@@ -23,6 +23,7 @@ def main() -> None:
     with open(log_path, "a", encoding="utf-8") as log:
         log.write(f"\n===== daily_job {datetime.now():%Y-%m-%d %H:%M:%S} =====\n")
         for name, script, fatal in [("scan", "daily_scan.py", True),
+                                    ("analyst", "ai_analyst.py", False),
                                     ("telegram", "send_telegram.py", False)]:
             proc = subprocess.run([sys.executable, os.path.join(SCRIPTS, script)],
                                   cwd=ROOT, capture_output=True, text=True,
