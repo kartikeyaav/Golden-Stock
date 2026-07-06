@@ -1,0 +1,19 @@
+# secrets — never commit
+telegram_config.json
+.env
+
+# regenerable data caches (rebuilt by fetch scripts)
+multibagger_screener/multibagger_screener/data_cache/
+multibagger_screener/multibagger_screener/fundamentals_cache/
+
+# operational noise
+multibagger_screener/multibagger_screener/logs/
+multibagger_screener/multibagger_screener/state/
+multibagger_screener/multibagger_screener/matrix_trades/
+*.log
+__pycache__/
+*.pyc
+
+# office temp files
+~$*.docx
+*.docx

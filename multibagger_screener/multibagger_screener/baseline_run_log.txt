@@ -1,0 +1,40 @@
+  signals 50/651 (8s)
+  signals 100/651 (17s)
+  signals 150/651 (27s)
+  signals 200/651 (35s)
+  signals 250/651 (43s)
+  signals 300/651 (53s)
+  signals 350/651 (61s)
+  signals 400/651 (71s)
+  signals 450/651 (77s)
+  signals 500/651 (84s)
+  signals 550/651 (92s)
+  signals 650/651 (106s)
+signal generation: 604 stocks in 1.8 min (47 skipped)
+backtest loop: 0.4 min
+
+# Baseline backtest — technical-only, two-lot (Phase A acceptance)
+
+- Universe: 604 cached index-constituent stocks, 2019-01-01 00:00:00 to 2026-07-03 00:00:00 (7.5 yrs)
+- Distinct positions: 211  (lot rows: 422)
+- Costs: 0.15% per side applied
+
+## Blended (after costs)
+{'num_trades': 422, 'win_rate_pct': 27.49, 'avg_win_r': np.float64(7.89), 'avg_loss_r': np.float64(-0.81), 'payoff_ratio': np.float64(9.8), 'expectancy_r': np.float64(1.586), 'total_pnl': np.float64(2452066.7), 'best_trade_r': np.float64(113.78), 'worst_trade_r': np.float64(-1.06), 'exit_reason_breakdown': {'stop_loss': 295, 'trend_break_50dma': 65, 'weekly_close_below_30wk_ma': 56, 'backtest_end': 6}}
+
+## Per lot (after costs)
+- core: {'num_trades': 211, 'win_rate_pct': 20.38, 'avg_win_r': np.float64(16.42), 'avg_loss_r': np.float64(-0.73), 'payoff_ratio': np.float64(22.59), 'expectancy_r': np.float64(2.767), 'total_pnl': np.float64(2224947.72), 'best_trade_r': np.float64(113.78), 'worst_trade_r': np.float64(-1.06), 'exit_reason_breakdown': {'stop_loss': 151, 'weekly_close_below_30wk_ma': 56, 'backtest_end': 4}, 'trades_ge_5r': 23}
+- trading: {'num_trades': 211, 'win_rate_pct': 34.6, 'avg_win_r': np.float64(2.87), 'avg_loss_r': np.float64(-0.9), 'payoff_ratio': np.float64(3.19), 'expectancy_r': np.float64(0.404), 'total_pnl': np.float64(227118.98), 'best_trade_r': np.float64(18.49), 'worst_trade_r': np.float64(-1.06), 'exit_reason_breakdown': {'stop_loss': 144, 'trend_break_50dma': 65, 'backtest_end': 2}, 'trades_ge_5r': 8}
+
+## Equity
+{'start_date': Timestamp('2019-01-01 00:00:00'), 'end_date': Timestamp('2026-07-03 00:00:00'), 'years': 7.5, 'starting_equity': 1000000, 'ending_equity': np.float64(3549030.96), 'total_return_pct': np.float64(254.9), 'cagr_pct': np.float64(18.39), 'max_drawdown_pct': np.float64(-21.48)}
+
+## Vs NIFTY50 buy-and-hold
+{'strategy_total_return_pct': np.float64(254.9), 'benchmark_total_return_pct': np.float64(124.89), 'excess_return_pct': np.float64(130.02)}
+
+## Raw (pre-cost) blended
+{'num_trades': 422, 'win_rate_pct': 27.49, 'avg_win_r': np.float64(7.94), 'avg_loss_r': np.float64(-0.77), 'payoff_ratio': np.float64(10.34), 'expectancy_r': np.float64(1.626), 'total_pnl': np.float64(2549030.96), 'best_trade_r': np.float64(113.98), 'worst_trade_r': np.float64(-1.0), 'exit_reason_breakdown': {'stop_loss': 295, 'trend_break_50dma': 65, 'weekly_close_below_30wk_ma': 56, 'backtest_end': 6}}
+
+**Honesty caveats (Design Law #4):** survivor-only universe (today's
+constituents), idealized fills (close entries, exact-stop exits, no
+circuit freezes), static neutral fundamentals. DIRECTIONAL ONLY.

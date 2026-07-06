@@ -1,0 +1,18 @@
+building sector heat grid...
+heat grid: 85 months x 21 industries
+  signals 100/651 (22s)
+  signals 200/651 (43s)
+  signals 300/651 (67s)
+  signals 400/651 (91s)
+  signals 500/651 (111s)
+signals ready: 604 stocks in 2.4 min
+[A_baseline] pos=108 exp=1.27R core_exp=2.186R core>=5R=6 P1=2.313 P2=0.147 cagr=21.48% dd=-12.88%
+[E40_sector_heat] pos=113 exp=0.216R core_exp=0.414R core>=5R=3 P1=0.384 P2=-0.01 cagr=6.47% dd=-15.01%
+[E60_sector_heat] pos=106 exp=0.105R core_exp=0.356R core>=5R=5 P1=0.368 P2=-0.331 cagr=1.76% dd=-21.13%
+[F1_core_patience] pos=106 exp=1.248R core_exp=2.115R core>=5R=6 P1=2.254 P2=0.163 cagr=20.77% dd=-13.16%
+[F2_fund_split] pos=108 exp=1.271R core_exp=2.186R core>=5R=6 P1=2.315 P2=0.147 cagr=17.93% dd=-13.22%
+[S1_next_open_fill] pos=111 exp=0.955R core_exp=1.758R core>=5R=7 P1=1.959 P2=-0.068 cagr=16.6% dd=-14.59%
+[S3_gap_aware_stops] pos=108 exp=1.228R core_exp=2.145R core>=5R=6 P1=2.233 P2=0.146 cagr=20.58% dd=-12.89%
+[S2_heavy_costs_0.40] exp=1.203R win%=26.39 payoff=8.16
+
+-> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\matrix2_report.md

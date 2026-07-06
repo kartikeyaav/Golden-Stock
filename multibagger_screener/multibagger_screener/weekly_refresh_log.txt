@@ -1,0 +1,60 @@
+
+============================================================
+STEP: universe
+============================================================
+
+Universe: 651 unique symbols -> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\universe.csv
+index_source
+microcap250    251
+smallcap250    250
+midcap150      150
+[universe] done in 0.0 min
+
+============================================================
+STEP: prices (incremental, full universe)
+============================================================
+[450/652] ...
+[500/652] ...
+[550/652] ...
+[600/652] ...
+[650/652] ...
+updated 652/652 in 6.8 min
+[prices (incremental, full universe)] done in 6.8 min
+
+============================================================
+STEP: focus list
+============================================================
+      ERIS                     Healthcare       31.9          7.9      1431.1
+       SRF                      Chemicals       30.9        134.2      2794.5
+     ARE&M Automobile and Auto Components       30.9         39.7       855.2
+       RCF                      Chemicals       30.1         29.6       133.0
+JUBLPHARMA                     Healthcare       28.2          8.5       969.2
+ DEEPAKNTR                      Chemicals       23.5         22.5      1558.1
+[focus list] done in 0.8 min
+
+============================================================
+STEP: fundamentals (shortlist)
+============================================================
+      RAIN    -115.0        158.0
+WOCKPHARMA     -45.0        164.0
+INDUSINDBK   -2329.0        594.0
+MANAPPURAM    -203.0        405.0
+       ITI      -4.0        436.0
+ARVINDFASN     -72.0         66.0
+[fundamentals (shortlist)] done in 0.0 min
+
+============================================================
+STEP: ranked shortlist
+============================================================
+ THYROCARE    CONFIRMED   25.0 promoter_pledge: 100.0% of promoter holding pledged
+      STAR    CONFIRMED   25.0  promoter_pledge: 27.3% of promoter holding pledged
+INDUSINDBK    CONFIRMED   25.0  promoter_pledge: 42.8% of promoter holding pledged
+    CHALET ANTICIPATION   25.0  promoter_pledge: 31.9% of promoter holding pledged
+
+report -> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\shortlist_report.md
+[ranked shortlist] done in 0.1 min
+
+============================================================
+WEEKLY REFRESH COMPLETE in 7.8 min
+  -> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\shortlist_report.md
+  -> next: scripts/daily_scan.py runs against the new focus list

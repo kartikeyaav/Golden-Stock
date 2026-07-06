@@ -1,0 +1,27 @@
+  signals 100/651 (109s)
+  signals 200/651 (229s)
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scoring\pit_fundamentals.py:131: RuntimeWarning: divide by zero encountered in scalar divide
+  g = float(np.clip((np_latest - np_yoy) / abs(np_yoy), -1.0, 2.0))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scoring\pit_fundamentals.py:131: RuntimeWarning: divide by zero encountered in scalar divide
+  g = float(np.clip((np_latest - np_yoy) / abs(np_yoy), -1.0, 2.0))
+  signals 300/651 (359s)
+  signals 400/651 (490s)
+  signals 500/651 (597s)
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scoring\pit_fundamentals.py:131: RuntimeWarning: divide by zero encountered in scalar divide
+  g = float(np.clip((np_latest - np_yoy) / abs(np_yoy), -1.0, 2.0))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scoring\pit_fundamentals.py:131: RuntimeWarning: divide by zero encountered in scalar divide
+  g = float(np.clip((np_latest - np_yoy) / abs(np_yoy), -1.0, 2.0))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scoring\pit_fundamentals.py:131: RuntimeWarning: divide by zero encountered in scalar divide
+  g = float(np.clip((np_latest - np_yoy) / abs(np_yoy), -1.0, 2.0))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scoring\pit_fundamentals.py:131: RuntimeWarning: divide by zero encountered in scalar divide
+  g = float(np.clip((np_latest - np_yoy) / abs(np_yoy), -1.0, 2.0))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scoring\pit_fundamentals.py:131: RuntimeWarning: divide by zero encountered in scalar divide
+  g = float(np.clip((np_latest - np_yoy) / abs(np_yoy), -1.0, 2.0))
+signals ready: 604 stocks in 12.7 min
+[A_technical_baseline] positions=108 expectancy=1.27R win%=27.78 payoff=8.3 cagr=7.87% dd=-12.88%
+[B1_pit_gate_failopen] positions=105 expectancy=0.391R win%=25.71 payoff=4.8 cagr=2.17% dd=-12.2%
+[B2_pit_gate_failclosed] positions=104 expectancy=0.39R win%=25.48 payoff=4.84 cagr=2.23% dd=-12.22%
+[B3_pit_gate_050] positions=110 expectancy=0.537R win%=25.0 payoff=5.62 cagr=3.68% dd=-13.84%
+[D_pit_entry_ranking] positions=105 expectancy=0.382R win%=25.71 payoff=4.73 cagr=1.97% dd=-12.18%
+
+-> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\matrix_report.md
