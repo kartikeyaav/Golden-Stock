@@ -62,6 +62,7 @@ def main() -> None:
     run_step("fundamentals (shortlist)", "fetch_fundamentals.py")
     run_step("ranked shortlist", "run_shortlist.py")
     run_step("journal outcomes (forward scorecard)", "journal_outcomes.py", fatal=False)
+    run_step("dashboard", "build_dashboard.py", fatal=False)
 
     print(f"\n{'=' * 60}")
     print(f"WEEKLY REFRESH COMPLETE in {(time.time() - t0) / 60:.1f} min")
