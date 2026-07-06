@@ -53,10 +53,12 @@ JOURNAL_FIELDS = ["logged_at", "symbol", "kind", "old_tag", "new_tag", "close",
                   "vetoed", "veto_reasons", "rs_pctile", "archetypes"]
 
 
-def health_check(today_tags: dict, symbols: list[str]) -> list[str]:
+def health_check(today_tags: dict, symbols: list[str],
+                 extra_problems: list[str] | None = None) -> list[str]:
     """Silent staleness is the failure mode of autonomous systems — check the
-    data actually moved and the tagger isn't degenerate; alert LOUDLY if not."""
-    problems = []
+    data actually moved, the tagger isn't degenerate, the screener parser
+    still parses, and the filings feed still answers. Alert LOUDLY if not."""
+    problems = list(extra_problems or [])
     bench = load_ohlcv("NIFTY50")
     if bench is None:
         problems.append("benchmark NIFTY50 missing from cache")
@@ -71,6 +73,21 @@ def health_check(today_tags: dict, symbols: list[str]) -> list[str]:
         counts = pd.Series(list(today_tags.values())).value_counts()
         if counts.index[0] == "WATCH" and counts.iloc[0] > 0.95 * len(today_tags):
             problems.append("tagger degenerate: >95% WATCH — indicator inputs look broken")
+    # screener parser health (written by the weekly fundamentals job)
+    ph_path = os.path.join(ROOT, "state", "parser_health.json")
+    if os.path.exists(ph_path):
+        try:
+            ph = json.load(open(ph_path, encoding="utf-8"))
+            if not ph.get("ok", True):
+                problems.append(
+                    f"screener parser degraded: {ph.get('empty_quarters')}/"
+                    f"{ph.get('fetched')} pages parsed empty, "
+                    f"{ph.get('fetch_failures')} failures — page layout may have changed")
+            age_d = (datetime.now() - datetime.fromisoformat(ph["checked_at"])).days
+            if age_d > 14:
+                problems.append(f"fundamentals last refreshed {age_d}d ago — weekly job may be dead")
+        except (ValueError, KeyError):
+            pass
     return [f"!! HEALTH: {p}" for p in problems]
 
 
@@ -83,8 +100,18 @@ def load_state(path: str) -> dict | None:
 
 def save_state(path: str, tags: dict) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    payload = {"date": datetime.now().strftime("%Y-%m-%d"), "tags": tags}
     with open(path, "w", encoding="utf-8") as f:
-        json.dump({"date": datetime.now().strftime("%Y-%m-%d"), "tags": tags}, f, indent=1)
+        json.dump(payload, f, indent=1)
+    # daily snapshot (audit trail for missed-day/late transitions), keep 90
+    hist_dir = os.path.join(os.path.dirname(path), "history")
+    os.makedirs(hist_dir, exist_ok=True)
+    snap = os.path.join(hist_dir, f"{payload['date']}.json")
+    with open(snap, "w", encoding="utf-8") as f:
+        json.dump(payload, f)
+    snaps = sorted(os.listdir(hist_dir))
+    for old in snaps[:-90]:
+        os.remove(os.path.join(hist_dir, old))
 
 
 def journal_append(rows: list[dict]) -> None:
@@ -175,6 +202,15 @@ def main() -> None:
         print(f"updating prices for {len(symbols)} symbols...", flush=True)
         update_symbols(symbols, pause=0.25)
 
+    # persist today's NSE filings into our archive (the live feed forgets)
+    feed_problems: list[str] = []
+    try:
+        from data.announcements_fetch import archive_feed
+        n_new = archive_feed()
+        print(f"filings archive: +{n_new} new NSE announcements", flush=True)
+    except Exception as e:  # noqa: BLE001
+        feed_problems.append(f"NSE announcements feed unreachable ({str(e)[:60]})")
+
     bench = load_ohlcv("NIFTY50")
     today_tags: dict[str, str] = {}
     tag_results: dict[str, dict] = {}
@@ -249,7 +285,7 @@ def main() -> None:
         journal_rows += pos_journal
 
     # health checks go on TOP so a broken feed can't hide behind "no transitions"
-    problems = health_check(today_tags, symbols)
+    problems = health_check(today_tags, symbols, extra_problems=feed_problems)
     if problems:
         lines = lines[:2] + problems + [""] + lines[2:]
 

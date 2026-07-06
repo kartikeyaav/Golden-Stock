@@ -74,3 +74,62 @@ def announcements_for(company_name: str) -> list[dict]:
             if a["company_norm"] == target
             or a["company_norm"].startswith(target)
             or target.startswith(a["company_norm"])]
+
+
+# ---------------------------------------------------------------------------
+# Archive: the feed is a rolling ~1-day window — persist it daily so the
+# system builds its own filings history instead of forgetting.
+# ---------------------------------------------------------------------------
+import csv
+import os
+
+_ARCHIVE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                             "announcements_archive.csv")
+_ARCHIVE_FIELDS = ["date", "company", "company_norm", "subject", "link"]
+
+
+def archive_feed() -> int:
+    """Append today's feed items to the archive (deduped by link+subject).
+    Returns the number of NEW rows. Called by the daily scan."""
+    items = fetch_announcements()
+    seen: set[str] = set()
+    if os.path.exists(_ARCHIVE_PATH):
+        with open(_ARCHIVE_PATH, "r", encoding="utf-8", newline="") as f:
+            for row in csv.DictReader(f):
+                seen.add(row.get("link") or row.get("subject", ""))
+    new_rows = [a for a in items if (a["link"] or a["subject"]) not in seen]
+    if new_rows:
+        write_header = not os.path.exists(_ARCHIVE_PATH)
+        with open(_ARCHIVE_PATH, "a", encoding="utf-8", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=_ARCHIVE_FIELDS)
+            if write_header:
+                w.writeheader()
+            for a in new_rows:
+                w.writerow({"date": a["date"].isoformat(timespec="seconds") if a["date"] else "",
+                            "company": a["company"], "company_norm": a["company_norm"],
+                            "subject": a["subject"], "link": a["link"]})
+    return len(new_rows)
+
+
+def archived_for(company_name: str, days: int = 7) -> list[dict]:
+    """Archived filings for one company over the trailing window — survives
+    the live feed's short memory."""
+    if not os.path.exists(_ARCHIVE_PATH):
+        return []
+    target = _normalize_company(company_name)
+    cutoff = datetime.now().timestamp() - days * 86400
+    out = []
+    with open(_ARCHIVE_PATH, "r", encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f):
+            norm = row.get("company_norm", "")
+            if not (norm == target or norm.startswith(target) or target.startswith(norm)):
+                continue
+            try:
+                d = datetime.fromisoformat(row["date"])
+            except (ValueError, KeyError):
+                continue
+            if d.timestamp() >= cutoff:
+                out.append({"company": row["company"], "subject": row["subject"],
+                            "date": d, "link": row["link"]})
+    out.sort(key=lambda x: x["date"], reverse=True)
+    return out

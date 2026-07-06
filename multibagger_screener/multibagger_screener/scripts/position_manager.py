@@ -99,14 +99,24 @@ def check_positions() -> tuple[list[str], list[dict]]:
             fire(f"TRADING LOT EXIT — closed {row['close']:.2f} below 50-DMA {sma50:.2f}")
             pos.at[i, "trading_open"] = False
 
-        # 5. core lot: Friday close below the 150d SMA (~30-week MA)
-        sma150 = row.get(f"sma_{RISK.core_exit_ma_period}")
-        is_week_end = pd.Timestamp(row["date"]).weekday() == 4
-        if (_bool(pos.at[i, "core_open"]) and is_week_end
-                and pd.notna(sma150) and row["close"] < sma150):
-            fire(f"CORE LOT EXIT — weekly close {row['close']:.2f} below "
-                 f"30-week MA {sma150:.2f} (the trend is over)")
-            pos.at[i, "core_open"] = False
+        # 5. core lot: last COMPLETED week's close below the 150d SMA
+        # (robust to holiday Fridays — a week whose Friday label is still in
+        # the future is incomplete and ignored; Monday catches a bad prior
+        # week even if Friday was a holiday)
+        if _bool(pos.at[i, "core_open"]):
+            wk_period = df["date"].dt.to_period("W-FRI")
+            current_period = wk_period.iloc[-1]
+            is_friday = pd.Timestamp(row["date"]).weekday() == 4
+            completed = df[(wk_period < current_period)
+                           | (is_friday & (wk_period == current_period))]
+            if len(completed):
+                wl = completed.iloc[-1]  # last daily bar of last completed week
+                wl_sma = wl.get(f"sma_{RISK.core_exit_ma_period}")
+                if pd.notna(wl_sma) and wl["close"] < wl_sma:
+                    fire(f"CORE LOT EXIT — weekly close {wl['close']:.2f} "
+                         f"(w/e {pd.Timestamp(wl['date']).date()}) below "
+                         f"30-week MA {wl_sma:.2f} (the trend is over)")
+                    pos.at[i, "core_open"] = False
 
     pos.to_csv(POSITIONS_PATH, index=False)
     return alerts, journal_rows

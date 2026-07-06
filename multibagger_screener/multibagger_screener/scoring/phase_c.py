@@ -13,7 +13,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from config import CATALYST
-from data.announcements_fetch import announcements_for
+from data.announcements_fetch import announcements_for, archived_for
 from data.news_catalyst import score_catalyst, tag_government_themes
 from data.news_fetch import fetch_headlines
 from scoring.conviction import Dimension
@@ -36,12 +36,24 @@ def enrich(symbol: str, company_name: str) -> dict:
     items = [{"date": h["date"], "text": h["text"], "source": h["source"]}
              for h in headlines]
 
-    # official NSE filings (first-party, same-day rolling feed) — scanned
-    # with the same keyword sets but listed separately and trusted more
+    # official NSE filings: live rolling feed UNION our own 7-day archive
+    # (the archive survives the feed's short memory) — scanned with the same
+    # keyword sets but listed separately and trusted more
     try:
-        filings = announcements_for(company_name)
+        live = announcements_for(company_name)
     except Exception:  # noqa: BLE001 — feed down != scan down
-        filings = []
+        live = []
+    try:
+        old = archived_for(company_name, days=7)
+    except Exception:  # noqa: BLE001
+        old = []
+    seen_subjects = set()
+    filings = []
+    for f in live + old:
+        key = f["subject"][:80]
+        if key not in seen_subjects:
+            seen_subjects.add(key)
+            filings.append(f)
 
     theme_hits: set[str] = set()
     event_hits: set[str] = set()
