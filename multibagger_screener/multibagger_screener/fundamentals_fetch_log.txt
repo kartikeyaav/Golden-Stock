@@ -1,0 +1,37 @@
+fetching 84 symbols (pause 1.8s)...
+[10/84] ...
+[20/84] ...
+[30/84] ...
+[40/84] ...
+[50/84] ...
+[60/84] ...
+[70/84] ...
+[80/84] ...
+
+84 companies -> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\fundamentals_flat.csv  (0 failed: [])
+
+=== VETO REPORT ===
+  NETWEB       PROMOTER SELLING (71.03% -> 66.98%)
+  BELRISE      PROMOTER SELLING (73.01% -> 66.46%)
+  SKYGOLD      PROMOTER SELLING (53.86% -> 51.74%)
+  MAHABANK     PROMOTER SELLING (79.6% -> 73.6%)
+  KRN          PROMOTER SELLING (70.79% -> 67.22%)
+  CRAFTSMAN    PROMOTER SELLING (48.7% -> 44.42%)
+  THYROCARE    PLEDGE 100.0% | PROMOTER SELLING (71.06% -> 60.92%)
+  STAR         PLEDGE 27.3%
+  INDUSINDBK   PLEDGE 42.8%
+  MANAPPURAM   PROMOTER SELLING (35.25% -> 31.77%)
+  INDIACEM     PROMOTER SELLING (81.49% -> 75.0%)
+  POONAWALLA   PROMOTER SELLING (63.96% -> 59.03%)
+  CHALET       PLEDGE 31.9%
+
+=== LOSS->PROFIT SWINGS (turnaround signature) ===
+    symbol  np_yoy_q  np_latest_q
+   STLTECH     -40.0         59.0
+      IDEA   -7167.0      51970.0
+      RAIN    -115.0        158.0
+WOCKPHARMA     -45.0        164.0
+INDUSINDBK   -2329.0        594.0
+MANAPPURAM    -203.0        405.0
+       ITI      -4.0        436.0
+ARVINDFASN     -72.0         66.0

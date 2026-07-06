@@ -1,0 +1,46 @@
+universe 651, already cached 84, fetching 567 (pause 2.2s)
+[25/567] ok=25 (1.0 min)
+[50/567] ok=50 (1.9 min)
+[75/567] ok=75 (3.0 min)
+[100/567] ok=100 (3.9 min)
+[125/567] ok=125 (4.9 min)
+[150/567] ok=150 (5.9 min)
+[175/567] ok=175 (6.9 min)
+[200/567] ok=200 (7.9 min)
+[225/567] ok=225 (8.9 min)
+[250/567] ok=250 (9.9 min)
+[275/567] ok=275 (10.8 min)
+[300/567] ok=300 (11.8 min)
+[325/567] ok=325 (12.8 min)
+[350/567] ok=350 (13.8 min)
+[375/567] ok=375 (14.8 min)
+[400/567] ok=400 (15.8 min)
+[425/567] ok=425 (16.8 min)
+[450/567] ok=450 (17.8 min)
+[475/567] ok=475 (18.8 min)
+[500/567] ok=500 (19.8 min)
+[505/567] FAIL SHRIPISTON: SHRIPISTON: <urlopen error [Errno 11001] getaddrinfo failed>
+[506/567] FAIL SAATVIKGL: SAATVIKGL: <urlopen error [Errno 11001] getaddrinfo failed>
+[507/567] FAIL SAFARI: SAFARI: <urlopen error [Errno 11001] getaddrinfo failed>
+[508/567] FAIL SAMHI: SAMHI: <urlopen error [Errno 11001] getaddrinfo failed>
+[509/567] FAIL SANDUMA: SANDUMA: <urlopen error [Errno 11001] getaddrinfo failed>
+[510/567] FAIL SANOFICONR: SANOFICONR: <urlopen error [Errno 11001] getaddrinfo failed>
+[511/567] FAIL SANSERA: SANSERA: <urlopen error [Errno 11001] getaddrinfo failed>
+[512/567] FAIL SENCO: SENCO: <urlopen error [Errno 11001] getaddrinfo failed>
+[513/567] FAIL STYL: STYL: <urlopen error [Errno 11001] getaddrinfo failed>
+[514/567] FAIL SHAILY: SHAILY: <urlopen error [Errno 11001] getaddrinfo failed>
+[515/567] FAIL SHAKTIPUMP: SHAKTIPUMP: <urlopen error [Errno 11001] getaddrinfo failed>
+[516/567] FAIL SHARDACROP: SHARDACROP: <urlopen error [Errno 11001] getaddrinfo failed>
+[517/567] FAIL SHAREINDIA: SHAREINDIA: <urlopen error [Errno 11001] getaddrinfo failed>
+[518/567] FAIL SFL: SFL: <urlopen error [Errno 11001] getaddrinfo failed>
+[519/567] FAIL SHILPAMED: SHILPAMED: <urlopen error [Errno 11001] getaddrinfo failed>
+[520/567] FAIL RENUKA: RENUKA: <urlopen error [Errno 11001] getaddrinfo failed>
+[521/567] FAIL SKIPPER: SKIPPER: <urlopen error [Errno 11001] getaddrinfo failed>
+[522/567] FAIL SMARTWORKS: SMARTWORKS: <urlopen error [Errno 11001] getaddrinfo failed>
+[523/567] FAIL LOTUSDEV: LOTUSDEV: <urlopen error [Errno 11001] getaddrinfo failed>
+[524/567] FAIL STARCEMENT: STARCEMENT: <urlopen error [Errno 11001] getaddrinfo failed>
+[525/567] ok=505 (21.1 min)
+[550/567] ok=530 (22.2 min)
+
+Done in 22.9 min: 547 fetched, 20 failed
+Failed: SHRIPISTON,SAATVIKGL,SAFARI,SAMHI,SANDUMA,SANOFICONR,SANSERA,SENCO,STYL,SHAILY,SHAKTIPUMP,SHARDACROP,SHAREINDIA,SFL,SHILPAMED,RENUKA,SKIPPER,SMARTWORKS,LOTUSDEV,STARCEMENT

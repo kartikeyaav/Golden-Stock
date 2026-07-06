@@ -1,0 +1,37 @@
+
+=== RANKED SHORTLIST (84) ===
+    symbol                          industry       tag                      archetypes  score  coverage          label  vetoed
+CHENNPETRO        Oil Gas & Consumable Fuels CONFIRMED                      Turnaround   86.6      75.0     Conviction   False
+    EMCURE                        Healthcare CONFIRMED                      Turnaround   84.4      75.0     Conviction   False
+DATAPATTNS                     Capital Goods CONFIRMED (untagged — theme data Phase C)   82.4      45.0 Technical Read   False
+   STLTECH                 Telecommunication CONFIRMED                      Turnaround   82.1      75.0     Conviction   False
+   POLYCAB                     Capital Goods CONFIRMED                         Quality   80.2      75.0     Conviction   False
+NAVINFLUOR                         Chemicals CONFIRMED (untagged — theme data Phase C)   80.1      75.0     Conviction   False
+   BELRISE    Automobile and Auto Components CONFIRMED                      Turnaround   79.8      75.0     Conviction   False
+   RRKABEL                     Capital Goods CONFIRMED            Turnaround + Quality   79.2      75.0     Conviction   False
+  MAHABANK                Financial Services CONFIRMED (untagged — theme data Phase C)   77.3      75.0     Conviction   False
+   SAILIFE                        Healthcare CONFIRMED                      Turnaround   77.0      75.0     Conviction   False
+  GRANULES                        Healthcare CONFIRMED (untagged — theme data Phase C)   76.6      75.0     Conviction   False
+  APARINDS                     Capital Goods CONFIRMED                         Quality   76.2      75.0     Conviction   False
+EQUITASBNK                Financial Services CONFIRMED (untagged — theme data Phase C)   76.1      55.0 Technical Read   False
+       CCL        Fast Moving Consumer Goods CONFIRMED                    Hyper-growth   75.3      75.0     Conviction   False
+   SKYGOLD                 Consumer Durables CONFIRMED                    Hyper-growth   75.1      75.0     Conviction   False
+      IDEA                 Telecommunication CONFIRMED                      Turnaround   75.1      75.0     Conviction   False
+ SCHNEIDER                     Capital Goods CONFIRMED (untagged — theme data Phase C)   75.0      45.0 Technical Read   False
+ CRAFTSMAN    Automobile and Auto Components CONFIRMED                    Hyper-growth   74.6      75.0     Conviction   False
+    AIAENG                     Capital Goods CONFIRMED                      Turnaround   74.2      75.0     Conviction   False
+      GAEL        Fast Moving Consumer Goods CONFIRMED (untagged — theme data Phase C)   73.5      75.0     Conviction   False
+ TIPSMUSIC Media Entertainment & Publication CONFIRMED (untagged — theme data Phase C)   73.2      45.0 Technical Read   False
+   KIRLPNU                     Capital Goods CONFIRMED (untagged — theme data Phase C)   73.0      75.0     Conviction   False
+       KEI                     Capital Goods CONFIRMED                         Quality   73.0      75.0     Conviction   False
+  LLOYDSME                   Metals & Mining CONFIRMED                    Hyper-growth   72.5      75.0     Conviction   False
+ KIRLOSENG                     Capital Goods CONFIRMED (untagged — theme data Phase C)   72.4      75.0     Conviction   False
+
+=== VETOED (4) ===
+    symbol          tag  score                                        veto_reasons
+ THYROCARE    CONFIRMED   25.0 promoter_pledge: 100.0% of promoter holding pledged
+      STAR    CONFIRMED   25.0  promoter_pledge: 27.3% of promoter holding pledged
+INDUSINDBK    CONFIRMED   25.0  promoter_pledge: 42.8% of promoter holding pledged
+    CHALET ANTICIPATION   25.0  promoter_pledge: 31.9% of promoter holding pledged
+
+report -> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\shortlist_report.md
