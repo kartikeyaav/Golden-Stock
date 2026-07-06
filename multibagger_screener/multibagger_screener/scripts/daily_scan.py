@@ -42,6 +42,7 @@ from scoring.stage_tagger import tag_stock
 from scoring.technical_score import compute_atr, compute_entry_plan
 from reports.watchlist_card import render_card
 from fetch_fundamentals import flatten
+from position_manager import check_positions
 from update_prices import universe_and_holdings_symbols, update_symbols
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -50,6 +51,27 @@ JOURNAL_PATH = os.path.join(ROOT, "journal", "signals_journal.csv")
 JOURNAL_FIELDS = ["logged_at", "symbol", "kind", "old_tag", "new_tag", "close",
                   "atr", "stop_suggested", "conviction_score", "coverage_pct",
                   "vetoed", "veto_reasons", "rs_pctile", "archetypes"]
+
+
+def health_check(today_tags: dict, symbols: list[str]) -> list[str]:
+    """Silent staleness is the failure mode of autonomous systems — check the
+    data actually moved and the tagger isn't degenerate; alert LOUDLY if not."""
+    problems = []
+    bench = load_ohlcv("NIFTY50")
+    if bench is None:
+        problems.append("benchmark NIFTY50 missing from cache")
+    else:
+        age = (datetime.now() - bench["date"].iloc[-1]).days
+        if age > 5:
+            problems.append(f"benchmark data is {age} days old — price feed may be broken")
+    tagged_frac = len(today_tags) / max(len(symbols) - 1, 1)
+    if tagged_frac < 0.80:
+        problems.append(f"only {tagged_frac:.0%} of watched names tagged — data gaps?")
+    if today_tags:
+        counts = pd.Series(list(today_tags.values())).value_counts()
+        if counts.index[0] == "WATCH" and counts.iloc[0] > 0.95 * len(today_tags):
+            problems.append("tagger degenerate: >95% WATCH — indicator inputs look broken")
+    return [f"!! HEALTH: {p}" for p in problems]
 
 
 def load_state(path: str) -> dict | None:
@@ -132,6 +154,9 @@ def main() -> None:
     holdings_path = os.path.join(ROOT, "holdings.csv")
     if os.path.exists(holdings_path):
         holdings = set(pd.read_csv(holdings_path)["symbol"])
+    positions_path = os.path.join(ROOT, "positions.csv")
+    if os.path.exists(positions_path):
+        holdings |= set(pd.read_csv(positions_path)["symbol"])
 
     symbols = universe_and_holdings_symbols(ROOT)
     if not args.no_update:
@@ -202,6 +227,19 @@ def main() -> None:
         if infos:
             lines.append("")
             lines.append("Minor shifts: " + ", ".join(f"{s} {o}->{n}" for s, o, n in infos))
+
+    # position management: track every open position against ITS OWN plan
+    pos_alerts, pos_journal = check_positions()
+    if pos_alerts:
+        lines.append("")
+        lines.append(f"{len(pos_alerts)} position-management alert(s):")
+        lines += pos_alerts
+        journal_rows += pos_journal
+
+    # health checks go on TOP so a broken feed can't hide behind "no transitions"
+    problems = health_check(today_tags, symbols)
+    if problems:
+        lines = lines[:2] + problems + [""] + lines[2:]
 
     save_state(args.state_file, today_tags)
     journal_append(journal_rows)

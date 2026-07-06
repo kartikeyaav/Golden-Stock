@@ -1,0 +1,2 @@
+symbol,entry_date,entry_price,initial_stop,stop_current,shares_trading,shares_core,trading_open,core_open,partial_taken,breakeven_moved,notes
+MOSCHIP,2026-07-04,208.485,190.14,190.14,100,100,True,True,False,False,seeded from Zerodha holding; stop set 2.5xATR at seed time (not original trade stop)

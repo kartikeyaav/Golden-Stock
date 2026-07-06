@@ -1,0 +1,13 @@
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scripts\run_matrix3.py:71: FutureWarning: The default fill_method='pad' in Series.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  ratio = ((1 + wk_close.pct_change(13)) / (1 + b.pct_change(13).reindex(wk_close.index)))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scripts\run_matrix3.py:72: FutureWarning: The default fill_method='pad' in Series.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  ratio26 = ((1 + wk_close.pct_change(26)) / (1 + b.pct_change(26).reindex(wk_close.index)))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scripts\run_matrix3.py:71: FutureWarning: The default fill_method='pad' in Series.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  ratio = ((1 + wk_close.pct_change(13)) / (1 + b.pct_change(13).reindex(wk_close.index)))
+C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\scripts\run_matrix3.py:72: FutureWarning: The default fill_method='pad' in Series.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  ratio26 = ((1 + wk_close.pct_change(26)) / (1 + b.pct_change(26).reindex(wk_close.index)))
+  signals 100/651 (29s)
+  signals 200/651 (59s)
+  signals 300/651 (93s)
+  signals 400/651 (126s)
+  signals 500/651 (154s)

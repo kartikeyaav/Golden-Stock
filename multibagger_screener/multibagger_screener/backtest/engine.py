@@ -162,15 +162,16 @@ class Portfolio:
         self.equity_curve: list[dict] = []
 
     def open_position(self, name: str, date, entry_price: float, stop_price: float,
-                      trading_fraction: Optional[float] = None) -> Optional[Trade]:
+                      trading_fraction: Optional[float] = None,
+                      risk_scale: float = 1.0) -> Optional[Trade]:
         """Risk-normalized sizing: shares = risk budget / stop distance, then
         capped by max position value and available cash. Splits into lots.
-        trading_fraction overrides the fixed config split (matrix v2 config F2
-        tests a fundamentals-modulated split)."""
+        trading_fraction overrides the fixed config split (matrix v2 config F2);
+        risk_scale multiplies the risk budget (matrix v3b regime sizing)."""
         risk_per_share = entry_price - stop_price
         if risk_per_share <= 0:
             return None
-        risk_capital = self.cash * RISK.risk_per_trade_pct / 100
+        risk_capital = self.cash * RISK.risk_per_trade_pct / 100 * risk_scale
         shares = int(risk_capital // risk_per_share)
 
         max_value = self.cash * RISK.max_position_value_pct / 100
@@ -238,6 +239,9 @@ def run_backtest(
     core_patience: bool = False,         # config F1: strong PIT fundamentals buy the core
     patience_min_score: float = 0.60,    # lot ONE extra weekly close below the MA
     split_mode: str = "fixed",           # config F2: "fundamental" modulates the lot split
+    risk_scale: Optional[pd.Series] = None,  # matrix v3b: date-indexed risk multiplier
+                                             # (e.g. 0.5 when the index is below its
+                                             # 150-DMA) — sizing, never a filter
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """signals_by_stock: {name: generate_signals(...) output}.
     Returns (trades_df — ONE ROW PER LOT, equity_curve_df).
@@ -359,13 +363,20 @@ def run_backtest(
                         trading_fraction = 0.7   # weak/unknown -> trading-heavy
                 candidates.append((sort_key, name, entry_price, stop_distance, trading_fraction))
 
+            scale = 1.0
+            if risk_scale is not None:
+                prior = risk_scale[risk_scale.index <= date]
+                if len(prior):
+                    scale = float(prior.iloc[-1])
+
             candidates.sort(key=lambda c: c[0], reverse=True)
             for _, name, entry_price, stop_distance, trading_fraction in candidates:
                 if len(portfolio.open_trades) >= RISK.max_open_positions:
                     break
                 trade = portfolio.open_position(name, date, entry_price,
                                                 entry_price - stop_distance,
-                                                trading_fraction=trading_fraction)
+                                                trading_fraction=trading_fraction,
+                                                risk_scale=scale)
                 if trade is not None:
                     last_prices[name] = entry_price
 
