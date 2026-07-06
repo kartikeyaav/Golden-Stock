@@ -69,6 +69,9 @@ def render_card(name: str, tag_result: dict, conviction: ConvictionResult,
                          f" | themes: {', '.join(news['themes']) if news['themes'] else 'none'}")
             for flag in news.get("red_flags", []):
                 lines.append(f"    !! RED FLAG: {flag}")
+            for f in news.get("filings", [])[:3]:
+                d = f["date"].strftime("%d-%b") if f.get("date") else "--"
+                lines.append(f"    [NSE {d}] {f['subject'][:90]}")
             for h in news.get("headlines", [])[:4]:
                 lines.append(f"    [{h['date'].strftime('%d-%b')}] {h['text'][:95]}"
                              f" ({h['source']})")
