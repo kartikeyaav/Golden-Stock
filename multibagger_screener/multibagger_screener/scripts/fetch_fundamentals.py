@@ -133,10 +133,22 @@ def veto_flags(row: dict) -> list[str]:
     return flags
 
 
+def _age_days(data: dict) -> float:
+    from datetime import datetime
+    try:
+        fetched = datetime.fromisoformat(data.get("fetched_at", ""))
+        return (datetime.now() - fetched).total_seconds() / 86400
+    except (ValueError, TypeError):
+        return 9999
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("symbols", nargs="*")
     parser.add_argument("--refresh", action="store_true")
+    parser.add_argument("--max-age-days", type=float, default=7.0,
+                        help="refetch cached entries older than this (weekly job "
+                             "keeps the shortlist current instead of fossilizing)")
     args = parser.parse_args()
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -146,14 +158,21 @@ def main() -> None:
         focus = pd.read_csv(os.path.join(root, "focus_list.csv"))
         symbols = focus[focus["tag"].isin(["CONFIRMED", "ANTICIPATION"])]["symbol"].tolist()
 
-    print(f"fetching {len(symbols)} symbols (pause {PAUSE_SECONDS}s)...", flush=True)
+    print(f"fetching {len(symbols)} symbols (pause {PAUSE_SECONDS}s, "
+          f"max age {args.max_age_days}d)...", flush=True)
     rows, failures = [], []
+    fetched_n = empty_quarters = 0
     for i, sym in enumerate(symbols, 1):
         data = None if args.refresh else load_company(sym)
+        if data is not None and _age_days(data) > args.max_age_days:
+            data = None  # stale — refetch
         if data is None:
             try:
                 data = fetch_company(sym)
                 save_company(sym, data)
+                fetched_n += 1
+                if not data.get("quarters", {}).get("rows"):
+                    empty_quarters += 1  # parser-health signal
                 time.sleep(PAUSE_SECONDS)
             except Exception as e:  # noqa: BLE001
                 failures.append(sym)
@@ -163,6 +182,22 @@ def main() -> None:
         rows.append(flatten(sym, data))
         if i % 10 == 0:
             print(f"[{i}/{len(symbols)}] ...", flush=True)
+
+    # parser health: if screener changes its page layout, quarters parse empty
+    # across the board — write a flag the daily health check reads and shouts.
+    import json as _json
+    from datetime import datetime as _dt
+    health = {
+        "checked_at": _dt.now().isoformat(timespec="seconds"),
+        "fetched": fetched_n, "empty_quarters": empty_quarters,
+        "fetch_failures": len(failures),
+        "ok": (fetched_n == 0) or (empty_quarters / max(fetched_n, 1) <= 0.3
+                                   and len(failures) / max(len(symbols), 1) <= 0.3),
+    }
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    os.makedirs(os.path.join(root, "state"), exist_ok=True)
+    with open(os.path.join(root, "state", "parser_health.json"), "w", encoding="utf-8") as fh:
+        _json.dump(health, fh, indent=1)
 
     df = pd.DataFrame(rows)
     out = os.path.join(root, "fundamentals_flat.csv")
