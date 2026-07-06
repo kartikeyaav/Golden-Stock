@@ -13,6 +13,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from config import CATALYST
+from data.announcements_fetch import announcements_for
 from data.news_catalyst import score_catalyst, tag_government_themes
 from data.news_fetch import fetch_headlines
 from scoring.conviction import Dimension
@@ -35,6 +36,13 @@ def enrich(symbol: str, company_name: str) -> dict:
     items = [{"date": h["date"], "text": h["text"], "source": h["source"]}
              for h in headlines]
 
+    # official NSE filings (first-party, same-day rolling feed) — scanned
+    # with the same keyword sets but listed separately and trusted more
+    try:
+        filings = announcements_for(company_name)
+    except Exception:  # noqa: BLE001 — feed down != scan down
+        filings = []
+
     theme_hits: set[str] = set()
     event_hits: set[str] = set()
     red_flags: list[str] = []
@@ -43,6 +51,11 @@ def enrich(symbol: str, company_name: str) -> dict:
         event_hits.update(_keyword_hits(h["text"], CATALYST.catalyst_event_keywords))
         for flag in _keyword_hits(h["text"], CATALYST.red_flag_keywords):
             red_flags.append(f"'{flag}' in: {h['text'][:90]}")
+    for f in filings:
+        theme_hits.update(tag_government_themes(f["subject"]))
+        event_hits.update(_keyword_hits(f["subject"], CATALYST.catalyst_event_keywords))
+        for flag in _keyword_hits(f["subject"], CATALYST.red_flag_keywords):
+            red_flags.append(f"[NSE FILING] '{flag}': {f['subject'][:90]}")
 
     # dimension 6 (catalyst): dated events + v1 recency/volume blend
     base = score_catalyst(items, as_of=now)          # govt-theme weighted 0-1
@@ -58,6 +71,7 @@ def enrich(symbol: str, company_name: str) -> dict:
         "ok": True,
         "headline_count": len(headlines),
         "headlines": headlines[:5],
+        "filings": filings[:5],
         "themes": sorted(theme_hits),
         "events": sorted(event_hits),
         "red_flags": red_flags[:5],
