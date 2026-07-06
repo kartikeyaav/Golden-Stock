@@ -183,6 +183,17 @@ locked the following. Changing these requires NEW pre-registered evidence:
    append-only, auto-written by the daily scan; outcomes via
    journal_outcomes.py). Real-capital gate: journal expectancy within ~50%
    of backtest at meaningful sample size; small sizes until then.
+8. **Regime sizing ADOPTED (matrix v3b):** risk per trade ×0.5 whenever
+   NIFTY50 closes below its 150-DMA. Identical trades, higher CAGR, lower
+   drawdown in test. Sizing only — never an entry filter.
+9. **Anticipation tier validated as an ALERT tier (matrix v3a):**
+   Stage-1-base signals WITH PIT fundamentals ≥0.60 earned +0.41R (positive
+   both cohorts, 7× better than price-only) — proof that fundamentals lead
+   price INSIDE bases even though they lag at breakouts. Still zero capital:
+   +0.41R < +1.27R breakout economics; the tier's job is earlier attention.
+10. **Survivorship bounded by measurement:** 9.2% smallcap churn per ~2 years
+   (Wayback diff), mostly mergers/renames. Backtests modestly optimistic,
+   not fantasy (see survivorship_report.md).
 
 ---
 

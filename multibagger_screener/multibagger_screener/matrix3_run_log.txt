@@ -11,3 +11,10 @@ C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\mul
   signals 300/651 (93s)
   signals 400/651 (126s)
   signals 500/651 (154s)
+signals ready: 604 in 3.3 min
+[A_baseline_ref] pos=108 exp=1.27R core=2.186R P1=2.313 P2=0.147 cagr=21.48% dd=-12.88%
+[V3a_anticipation_fund] pos=133 exp=0.412R core=0.26R P1=0.815 P2=0.06 cagr=11.78% dd=-9.82%
+[V3a_anticipation_priceonly] pos=167 exp=0.056R core=0.08R P1=0.262 P2=-0.121 cagr=1.97% dd=-17.18%
+[V3b_regime_sized] pos=108 exp=1.271R core=2.186R P1=2.313 P2=0.148 cagr=22.46% dd=-12.37%
+
+-> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\matrix3_report.md

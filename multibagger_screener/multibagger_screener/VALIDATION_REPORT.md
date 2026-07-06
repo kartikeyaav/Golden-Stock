@@ -87,6 +87,19 @@ exists to catch, monotonically with gate strength.
   the PIT window.
 - **Vetoes are untested by construction** — kept on tail-risk logic, cost ≈ 0.
 
+## 6B. Matrix v3 (2026-07-06) — anticipation tier + regime sizing
+
+| Config | Expectancy | Cohorts P1/P2 | Verdict |
+|---|---|---|---|
+| A baseline (ref) | +1.27R | +2.31 / +0.15 | — |
+| V3a anticipation WITH PIT fundamentals ≥0.60 | +0.41R | +0.82 / +0.06 | **Passes its pre-registered bar** (positive both cohorts, beats price-only 7×) — but absolute economics stay inferior to breakouts; core lot structurally capped (+0.26R, exits near flat 30wMA). **Disposition: evidence-backed WATCH alerts, zero capital.** |
+| V3a anticipation price-only | +0.06R | +0.26 / −0.12 | Worthless without fundamentals — confirming fundamentals LEAD price inside bases (the mirror image of the entry-gate rejection). |
+| V3b regime sizing (risk ×0.5 when NIFTY < 150-DMA) | +1.27R | identical trades | **ADOPTED** — CAGR 22.5% vs 21.5% AND drawdown −12.4% vs −12.9%: a Pareto improvement targeting the known chop weakness. Wired into live entry plans same day. |
+
+Survivorship, measured (survivorship_report.md): Wayback 2024-07 smallcap-250
+snapshot vs today = 9.2% churn/~2y, mostly mergers/renames/demergers — the
+backtest haircut is real but moderate; caveat now bounded, not open-ended.
+
 ## 7. Forward validation (running from 2026-07-06)
 
 Every alert auto-appends to `journal/signals_journal.csv` (append-only);

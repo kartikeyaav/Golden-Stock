@@ -100,6 +100,16 @@ def journal_append(rows: list[dict]) -> None:
             w.writerow({k: r.get(k, "") for k in JOURNAL_FIELDS})
 
 
+def market_risk_scale() -> float:
+    """Regime sizing (matrix v3b, ADOPTED): half risk when NIFTY50 closes
+    below its 150-DMA. Sizing only — entries are never filtered."""
+    bench = load_ohlcv("NIFTY50")
+    if bench is None or len(bench) < 150:
+        return 1.0
+    sma150 = bench["close"].rolling(150).mean().iloc[-1]
+    return 0.5 if float(bench["close"].iloc[-1]) < float(sma150) else 1.0
+
+
 def build_candidate(sym: str, tag_result: dict, industry: str | None,
                     rs_pctile: float | None, company_name: str = "") -> dict:
     """Conviction card + journal fields for an alerted name. Fundamentals and
@@ -121,10 +131,12 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     archetypes = tag_archetypes(fund_row, industry) if fund_row else None
     df = load_ohlcv(sym)
     atr = float(compute_atr(df).iloc[-1]) if df is not None else None
-    plan = compute_entry_plan(tag_result["last_close"], atr=atr) if atr else {}
+    plan = compute_entry_plan(tag_result["last_close"], atr=atr,
+                              risk_scale=market_risk_scale()) if atr else {}
     return {
         "card": render_card(sym, tag_result, conviction, atr=atr,
-                            archetypes=archetypes, dim_notes=True, news=news),
+                            archetypes=archetypes, dim_notes=True, news=news,
+                            risk_scale=market_risk_scale()),
         "close": tag_result["last_close"],
         "atr": round(atr, 2) if atr else "",
         "stop_suggested": plan.get("stop_loss_price", ""),

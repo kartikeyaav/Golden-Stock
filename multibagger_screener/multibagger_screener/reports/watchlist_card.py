@@ -14,7 +14,8 @@ from scoring.technical_score import compute_entry_plan
 
 def render_card(name: str, tag_result: dict, conviction: ConvictionResult,
                 atr: float | None = None, archetypes: list[str] | None = None,
-                dim_notes: bool = False, news: dict | None = None) -> str:
+                dim_notes: bool = False, news: dict | None = None,
+                risk_scale: float = 1.0) -> str:
     lines: list[str] = []
     tag = tag_result["tag"]
     stage = tag_result.get("stage", {})
@@ -74,12 +75,16 @@ def render_card(name: str, tag_result: dict, conviction: ConvictionResult,
 
     # entry plan only where an entry could be justified
     if tag in ("CONFIRMED",):
-        plan = compute_entry_plan(tag_result["last_close"], atr=atr)
+        plan = compute_entry_plan(tag_result["last_close"], atr=atr, risk_scale=risk_scale)
         lines.append("")
         if plan.get("skip"):
             lines.append(f"  Entry plan : SKIP — {plan['skip_reason']}")
         else:
-            lines.append(f"  Entry plan (two-lot, risk-normalized):")
+            if risk_scale < 1.0:
+                lines.append(f"  Entry plan (two-lot, RISK x{risk_scale} — "
+                             "index below its 150-DMA, regime sizing active):")
+            else:
+                lines.append(f"  Entry plan (two-lot, risk-normalized):")
             lines.append(f"    entry ~{plan['entry_price']}  stop {plan['stop_loss_price']} "
                          f"({plan['stop_basis']})  risk/share {plan['risk_per_share']}")
             lines.append(f"    size: {plan['shares_total']} sh "
