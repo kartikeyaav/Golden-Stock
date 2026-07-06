@@ -232,11 +232,16 @@ def detect_breakout(df: pd.DataFrame, pivot_price: float) -> dict:
     }
 
 
-def compute_entry_plan(entry_price: float, atr: float | None = None) -> dict:
+def compute_entry_plan(entry_price: float, atr: float | None = None,
+                       risk_scale: float = 1.0) -> dict:
     """Translate config.RISK into concrete numbers for one two-lot trade
     (v2, Design Law #2/#7): ATR-based stop, risk-normalized sizing, trading
     lot + core lot split with their separate exit rules. Falls back to the
-    pct-cap stop when no ATR is supplied (legacy callers)."""
+    pct-cap stop when no ATR is supplied (legacy callers).
+
+    risk_scale: regime sizing, ADOPTED from matrix v3b (2026-07-06) — pass
+    0.5 when NIFTY50 closes below its 150-DMA (identical trades, higher CAGR,
+    lower drawdown in test). Sizing only; entries are never filtered."""
     if atr is not None and atr > 0:
         stop_distance = RISK.atr_stop_mult * atr
         stop_basis = f"{RISK.atr_stop_mult} x ATR({RISK.atr_period})"
@@ -256,7 +261,7 @@ def compute_entry_plan(entry_price: float, atr: float | None = None) -> dict:
 
     stop_price = entry_price - stop_distance
     risk_per_share = stop_distance
-    risk_capital = RISK.capital * RISK.risk_per_trade_pct / 100
+    risk_capital = RISK.capital * RISK.risk_per_trade_pct / 100 * risk_scale
     shares = int(risk_capital // risk_per_share) if risk_per_share > 0 else 0
 
     # position-value cap (tight stop must not mean an oversized position)
@@ -275,6 +280,7 @@ def compute_entry_plan(entry_price: float, atr: float | None = None) -> dict:
     return {
         "entry_price": round(entry_price, 2),
         "skip": False,
+        "risk_scale": risk_scale,
         "stop_loss_price": round(stop_price, 2),
         "stop_basis": stop_basis,
         "risk_per_share": round(risk_per_share, 2),
