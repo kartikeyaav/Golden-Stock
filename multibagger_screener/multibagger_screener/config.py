@@ -205,6 +205,36 @@ class CatalystConfig:
         "whistleblower", "delisting", "suspended", "scam",
     ])
 
+    # news quality controls (2026-07-07: relevance + trust + v0 sentiment)
+    trusted_sources: List[str] = field(default_factory=lambda: [
+        "economic times", "economictimes", "moneycontrol", "business standard",
+        "livemint", "mint", "reuters", "bloomberg", "cnbc", "business today",
+        "financial express", "ndtv profit", "businessline", "zee business",
+        "the hindu", "business upturn", "upstox", "trendlyne", "scanx",
+        "marketscreener", "tradingview", "equitybulls", "capital market",
+    ])
+    # generic words ignored when checking a headline actually names the company
+    generic_name_words: List[str] = field(default_factory=lambda: [
+        "limited", "ltd", "india", "indian", "industries", "industry",
+        "corporation", "company", "enterprises", "international", "projects",
+        "products", "solutions", "systems", "services", "technologies",
+        "technology", "tech", "and", "the", "of",
+    ])
+    positive_words: List[str] = field(default_factory=lambda: [
+        "order win", "bags", "wins", "surge", "surges", "jumps", "rallies",
+        "record", "expansion", "approval", "upgrade", "upgrades", "raises",
+        "profit rises", "profit jumps", "beats", "strong", "buyback", "bonus",
+        "highest", "all-time high", "turnaround", "doubles", "soars",
+        "gains", "rises", "rally", "spikes", "zooms", "navratna", "wins order",
+        "secures", "new high", "multibagger", "rerating", "re-rating",
+    ])
+    negative_words: List[str] = field(default_factory=lambda: [
+        "falls", "drops", "plunges", "plunge", "loss widens", "weak",
+        "downgrade", "downgrades", "cuts", "probe", "penalty", "fraud",
+        "resigns", "default", "declines", "misses", "slumps", "crashes",
+        "under pressure", "sell-off", "warning",
+    ])
+
 
 # ---------------------------------------------------------------------------
 # COMPOSITE (v1 compat — used by scoring/composite.py until conviction.py

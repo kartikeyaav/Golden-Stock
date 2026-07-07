@@ -161,15 +161,42 @@ def score_financial_strength(row: dict, industry: str | None = None) -> tuple[fl
 # Dimension 8 — valuation sanity (weight 5): penalize froth only
 # ---------------------------------------------------------------------------
 def score_valuation_sanity(row: dict) -> tuple[float | None, str]:
+    """Penalize FROTH (expensive mature earnings), NOT inflection.
+
+    A sky-high P/E means opposite things in two regimes and the old logic
+    conflated them (user caught STLTECH at P/E 622 scored as froth): a mature
+    company at P/E 622 IS froth; an early turnaround whose earnings just went
+    positive has a microscopic 'E', so P/E is mechanically huge and MEANINGLESS
+    — punishing it hits exactly the turnaround profile the system hunts
+    (Suzlon ran with P/E >100 at this phase). We detect the turnaround case
+    from a recent loss->profit swing and a big TTM growth number, and treat
+    its P/E as not-yet-informative rather than as froth."""
     pe = _num(row, "pe")
     g_3y = _num(row, "profit_growth_3y")
+    g_ttm = _num(row, "profit_growth_ttm")
+    np_yoy = _num(row, "np_yoy_q")
+    np_now = _num(row, "np_latest_q")
+
+    # is the tiny/huge PE an artefact of a recovering earnings base?
+    inflection = (
+        (np_yoy is not None and np_now is not None and np_yoy <= 0 < np_now)
+        or (g_ttm is not None and g_ttm > 150)
+    )
 
     if pe is None:
         return 0.35, "no P/E (loss-making TTM or data missing) — cautious neutral"
+
     if pe > CONVICTION.veto_froth_pe:
-        return 0.05, f"froth: P/E {pe:.0f}"
+        if inflection:
+            # P/E is distorted by a just-recovered earnings base — neutral,
+            # not a froth penalty; PEG on next year's normalized earnings is
+            # the real test (needs forward estimates we don't have)
+            return 0.5, (f"P/E {pe:.0f} distorted by recovering earnings base "
+                         "(turnaround) — trailing P/E not yet meaningful")
+        return 0.05, f"froth: P/E {pe:.0f} on established earnings"
     if pe > 60:
-        return 0.25, f"expensive: P/E {pe:.0f}"
+        return (0.5 if inflection else 0.25), (
+            f"P/E {pe:.0f}" + (" (early-cycle, base still small)" if inflection else " — expensive"))
 
     if g_3y is not None and g_3y > 0:
         peg = pe / g_3y
