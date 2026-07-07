@@ -26,6 +26,20 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from data.cache import load_ohlcv
 from data.screener_fetch import load_company
 
+
+def _market_cap(sym: str):
+    """Current market cap (Cr) from the screener cache — available for the
+    whole universe (fetched during the PIT backfill), so cap tiers are
+    classified consistently, not just for the shortlist."""
+    raw = load_company(sym)
+    if not raw:
+        return None
+    mc = (raw.get("top_ratios") or {}).get("Market Cap")
+    try:
+        return float(mc) if mc is not None else None
+    except (TypeError, ValueError):
+        return None
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "dashboard.html")
 
@@ -125,16 +139,32 @@ def build_payload() -> dict:
     score_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("score", [])))
     veto_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("vetoed", [])))
     arch_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("archetypes", [])))
+    TIER = {"microcap250": "Micro", "smallcap250": "Small", "midcap150": "Mid"}
+
+    def cap_tier(mcap, idx_src):
+        # actual market cap wins; index membership is the fallback label
+        if mcap is not None and pd.notna(mcap):
+            m = float(mcap)
+            return "Micro" if m < 2000 else "Small" if m < 12000 else "Mid" if m < 50000 else "Large"
+        return TIER.get(str(idx_src), "")
+
     screener_rows, closes = [], {}
     for _, r in focus.iterrows():
         sym = r["symbol"]
         f = fund_by_sym.get(sym, {})
         arch = str(arch_by_sym.get(sym, ""))
+        # market cap from the full-universe screener cache (consistent), with
+        # the shortlist flat file as a secondary source
+        mcap = _market_cap(sym)
+        if mcap is None:
+            mcap = f.get("market_cap_cr")
         screener_rows.append({
             "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
             "ind": str(r.get("industry", ""))[:30],
             # tonight's state wins over the weekly focus snapshot (freshness)
             "tag": tags.get(sym, r.get("tag", "")),
+            "tier": cap_tier(mcap, r.get("index_source", "")),
+            "mcap": round(float(mcap), 0) if mcap is not None and pd.notna(mcap) else None,
             "rs": round(float(r["rs_pctile"]), 1) if pd.notna(r.get("rs_pctile")) else None,
             "close": round(float(r["last_close"]), 2) if pd.notna(r.get("last_close")) else None,
             "turn": round(float(r["turnover_cr"]), 1) if pd.notna(r.get("turnover_cr")) else None,
@@ -361,14 +391,21 @@ footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
 <div class="tab" id="screener">
   <div class="card">
     <div class="fbar2">
-      <input id="q" placeholder="search symbol / company..." style="width:230px">
+      <input id="q" placeholder="search symbol / company..." style="width:200px">
       <select id="find"><option value="">all industries</option></select>
+      <span id="tierfilters"></span>
+      <span style="width:1px;height:22px;background:var(--line);margin:0 4px"></span>
       <span id="tagfilters"></span>
       <span class="dim" style="font-size:12px;margin-left:auto" id="count"></span>
     </div>
-    <div style="max-height:70vh;overflow:auto">
+    <div class="legendline" style="border:0;padding:0;margin:-4px 0 12px;font-size:11.5px">
+      <b style="color:#f0abfc">Micro</b> (&lt;₹2k Cr) = highest multibagger runway, highest risk ·
+      <b style="color:#22d3ee">Small</b> (₹2–12k Cr) · <b style="color:#a78bfa">Mid</b> (₹12–50k Cr) = steadier, lower ceiling.
+      Filter to <b>Micro + CONFIRMED</b> for the "potential multibagger" view.
+    </div>
+    <div style="max-height:66vh;overflow:auto">
     <table id="tbl"><thead><tr>
-      <th data-k="sym">Symbol</th><th data-k="ind">Industry</th><th data-k="tag">Tag</th>
+      <th data-k="sym">Symbol</th><th data-k="tier">Cap</th><th data-k="ind">Industry</th><th data-k="tag">Tag</th>
       <th data-k="rs">RS%</th><th data-k="score">Conviction</th><th data-k="arch">Archetype</th>
       <th data-k="roce">ROCE</th><th data-k="pe">P/E</th><th data-k="pgttm">PAT TTM%</th>
       <th data-k="close">Price</th><th>120d</th></tr></thead><tbody></tbody></table></div>
@@ -448,22 +485,29 @@ const c=a[a.length-1]>=a[0]?'#34d399':'#f87171';
 return `<svg width="${w}" height="${h}"><polyline fill="none" stroke="${c}" stroke-width="1.5" points="${p}"/></svg>`}
 
 /* screener table */
+const TIERC={Micro:'#f0abfc',Small:'#22d3ee',Mid:'#a78bfa',Large:'#64748b'};
 let rows=D.rows.slice(),sortK='score',sortA=false,activeTags=new Set(Object.keys(TC));
+let activeTiers=new Set(['Micro','Small','Mid','Large','']);
 const inds=[...new Set(D.rows.map(r=>r.ind))].sort();
 $('#find').innerHTML+=inds.map(i=>`<option>${esc(i)}</option>`).join('');
+$('#tierfilters').innerHTML=['Micro','Small','Mid','Large'].map(t=>`<span class="chip" data-tier="${t}" style="border-color:${TIERC[t]}"><b style="color:${TIERC[t]}">${t}</b></span>`).join('');
 $('#tagfilters').innerHTML=Object.keys(TC).map(t=>`<span class="chip" data-tag="${t}" style="border-color:${TC[t]}"><b style="color:${TC[t]}">${t}</b></span>`).join('');
 document.querySelectorAll('[data-tag]').forEach(c=>c.onclick=()=>{const t=c.dataset.tag;
 activeTags.has(t)?(activeTags.delete(t),c.classList.add('off')):(activeTags.add(t),c.classList.remove('off'));render();});
+document.querySelectorAll('[data-tier]').forEach(c=>c.onclick=()=>{const t=c.dataset.tier;
+activeTiers.has(t)?(activeTiers.delete(t),c.classList.add('off')):(activeTiers.add(t),c.classList.remove('off'));render();});
 $('#q').oninput=render;$('#find').onchange=render;
 document.querySelectorAll('#tbl th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;
 sortA=(sortK===k)?!sortA:false;sortK=k;render();});
+function fmtCr(v){if(v==null)return'';return v>=1000?'₹'+(v/1000).toFixed(1)+'k Cr':'₹'+Math.round(v)+' Cr';}
 function render(){const q=$('#q').value.toUpperCase(),ind=$('#find').value;
-let out=rows.filter(r=>activeTags.has(r.tag)&&(!ind||r.ind===ind)&&(r.sym.includes(q)||r.company.toUpperCase().includes(q)));
+let out=rows.filter(r=>activeTags.has(r.tag)&&activeTiers.has(r.tier)&&(!ind||r.ind===ind)&&(r.sym.includes(q)||r.company.toUpperCase().includes(q)));
 out.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;
 if(typeof x==='string')return sortA?x.localeCompare(y):y.localeCompare(x);return sortA?x-y:y-x;});
 $('#count').textContent=out.length+' stocks';
 $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td class="sym">${r.sym}${r.veto?' <span style="color:#f87171">⛔</span>':''}</td>
+<td><span class="pill" style="border-color:${TIERC[r.tier]||'#475569'};color:${TIERC[r.tier]||'#94a3b8'}" title="${fmtCr(r.mcap)}">${r.tier||'—'}</span></td>
 <td class="dim">${esc(r.ind)}</td>
 <td><span class="pill" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${r.tag||''}</span></td>
 <td class="mono">${r.rs??''}</td>
@@ -533,16 +577,25 @@ return`<div class="mini" style="border-color:#34d39944;margin-top:14px"><h3 styl
 <tr><td class="dim">Core lot</td><td class="mono">${p.shares_core_lot} sh — exits only on weekly close &lt; 30-week MA</td></tr>
 <tr><td class="dim">Horizon</td><td>trading lot: weeks–months · core lot: months–years (the multibagger seat)</td></tr></table></div>`;}
 function newsSection(sym){const dt=D.details[sym];if(!dt||!dt.news)return'';const n=dt.news;
-let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d) — ${n.count} headlines${n.themes.length?' · themes: '+esc(n.themes.join(', ')):''}${n.events.length?' · events: '+esc(n.events.join(', ')):''}</h3>`;
+const sc=n.sentiment>0.15?'#34d399':n.sentiment<-0.15?'#f87171':'#8b98ac';
+const sl=n.sentiment>0.15?'positive':n.sentiment<-0.15?'negative':'neutral';
+let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)</h3>
+<div style="font-size:12px;margin-bottom:8px" class="dim">
+<b style="color:var(--txt)">${n.trusted}</b> trusted-source headlines (of ${n.count} found) ·
+sentiment <b style="color:${sc}">${sl}</b> (${n.sent_pos}+ / ${n.sent_neg}-)
+${n.themes.length?' · themes: <b style="color:#34d399">'+esc(n.themes.join(', '))+'</b>':''}
+${n.events.length?' · events: <b style="color:#22d3ee">'+esc(n.events.join(', '))+'</b>':''}
+<div class="axis" style="margin-top:3px">only trusted sources feed the score; others shown but excluded</div></div>`;
 (n.red_flags||[]).forEach(f=>h+=`<div style="color:#f87171;font-size:12px;margin:4px 0">!! ${esc(f)}</div>`);
 (n.filings||[]).forEach(f=>h+=`<div style="font-size:12px;margin:4px 0"><span class="pill" style="border-color:#a78bfa;color:#a78bfa">NSE</span> <span class="dim">${f.d}</span> ${esc(f.t)}</div>`);
-(n.headlines||[]).forEach(x=>h+=`<div style="font-size:12px;margin:4px 0"><span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)})</span></div>`);
+(n.headlines||[]).forEach(x=>{const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
+h+=`<div style="font-size:12px;margin:4px 0">${dot} <span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)}${x.tr?'':' — unverified'})</span></div>`;});
 return h+'</div>';}
 window.openDrawer=function(sym){const d=$('#drawer');const r=D.rows.find(x=>x.sym===sym)||{};
 const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
 d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
 <h1 style="font-size:20px">${sym} <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${r.tag||''}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
-<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')} · RS percentile ${r.rs??'—'} · conviction ${r.score??'—'}${r.arch?' · '+esc(r.arch):''}</div>
+<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · conviction ${r.score??'—'}${r.arch?' · '+esc(r.arch):''}</div>
 ${planSection(sym,r)}
 ${whySection(sym)}
 <div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">price chart available for shortlist + positions</div>'}</div>

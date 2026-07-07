@@ -136,13 +136,17 @@ def main() -> None:
             e = r.get("_news") or {}
             if e.get("ok"):
                 news_blob = {
-                    "count": e["headline_count"],
+                    "count": e["headline_count"], "trusted": e.get("trusted_count", 0),
+                    "sentiment": e.get("sentiment", 0.0),
+                    "sent_pos": e.get("sent_pos", 0), "sent_neg": e.get("sent_neg", 0),
                     "themes": e["themes"], "events": e["events"],
                     "red_flags": e["red_flags"],
                     "filings": [{"d": str(f.get("date", ""))[:10], "t": f["subject"][:110]}
                                 for f in e.get("filings", [])[:3]],
                     "headlines": [{"d": h["date"].strftime("%d %b"), "t": h["text"][:110],
-                                   "s": h["source"]} for h in e.get("headlines", [])[:4]],
+                                   "s": h["source"], "tr": h.get("trusted", False),
+                                   "sn": h.get("sentiment", 0)}
+                                  for h in e.get("headlines", [])[:5]],
                 }
 
         plan = {}
