@@ -35,3 +35,10 @@ INDUSINDBK    CONFIRMED   25.0  promoter_pledge: 42.8% of promoter holding pledg
     CHALET ANTICIPATION   25.0  promoter_pledge: 31.9% of promoter holding pledged
 
 report -> C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener\shortlist_report.md
+
+building shortlist_details.json (with news enrichment)...
+  details 20/84
+  details 40/84
+  details 60/84
+  details 80/84
+details -> shortlist_details.json (84 stocks)
