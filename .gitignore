@@ -17,3 +17,6 @@ __pycache__/
 # office temp files
 ~$*.docx
 *.docx
+
+# test artifacts
+multibagger_screener/multibagger_screener/test_alert.md

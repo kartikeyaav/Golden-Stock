@@ -142,10 +142,17 @@ def selftest() -> int:
 def main() -> None:
     if "--selftest" in sys.argv:
         sys.exit(selftest())
-    if not os.path.exists(ALERTS_PATH):
-        print("no daily_alerts.md")
+    # optional --alerts-file PATH for manual/test runs (keeps the real
+    # daily_alerts.md + verdict journal untouched)
+    alerts_path = ALERTS_PATH
+    is_test = False
+    if "--alerts-file" in sys.argv:
+        alerts_path = sys.argv[sys.argv.index("--alerts-file") + 1]
+        is_test = True
+    if not os.path.exists(alerts_path):
+        print(f"no alerts file at {alerts_path}")
         return
-    with open(ALERTS_PATH, "r", encoding="utf-8") as f:
+    with open(alerts_path, "r", encoding="utf-8") as f:
         report = f.read()
 
     candidates = extract_candidates(report)
@@ -167,7 +174,8 @@ def main() -> None:
         memo_path = os.path.join(REPORTS_DIR, f"{datetime.now():%Y-%m-%d}_{sym}.md")
         with open(memo_path, "w", encoding="utf-8") as f:
             f.write(memo)
-        log_verdict(sym, memo)
+        if not is_test:  # test runs never touch the real verdict journal
+            log_verdict(sym, memo)
         verdict_lines.append(f"### {sym}")
         verdict_lines.append(memo)
         verdict_lines.append("")
@@ -180,9 +188,9 @@ def main() -> None:
         report = report.replace("\n## Cards", block + "\n## Cards", 1)
     else:
         report += block
-    with open(ALERTS_PATH, "w", encoding="utf-8") as f:
+    with open(alerts_path, "w", encoding="utf-8") as f:
         f.write(report)
-    print(f"verdicts inserted into {ALERTS_PATH}")
+    print(f"verdicts inserted into {alerts_path}")
 
 
 if __name__ == "__main__":
