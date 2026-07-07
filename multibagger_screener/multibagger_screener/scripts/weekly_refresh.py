@@ -61,6 +61,7 @@ def main() -> None:
     run_step("focus list", "build_focus_list.py")
     run_step("fundamentals (shortlist)", "fetch_fundamentals.py")
     run_step("ranked shortlist", "run_shortlist.py")
+    run_step("AI committee picks", "ai_picks.py", fatal=False)  # needs claude auth; skips cleanly if absent
     run_step("journal outcomes (forward scorecard)", "journal_outcomes.py", fatal=False)
     run_step("dashboard", "build_dashboard.py", fatal=False)
 
