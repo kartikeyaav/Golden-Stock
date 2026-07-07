@@ -79,6 +79,13 @@ def run_deep_dive(symbol: str, card: str) -> str | None:
     claude_bin = shutil.which("claude")
     if claude_bin is None:
         return None, "claude CLI not found on PATH"
+    # Scrub host-injected auth context: when this runs inside a Claude Code
+    # SDK/agent session, ANTHROPIC_BASE_URL + CLAUDE_CODE_* are injected and
+    # point the child CLI at a proxy it has no token for ("Invalid API key").
+    # A clean env lets the standalone CLI use the user's own /login or
+    # ANTHROPIC_API_KEY. Harmless in a normal terminal (those vars aren't set).
+    clean_env = {k: v for k, v in os.environ.items()
+                 if not k.startswith("CLAUDE_CODE_") and k != "ANTHROPIC_BASE_URL"}
     try:
         # prompt goes via STDIN — multiline text can't survive the Windows shell
         proc = subprocess.run(
@@ -86,6 +93,7 @@ def run_deep_dive(symbol: str, card: str) -> str | None:
              "--allowedTools", "WebSearch", "WebFetch"],
             input=prompt, capture_output=True, text=True,
             encoding="utf-8", errors="replace", timeout=TIMEOUT_S, cwd=ROOT,
+            env=clean_env,
         )
         out = (proc.stdout or "").strip()
         err = (proc.stderr or "").strip()
