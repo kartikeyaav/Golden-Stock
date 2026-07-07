@@ -14,7 +14,21 @@ Constraints: max 3 deep dives per day (cost), 10 min timeout per name,
 failures degrade to "analyst unavailable" — the mechanical alert always
 goes out regardless.
 
+ONE-TIME AUTH SETUP (required before this layer works):
+  Option A — subscription login (uses your Claude Pro/Max plan):
+    1. open a terminal, run:  claude
+    2. run:  /login   -> authenticate in the browser
+    3. verify:  python scripts/ai_analyst.py --selftest
+    NOTE: nightly deep-dives then consume your subscription usage limits.
+  Option B — API key (recommended for an UNATTENDED nightly job; pay-per-use,
+    a few cents/day, never competes with your interactive Claude usage):
+    1. get a key at console.anthropic.com
+    2. set it for the scheduled task's environment:
+         setx ANTHROPIC_API_KEY "sk-ant-..."   (then reopen the terminal)
+    3. verify:  python scripts/ai_analyst.py --selftest
+
     python scripts/ai_analyst.py            # process today's daily_alerts.md
+    python scripts/ai_analyst.py --selftest # check auth is working
 """
 
 from __future__ import annotations
@@ -64,7 +78,7 @@ def run_deep_dive(symbol: str, card: str) -> str | None:
               "Do your research now and give the verdict in the exact format.")
     claude_bin = shutil.which("claude")
     if claude_bin is None:
-        return None
+        return None, "claude CLI not found on PATH"
     try:
         # prompt goes via STDIN — multiline text can't survive the Windows shell
         proc = subprocess.run(
@@ -74,11 +88,19 @@ def run_deep_dive(symbol: str, card: str) -> str | None:
             encoding="utf-8", errors="replace", timeout=TIMEOUT_S, cwd=ROOT,
         )
         out = (proc.stdout or "").strip()
-        if proc.returncode != 0 or "VERDICT:" not in out:
-            return None
-        return out
-    except (subprocess.TimeoutExpired, OSError):
-        return None
+        err = (proc.stderr or "").strip()
+        if proc.returncode != 0:
+            low = (out + err).lower()
+            if "login" in low or "api key" in low or "auth" in low:
+                return None, "AUTH: run `claude` then `/login` (see scripts/ai_analyst.py header)"
+            return None, f"exit {proc.returncode}: {(err or out)[:120]}"
+        if "VERDICT:" not in out:
+            return None, "no VERDICT in response (model may have refused/rambled)"
+        return out, None
+    except subprocess.TimeoutExpired:
+        return None, f"timed out after {TIMEOUT_S}s"
+    except OSError as e:
+        return None, f"OSError: {str(e)[:100]}"
 
 
 def log_verdict(symbol: str, memo: str) -> None:
@@ -97,7 +119,21 @@ def log_verdict(symbol: str, memo: str) -> None:
                     (size.group(1).strip() if size else "")])
 
 
+def selftest() -> int:
+    """`python scripts/ai_analyst.py --selftest` — verify auth works before
+    trusting the nightly job. Runs one trivial headless call."""
+    memo, err = run_deep_dive("_SELFTEST_",
+                              "VERDICT stub — reply 'VERDICT: SKIP' to confirm the pipe works.")
+    if memo is not None:
+        print("OK — headless Claude is authenticated and responding.")
+        return 0
+    print(f"NOT READY — {err}")
+    return 1
+
+
 def main() -> None:
+    if "--selftest" in sys.argv:
+        sys.exit(selftest())
     if not os.path.exists(ALERTS_PATH):
         print("no daily_alerts.md")
         return
@@ -114,11 +150,11 @@ def main() -> None:
     verdict_lines = ["", "## AI analyst verdicts", ""]
     for sym in candidates:
         card = extract_card(report, sym)
-        memo = run_deep_dive(sym, card)
+        memo, err = run_deep_dive(sym, card)
         if memo is None:
-            verdict_lines.append(f"**{sym}** — analyst unavailable "
-                                 "(review the card manually before acting)")
-            print(f"[{sym}] FAILED/timeout", flush=True)
+            verdict_lines.append(f"**{sym}** — analyst unavailable ({err}) "
+                                 "— review the card manually before acting")
+            print(f"[{sym}] FAILED: {err}", flush=True)
             continue
         memo_path = os.path.join(REPORTS_DIR, f"{datetime.now():%Y-%m-%d}_{sym}.md")
         with open(memo_path, "w", encoding="utf-8") as f:
