@@ -104,6 +104,10 @@ def build_payload() -> dict:
     dpath = os.path.join(ROOT, "shortlist_details.json")
     if os.path.exists(dpath):
         details = json.load(open(dpath, encoding="utf-8"))
+    ai_picks = {}
+    ppath = os.path.join(ROOT, "ai_picks.json")
+    if os.path.exists(ppath):
+        ai_picks = json.load(open(ppath, encoding="utf-8"))
     company_by_sym = dict(zip(universe.get("symbol", []), universe.get("company", [])))
 
     state_path = os.path.join(ROOT, "state", "tags_state.json")
@@ -252,7 +256,7 @@ def build_payload() -> dict:
              "CONFIRMED + ANTICIPATION today"],
             ["Alerts tonight", len(alerts), "state transitions only"],
         ],
-        "tags": tag_counts, "alerts": alerts, "verdicts": verdicts,
+        "tags": tag_counts, "alerts": alerts, "verdicts": verdicts, "ai_picks": ai_picks,
         "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "outcomes": out_stats, "equity": equity, "nifty": nifty,
@@ -326,8 +330,11 @@ tbody tr:hover{background:#13203466;transform:translateX(2px)}
 .sym{font-weight:700;font-family:var(--mono);font-size:12.5px}
 .dim{color:var(--dim)}.mono{font-family:var(--mono)}
 .pill{border:1px solid;border-radius:999px;padding:2.5px 9px;font-size:10.5px;font-weight:700}
-.scorebar{display:inline-block;width:64px;height:7px;background:#1a2537;border-radius:4px;vertical-align:middle;margin-right:7px}
+.convcell{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.scorebar{display:inline-block;width:50px;height:7px;background:#1a2537;border-radius:4px;flex:0 0 auto}
 .scorebar div{height:7px;border-radius:4px;background:linear-gradient(90deg,var(--vio),var(--grn))}
+td{white-space:nowrap}
+td.wrap{white-space:normal}
 input,select{background:#0d1420;border:1px solid var(--line);border-radius:10px;color:var(--txt);
 padding:8px 13px;font:500 12.5px Inter;outline:0}
 input:focus{border-color:var(--grn)}
@@ -363,6 +370,7 @@ footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
 <button class="navbtn on" data-t="overview">&#9632; Overview</button>
+<button class="navbtn" data-t="picks">&#9733; AI Picks</button>
 <button class="navbtn" data-t="screener">&#9776; Screener</button>
 <button class="navbtn" data-t="positions">&#9679; Positions</button>
 <button class="navbtn" data-t="journal">&#10148; Journal</button>
@@ -386,6 +394,15 @@ footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
     <b style="color:#22d3ee">ANTICIPATION</b> = base forming, watch with zero capital.</div></div>
     <div class="card"><h2>Sector heat &mdash; avg RS percentile</h2><div class="heatgrid" id="heat"></div></div>
   </div></div>
+</div>
+
+<div class="tab" id="picks">
+  <div class="card"><div class="legendline" style="border:0;padding:0;margin:0;font-size:12.5px">
+  <b style="color:#fbbf24">The AI investment committee.</b> Claude reads the whole mechanically-scored shortlist
+  (dimensions, conviction, sector, RS), selects the optimum 3-5, deep-researches each on the web, and writes
+  the investment case. The machine qualifies &amp; scores; the AI curates &amp; explains. Entry/stop/size stay
+  mechanical (shown per pick). These selections are journaled and measured vs the mechanical top-N over time.</div></div>
+  <div id="picksbody"></div>
 </div>
 
 <div class="tab" id="screener">
@@ -449,7 +466,8 @@ document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
  b.classList.add('on');$('#'+b.dataset.t).classList.add('on');
  if(b.dataset.t==='validation'&&!window._eq)drawEquity();
- if(b.dataset.t==='positions'&&!window._pos)drawPositions();});
+ if(b.dataset.t==='positions'&&!window._pos)drawPositions();
+ if(b.dataset.t==='picks'&&!window._picks)drawPicks();});
 
 /* header */
 $('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date;
@@ -511,8 +529,8 @@ $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td class="dim">${esc(r.ind)}</td>
 <td><span class="pill" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${r.tag||''}</span></td>
 <td class="mono">${r.rs??''}</td>
-<td>${r.score!=null?`<span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono">${r.score}</b>`:'<span class="dim">—</span>'}</td>
-<td class="dim">${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
+<td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono">${r.score}</b></span>`:'<span class="dim">—</span>'}</td>
+<td class="dim wrap">${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
 <td class="mono" style="color:${r.pgttm>0?'#34d399':r.pgttm<0?'#f87171':''}">${r.pgttm??''}</td>
 <td class="mono">${r.close??''}</td><td>${spark(D.closes[r.sym])}</td></tr>`).join('');}
 render();
@@ -652,6 +670,39 @@ $('#jstats').innerHTML=[['Signals logged',D.journal.length,'since 2026-07-05'],
 .map(k=>`<div class="kpi"><span>${k[0]}</span><b>${k[1]}</b><span style="text-transform:none;letter-spacing:0">${k[2]}</span></div>`).join('');
 const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','WATCH CLOSELY':'#22d3ee','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
 $('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(j.kind)}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(j.old)+' → ':''}${esc(j.new)}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
+
+/* AI picks */
+const CONVC={HIGH:'#34d399',MEDIUM:'#fbbf24',LOW:'#f87171'};
+function drawPicks(){window._picks=1;const w=$('#picksbody');const P=D.ai_picks||{};
+if(!P.picks||!P.picks.length){w.innerHTML='<div class="card quiet">No AI picks yet. They generate weekly (or run scripts/ai_picks.py). The committee reviews the shortlist and selects 3-5 researched names.</div>';return;}
+let h=`<div class="card" style="border-color:#fbbf2433"><h2 style="color:#fbbf24">Portfolio view</h2><div style="font-size:13.5px;line-height:1.7">${esc(P.portfolio_view||'')}</div><div class="axis" style="margin-top:8px">generated ${esc(P.generated||'')} · model ${esc(P.model||'')}</div></div>`;
+P.picks.forEach((p,i)=>{const m=p.meta||{};const pl=p.plan||{};const cc=CONVC[p.conviction]||'#8b98ac';
+h+=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+<div><span style="font-size:12px;color:#fbbf24;font-weight:700">PICK ${i+1}</span>
+<b class="sym" style="font-size:18px;margin-left:8px">${p.symbol}</b>
+<span class="dim" style="font-size:12.5px"> ${esc(m.company||'')} · ${esc(m.sector||'')}</span></div>
+<div><span class="pill" style="border-color:${cc};color:${cc}">${p.conviction||''} conviction</span>
+<span class="pill" style="border-color:#334155;color:#94a3b8;margin-left:6px">mech ${m.score??'—'} · RS ${m.rs??'—'}</span></div></div>
+<div style="margin-top:12px;display:grid;grid-template-columns:1fr;gap:10px;font-size:13px;line-height:1.65">
+<div><span class="axis">SELECTED BECAUSE</span><br>${esc(p.selected_because)}</div>
+<div><span class="axis">THESIS</span><br>${esc(p.thesis)}</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div><span class="axis" style="color:#34d399">CATALYST</span><br>${esc(p.catalyst)}</div>
+<div><span class="axis" style="color:#a78bfa">MANAGEMENT & QUALITY</span><br>${esc(p.management)}</div></div>
+<div><span class="axis" style="color:#f87171">KEY RISKS</span><br>${esc(p.risks)}</div>
+<div><span class="axis">WATCH FOR</span> ${esc(p.watch_for)}</div>`;
+if(pl&&pl.shares_total)h+=`<div class="mini" style="border-color:#34d39933"><span class="axis" style="color:#34d399">MECHANICAL PLAN (not AI — the validated engine)</span><br>
+<span style="font-size:13px">Buy <b>${pl.shares_total} sh</b> ≈ ₹${fmtCr(pl.position_value)} · entry ~${pl.entry_price} · stop <span style="color:#f87171">${pl.stop_loss_price}</span> · partial <span style="color:#34d399">${pl.partial_price}</span>${pl.risk_scale<1?' · <span style="color:#fbbf24">HALF SIZE (defensive regime)</span>':''}</span></div>`;
+else h+=`<div class="mini" style="border-color:#f8717144"><span class="axis" style="color:#f87171">NO MECHANICAL ENTRY PLAN</span><br><span style="font-size:13px">The risk engine skips this name: its ATR-based stop would exceed the 12% hard cap (too volatile to size cleanly, Design Law #7). No clean entry — treat as watch only, not a buy.</span></div>`;
+h+=`</div><div style="margin-top:12px" id="pick_${p.symbol}"></div></div>`;});
+w.innerHTML=h;
+P.picks.forEach(p=>{const data=D.ohlc[p.symbol];if(!data||data.length<10)return;
+const c=mkChart(document.getElementById('pick_'+p.symbol),200);
+const cs=c.addCandlestickSeries({upColor:'#34d399',downColor:'#f87171',borderVisible:false,wickUpColor:'#34d399',wickDownColor:'#f87171'});
+cs.setData(data.map(q=>({time:q[0],open:q[1],high:q[2],low:q[3],close:q[4]})));
+c.addLineSeries({color:'#fbbf24',lineWidth:1}).setData(sma(data,150));
+if(p.plan&&p.plan.stop_loss_price)cs.createPriceLine({price:p.plan.stop_loss_price,color:'#f87171',lineStyle:2,title:'stop'});
+c.timeScale().fitContent();});}
 
 /* validation */
 function drawEquity(){window._eq=1;if(!D.equity.length)return;
