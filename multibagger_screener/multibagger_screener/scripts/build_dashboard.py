@@ -86,6 +86,10 @@ def build_payload() -> dict:
     positions = _read_csv("positions.csv")
     journal = _read_csv(os.path.join("journal", "signals_journal.csv"))
     outcomes = _read_csv(os.path.join("journal", "journal_outcomes.csv"))
+    details = {}
+    dpath = os.path.join(ROOT, "shortlist_details.json")
+    if os.path.exists(dpath):
+        details = json.load(open(dpath, encoding="utf-8"))
     company_by_sym = dict(zip(universe.get("symbol", []), universe.get("company", [])))
 
     state_path = os.path.join(ROOT, "state", "tags_state.json")
@@ -218,7 +222,7 @@ def build_payload() -> dict:
             ["Alerts tonight", len(alerts), "state transitions only"],
         ],
         "tags": tag_counts, "alerts": alerts, "verdicts": verdicts,
-        "rows": screener_rows, "closes": closes, "ohlc": ohlc,
+        "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "outcomes": out_stats, "equity": equity, "nifty": nifty,
         "heat": heat, "matrix": matrix,
@@ -320,6 +324,8 @@ padding:7px 13px;cursor:pointer;font-weight:700}
 .mtrack{flex:1;height:12px;background:#141f31;border-radius:6px}
 .mfill{height:12px;border-radius:6px}
 .memo{white-space:pre-wrap;font-size:12.8px;line-height:1.7;color:var(--txt)}
+.axis{color:#5f7089;font-size:10px;letter-spacing:.3px}
+.legendline{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
 footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
 .tab{display:none}.tab.on{display:block}
 @media(max-width:1000px){nav{display:none}main{margin:0}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:100vw;right:-100vw}}
@@ -343,7 +349,10 @@ footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
     <div class="card" id="verdictcard" style="display:none"><h2>AI analyst verdicts</h2><div class="memo" id="verdicts"></div></div>
   </div><div>
     <div class="card"><h2>NIFTY 50 &middot; regime line (150-DMA)</h2><div id="niftychart" style="height:190px"></div></div>
-    <div class="card"><h2>Tag board</h2><div id="tagboard"></div></div>
+    <div class="card"><h2>Tag board</h2><div id="tagboard"></div>
+    <div class="legendline"><b style="color:#34d399">CONFIRMED</b> = passes all 8 uptrend checks — a monitored POOL, not "buy all".
+    You act only on fresh <b>transitions</b> (tonight's alerts) and top conviction, sized by the plan in each stock's drawer.
+    <b style="color:#22d3ee">ANTICIPATION</b> = base forming, watch with zero capital.</div></div>
     <div class="card"><h2>Sector heat &mdash; avg RS percentile</h2><div class="heatgrid" id="heat"></div></div>
   </div></div>
 </div>
@@ -375,7 +384,11 @@ footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
 </div>
 
 <div class="tab" id="validation">
-  <div class="card"><h2>Baseline equity curve &mdash; 604 stocks, 7.5y, after costs (survivor-biased: directional)</h2>
+  <div class="card"><div class="legendline" style="border:0;padding:0;margin:0 0 14px;font-size:12.5px">
+  <b style="color:var(--txt)">Why trust this system at all?</b> This tab is the receipts: what &#8377;10L became following the rules
+  mechanically for 7.5 years (top), and the 12 alternative designs we tested and rejected before locking this one (bottom).
+  If you ever wonder "shouldn't we also filter by X?" — the answer is probably a grey bar below.</div>
+  <h2>Baseline equity curve &mdash; 604 stocks, 7.5y, after costs (survivor-biased: directional)</h2>
   <div id="eqchart" style="height:230px"></div></div>
   <div class="card"><h2>Every config tested &mdash; expectancy per trade (pre-registered experiments)</h2>
   <div id="matrix"></div>
@@ -471,24 +484,72 @@ const s=c.addLineSeries({color:'#fbbf24',lineWidth:1,lineStyle:2});
 s.setData(D.nifty.filter(p=>p[2]).map(p=>({time:p[0],value:p[2]})));c.timeScale().fitContent();})();
 
 /* drawer */
-function miniBars(labels,vals,el){if(!vals||!vals.length)return'';const mx=Math.max(...vals.map(v=>Math.abs(v??0)))||1;
-return '<div style="display:flex;align-items:flex-end;gap:3px;height:70px">'+vals.map((v,i)=>{const hh=Math.abs(v??0)/mx*62+3;
-return `<div title="${labels[i]}: ${v}" style="flex:1;height:${hh}px;border-radius:3px;background:${(v??0)>=0?'#34d399':'#f87171'};opacity:.85"></div>`}).join('')+'</div>';}
-function miniLine(vals,color){if(!vals||vals.filter(v=>v!=null).length<2)return'<span class="dim">no data</span>';
+const DN={rs_and_stage:'Technicals — RS &amp; stage',earnings_inflection:'Earnings inflection',
+theme_tailwind:'Theme tailwind (news)',smart_money:'Smart money (FII/DII)',
+financial_strength_trend:'Balance-sheet strength',catalyst:'Catalysts (news+filings)',
+governance:'Governance',valuation_sanity:'Valuation sanity'};
+function fmtNum(v){if(v==null)return'';const a=Math.abs(v);return a>=1000?(v/1000).toFixed(1)+'k':(''+Math.round(v*10)/10);}
+function miniBars(labels,vals){if(!vals||!vals.filter(v=>v!=null).length)return'<span class="dim">no data</span>';
+const mx=Math.max(...vals.map(v=>Math.abs(v??0)))||1;const mn=Math.min(...vals.map(v=>v??0));
+const bars=vals.map((v,i)=>{const hh=Math.abs(v??0)/mx*54+3;
+return `<div title="${labels[i]}: ${v}" style="flex:1;height:${hh}px;border-radius:3px;background:${(v??0)>=0?'#34d399':'#f87171'};opacity:.85"></div>`}).join('');
+return `<div style="display:flex;justify-content:space-between" class="axis"><span>peak ${fmtNum(mx)}</span>${mn<0?`<span style="color:#f87171">low ${fmtNum(mn)}</span>`:''}</div>
+<div style="display:flex;align-items:flex-end;gap:3px;height:62px">${bars}</div>
+<div style="display:flex;justify-content:space-between" class="axis"><span>${esc(labels[0]||'')}</span><span>${esc(labels[labels.length-1]||'')}</span></div>`;}
+function miniLine(vals,color,caption,labels){if(!vals||vals.filter(v=>v!=null).length<2)return'';
 const a=vals.map(v=>v??0);const lo=Math.min(...a),hi=Math.max(...a),r=(hi-lo)||1;
-const p=a.map((v,i)=>`${(i*180/(a.length-1)).toFixed(1)},${(60-4-(v-lo)/r*52).toFixed(1)}`).join(' ');
-return `<svg width="180" height="60"><polyline fill="none" stroke="${color}" stroke-width="2" points="${p}"/></svg>`}
+const p=a.map((v,i)=>`${(i*150/(a.length-1)).toFixed(1)},${(44-4-(v-lo)/r*36).toFixed(1)}`).join(' ');
+const last=a[a.length-1];
+return `<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
+<span class="axis" style="width:78px">${caption}</span>
+<svg width="150" height="44"><polyline fill="none" stroke="${color}" stroke-width="2" points="${p}"/></svg>
+<div style="font-family:var(--mono);font-size:12px"><b style="color:${color}">${fmtNum(last)}</b>
+<div class="axis">${fmtNum(lo)}–${fmtNum(hi)}</div></div></div>
+<div class="axis" style="margin-left:88px">${esc((labels&&labels[0])||'')} → ${esc((labels&&labels[labels.length-1])||'')}</div>`;}
+function whySection(sym){const dt=D.details[sym];if(!dt)return'';
+let h='<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions</h3>';
+(dt.dims||[]).slice().sort((a,b)=>b.w-a.w).forEach(m=>{
+const pct=m.s!=null?Math.round(m.s*100):0;
+const col=m.s==null?'#334155':m.s>=.7?'#34d399':m.s>=.4?'#fbbf24':'#f87171';
+h+=`<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:12px">
+<span>${DN[m.k]||m.k} <span class="axis">w${m.w}</span></span>
+<b class="mono" style="color:${col}">${m.s==null?'no data':pct}</b></div>
+<div class="mtrack" style="height:7px;margin:4px 0"><div class="mfill" style="height:7px;width:${m.s==null?0:pct}%;background:${col}"></div></div>
+<div class="axis" style="line-height:1.5">${esc(m.n||'')}</div></div>`;});
+if((dt.reasons||[]).length)h+=`<div style="margin-top:10px;font-size:12px"><span class="axis">MECHANICAL READ</span><br>${dt.reasons.map(x=>'· '+esc(x)).join('<br>')}</div>`;
+h+='</div>';return h;}
+function planSection(sym,r){const dt=D.details[sym];if(!dt)return'';
+if(r.veto)return`<div class="mini" style="border-color:#f8717155;margin-top:14px"><h3 style="color:#f87171">Vetoed — do not buy</h3><div style="font-size:12.5px">${esc((dt.veto_reasons||[]).join('; '))}</div></div>`;
+if(r.tag==='ANTICIPATION')return`<div class="mini" style="border-color:#22d3ee44;margin-top:14px"><h3 style="color:#22d3ee">Watch only — zero capital</h3><div style="font-size:12.5px">Stage-1 base forming. Validated as an alert tier only (+0.41R) — capital waits for the confirmed breakout (+1.27R economics). Horizon if it triggers later: weeks–months (trading lot), months–years (core lot).</div></div>`;
+const p=dt.plan;if(!p||!p.shares_total)return'';
+return`<div class="mini" style="border-color:#34d39944;margin-top:14px"><h3 style="color:#34d399">If you take this trade (plan, not advice)</h3>
+<table style="font-size:12.5px"><tr><td class="dim">Buy</td><td class="mono"><b>${p.shares_total} shares</b> ≈ ₹${fmtNum(p.position_value)} ${p.risk_scale<1?'<span style="color:#fbbf24">(HALF SIZE — defensive regime)</span>':''}</td></tr>
+<tr><td class="dim">Entry ~</td><td class="mono">${p.entry_price}</td></tr>
+<tr><td class="dim">Stop</td><td class="mono" style="color:#f87171">${p.stop_loss_price} (risk ₹${fmtNum(p.capital_at_risk)} ≈ ${p.risk_scale<1?'0.6':'1.25'}% of capital)</td></tr>
+<tr><td class="dim">Breakeven at</td><td class="mono" style="color:#fbbf24">${p.breakeven_trigger} — then stop moves to entry</td></tr>
+<tr><td class="dim">Partial at</td><td class="mono" style="color:#34d399">${p.partial_price} — sell ⅓ of trading lot (${p.shares_trading_lot} sh lot)</td></tr>
+<tr><td class="dim">Core lot</td><td class="mono">${p.shares_core_lot} sh — exits only on weekly close &lt; 30-week MA</td></tr>
+<tr><td class="dim">Horizon</td><td>trading lot: weeks–months · core lot: months–years (the multibagger seat)</td></tr></table></div>`;}
+function newsSection(sym){const dt=D.details[sym];if(!dt||!dt.news)return'';const n=dt.news;
+let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d) — ${n.count} headlines${n.themes.length?' · themes: '+esc(n.themes.join(', ')):''}${n.events.length?' · events: '+esc(n.events.join(', ')):''}</h3>`;
+(n.red_flags||[]).forEach(f=>h+=`<div style="color:#f87171;font-size:12px;margin:4px 0">!! ${esc(f)}</div>`);
+(n.filings||[]).forEach(f=>h+=`<div style="font-size:12px;margin:4px 0"><span class="pill" style="border-color:#a78bfa;color:#a78bfa">NSE</span> <span class="dim">${f.d}</span> ${esc(f.t)}</div>`);
+(n.headlines||[]).forEach(x=>h+=`<div style="font-size:12px;margin:4px 0"><span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)})</span></div>`);
+return h+'</div>';}
 window.openDrawer=function(sym){const d=$('#drawer');const r=D.rows.find(x=>x.sym===sym)||{};
 const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
 d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
 <h1 style="font-size:20px">${sym} <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${r.tag||''}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
-<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')} · RS ${r.rs??'—'} · conviction ${r.score??'—'}${r.arch?' · '+esc(r.arch):''}</div>
-<div id="dchart" style="height:300px">${hasOhlc?'':'<div class="quiet">price detail available for shortlist + positions (cache the rest on demand)</div>'}</div>
+<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')} · RS percentile ${r.rs??'—'} · conviction ${r.score??'—'}${r.arch?' · '+esc(r.arch):''}</div>
+${planSection(sym,r)}
+${whySection(sym)}
+<div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">price chart available for shortlist + positions</div>'}</div>
+${newsSection(sym)}
 <div class="minis">
-<div class="mini"><h3>Quarterly net profit (Cr)</h3>${miniBars(f.q_labels||[],f.np||[])}</div>
-<div class="mini"><h3>Operating margin %</h3>${miniLine(f.opm,'#22d3ee')}</div>
-<div class="mini"><h3>Borrowings trend (Cr, yearly)</h3>${miniLine(f.debt,'#fbbf24')}</div>
-<div class="mini"><h3>Promoter / FII / DII %</h3>${miniLine(f.prom,'#a78bfa')}${miniLine(f.fii,'#34d399')}${miniLine(f.dii,'#22d3ee')}</div>
+<div class="mini"><h3>Quarterly net profit (₹ Cr per quarter)</h3>${miniBars(f.q_labels||[],f.np||[])}</div>
+<div class="mini"><h3>Operating margin % (quarterly)</h3>${miniLine(f.opm,'#22d3ee','OPM %',f.q_labels)}</div>
+<div class="mini"><h3>Borrowings ₹ Cr (yearly — falling = deleveraging)</h3>${miniLine(f.debt,'#fbbf24','debt',f.bs_labels)}</div>
+<div class="mini"><h3>Shareholding % (quarterly)</h3>${miniLine(f.prom,'#a78bfa','Promoter',f.sh_labels)}${miniLine(f.fii,'#34d399','FII',f.sh_labels)}${miniLine(f.dii,'#22d3ee','DII',f.sh_labels)}</div>
 </div>`;
 $('#ovl').classList.add('show');d.classList.add('open');
 if(hasOhlc){const c=mkChart($('#dchart'),300);
