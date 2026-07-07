@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from data.cache import load_ohlcv
 from scoring.conviction import assess
 from scoring.phase_b import build_dimensions, build_vetoes, tag_archetypes
-from scoring.phase_c import enrich
+from scoring.phase_c import enrich, enrichment_dimensions
 from scoring.stage_tagger import tag_stock
 from scoring.technical_score import compute_atr, compute_entry_plan
 from reports.watchlist_card import render_card
@@ -65,6 +65,20 @@ def main() -> None:
         industry = f.get("industry")
 
         dims = build_dimensions(tag, f.get("rs_pctile"), fund_row, industry)
+
+        # Phase C: news/filings feed the theme + catalyst dimensions here too
+        # (previously only alert cards got this — the ranking fetched news but
+        # scored those dims as "no data": inconsistent, fixed 2026-07-07)
+        news_e = None
+        if not args.no_news:
+            news_e = enrich(sym, company_by_sym.get(sym, sym))
+            time.sleep(0.3)
+            if news_e.get("ok"):
+                by_key = {d.key: d for d in dims}
+                for d2 in enrichment_dimensions(news_e):
+                    by_key[d2.key] = d2
+                dims = list(by_key.values())
+
         vetoes = build_vetoes(fund_row) if fund_row else []
         conviction = assess(dims, vetoes)
         atr = float(compute_atr(df).iloc[-1])
@@ -77,7 +91,7 @@ def main() -> None:
             "label": conviction.label, "vetoed": conviction.vetoed,
             "veto_reasons": "; ".join(conviction.veto_reasons),
             "_tag_result": tag, "_conviction": conviction, "_atr": atr,
-            "_archetype_list": archetypes,
+            "_archetype_list": archetypes, "_news": news_e,
         })
 
     out = pd.DataFrame(results).sort_values(
@@ -124,8 +138,7 @@ def main() -> None:
 
         news_blob = None
         if not args.no_news:
-            e = enrich(sym, company_by_sym.get(sym, sym))
-            time.sleep(0.3)
+            e = r.get("_news") or {}
             if e.get("ok"):
                 news_blob = {
                     "count": e["headline_count"],
