@@ -28,13 +28,7 @@ from scoring.technical_score import compute_atr, compute_entry_plan
 from reports.watchlist_card import render_card
 
 
-def market_risk_scale() -> float:
-    """Regime sizing (matrix v3b): half risk when NIFTY50 < its 150-DMA."""
-    bench = load_ohlcv("NIFTY50")
-    if bench is None or len(bench) < 150:
-        return 1.0
-    sma150 = bench["close"].rolling(150).mean().iloc[-1]
-    return 0.5 if float(bench["close"].iloc[-1]) < float(sma150) else 1.0
+from scoring.regime import market_risk_scale
 
 
 def main() -> None:
@@ -107,10 +101,11 @@ def main() -> None:
         print(f"\n=== VETOED ({len(vetoed)}) ===")
         print(vetoed[["symbol", "tag", "score", "veto_reasons"]].to_string(index=False))
 
-    # detailed cards for the top N non-vetoed
+    # detailed cards for the top N non-vetoed (same regime sizing as dashboard)
     top = out[~out["vetoed"]].head(args.cards)
     cards = [render_card(r["symbol"], r["_tag_result"], r["_conviction"],
-                         atr=r["_atr"], archetypes=r["_archetype_list"], dim_notes=True)
+                         atr=r["_atr"], archetypes=r["_archetype_list"],
+                         dim_notes=True, risk_scale=risk_scale)
              for _, r in top.iterrows()]
 
     report_path = os.path.join(root, "shortlist_report.md")
@@ -159,7 +154,7 @@ def main() -> None:
                         "capital_at_risk", "risk_scale")
                 plan = {k: p[k] for k in keys if k in p}
                 plan["breakeven_trigger"] = p.get("breakeven_move_trigger_price")
-                plan["partial_price"] = round(p["entry_price"] + p["risk_per_share"] * 2.5, 2)
+                plan["partial_price"] = p.get("partial_profit_price")
 
         details[sym] = {
             "reasons": tag.get("reasons", []),
