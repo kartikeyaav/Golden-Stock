@@ -58,7 +58,10 @@ def normalize_ohlcv(df: pd.DataFrame) -> pd.DataFrame:
     if getattr(df["date"].dt, "tz", None) is not None:
         df["date"] = df["date"].dt.tz_localize(None)
     df = df.dropna(subset=["close"])
-    df = df.drop_duplicates(subset="date").sort_values("date").reset_index(drop=True)
+    # keep="last": on incremental merges new rows are concatenated AFTER old
+    # ones — the fresh fetch must win, or a partial/corrected candle would be
+    # stale forever (audit fix 2026-07-07)
+    df = df.drop_duplicates(subset="date", keep="last").sort_values("date").reset_index(drop=True)
     for col in ["open", "high", "low", "close", "volume"]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     df["volume"] = df["volume"].fillna(0)

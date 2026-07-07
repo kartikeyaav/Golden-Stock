@@ -133,7 +133,8 @@ def build_payload() -> dict:
         screener_rows.append({
             "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
             "ind": str(r.get("industry", ""))[:30],
-            "tag": r.get("tag", tags.get(sym, "")),
+            # tonight's state wins over the weekly focus snapshot (freshness)
+            "tag": tags.get(sym, r.get("tag", "")),
             "rs": round(float(r["rs_pctile"]), 1) if pd.notna(r.get("rs_pctile")) else None,
             "close": round(float(r["last_close"]), 2) if pd.notna(r.get("last_close")) else None,
             "turn": round(float(r["turnover_cr"]), 1) if pd.notna(r.get("turnover_cr")) else None,
@@ -506,7 +507,8 @@ return `<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
 <div style="font-family:var(--mono);font-size:12px"><b style="color:${color}">${fmtNum(last)}</b>
 <div class="axis">${fmtNum(lo)}–${fmtNum(hi)}</div></div></div>
 <div class="axis" style="margin-left:88px">${esc((labels&&labels[0])||'')} → ${esc((labels&&labels[labels.length-1])||'')}</div>`;}
-function whySection(sym){const dt=D.details[sym];if(!dt)return'';
+function whySection(sym){const dt=D.details[sym];
+if(!dt)return'<div class="mini" style="margin-top:14px"><h3>Why no score breakdown?</h3><div style="font-size:12.5px" class="dim">Full 8-question scoring runs on the actionable shortlist (CONFIRMED + ANTICIPATION). This stock is currently outside it — it re-enters scoring the moment its tag turns actionable.</div></div>';
 let h='<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions</h3>';
 (dt.dims||[]).slice().sort((a,b)=>b.w-a.w).forEach(m=>{
 const pct=m.s!=null?Math.round(m.s*100):0;
@@ -595,7 +597,8 @@ $('#jstats').innerHTML=[['Signals logged',D.journal.length,'since 2026-07-05'],
 ['Stopped',D.outcomes.stopped??'—','hit the suggested stop'],
 ['Expectancy to date',D.outcomes.exp!=null?D.outcomes.exp+'R':'—','forward, unfakeable']]
 .map(k=>`<div class="kpi"><span>${k[0]}</span><b>${k[1]}</b><span style="text-transform:none;letter-spacing:0">${k[2]}</span></div>`).join('');
-$('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td>${esc(j.kind)}</td><td class="dim">${esc(j.old)} → ${esc(j.new)}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as alerts fire.</td></tr>';
+const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','WATCH CLOSELY':'#22d3ee','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
+$('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(j.kind)}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(j.old)+' → ':''}${esc(j.new)}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
 
 /* validation */
 function drawEquity(){window._eq=1;if(!D.equity.length)return;
