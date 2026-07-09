@@ -13,6 +13,7 @@ enrich several names).
 
 from __future__ import annotations
 
+import time
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -41,9 +42,20 @@ def fetch_announcements(force: bool = False) -> list[dict]:
     if _FEED_CACHE is not None and not force:
         return _FEED_CACHE
 
-    req = urllib.request.Request(_FEED_URL, headers=_UA)
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        root = ET.fromstring(resp.read())
+    # the ~400KB download occasionally truncates mid-stream, which surfaces
+    # as an XML parse error and would lose that day's filings for good (the
+    # feed is a rolling ~1-day window) — retry before giving up (2026-07-09)
+    root = None
+    for attempt in range(3):
+        req = urllib.request.Request(_FEED_URL, headers=_UA)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                root = ET.fromstring(resp.read())
+            break
+        except (ET.ParseError, OSError):
+            if attempt == 2:
+                raise
+            time.sleep(3)
 
     items = []
     for it in root.iter("item"):

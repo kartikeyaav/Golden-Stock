@@ -1,8 +1,10 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-07-09.** This is the single "where we are / what's next"
-doc. For strategy read `PROJECT_BRIEF.md`; for the evidence read
-`VALIDATION_REPORT.md`. This file is the operational status + next steps.
+**Last updated: 2026-07-09 (evening — post intraday-scan incident + fixes).**
+This is the single "where we are / what's next" doc. For strategy read
+`../../PROJECT_BRIEF.md` (it lives at the git root `files/`, NOT in this
+folder); for the evidence read `VALIDATION_REPORT.md`. This file is the
+operational status + next steps.
 
 ---
 
@@ -111,6 +113,34 @@ plan + news + fundamental trend charts.
 
 ---
 
+## 3B. 2026-07-09 incident + hardening (context for the journal)
+
+A manual `daily_scan.py` run at 12:34 (mid-market) tagged the universe on
+PARTIAL intraday bars: 5 of its 17 alerts were phantoms that reversed by the
+close (HEG, BERGEPAINT, BHARTIHEXA, SANDUMA, HFCL) and it missed 7 real ones.
+Fixes, all live:
+
+- **`data/cache.py` partial-bar guard**: `load_ohlcv` drops a bar dated today
+  until 15:45 IST (`BAR_FINAL_IST`) — every consumer (scan, tagger, position
+  manager, dashboard, outcomes) now only ever sees completed candles. Running
+  the scan at ANY hour is now safe (an intraday run simply reads yesterday's
+  close).
+- **Journal integrity**: the 18 intraday rows were moved to
+  `journal/quarantine_intraday_2026-07-09.csv` (preserved for audit, out of
+  the forward-validation stats); state was restored from the 07-07 snapshot
+  and the 16:39 post-close re-scan journaled the clean set (19 transitions
+  covering Jul-8+9). MOSCHIP's breakeven flag (set intraday) was reverted and
+  legitimately re-fired on the final close.
+- **Task Scheduler**: both jobs previously had DisallowStartIfOnBatteries +
+  no catch-up — that's why Jul-8 was silently skipped on this laptop. Now:
+  run on battery, StartWhenAvailable catch-up (safe with the bar guard), 4h
+  execution limit.
+- **NSE feed**: the ~400KB RSS download can truncate mid-stream (lost a day's
+  filings). `fetch_announcements` now retries 3x; the failed day was
+  backfilled (+470 filings).
+- **daily_job chain** now runs `journal_outcomes.py` before the dashboard
+  build, so the Journal tab's forward-validation KPIs stay live.
+
 ## 4. Live production state (as of 2026-07-09)
 
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
@@ -143,12 +173,18 @@ plan + news + fundamental trend charts.
    verdicts + committee picks beat the mechanical baseline? (the real-capital
    gate, per brief).
 
-**Worth investigating (build):**
-5. **Alert volume calibration** — 2026-07-07 fired ~10 alerts in ONE day vs
-   the 1-5/week design. Check whether it was a genuinely strong market day,
-   a stale state baseline from testing, or the RS>=60 focus floor being too
-   loose (320 names). Tightening RS floor to ~75 (-> ~150 names) was flagged
-   earlier. This directly reduces analyst load / session-limit pressure.
+**Alert volume — INVESTIGATED 2026-07-09, conclusion:**
+5. The 1-5/week estimate was made for a ~150-name watch set; the
+   evidence-locked scan watches the whole universe (609 names — lock #3
+   forbids shrinking it), so expected volume is structurally ~4x that
+   estimate. On top of that, the first week runs hot while the fresh state
+   baseline settles (names near tag boundaries flip on small moves), and
+   missed days produce multi-day diffs (Jul-9 fired 19 covering 2 trading
+   days). NOTE: the earlier idea "raise the focus RS floor to cut alerts"
+   is WRONG — the focus list is reporting-only; alerts fire from the whole
+   universe regardless. Cost is already capped (analyst max 3 dives/day,
+   conviction-ranked). Decision: accept the volume, revisit after 2-3
+   settled weeks; any watch-set change needs pre-registered evidence.
 
 ---
 
@@ -156,14 +192,14 @@ plan + news + fundamental trend charts.
 
 Priority order:
 1. **Decide auth**: switch the daily analyst to an API key (recommended) OR
-   accept subscription + reduce load via item #5. This is the main friction.
-2. **Calibrate alert volume** (item #5): investigate the ~10-alert day; if the
-   RS floor is too loose, raise it (build_focus_list.py `RS_PCTILE_FLOOR`, and
-   consider the daily-scan watch set). Goal: alerts back to a trickle.
-3. **Let the weekend weekly job run** (Sun 10:00) with the new Opus-4.7
-   committee and review the picks quality vs last run.
-4. **Telegram setup** whenever the user is ready (delivery layer).
-5. Longer term: cloud migration + the forward-journal review after ~2-4 weeks.
+   accept subscription session limits. This is the main friction.
+   (Alert volume was investigated 2026-07-09 — see item #5 above: volume is
+   structural + settling, no threshold change; cost already capped at 3
+   dives/day.)
+2. **Let the weekend weekly job run** (Sun 2026-07-12 10:00) with the
+   Opus-4.7 committee and review the picks quality vs last run.
+3. **Telegram setup** whenever the user is ready (delivery layer).
+4. Longer term: cloud migration + the forward-journal review after ~2-4 weeks.
 
 Do NOT: add fundamental/news/AI signals into the ENTRY or SIZING decision
 (evidence-locked). AI stays context/curation/veto only.
@@ -188,7 +224,9 @@ scoring/conviction.py         8-dim composite, coverage renorm, veto cap
 scoring/regime.py             market_risk_scale (half below 150-DMA)
 backtest/engine.py            two-lot event-driven engine + regime/stress hooks
 backtest/metrics.py           trade/equity/lot stats, costs, benchmark
-scripts/daily_scan.py         nightly job core
+scripts/daily_scan.py         nightly job core (safe at any hour — cache guard)
+scripts/daily_job.py          what Task Scheduler actually runs: scan -> analyst -> outcomes -> dashboard -> telegram
+scripts/weekly_job.py         what Task Scheduler runs Sundays (weekly_refresh wrapper)
 scripts/ai_analyst.py         daily deep-dive (sonnet-5), conviction-prioritized, idempotent
 scripts/ai_picks.py           weekly committee (opus-4-7 + high thinking)
 scripts/weekly_refresh.py     full weekly chain
