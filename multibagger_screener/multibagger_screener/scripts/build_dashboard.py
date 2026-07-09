@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from data.cache import load_ohlcv
 from data.screener_fetch import load_company
+from paper_trader import summarize as paper_summary
 
 
 def _market_cap(sym: str):
@@ -162,6 +163,11 @@ def build_payload() -> dict:
         mcap = _market_cap(sym)
         if mcap is None:
             mcap = f.get("market_cap_cr")
+        closes[sym] = _closes(sym)
+        # price from tonight's cache — the focus snapshot's last_close is a
+        # WEEKLY artifact and goes stale within a day (user-caught 2026-07-09)
+        live_close = closes[sym][-1] if closes[sym] else (
+            round(float(r["last_close"]), 2) if pd.notna(r.get("last_close")) else None)
         screener_rows.append({
             "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
             "ind": str(r.get("industry", ""))[:30],
@@ -170,7 +176,7 @@ def build_payload() -> dict:
             "tier": cap_tier(mcap, r.get("index_source", "")),
             "mcap": round(float(mcap), 0) if mcap is not None and pd.notna(mcap) else None,
             "rs": round(float(r["rs_pctile"]), 1) if pd.notna(r.get("rs_pctile")) else None,
-            "close": round(float(r["last_close"]), 2) if pd.notna(r.get("last_close")) else None,
+            "close": live_close,
             "turn": round(float(r["turnover_cr"]), 1) if pd.notna(r.get("turnover_cr")) else None,
             "score": round(float(score_by_sym[sym]), 1) if sym in score_by_sym and pd.notna(score_by_sym[sym]) else None,
             "veto": bool(veto_by_sym.get(sym, False)),
@@ -178,7 +184,6 @@ def build_payload() -> dict:
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
             "pgttm": f.get("profit_growth_ttm"),
         })
-        closes[sym] = _closes(sym)
 
     # detail data: OHLC + fundamentals for shortlist + positions
     detail_syms = list(ranked.get("symbol", [])) + list(positions.get("symbol", []))
@@ -215,6 +220,65 @@ def build_payload() -> dict:
                      "stopped": int((outcomes["status"] == "stopped").sum()),
                      "exp": round(float(rvals.mean()), 2) if len(rvals) else None}
 
+    # journal scorecard: every buy-type signal marked to market (Journal tab)
+    def _num(v, nd=2):
+        v = pd.to_numeric(pd.Series([v]), errors="coerce").iloc[0]
+        return round(float(v), nd) if pd.notna(v) else None
+    score_rows = []
+    if not outcomes.empty:
+        for _, r in outcomes.iloc[::-1].iterrows():
+            score_rows.append({
+                "d": str(r["logged_at"])[:16], "sym": r["symbol"],
+                "kind": str(r.get("kind", "")), "entry": _num(r.get("close")),
+                "stop": _num(r.get("stop_suggested")),
+                "ret": _num(r.get("return_to_date_pct"), 1),
+                "r": _num(r.get("r_to_date")), "maxr": _num(r.get("max_favorable_R")),
+                "status": str(r.get("status", "")),
+                "conv": _num(r.get("conviction_score"), 0)})
+
+    # "actionable now" — buy signals from the last 7 days, marked against
+    # tonight's tag + price so fresh/extended/faded is explicit (the
+    # demarcation the alert stream alone doesn't give)
+    verdict_by_sym = {}
+    vpath = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
+    if os.path.exists(vpath):
+        vs = pd.read_csv(vpath)
+        for _, v in vs.iterrows():
+            verdict_by_sym[v["symbol"]] = (f"{v['verdict']}/{v.get('conviction', '')}"
+                                           f"/{v.get('size', '')}")
+    actionable = []
+    if not journal.empty:
+        jj = journal.copy()
+        jj["logged_at"] = pd.to_datetime(jj["logged_at"], errors="coerce")
+        recent = jj[(jj["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW"]))
+                    & (jj["logged_at"] >= pd.Timestamp.now() - pd.Timedelta(days=7))]
+        for _, r in recent.iloc[::-1].iterrows():
+            sym = r["symbol"]
+            df = load_ohlcv(sym)
+            now_px = round(float(df["close"].iloc[-1]), 2) if df is not None and len(df) else None
+            alert_px = _num(r.get("close"))
+            tag_now = tags.get(sym, "")
+            vetoed = str(r.get("vetoed", "")).lower() == "true"
+            if vetoed:
+                status = "VETOED"
+            elif tag_now == "CONFIRMED":
+                status = "ACTIONABLE"
+            elif tag_now == "EXTENDED":
+                status = "RAN AWAY"
+            else:
+                status = "FADED"
+            actionable.append({
+                "sym": sym, "d": f"{r['logged_at']:%d %b}", "kind": str(r["kind"]),
+                "alert_px": alert_px, "now_px": now_px,
+                "chg": round((now_px / alert_px - 1) * 100, 1) if now_px and alert_px else None,
+                "conv": _num(r.get("conviction_score"), 0), "tag": tag_now,
+                "verdict": verdict_by_sym.get(sym, ""), "status": status})
+
+    try:
+        paper = paper_summary()
+    except Exception:  # noqa: BLE001 — dashboard must build even if paper book breaks
+        paper = {}
+
     equity = []
     eq = _read_csv("baseline_equity.csv")
     if not eq.empty:
@@ -247,6 +311,7 @@ def build_payload() -> dict:
 
     return {
         "generated": datetime.now().strftime("%d %b %Y, %H:%M"),
+        "price_date": str(bench["date"].iloc[-1].date()) if bench is not None and len(bench) else "",
         "scan_date": scan_date, "defensive": regime_defensive,
         "health_ok": bench_age <= 5 and len(tags) > 400,
         "funnel": [
@@ -261,7 +326,8 @@ def build_payload() -> dict:
         "tags": tag_counts, "alerts": alerts, "verdicts": verdicts, "ai_picks": ai_picks,
         "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
-        "journal_total": journal_total,
+        "journal_total": journal_total, "scorecard": score_rows,
+        "actionable": actionable, "paper": paper,
         "outcomes": out_stats, "equity": equity, "nifty": nifty,
         "heat": heat, "matrix": matrix,
         "kpi": {"exp": "+1.27R", "cagr": "21.5%", "dd": "-12.9%", "payoff": "8.3:1"},
@@ -392,6 +458,13 @@ main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:
 <div class="tab on" id="overview">
   <div class="kpis" id="kpis"></div>
   <div class="grid2"><div>
+    <div class="card" style="border-color:#34d39944"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days</h2>
+    <div class="legendline" style="border:0;padding:0;margin:0 0 10px;font-size:11.5px">
+    Alerts are one-night events; THIS list is what's still on the table. <b style="color:#34d399">ACTIONABLE</b> = setup
+    still valid (CONFIRMED) &middot; <b style="color:#fbbf24">RAN AWAY</b> = extended, wait for a re-entry alert &middot;
+    <b style="color:#64748b">FADED</b> = setup lost, no action &middot; <b style="color:#f87171">VETOED</b> = do not buy.
+    A faded signal is the system SAVING you from a stale entry, not changing its mind.</div>
+    <div id="actionable"></div></div>
     <div class="card"><h2>Filtering funnel &mdash; tonight</h2><div id="funnel"></div></div>
     <div class="card"><h2>Tonight's alerts</h2><div id="alerts"></div></div>
     <div class="card" id="verdictcard" style="display:none"><h2>AI analyst verdicts</h2><div class="memo" id="verdicts"></div></div>
@@ -438,11 +511,30 @@ main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:
   </div>
 </div>
 
-<div class="tab" id="positions"><div id="poswrap"></div></div>
+<div class="tab" id="positions">
+  <div class="card" style="border-color:#a78bfa44"><h2 style="color:var(--vio)">Paper book &mdash; every analyst BUY, traded on paper</h2>
+  <div class="legendline" style="border:0;padding:0;margin:0 0 12px;font-size:11.5px">
+  Each analyst BUY verdict is auto-entered here at the NEXT session's open, sized by the mechanical plan
+  (FULL/HALF respected, regime-scaled, &#8377;10L notional book), and exited by the SAME two-lot rules as real
+  positions. Nothing is discretionary &mdash; this is the running audit of whether the analyst layer makes money.</div>
+  <div class="kpis" id="paperkpi" style="margin-bottom:12px"></div>
+  <div id="paperbody"></div></div>
+  <div id="poswrap"></div>
+</div>
 
 <div class="tab" id="journal">
   <div class="kpis" id="jstats"></div>
-  <div class="card"><h2>Signal history (the forward-validation record)</h2>
+  <div class="card"><h2>Buy-signal scorecard &mdash; every buy alert, marked to market</h2>
+  <div class="legendline" style="border:0;padding:0;margin:0 0 10px;font-size:11.5px">
+  One row per <b>BUY CANDIDATE / RE-ENTRY</b> alert the machine ever fired (analyst-filtered or not), scored
+  against its own suggested stop. <b>R</b> = profit in units of initial risk (+2R = made twice what the stop
+  risked). <b>Max R</b> = best excursion so far. <b style="color:#f87171">stopped</b> = hit the stop (-1R, closed).
+  This table only ever GROWS &mdash; signals never disappear from here, whatever happens to tags later.</div>
+  <div style="max-height:44vh;overflow:auto">
+  <table><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv</th><th>Alert &#8377;</th><th>Stop</th>
+  <th>Ret %</th><th>R now</th><th>Max R</th><th>Status</th></tr></thead>
+  <tbody id="scorebody"></tbody></table></div></div>
+  <div class="card"><h2>All tag events (last 50) &mdash; the raw stream</h2>
   <table><thead><tr><th>When</th><th>Symbol</th><th>Signal</th><th>Detail</th></tr></thead>
   <tbody id="jbody"></tbody></table></div>
 </div>
@@ -479,7 +571,7 @@ document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  if(b.dataset.t==='picks'&&!window._picks)drawPicks();});
 
 /* header */
-$('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date;
+$('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date+' · prices as of '+D.price_date;
 $('#badges').innerHTML=(D.defensive?'<span class="badge b-amb">DEFENSIVE — HALF SIZE (NIFTY &lt; 150-DMA)</span>':'<span class="badge b-grn">NORMAL RISK</span>')+' '+(D.health_ok?'<span class="badge b-grn">HEALTH OK</span>':'<span class="badge b-red">HEALTH FAILED</span>');
 
 /* KPIs */
@@ -497,6 +589,19 @@ setTimeout(()=>document.querySelectorAll('.fbar').forEach(b=>b.style.width=b.dat
 /* alerts */
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>`<div class="alert"><span class="ak">${esc(a.kind)}</span><span>${esc(a.text)}</span></div>`).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
 if(D.verdicts){$('#verdictcard').style.display='block';$('#verdicts').textContent=D.verdicts;}
+
+/* actionable now */
+const STC={ACTIONABLE:'#34d399','RAN AWAY':'#fbbf24',FADED:'#64748b',VETOED:'#f87171'};
+$('#actionable').innerHTML=(D.actionable&&D.actionable.length)?
+`<table><thead><tr><th>Alerted</th><th>Symbol</th><th>Analyst</th><th>At ₹</th><th>Now ₹</th><th>Since</th><th>Status</th></tr></thead><tbody>`+
+D.actionable.map(a=>`<tr onclick="openDrawer('${a.sym}')">
+<td class="dim mono">${a.d}</td>
+<td class="sym">${a.sym}${a.conv!=null?` <span class="axis">conv ${a.conv}</span>`:''}</td>
+<td class="dim" style="font-size:11.5px">${a.verdict?esc(a.verdict):'—'}</td>
+<td class="mono">${a.alert_px??''}</td><td class="mono">${a.now_px??''}</td>
+<td class="mono" style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':''}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</td>
+<td><span class="pill" style="border-color:${STC[a.status]};color:${STC[a.status]}">${a.status}</span></td></tr>`).join('')+
+'</tbody></table>':'<div class="quiet">No buy signals in the last 7 days.</div>';
 
 /* tag board */
 $('#tagboard').innerHTML=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<div class="chip" style="border-color:${TC[t]||'#475569'}"><b style="color:${TC[t]||'#94a3b8'}">${t}</b><span>${c}</span></div>`).join('');
@@ -653,8 +758,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
 
 /* positions */
 function drawPositions(){window._pos=1;const w=$('#poswrap');
-if(!D.positions.length){w.innerHTML='<div class="card quiet">No open positions tracked.</div>';return;}
-w.innerHTML=D.positions.map(p=>{const prog=Math.max(0,Math.min(1,(p.last-p.stop)/(p.partial-p.stop)))*100;
+const hdr='<div class="card" style="padding:12px 20px;margin-top:16px"><h2 style="margin:0">Real positions &mdash; your actual money (positions.csv)</h2></div>';
+if(!D.positions.length){w.innerHTML=hdr+'<div class="card quiet">No real positions tracked.</div>';return;}
+w.innerHTML=hdr+D.positions.map(p=>{const prog=Math.max(0,Math.min(1,(p.last-p.stop)/(p.partial-p.stop)))*100;
 return `<div class="card"><div class="posrow"><b style="font-size:16px" class="sym">${p.sym}</b>
 <span style="color:${p.pnl>=0?'#34d399':'#f87171'};font-weight:800;font-family:var(--mono)">${p.pnl>0?'+':''}${p.pnl}%</span></div>
 <div class="posrow dim"><span>${p.shares} shares @ ${p.entry}</span><span>last ${p.last}</span></div>
@@ -680,6 +786,45 @@ $('#jstats').innerHTML=[['Signals logged',D.journal_total??D.journal.length,'sin
 .map(k=>`<div class="kpi"><span>${k[0]}</span><b>${k[1]}</b><span style="text-transform:none;letter-spacing:0">${k[2]}</span></div>`).join('');
 const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','WATCH CLOSELY':'#22d3ee','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
 $('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(j.kind)}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(j.old)+' → ':''}${esc(j.new)}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
+
+/* buy-signal scorecard */
+$('#scorebody').innerHTML=(D.scorecard&&D.scorecard.length)?D.scorecard.map(s=>{
+const rc=s.r==null?'':s.r>0?'#34d399':s.r<0?'#f87171':'#8b98ac';
+const st=s.status==='stopped'?'#f87171':s.status==='open'?'#34d399':'#64748b';
+return `<tr onclick="openDrawer('${s.sym}')"><td class="dim mono">${s.d}</td><td class="sym">${s.sym}</td>
+<td class="dim" style="font-size:11px">${s.kind==='BUY CANDIDATE'?'BUY':'RE-ENTRY'}</td>
+<td class="mono">${s.conv??''}</td><td class="mono">${s.entry??''}</td><td class="mono dim">${s.stop??''}</td>
+<td class="mono" style="color:${s.ret>0?'#34d399':s.ret<0?'#f87171':''}">${s.ret!=null?(s.ret>0?'+':'')+s.ret+'%':''}</td>
+<td class="mono" style="color:${rc};font-weight:700">${s.r!=null?(s.r>0?'+':'')+s.r+'R':''}</td>
+<td class="mono dim">${s.maxr!=null?'+'+s.maxr+'R':''}</td>
+<td><span class="pill" style="border-color:${st};color:${st}">${esc(s.status)}</span></td></tr>`}).join('')
+:'<tr><td colspan="10" class="quiet">No buy signals tracked yet.</td></tr>';
+
+/* paper book */
+(function(){const P=D.paper||{};
+const k=[['Net gain',(P.net!=null?(P.net>0?'+':'')+fmtNum(P.net)+' ₹':'—'),(P.net_pct!=null?(P.net_pct>0?'+':'')+P.net_pct+'% of ₹10L book':'')],
+['Realized',(P.realized!=null?(P.realized>0?'+':'')+fmtNum(P.realized)+' ₹':'—'),'booked on exits'],
+['Unrealized',(P.unrealized!=null?(P.unrealized>0?'+':'')+fmtNum(P.unrealized)+' ₹':'—'),'open positions, mark-to-market'],
+['Open / pending',((P.open||[]).length)+' / '+((P.pending||[]).length),'positions / verdicts awaiting fill']];
+$('#paperkpi').innerHTML=k.map(x=>`<div class="kpi"><span>${x[0]}</span><b style="color:${String(x[1]).startsWith('+')?'#34d399':String(x[1]).startsWith('-')?'#f87171':'inherit'}">${x[1]}</b><span style="text-transform:none;letter-spacing:0">${x[2]}</span></div>`).join('');
+let h='';
+if((P.open||[]).length){h+=`<table style="margin-bottom:14px"><thead><tr><th>Symbol</th><th>Verdict</th><th>Entered</th><th>Entry ₹</th><th>Stop</th><th>Last</th><th>Shares</th><th>P&amp;L ₹</th><th>P&amp;L %</th></tr></thead><tbody>`+
+P.open.map(p=>`<tr onclick="openDrawer('${p.sym}')"><td class="sym">${p.sym}</td>
+<td class="dim" style="font-size:11.5px">${esc(p.verdict)}</td><td class="dim mono">${p.entered}</td>
+<td class="mono">${p.entry}</td><td class="mono" style="color:#f87171">${p.stop}</td><td class="mono">${p.last}</td>
+<td class="mono">${p.shares}</td>
+<td class="mono" style="color:${p.pnl>=0?'#34d399':'#f87171'};font-weight:700">${p.pnl>0?'+':''}${fmtNum(p.pnl)}</td>
+<td class="mono" style="color:${p.pnl_pct>=0?'#34d399':'#f87171'}">${p.pnl_pct>0?'+':''}${p.pnl_pct}%</td></tr>`).join('')+'</tbody></table>';}
+if((P.pending||[]).length)h+='<div style="font-size:12.5px;margin-bottom:12px"><span class="axis">AWAITING FILL (next session open)</span><br>'+
+P.pending.map(p=>`<span class="chip" style="border-color:#fbbf24"><b style="color:#fbbf24">${p.sym}</b><span>${esc(p.verdict)} · ${p.d}</span></span>`).join('')+'</div>';
+if((P.ledger||[]).length){h+=`<div class="axis" style="margin:6px 0">RECENT PAPER FILLS</div><table><thead><tr><th>Date</th><th>Symbol</th><th>Action</th><th>Lot</th><th>Shares</th><th>Price</th><th>P&amp;L</th><th>Reason</th></tr></thead><tbody>`+
+P.ledger.map(l=>`<tr><td class="dim mono">${l.d}</td><td class="sym">${l.sym}</td>
+<td><span class="pill" style="border-color:${l.action==='BUY'?'#34d399':l.action==='SELL'?'#f87171':'#64748b'};color:${l.action==='BUY'?'#34d399':l.action==='SELL'?'#f87171':'#94a3b8'}">${l.action}</span></td>
+<td class="dim">${esc(l.lot)}</td><td class="mono">${l.shares||''}</td><td class="mono">${l.price||''}</td>
+<td class="mono" style="color:${l.pnl>0?'#34d399':l.pnl<0?'#f87171':''}">${l.pnl!==''&&l.pnl!=null?fmtNum(l.pnl):''}</td>
+<td class="dim wrap" style="font-size:11px">${esc(l.reason)}</td></tr>`).join('')+'</tbody></table>';}
+if(!h)h='<div class="quiet">No paper trades yet — the book opens automatically at the first analyst BUY verdict\'s next-session fill.</div>';
+$('#paperbody').innerHTML=h;})();
 
 /* AI picks */
 const CONVC={HIGH:'#34d399',MEDIUM:'#fbbf24',LOW:'#f87171'};

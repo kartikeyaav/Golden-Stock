@@ -141,6 +141,39 @@ Fixes, all live:
 - **daily_job chain** now runs `journal_outcomes.py` before the dashboard
   build, so the Journal tab's forward-validation KPIs stay live.
 
+## 3C. Paper book + clarity layer (2026-07-09 evening, user-requested)
+
+User confusion driving this: alerts churn nightly by design, but nothing
+showed what was STILL actionable vs faded, the Journal read as a raw stream,
+and screener prices were stale (focus_list.csv is a WEEKLY snapshot — its
+last_close was 4 days old; screener Price now reads the daily cache, and the
+header shows "prices as of <date>").
+
+- **`scripts/paper_trader.py` — the analyst's paper book.** Every analyst
+  BUY verdict auto-becomes a paper position: filled at the NEXT session's
+  open (stress-validated fill), stop = the alert's suggested stop, sized
+  RISK.capital x 1.25% x regime, halved on HALF PLAN, 15% value cap, no
+  pyramiding. Exits run through the SAME `position_manager.check_positions`
+  as real positions (generalized: takes positions_path + optional
+  ledger_path; fills booked to `journal/paper_ledger.csv`). State in
+  `paper_positions.csv`; idempotent by symbol@verdict-timestamp; skips
+  (gap-below-stop, no stop, already open) are ledgered so they never retry.
+  In daily_job after the analyst. First fills 2026-07-09: SYRMA 16sh@1410.40,
+  SHILPAMED 49sh@599.00, LAURUSLABS 31sh@1468.10 (all HALF; CHENNPETRO /
+  IPCALAB / ACMESOLAR pending next open). THIS is the number that decides if
+  the AI layer earns its keep (brief: journal must beat the machine alone).
+- **Dashboard — Overview "Actionable now" panel**: buy signals from the last
+  7 days marked against tonight's tag: ACTIONABLE (still CONFIRMED) / RAN
+  AWAY (extended) / FADED / VETOED — the demarcation between one-night
+  alerts and standing opportunities. Survives daily_alerts.md overwrites
+  (reads the journal).
+- **Dashboard — Journal tab**: added a buy-signal scorecard (one row per buy
+  alert ever: alert price, stop, ret%, R-now, max-R, open/stopped status,
+  plain-English explainer) above the raw event stream.
+- **Dashboard — Positions tab**: Paper book section (net/realized/unrealized
+  KPIs, open paper positions, pending fills, recent ledger) above the
+  clearly-labeled "Real positions" section.
+
 ## 4. Live production state (as of 2026-07-09)
 
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
@@ -225,8 +258,9 @@ scoring/regime.py             market_risk_scale (half below 150-DMA)
 backtest/engine.py            two-lot event-driven engine + regime/stress hooks
 backtest/metrics.py           trade/equity/lot stats, costs, benchmark
 scripts/daily_scan.py         nightly job core (safe at any hour — cache guard)
-scripts/daily_job.py          what Task Scheduler actually runs: scan -> analyst -> outcomes -> dashboard -> telegram
+scripts/daily_job.py          what Task Scheduler actually runs: scan -> analyst -> paper -> outcomes -> dashboard -> telegram
 scripts/weekly_job.py         what Task Scheduler runs Sundays (weekly_refresh wrapper)
+scripts/paper_trader.py       analyst paper book: BUY verdicts -> next-open fills -> two-lot managed, ledgered
 scripts/ai_analyst.py         daily deep-dive (sonnet-5), conviction-prioritized, idempotent
 scripts/ai_picks.py           weekly committee (opus-4-7 + high thinking)
 scripts/weekly_refresh.py     full weekly chain
