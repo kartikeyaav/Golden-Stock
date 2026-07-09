@@ -201,6 +201,7 @@ def build_payload() -> dict:
         })
 
     j_rows = []
+    journal_total = 0 if journal.empty else len(journal)
     if not journal.empty:
         for _, r in journal.tail(50).iloc[::-1].iterrows():
             j_rows.append({"d": str(r["logged_at"])[:16], "sym": r["symbol"],
@@ -254,11 +255,13 @@ def build_payload() -> dict:
             ["Focus list", len(focus), "top relative strength (reporting)"],
             ["Actionable tags", tag_counts.get("CONFIRMED", 0) + tag_counts.get("ANTICIPATION", 0),
              "CONFIRMED + ANTICIPATION today"],
-            ["Alerts tonight", len(alerts), "state transitions only"],
+            ["Alerts tonight", len([a for a in alerts if a["kind"] != "POSITION"]),
+             "state transitions only"],
         ],
         "tags": tag_counts, "alerts": alerts, "verdicts": verdicts, "ai_picks": ai_picks,
         "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
+        "journal_total": journal_total,
         "outcomes": out_stats, "equity": equity, "nifty": nifty,
         "heat": heat, "matrix": matrix,
         "kpi": {"exp": "+1.27R", "cagr": "21.5%", "dd": "-12.9%", "payoff": "8.3:1"},
@@ -366,7 +369,13 @@ padding:7px 13px;cursor:pointer;font-weight:700}
 .legendline{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
 footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
 .tab{display:none}.tab.on{display:block}
-@media(max-width:1000px){nav{display:none}main{margin:0}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:100vw;right:-100vw}}
+@media(max-width:1000px){
+body{flex-direction:column}
+nav{position:static;width:100%;height:auto;display:flex;align-items:center;gap:2px;
+padding:10px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
+nav h1{padding:0 12px 0 2px;white-space:nowrap}
+.navbtn{width:auto;white-space:nowrap;padding:8px 11px;margin:0}
+main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:100vw;right:-100vw}}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
 <button class="navbtn on" data-t="overview">&#9632; Overview</button>
@@ -585,7 +594,8 @@ h+='</div>';return h;}
 function planSection(sym,r){const dt=D.details[sym];if(!dt)return'';
 if(r.veto)return`<div class="mini" style="border-color:#f8717155;margin-top:14px"><h3 style="color:#f87171">Vetoed — do not buy</h3><div style="font-size:12.5px">${esc((dt.veto_reasons||[]).join('; '))}</div></div>`;
 if(r.tag==='ANTICIPATION')return`<div class="mini" style="border-color:#22d3ee44;margin-top:14px"><h3 style="color:#22d3ee">Watch only — zero capital</h3><div style="font-size:12.5px">Stage-1 base forming. Validated as an alert tier only (+0.41R) — capital waits for the confirmed breakout (+1.27R economics). Horizon if it triggers later: weeks–months (trading lot), months–years (core lot).</div></div>`;
-const p=dt.plan;if(!p||!p.shares_total)return'';
+const p=dt.plan;
+if(!p||!p.shares_total)return r.tag==='CONFIRMED'?`<div class="mini" style="border-color:#f8717144;margin-top:14px"><h3 style="color:#f87171">No mechanical entry plan</h3><div style="font-size:12.5px">The risk engine skips this name: its ATR-based stop would exceed the 12% hard cap — untradeably volatile to size cleanly (Design Law #7). Watch only, not a buy.</div></div>`:'';
 return`<div class="mini" style="border-color:#34d39944;margin-top:14px"><h3 style="color:#34d399">If you take this trade (plan, not advice)</h3>
 <table style="font-size:12.5px"><tr><td class="dim">Buy</td><td class="mono"><b>${p.shares_total} shares</b> ≈ ₹${fmtNum(p.position_value)} ${p.risk_scale<1?'<span style="color:#fbbf24">(HALF SIZE — defensive regime)</span>':''}</td></tr>
 <tr><td class="dim">Entry ~</td><td class="mono">${p.entry_price}</td></tr>
@@ -663,7 +673,7 @@ cs.createPriceLine({price:p.entry,color:'#8b98ac',lineStyle:3,title:'entry'});
 c.timeScale().fitContent();});}
 
 /* journal */
-$('#jstats').innerHTML=[['Signals logged',D.journal.length,'since 2026-07-05'],
+$('#jstats').innerHTML=[['Signals logged',D.journal_total??D.journal.length,'since 2026-07-05'],
 ['Open',D.outcomes.open??'—','tracking vs suggested stops'],
 ['Stopped',D.outcomes.stopped??'—','hit the suggested stop'],
 ['Expectancy to date',D.outcomes.exp!=null?D.outcomes.exp+'R':'—','forward, unfakeable']]
@@ -692,7 +702,7 @@ h+=`<div class="card"><div style="display:flex;justify-content:space-between;ali
 <div><span class="axis" style="color:#f87171">KEY RISKS</span><br>${esc(p.risks)}</div>
 <div><span class="axis">WATCH FOR</span> ${esc(p.watch_for)}</div>`;
 if(pl&&pl.shares_total)h+=`<div class="mini" style="border-color:#34d39933"><span class="axis" style="color:#34d399">MECHANICAL PLAN (not AI — the validated engine)</span><br>
-<span style="font-size:13px">Buy <b>${pl.shares_total} sh</b> ≈ ₹${fmtCr(pl.position_value)} · entry ~${pl.entry_price} · stop <span style="color:#f87171">${pl.stop_loss_price}</span> · partial <span style="color:#34d399">${pl.partial_price}</span>${pl.risk_scale<1?' · <span style="color:#fbbf24">HALF SIZE (defensive regime)</span>':''}</span></div>`;
+<span style="font-size:13px">Buy <b>${pl.shares_total} sh</b> ≈ ₹${fmtNum(pl.position_value)} · entry ~${pl.entry_price} · stop <span style="color:#f87171">${pl.stop_loss_price}</span> · partial <span style="color:#34d399">${pl.partial_price}</span>${pl.risk_scale<1?' · <span style="color:#fbbf24">HALF SIZE (defensive regime)</span>':''}</span></div>`;
 else h+=`<div class="mini" style="border-color:#f8717144"><span class="axis" style="color:#f87171">NO MECHANICAL ENTRY PLAN</span><br><span style="font-size:13px">The risk engine skips this name: its ATR-based stop would exceed the 12% hard cap (too volatile to size cleanly, Design Law #7). No clean entry — treat as watch only, not a buy.</span></div>`;
 h+=`</div><div style="margin-top:12px" id="pick_${p.symbol}"></div></div>`;});
 w.innerHTML=h;

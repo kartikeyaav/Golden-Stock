@@ -17,10 +17,19 @@ Layout:
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, time as dtime
 from pathlib import Path
 
 import pandas as pd
+
+try:  # IST wall clock; fall back to local time (this box runs in IST anyway)
+    from zoneinfo import ZoneInfo
+    _IST = ZoneInfo("Asia/Kolkata")
+except Exception:  # noqa: BLE001 — no tzdata on this interpreter
+    _IST = None
+
+# NSE closing session ends 15:40 IST; the daily candle is final after this.
+BAR_FINAL_IST = dtime(15, 45)
 
 CACHE_DIR = Path(__file__).resolve().parent.parent / "data_cache"
 MANIFEST_PATH = CACHE_DIR / "manifest.json"
@@ -95,12 +104,31 @@ def save_ohlcv(symbol: str, df: pd.DataFrame, meta: dict | None = None) -> Path:
     return path
 
 
+def _drop_in_progress_bar(df: pd.DataFrame) -> pd.DataFrame:
+    """A daily bar fetched DURING the session is a partial candle — intraday
+    volume, unsettled close. Signals computed on it are invalid (2026-07-09
+    incident: a mid-market scan fired 17 alerts off half-day bars). Until the
+    close is final (BAR_FINAL_IST), a bar dated today is dropped on load, so
+    every consumer — scan, tagger, position manager, dashboard — only ever
+    sees completed candles. The partial row stays in the CSV and is
+    overwritten by the next post-close fetch (merge keeps last)."""
+    if df.empty:
+        return df
+    now = datetime.now(_IST) if _IST else datetime.now()
+    if now.time() >= BAR_FINAL_IST:
+        return df
+    if df["date"].iloc[-1].date() == now.date():
+        return df.iloc[:-1].reset_index(drop=True)
+    return df
+
+
 def load_ohlcv(symbol: str) -> pd.DataFrame | None:
-    """Load a symbol from cache; None if absent."""
+    """Load a symbol from cache; None if absent. Completed daily bars only —
+    an in-progress bar for today is excluded (see _drop_in_progress_bar)."""
     path = CACHE_DIR / f"{symbol}.csv"
     if not path.exists():
         return None
-    return pd.read_csv(path, parse_dates=["date"])
+    return _drop_in_progress_bar(pd.read_csv(path, parse_dates=["date"]))
 
 
 def list_cached() -> list[str]:
