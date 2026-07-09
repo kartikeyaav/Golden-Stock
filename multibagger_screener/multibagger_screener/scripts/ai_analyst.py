@@ -52,15 +52,26 @@ MAX_DIVES_PER_DAY = 3
 TIMEOUT_S = 600
 
 
+def _conviction_of(report: str, sym: str) -> float:
+    """Pull the mechanical conviction score from a symbol's card, so the
+    limited daily dives go to the STRONGEST names, not the alphabetically
+    first ones (matters on busy alert days)."""
+    m = re.search(rf"={{10,}}\n{re.escape(sym)}\s+\[.*?(?:Conviction|Technical Read):\s*([\d.]+)",
+                  report, re.S)
+    return float(m.group(1)) if m else 0.0
+
+
 def extract_candidates(report: str) -> list[str]:
-    """Symbols with buy-type alerts, in order of appearance."""
+    """Buy-type alert symbols, ranked by mechanical conviction (highest first),
+    capped at MAX_DIVES_PER_DAY — spend scarce research on the best names."""
     syms = re.findall(r"\*\*(?:BUY CANDIDATE|RE-ENTRY WINDOW)\*\*: (\w[\w&-]*)", report)
-    seen, out = set(), []
+    seen, uniq = set(), []
     for s in syms:
         if s not in seen:
             seen.add(s)
-            out.append(s)
-    return out[:MAX_DIVES_PER_DAY]
+            uniq.append(s)
+    uniq.sort(key=lambda s: _conviction_of(report, s), reverse=True)
+    return uniq[:MAX_DIVES_PER_DAY]
 
 
 def extract_card(report: str, symbol: str) -> str:
@@ -154,6 +165,10 @@ def main() -> None:
         return
     with open(alerts_path, "r", encoding="utf-8") as f:
         report = f.read()
+    # drop any prior verdicts block so re-running (e.g. after a rate-limit
+    # reset) refreshes rather than duplicates
+    report = re.sub(r"\n## AI analyst verdicts\n.*?(?=\n## Cards|\Z)", "\n",
+                    report, flags=re.S)
 
     candidates = extract_candidates(report)
     if not candidates:
