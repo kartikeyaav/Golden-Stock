@@ -92,7 +92,7 @@ def build_briefing(cands) -> str:
     return "\n".join(lines)
 
 
-def run_committee(briefing: str, model: str):
+def run_committee(briefing: str, model: str, thinking_tokens: int):
     with open(PROTOCOL, "r", encoding="utf-8") as f:
         protocol = f.read()
     prompt = (f"{protocol}\n\n---\n\nAS OF {datetime.now():%Y-%m-%d}:\n\n{briefing}\n\n"
@@ -102,6 +102,10 @@ def run_committee(briefing: str, model: str):
         return None, "claude CLI not found"
     clean_env = {k: v for k, v in os.environ.items()
                  if not k.startswith("CLAUDE_CODE_") and k != "ANTHROPIC_BASE_URL"}
+    # high thinking budget for this weekly, high-value task (the committee is
+    # infrequent, so premium reasoning here costs little in aggregate)
+    if thinking_tokens > 0:
+        clean_env["MAX_THINKING_TOKENS"] = str(thinking_tokens)
     try:
         proc = subprocess.run(
             [claude_bin, "-p", "--model", model, "--allowedTools", "WebSearch", "WebFetch"],
@@ -150,7 +154,10 @@ def parse_picks(memo: str, cands) -> list:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--top", type=int, default=20)
-    parser.add_argument("--model", default="claude-sonnet-5")
+    parser.add_argument("--model", default="claude-opus-4-7",
+                        help="premium reasoning for the weekly committee")
+    parser.add_argument("--thinking-tokens", type=int, default=24000,
+                        help="extended-thinking budget ('High'); 0 to disable")
     args = parser.parse_args()
 
     cands = load_candidates(args.top)
@@ -158,9 +165,9 @@ def main():
         print("not enough CONFIRMED candidates to select from")
         return
     print(f"feeding {len(cands)} candidates to the AI committee "
-          f"(model {args.model}, up to {TIMEOUT_S}s)...", flush=True)
+          f"(model {args.model}, thinking {args.thinking_tokens}, up to {TIMEOUT_S}s)...", flush=True)
 
-    memo, err = run_committee(build_briefing(cands), args.model)
+    memo, err = run_committee(build_briefing(cands), args.model, args.thinking_tokens)
     if memo is None:
         print(f"FAILED: {err}")
         sys.exit(1)

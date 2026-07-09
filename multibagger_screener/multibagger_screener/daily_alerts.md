@@ -32,11 +32,64 @@
 
 Minor shifts: ACMESOLAR EXTENDED->WATCH, ATHERENERG CONFIRMED->EXTENDED, CHENNPETRO CONFIRMED->WATCH, CLEAN BROKEN->WATCH, DEEPAKFERT EXTENDED->WATCH, FINCABLES CONFIRMED->WATCH, GRANULES CONFIRMED->EXTENDED, GMDCLTD WATCH->BROKEN, IKS WATCH->EXTENDED, KIMS EXTENDED->WATCH, LTFOODS BROKEN->WATCH, NETWEB CONFIRMED->WATCH, POONAWALLA ANTICIPATION->WATCH, SAREGAMA EXTENDED->WATCH, TRIDENT ANTICIPATION->WATCH, TRITURBINE CONFIRMED->WATCH, ZYDUSWELL EXTENDED->WATCH, APOLLOTYRE ANTICIPATION->WATCH, BANKINDIA BROKEN->WATCH, MAHABANK CONFIRMED->WATCH, COCHINSHIP WATCH->BROKEN, COLPAL BROKEN->WATCH, GLAXO BROKEN->WATCH, IREDA WATCH->BROKEN, INDUSINDBK CONFIRMED->EXTENDED, JKCEMENT WATCH->BROKEN, KEI CONFIRMED->WATCH, LLOYDSME CONFIRMED->WATCH, OFSS EXTENDED->WATCH, SUPREMEIND BROKEN->WATCH, AHLUCONT BROKEN->WATCH, APOLLO EXTENDED->WATCH, DCBBANK CONFIRMED->WATCH, ETHOSLTD BROKEN->WATCH, JKPAPER BROKEN->WATCH, JAIBALAJI WATCH->BROKEN, JAMNAAUTO EXTENDED->WATCH, KANSAINER WATCH->BROKEN, RTNPOWER WATCH->BROKEN, SANDUMA BROKEN->WATCH, SHAKTIPUMP BROKEN->WATCH, SHAREINDIA BROKEN->WATCH, SFL WATCH->EXTENDED, SKIPPER EXTENDED->WATCH, TIMETECHNO WATCH->BROKEN
 
+
+
+
 ## AI analyst verdicts
 
-**ACUTAAS** — analyst unavailable (exit 1: You've hit your session limit · resets 8:20pm (Asia/Calcutta)) — review the card manually before acting
-**ANANDRATHI** — analyst unavailable (exit 1: You've hit your session limit · resets 8:20pm (Asia/Calcutta)) — review the card manually before acting
-**BANDHANBNK** — analyst unavailable (exit 1: You've hit your session limit · resets 8:20pm (Asia/Calcutta)) — review the card manually before acting
+### SYRMA
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection is real, not one-off: FY26 revenue +27%, PAT +87%, EBITDA margin 9.7%→12%; Q4 revenue +57%/PAT +67% YoY confirms acceleration, driven by scale + Elcome acquisition + new Kaga Electronics JV (60/40, EMS facility for Japanese auto/appliance/aircon OEMs, signed 22-Jun-2026) — a genuine new growth vector, not narrative.
+- Sector tailwind is stronger than the card's news-scan captured: India EMS is in a structural upcycle (PLI 2.0, China+1, export CAGR ~24%), so the low "theme_tailwind" score (0.3) understates reality.
+- The promoter stake drop (46.4%→42.3%) is largely a QIP artifact (₹1,000cr raise, Aug-2025) that mechanically dilutes %, not confirmed net promoter selling; 0% pledged.
+
+RISKS (max 2 bullets):
+- Could not verify the specific 07-Jul-2026 "Chief Compliance Officer resignation" headline — only found a resolved 2025 CS transition; combined with a brand-new CEO (effective 29-Jun-2026), there's a live leadership-transition risk I can't fully clear.
+- Valuation is stretched (P/E 83) with RS "improving: False" — priced for perfection into a management change, thin margin for a Q1 FY27 miss.
+
+CHECKED: Web search across NSE-filing-adjacent news, Business Standard, ScanX, MarketsMojo, Screener, KPMG/HDFC sector notes — no SEBI enforcement/auditor action found; SEBI Reg 74(5) item is a routine depository certificate, not enforcement.
+
+CHANGES MY MIND: Confirmation the recent CCO-resignation headline is another routine admin swap (not a fraud/audit-related departure) would raise conviction; a weak Q1 FY27 print or margin miss under the new CEO would flip this to SKIP.
+
+### SHILPAMED
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings driver is real, not one-off: Q4 FY26 profit +643% YoY on record revenue (+32%), backed by a binding Orion Corp deal (Shilpa Biologicals subsidiary) to co-develop/supply a nivolumab biosimilar for the €4.1B EU oncology market — confirms the biologics/CDMO pivot is translating to P&L, not just narrative.
+- Promoter stake drop (44.23%→40.13%) is explained by a benign technical event, not an exit: two promoter-group individuals (Suraj Kumar Inani, Priya Inani) were reclassified from Promoter to Public category via postal ballot (Oct–Nov 2025), not open-market selling.
+- Sector tailwind confirmed: India CDMO/biosimilar space growing ~13% CAGR on global patent-cliff demand; company has a dedicated integrated ADC/biologics facility (Dharwad) supporting the story structurally, not opportunistically.
+
+RISKS (max 2 bullets):
+- Pledge status is unresolved and conflicts with the card: card says "no pledge disclosed," but secondary aggregator data (non-primary) suggests ~8.73% of promoter holding may be pledged. I could not confirm this against a primary NSE/BSE shareholding filing — this is exactly the kind of hard-veto trigger that needs resolving before full size.
+- One card news item ("Ekalavya Foundation... Chief Compliance Officer resignation") appears to be an unrelated entity mixed into the news feed, not a Shilpa Medicare governance event — flagging so it isn't mistaken for a real red flag, but it means the news scan has noise.
+
+CHECKED: Web search across NSE/company filings summaries, screener/trendlyne shareholding aggregators, Orion Pharma/BioSpectrum/Business Standard deal coverage, FY26/Q4 results coverage (scanx, marketsmojo, investywise).
+CHANGES MY MIND: A primary-source (NSE/BSE) shareholding disclosure confirming an active promoter pledge would flip this to SKIP under the hard veto rule; confirmation of zero pledge would support moving back toward FULL PLAN.
+
+### LAURUSLABS
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story checks out: CDMO revenue +36-38% YoY driven by real order inflows (NCE commercial supplies, late-stage ramp-up), not one-offs — company is structurally shifting to CDMO-led model (~50% of revenue by FY29E) with Vizag peptide/fermentation capacity coming online through 2026.
+- Governance is clean: promoter group confirmed zero share encumbrance for FY26 (April 2026 disclosure); the "Resignation of Chief Compliance Officer" NSE headline the scanner flagged is actually routine independent-director term completion (Aruna Bhinge, term end 7/6/26) plus two new independent directors appointed — no red flag, keyword scan mis-fired here.
+- Sector tailwind is real but two-sided: China+1/BIOSECURE Act favors Indian CDMOs structurally, but 2026 is being called a "reset year" with US tariff/reshoring uncertainty possibly denting H1 revenue visibility.
+
+RISKS (max 2 bullets):
+- Valuation and extension: stock already up 53% this quarter (sharpest 5-yr rally), 26.9% above 30wMA, P/E 93 — a lot of the CDMO re-rating is priced in, raising downside-on-disappointment risk.
+- Near-term US tariff/trade-policy overhang on India CDMO outsourcing flows could pressure sentiment/margins in H1 before the structural tailwind reasserts.
+
+CHECKED: NSE/company disclosures (pledge release, AGM, director appointments), Business Standard/BusinessToday/Whalesbook on Q1FY27 CDMO results, sector outlook pieces on India CDMO/BIOSECURE/tariffs.
+
+CHANGES MY MIND: Any signal that Q1FY27 CDMO order inflows are timing pull-forwards rather than sustained run-rate, or a US tariff/reshoring announcement specifically naming Indian API/CDMO exports.
+
 
 ## Cards
 
