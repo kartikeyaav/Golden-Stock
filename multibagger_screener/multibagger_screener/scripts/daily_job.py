@@ -24,6 +24,7 @@ def main() -> None:
         log.write(f"\n===== daily_job {datetime.now():%Y-%m-%d %H:%M:%S} =====\n")
         for name, script, fatal in [("scan", "daily_scan.py", True),
                                     ("analyst", "ai_analyst.py", False),
+                                    ("paper", "paper_trader.py", False),
                                     ("outcomes", "journal_outcomes.py", False),
                                     ("dashboard", "build_dashboard.py", False),
                                     ("telegram", "send_telegram.py", False)]:

@@ -1,0 +1,4 @@
+symbol,entry_date,entry_price,initial_stop,stop_current,shares_trading,shares_core,trading_open,core_open,partial_taken,breakeven_moved,notes,verdict_id,verdict,conviction,size_plan
+SYRMA,2026-07-09,1410.4,1220.64,1220.64,8,8,True,True,False,False,PAPER auto-entry from analyst verdict 2026-07-08,SYRMA@2026-07-08 10:46,BUY,MEDIUM,HALF PLAN
+SHILPAMED,2026-07-09,599.0,535.42,535.42,24,25,True,True,False,False,PAPER auto-entry from analyst verdict 2026-07-08,SHILPAMED@2026-07-08 10:47,BUY,MEDIUM,HALF PLAN
+LAURUSLABS,2026-07-09,1468.1,1369.45,1369.45,15,16,True,True,False,False,PAPER auto-entry from analyst verdict 2026-07-08,LAURUSLABS@2026-07-08 10:48,BUY,MEDIUM,HALF PLAN
