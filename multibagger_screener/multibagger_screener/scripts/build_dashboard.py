@@ -739,18 +739,31 @@ const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
  <td class="dim mono">${a.d}</td></tr>`};
 const hdr='<tr><th>What to do</th><th>Symbol</th><th>Conv</th><th>Analyst</th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
+const DKNAMES={act:'BUY SETUP',watch:'WATCH',weak:'WEAK'};
 const renderBody=()=>{
  const dec=decAll.filter(a=>activeDo.has(a.dokind)&&(!convMin||(a.conv??0)>=60));
  let h='';
  if(dec.length)h+=`<table><thead>${hdr}</thead><tbody>`+dec.map(row).join('')+'</tbody></table>';
+ else if(activeDo.size===1){const k=[...activeDo][0];
+  h+=`<div class="quiet">No ${DKNAMES[k]} rows right now${k==='act'?' — a validated trigger appears only on the evening a pivot breaks on 1.5x volume; the chip count shows how many are live':''}.</div>`;}
  else h+=`<div class="quiet">${decAll.length?'No live setups match the filters.':'No live setups among recent signals.'}</div>`;
  if(rest.length)h+=`<details class="actrest"><summary>${rest.length} resolved signal${rest.length>1?'s':''} — ran away / faded / vetoed (no action)</summary>
 <table><thead>${hdr}</thead><tbody>`+rest.map(row).join('')+'</tbody></table></details>';
  $('#actbody').innerHTML=h;
  $('#actcount').textContent=`showing ${dec.length} of ${decAll.length} live`;
 };
-document.querySelectorAll('#actionable [data-do]').forEach(c=>c.onclick=()=>{const k=c.dataset.do;
- activeDo.has(k)?(activeDo.delete(k),c.classList.add('off')):(activeDo.add(k),c.classList.remove('off'));renderBody();});
+/* chip semantics: from "all on", clicking a chip ISOLATES that group (the
+   intuitive "show me only buy setups"); clicking the lone active chip
+   restores all; in a partial selection, clicks toggle membership. */
+const syncChips=()=>document.querySelectorAll('#actionable [data-do]')
+ .forEach(x=>x.classList.toggle('off',!activeDo.has(x.dataset.do)));
+document.querySelectorAll('#actionable [data-do]').forEach(c=>c.onclick=()=>{
+ const k=c.dataset.do, allKeys=DK.map(x=>x[0]);
+ if(activeDo.size===allKeys.length)activeDo=new Set([k]);
+ else if(activeDo.size===1&&activeDo.has(k))activeDo=new Set(allKeys);
+ else{activeDo.has(k)?activeDo.delete(k):activeDo.add(k);
+  if(!activeDo.size)activeDo=new Set(allKeys);}
+ syncChips();renderBody();});
 document.querySelector('#actionable [data-convmin]').onclick=e=>{convMin=!convMin;
  e.currentTarget.classList.toggle('off',!convMin);renderBody();};
 renderBody();})();
