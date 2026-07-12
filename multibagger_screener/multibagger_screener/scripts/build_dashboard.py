@@ -540,6 +540,7 @@ padding:7px 13px;cursor:pointer;font-weight:700}
 footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
 .tab{display:none}.tab.on{display:block}
 .acthead{font-size:13.5px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.actfilters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .dochip{display:inline-block;padding:3px 9px;border-radius:7px;border:1px solid;font-size:10.5px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
 details.actrest{margin-top:10px}
 details.actrest summary{cursor:pointer;color:var(--dim);font-size:12px;padding:6px 0}
@@ -717,12 +718,18 @@ const DOC={act:'#34d399',watch:'#fbbf24',weak:'#94a3b8',warn:'#fbbf24',mute:'#64
 (function(){
 const all=D.actionable||[];
 if(!all.length){$('#actionable').innerHTML='<div class="quiet">No buy signals in the last 7 days.</div>';return;}
-const dec=all.filter(a=>a.status==='ACTIONABLE'),rest=all.filter(a=>a.status!=='ACTIONABLE');
-const nv=dec.filter(a=>a.dokind==='act').length,nw=dec.filter(a=>a.dokind==='watch').length,nk=dec.length-nv-nw;
-let h=`<div class="acthead">${nv
+const decAll=all.filter(a=>a.status==='ACTIONABLE'),rest=all.filter(a=>a.status!=='ACTIONABLE');
+const nv=decAll.filter(a=>a.dokind==='act').length,nw=decAll.filter(a=>a.dokind==='watch').length,nk=decAll.length-nv-nw;
+const DK=[['act','BUY SETUP'],['watch','WATCH'],['weak','WEAK']];
+let activeDo=new Set(['act','watch','weak']),convMin=false;
+$('#actionable').innerHTML=`<div class="acthead">${nv
  ?`<b style="color:#34d399">&#9679; ${nv} validated buy trigger${nv>1?'s':''} — act today</b>`
  :`<b style="color:#94a3b8">&#9675; No validated triggers right now — nothing requires action.</b>`}
- <span class="dim" style="font-size:11.5px">${nw} awaiting pivot &middot; ${nk} weak-trigger &middot; ${rest.length} resolved</span></div>`;
+ <span class="dim" style="font-size:11.5px">${nw} awaiting pivot &middot; ${nk} weak-trigger &middot; ${rest.length} resolved</span></div>
+ <div class="actfilters">${DK.map(([k,l])=>`<span class="chip" data-do="${k}" style="border-color:${DOC[k]}"><b style="color:${DOC[k]}">${l}</b> <span class="dim">${decAll.filter(a=>a.dokind===k).length}</span></span>`).join('')}
+ <span class="chip off" data-convmin style="border-color:#7c8db0"><b style="color:#94a3b8">Conv &ge; 60</b></span>
+ <span class="dim" id="actcount" style="font-size:11px;align-self:center"></span></div>
+ <div id="actbody"></div>`;
 const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  return `<tr onclick="openDrawer('${a.sym}')">
  <td><span class="dochip" style="background:${c}14;color:${c};border-color:${c}55">${a.do}</span></td>
@@ -731,13 +738,22 @@ const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  <td class="dim" style="font-size:11.5px">${a.verdict?esc(a.verdict):'—'}</td>
  <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
  <td class="dim mono">${a.d}</td></tr>`};
-if(dec.length)h+=`<table><thead><tr><th>What to do</th><th>Symbol</th><th>Conv</th><th>Analyst</th><th>Alert &rarr; now</th><th>Alerted</th></tr></thead><tbody>`
- +dec.map(row).join('')+'</tbody></table>';
-else h+='<div class="quiet">No live setups among recent signals.</div>';
-if(rest.length)h+=`<details class="actrest"><summary>${rest.length} resolved signal${rest.length>1?'s':''} — ran away / faded / vetoed (no action)</summary>
-<table><thead><tr><th>What to do</th><th>Symbol</th><th>Conv</th><th>Analyst</th><th>Alert &rarr; now</th><th>Alerted</th></tr></thead><tbody>`
- +rest.map(row).join('')+'</tbody></table></details>';
-$('#actionable').innerHTML=h;})();
+const hdr='<tr><th>What to do</th><th>Symbol</th><th>Conv</th><th>Analyst</th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
+const renderBody=()=>{
+ const dec=decAll.filter(a=>activeDo.has(a.dokind)&&(!convMin||(a.conv??0)>=60));
+ let h='';
+ if(dec.length)h+=`<table><thead>${hdr}</thead><tbody>`+dec.map(row).join('')+'</tbody></table>';
+ else h+=`<div class="quiet">${decAll.length?'No live setups match the filters.':'No live setups among recent signals.'}</div>`;
+ if(rest.length)h+=`<details class="actrest"><summary>${rest.length} resolved signal${rest.length>1?'s':''} — ran away / faded / vetoed (no action)</summary>
+<table><thead>${hdr}</thead><tbody>`+rest.map(row).join('')+'</tbody></table></details>';
+ $('#actbody').innerHTML=h;
+ $('#actcount').textContent=`showing ${dec.length} of ${decAll.length} live`;
+};
+document.querySelectorAll('#actionable [data-do]').forEach(c=>c.onclick=()=>{const k=c.dataset.do;
+ activeDo.has(k)?(activeDo.delete(k),c.classList.add('off')):(activeDo.add(k),c.classList.remove('off'));renderBody();});
+document.querySelector('#actionable [data-convmin]').onclick=e=>{convMin=!convMin;
+ e.currentTarget.classList.toggle('off',!convMin);renderBody();};
+renderBody();})();
 
 /* tag board */
 $('#tagboard').innerHTML=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<div class="chip" style="border-color:${TC[t]||'#475569'}"><b style="color:${TC[t]||'#94a3b8'}">${t}</b><span>${c}</span></div>`).join('');
