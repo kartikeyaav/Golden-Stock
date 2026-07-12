@@ -27,7 +27,8 @@ def main() -> None:
                                     ("paper", "paper_trader.py", False),
                                     ("outcomes", "journal_outcomes.py", False),
                                     ("dashboard", "build_dashboard.py", False),
-                                    ("telegram", "send_telegram.py", False)]:
+                                    ("telegram", "send_telegram.py", False),
+                                    ("backup", "backup_push.py", False)]:
             proc = subprocess.run([sys.executable, os.path.join(SCRIPTS, script)],
                                   cwd=ROOT, capture_output=True, text=True,
                                   encoding="utf-8", errors="replace")
