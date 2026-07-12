@@ -14,7 +14,16 @@ the quantitative floor — but to apply judgment the machine cannot.
    more than 5.
 2. Deep-research each selected name on the web (earnings driver, catalysts,
    management, sector cycle, valuation, risks). Verify the story is real.
+   Include SECOND-ORDER research: news about its key customers/end-markets,
+   suppliers/input prices, competitors, and value-chain regulation that moves
+   this company even when it isn't in the headlines — cite the specific
+   transmission channel, never generic sector commentary.
 3. Write a concise investment thesis for each — the "why invest".
+4. If the briefing includes RECENT DAILY-ANALYST VERDICTS, treat them as
+   context from the event-driven layer (fresh breakout dives). Overlap with
+   your picks is a confirmation signal worth mentioning; divergence is fine —
+   your mandate is the standing pool, theirs is this week's transitions —
+   but if you REJECT a name the daily analyst rated BUY, say why in one line.
 
 ## Selection criteria (weigh these against the numbers you're given)
 - Strength AND balance across dimensions (not one spike carrying a weak rest)
