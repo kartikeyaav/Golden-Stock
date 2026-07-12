@@ -440,18 +440,34 @@ TEMPLATE = r"""<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
-:root{--bg:#070b12;--panel:#0d1420;--card:#111a2a;--line:#1c2940;--txt:#e8edf6;--dim:#8b98ac;
---grn:#34d399;--red:#f87171;--amb:#fbbf24;--cyn:#22d3ee;--vio:#a78bfa;--mono:'JetBrains Mono',monospace}
+:root{--bg:#05080e;--panel:#0a0f18;--card:#0b1220;--line:#18243a;--line2:#223354;--txt:#e9eef7;--dim:#8b98ac;
+--faint:#5c6b84;--grn:#34d399;--red:#f87171;--amb:#fbbf24;--cyn:#22d3ee;--vio:#a78bfa;--mono:'JetBrains Mono',monospace}
 *{box-sizing:border-box;margin:0}
-body{background:radial-gradient(1200px 600px at 80% -10%,#12203a55,transparent),var(--bg);
-color:var(--txt);font-family:Inter,system-ui,sans-serif;display:flex;min-height:100vh}
-nav{width:210px;background:#0a101cee;border-right:1px solid var(--line);padding:22px 12px;position:fixed;height:100vh}
-nav h1{font-size:15px;font-weight:800;padding:0 12px 18px;letter-spacing:-.2px}
-nav h1 span{color:var(--grn)}
-.navbtn{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border:0;border-radius:12px;
-background:transparent;color:var(--dim);font:500 13.5px Inter;cursor:pointer;margin:2px 0;text-align:left;transition:.15s}
-.navbtn:hover{background:#131e31;color:var(--txt)}
-.navbtn.on{background:linear-gradient(90deg,#13251f,#12202f);color:var(--grn);font-weight:600}
+::selection{background:#34d39933}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#1c2940;border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#2a3d5e}
+::-webkit-scrollbar-track{background:transparent}
+body{background:
+ radial-gradient(1100px 520px at 85% -12%,#0e2a3a44,transparent),
+ radial-gradient(900px 500px at -10% 10%,#0d251f3d,transparent),var(--bg);
+color:var(--txt);font-family:Inter,system-ui,sans-serif;display:flex;min-height:100vh;
+font-feature-settings:'tnum' 1,'cv11' 1}
+.mono,td.mono,.kpi b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+nav{width:216px;background:#070c14f2;border-right:1px solid var(--line);padding:20px 12px;position:fixed;height:100vh;
+backdrop-filter:blur(10px);z-index:40;display:flex;flex-direction:column}
+nav h1{font-size:15px;font-weight:800;padding:2px 12px 16px;letter-spacing:-.2px}
+nav h1 span{background:linear-gradient(90deg,var(--grn),var(--cyn));-webkit-background-clip:text;background-clip:text;color:transparent}
+.navbtn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:0;border-radius:11px;
+background:transparent;color:var(--dim);font:500 13.5px Inter;cursor:pointer;margin:2px 0;text-align:left;
+transition:background .15s,color .15s,transform .12s}
+.navbtn:hover{background:#111c2e;color:var(--txt);transform:translateX(2px)}
+.navbtn.on{background:linear-gradient(90deg,#0f2620,#0e1e30);color:var(--grn);font-weight:600;
+box-shadow:inset 2px 0 0 var(--grn)}
+.searchhint{margin:10px 2px 0;padding:8px 12px;border:1px solid var(--line);border-radius:10px;color:var(--faint);
+font-size:11.5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:.15s}
+.searchhint:hover{border-color:var(--line2);color:var(--dim)}
+.searchhint kbd{font:600 10px var(--mono);border:1px solid var(--line2);border-radius:5px;padding:2px 6px;color:var(--dim);background:#0d1524}
 #runpanel{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
 .runhead{font-size:10px;letter-spacing:1.2px;color:#5f7089;padding:0 14px 8px;font-weight:700}
 .runbtn{display:block;width:100%;padding:9px 14px;border:1px solid #34d39933;border-radius:10px;
@@ -465,20 +481,26 @@ margin-top:6px;max-height:180px;overflow-y:auto;font:10px/1.5 ui-monospace,Conso
 white-space:pre-wrap;word-break:break-all;color:#8aa0bd}
 @keyframes runpulse{50%{opacity:.45}}
 .runlive{color:var(--amb);animation:runpulse 1.2s infinite}
-main{margin-left:210px;flex:1;padding:26px 30px;max-width:1220px}
-.badge{padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.3px}
-.b-amb{background:#fbbf2418;color:var(--amb);border:1px solid #fbbf2444}
-.b-grn{background:#34d39918;color:var(--grn);border:1px solid #34d39944}
-.b-red{background:#f8717118;color:var(--red);border:1px solid #f8717144}
-.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:4px}
-.sub{color:var(--dim);font-size:12.5px;margin-bottom:20px}
-.card{background:linear-gradient(180deg,#111a2af0,#0d1420f0);border:1px solid var(--line);
-border-radius:18px;padding:20px;margin-bottom:16px;transition:.2s}
-h2{font-size:12px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:14px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
-.kpi{background:linear-gradient(160deg,#121d31,#0d1420);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
-.kpi b{display:block;font-size:23px;font-weight:800;font-family:var(--mono);margin-top:4px}
-.kpi span{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+main{margin-left:216px;flex:1;padding:22px 30px 40px;max-width:1280px;animation:fadein .3s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.badge{padding:4px 11px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.4px}
+.b-amb{background:#fbbf2414;color:var(--amb);border:1px solid #fbbf2440}
+.b-grn{background:#34d39914;color:var(--grn);border:1px solid #34d39940}
+.b-red{background:#f8717114;color:var(--red);border:1px solid #f8717140}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+padding-bottom:14px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.sub{display:none}
+.card{background:linear-gradient(180deg,#0d1524e8,#0a111de8);border:1px solid var(--line);
+border-radius:16px;padding:18px 20px;margin-bottom:14px;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:#22335466;box-shadow:0 8px 32px #00000040}
+h2{font-size:11px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:1.6px;margin-bottom:13px}
+.kpis{display:flex;gap:0;margin-bottom:14px;background:linear-gradient(180deg,#0d1524e8,#0a111de8);
+border:1px solid var(--line);border-radius:16px;padding:14px 6px;justify-content:space-around}
+.kpi{padding:2px 18px;border-left:1px solid var(--line)}
+.kpi:first-child{border-left:0}
+.kpi b{display:block;font-size:20px;font-weight:700;font-family:var(--mono);margin-top:3px;letter-spacing:-.4px}
+.kpi span{color:var(--faint);font-size:9.5px;text-transform:uppercase;letter-spacing:1px;display:block;max-width:220px}
+.kpi span:last-child{margin-top:3px;color:var(--faint);text-transform:none;letter-spacing:.1px;font-size:10px}
 .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
 .frow{display:flex;align-items:center;gap:14px;margin:11px 0}
 .flabel{width:210px;font-size:13px;font-weight:500}.fsub{display:block;color:var(--dim);font-size:10.5px}
@@ -498,8 +520,8 @@ table{width:100%;border-collapse:collapse;font-size:12.8px}
 th{color:var(--dim);text-align:left;font-weight:600;font-size:10.5px;text-transform:uppercase;
 letter-spacing:.8px;padding:8px 9px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;position:sticky;top:0;background:#0f1727}
 td{padding:8px 9px;border-bottom:1px solid #141f31}
-tbody tr{cursor:pointer;transition:.12s}
-tbody tr:hover{background:#13203466;transform:translateX(2px)}
+tbody tr{cursor:pointer;transition:background .12s,box-shadow .12s}
+tbody tr:hover{background:#12203a55;box-shadow:inset 2px 0 0 var(--cyn)}
 .sym{font-weight:700;font-family:var(--mono);font-size:12.5px}
 .dim{color:var(--dim)}.mono{font-family:var(--mono)}
 .pill{border:1px solid;border-radius:999px;padding:2.5px 9px;font-size:10.5px;font-weight:700}
@@ -526,6 +548,23 @@ padding:7px 13px;cursor:pointer;font-weight:700}
 .minis{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .mini{background:#0d1420;border:1px solid var(--line);border-radius:14px;padding:14px}
 .mini h3{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.actcard{border-color:#34d39922;background:linear-gradient(180deg,#0c1a17e8,#0a111de8)}
+.funnelline{color:var(--faint);font-size:11.5px;margin:2px 4px 16px;font-family:var(--mono)}
+.funnelline b{color:var(--dim);font-weight:600}
+.funnelline .sep{color:#2a3a58;padding:0 7px}
+.pal{position:fixed;inset:0;background:#04070dd0;z-index:80;display:none;backdrop-filter:blur(7px)}
+.pal.show{display:flex;align-items:flex-start;justify-content:center;padding-top:12vh}
+.palbox{width:580px;max-width:92vw;background:#0b1322fa;border:1px solid var(--line2);border-radius:16px;
+box-shadow:0 24px 90px #000d;overflow:hidden;animation:palin .16s ease}
+@keyframes palin{from{transform:scale(.97) translateY(-6px);opacity:0}}
+.palbox input{width:100%;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;
+padding:16px 18px;font:500 15px Inter;color:var(--txt)}
+.pallist{max-height:46vh;overflow-y:auto;padding:6px}
+.palrow{display:flex;gap:12px;align-items:center;padding:9px 13px;border-radius:10px;cursor:pointer;font-size:13px}
+.palrow.on,.palrow:hover{background:#13223a}
+.palrow .sym{min-width:104px}
+.palrow .pill{margin-left:auto;flex:0 0 auto}
+.palempty{padding:18px;color:var(--faint);font-size:13px}
 .poscard{border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;background:#0d1420}
 .posrow{display:flex;justify-content:space-between;margin:3px 0;font-size:13px}
 .track{height:9px;background:#1a2537;border-radius:5px;margin:12px 0 6px;position:relative}
@@ -553,10 +592,13 @@ padding:10px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--l
 nav h1{padding:0 12px 0 2px;white-space:nowrap}
 .navbtn{width:auto;white-space:nowrap;padding:8px 11px;margin:0}
 #runpanel{display:none!important}
-main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:100vw;right:-100vw}}
+main{margin:0;padding:16px}.grid2{grid-template-columns:1fr}
+.kpis{flex-wrap:wrap;gap:8px}.kpi{border-left:0;padding:2px 10px}
+.searchhint{display:none}.drawer{width:100vw;right:-100vw}}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
-<button class="navbtn on" data-t="overview">&#9632; Overview</button>
+<div class="searchhint" onclick="openPalette()"><span>Search stocks&hellip;</span><kbd>Ctrl K</kbd></div>
+<button class="navbtn on" data-t="overview" style="margin-top:12px">&#9632; Overview</button>
 <button class="navbtn" data-t="picks">&#9733; AI Picks</button>
 <button class="navbtn" data-t="screener">&#9776; Screener</button>
 <button class="navbtn" data-t="positions">&#9679; Positions</button>
@@ -576,24 +618,23 @@ main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:
 <div class="sub">Alerts fire on state transitions only &middot; entries are technical-only (evidence-locked) &middot; click any stock for the full picture</div>
 
 <div class="tab on" id="overview">
-  <div class="kpis" id="kpis"></div>
-  <div class="grid2"><div>
-    <div class="card" style="border-color:#34d39944"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days</h2>
+  <div class="card actcard"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days</h2>
     <div class="legendline" style="border:0;padding:0;margin:0 0 10px;font-size:11.5px">
-    This is the ONLY panel you act from. Each row tells you what to do:
-    <b style="color:#34d399">BUY SETUP</b> = the exact backtested trigger fired (pivot broken on volume) — open the drawer for the plan &middot;
-    <b style="color:#fbbf24">WATCH</b> = good base, breakout not confirmed yet &middot;
+    The only panel you act from. <b style="color:#34d399">BUY SETUP</b> = exact backtested trigger fired — open the drawer for the plan &middot;
+    <b style="color:#fbbf24">WATCH</b> = base ready, breakout not confirmed &middot;
     <b style="color:#94a3b8">WEAK</b> = uptrend without the proven trigger &middot;
-    everything under "resolved" needs no action (a faded signal is the system SAVING you from a stale entry).</div>
+    resolved rows need nothing (a faded signal is the system saving you from a stale entry).</div>
     <div id="actionable"></div></div>
-    <div class="card"><h2>Filtering funnel &mdash; tonight</h2><div id="funnel"></div></div>
-    <div class="card"><h2>Tonight's alerts</h2><div id="alerts"></div></div>
-    <div class="card" id="verdictcard" style="display:none"><h2>AI analyst verdicts</h2><div class="memo" id="verdicts"></div></div>
-  </div><div>
+  <div class="kpis" id="kpis"></div>
+  <div class="funnelline" id="funnel"></div>
+  <div class="grid2"><div>
+    <div class="card"><h2>Tonight</h2><div id="alerts"></div>
+    <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst verdicts</h2><div class="memo" id="verdicts"></div></div></div>
     <div class="card"><h2>NIFTY 50 &middot; regime line (150-DMA)</h2><div id="niftychart" style="height:190px"></div></div>
+  </div><div>
     <div class="card"><h2>Tag board</h2><div id="tagboard"></div>
     <div class="legendline"><b style="color:#34d399">CONFIRMED</b> = passes all 8 uptrend checks — a monitored POOL, not "buy all".
-    You act only on fresh <b>transitions</b> (tonight's alerts) and top conviction, sized by the plan in each stock's drawer.
+    You act only on fresh <b>transitions</b> and top conviction, sized by the plan in each stock's drawer.
     <b style="color:#22d3ee">ANTICIPATION</b> = base forming, watch with zero capital.</div></div>
     <div class="card"><h2>Sector heat &mdash; avg RS percentile</h2><div class="heatgrid" id="heat"></div></div>
   </div></div>
@@ -673,6 +714,9 @@ main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:
 </div>
 
 <div class="overlay" id="ovl" onclick="closeDrawer()"></div>
+<div class="pal" id="pal"><div class="palbox">
+<input id="palq" placeholder="Search stocks — symbol or company&hellip;" autocomplete="off">
+<div class="pallist" id="pallist"></div></div></div>
 <div class="drawer" id="drawer"></div>
 <footer>Data: NSE constituents &middot; Yahoo OHLCV (verified vs Zerodha) &middot; screener.in public pages &middot; NSE announcements RSS &middot; Google News. Decision support only &mdash; not investment advice.</footer>
 </main>
@@ -702,10 +746,8 @@ $('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,'validated window, after c
 ['Payoff ratio',D.kpi.payoff,'avg win : avg loss']]
 .map(k=>`<div class="kpi"><span>${k[0]}</span><b>${k[1]}</b><span style="text-transform:none;letter-spacing:0">${k[2]}</span></div>`).join('');
 
-/* funnel */
-const fmax=Math.max(...D.funnel.map(f=>f[1]))||1;
-$('#funnel').innerHTML=D.funnel.map(f=>`<div class="frow"><div class="flabel">${f[0]}<span class="fsub">${f[2]}</span></div><div class="fbarwrap"><div class="fbar" style="width:0" data-w="${Math.max(f[1]/fmax*100,1.5)}"></div><span class="fnum">${f[1]}</span></div></div>`).join('');
-setTimeout(()=>document.querySelectorAll('.fbar').forEach(b=>b.style.width=b.dataset.w+'%'),80);
+/* funnel — one-line breadcrumb (context, not a decision surface) */
+$('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b> ${esc(f[0].toLowerCase())}</span>`).join('<span class="sep">&rsaquo;</span>');
 
 /* alerts */
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>`<div class="alert"><span class="ak">${esc(a.kind)}</span><span>${esc(a.text)}</span></div>`).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
@@ -923,6 +965,36 @@ cs.createPriceLine({price:pos.partial,color:'#34d399',lineStyle:2,title:'partial
 c.timeScale().fitContent();}};
 window.closeDrawer=function(){$('#drawer').classList.remove('open');$('#ovl').classList.remove('show');};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+
+/* command palette — Ctrl+K or / from anywhere; type, arrows, Enter -> drawer */
+(function(){
+const pal=$('#pal'),q=$('#palq'),list=$('#pallist');let idx=0,matches=[];
+const open=()=>{pal.classList.add('show');q.value='';filter('');setTimeout(()=>q.focus(),30)};
+const close=()=>pal.classList.remove('show');
+window.openPalette=open;
+const filter=s=>{s=s.trim().toUpperCase();
+ matches=(s?D.rows.filter(r=>r.sym.includes(s)||r.company.toUpperCase().includes(s)):D.rows.filter(r=>r.score!=null)).slice(0,40);
+ idx=0;render();};
+const render=()=>{list.innerHTML=matches.length?matches.map((r,i)=>`<div class="palrow${i===idx?' on':''}" data-i="${i}">
+ <span class="sym">${r.sym}</span>
+ <span class="dim" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(r.company)}</span>
+ ${r.score!=null?`<b class="mono" style="font-size:12px">${r.score}</b>`:''}
+ <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'}">${r.tag||''}</span></div>`).join('')
+ :'<div class="palempty">No match among the 611 watched stocks.</div>';
+ list.querySelectorAll('.palrow').forEach(el=>el.onclick=()=>{close();openDrawer(matches[+el.dataset.i].sym)});
+ const on=list.querySelector('.palrow.on');if(on)on.scrollIntoView({block:'nearest'});};
+q.oninput=()=>filter(q.value);
+document.addEventListener('keydown',e=>{
+ const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+ if((e.ctrlKey&&e.key.toLowerCase()==='k')||(e.key==='/'&&!typing&&!pal.classList.contains('show'))){
+  e.preventDefault();open();return;}
+ if(!pal.classList.contains('show'))return;
+ if(e.key==='Escape')close();
+ else if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,matches.length-1);render();}
+ else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);render();}
+ else if(e.key==='Enter'&&matches[idx]){close();openDrawer(matches[idx].sym);}});
+pal.onclick=e=>{if(e.target===pal)close();};
+})();
 
 /* positions */
 function drawPositions(){window._pos=1;const w=$('#poswrap');
