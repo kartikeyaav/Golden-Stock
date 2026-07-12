@@ -34,6 +34,7 @@ ONE-TIME AUTH SETUP (required before this layer works):
 from __future__ import annotations
 
 import csv
+import json
 import os
 import re
 import shutil
@@ -46,6 +47,25 @@ ALERTS_PATH = os.path.join(ROOT, "daily_alerts.md")
 PROTOCOL_PATH = os.path.join(ROOT, "analyst", "DEEP_DIVE_PROTOCOL.md")
 REPORTS_DIR = os.path.join(ROOT, "analyst_reports")
 VERDICTS_CSV = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
+HEALTH_PATH = os.path.join(ROOT, "state", "analyst_health.json")
+
+
+def write_health(status: str, note: str = "") -> None:
+    """Heartbeat the daily scan reads: status in {ok, failed, idle}. Preserves
+    the last successful timestamp so a run of failures is visible as a growing
+    gap, not just a single flag."""
+    prev = {}
+    if os.path.exists(HEALTH_PATH):
+        try:
+            prev = json.load(open(HEALTH_PATH, encoding="utf-8"))
+        except (ValueError, OSError):
+            prev = {}
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    os.makedirs(os.path.dirname(HEALTH_PATH), exist_ok=True)
+    with open(HEALTH_PATH, "w", encoding="utf-8") as f:
+        json.dump({"checked_at": now, "status": status, "note": note[:200],
+                   "last_success_at": now if status == "ok" else prev.get("last_success_at")},
+                  f, indent=1)
 
 MODEL = "claude-sonnet-5"      # capable + economical for a nightly memo
 MAX_DIVES_PER_DAY = 3
@@ -173,19 +193,24 @@ def main() -> None:
     candidates = extract_candidates(report)
     if not candidates:
         print("no buy-type alerts — analyst not needed tonight")
+        if not is_test:
+            write_health("idle", "no buy-type alerts tonight")
         return
 
     print(f"deep-diving {len(candidates)} name(s): {candidates}", flush=True)
     os.makedirs(REPORTS_DIR, exist_ok=True)
     verdict_lines = ["", "## AI analyst verdicts", ""]
+    n_ok, last_err = 0, ""
     for sym in candidates:
         card = extract_card(report, sym)
         memo, err = run_deep_dive(sym, card)
         if memo is None:
+            last_err = err or ""
             verdict_lines.append(f"**{sym}** — analyst unavailable ({err}) "
                                  "— review the card manually before acting")
             print(f"[{sym}] FAILED: {err}", flush=True)
             continue
+        n_ok += 1
         memo_path = os.path.join(REPORTS_DIR, f"{datetime.now():%Y-%m-%d}_{sym}.md")
         with open(memo_path, "w", encoding="utf-8") as f:
             f.write(memo)
@@ -206,6 +231,14 @@ def main() -> None:
     with open(alerts_path, "w", encoding="utf-8") as f:
         f.write(report)
     print(f"verdicts inserted into {alerts_path}")
+
+    # heartbeat: all attempts failing (auth/session) is the alarm case the
+    # daily scan surfaces — some succeeding counts as ok
+    if not is_test:
+        if n_ok > 0:
+            write_health("ok", f"{n_ok}/{len(candidates)} dives produced verdicts")
+        else:
+            write_health("failed", last_err or "all dives failed")
 
 
 if __name__ == "__main__":

@@ -315,6 +315,17 @@ def main() -> None:
         today_tags[sym] = t["tag"]
         tag_results[sym] = t
 
+    # FRESH nightly RS percentile across tonight's whole watched universe —
+    # the weekly focus_list.csv percentile is up to 6 days stale, and it feeds
+    # the 20-weight technical dimension. Rank the live rs_blend so the card's
+    # RS reflects today, not the last weekend (audit fix 2026-07-12).
+    rs_blends = {s: tr.get("rs", {}).get("rs_blend")
+                 for s, tr in tag_results.items()
+                 if tr.get("rs", {}).get("rs_blend") is not None}
+    if rs_blends:
+        rs_live = (pd.Series(rs_blends).rank(pct=True) * 100).round(1)
+        rs_by_sym = {**rs_by_sym, **rs_live.to_dict()}  # live wins; keep any focus-only names
+
     prev = load_state(args.state_file)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [f"# Daily scan — {now}", ""]
@@ -395,6 +406,29 @@ def main() -> None:
         feed_problems += [f"position drift: {p}" for p in sync_check()]
     except Exception:  # noqa: BLE001
         pass
+    # per-holding staleness: a renamed/suspended symbol freezes silently while
+    # the rest of the universe updates fine — the aggregate <80% check can't
+    # catch one frozen name you actually OWN (audit fix 2026-07-12)
+    for h in sorted(holdings):
+        hdf = load_ohlcv(h)
+        if hdf is None or hdf.empty:
+            feed_problems.append(f"HELD {h}: no price data cached — symbol renamed/suspended?")
+        else:
+            age = (datetime.now() - hdf["date"].iloc[-1]).days
+            if age > 5:
+                feed_problems.append(f"HELD {h}: price {age}d stale — likely renamed/suspended, "
+                                     "check the Yahoo ticker")
+    # AI analyst heartbeat: a persistent auth/session failure silently starves
+    # the verdicts + paper book; surface the last run's status loudly
+    ah_path = os.path.join(ROOT, "state", "analyst_health.json")
+    if os.path.exists(ah_path):
+        try:
+            ah = json.load(open(ah_path, encoding="utf-8"))
+            if ah.get("status") == "failed":
+                feed_problems.append(f"AI analyst last run FAILED ({ah.get('note', '')[:70]}) "
+                                     "— verdicts missing, review cards manually")
+        except (ValueError, KeyError):
+            pass
     problems = health_check(today_tags, symbols, extra_problems=feed_problems)
     if problems:
         lines = lines[:2] + problems + [""] + lines[2:]
