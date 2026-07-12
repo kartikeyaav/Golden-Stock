@@ -196,6 +196,15 @@ class CatalystConfig:
         "qip", "preferential issue", "buyback", "bonus issue", "export order",
         "approval", "patent", "launch",
     ])
+    # results / board-meeting intimations — surfaced as EVENT RISK context on
+    # the card (a breakout right before results is binary event risk; Minervini
+    # manages around earnings dates). NEVER a gate — the human sizes/times it.
+    results_event_keywords: List[str] = field(default_factory=lambda: [
+        "board meeting", "financial results", "quarterly results",
+        "audited results", "unaudited results", "outcome of board",
+        "consider and approve", "results for the quarter",
+    ])
+
     # governance/red-flag keywords — surfaced prominently for the HUMAN
     # (never an automated gate; the machine's vetoes stay data-based)
     red_flag_keywords: List[str] = field(default_factory=lambda: [

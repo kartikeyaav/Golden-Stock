@@ -69,11 +69,16 @@ def enrich(symbol: str, company_name: str) -> dict:
         for flag in _keyword_hits(h["text"], CATALYST.red_flag_keywords):
             tag = "" if h.get("trusted") else " [unverified source]"
             red_flags.append(f"'{flag}'{tag}: {h['text'][:85]}")
+    results_notices: list[dict] = []
     for f in filings:
         theme_hits.update(tag_government_themes(f["subject"]))
         event_hits.update(_keyword_hits(f["subject"], CATALYST.catalyst_event_keywords))
         for flag in _keyword_hits(f["subject"], CATALYST.red_flag_keywords):
             red_flags.append(f"[NSE FILING] '{flag}': {f['subject'][:90]}")
+        # results / board-meeting filings -> EVENT RISK context (binary event
+        # risk near a breakout; never gates, just informs the human's timing)
+        if _keyword_hits(f["subject"], CATALYST.results_event_keywords):
+            results_notices.append({"date": f.get("date"), "subject": f["subject"][:110]})
 
     # v0 sentiment: net over trusted headlines (-1..+1 average)
     sents = [h["sentiment"] for h in trusted if h.get("sentiment") is not None]
@@ -104,6 +109,7 @@ def enrich(symbol: str, company_name: str) -> dict:
         "themes": sorted(theme_hits),
         "events": sorted(event_hits),
         "red_flags": red_flags[:5],
+        "results_notices": results_notices[:3],
         "sentiment": net_sent, "sent_pos": pos_n, "sent_neg": neg_n,
         "catalyst_score": catalyst_score,
         "theme_score": theme_score,

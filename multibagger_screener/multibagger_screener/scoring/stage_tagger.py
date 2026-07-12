@@ -28,6 +28,7 @@ from config import STAGE, TECHNICAL
 from scoring.technical_score import (
     add_moving_averages,
     compute_atr,
+    detect_breakout,
     evaluate_trend_template,
     evaluate_vcp,
 )
@@ -168,6 +169,20 @@ def tag_stock(df: pd.DataFrame, bench_df: pd.DataFrame | None = None) -> dict:
     tt_checks_passed = sum(bool(v) for v in tt.checks.values()) if not tt.checks.get("insufficient_history") else 0
     vcp = evaluate_vcp(df_ma) if stage_info.get("stage") == 2 else {"valid": False}
 
+    # The BACKTESTED entry (backtest/engine.py generate_signals) is stricter
+    # than the CONFIRMED tag: it also requires a valid VCP pivot to be cleared
+    # TODAY on >=1.5x average volume. The tag alone (Stage 2 + trend template)
+    # fires on trend-following names that were never backtest entries, so we
+    # compute the exact breakout here and expose it — the alert can then say
+    # "validated entry (act)" vs "confirmed, watch the pivot". Labeling only;
+    # it does NOT change what fires (Design Law: no untested gates).
+    pivot_price = None
+    breakout = {"breakout": False, "price_cleared_pivot": False,
+                "volume_confirmed": False, "volume_vs_50d_avg": None}
+    if vcp.get("valid") and vcp.get("contractions"):
+        pivot_price = float(vcp["contractions"][-1]["peak_price"])
+        breakout = detect_breakout(df_ma, pivot_price)
+
     stage = stage_info.get("stage", 0)
     reasons: list[str] = []
 
@@ -212,6 +227,12 @@ def tag_stock(df: pd.DataFrame, bench_df: pd.DataFrame | None = None) -> dict:
         "trend_template_passed": bool(tt.passed),
         "trend_template_checks_passed": int(tt_checks_passed),
         "vcp_valid": bool(vcp.get("valid", False)),
+        "pivot_price": round(pivot_price, 2) if pivot_price else None,
+        "breakout_today": bool(breakout.get("breakout")),
+        "breakout_volume_ratio": breakout.get("volume_vs_50d_avg"),
+        # the alert is a real backtest entry ONLY when the CONFIRMED tag
+        # coincides with a fresh volume breakout over the VCP pivot
+        "validated_entry": bool(tag == "CONFIRMED" and breakout.get("breakout")),
         "last_close": float(df["close"].iloc[-1]),
         "last_date": str(df["date"].iloc[-1].date()),
     }

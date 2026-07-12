@@ -105,6 +105,15 @@ def build_payload() -> dict:
     dpath = os.path.join(ROOT, "shortlist_details.json")
     if os.path.exists(dpath):
         details = json.load(open(dpath, encoding="utf-8"))
+    # alert-time details from the nightly scan — every alerted name gets a
+    # full drawer, not just the weekly shortlist; alert data is fresher so
+    # it wins on collision
+    adpath = os.path.join(ROOT, "state", "alert_details.json")
+    if os.path.exists(adpath):
+        try:
+            details.update(json.load(open(adpath, encoding="utf-8")))
+        except ValueError:
+            pass
     ai_picks = {}
     ppath = os.path.join(ROOT, "ai_picks.json")
     if os.path.exists(ppath):
@@ -183,10 +192,47 @@ def build_payload() -> dict:
             "arch": "" if "untagged" in arch else arch[:26],
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
             "pgttm": f.get("profit_growth_ttm"),
+            "focus": True,
         })
 
-    # detail data: OHLC + fundamentals for shortlist + positions
-    detail_syms = list(ranked.get("symbol", [])) + list(positions.get("symbol", []))
+    # the scan watches (and alerts from) the WHOLE tagged universe — the
+    # screener must show those names too, or alerted stocks are unfindable
+    # (user-caught 2026-07-10). Non-focus names carry no RS percentile (that
+    # is a focus-list artifact) but get tag/price/cap/score like everyone.
+    ind_by_sym = dict(zip(universe.get("symbol", []), universe.get("industry", [])))
+    focus_syms = set(focus["symbol"]) if not focus.empty else set()
+    for sym, tg in tags.items():
+        if sym in focus_syms:
+            continue
+        f = fund_by_sym.get(sym, {})
+        closes[sym] = _closes(sym)
+        live_close = closes[sym][-1] if closes[sym] else None
+        mcap = _market_cap(sym)
+        if mcap is None:
+            mcap = f.get("market_cap_cr")
+        arch = str(arch_by_sym.get(sym, ""))
+        screener_rows.append({
+            "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
+            "ind": str(ind_by_sym.get(sym, ""))[:30],
+            "tag": tg,
+            "tier": cap_tier(mcap, ""),
+            "mcap": round(float(mcap), 0) if mcap is not None and pd.notna(mcap) else None,
+            "rs": None,
+            "close": live_close,
+            "turn": None,
+            "score": round(float(score_by_sym[sym]), 1) if sym in score_by_sym and pd.notna(score_by_sym[sym]) else None,
+            "veto": bool(veto_by_sym.get(sym, False)),
+            "arch": "" if "untagged" in arch else arch[:26],
+            "roce": f.get("roce_pct"), "pe": f.get("pe"),
+            "pgttm": f.get("profit_growth_ttm"),
+            "focus": False,
+        })
+
+    # detail data: OHLC + fundamentals for shortlist + positions + paper book
+    # + every recently-alerted name (details now includes alert_details.json)
+    paper_pos = _read_csv("paper_positions.csv")
+    detail_syms = (list(ranked.get("symbol", [])) + list(positions.get("symbol", []))
+                   + list(paper_pos.get("symbol", [])) + list(details.keys()))
     ohlc = {s: _ohlc(s) for s in dict.fromkeys(detail_syms)}
     fund_series = {s: _fund_series(s) for s in dict.fromkeys(detail_syms)}
 
@@ -246,6 +292,16 @@ def build_payload() -> dict:
         for _, v in vs.iterrows():
             verdict_by_sym[v["symbol"]] = (f"{v['verdict']}/{v.get('conviction', '')}"
                                            f"/{v.get('size', '')}")
+    # entry-fidelity labels per buy alert (journal/entry_signals.csv) — shows
+    # whether an alert was the exact backtested trigger or a watch-the-pivot
+    trigger_by_sym = {}
+    espath = os.path.join(ROOT, "journal", "entry_signals.csv")
+    if os.path.exists(espath):
+        es = pd.read_csv(espath)
+        es["logged_at"] = pd.to_datetime(es["logged_at"], errors="coerce")
+        for _, r in es[es["logged_at"] >= pd.Timestamp.now() - pd.Timedelta(days=7)].iterrows():
+            trigger_by_sym[r["symbol"]] = str(r.get("entry_status", ""))
+
     actionable = []
     if not journal.empty:
         jj = journal.copy()
@@ -267,11 +323,17 @@ def build_payload() -> dict:
                 status = "RAN AWAY"
             else:
                 status = "FADED"
+            # conviction: the alert-night number; older journal rows that
+            # predate a card fall back to the weekly shortlist score
+            conv = _num(r.get("conviction_score"), 0)
+            if conv is None and sym in score_by_sym and pd.notna(score_by_sym[sym]):
+                conv = round(float(score_by_sym[sym]), 0)
             actionable.append({
                 "sym": sym, "d": f"{r['logged_at']:%d %b}", "kind": str(r["kind"]),
                 "alert_px": alert_px, "now_px": now_px,
                 "chg": round((now_px / alert_px - 1) * 100, 1) if now_px and alert_px else None,
-                "conv": _num(r.get("conviction_score"), 0), "tag": tag_now,
+                "conv": conv, "tag": tag_now,
+                "trigger": trigger_by_sym.get(sym, ""),
                 "verdict": verdict_by_sym.get(sym, ""), "status": status})
 
     try:
@@ -307,6 +369,8 @@ def build_payload() -> dict:
         {"name": "E40 sector-heat gate", "exp": 0.22, "keep": False},
         {"name": "E60 sector-heat gate", "exp": 0.11, "keep": False},
         {"name": "V3a anticipation price-only", "exp": 0.06, "keep": False},
+        {"name": "SZ 16 slots (sizing matrix)", "exp": 1.15, "keep": False},
+        {"name": "SZ 20 slots (sizing matrix)", "exp": 0.89, "keep": False},
     ]
 
     return {
@@ -361,6 +425,19 @@ nav h1 span{color:var(--grn)}
 background:transparent;color:var(--dim);font:500 13.5px Inter;cursor:pointer;margin:2px 0;text-align:left;transition:.15s}
 .navbtn:hover{background:#131e31;color:var(--txt)}
 .navbtn.on{background:linear-gradient(90deg,#13251f,#12202f);color:var(--grn);font-weight:600}
+#runpanel{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.runhead{font-size:10px;letter-spacing:1.2px;color:#5f7089;padding:0 14px 8px;font-weight:700}
+.runbtn{display:block;width:100%;padding:9px 14px;border:1px solid #34d39933;border-radius:10px;
+background:#13251f66;color:var(--grn);font:600 12px Inter;cursor:pointer;margin:4px 0;text-align:left;transition:.15s}
+.runbtn:hover{background:#13251f;border-color:#34d39966}
+.runbtn:disabled{opacity:.4;cursor:not-allowed}
+.runnote{font-size:10px;color:#5f7089;line-height:1.5;padding:6px 14px 0}
+#runstatus{font-size:10.5px;line-height:1.55;padding:8px 6px 0;color:var(--dim)}
+#runstatus .runlog{background:#0a101c;border:1px solid var(--line);border-radius:8px;padding:7px 9px;
+margin-top:6px;max-height:180px;overflow-y:auto;font:10px/1.5 ui-monospace,Consolas,monospace;
+white-space:pre-wrap;word-break:break-all;color:#8aa0bd}
+@keyframes runpulse{50%{opacity:.45}}
+.runlive{color:var(--amb);animation:runpulse 1.2s infinite}
 main{margin-left:210px;flex:1;padding:26px 30px;max-width:1220px}
 .badge{padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.3px}
 .b-amb{background:#fbbf2418;color:var(--amb);border:1px solid #fbbf2444}
@@ -441,6 +518,7 @@ nav{position:static;width:100%;height:auto;display:flex;align-items:center;gap:2
 padding:10px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
 nav h1{padding:0 12px 0 2px;white-space:nowrap}
 .navbtn{width:auto;white-space:nowrap;padding:8px 11px;margin:0}
+#runpanel{display:none!important}
 main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:100vw;right:-100vw}}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
@@ -450,6 +528,14 @@ main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:
 <button class="navbtn" data-t="positions">&#9679; Positions</button>
 <button class="navbtn" data-t="journal">&#10148; Journal</button>
 <button class="navbtn" data-t="validation">&#10003; Validation</button>
+<div id="runpanel" style="display:none">
+  <div class="runhead">RUN (local server)</div>
+  <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + dashboard — no AI, no credits">&#8635; Daily scan (no AI)</button>
+  <button class="runbtn" data-job="daily_ai" title="adds the sonnet analyst, max 3 deep-dives — moderate credits">&#8635; Scan + AI analyst</button>
+  <button class="runbtn" data-job="weekly" title="full weekly refresh, AI committee SKIPPED — no Opus credits">&#8635; Weekly refresh (no AI)</button>
+  <div class="runnote">AI committee runs only from the scheduled weekly job &mdash; never from here (credit guard).</div>
+  <div id="runstatus"></div>
+</div>
 </nav>
 <main>
 <div class="top"><div id="badges"></div><div class="dim" style="font-size:12px" id="gen"></div></div>
@@ -463,7 +549,10 @@ main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:
     Alerts are one-night events; THIS list is what's still on the table. <b style="color:#34d399">ACTIONABLE</b> = setup
     still valid (CONFIRMED) &middot; <b style="color:#fbbf24">RAN AWAY</b> = extended, wait for a re-entry alert &middot;
     <b style="color:#64748b">FADED</b> = setup lost, no action &middot; <b style="color:#f87171">VETOED</b> = do not buy.
-    A faded signal is the system SAVING you from a stale entry, not changing its mind.</div>
+    A faded signal is the system SAVING you from a stale entry, not changing its mind.
+    Trigger: <b style="color:#34d399">VALIDATED</b> = exact backtested signal (pivot broken on volume — act) &middot;
+    <b style="color:#fbbf24">AWAITING TRIGGER</b> = VCP base live, watch the pivot &middot;
+    <b style="color:#64748b">NO VCP BASE</b> = trend read only, edge not established.</div>
     <div id="actionable"></div></div>
     <div class="card"><h2>Filtering funnel &mdash; tonight</h2><div id="funnel"></div></div>
     <div class="card"><h2>Tonight's alerts</h2><div id="alerts"></div></div>
@@ -592,11 +681,14 @@ if(D.verdicts){$('#verdictcard').style.display='block';$('#verdicts').textConten
 
 /* actionable now */
 const STC={ACTIONABLE:'#34d399','RAN AWAY':'#fbbf24',FADED:'#64748b',VETOED:'#f87171'};
+const TRC={'VALIDATED':'#34d399','AWAITING TRIGGER':'#fbbf24','NO VCP BASE':'#64748b'};
 $('#actionable').innerHTML=(D.actionable&&D.actionable.length)?
-`<table><thead><tr><th>Alerted</th><th>Symbol</th><th>Analyst</th><th>At ₹</th><th>Now ₹</th><th>Since</th><th>Status</th></tr></thead><tbody>`+
+`<table><thead><tr><th>Alerted</th><th>Symbol</th><th>Conv</th><th>Trigger</th><th>Analyst</th><th>At ₹</th><th>Now ₹</th><th>Since</th><th>Status</th></tr></thead><tbody>`+
 D.actionable.map(a=>`<tr onclick="openDrawer('${a.sym}')">
 <td class="dim mono">${a.d}</td>
-<td class="sym">${a.sym}${a.conv!=null?` <span class="axis">conv ${a.conv}</span>`:''}</td>
+<td class="sym">${a.sym}</td>
+<td class="mono">${a.conv??'—'}</td>
+<td>${a.trigger?`<span class="pill" style="border-color:${TRC[a.trigger]||'#475569'};color:${TRC[a.trigger]||'#94a3b8'};font-size:9.5px">${a.trigger}</span>`:'<span class="dim">—</span>'}</td>
 <td class="dim" style="font-size:11.5px">${a.verdict?esc(a.verdict):'—'}</td>
 <td class="mono">${a.alert_px??''}</td><td class="mono">${a.now_px??''}</td>
 <td class="mono" style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':''}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</td>
@@ -622,7 +714,10 @@ let rows=D.rows.slice(),sortK='score',sortA=false,activeTags=new Set(Object.keys
 let activeTiers=new Set(['Micro','Small','Mid','Large','']);
 const inds=[...new Set(D.rows.map(r=>r.ind))].sort();
 $('#find').innerHTML+=inds.map(i=>`<option>${esc(i)}</option>`).join('');
-$('#tierfilters').innerHTML=['Micro','Small','Mid','Large'].map(t=>`<span class="chip" data-tier="${t}" style="border-color:${TIERC[t]}"><b style="color:${TIERC[t]}">${t}</b></span>`).join('');
+$('#tierfilters').innerHTML=['Micro','Small','Mid','Large'].map(t=>`<span class="chip" data-tier="${t}" style="border-color:${TIERC[t]}"><b style="color:${TIERC[t]}">${t}</b></span>`).join('')
++`<span class="chip off" data-focus style="border-color:#7c8db0" title="show only the ~320-name RS focus list (reporting view); off = full watched universe"><b style="color:#94a3b8">Focus only</b></span>`;
+let focusOnly=false;
+document.querySelector('[data-focus]').onclick=e=>{focusOnly=!focusOnly;e.currentTarget.classList.toggle('off',!focusOnly);render();};
 $('#tagfilters').innerHTML=Object.keys(TC).map(t=>`<span class="chip" data-tag="${t}" style="border-color:${TC[t]}"><b style="color:${TC[t]}">${t}</b></span>`).join('');
 document.querySelectorAll('[data-tag]').forEach(c=>c.onclick=()=>{const t=c.dataset.tag;
 activeTags.has(t)?(activeTags.delete(t),c.classList.add('off')):(activeTags.add(t),c.classList.remove('off'));render();});
@@ -633,7 +728,7 @@ document.querySelectorAll('#tbl th[data-k]').forEach(th=>th.onclick=()=>{const k
 sortA=(sortK===k)?!sortA:false;sortK=k;render();});
 function fmtCr(v){if(v==null)return'';return v>=1000?'₹'+(v/1000).toFixed(1)+'k Cr':'₹'+Math.round(v)+' Cr';}
 function render(){const q=$('#q').value.toUpperCase(),ind=$('#find').value;
-let out=rows.filter(r=>activeTags.has(r.tag)&&activeTiers.has(r.tier)&&(!ind||r.ind===ind)&&(r.sym.includes(q)||r.company.toUpperCase().includes(q)));
+let out=rows.filter(r=>activeTags.has(r.tag)&&activeTiers.has(r.tier)&&(!focusOnly||r.focus)&&(!ind||r.ind===ind)&&(r.sym.includes(q)||r.company.toUpperCase().includes(q)));
 out.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;
 if(typeof x==='string')return sortA?x.localeCompare(y):y.localeCompare(x);return sortA?x-y:y-x;});
 $('#count').textContent=out.length+' stocks';
@@ -728,10 +823,10 @@ window.openDrawer=function(sym){const d=$('#drawer');const r=D.rows.find(x=>x.sy
 const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
 d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
 <h1 style="font-size:20px">${sym} <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${r.tag||''}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
-<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · conviction ${r.score??'—'}${r.arch?' · '+esc(r.arch):''}</div>
+<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · conviction ${r.score??(D.details[sym]&&D.details[sym].score!=null?D.details[sym].score+(D.details[sym].label==='Technical Read'?' (technical read)':''):'—')}${r.arch?' · '+esc(r.arch):''}</div>
 ${planSection(sym,r)}
 ${whySection(sym)}
-<div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">price chart available for shortlist + positions</div>'}</div>
+<div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">chart not cached for this name yet — it loads with the next scan alert or weekly refresh (or run: python scripts/enrich.py '+sym+')</div>'}</div>
 ${newsSection(sym)}
 <div class="minis">
 <div class="mini"><h3>Quarterly net profit (₹ Cr per quarter)</h3>${miniBars(f.q_labels||[],f.np||[])}</div>
@@ -866,6 +961,50 @@ const a=c.addAreaSeries({lineColor:'#34d399',topColor:'#34d39922',bottomColor:'t
 a.setData(D.equity.map(p=>({time:p[0],value:p[1]})));c.timeScale().fitContent();}
 $('#matrix').innerHTML=D.matrix.map(m=>{const w=m.exp/1.27*100;
 return `<div class="mbar"><div class="mlabel">${m.name}</div><div class="mtrack"><div class="mfill" style="width:${Math.max(w,2)}%;background:${m.keep?'linear-gradient(90deg,#34d399,#22d3ee)':'#47556999'}"></div></div><b class="mono" style="min-width:56px">${m.exp>0?'+':''}${m.exp}R</b></div>`}).join('');
+
+/* run panel — lights up ONLY when served by scripts/dashboard_server.py.
+   Opened as a plain file (file://) the fetch fails and the panel stays
+   hidden, so dashboard.html keeps working standalone. The AI committee is
+   not runnable from here at all (credit guard lives server-side too). */
+(async()=>{
+ let st;
+ try{const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok)return;st=await r.json();}
+ catch(e){return}
+ $('#runpanel').style.display='block';
+ const btns=[...document.querySelectorAll('.runbtn[data-job]')],status=$('#runstatus');
+ let baseMtime=st.dashboard_mtime,timer=null;
+ const render=s=>{
+  btns.forEach(b=>b.disabled=s.running);
+  if(s.running){
+   status.innerHTML=`<span class="runlive">&#9679; ${esc(s.job)} running since ${esc(s.started_at)}</span>`+
+    `<div class="runlog">${esc((s.log||[]).slice(-14).join('\n'))}</div>`;
+   const lg=status.querySelector('.runlog');lg.scrollTop=lg.scrollHeight;
+  }else if(s.finished_at){
+   const fresh=s.dashboard_mtime>baseMtime;
+   status.innerHTML=(s.exit_ok
+    ?`<span style="color:var(--grn)">&#10003; ${esc(s.job)} done at ${esc(s.finished_at)}</span>`
+    :`<span style="color:var(--red)">&#10007; ${esc(s.job)} FAILED at ${esc(s.finished_at)}</span>`+
+     `<div class="runlog">${esc((s.log||[]).slice(-14).join('\n'))}</div>`)+
+    (fresh?`<button class="runbtn" style="margin-top:7px" onclick="location.reload()">&#8635; Reload fresh data</button>`:'');
+  }else status.textContent='';
+ };
+ const poll=async()=>{
+  try{const q=await fetch('/api/status',{cache:'no-store'});st=await q.json();render(st);
+   if(!st.running&&timer){clearInterval(timer);timer=null;}}
+  catch(e){if(timer){clearInterval(timer);timer=null;}
+   status.innerHTML='<span style="color:var(--red)">server stopped</span>';}
+ };
+ render(st);
+ if(st.running)timer=setInterval(poll,2000);
+ btns.forEach(b=>b.onclick=async()=>{
+  if(!confirm('Run "'+b.textContent.trim().replace(/^\S+\s/,'')+'" now?'))return;
+  baseMtime=st.dashboard_mtime;
+  const q=await fetch('/api/run/'+b.dataset.job,{method:'POST'});
+  if(q.status===409){alert('A job is already running — wait for it to finish.');return;}
+  if(!timer)timer=setInterval(poll,2000);
+  poll();
+ });
+})();
 </script></body></html>"""
 
 
