@@ -336,6 +336,28 @@ def build_payload() -> dict:
                 "trigger": trigger_by_sym.get(sym, ""),
                 "verdict": verdict_by_sym.get(sym, ""), "status": status})
 
+    # decision-first ordering + a plain-English instruction per row (the
+    # panel is the action surface — it must answer "so what do I DO?")
+    def _do(a):
+        if a["status"] == "VETOED":
+            return "DO NOT BUY", "veto"
+        if a["status"] == "FADED":
+            return "IGNORE — setup gone", "mute"
+        if a["status"] == "RAN AWAY":
+            return "WAIT — re-entry alert will fire", "warn"
+        if a["trigger"] == "VALIDATED":
+            return "BUY SETUP — plan in drawer", "act"
+        if a["trigger"] == "AWAITING TRIGGER":
+            return "WATCH — buy only on pivot breakout", "watch"
+        return "WEAK — trend only, no proven trigger", "weak"
+    _srank = {"ACTIONABLE": 0, "RAN AWAY": 1, "FADED": 2, "VETOED": 3}
+    _trank = {"VALIDATED": 0, "AWAITING TRIGGER": 1, "NO VCP BASE": 2, "": 3}
+    for a in actionable:
+        a["do"], a["dokind"] = _do(a)
+    actionable.sort(key=lambda a: (_srank.get(a["status"], 9),
+                                   _trank.get(a["trigger"], 9),
+                                   -(a["conv"] or 0)))
+
     try:
         paper = paper_summary()
     except Exception:  # noqa: BLE001 — dashboard must build even if paper book breaks
@@ -357,6 +379,8 @@ def build_payload() -> dict:
                 for i, r in g.iterrows()][:18]
 
     matrix = [
+        {"name": "SZ2-B equity-basis sizing (ADOPTED)", "exp": 1.67, "keep": True},
+        {"name": "SZ2-B deployment stress", "exp": 1.10, "keep": True},
         {"name": "A technical baseline", "exp": 1.27, "keep": True},
         {"name": "F2 fund lot-split", "exp": 1.27, "keep": False},
         {"name": "F1 core patience", "exp": 1.25, "keep": False},
@@ -394,7 +418,10 @@ def build_payload() -> dict:
         "actionable": actionable, "paper": paper,
         "outcomes": out_stats, "equity": equity, "nifty": nifty,
         "heat": heat, "matrix": matrix,
-        "kpi": {"exp": "+1.27R", "cagr": "21.5%", "dd": "-12.9%", "payoff": "8.3:1"},
+        # sizing matrix v2 (2026-07-12): equity-basis sizing adopted — the old
+        # 21.5% figure was a cash-basis measurement artifact. Ideal-fill /
+        # stressed pairs shown; stress = next-open fills + gap stops + costs.
+        "kpi": {"exp": "+1.67R", "cagr": "47% / 33%", "dd": "-18.5 / -20.7%", "payoff": "9.6:1"},
     }
 
 
@@ -512,6 +539,12 @@ padding:7px 13px;cursor:pointer;font-weight:700}
 .legendline{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
 footer{color:#546480;font-size:10.5px;margin-top:24px;line-height:1.7}
 .tab{display:none}.tab.on{display:block}
+.acthead{font-size:13.5px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.dochip{display:inline-block;padding:3px 9px;border-radius:7px;border:1px solid;font-size:10.5px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
+details.actrest{margin-top:10px}
+details.actrest summary{cursor:pointer;color:var(--dim);font-size:12px;padding:6px 0}
+details.actrest summary:hover{color:var(--txt)}
+details.actrest table{opacity:.75}
 @media(max-width:1000px){
 body{flex-direction:column}
 nav{position:static;width:100%;height:auto;display:flex;align-items:center;gap:2px;
@@ -546,13 +579,11 @@ main{margin:0;padding:16px}.grid2,.kpis{grid-template-columns:1fr}.drawer{width:
   <div class="grid2"><div>
     <div class="card" style="border-color:#34d39944"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days</h2>
     <div class="legendline" style="border:0;padding:0;margin:0 0 10px;font-size:11.5px">
-    Alerts are one-night events; THIS list is what's still on the table. <b style="color:#34d399">ACTIONABLE</b> = setup
-    still valid (CONFIRMED) &middot; <b style="color:#fbbf24">RAN AWAY</b> = extended, wait for a re-entry alert &middot;
-    <b style="color:#64748b">FADED</b> = setup lost, no action &middot; <b style="color:#f87171">VETOED</b> = do not buy.
-    A faded signal is the system SAVING you from a stale entry, not changing its mind.
-    Trigger: <b style="color:#34d399">VALIDATED</b> = exact backtested signal (pivot broken on volume — act) &middot;
-    <b style="color:#fbbf24">AWAITING TRIGGER</b> = VCP base live, watch the pivot &middot;
-    <b style="color:#64748b">NO VCP BASE</b> = trend read only, edge not established.</div>
+    This is the ONLY panel you act from. Each row tells you what to do:
+    <b style="color:#34d399">BUY SETUP</b> = the exact backtested trigger fired (pivot broken on volume) — open the drawer for the plan &middot;
+    <b style="color:#fbbf24">WATCH</b> = good base, breakout not confirmed yet &middot;
+    <b style="color:#94a3b8">WEAK</b> = uptrend without the proven trigger &middot;
+    everything under "resolved" needs no action (a faded signal is the system SAVING you from a stale entry).</div>
     <div id="actionable"></div></div>
     <div class="card"><h2>Filtering funnel &mdash; tonight</h2><div id="funnel"></div></div>
     <div class="card"><h2>Tonight's alerts</h2><div id="alerts"></div></div>
@@ -665,8 +696,8 @@ $('#badges').innerHTML=(D.defensive?'<span class="badge b-amb">DEFENSIVE — HAL
 
 /* KPIs */
 $('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,'validated window, after costs'],
-['CAGR (directional)',D.kpi.cagr,'survivor-biased backtest'],
-['Max drawdown',D.kpi.dd,'window baseline'],
+['CAGR ideal / stressed',D.kpi.cagr,'survivor-biased; stressed = next-open fills + gap stops'],
+['Max drawdown',D.kpi.dd,'ideal / stressed · circuit breaker -25%'],
 ['Payoff ratio',D.kpi.payoff,'avg win : avg loss']]
 .map(k=>`<div class="kpi"><span>${k[0]}</span><b>${k[1]}</b><span style="text-transform:none;letter-spacing:0">${k[2]}</span></div>`).join('');
 
@@ -679,21 +710,34 @@ setTimeout(()=>document.querySelectorAll('.fbar').forEach(b=>b.style.width=b.dat
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>`<div class="alert"><span class="ak">${esc(a.kind)}</span><span>${esc(a.text)}</span></div>`).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
 if(D.verdicts){$('#verdictcard').style.display='block';$('#verdicts').textContent=D.verdicts;}
 
-/* actionable now */
+/* actionable now — decision-first: headline verdict, DO instruction per row,
+   action rows on top, resolved rows collapsed */
 const STC={ACTIONABLE:'#34d399','RAN AWAY':'#fbbf24',FADED:'#64748b',VETOED:'#f87171'};
-const TRC={'VALIDATED':'#34d399','AWAITING TRIGGER':'#fbbf24','NO VCP BASE':'#64748b'};
-$('#actionable').innerHTML=(D.actionable&&D.actionable.length)?
-`<table><thead><tr><th>Alerted</th><th>Symbol</th><th>Conv</th><th>Trigger</th><th>Analyst</th><th>At ₹</th><th>Now ₹</th><th>Since</th><th>Status</th></tr></thead><tbody>`+
-D.actionable.map(a=>`<tr onclick="openDrawer('${a.sym}')">
-<td class="dim mono">${a.d}</td>
-<td class="sym">${a.sym}</td>
-<td class="mono">${a.conv??'—'}</td>
-<td>${a.trigger?`<span class="pill" style="border-color:${TRC[a.trigger]||'#475569'};color:${TRC[a.trigger]||'#94a3b8'};font-size:9.5px">${a.trigger}</span>`:'<span class="dim">—</span>'}</td>
-<td class="dim" style="font-size:11.5px">${a.verdict?esc(a.verdict):'—'}</td>
-<td class="mono">${a.alert_px??''}</td><td class="mono">${a.now_px??''}</td>
-<td class="mono" style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':''}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</td>
-<td><span class="pill" style="border-color:${STC[a.status]};color:${STC[a.status]}">${a.status}</span></td></tr>`).join('')+
-'</tbody></table>':'<div class="quiet">No buy signals in the last 7 days.</div>';
+const DOC={act:'#34d399',watch:'#fbbf24',weak:'#94a3b8',warn:'#fbbf24',mute:'#64748b',veto:'#f87171'};
+(function(){
+const all=D.actionable||[];
+if(!all.length){$('#actionable').innerHTML='<div class="quiet">No buy signals in the last 7 days.</div>';return;}
+const dec=all.filter(a=>a.status==='ACTIONABLE'),rest=all.filter(a=>a.status!=='ACTIONABLE');
+const nv=dec.filter(a=>a.dokind==='act').length,nw=dec.filter(a=>a.dokind==='watch').length,nk=dec.length-nv-nw;
+let h=`<div class="acthead">${nv
+ ?`<b style="color:#34d399">&#9679; ${nv} validated buy trigger${nv>1?'s':''} — act today</b>`
+ :`<b style="color:#94a3b8">&#9675; No validated triggers right now — nothing requires action.</b>`}
+ <span class="dim" style="font-size:11.5px">${nw} awaiting pivot &middot; ${nk} weak-trigger &middot; ${rest.length} resolved</span></div>`;
+const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
+ return `<tr onclick="openDrawer('${a.sym}')">
+ <td><span class="dochip" style="background:${c}14;color:${c};border-color:${c}55">${a.do}</span></td>
+ <td class="sym">${a.sym}</td>
+ <td class="mono">${a.conv??'—'}</td>
+ <td class="dim" style="font-size:11.5px">${a.verdict?esc(a.verdict):'—'}</td>
+ <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
+ <td class="dim mono">${a.d}</td></tr>`};
+if(dec.length)h+=`<table><thead><tr><th>What to do</th><th>Symbol</th><th>Conv</th><th>Analyst</th><th>Alert &rarr; now</th><th>Alerted</th></tr></thead><tbody>`
+ +dec.map(row).join('')+'</tbody></table>';
+else h+='<div class="quiet">No live setups among recent signals.</div>';
+if(rest.length)h+=`<details class="actrest"><summary>${rest.length} resolved signal${rest.length>1?'s':''} — ran away / faded / vetoed (no action)</summary>
+<table><thead><tr><th>What to do</th><th>Symbol</th><th>Conv</th><th>Analyst</th><th>Alert &rarr; now</th><th>Alerted</th></tr></thead><tbody>`
+ +rest.map(row).join('')+'</tbody></table></details>';
+$('#actionable').innerHTML=h;})();
 
 /* tag board */
 $('#tagboard').innerHTML=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<div class="chip" style="border-color:${TC[t]||'#475569'}"><b style="color:${TC[t]||'#94a3b8'}">${t}</b><span>${c}</span></div>`).join('');

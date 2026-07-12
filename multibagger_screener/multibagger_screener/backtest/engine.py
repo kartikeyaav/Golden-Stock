@@ -163,20 +163,29 @@ class Portfolio:
 
     def open_position(self, name: str, date, entry_price: float, stop_price: float,
                       trading_fraction: Optional[float] = None,
-                      risk_scale: float = 1.0) -> Optional[Trade]:
+                      risk_scale: float = 1.0,
+                      sizing_base: Optional[float] = None) -> Optional[Trade]:
         """Risk-normalized sizing: shares = risk budget / stop distance, then
         capped by max position value and available cash. Splits into lots.
         trading_fraction overrides the fixed config split (matrix v2 config F2);
-        risk_scale multiplies the risk budget (matrix v3b regime sizing)."""
+        risk_scale multiplies the risk budget (matrix v3b regime sizing).
+        sizing_base: base the %% sizing on this figure (e.g. total equity —
+        sizing matrix v2, 2026-07-12) instead of remaining cash. Cash-basis
+        (default) undersizes late entries: with ~73%% deployed, 1.25%% of the
+        leftover cash is ~0.3%% of the portfolio."""
         risk_per_share = entry_price - stop_price
         if risk_per_share <= 0:
             return None
-        risk_capital = self.cash * RISK.risk_per_trade_pct / 100 * risk_scale
+        base = self.cash if sizing_base is None else sizing_base
+        risk_capital = base * RISK.risk_per_trade_pct / 100 * risk_scale
         shares = int(risk_capital // risk_per_share)
 
-        max_value = self.cash * RISK.max_position_value_pct / 100
+        max_value = base * RISK.max_position_value_pct / 100
         if shares * entry_price > max_value:
             shares = int(max_value // entry_price)
+        # equity-basis sizing can want more than the cash on hand — clamp
+        if shares * entry_price > self.cash:
+            shares = int(self.cash // entry_price)
 
         cost = shares * entry_price
         if shares <= 0 or cost > self.cash:
@@ -218,12 +227,14 @@ class Portfolio:
             self.closed_trades.append(trade)
             del self.open_trades[trade.name]
 
-    def mark_to_market(self, date, last_prices: dict[str, float]):
-        positions_value = sum(
+    def total_equity(self, last_prices: dict[str, float]) -> float:
+        return self.cash + sum(
             t.remaining_shares * last_prices.get(t.name, t.entry_price)
             for t in self.open_trades.values()
         )
-        self.equity_curve.append({"date": date, "equity": self.cash + positions_value})
+
+    def mark_to_market(self, date, last_prices: dict[str, float]):
+        self.equity_curve.append({"date": date, "equity": self.total_equity(last_prices)})
 
 
 # ---------------------------------------------------------------------------
@@ -242,6 +253,10 @@ def run_backtest(
     risk_scale: Optional[pd.Series] = None,  # matrix v3b: date-indexed risk multiplier
                                              # (e.g. 0.5 when the index is below its
                                              # 150-DMA) — sizing, never a filter
+    size_on: str = "cash",               # sizing matrix v2: "equity" bases the risk %
+                                         # and value cap on marked-to-market equity
+                                         # (fixed-fractional standard) instead of
+                                         # remaining cash; fills still cash-clamped
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """signals_by_stock: {name: generate_signals(...) output}.
     Returns (trades_df — ONE ROW PER LOT, equity_curve_df).
@@ -373,10 +388,13 @@ def run_backtest(
             for _, name, entry_price, stop_distance, trading_fraction in candidates:
                 if len(portfolio.open_trades) >= RISK.max_open_positions:
                     break
+                sizing_base = (portfolio.total_equity(last_prices)
+                               if size_on == "equity" else None)
                 trade = portfolio.open_position(name, date, entry_price,
                                                 entry_price - stop_distance,
                                                 trading_fraction=trading_fraction,
-                                                risk_scale=scale)
+                                                risk_scale=scale,
+                                                sizing_base=sizing_base)
                 if trade is not None:
                     last_prices[name] = entry_price
 
