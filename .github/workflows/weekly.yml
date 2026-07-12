@@ -1,0 +1,71 @@
+name: Weekly refresh (cloud)
+
+# Full weekly rebuild in the cloud: universe -> prices -> focus list ->
+# fundamentals -> ranked shortlist -> (AI committee if key set) -> dashboard.
+# Sunday 10:00 IST = 04:30 UTC. NSE rebalances indices only in Mar/Sep, so a
+# weekly universe refresh is plenty. Also runnable on demand.
+on:
+  schedule:
+    - cron: "30 4 * * 0"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: golden-stock-pipeline
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: multibagger_screener/multibagger_screener
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180   # fundamentals scrape of the shortlist is the long pole
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "pandas>=2.0" "numpy>=1.24"
+
+      - name: Restore data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            multibagger_screener/multibagger_screener/data_cache
+            multibagger_screener/multibagger_screener/fundamentals_cache
+          key: golden-data-${{ github.run_id }}
+          restore-keys: golden-data-
+
+      # --no-ai keeps the credit-burning committee out of the automatic run
+      # UNLESS an API key is configured (then the committee runs on pay-per-use).
+      - name: Weekly refresh
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true
+            python scripts/weekly_refresh.py
+          else
+            python scripts/weekly_refresh.py --no-ai
+          fi
+
+      - name: Commit refreshed record
+        run: |
+          git config user.name "golden-stock-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f journal state/tags_state.json focus_list.csv universe.csv \
+                     shortlist_ranked.csv fundamentals_flat.csv ai_picks.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "cloud: weekly refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash origin master || true
+            git push origin HEAD:master
+          fi

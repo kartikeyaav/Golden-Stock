@@ -322,6 +322,31 @@ Audit-driven defensive fixes (all small, all pure-defense, tests green):
 Still needs the USER (can't be done from here): Telegram BotFather token (#11),
 RISK.capital update to real equity for true fixed-fractional (#5).
 
+## 3J. Cloud migration — GitHub Actions (2026-07-12)
+
+The job now runs in the cloud so it fires 365 nights regardless of the laptop.
+`.github/workflows/daily.yml` (18:35 IST / 13:05 UTC Mon-Fri) + `weekly.yml`
+(Sun 10:00 IST / 04:30 UTC), both with a manual Run-workflow button. Full
+setup + operations in **CLOUD.md**. Design: price/fundamentals caches (75 MB)
+persist via actions/cache (rolling key); the forward record (journal,
+tags_state.json diff-baseline, alerts, positions) is committed back to the repo
+each run (durable + offsite backup); the dashboard publishes to GitHub Pages
+(no git bloat) + a run artifact. AI analyst/committee run only if
+ANTHROPIC_API_KEY secret is set; Telegram only if its secrets are set — both
+degrade cleanly otherwise.
+
+USER STEPS (see CLOUD.md): (1) Actions -> Run workflow once to prime the cache
+(first run = full backfill, baseline, no alerts — expected). (2) Settings ->
+Pages -> Source = GitHub Actions. (3) add secrets (TELEGRAM_*, ANTHROPIC_API_KEY).
+(4) **DISABLE the laptop tasks** (Disable-ScheduledTask MultibaggerDailyScan /
+MultibaggerWeeklyRefresh) — two runners both pushing the journal = conflicts.
+
+CANNOT be verified from this repo (no gh/API token here to read Action logs) —
+the first live run is user-triggered; iterate from its logs. TOP RISK: Yahoo
+(and screener.in) rate-limiting GitHub datacenter IPs — per-symbol failures are
+non-fatal + logged; if many fail, health check shouts. Laptop tasks still
+enabled + healthy (ran today) as the fallback until cloud is proven.
+
 ## 4. Live production state (as of 2026-07-09)
 
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
