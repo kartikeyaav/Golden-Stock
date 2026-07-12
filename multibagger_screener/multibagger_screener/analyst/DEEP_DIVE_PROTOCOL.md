@@ -18,7 +18,15 @@ receive contains all of it.
    (orders, capacity, pricing, sector cycle) or does it smell like one-offs?
    Check recent filings/news/concall coverage.
 3. CONTEXT: is the sector in favor or fighting a headwind right now?
-4. Anything material the card missed (M&A, litigation, big dilution planned).
+4. SECOND-ORDER: the card's keyword scan only sees news naming THIS company.
+   Scan the ecosystem for news that moves it while it stays quiet — its key
+   customers/end-markets (order books, capex cycles, demand guidance),
+   upstream suppliers and input prices, competitors (capacity adds, price
+   wars, market-share shifts), and regulation/tariffs anywhere on the value
+   chain. One or two targeted searches; cite the SPECIFIC transmission
+   channel ("largest customer froze capex", "China dumping cut realizations")
+   — generic sector commentary is worthless, skip it if you find no direct link.
+5. Anything material the card missed (M&A, litigation, big dilution planned).
 
 ## Hard rules (non-negotiable)
 - A veto on the card (pledge/leverage) = automatic SKIP. You cannot override.

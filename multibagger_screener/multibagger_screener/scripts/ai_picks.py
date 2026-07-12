@@ -29,7 +29,7 @@ import re
 import shutil
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROTOCOL = os.path.join(ROOT, "analyst", "PICKS_PROTOCOL.md")
@@ -82,6 +82,32 @@ def load_candidates(top_n: int):
     return cands
 
 
+def recent_analyst_verdicts(days: int = 14) -> str:
+    """The daily analyst's recent verdicts — cross-layer context for the
+    committee (overlap = confirmation; divergence = fine, different mandates;
+    rejecting a daily BUY must be explained — see PICKS_PROTOCOL task 4)."""
+    path = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
+    if not os.path.exists(path):
+        return ""
+    cutoff = datetime.now() - timedelta(days=days)
+    rows = []
+    with open(path, "r", encoding="utf-8", newline="") as f:
+        for r in csv.DictReader(f):
+            try:
+                logged = datetime.strptime(r["logged_at"], "%Y-%m-%d %H:%M")
+            except (ValueError, KeyError):
+                continue
+            if logged >= cutoff:
+                rows.append((logged, r))
+    if not rows:
+        return ""
+    lines = ["", f"RECENT DAILY-ANALYST VERDICTS (last {days}d, event-driven breakout dives):"]
+    for logged, r in rows:
+        lines.append(f"- {logged:%d %b} {r.get('symbol', '')}: {r.get('verdict', '')} "
+                     f"({r.get('conviction', '')}, {r.get('size', '')})")
+    return "\n".join(lines)
+
+
 def build_briefing(cands) -> str:
     lines = [f"CANDIDATES ({len(cands)} mechanically-qualified, all CONFIRMED + veto-passed):", ""]
     for c in cands:
@@ -89,7 +115,7 @@ def build_briefing(cands) -> str:
         lines.append(f"- {c['symbol']} ({c['company']}) | {c['sector']} | "
                      f"conviction {c['score']} | RS {c['rs']} | {c['archetype']}{flag}")
         lines.append(f"    {c['highlights']}")
-    return "\n".join(lines)
+    return "\n".join(lines) + recent_analyst_verdicts()
 
 
 def run_committee(briefing: str, model: str, thinking_tokens: int):
