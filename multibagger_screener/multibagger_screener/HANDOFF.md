@@ -294,6 +294,34 @@ discipline — more absolute return = more capital or accepting more DD.
   size_on="cash" so historical configs reproduce; matrices go equity-basis
   from here.
 
+## 3I. Hardening pass (2026-07-12)
+
+Audit-driven defensive fixes (all small, all pure-defense, tests green):
+- **Split/bonus guard** (update_prices.py `_adjustment_detected`): Yahoo
+  split-adjusts the whole series retroactively, so a split makes the 7-day
+  incremental overlap disagree with cache by the split factor — beyond any
+  circuit band. On >30% overlap deviation we refetch full history (consistent
+  scale, merge keep=last overwrites the mis-scaled rows). Prevents phantom
+  BROKEN alerts / wrong MAs+ATR the day any watched name splits. Unit-tested.
+- **Fresh nightly RS percentile** (daily_scan): the 20-weight technical
+  dimension was reading week-old focus_list percentile; now ranks tonight's
+  live rs_blend across the whole watched universe. Live value overrides the
+  weekly one in cards + journal.
+- **Per-holding staleness** (daily_scan health): each held symbol checked
+  individually (>5d stale or no data => loud alert) — the aggregate <80%
+  check can't catch one frozen name you OWN (rename/suspension).
+- **AI analyst heartbeat** (ai_analyst `write_health` -> state/analyst_health.json;
+  daily_scan reads it): a run where ALL dives fail (auth/session) writes
+  status=failed; the next scan shouts it. idle (no buy alerts) is not a
+  failure. Closes the silent-analyst-starvation gap.
+- **scripts/import_holdings.py**: update holdings.csv from a Zerodha Console
+  export (Portfolio->Holdings->download) — NO daily Kite login. Robust header
+  detection, prints add/update/gone diff, --dry-run. Does NOT touch
+  positions.csv. This is the standing answer to the SEBI daily-session friction.
+
+Still needs the USER (can't be done from here): Telegram BotFather token (#11),
+RISK.capital update to real equity for true fixed-fractional (#5).
+
 ## 4. Live production state (as of 2026-07-09)
 
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
