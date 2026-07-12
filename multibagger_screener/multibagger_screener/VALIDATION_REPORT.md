@@ -107,3 +107,28 @@ Every alert auto-appends to `journal/signals_journal.csv` (append-only);
 daily scan 18:35 IST, weekly refresh Sunday 10:00. Gate for real capital:
 journal expectancy within ~50% of backtest after a meaningful sample —
 position sizes stay small until then.
+
+## 6C. Sizing matrix v2 — equity-basis sizing (2026-07-12, pre-registered)
+
+The engine sized risk% and the value cap off REMAINING CASH; with ~73%
+average deployment this cut every late entry to ~0.3% real risk. The live
+system's plans size off configured capital, so the backtest was
+underreporting the live rules. Sweep (7 cells, entries identical):
+
+| config | pos | exp/R | CAGR(w) | maxDD | MAR | P2 R |
+|---|---|---|---|---|---|---|
+| A cash cap15 r1.25 (old read) | 109 | 1.294 | 22.5% | -12.9% | 1.75 | +0.218 |
+| B equity cap15 r1.25 (ADOPTED) | 96 | 1.667 | 47.4% | -18.5% | 2.57 | +0.312 |
+| C equity cap20 r1.25 | 102 | 1.513 | 47.0% | -18.2% | 2.59 | +0.245 |
+| D equity cap25 r1.25 | 100 | 1.569 | 44.5% | -18.4% | 2.42 | +0.206 |
+| E equity cap20 r1.75 | 96 | 1.485 | 50.0% | -21.0% | 2.38 | -0.026 |
+| F equity cap25 r1.75 | 90 | 1.860 | 58.0% | -22.2% | 2.62 | +0.319 |
+| G equity cap20 r2.50 | 96 | 1.451 | 53.8% | -22.7% | 2.37 | -0.069 |
+| B STRESS (next-open + gap stops) | 104 | 1.102 | 32.5% | -20.7% | 1.57 | +0.312 |
+
+Verdict: B adopted (sizing-basis correction only; cap stays 15%, risk stays
+1.25% — E/G turn the chop cohort negative and E/F/G breach the -20% DD
+bound). Honest planning number = the stress row. Caveats: survivor bias
+(directional), single ~2.9y window, microcap liquidity limits as equity
+compounds (revisit past ~1 Cr). Live action: update RISK.capital to actual
+account equity periodically; no code change (live never had the cash-drag).

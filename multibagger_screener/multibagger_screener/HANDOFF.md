@@ -270,6 +270,30 @@ lever (own pre-registered run + concentration-risk debate required). Bottom
 line: both obvious throttles tested; system is capacity-limited by its own
 discipline — more absolute return = more capital or accepting more DD.
 
+## 3H. Actionable panel redesign + sizing matrix v2 (2026-07-12)
+
+- **Actionable panel is now decision-first** (user: "if that's where I act, it
+  must be intuitive"): headline verdict line ("N validated buy triggers — act
+  today" / "No validated triggers — nothing requires action"), every row leads
+  with a plain-English DO chip (BUY SETUP / WATCH / WEAK / WAIT / IGNORE /
+  DO NOT BUY), rows sorted act-first (VALIDATED > AWAITING > WEAK, conv desc),
+  resolved signals (ran away/faded/vetoed) collapsed under a <details> toggle.
+- **Sizing matrix v2 — THE HEADLINE RESULT** (scripts/run_sizing_matrix2.py,
+  pre-registered; full table + verdict in sizing_matrix2_report.md):
+  the engine's cash-basis sizing was an artifact that undersized every late
+  entry (~0.3% real risk at 73% deployment). Config B (equity-basis, all
+  other rules IDENTICAL): window CAGR 22.5% -> **47.4%**, maxDD -12.9% ->
+  -18.5%, MAR 1.75 -> 2.57, P2 chop cohort IMPROVED. Deployment stress
+  (next-open fills + gap-aware stops + costs): **32.5% CAGR, -20.7% DD,
+  +1.10R** — the honest planning number. Cap relaxation adds nothing (cap
+  stays 15%); higher risk% rejected AGAIN (P2 negative + DD breach). ADOPTED
+  as the canonical baseline read; KPI strip now shows ideal/stressed pairs.
+  Live code needs NO change (live plans already size off RISK.capital, not
+  remaining cash) — but for true fixed-fractional the user should update
+  RISK.capital to actual account equity periodically. Engine default stays
+  size_on="cash" so historical configs reproduce; matrices go equity-basis
+  from here.
+
 ## 4. Live production state (as of 2026-07-09)
 
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
