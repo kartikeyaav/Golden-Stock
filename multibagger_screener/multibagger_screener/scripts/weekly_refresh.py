@@ -13,6 +13,7 @@ shortlist_report.md, shortlist_ranked.csv + a summary printed at the end.
 
     python scripts/weekly_refresh.py
     python scripts/weekly_refresh.py --skip-prices   # rerun logic only
+    python scripts/weekly_refresh.py --no-ai         # skip the AI committee (no claude credits)
 """
 
 from __future__ import annotations
@@ -51,6 +52,8 @@ def run_step(name: str, script: str, *script_args: str, fatal: bool = True) -> b
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-prices", action="store_true")
+    parser.add_argument("--no-ai", action="store_true",
+                        help="skip the AI committee (ai_picks.py) — no claude credits used")
     args = parser.parse_args()
 
     t0 = time.time()
@@ -61,7 +64,10 @@ def main() -> None:
     run_step("focus list", "build_focus_list.py")
     run_step("fundamentals (shortlist)", "fetch_fundamentals.py")
     run_step("ranked shortlist", "run_shortlist.py")
-    run_step("AI committee picks", "ai_picks.py", fatal=False)  # needs claude auth; skips cleanly if absent
+    if args.no_ai:
+        print("\n[AI committee] SKIPPED (--no-ai)")
+    else:
+        run_step("AI committee picks", "ai_picks.py", fatal=False)  # needs claude auth; skips cleanly if absent
     run_step("journal outcomes (forward scorecard)", "journal_outcomes.py", fatal=False)
     run_step("dashboard", "build_dashboard.py", fatal=False)
 

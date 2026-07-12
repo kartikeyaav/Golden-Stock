@@ -26,6 +26,24 @@ def render_card(name: str, tag_result: dict, conviction: ConvictionResult,
     lines.append("=" * 72)
     lines.append(f"{name}  [{tag}]   as of {tag_result.get('last_date')}")
     lines.append("=" * 72)
+    # entry fidelity: is this the exact backtested signal, or a trend name to
+    # watch? (Design Law: the +1.27R edge belongs to the volume breakout over a
+    # VCP pivot, not to the CONFIRMED tag alone.)
+    if tag == "CONFIRMED":
+        if tag_result.get("validated_entry"):
+            vr = tag_result.get("breakout_volume_ratio")
+            lines.append(f"  >> VALIDATED ENTRY: fresh breakout over pivot "
+                         f"{tag_result.get('pivot_price')} on "
+                         f"{vr}x avg volume — matches the backtested trigger")
+        elif tag_result.get("vcp_valid"):
+            lines.append(f"  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend "
+                         f"template, VCP base live — watch the pivot "
+                         f"{tag_result.get('pivot_price')} for a volume breakout "
+                         f"(not yet a backtested entry)")
+        else:
+            lines.append("  >> CONFIRMED, NO VCP BASE: trend-following read only "
+                         "— no volume-breakout trigger; the +1.27R edge is not "
+                         "established for this entry")
     lines.append(f"  {conviction.display()}")
     arch = " + ".join(archetypes) if archetypes else tag_result.get("archetype")
     lines.append(f"  Archetype: {arch}")
@@ -69,6 +87,11 @@ def render_card(name: str, tag_result: dict, conviction: ConvictionResult,
                          f" | themes: {', '.join(news['themes']) if news['themes'] else 'none'}")
             for flag in news.get("red_flags", []):
                 lines.append(f"    !! RED FLAG: {flag}")
+            for ev in news.get("results_notices", []):
+                d = ev["date"].strftime("%d-%b") if ev.get("date") else "--"
+                lines.append(f"    !! EVENT RISK [results/board mtg, {d}]: "
+                             f"{ev['subject']} — binary event risk near a breakout, "
+                             f"check the date before sizing")
             for f in news.get("filings", [])[:3]:
                 d = f["date"].strftime("%d-%b") if f.get("date") else "--"
                 lines.append(f"    [NSE {d}] {f['subject'][:90]}")

@@ -27,7 +27,7 @@ import csv
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 
@@ -53,6 +53,15 @@ JOURNAL_PATH = os.path.join(ROOT, "journal", "signals_journal.csv")
 JOURNAL_FIELDS = ["logged_at", "symbol", "kind", "old_tag", "new_tag", "close",
                   "atr", "stop_suggested", "conviction_score", "coverage_pct",
                   "vetoed", "veto_reasons", "rs_pctile", "archetypes"]
+
+# Separate, additive record of entry FIDELITY per buy alert — kept out of the
+# pristine signals_journal so we can later ask "did the alerts that were exact
+# backtested triggers (VALIDATED) outperform the CONFIRMED-but-no-breakout
+# ones?" without ever having gated the alerts on it. Own schema, own file.
+ENTRY_SIGNALS_PATH = os.path.join(ROOT, "journal", "entry_signals.csv")
+ENTRY_SIGNALS_FIELDS = ["logged_at", "symbol", "kind", "entry_status",
+                        "validated_entry", "close", "pivot_price",
+                        "breakout_today", "breakout_volume_ratio", "vcp_valid"]
 
 
 def health_check(today_tags: dict, symbols: list[str],
@@ -129,6 +138,29 @@ def journal_append(rows: list[dict]) -> None:
             w.writerow({k: r.get(k, "") for k in JOURNAL_FIELDS})
 
 
+def entry_signals_append(rows: list[dict]) -> None:
+    """Append entry-fidelity rows (buy/re-entry alerts only). Additive file."""
+    if not rows:
+        return
+    os.makedirs(os.path.dirname(ENTRY_SIGNALS_PATH), exist_ok=True)
+    new_file = not os.path.exists(ENTRY_SIGNALS_PATH)
+    with open(ENTRY_SIGNALS_PATH, "a", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=ENTRY_SIGNALS_FIELDS)
+        if new_file:
+            w.writeheader()
+        for r in rows:
+            w.writerow({k: r.get(k, "") for k in ENTRY_SIGNALS_FIELDS})
+
+
+def entry_status_of(tag_result: dict) -> str:
+    """Human label for how faithfully an alert matches the backtested trigger."""
+    if tag_result.get("validated_entry"):
+        return "VALIDATED"          # fresh volume breakout over VCP pivot
+    if tag_result.get("vcp_valid"):
+        return "AWAITING TRIGGER"   # VCP base live, pivot not yet cleared on volume
+    return "NO VCP BASE"            # trend-following read only
+
+
 def build_candidate(sym: str, tag_result: dict, industry: str | None,
                     rs_pctile: float | None, company_name: str = "") -> dict:
     """Conviction card + journal fields for an alerted name. Fundamentals and
@@ -153,10 +185,55 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     risk_scale = market_risk_scale()
     plan = compute_entry_plan(tag_result["last_close"], atr=atr,
                               risk_scale=risk_scale) if atr else {}
+
+    # structured detail blob for the dashboard drawer — SAME schema as
+    # run_shortlist's shortlist_details.json, so every alerted name gets the
+    # full why-this-score/plan/news drawer, not just the weekly shortlist 84
+    # (the "empty drawer on alerted stocks" gap, user-caught 2026-07-10)
+    plan_trim = {}
+    if plan and not plan.get("skip"):
+        keys = ("entry_price", "stop_loss_price", "risk_per_share", "shares_total",
+                "shares_trading_lot", "shares_core_lot", "position_value",
+                "capital_at_risk", "risk_scale")
+        plan_trim = {k: plan[k] for k in keys if k in plan}
+        plan_trim["breakeven_trigger"] = plan.get("breakeven_move_trigger_price")
+        plan_trim["partial_price"] = plan.get("partial_profit_price")
+    news_blob = None
+    if news.get("ok"):
+        news_blob = {
+            "count": news["headline_count"], "trusted": news.get("trusted_count", 0),
+            "sentiment": news.get("sentiment", 0.0),
+            "sent_pos": news.get("sent_pos", 0), "sent_neg": news.get("sent_neg", 0),
+            "themes": news["themes"], "events": news["events"],
+            "red_flags": news["red_flags"],
+            "filings": [{"d": str(f.get("date", ""))[:10], "t": f["subject"][:110]}
+                        for f in news.get("filings", [])[:3]],
+            "headlines": [{"d": h["date"].strftime("%d %b"), "t": h["text"][:110],
+                           "s": h["source"], "tr": h.get("trusted", False),
+                           "sn": h.get("sentiment", 0)}
+                          for h in news.get("headlines", [])[:5]],
+        }
+    detail = {
+        "alerted_at": datetime.now().strftime("%Y-%m-%d"),
+        "score": conviction.score, "coverage": conviction.coverage_pct,
+        "label": conviction.label,
+        "reasons": tag_result.get("reasons", []),
+        "stage_name": tag_result.get("stage", {}).get("stage_name", ""),
+        "tt_checks": tag_result.get("trend_template_checks_passed", 0),
+        "vcp": tag_result.get("vcp_valid", False),
+        "dims": [{"k": d["key"], "w": d["weight"], "s": d["score"],
+                  "live": d["live"], "n": str(d["notes"])[:220]}
+                 for d in conviction.per_dimension],
+        "veto_reasons": conviction.veto_reasons,
+        "plan": plan_trim,
+        "news": news_blob,
+    }
+
     return {
         "card": render_card(sym, tag_result, conviction, atr=atr,
                             archetypes=archetypes, dim_notes=True, news=news,
                             risk_scale=risk_scale),
+        "detail": detail,
         "close": tag_result["last_close"],
         "atr": round(atr, 2) if atr else "",
         "stop_suggested": plan.get("stop_loss_price", ""),
@@ -166,6 +243,27 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
         "veto_reasons": "; ".join(conviction.veto_reasons),
         "archetypes": " + ".join(archetypes) if archetypes else "",
     }
+
+
+def save_alert_details(new: dict) -> None:
+    """Merge alert-time drawer details into state/alert_details.json.
+    Entries expire after 30 days (the drawer only needs recent alerts;
+    the weekly shortlist file covers the standing names)."""
+    if not new:
+        return
+    path = os.path.join(ROOT, "state", "alert_details.json")
+    data = {}
+    if os.path.exists(path):
+        try:
+            data = json.load(open(path, encoding="utf-8"))
+        except ValueError:
+            data = {}
+    cutoff = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+    data = {s: d for s, d in data.items() if str(d.get("alerted_at", "")) >= cutoff}
+    data.update(new)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, default=str)
 
 
 def main() -> None:
@@ -222,6 +320,8 @@ def main() -> None:
     lines = [f"# Daily scan — {now}", ""]
     cards: list[str] = []
     journal_rows: list[dict] = []
+    entry_signal_rows: list[dict] = []
+    alert_details: dict[str, dict] = {}
 
     if prev is None:
         lines.append(f"Baseline established for {len(today_tags)} names — no alerts on first run.")
@@ -252,18 +352,31 @@ def main() -> None:
             lines.append(f"{len(alerts)} alert(s):")
             lines.append("")
             for kind, sym, old, new in alerts:
-                lines.append(f"- **{kind}**: {sym}  ({old} -> {new})")
+                tr = tag_results[sym]
                 row = {"logged_at": now, "symbol": sym, "kind": kind,
                        "old_tag": old, "new_tag": new,
                        "rs_pctile": rs_by_sym.get(sym, "")}
                 if kind in ("BUY CANDIDATE", "RE-ENTRY WINDOW"):
-                    cand = build_candidate(sym, tag_results[sym],
+                    status = entry_status_of(tr)
+                    lines.append(f"- **{kind}** [{status}]: {sym}  ({old} -> {new})")
+                    entry_signal_rows.append({
+                        "logged_at": now, "symbol": sym, "kind": kind,
+                        "entry_status": status,
+                        "validated_entry": tr.get("validated_entry"),
+                        "close": tr["last_close"], "pivot_price": tr.get("pivot_price"),
+                        "breakout_today": tr.get("breakout_today"),
+                        "breakout_volume_ratio": tr.get("breakout_volume_ratio"),
+                        "vcp_valid": tr.get("vcp_valid"),
+                    })
+                    cand = build_candidate(sym, tr,
                                            industry_by_sym.get(sym), rs_by_sym.get(sym),
                                            company_name=company_by_sym.get(sym, sym))
                     cards.append(cand.pop("card"))
+                    alert_details[sym] = cand.pop("detail")
                     row.update(cand)
                 else:
-                    row["close"] = tag_results[sym]["last_close"]
+                    lines.append(f"- **{kind}**: {sym}  ({old} -> {new})")
+                    row["close"] = tr["last_close"]
                 journal_rows.append(row)
         if infos:
             lines.append("")
@@ -288,6 +401,8 @@ def main() -> None:
 
     save_state(args.state_file, today_tags)
     journal_append(journal_rows)
+    entry_signals_append(entry_signal_rows)
+    save_alert_details(alert_details)
 
     report = "\n".join(lines)
     if cards:

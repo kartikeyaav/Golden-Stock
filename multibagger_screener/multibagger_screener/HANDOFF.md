@@ -174,6 +174,102 @@ header shows "prices as of <date>").
   KPIs, open paper positions, pending fills, recent ledger) above the
   clearly-labeled "Real positions" section.
 
+## 3D. Entry-fidelity labeling + event-risk context (2026-07-10)
+
+Closed the one real divergence between the live system and its own evidence:
+the backtested entry (+1.27R) is a **volume breakout over a VCP pivot**, but the
+live scan alerted on the looser CONFIRMED tag (Stage 2 + trend template only),
+which never checked VCP/breakout. Audit on 120 names: 15 CONFIRMED → 0 validated
+entries, 4 awaiting-trigger, 11 no-VCP-base — most alerts were NOT the
+backtested signal. Fixes (labeling only — nothing new gates what fires, per the
+evidence lock):
+
+- **`scoring/stage_tagger.py`**: `tag_stock` now computes the exact backtest
+  trigger at the last bar (`detect_breakout` over the live VCP pivot) and
+  returns `validated_entry` / `pivot_price` / `breakout_today` /
+  `breakout_volume_ratio`.
+- **`reports/watchlist_card.py`**: every CONFIRMED card leads with one of
+  `VALIDATED ENTRY` (fresh breakout over pivot on ≥1.5x vol — act) /
+  `CONFIRMED, AWAITING TRIGGER` (VCP base live, watch the pivot) /
+  `CONFIRMED, NO VCP BASE` (trend read only, edge not established).
+- **`scripts/daily_scan.py`**: buy-alert summary lines carry `[VALIDATED]` /
+  `[AWAITING TRIGGER]` / `[NO VCP BASE]`; each buy/re-entry alert is logged to a
+  NEW additive file **`journal/entry_signals.csv`** (own schema — signals_journal
+  stays pristine) so we can later test whether validated-entry alerts outperform.
+  No change to what fires or what gets paper-traded — the cohort has to earn a
+  gate with forward evidence first.
+- **Event-risk context**: `scoring/phase_c.enrich` now flags results /
+  board-meeting NSE filings (`config.CATALYST.results_event_keywords`); the card
+  shows `!! EVENT RISK [results/board mtg, <date>]` — binary event risk near a
+  breakout (Minervini earnings-date discipline). Context only, never a gate.
+
+Verified: both regression tests green; full scan runs clean (611 names, exit 0);
+tagger/card/writer unit-smoke-tested. NOT committed yet.
+
+## 3E. Run-from-UI (2026-07-10, user-requested)
+
+`scripts/dashboard_server.py` (stdlib, binds 127.0.0.1:8765 default; launch.json
+runs it on 8787) serves dashboard.html + a job API. The dashboard sidebar now
+has a RUN panel that appears ONLY when served by this server (plain file:// open
+= panel hidden, dashboard unchanged). Buttons:
+
+- **Daily scan (no AI)** — daily_scan -> paper_trader -> journal_outcomes ->
+  build_dashboard. Zero claude credits, no telegram (manual re-runs must not
+  spam the phone; telegram stays with the scheduled job).
+- **Scan + AI analyst** — adds ai_analyst.py (sonnet, self-capped 3 dives/day).
+- **Weekly refresh (no AI)** — weekly_refresh.py **--no-ai** (new flag): full
+  chain, AI committee (ai_picks/Opus) SKIPPED.
+
+The AI committee is NOT runnable from the UI at all — credit guard is
+server-side (no such job exists), not just a missing button. One job at a time
+(HTTP 409 if busy); log streams into the panel (2s poll); on completion a
+"Reload fresh data" button appears (job chains end with build_dashboard).
+Panel hidden on mobile (<1000px). Start it with:
+`python scripts/dashboard_server.py` then open http://127.0.0.1:8765.
+Safe at any hour — the partial-bar cache guard (3B) makes intraday runs
+harmless, and the chain is idempotent (StartWhenAvailable evidence, 3C).
+
+## 3F. Dashboard data-flow unification (2026-07-11, user-caught)
+
+User: "screener and actionable show different stocks; actionable names have no
+score and empty drawers." Root cause: three different coverage sets — scan
+alerts from the FULL universe (609), screener showed only the focus list (320),
+and drawer details/charts existed only for the weekly shortlist (84). Fixes:
+
+- **daily_scan.build_candidate now persists its full analysis**: every buy
+  alert writes a drawer-schema detail blob (dims/plan/news/vetoes/score) to
+  `state/alert_details.json` (30-day expiry, `save_alert_details`). The scan
+  already computed all of it and was throwing the structured form away.
+- **build_dashboard merges** shortlist_details + alert_details (alert wins),
+  and detail OHLC/fundamentals now cover shortlist + positions + PAPER BOOK +
+  every alerted name. The 47 in-window alerts were backfilled — all have
+  full drawers now (incl. two vetoes the panel previously hid: INDUSINDBK,
+  NAZARA at 25-capped).
+- **Screener = full watched universe (611 rows)**, not just focus; non-focus
+  rows carry tag/price/cap/score but no RS percentile (that's a focus-list
+  artifact). New "Focus only" chip restores the old view.
+- **Actionable panel**: Conv column always filled (journal value, shortlist
+  fallback) + Trigger column (VALIDATED / AWAITING TRIGGER / NO VCP BASE from
+  entry_signals.csv) — the 3D entry-fidelity work is now visible in the UI.
+- Drawer header falls back to alert-time conviction when a name isn't in the
+  weekly ranked file; chart placeholder text explains how data loads.
+
+## 3G. Sizing matrix (2026-07-11, pre-registered — scripts/run_sizing_matrix.py)
+
+Motivated by "21.5% CAGR feels low": utilization measurement showed avg open
+risk 0.69%/position vs nominal 1.25% and the 12-slot cap binding 39% of days.
+9-cell sweep risk{1.25,1.75,2.5} x slots{12,16,20}, same signals/window/costs.
+VERDICTS (sizing_matrix_report.md): (1) slot expansion REJECTED — expectancy
+falls monotonically (1.29R -> 1.15R -> 0.89R; the volume-ranked queue already
+takes the best same-day breakouts, extra slots admit weaker ones) and CAGR
+falls too. (2) risk%% saturates at the 15%% value cap: 1.75%% lifts corrected
+CAGR 21.5 -> 23.4%% (MAR 1.67 -> 1.79, DD +0.2pp); 2.5%% adds nothing more.
+Within survivor-bias noise -> user choice, DEFAULT KEPT at 1.25%%; revisit
+after forward journal matures. (3) The 15%% value cap is the residual untested
+lever (own pre-registered run + concentration-risk debate required). Bottom
+line: both obvious throttles tested; system is capacity-limited by its own
+discipline — more absolute return = more capital or accepting more DD.
+
 ## 4. Live production state (as of 2026-07-09)
 
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
@@ -257,14 +353,16 @@ scoring/conviction.py         8-dim composite, coverage renorm, veto cap
 scoring/regime.py             market_risk_scale (half below 150-DMA)
 backtest/engine.py            two-lot event-driven engine + regime/stress hooks
 backtest/metrics.py           trade/equity/lot stats, costs, benchmark
-scripts/daily_scan.py         nightly job core (safe at any hour — cache guard)
+scripts/daily_scan.py         nightly job core (safe at any hour — cache guard); logs entry_signals.csv
+journal/entry_signals.csv     per-buy-alert entry fidelity (VALIDATED/AWAITING/NO VCP) — forward test
 scripts/daily_job.py          what Task Scheduler actually runs: scan -> analyst -> paper -> outcomes -> dashboard -> telegram
 scripts/weekly_job.py         what Task Scheduler runs Sundays (weekly_refresh wrapper)
 scripts/paper_trader.py       analyst paper book: BUY verdicts -> next-open fills -> two-lot managed, ledgered
 scripts/ai_analyst.py         daily deep-dive (sonnet-5), conviction-prioritized, idempotent
 scripts/ai_picks.py           weekly committee (opus-4-7 + high thinking)
 scripts/weekly_refresh.py     full weekly chain
-scripts/build_dashboard.py    dashboard.html generator
+scripts/build_dashboard.py    dashboard.html generator (incl. RUN panel, server-only)
+scripts/dashboard_server.py   local server: dashboard + run-jobs API (daily / daily_ai / weekly --no-ai; committee excluded)
 scripts/run_shortlist.py      ranked shortlist + shortlist_details.json (drawer data)
 scripts/position_manager.py   open positions vs their two-lot plans
 scripts/survivorship_check.py Wayback constituent diff
