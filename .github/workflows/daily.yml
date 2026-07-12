@@ -1,0 +1,144 @@
+name: Daily scan (cloud)
+
+# Runs the mechanical daily pipeline in the cloud so it fires 365 nights
+# regardless of whether the laptop is on. 18:35 IST = 13:05 UTC, Mon-Fri
+# (NSE trading days). Also runnable on demand via the "Run workflow" button.
+on:
+  schedule:
+    - cron: "5 13 * * 1-5"
+  workflow_dispatch: {}
+
+# allow the job to commit the forward record back to the repo
+permissions:
+  contents: write
+
+# daily and weekly must never run at the same time (they share the cache and
+# both push) — one at a time, queued
+concurrency:
+  group: golden-stock-pipeline
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: multibagger_screener/multibagger_screener
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      # secrets surfaced as plain env so `if:` can test them (secrets can't be
+      # read directly in step conditions). Empty string when the secret is unset.
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install "pandas>=2.0" "numpy>=1.24"
+
+      # persist the price + fundamentals caches between runs. Unique key each
+      # run always saves a fresh copy; restore-keys pulls the most recent prior
+      # one (the standard mutable-cache pattern). A cache miss (first run / rare
+      # eviction) triggers a full backfill — slow that once, then incremental.
+      - name: Restore data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            multibagger_screener/multibagger_screener/data_cache
+            multibagger_screener/multibagger_screener/fundamentals_cache
+          key: golden-data-${{ github.run_id }}
+          restore-keys: golden-data-
+
+      - name: Daily scan (prices + tag + diff + alerts + journal)
+        run: python scripts/daily_scan.py
+
+      - name: AI analyst deep-dives (only if ANTHROPIC_API_KEY is set)
+        if: ${{ env.ANTHROPIC_API_KEY != '' }}
+        run: |
+          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true
+          python scripts/ai_analyst.py || echo "analyst degraded (non-fatal)"
+
+      - name: Paper book + forward outcomes
+        run: |
+          python scripts/paper_trader.py || echo "paper degraded (non-fatal)"
+          python scripts/journal_outcomes.py || echo "outcomes degraded (non-fatal)"
+
+      - name: Build dashboard
+        run: python scripts/build_dashboard.py
+
+      - name: Telegram (only if configured)
+        if: ${{ env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != '' }}
+        run: python scripts/send_telegram.py || echo "telegram degraded (non-fatal)"
+
+      # commit the small, durable FORWARD RECORD back to the repo (journal,
+      # tonight's tag state = the diff baseline, alerts, positions). NOT the
+      # 75MB caches (they live in actions/cache) and NOT dashboard.html (that
+      # goes to Pages below — keeps git history lean).
+      - name: Commit forward record
+        run: |
+          git config user.name "golden-stock-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f journal state/tags_state.json state/alert_details.json \
+                     state/analyst_health.json daily_alerts.md \
+                     announcements_archive.csv positions.csv paper_positions.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no forward-record changes to commit"
+          else
+            git commit -m "cloud: daily run $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash origin master || true
+            git push origin HEAD:master
+          fi
+
+      - name: Upload dashboard artifact (view/download from the run page)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard
+          path: multibagger_screener/multibagger_screener/dashboard.html
+          retention-days: 14
+
+  # Publish the dashboard to GitHub Pages (permanent URL, no git-history bloat).
+  # Separate job so a Pages misconfiguration never breaks the critical scan job
+  # above. Enable once: repo Settings -> Pages -> Source = GitHub Actions.
+  publish-dashboard:
+    needs: scan
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master   # pick up the fresh commit the scan job just pushed
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "pandas>=2.0" "numpy>=1.24"
+      - name: Restore data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            multibagger_screener/multibagger_screener/data_cache
+            multibagger_screener/multibagger_screener/fundamentals_cache
+          key: golden-data-${{ github.run_id }}
+          restore-keys: golden-data-
+      - name: Rebuild dashboard for Pages
+        working-directory: multibagger_screener/multibagger_screener
+        run: |
+          python scripts/build_dashboard.py
+          mkdir -p _site
+          cp dashboard.html _site/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: multibagger_screener/multibagger_screener/_site
+      - id: deploy
+        uses: actions/deploy-pages@v4
