@@ -194,6 +194,21 @@ locked the following. Changing these requires NEW pre-registered evidence:
 10. **Survivorship bounded by measurement:** 9.2% smallcap churn per ~2 years
    (Wayback diff), mostly mergers/renames. Backtests modestly optimistic,
    not fantasy (see survivorship_report.md).
+11. **Sizing basis corrected — equity, not cash (matrix v2, 2026-07-12):**
+   the engine sized risk% and the position-value cap off REMAINING CASH,
+   which undersizes every late entry (at ~73% typical deployment, a "1.25%
+   risk" trade was actually risking ~0.3%). Fixed-fractional on
+   marked-to-market EQUITY (same entries, same stops, same everything else)
+   corrected the read: window CAGR 22.5%->47.4% ideal / 32.5% under
+   deployment stress (next-open fills + gap-aware stops + full costs), maxDD
+   -12.9%->-18.5%/-20.7%, chop cohort IMPROVED not worsened. This is a
+   MEASUREMENT fix, not a new strategy — live plans were never affected (they
+   already size off configured capital). Also tested and REJECTED in the same
+   matrix: expanding the 15% position-value cap (adds nothing at 1.25% risk)
+   and raising risk-per-trade above 1.25% (breaches the drawdown bound and
+   turns the chop cohort negative again — same monotonic-rejection shape as
+   every other over-aggressive lever). Full table: multibagger_screener/
+   multibagger_screener/sizing_matrix2_report.md.
 
 ---
 
