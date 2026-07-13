@@ -1,10 +1,11 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-07-09 (evening — post intraday-scan incident + fixes).**
+**Last updated: 2026-07-13 (consolidation pass before a fresh chat).**
 This is the single "where we are / what's next" doc. For strategy read
 `../../PROJECT_BRIEF.md` (it lives at the git root `files/`, NOT in this
-folder); for the evidence read `VALIDATION_REPORT.md`. This file is the
-operational status + next steps.
+folder); for the evidence read `VALIDATION_REPORT.md`; for cloud ops read
+`CLOUD.md`. Sections 3-3J below are a chronological work-log (kept for
+context) — sections 0/1/2/4/5/6/7 are the CURRENT state, kept fresh.
 
 ---
 
@@ -12,13 +13,24 @@ operational status + next steps.
 
 A decision-support system that finds Indian small/mid-cap "golden stocks",
 explains why, sizes the trade, and keeps a forward track record. It runs
-itself: a nightly scan (18:35 IST) fires transition alerts, an AI analyst
-deep-researches the top buy candidates, and a weekly job refreshes everything
-+ an AI investment committee picks 3-5 researched names. Entries are 100%
-technical (backtest-validated); fundamentals/news/AI are context + vetoes +
-curation, never automated trade drivers. **The system is essentially complete
-and live.** What remains is operational (Telegram, auth) and time (the
-forward journal must accumulate before real capital).
+itself — now in the **cloud** (GitHub Actions, repo:
+github.com/kartikeyaav/Golden-Stock), not dependent on the laptop being on:
+a nightly scan fires transition alerts, an AI analyst deep-researches the top
+buy candidates (with second-order ecosystem research — customers/suppliers/
+competitors, not just company-named news), and a weekly job refreshes
+everything + an AI investment committee picks 3-5 researched names (now
+cross-fed the daily analyst's recent verdicts). Entries are 100% technical
+(backtest-validated, never AI/fundamental-gated). The dashboard was fully
+revamped (terminal aesthetic, Ctrl+K command palette, decision-first
+Actionable panel with plain-English DO chips and filters) and its data flow
+unified (screener/actionable/drawer used to show inconsistent coverage —
+fixed). **The backtested read was corrected 2026-07-12: sizing was measured
+off remaining cash, undersizing every late entry — equity-basis sizing is the
+same rules, same entries, just honest measurement, and it roughly DOUBLES the
+CAGR read** (see §3H). **The system is essentially complete and live, now
+laptop-independent.** What remains is small user actions (Telegram, verify
+the first cloud run, decide API-key auth) and time (forward journal must
+accumulate before real capital scales).
 
 ---
 
@@ -28,15 +40,24 @@ forward journal must accumulate before real capital).
   Bash `python` PATH is flaky; PowerShell tool also works.
 - **Project root** (all commands run from here):
   `C:\Users\karth\OneDrive\Desktop\Karthikeya_claude\files\multibagger_screener\multibagger_screener`
-- **Git repo** is at `files/` (parent). Commits through `2415232`. `.gitignore`
-  excludes caches, secrets, logs, test artifacts.
+- **Git repo** is at `files/` (parent), pushed to **github.com/kartikeyaav/Golden-Stock**
+  (remote `origin`, branch `master`; push works non-interactively — credential
+  is cached via Windows Git Credential Manager after the user's one manual login).
+  Commits through `8746dc3`+ (see `git log`). `.gitignore` excludes caches,
+  secrets, logs, test artifacts.
+- **Cloud is now the primary runner** (2026-07-12): `.github/workflows/daily.yml`
+  + `weekly.yml` on GitHub Actions — see `CLOUD.md` for full setup/ops. The
+  Windows Task Scheduler jobs (`MultibaggerDailyScan`/`WeeklyRefresh`) still
+  exist as a fallback until the cloud run is verified by the user; **disable
+  them once cloud is confirmed working** (two runners both pushing the journal
+  = merge conflicts).
 - **AI scripts spawn `claude -p`**: they scrub `CLAUDE_CODE_*` + `ANTHROPIC_BASE_URL`
   from the env before spawning (else the host-injected auth poisons the child
   CLI -> "Invalid API key"). This is already coded; don't remove it.
-- **Auth**: subscription `/login` works headless (with the scrub). The
-  constraint is **subscription session limits** — they reset on a schedule.
-  Permanent fix = API key (`setx ANTHROPIC_API_KEY ...`), recommended for the
-  daily analyst. `python scripts/ai_analyst.py --selftest` verifies auth.
+- **Auth**: subscription `/login` works headless locally (with the scrub), but
+  **cannot work in GitHub Actions** (no browser) — cloud AI steps need an
+  `ANTHROPIC_API_KEY` repo secret instead; they skip cleanly if it's absent.
+  `python scripts/ai_analyst.py --selftest` verifies local auth.
 
 ### Key commands
 ```
@@ -44,11 +65,17 @@ python scripts/daily_scan.py            # tag + diff + alerts + journal (usually
 python scripts/ai_analyst.py            # deep-dive top-3 buy alerts -> verdicts
 python scripts/ai_picks.py              # weekly AI committee: 3-5 researched picks (Opus 4.7)
 python scripts/weekly_refresh.py        # universe->prices->focus->fundamentals->shortlist->picks->dashboard
+python scripts/weekly_refresh.py --no-ai  # same, skip the AI committee (no credits)
 python scripts/build_dashboard.py       # regenerate dashboard.html
+python scripts/dashboard_server.py      # serve dashboard + Run panel (localhost:8765)
 python scripts/enrich.py SYMBOL         # on-demand full card for any stock
 python scripts/sync_positions.py        # holdings vs positions drift check
+python scripts/import_holdings.py FILE.csv --dry-run  # sync holdings from a Zerodha Console export, no Kite login
+python scripts/backup_push.py           # commit+push the forward record to GitHub (non-fatal)
 ```
-Open `dashboard.html` in a browser (needs internet for the chart CDN).
+Open `dashboard.html` directly in a browser, or via `dashboard_server.py` for
+the Run panel, or the published copy at `kartikeyaav.github.io/Golden-Stock/`
+(once the user enables Pages — see CLOUD.md).
 
 ---
 
@@ -62,9 +89,13 @@ Open `dashboard.html` in a browser (needs internet for the chart CDN).
 **Universe**: Nifty Smallcap 250 + Midcap 150 + Microcap 250 = 651 names. `universe.csv`.
 
 **Pipeline** (nightly + weekly):
-Universe -> liquidity filter -> RS-percentile focus list (~320) -> mechanical
-stage tags (all 609 taggable) -> transition diff vs saved state -> alerts only
-on state changes -> per-alert: 8-dim conviction score + vetoes + two-lot plan.
+Universe -> liquidity filter -> RS-percentile focus list (~320, reporting-only)
+-> mechanical stage tags (all 611 taggable, the FULL universe — evidence lock)
+-> transition diff vs saved state -> alerts only on state changes -> per-alert:
+8-dim conviction score + vetoes + two-lot plan + **entry-fidelity label**
+(VALIDATED = exact backtested VCP-pivot+volume breakout / AWAITING TRIGGER =
+base live, pivot not cleared / NO VCP BASE = trend read only — logged to
+`journal/entry_signals.csv` for a future forward test, never a gate yet).
 
 **8-dimension conviction score** (coverage-honest, 0-100):
 rs_and_stage 20 (LIVE, validated) · earnings_inflection 20 · theme 15 ·
@@ -76,6 +107,10 @@ news dims are keyword+trust+sentiment filtered ("news-based v0").
 (8-pt trend template + VCP + volume) -> two-lot ATR structure (trading lot
 partial@2.5R + 50-DMA trail; core lot exits on weekly close < 30-week MA);
 2.5xATR stop, skip if >12% wide; regime sizing (risk x0.5 when NIFTY < 150-DMA).
+**Sizing basis corrected 2026-07-12** (§3H): fixed-fractional on EQUITY, not
+remaining cash — same rules, just honest measurement. Live plans were never
+affected (they already size off `RISK.capital`); update that config value to
+your real account equity periodically for true fixed-fractional behavior.
 
 **Vetoes** (hard, cap score at 25): promoter pledge >10%, leverage+froth,
 governance red flags. Data-based; AI cannot override.
@@ -83,33 +118,63 @@ governance red flags. Data-based; AI cannot override.
 **AI layers** (context/curation only, journaled, unvalidated-so-on-probation):
 - Daily analyst (`ai_analyst.py`, **claude-sonnet-5**): researches top-3
   conviction buy alerts, writes VERDICT/CONVICTION/SIZE. Can only be MORE
-  conservative (take/halve/skip), never override vetoes or resize up.
+  conservative (take/halve/skip), never override vetoes or resize up. Now does
+  **second-order ecosystem research** (customers/end-markets, suppliers/input
+  prices, competitors, value-chain regulation — with a named transmission
+  channel, not generic sector talk) since the keyword scan only sees news
+  naming the company itself. Writes a heartbeat to `state/analyst_health.json`
+  (ok/failed/idle) so a silent auth failure gets surfaced by the next scan.
 - Weekly committee (`ai_picks.py`, **claude-opus-4-7 + MAX_THINKING_TOKENS=24000**):
-  reads the scored shortlist, selects optimum 3-5, deep-researches, writes theses.
+  reads the scored shortlist, selects optimum 3-5, deep-researches, writes
+  theses. Same second-order research requirement. Briefing now includes the
+  **last 14 days of daily-analyst verdicts** as cross-layer context (overlap =
+  confirmation; rejecting a daily BUY must be explained in one line).
 
-**Dashboard** (`dashboard.html`, single self-contained SPA): tabs = Overview /
-AI Picks / Screener (cap-tier + tag filters, 320 rows) / Positions / Journal /
-Validation. Click any stock -> drawer with candlestick chart + why-this-score +
-plan + news + fundamental trend charts.
+**Dashboard** (`dashboard.html`, single self-contained SPA — revamped 2026-07-12,
+§3H/terminal aesthetic + command palette): tabs = Overview / AI Picks /
+Screener (full 611-name universe with a "Focus only" chip, cap-tier + tag
+filters) / Positions / Journal / Validation. **Ctrl+K (or `/`) opens a fuzzy
+search palette** across all 611 stocks -> arrow-nav -> Enter opens the drawer.
+Overview leads with the **Actionable panel** (the only tab you act from):
+headline verdict line, every row a plain-English DO chip (BUY SETUP / WATCH /
+WEAK / WAIT / IGNORE / DO NOT BUY), filter chips (do-kind isolate-on-click +
+conviction floor), resolved signals collapsed. Click any stock anywhere ->
+drawer with candlestick chart + why-this-score + plan + news + fundamental
+trend charts (drawer data now covers every alerted name, not just the weekly
+shortlist — §3F). KPI strip shows ideal/stressed pairs (see §3H for why).
 
-**Ops**: Windows Task Scheduler — `MultibaggerDailyScan` 18:35 IST,
-`MultibaggerWeeklyRefresh` Sun 10:00. Journal (`journal/`), health checks
-(loud on stale data/broken parser/degenerate tagger), position management
-(`positions.csv` vs plan), holdings drift check.
+**Ops**: **Cloud-first as of 2026-07-12** — GitHub Actions (`daily.yml` +
+`weekly.yml`, see CLOUD.md) runs regardless of the laptop; dashboard publishes
+to GitHub Pages. Windows Task Scheduler (`MultibaggerDailyScan` 18:35 IST,
+`MultibaggerWeeklyRefresh` Sun 10:00) still enabled as a fallback pending user
+verification of the cloud run — disable once confirmed. Journal (`journal/`,
+now including `entry_signals.csv` fidelity log), health checks (loud on stale
+data/broken parser/degenerate tagger/per-holding staleness/analyst heartbeat),
+position management (`positions.csv` vs plan), holdings drift check, nightly
+`backup_push.py` commits the forward record to GitHub (offsite backup).
 
 ---
 
 ## 3. What's validated (evidence — see VALIDATION_REPORT.md)
 
-- Baseline (technical-only, 2-lot, after costs): **+1.27R/trade** honest 3y
-  window (+1.59R on the 7.5y look-back), payoff ~8:1, win ~28%, CAGR ~21.5%,
-  maxDD ~-13%. Survivor-biased => directional; churn measured ~9.2%/2y.
-- **11+ configs tested, every fundamental/sector/news GATE on entries was
-  REJECTED** (price leads reported fundamentals). Entries stay technical-only.
-- **Adopted**: regime sizing (Pareto improvement). **Validated as alert-only**:
+- Baseline (technical-only, 2-lot, after costs), **CORRECTED sizing basis
+  2026-07-12 (§3H — same entries/rules, equity- not cash-basis measurement)**:
+  **+1.67R/trade**, payoff ~9.6:1, win ~30%, **CAGR 47.4% ideal / 32.5% under
+  deployment stress** (next-open fills + gap-aware stops + full costs), maxDD
+  -18.5% ideal / -20.7% stressed. The OLD read (+1.27R, 21.5% CAGR, -12.9% DD)
+  was real but measured off remaining cash, which undersizes late entries —
+  superseded, kept here only so old context isn't confusing. Survivor-biased
+  => directional; churn measured ~9.2%/2y.
+- **13+ configs tested, every fundamental/sector/news GATE on entries was
+  REJECTED**, and separately every POSITION-SLOT expansion was rejected
+  (price leads reported fundamentals; more slots admit weaker same-day
+  breakouts). Entries stay technical-only, position cap stays 12, risk-per-trade
+  stays 1.25% (higher saturates/breaches DD — §3H).
+- **Adopted**: regime sizing (Pareto improvement), equity-basis sizing
+  (measurement correction, not a strategy change). **Validated as alert-only**:
   anticipation tier with fundamentals (+0.41R, positive both cohorts).
-- Design is evidence-locked (PROJECT_BRIEF.md section 2B). Changing it needs
-  new pre-registered evidence.
+- Design is evidence-locked (PROJECT_BRIEF.md section 2B, now 11 items).
+  Changing it needs new pre-registered evidence.
 
 ---
 
@@ -347,68 +412,88 @@ the first live run is user-triggered; iterate from its logs. TOP RISK: Yahoo
 non-fatal + logged; if many fail, health check shouts. Laptop tasks still
 enabled + healthy (ran today) as the fallback until cloud is proven.
 
-## 4. Live production state (as of 2026-07-09)
+## 4. Live production state (as of 2026-07-12)
 
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
   BANDHANBNK/CARBORUNIV/KARURVYSYA (buys), ACUTAAS/ANANDRATHI/SYRMA/J&KBANK
   (re-entries), CDSL/CHOLAHLDNG/NBCC (anticipation).
 - **First real analyst verdicts**: SYRMA, SHILPAMED, LAURUSLABS — all BUY
   (`journal/analyst_verdicts.csv`).
-- **First committee run** (was Sonnet; now set to Opus 4.7): picked
-  KEI(HIGH)/STLTECH/CHENNPETRO/EMCURE/MAHABANK across 5 sectors.
-- **External benchmark done**: all 5 committee picks corroborated by
-  independent analysts; the AI's caution on STLTECH (MEDIUM despite top score)
-  matched analysts calling it "overvalued ~67%" AND our risk engine skipping
-  it as too volatile. Coupling adds real value.
+- **First committee run** (Opus 4.7): picked KEI(HIGH)/STLTECH/CHENNPETRO/
+  EMCURE/MAHABANK across 5 sectors; externally benchmarked against
+  independent analysts and corroborated (STLTECH froth-caution matched).
+- **Holdings synced from Zerodha** (2026-07-12): user holds MOSCHIP (200 @
+  208.485) and DIACABS (100 @ 224.62 — a stock the system itself alerted
+  2026-07-10; seeded stop 195.37, 2.5xATR). Both in `holdings.csv` +
+  `positions.csv` with reconstructed stops (flagged as such). Kite sessions
+  expire DAILY (SEBI reg) — re-sync needs a fresh login each time, OR use
+  `scripts/import_holdings.py` against a Zerodha Console CSV export (no login).
+- **Repo pushed to GitHub** (github.com/kartikeyaav/Golden-Stock), all history
+  through commit `8746dc3`+; cloud workflows added but **not yet verified
+  live** — the first Actions run is a user-triggered step (see §3J/CLOUD.md).
 
 ---
 
 ## 5. Open items
 
-**Needs the user (small):**
-1. **Telegram** — 2-min BotFather setup, then alerts+verdicts hit the phone
-   (currently they land in `daily_alerts.md` + dashboard only). See
-   `scripts/send_telegram.py` header.
-2. **API key (recommended)** — fixes the subscription session-limit problem
-   permanently for the automation. `setx ANTHROPIC_API_KEY "sk-ant-..."`.
-3. **Cloud migration (optional)** — so it runs when the laptop is off; needs
-   `gh auth login` + a private repo + scheduled cloud agent decision.
+**Needs the user (small, all documented in CLOUD.md):**
+1. **Verify the first cloud run** — Actions tab -> "Daily scan (cloud)" ->
+   Run workflow. First run = full price backfill (~20min) + baseline (no
+   alerts — expected, no prior state to diff). Report back what the log says;
+   the untested risk is Yahoo/screener.in rate-limiting GitHub's datacenter IPs.
+2. **Enable GitHub Pages** (Settings -> Pages -> Source = GitHub Actions) for
+   a permanent dashboard URL reachable from anywhere, no laptop needed.
+3. **Add repo secrets** (optional): `TELEGRAM_BOT_TOKEN`+`TELEGRAM_CHAT_ID`
+   (phone alerts — 2-min BotFather setup, see `scripts/send_telegram.py`
+   header) and `ANTHROPIC_API_KEY` (cloud AI analyst/committee — subscription
+   login can't work headless in Actions; API key is pay-per-use, a few
+   cents/day).
+4. **Disable the laptop Task Scheduler jobs** once the cloud run is confirmed
+   working (`Disable-ScheduledTask MultibaggerDailyScan` / `...WeeklyRefresh`)
+   — two runners both pushing the journal will conflict.
+5. **Update `config.RISK.capital`** to the real account equity periodically
+   (monthly is enough) — makes the corrected fixed-fractional sizing (§3H)
+   actually track reality; live plans size off this constant.
 
 **Needs time:**
-4. **Forward journal** must accumulate a few weeks. Then review: do analyst
-   verdicts + committee picks beat the mechanical baseline? (the real-capital
-   gate, per brief).
+6. **Forward journal** must accumulate a few weeks. Then review: do analyst
+   verdicts + committee picks beat the mechanical baseline, and do VALIDATED
+   entry-fidelity alerts (§3D, `journal/entry_signals.csv`) beat WEAK ones?
+   (the real-capital gate, per brief).
 
-**Alert volume — INVESTIGATED 2026-07-09, conclusion:**
-5. The 1-5/week estimate was made for a ~150-name watch set; the
-   evidence-locked scan watches the whole universe (609 names — lock #3
-   forbids shrinking it), so expected volume is structurally ~4x that
-   estimate. On top of that, the first week runs hot while the fresh state
-   baseline settles (names near tag boundaries flip on small moves), and
-   missed days produce multi-day diffs (Jul-9 fired 19 covering 2 trading
-   days). NOTE: the earlier idea "raise the focus RS floor to cut alerts"
-   is WRONG — the focus list is reporting-only; alerts fire from the whole
-   universe regardless. Cost is already capped (analyst max 3 dives/day,
-   conviction-ranked). Decision: accept the volume, revisit after 2-3
-   settled weeks; any watch-set change needs pre-registered evidence.
+**Alert volume — INVESTIGATED 2026-07-09, still the working assumption:**
+7. Evidence-locked scan watches the whole universe (611 names), so alert
+   volume runs ~4x a naive "150-name watchlist" estimate; this is intentional
+   (lock #3 forbids shrinking the watch set) and cost is already capped
+   (analyst max 3 dives/day, conviction-ranked). No action needed.
 
 ---
 
 ## 6. NEXT TASK (what a fresh chat should pick up)
 
 Priority order:
-1. **Decide auth**: switch the daily analyst to an API key (recommended) OR
-   accept subscription session limits. This is the main friction.
-   (Alert volume was investigated 2026-07-09 — see item #5 above: volume is
-   structural + settling, no threshold change; cost already capped at 3
-   dives/day.)
-2. **Let the weekend weekly job run** (Sun 2026-07-12 10:00) with the
-   Opus-4.7 committee and review the picks quality vs last run.
-3. **Telegram setup** whenever the user is ready (delivery layer).
-4. Longer term: cloud migration + the forward-journal review after ~2-4 weeks.
+1. **User verifies the first cloud Actions run** (§5 item 1) — this is the
+   main open thread. If it fails, the log will show why (most likely
+   candidate: Yahoo/screener rate-limiting the GitHub IP range) — fix from
+   there (longer pause / retry logic), don't guess blind.
+2. Once cloud is confirmed: help the user enable Pages, add secrets, and
+   disable the laptop scheduler (§5 items 2-4).
+3. **Forward-journal review** after a few more settled weeks: do analyst
+   verdicts / committee picks / VALIDATED-entry-fidelity alerts beat the
+   mechanical baseline out-of-sample? This is the evidence gate before any
+   real-capital scale-up.
+4. Longer-term strategy work, deliberately PARKED until the forward journal
+   has enough data (do not start these speculatively): pyramiding winners,
+   regime up-scaling (size UP in strong uptrends, symmetric to the existing
+   down-scaling), an IPO-base module for young stocks that can't form
+   45-week structures, and relaxing the 15% position-value cap (the one
+   sizing lever the matrix flagged as untested).
 
 Do NOT: add fundamental/news/AI signals into the ENTRY or SIZING decision
-(evidence-locked). AI stays context/curation/veto only.
+(evidence-locked, now 11 items in PROJECT_BRIEF.md §2B). AI stays
+context/curation/veto only. Do NOT re-run the sizing or entry matrices without
+a new pre-registered hypothesis — re-litigating settled evidence wastes the
+discipline that makes this system trustworthy.
 
 ---
 
@@ -438,12 +523,24 @@ scripts/paper_trader.py       analyst paper book: BUY verdicts -> next-open fill
 scripts/ai_analyst.py         daily deep-dive (sonnet-5), conviction-prioritized, idempotent
 scripts/ai_picks.py           weekly committee (opus-4-7 + high thinking)
 scripts/weekly_refresh.py     full weekly chain
-scripts/build_dashboard.py    dashboard.html generator (incl. RUN panel, server-only)
+scripts/build_dashboard.py    dashboard.html generator (RUN panel + command palette, terminal UI)
 scripts/dashboard_server.py   local server: dashboard + run-jobs API (daily / daily_ai / weekly --no-ai; committee excluded)
 scripts/run_shortlist.py      ranked shortlist + shortlist_details.json (drawer data)
 scripts/position_manager.py   open positions vs their two-lot plans
 scripts/survivorship_check.py Wayback constituent diff
-analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders
-analyst/PICKS_PROTOCOL.md     committee standing orders
+scripts/import_holdings.py    sync holdings.csv from a Zerodha Console CSV export (no daily Kite login)
+scripts/backup_push.py        commits+pushes the forward record to GitHub nightly (non-fatal)
+scripts/run_sizing_matrix.py  sizing matrix v1: risk% x position-slot sweep (slots REJECTED, risk saturates)
+scripts/run_sizing_matrix2.py sizing matrix v2: cash- vs equity-basis sizing (equity ADOPTED, ~2x corrected CAGR)
+sizing_matrix_report.md       v1 table + verdict
+sizing_matrix2_report.md      v2 table + verdict (the CAGR-correction evidence)
+state/alert_details.json      per-alert drawer detail blob (30d expiry) — merges into shortlist_details in the dashboard
+state/analyst_health.json     AI analyst heartbeat (ok/failed/idle), read by daily_scan health check
+journal/entry_signals.csv     per-buy-alert entry fidelity (VALIDATED/AWAITING TRIGGER/NO VCP BASE) — forward test data
+analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders (incl. second-order ecosystem research task)
+analyst/PICKS_PROTOCOL.md     committee standing orders (incl. second-order research + analyst-verdict cross-check)
+CLOUD.md                      GitHub Actions setup + operations (cache design, secrets, Pages, risks)
+.github/workflows/daily.yml   cloud daily pipeline (13:05 UTC Mon-Fri) + Pages publish
+.github/workflows/weekly.yml  cloud weekly refresh (04:30 UTC Sun)
 tests/                        two-lot + synthetic regression (both green)
 ```
