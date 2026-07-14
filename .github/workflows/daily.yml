@@ -85,9 +85,14 @@ jobs:
         run: |
           git config user.name "golden-stock-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add -f journal state/tags_state.json state/alert_details.json \
-                     state/analyst_health.json daily_alerts.md \
-                     announcements_archive.csv positions.csv paper_positions.csv 2>/dev/null || true
+          # add each path separately: git add aborts ALL staging if any one
+          # pathspec matches nothing (e.g. analyst_health.json when the AI
+          # step is skipped) — that silently dropped the whole forward record
+          for p in journal state/tags_state.json state/alert_details.json \
+                   state/analyst_health.json daily_alerts.md \
+                   announcements_archive.csv positions.csv paper_positions.csv; do
+            git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
+          done
           if git diff --cached --quiet; then
             echo "no forward-record changes to commit"
           else
