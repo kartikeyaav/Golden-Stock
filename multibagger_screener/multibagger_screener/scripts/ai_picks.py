@@ -180,7 +180,7 @@ def parse_picks(memo: str, cands) -> list:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--top", type=int, default=20)
-    parser.add_argument("--model", default="claude-opus-4-7",
+    parser.add_argument("--model", default="claude-sonnet-5",
                         help="premium reasoning for the weekly committee")
     parser.add_argument("--thinking-tokens", type=int, default=24000,
                         help="extended-thinking budget ('High'); 0 to disable")
