@@ -68,7 +68,10 @@ def write_health(status: str, note: str = "") -> None:
                   f, indent=1)
 
 MODEL = "claude-sonnet-5"      # capable + economical for a nightly memo
-MAX_DIVES_PER_DAY = 3
+MAX_DIVES_PER_DAY = 2   # was 3 — cost discipline (2026-07-16)
+MAX_TURNS = 15          # cap the agentic research loop per dive: unbounded
+                        # turns re-process a growing context each step and
+                        # dominate API cost; 15 is ample for a 250-word verdict
 TIMEOUT_S = 600
 
 
@@ -120,7 +123,7 @@ def run_deep_dive(symbol: str, card: str) -> str | None:
     try:
         # prompt goes via STDIN — multiline text can't survive the Windows shell
         proc = subprocess.run(
-            [claude_bin, "-p", "--model", MODEL,
+            [claude_bin, "-p", "--model", MODEL, "--max-turns", str(MAX_TURNS),
              "--allowedTools", "WebSearch", "WebFetch"],
             input=prompt, capture_output=True, text=True,
             encoding="utf-8", errors="replace", timeout=TIMEOUT_S, cwd=ROOT,

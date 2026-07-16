@@ -1055,18 +1055,19 @@ h+=`<div class="card"><div style="display:flex;justify-content:space-between;ali
 <span class="dim" style="font-size:12.5px"> ${esc(m.company||'')} · ${esc(m.sector||'')}</span></div>
 <div><span class="pill" style="border-color:${cc};color:${cc}">${p.conviction||''} conviction</span>
 <span class="pill" style="border-color:#334155;color:#94a3b8;margin-left:6px">mech ${m.score??'—'} · RS ${m.rs??'—'}</span></div></div>
-<div style="margin-top:12px;display:grid;grid-template-columns:1fr;gap:10px;font-size:13px;line-height:1.65">
-<div><span class="axis">SELECTED BECAUSE</span><br>${esc(p.selected_because)}</div>
+<div style="margin-top:11px;font-size:12.8px;line-height:1.6"><span class="axis">SELECTED BECAUSE</span><br>${esc(p.selected_because)}</div>`;
+if(pl&&pl.shares_total)h+=`<div class="mini" style="border-color:#34d39933;margin-top:10px"><span class="axis" style="color:#34d399">MECHANICAL PLAN (not AI — the validated engine)</span><br>
+<span style="font-size:13px">Buy <b>${pl.shares_total} sh</b> ≈ ₹${fmtNum(pl.position_value)} · entry ~${pl.entry_price} · stop <span style="color:#f87171">${pl.stop_loss_price}</span> · partial <span style="color:#34d399">${pl.partial_price}</span>${pl.risk_scale<1?' · <span style="color:#fbbf24">HALF SIZE (defensive regime)</span>':''}</span></div>`;
+else h+=`<div class="mini" style="border-color:#f8717144;margin-top:10px"><span class="axis" style="color:#f87171">NO MECHANICAL ENTRY PLAN</span> <span class="info" data-tip="The risk engine skips this name: its ATR-based stop would exceed the 12% hard cap — too volatile to size cleanly (Design Law #7). Watch only, not a buy.">?</span></div>`;
+h+=`<details class="actrest"><summary>Full research — thesis, catalyst, management, risks</summary>
+<div style="display:grid;grid-template-columns:1fr;gap:10px;font-size:12.8px;line-height:1.65;padding:8px 0 4px">
 <div><span class="axis">THESIS</span><br>${esc(p.thesis)}</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <div><span class="axis" style="color:#34d399">CATALYST</span><br>${esc(p.catalyst)}</div>
 <div><span class="axis" style="color:#a78bfa">MANAGEMENT & QUALITY</span><br>${esc(p.management)}</div></div>
 <div><span class="axis" style="color:#f87171">KEY RISKS</span><br>${esc(p.risks)}</div>
-<div><span class="axis">WATCH FOR</span> ${esc(p.watch_for)}</div>`;
-if(pl&&pl.shares_total)h+=`<div class="mini" style="border-color:#34d39933"><span class="axis" style="color:#34d399">MECHANICAL PLAN (not AI — the validated engine)</span><br>
-<span style="font-size:13px">Buy <b>${pl.shares_total} sh</b> ≈ ₹${fmtNum(pl.position_value)} · entry ~${pl.entry_price} · stop <span style="color:#f87171">${pl.stop_loss_price}</span> · partial <span style="color:#34d399">${pl.partial_price}</span>${pl.risk_scale<1?' · <span style="color:#fbbf24">HALF SIZE (defensive regime)</span>':''}</span></div>`;
-else h+=`<div class="mini" style="border-color:#f8717144"><span class="axis" style="color:#f87171">NO MECHANICAL ENTRY PLAN</span><br><span style="font-size:13px">The risk engine skips this name: its ATR-based stop would exceed the 12% hard cap (too volatile to size cleanly, Design Law #7). No clean entry — treat as watch only, not a buy.</span></div>`;
-h+=`</div><div style="margin-top:12px" id="pick_${p.symbol}"></div></div>`;});
+<div><span class="axis">WATCH FOR</span> ${esc(p.watch_for)}</div></div></details>
+<div style="margin-top:10px" id="pick_${p.symbol}"></div></div>`;});
 w.innerHTML=h;
 P.picks.forEach(p=>{const data=D.ohlc[p.symbol];if(!data||data.length<10)return;
 const c=mkChart(document.getElementById('pick_'+p.symbol),200);

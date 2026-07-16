@@ -37,6 +37,9 @@ OUT_MD = os.path.join(ROOT, "ai_picks.md")
 OUT_JSON = os.path.join(ROOT, "ai_picks.json")
 JOURNAL = os.path.join(ROOT, "journal", "ai_picks_journal.csv")
 TIMEOUT_S = 900
+MAX_TURNS = 30   # cap the committee's research loop: unbounded turns
+                 # re-process a growing context each step (the other half of
+                 # the 2026-07-16 $1.9/run cost); 30 covers 5 researched picks
 
 DIM_LABEL = {
     "rs_and_stage": "technicals/RS", "earnings_inflection": "earnings",
@@ -128,13 +131,17 @@ def run_committee(briefing: str, model: str, thinking_tokens: int):
         return None, "claude CLI not found"
     clean_env = {k: v for k, v in os.environ.items()
                  if not k.startswith("CLAUDE_CODE_") and k != "ANTHROPIC_BASE_URL"}
-    # high thinking budget for this weekly, high-value task (the committee is
-    # infrequent, so premium reasoning here costs little in aggregate)
+    # thinking: default 0 = the model's adaptive thinking (Sonnet 5 decides
+    # per-turn). Forcing a large budget via MAX_THINKING_TOKENS made EVERY
+    # turn of the ~30-turn research loop think at premium depth — the main
+    # driver of the $1.9/run cost observed 2026-07-16. Opt back in via
+    # --thinking-tokens if a specific run warrants it.
     if thinking_tokens > 0:
         clean_env["MAX_THINKING_TOKENS"] = str(thinking_tokens)
     try:
         proc = subprocess.run(
-            [claude_bin, "-p", "--model", model, "--allowedTools", "WebSearch", "WebFetch"],
+            [claude_bin, "-p", "--model", model, "--max-turns", str(MAX_TURNS),
+             "--allowedTools", "WebSearch", "WebFetch"],
             input=prompt, capture_output=True, text=True, encoding="utf-8",
             errors="replace", timeout=TIMEOUT_S, cwd=ROOT, env=clean_env)
         out = (proc.stdout or "").strip()
@@ -182,8 +189,9 @@ def main():
     parser.add_argument("--top", type=int, default=20)
     parser.add_argument("--model", default="claude-sonnet-5",
                         help="premium reasoning for the weekly committee")
-    parser.add_argument("--thinking-tokens", type=int, default=24000,
-                        help="extended-thinking budget ('High'); 0 to disable")
+    parser.add_argument("--thinking-tokens", type=int, default=0,
+                        help="0 (default) = model-adaptive thinking; set a "
+                             "budget only for a deliberate premium run")
     args = parser.parse_args()
 
     cands = load_candidates(args.top)
