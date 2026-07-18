@@ -145,6 +145,7 @@ def main() -> None:
                                 for f in e.get("filings", [])[:3]],
                     "headlines": [{"d": h["date"].strftime("%d %b"), "t": h["text"][:110],
                                    "s": h["source"], "tr": h.get("trusted", False),
+                                   "ru": h.get("roundup", False),
                                    "sn": h.get("sentiment", 0)}
                                   for h in e.get("headlines", [])[:5]],
                 }

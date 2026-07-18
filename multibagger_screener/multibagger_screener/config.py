@@ -229,19 +229,27 @@ class CatalystConfig:
         "products", "solutions", "systems", "services", "technologies",
         "technology", "tech", "and", "the", "of",
     ])
+    # matched on word boundaries with suffix tolerance (news_fetch v0.5):
+    # "surge" also hits surges/surged/surging — list base forms once
     positive_words: List[str] = field(default_factory=lambda: [
-        "order win", "bags", "wins", "surge", "surges", "jumps", "rallies",
-        "record", "expansion", "approval", "upgrade", "upgrades", "raises",
-        "profit rises", "profit jumps", "beats", "strong", "buyback", "bonus",
-        "highest", "all-time high", "turnaround", "doubles", "soars",
-        "gains", "rises", "rally", "spikes", "zooms", "navratna", "wins order",
-        "secures", "new high", "multibagger", "rerating", "re-rating",
+        "order win", "bags", "wins", "surge", "jumps", "rallies", "rallied",
+        "record", "expansion", "approval", "upgrade", "raises",
+        "profit rises", "profit jumps", "profit up", "beats", "strong",
+        "buyback", "bonus", "highest", "all-time high", "turnaround",
+        "doubles", "soars", "gains", "rises", "rally", "spikes", "zooms",
+        "navratna", "wins order", "secures", "new high", "multibagger",
+        "rerating", "re-rating", "upper circuit", "outperform",
+        "target raised", "order inflow", "contract win", "revenue up",
     ])
     negative_words: List[str] = field(default_factory=lambda: [
-        "falls", "drops", "plunges", "plunge", "loss widens", "weak",
-        "downgrade", "downgrades", "cuts", "probe", "penalty", "fraud",
+        "falls", "fell", "drops", "plunges", "plunge", "loss widens", "weak",
+        "downgrade", "cuts", "probe", "penalty", "fraud",
         "resigns", "default", "declines", "misses", "slumps", "crashes",
-        "under pressure", "sell-off", "warning",
+        "under pressure", "sell-off", "warning", "slips", "slides", "slid",
+        "tumbles", "tanks", "tanked", "plummets", "sinks", "sank",
+        "lower circuit", "posts loss", "profit falls", "profit drops",
+        "revenue falls", "underperform", "target cut", "shows cause",
+        "show cause", "pledge", "pledged",
     ])
 
 
