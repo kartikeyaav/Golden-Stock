@@ -27,6 +27,7 @@ import csv
 import json
 import os
 import sys
+import time
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -152,6 +153,13 @@ def entry_signals_append(rows: list[dict]) -> None:
             w.writerow({k: r.get(k, "") for k in ENTRY_SIGNALS_FIELDS})
 
 
+# live screener.in fetch politeness (see build_candidate): matches the batch
+# fetcher's 1.8s pause; budget bounds a freak all-alerts night
+_LIVE_FETCH_PAUSE_S = 1.8
+_LIVE_FETCH_BUDGET = 15
+_LIVE_FETCHES = {"n": 0}
+
+
 def entry_status_of(tag_result: dict) -> str:
     """Human label for how faithfully an alert matches the backtested trigger."""
     if tag_result.get("validated_entry"):
@@ -170,17 +178,29 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     raw = load_company(sym)
     # cloud-coverage fix (2026-07-18): the cache is only pre-filled for the
     # weekly CONFIRMED/ANTICIPATION shortlist, so re-entry/extended alerts
-    # scored fundamentals-blind (coverage 45%, five dims "no info"). Alerted
-    # names are 1-3 per night — fetch live when missing/stale, never fatal.
+    # scored fundamentals-blind (coverage 45%, five dims "no info"). Fetch
+    # live when missing/stale, never fatal. Politeness guards (audit
+    # 2026-07-18): volatile nights can fire 15-25 buy-type alerts (Jul-14
+    # had 23), so pause between live fetches and cap the per-night budget —
+    # names over budget just score technical-only tonight and heal at the
+    # next weekly refresh.
     if raw is None or _age_days(raw) > 7.0:
         why = "absent" if raw is None else "stale"
-        try:
-            raw = fetch_company(sym)
-            save_company(sym, raw)
-            print(f"  fundamentals fetched live for {sym} (cache was {why})",
-                  flush=True)
-        except Exception as e:  # noqa: BLE001 — screener.in down != scan down
-            print(f"  fundamentals fetch failed for {sym}: {str(e)[:80]}", flush=True)
+        if _LIVE_FETCHES["n"] >= _LIVE_FETCH_BUDGET:
+            print(f"  fundamentals fetch budget ({_LIVE_FETCH_BUDGET}/night) "
+                  f"exhausted — {sym} scores technical-only tonight", flush=True)
+        else:
+            try:
+                if _LIVE_FETCHES["n"]:
+                    time.sleep(_LIVE_FETCH_PAUSE_S)
+                _LIVE_FETCHES["n"] += 1
+                raw = fetch_company(sym)
+                save_company(sym, raw)
+                print(f"  fundamentals fetched live for {sym} (cache was {why})",
+                      flush=True)
+            except Exception as e:  # noqa: BLE001 — screener.in down != scan down
+                print(f"  fundamentals fetch failed for {sym}: {str(e)[:80]}",
+                      flush=True)
     fund_row = flatten(sym, raw) if raw else None
     dims = build_dimensions(tag_result, rs_pctile, fund_row, industry)
 

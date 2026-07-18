@@ -87,7 +87,13 @@ def _conviction_of(report: str, sym: str) -> float:
 def extract_candidates(report: str) -> list[str]:
     """Buy-type alert symbols, ranked by mechanical conviction (highest first),
     capped at MAX_DIVES_PER_DAY — spend scarce research on the best names."""
-    syms = re.findall(r"\*\*(?:BUY CANDIDATE|RE-ENTRY WINDOW)\*\*: (\w[\w&-]*)", report)
+    # tolerate the optional entry-fidelity label ("** [AWAITING TRIGGER]:")
+    # added to buy lines ~2026-07-14 — the old strict "**KIND**:" pattern
+    # matched nothing after that, silently killing every nightly deep-dive
+    # (audit catch 2026-07-18)
+    syms = re.findall(
+        r"\*\*(?:BUY CANDIDATE|RE-ENTRY WINDOW)\*\*(?:\s*\[[^\]]*\])?: (\w[\w&-]*)",
+        report)
     seen, uniq = set(), []
     for s in syms:
         if s not in seen:
@@ -195,6 +201,20 @@ def main() -> None:
 
     candidates = extract_candidates(report)
     if not candidates:
+        # format-drift tripwire (audit 2026-07-18): the strict pattern once
+        # went stale against the alert-line format and the analyst sat
+        # "idle" through real buy nights for a week, indistinguishable from
+        # a genuinely quiet market. If the words are in the file but the
+        # parser sees nothing, that is a BUG, not a quiet night — shout.
+        loose_hits = len(re.findall(r"BUY CANDIDATE|RE-ENTRY WINDOW", report))
+        if loose_hits:
+            msg = (f"ALERT-FORMAT DRIFT: {loose_hits} buy-type mention(s) in "
+                   f"daily_alerts.md but the candidate parser matched none — "
+                   f"fix extract_candidates() in ai_analyst.py")
+            print(msg, flush=True)
+            if not is_test:
+                write_health("failed", msg)
+            return
         print("no buy-type alerts — analyst not needed tonight")
         if not is_test:
             write_health("idle", "no buy-type alerts tonight")
