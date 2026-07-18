@@ -45,12 +45,13 @@ accumulate before real capital scales).
   is cached via Windows Git Credential Manager after the user's one manual login).
   Commits through `8746dc3`+ (see `git log`). `.gitignore` excludes caches,
   secrets, logs, test artifacts.
-- **Cloud is now the primary runner** (2026-07-12): `.github/workflows/daily.yml`
+- **Cloud is the sole runner** (verified 2026-07-18): `.github/workflows/daily.yml`
   + `weekly.yml` on GitHub Actions — see `CLOUD.md` for full setup/ops. The
-  Windows Task Scheduler jobs (`MultibaggerDailyScan`/`WeeklyRefresh`) still
-  exist as a fallback until the cloud run is verified by the user; **disable
-  them once cloud is confirmed working** (two runners both pushing the journal
-  = merge conflicts).
+  Windows Task Scheduler jobs (`MultibaggerDailyScan`/`WeeklyRefresh`) are now
+  **DISABLED** (they still exist, so re-enabling is a one-liner if the cloud
+  ever needs a fallback) — running both was causing two runners to push the
+  journal and produce merge conflicts / diverged history. Do NOT re-enable
+  while the cloud runs.
 - **AI scripts spawn `claude -p`**: they scrub `CLAUDE_CODE_*` + `ANTHROPIC_BASE_URL`
   from the env before spawning (else the host-injected auth poisons the child
   CLI -> "Invalid API key"). This is already coded; don't remove it.
@@ -146,8 +147,9 @@ shortlist — §3F). KPI strip shows ideal/stressed pairs (see §3H for why).
 **Ops**: **Cloud-first as of 2026-07-12** — GitHub Actions (`daily.yml` +
 `weekly.yml`, see CLOUD.md) runs regardless of the laptop; dashboard publishes
 to GitHub Pages. Windows Task Scheduler (`MultibaggerDailyScan` 18:35 IST,
-`MultibaggerWeeklyRefresh` Sun 10:00) still enabled as a fallback pending user
-verification of the cloud run — disable once confirmed. Journal (`journal/`,
+`MultibaggerWeeklyRefresh` Sun 10:00) **DISABLED 2026-07-18** now that the
+cloud is verified — they exist but do not fire (re-enabling races the cloud on
+the journal push). Journal (`journal/`,
 now including `entry_signals.csv` fidelity log), health checks (loud on stale
 data/broken parser/degenerate tagger/per-holding staleness/analyst heartbeat),
 position management (`positions.csv` vs plan), holdings drift check, nightly
@@ -403,8 +405,8 @@ degrade cleanly otherwise.
 USER STEPS (see CLOUD.md): (1) Actions -> Run workflow once to prime the cache
 (first run = full backfill, baseline, no alerts — expected). (2) Settings ->
 Pages -> Source = GitHub Actions. (3) add secrets (TELEGRAM_*, ANTHROPIC_API_KEY).
-(4) **DISABLE the laptop tasks** (Disable-ScheduledTask MultibaggerDailyScan /
-MultibaggerWeeklyRefresh) — two runners both pushing the journal = conflicts.
+(4) ~~DISABLE the laptop tasks~~ **DONE 2026-07-18** — both scheduled tasks are
+now Disabled; the cloud is the sole runner.
 
 CANNOT be verified from this repo (no gh/API token here to read Action logs) —
 the first live run is user-triggered; iterate from its logs. TOP RISK: Yahoo
@@ -448,9 +450,9 @@ enabled + healthy (ran today) as the fallback until cloud is proven.
    header) and `ANTHROPIC_API_KEY` (cloud AI analyst/committee — subscription
    login can't work headless in Actions; API key is pay-per-use, a few
    cents/day).
-4. **Disable the laptop Task Scheduler jobs** once the cloud run is confirmed
-   working (`Disable-ScheduledTask MultibaggerDailyScan` / `...WeeklyRefresh`)
-   — two runners both pushing the journal will conflict.
+4. ~~Disable the laptop Task Scheduler jobs~~ **DONE 2026-07-18** — both
+   `MultibaggerDailyScan` and `MultibaggerWeeklyRefresh` are Disabled; cloud is
+   the sole runner. (Re-enable only if the cloud is retired — never run both.)
 5. **Update `config.RISK.capital`** to the real account equity periodically
    (monthly is enough) — makes the corrected fixed-fractional sizing (§3H)
    actually track reality; live plans size off this constant.
