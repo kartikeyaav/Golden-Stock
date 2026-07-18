@@ -28,9 +28,9 @@ fixed). **The backtested read was corrected 2026-07-12: sizing was measured
 off remaining cash, undersizing every late entry — equity-basis sizing is the
 same rules, same entries, just honest measurement, and it roughly DOUBLES the
 CAGR read** (see §3H). **The system is essentially complete and live, now
-laptop-independent.** What remains is small user actions (Telegram, verify
-the first cloud run, decide API-key auth) and time (forward journal must
-accumulate before real capital scales).
+laptop-independent.** Cloud run verified, Telegram live, API key set (all
+2026-07-18). What remains is mostly time (the forward journal must accumulate
+before real capital scales).
 
 ---
 
@@ -386,8 +386,9 @@ Audit-driven defensive fixes (all small, all pure-defense, tests green):
   detection, prints add/update/gone diff, --dry-run. Does NOT touch
   positions.csv. This is the standing answer to the SEBI daily-session friction.
 
-Still needs the USER (can't be done from here): Telegram BotFather token (#11),
-RISK.capital update to real equity for true fixed-fractional (#5).
+Still needs the USER (can't be done from here): RISK.capital update to real
+equity for true fixed-fractional (#5). (Telegram BotFather token #11 — DONE
+2026-07-18, secrets set, delivery verified end-to-end.)
 
 ## 3J. Cloud migration — GitHub Actions (2026-07-12)
 
@@ -400,7 +401,10 @@ tags_state.json diff-baseline, alerts, positions) is committed back to the repo
 each run (durable + offsite backup); the dashboard publishes to GitHub Pages
 (no git bloat) + a run artifact. AI analyst/committee run only if
 ANTHROPIC_API_KEY secret is set; Telegram only if its secrets are set — both
-degrade cleanly otherwise.
+degrade cleanly otherwise. **All three secrets (ANTHROPIC_API_KEY,
+TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) are set as of 2026-07-18; Telegram
+delivery verified end-to-end. Alerts send every run (daily heartbeat — quiet
+nights included, by user choice).**
 
 USER STEPS (see CLOUD.md): (1) Actions -> Run workflow once to prime the cache
 (first run = full backfill, baseline, no alerts — expected). (2) Settings ->
