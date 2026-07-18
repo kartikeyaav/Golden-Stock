@@ -31,10 +31,12 @@ After the next daily run, the dashboard is live at
 dashboard is also attached to each run as a downloadable artifact.)
 
 ### 3. Add secrets (optional but recommended) — Settings → Secrets and variables → Actions
-| Secret | Enables | Without it |
-|---|---|---|
-| `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` | alerts pushed to your phone | alerts only in `daily_alerts.md` / Pages |
-| `ANTHROPIC_API_KEY` | nightly AI analyst dives + weekly committee | those steps skip cleanly |
+**Status: all three set as of 2026-07-18 — Telegram delivery verified end-to-end.**
+
+| Secret | Enables | Without it | Set? |
+|---|---|---|---|
+| `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` | alerts pushed to your phone | alerts only in `daily_alerts.md` / Pages | ✅ |
+| `ANTHROPIC_API_KEY` | nightly AI analyst dives + weekly committee | those steps skip cleanly | ✅ |
 
 The AI layers are pay-per-use with the API key (a few cents/day) — the right
 model for an unattended job (your Claude subscription login can't work headless
