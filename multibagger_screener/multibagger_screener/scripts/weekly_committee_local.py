@@ -117,7 +117,10 @@ def main() -> int:
     gr = git_root()
     run(["git", "add", "--",
          "multibagger_screener/multibagger_screener/ai_picks.json",
-         "multibagger_screener/multibagger_screener/ai_picks.md"], cwd=gr)
+         "multibagger_screener/multibagger_screener/ai_picks.md",
+         # the committee's forward track record — ai_picks.py appends here
+         "multibagger_screener/multibagger_screener/journal/ai_picks_journal.csv"],
+        cwd=gr)
     c = run(["git", "commit", "-m",
              f"local committee picks {datetime.now():%Y-%m-%d} (subscription run)"],
             cwd=gr)
