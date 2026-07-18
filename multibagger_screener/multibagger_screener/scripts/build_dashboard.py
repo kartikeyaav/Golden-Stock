@@ -378,13 +378,6 @@ def build_payload() -> dict:
     except Exception:  # noqa: BLE001 — dashboard must build even if paper book breaks
         paper = {}
 
-    equity = []
-    eq = _read_csv("baseline_equity.csv")
-    if not eq.empty:
-        eq = eq.iloc[::5]
-        equity = [[str(pd.Timestamp(d).date()), round(float(v), 0)]
-                  for d, v in zip(eq["date"], eq["equity"])]
-
     tag_counts = pd.Series(list(tags.values())).value_counts().to_dict() if tags else {}
     heat = []
     if not focus.empty:
@@ -392,25 +385,6 @@ def build_payload() -> dict:
         g = g[g["count"] >= 3].sort_values("mean", ascending=False)
         heat = [{"ind": str(i)[:24], "rs": round(float(r["mean"]), 0), "n": int(r["count"])}
                 for i, r in g.iterrows()][:18]
-
-    matrix = [
-        {"name": "SZ2-B equity-basis sizing (ADOPTED)", "exp": 1.67, "keep": True},
-        {"name": "SZ2-B deployment stress", "exp": 1.10, "keep": True},
-        {"name": "A technical baseline", "exp": 1.27, "keep": True},
-        {"name": "F2 fund lot-split", "exp": 1.27, "keep": False},
-        {"name": "F1 core patience", "exp": 1.25, "keep": False},
-        {"name": "S2 heavy costs (stress)", "exp": 1.20, "keep": True},
-        {"name": "S1 next-open fills (stress)", "exp": 0.96, "keep": True},
-        {"name": "B3 fund gate 0.50", "exp": 0.54, "keep": False},
-        {"name": "V3a anticipation+fund", "exp": 0.41, "keep": False},
-        {"name": "B1 fund gate 0.55", "exp": 0.39, "keep": False},
-        {"name": "D fund entry-ranking", "exp": 0.38, "keep": False},
-        {"name": "E40 sector-heat gate", "exp": 0.22, "keep": False},
-        {"name": "E60 sector-heat gate", "exp": 0.11, "keep": False},
-        {"name": "V3a anticipation price-only", "exp": 0.06, "keep": False},
-        {"name": "SZ 16 slots (sizing matrix)", "exp": 1.15, "keep": False},
-        {"name": "SZ 20 slots (sizing matrix)", "exp": 0.89, "keep": False},
-    ]
 
     return {
         "generated": datetime.now().strftime("%d %b %Y, %H:%M"),
@@ -431,8 +405,8 @@ def build_payload() -> dict:
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,
         "actionable": actionable, "paper": paper,
-        "outcomes": out_stats, "equity": equity, "nifty": nifty,
-        "heat": heat, "matrix": matrix,
+        "outcomes": out_stats, "nifty": nifty,
+        "heat": heat,
         # sizing matrix v2 (2026-07-12): equity-basis sizing adopted — the old
         # 21.5% figure was a cash-basis measurement artifact. Ideal-fill /
         # stressed pairs shown; stress = next-open fills + gap stops + costs.
@@ -504,10 +478,11 @@ padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--line)}
 .sub{display:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
 h2{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
-.info{display:inline-flex;width:15px;height:15px;border-radius:50%;border:1px solid var(--line2);color:var(--faint);
-font:600 9.5px Inter;align-items:center;justify-content:center;cursor:help;margin-left:7px;vertical-align:1px;
+.info{display:inline-flex;flex:0 0 16px;width:16px;height:16px;border-radius:50%;
+background:var(--card2);border:1px solid var(--line2);color:var(--dim);
+font:700 10px/1 Inter;align-items:center;justify-content:center;cursor:help;margin-left:7px;vertical-align:-2px;
 text-transform:none;letter-spacing:0;transition:.12s}
-.info:hover{color:var(--txt);border-color:var(--dim)}
+.info:hover{color:var(--txt);border-color:var(--dim);background:#232c39}
 .tip{position:fixed;display:none;max-width:320px;background:#1e2632;border:1px solid var(--line2);border-radius:8px;
 padding:9px 12px;font:400 11.5px/1.6 Inter;color:#c4cdd8;z-index:100;box-shadow:0 10px 32px #0009;pointer-events:none}
 .kpis{display:flex;gap:0;margin-bottom:14px;background:var(--card);border:1px solid var(--line);
@@ -612,7 +587,6 @@ main{margin:0;padding:14px}.grid2{grid-template-columns:1fr}
 <button class="navbtn" data-t="screener"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Screener</button>
 <button class="navbtn" data-t="positions"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Positions</button>
 <button class="navbtn" data-t="journal"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg> Journal</button>
-<button class="navbtn" data-t="validation"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.2-2.9 7.7-7 9.5-4.1-1.8-7-5.3-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg> Validation</button>
 <div id="runpanel" style="display:none">
   <div class="runhead">RUN (local server)</div>
   <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + dashboard — no AI, no credits">&#8635; Daily scan (no AI)</button>
@@ -685,13 +659,6 @@ main{margin:0;padding:14px}.grid2{grid-template-columns:1fr}
   <tbody id="jbody"></tbody></table></div>
 </div>
 
-<div class="tab" id="validation">
-  <div class="card"><h2>Baseline equity curve &mdash; 604 stocks, 7.5y, after costs<span class="info" data-tip="The receipts: what ₹10L became following the rules mechanically for 7.5 years. Survivor-biased, so directional — comparisons between configs are clean, absolute numbers are optimistic.">?</span></h2>
-  <div id="eqchart" style="height:230px"></div></div>
-  <div class="card"><h2>Every config tested &mdash; expectancy per trade<span class="info" data-tip="Pre-registered experiments. Green = kept in the live system; grey = tested and rejected. Every fundamental/sector/news gate underperformed the plain technical baseline — if you wonder 'shouldn't we also filter by X?', the answer is probably a grey bar. Full protocol in VALIDATION_REPORT.md.">?</span></h2>
-  <div id="matrix"></div></div>
-</div>
-
 <div class="overlay" id="ovl" onclick="closeDrawer()"></div>
 <div class="pal" id="pal"><div class="palbox">
 <input id="palq" placeholder="Search stocks — symbol or company&hellip;" autocomplete="off">
@@ -727,7 +694,6 @@ document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('on'));
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
  b.classList.add('on');$('#'+b.dataset.t).classList.add('on');
- if(b.dataset.t==='validation'&&!window._eq)drawEquity();
  if(b.dataset.t==='positions'&&!window._pos)drawPositions();
  if(b.dataset.t==='picks'&&!window._picks)drawPicks();});
 
@@ -1076,14 +1042,6 @@ cs.setData(data.map(q=>({time:q[0],open:q[1],high:q[2],low:q[3],close:q[4]})));
 c.addLineSeries({color:'#fbbf24',lineWidth:1}).setData(sma(data,150));
 if(p.plan&&p.plan.stop_loss_price)cs.createPriceLine({price:p.plan.stop_loss_price,color:'#f87171',lineStyle:2,title:'stop'});
 c.timeScale().fitContent();});}
-
-/* validation */
-function drawEquity(){window._eq=1;if(!D.equity.length)return;
-const c=mkChart($('#eqchart'),230);
-const a=c.addAreaSeries({lineColor:'#34d399',topColor:'#34d39922',bottomColor:'transparent',lineWidth:2});
-a.setData(D.equity.map(p=>({time:p[0],value:p[1]})));c.timeScale().fitContent();}
-$('#matrix').innerHTML=D.matrix.map(m=>{const w=m.exp/1.27*100;
-return `<div class="mbar"><div class="mlabel">${m.name}</div><div class="mtrack"><div class="mfill" style="width:${Math.max(w,2)}%;background:${m.keep?'linear-gradient(90deg,#34d399,#5aa2ff)':'#47556999'}"></div></div><b class="mono" style="min-width:56px">${m.exp>0?'+':''}${m.exp}R</b></div>`}).join('');
 
 /* run panel — lights up ONLY when served by scripts/dashboard_server.py.
    Opened as a plain file (file://) the fetch fails and the panel stays
