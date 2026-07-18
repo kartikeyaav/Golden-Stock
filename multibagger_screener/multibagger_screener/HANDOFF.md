@@ -399,12 +399,20 @@ setup + operations in **CLOUD.md**. Design: price/fundamentals caches (75 MB)
 persist via actions/cache (rolling key); the forward record (journal,
 tags_state.json diff-baseline, alerts, positions) is committed back to the repo
 each run (durable + offsite backup); the dashboard publishes to GitHub Pages
-(no git bloat) + a run artifact. AI analyst/committee run only if
-ANTHROPIC_API_KEY secret is set; Telegram only if its secrets are set — both
-degrade cleanly otherwise. **All three secrets (ANTHROPIC_API_KEY,
+(no git bloat) + a run artifact. Telegram sends only if its secrets are set —
+degrades cleanly otherwise. **All three secrets (ANTHROPIC_API_KEY,
 TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) are set as of 2026-07-18; Telegram
 delivery verified end-to-end. Alerts send every run (daily heartbeat — quiet
 nights included, by user choice).**
+
+**AI split (2026-07-19, credit discipline):** the **weekly committee is
+LOCAL-ONLY** — weekly.yml always runs `--no-ai` (API credits can run dry
+mid-cycle; the committee is the expensive call). The user runs
+`python scripts/ai_picks.py` on the laptop (subscription auth, free at the
+margin) and pushes ai_picks.json/md; the cloud never rewrites them under
+`--no-ai`, so every dashboard build uses the pushed picks. The **nightly
+analyst stays on the API key in daily.yml** (max 2 dives, cents, alert nights
+only) and degrades cleanly if credits die — the health check surfaces it.
 
 USER STEPS (see CLOUD.md): (1) Actions -> Run workflow once to prime the cache
 (first run = full backfill, baseline, no alerts — expected). (2) Settings ->
