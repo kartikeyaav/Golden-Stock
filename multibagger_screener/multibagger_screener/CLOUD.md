@@ -36,7 +36,22 @@ dashboard is also attached to each run as a downloadable artifact.)
 | Secret | Enables | Without it | Set? |
 |---|---|---|---|
 | `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` | alerts pushed to your phone | alerts only in `daily_alerts.md` / Pages | ✅ |
-| `ANTHROPIC_API_KEY` | nightly AI analyst dives + weekly committee | those steps skip cleanly | ✅ |
+| `ANTHROPIC_API_KEY` | nightly AI analyst dives (daily.yml only) | that step skips cleanly | ✅ |
+
+**AI split (2026-07-19, credit discipline):** the **weekly committee no longer
+runs in the cloud** — weekly.yml always passes `--no-ai`. The user runs it
+locally on subscription auth (free at the margin, no credit-exhaustion risk):
+
+```bash
+python scripts/ai_picks.py      # committee on the laptop (subscription /login)
+git add ai_picks.json ai_picks.md && git commit -m "weekly committee picks" && git push
+```
+
+The cloud weekly never rewrites ai_picks.json under `--no-ai`, so the pushed
+picks persist and every subsequent dashboard build (daily + weekly) uses them.
+The nightly analyst (2 dives max, cents/night, only on alert nights) stays on
+the API key in daily.yml; if credits run dry it degrades cleanly and the
+health check surfaces it.
 
 The AI layers are pay-per-use with the API key (a few cents/day) — the right
 model for an unattended job (your Claude subscription login can't work headless

@@ -1,9 +1,16 @@
 name: Weekly refresh (cloud)
 
 # Full weekly rebuild in the cloud: universe -> prices -> focus list ->
-# fundamentals -> ranked shortlist -> (AI committee if key set) -> dashboard.
-# Sunday 10:00 IST = 04:30 UTC. NSE rebalances indices only in Mar/Sep, so a
-# weekly universe refresh is plenty. Also runnable on demand.
+# fundamentals -> ranked shortlist -> dashboard. Sunday 10:00 IST = 04:30 UTC.
+# NSE rebalances indices only in Mar/Sep, so a weekly universe refresh is
+# plenty. Also runnable on demand.
+#
+# AI COMMITTEE RUNS LOCALLY, NOT HERE (user decision 2026-07-19): API credits
+# can run dry mid-cycle and the committee is the expensive call, so the cloud
+# always passes --no-ai. The user runs `python scripts/ai_picks.py` on the
+# laptop (Claude subscription auth — free at the margin), then pushes; the
+# committed ai_picks.json survives this job untouched (--no-ai never rewrites
+# it) and the dashboard build picks it up.
 on:
   schedule:
     - cron: "30 4 * * 0"
@@ -25,7 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180   # fundamentals scrape of the shortlist is the long pole
     env:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       PYTHONUNBUFFERED: "1"
     steps:
       - uses: actions/checkout@v4
@@ -45,16 +51,10 @@ jobs:
           key: golden-data-${{ github.run_id }}
           restore-keys: golden-data-
 
-      # --no-ai keeps the credit-burning committee out of the automatic run
-      # UNLESS an API key is configured (then the committee runs on pay-per-use).
-      - name: Weekly refresh
-        run: |
-          if [ -n "$ANTHROPIC_API_KEY" ]; then
-            npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true
-            python scripts/weekly_refresh.py
-          else
-            python scripts/weekly_refresh.py --no-ai
-          fi
+      # --no-ai ALWAYS: the committee runs on the user's laptop (subscription
+      # auth) and its ai_picks.json arrives via git push — see header comment.
+      - name: Weekly refresh (no AI committee — runs locally)
+        run: python scripts/weekly_refresh.py --no-ai
 
       - name: Commit refreshed record
         run: |
