@@ -143,8 +143,12 @@ def build_payload() -> dict:
         raw = open(ap, encoding="utf-8").read()
         m = re.search(r"Daily scan . (.+)", raw)
         scan_date = m.group(1).strip() if m else ""
-        alerts = [{"kind": k, "text": v} for k, v in
-                  re.findall(r"^- \*\*(.+?)\*\*: (.+)$", raw, re.M)]
+        # buy-type lines carry an entry-fidelity label ("**KIND** [STATUS]: SYM")
+        # since ~2026-07-14 — the old strict "**KIND**:" pattern dropped exactly
+        # the buy alerts from the Tonight panel (audit catch 2026-07-18)
+        alerts = [{"kind": k, "text": (f"[{s}] " if s else "") + v}
+                  for k, s, v in
+                  re.findall(r"^- \*\*(.+?)\*\*(?:\s*\[([^\]]*)\])?: (.+)$", raw, re.M)]
         vm = re.search(r"## AI analyst verdicts\n(.*?)(?=\n## |\Z)", raw, re.S)
         verdicts = vm.group(1).strip()[:4000] if vm else ""
 
@@ -456,6 +460,10 @@ nav h1 span{color:var(--grn)}
 background:transparent;color:var(--dim);font:500 13px Inter;cursor:pointer;margin:1px 0;text-align:left;
 transition:background .12s,color .12s}
 .navbtn svg{flex:0 0 auto;opacity:.7}
+/* desktop sidebar: gap between the search box and the first tab (was an
+   inline style, which beat the mobile margin reset and knocked Overview
+   out of line with the other tabs on the horizontal bar) */
+nav>.navbtn:first-of-type{margin-top:12px}
 .navbtn:hover{background:var(--card2);color:var(--txt)}
 .navbtn.on{background:var(--card2);color:var(--txt);font-weight:600;box-shadow:inset 2px 0 0 var(--grn)}
 .navbtn.on svg{color:var(--grn);opacity:1}
@@ -498,7 +506,9 @@ border-radius:12px;padding:13px 6px;justify-content:space-around}
 .kpi{padding:2px 18px;border-left:1px solid var(--line)}
 .kpi:first-child{border-left:0}
 .kpi b{display:block;font-size:21px;font-weight:700;margin-top:3px;letter-spacing:-.3px}
-.kpi span{color:var(--faint);font-size:9.5px;text-transform:uppercase;letter-spacing:.9px;display:block;white-space:nowrap}
+/* child selector: the nested .info "?" must not inherit the label's
+   display:block/uppercase styling (it was dropping onto its own line) */
+.kpi>span{color:var(--faint);font-size:9.5px;text-transform:uppercase;letter-spacing:.9px;display:block;white-space:nowrap}
 .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
 .chip{display:inline-flex;gap:7px;align-items:center;border:1px solid;border-radius:7px;
 padding:5px 11px;margin:2px 5px 2px 0;font-size:12px;background:transparent;cursor:pointer;transition:.15s}
@@ -585,6 +595,7 @@ scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 nav h1{padding:0 12px 0 2px;white-space:nowrap}
 .navbtn{width:auto;white-space:nowrap;padding:8px 11px;margin:0;flex:0 0 auto}
+nav>.navbtn:first-of-type{margin-top:0}
 .navbtn.on{box-shadow:inset 0 -2px 0 var(--grn)}
 #runpanel{display:none!important}
 main{margin:0;padding:14px;max-width:100%}.grid2{grid-template-columns:1fr}
@@ -608,7 +619,7 @@ th{font-size:9px}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
 <div class="searchhint" onclick="openPalette()"><span>Search stocks&hellip;</span><kbd>Ctrl K</kbd></div>
-<button class="navbtn on" data-t="overview" style="margin-top:12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Overview</button>
+<button class="navbtn on" data-t="overview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Overview</button>
 <button class="navbtn" data-t="picks"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg> AI Picks</button>
 <button class="navbtn" data-t="screener"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Screener</button>
 <button class="navbtn" data-t="positions"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Positions</button>
