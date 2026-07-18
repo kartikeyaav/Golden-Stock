@@ -407,12 +407,17 @@ nights included, by user choice).**
 
 **AI split (2026-07-19, credit discipline):** the **weekly committee is
 LOCAL-ONLY** — weekly.yml always runs `--no-ai` (API credits can run dry
-mid-cycle; the committee is the expensive call). The user runs
-`python scripts/ai_picks.py` on the laptop (subscription auth, free at the
-margin) and pushes ai_picks.json/md; the cloud never rewrites them under
-`--no-ai`, so every dashboard build uses the pushed picks. The **nightly
-analyst stays on the API key in daily.yml** (max 2 dives, cents, alert nights
-only) and degrades cleanly if credits die — the health check surfaces it.
+mid-cycle; the committee is the expensive call). It runs AUTOMATICALLY via
+Task Scheduler task **`MultibaggerWeeklyCommittee`** (triggers: every logon
++2min, and Sun 11:00 IST) → `scripts/weekly_committee_local.py`, which
+git-pulls, then runs `ai_picks.py` on subscription auth ONLY IF the cloud's
+shortlist_ranked.csv commit is newer than ai_picks.json's generated stamp
+(so daily boots are sub-second no-ops; one real run per weekly refresh),
+then commits + pushes ai_picks.json/md. Log: `logs/committee_local.log`.
+The cloud never rewrites the picks under `--no-ai`, so every dashboard
+build uses the pushed ones. The **nightly analyst stays on the API key in
+daily.yml** (max 2 dives, cents, alert nights only) and degrades cleanly
+if credits die — the health check surfaces it.
 
 USER STEPS (see CLOUD.md): (1) Actions -> Run workflow once to prime the cache
 (first run = full backfill, baseline, no alerts — expected). (2) Settings ->
