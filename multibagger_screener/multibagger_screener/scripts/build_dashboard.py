@@ -272,15 +272,23 @@ def build_payload() -> dict:
         return round(float(v), nd) if pd.notna(v) else None
     score_rows = []
     if not outcomes.empty:
+        seen_sc: dict = {}   # symbol -> how many newer rows exist (re-alert marker)
         for _, r in outcomes.iloc[::-1].iterrows():
+            sym = str(r["symbol"])
             score_rows.append({
-                "d": str(r["logged_at"])[:16], "sym": r["symbol"],
+                "d": str(r["logged_at"])[:16], "sym": sym,
                 "kind": str(r.get("kind", "")), "entry": _num(r.get("close")),
                 "stop": _num(r.get("stop_suggested")),
                 "ret": _num(r.get("return_to_date_pct"), 1),
                 "r": _num(r.get("r_to_date")), "maxr": _num(r.get("max_favorable_R")),
                 "status": str(r.get("status", "")),
-                "conv": _num(r.get("conviction_score"), 0)})
+                "conv": _num(r.get("conviction_score"), 0),
+                # coverage: <60% means the number is a coverage-limited
+                # "technical read", not a full 8-question conviction score
+                "cov": _num(r.get("coverage_pct"), 0),
+                # 0 = newest signal for this symbol; 1,2,… = earlier re-alerts
+                "re": seen_sc.get(sym, 0)})
+            seen_sc[sym] = seen_sc.get(sym, 0) + 1
 
     # "actionable now" — buy signals from the last 7 days, marked against
     # tonight's tag + price so fresh/extended/faded is explicit (the
@@ -332,7 +340,7 @@ def build_payload() -> dict:
                 "sym": sym, "d": f"{r['logged_at']:%d %b}", "kind": str(r["kind"]),
                 "alert_px": alert_px, "now_px": now_px,
                 "chg": round((now_px / alert_px - 1) * 100, 1) if now_px and alert_px else None,
-                "conv": conv, "tag": tag_now,
+                "conv": conv, "cov": _num(r.get("coverage_pct"), 0), "tag": tag_now,
                 "trigger": trigger_by_sym.get(sym, ""),
                 "verdict": verdict_by_sym.get(sym, ""), "status": status})
 
@@ -571,14 +579,32 @@ details.actrest summary:hover{color:var(--txt)}
 details.actrest table{opacity:.8}
 @media(max-width:1000px){
 body{flex-direction:column}
-nav{position:static;width:100%;height:auto;display:flex;align-items:center;gap:2px;
-padding:10px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
+nav{position:static;width:100%;height:auto;display:flex;flex-direction:row;align-items:center;gap:2px;
+padding:10px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);
+scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
 nav h1{padding:0 12px 0 2px;white-space:nowrap}
-.navbtn{width:auto;white-space:nowrap;padding:8px 11px;margin:0}
+.navbtn{width:auto;white-space:nowrap;padding:8px 11px;margin:0;flex:0 0 auto}
+.navbtn.on{box-shadow:inset 0 -2px 0 var(--grn)}
 #runpanel{display:none!important}
-main{margin:0;padding:14px}.grid2{grid-template-columns:1fr}
+main{margin:0;padding:14px;max-width:100%}.grid2{grid-template-columns:1fr}
 .kpis{flex-wrap:wrap;gap:8px}.kpi{border-left:0;padding:2px 10px}
-.searchhint{display:none}.drawer{width:100vw;right:-100vw}}
+.searchhint{display:none}.drawer{width:100vw;right:-100vw}
+/* wide tables scroll inside their card instead of clipping at the edge */
+.card{overflow-x:auto}
+.badge{white-space:nowrap}
+.top{align-items:flex-start}}
+@media(max-width:640px){
+main{padding:10px}
+.card{padding:12px 12px;border-radius:10px}
+table{font-size:11.5px}
+th{font-size:9px}
+.minis{grid-template-columns:1fr}
+.kpi b{font-size:16px}
+.acthead{font-size:12px}
+.dochip{font-size:9px;padding:2px 6px}
+.drawer{padding:16px 14px}
+.funnelline{font-size:10.5px;line-height:1.8}}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
 <div class="searchhint" onclick="openPalette()"><span>Search stocks&hellip;</span><kbd>Ctrl K</kbd></div>
@@ -736,7 +762,7 @@ const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  return `<tr onclick="openDrawer('${a.sym}')">
  <td><span class="dochip" data-tip="${esc(DOEXPL[a.dokind]||'')}" style="background:${c}12;color:${c};border-color:${c}45">${a.do}</span></td>
  <td class="sym">${a.sym}${a.n>1?`<span class="ndot" title="alerted ${a.n}× in 7 days">×${a.n}</span>`:''}</td>
- <td class="mono">${a.conv??'—'}</td>
+ <td class="mono">${a.conv==null?'—':(a.cov!=null&&a.cov<60?`<span data-tip="Technical read — only ${a.cov}% of the 8 scored questions had data (fundamentals unavailable at alert time). Not comparable with full-coverage conviction scores.">${a.conv}<span style="color:#fbbf24">°</span></span>`:a.conv)}</td>
  <td class="dim" style="font-size:11.5px">${a.verdict?esc(a.verdict):'—'}</td>
  <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
  <td class="dim mono">${a.d}</td></tr>`};
@@ -875,7 +901,7 @@ ${n.events.length?' · events: <b style="color:#5aa2ff">'+esc(n.events.join(', '
 (n.red_flags||[]).forEach(f=>h+=`<div style="color:#f87171;font-size:12px;margin:4px 0">!! ${esc(f)}</div>`);
 (n.filings||[]).forEach(f=>h+=`<div style="font-size:12px;margin:4px 0"><span class="pill" style="border-color:#a78bfa;color:#a78bfa">NSE</span> <span class="dim">${f.d}</span> ${esc(f.t)}</div>`);
 (n.headlines||[]).forEach(x=>{const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
-h+=`<div style="font-size:12px;margin:4px 0">${dot} <span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)}${x.tr?'':' — unverified'})</span></div>`;});
+h+=`<div style="font-size:12px;margin:4px 0${x.ru?';opacity:.55':''}">${dot} <span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)}${x.tr?'':' — unverified'}${x.ru?' — market roundup, excluded from score':''})</span></div>`;});
 return h+'</div>';}
 window.openDrawer=function(sym){const d=$('#drawer');const r=D.rows.find(x=>x.sym===sym)||{};
 const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
@@ -970,13 +996,19 @@ $('#jstats').innerHTML=[['Signals logged',D.journal_total??D.journal.length,'Eve
 const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','WATCH CLOSELY':'#5aa2ff','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
 $('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(j.kind)}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(j.old)+' → ':''}${esc(j.new)}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
 
-/* buy-signal scorecard */
+/* buy-signal scorecard — same name re-alerting across nights is ONE story:
+   the newest row is the live read, earlier rows get a ↻ marker + muted style
+   (each stays a real journaled signal — the record never shrinks).
+   Conv numbers at <60% data coverage carry a ° = "technical read". */
 $('#scorebody').innerHTML=(D.scorecard&&D.scorecard.length)?D.scorecard.map(s=>{
 const rc=s.r==null?'':s.r>0?'#34d399':s.r<0?'#f87171':'#94a0b0';
 const st=s.status==='stopped'?'#f87171':s.status==='open'?'#34d399':'#64748b';
-return `<tr onclick="openDrawer('${s.sym}')"><td class="dim mono">${s.d}</td><td class="sym">${s.sym}</td>
+const tread=s.conv!=null&&s.cov!=null&&s.cov<60;
+const convCell=s.conv==null?'':tread?`<span data-tip="Technical read — only ${s.cov}% of the 8 scored questions had data (fundamentals unavailable at alert time). Not comparable with full-coverage conviction scores.">${s.conv}<span style="color:#fbbf24">°</span></span>`:s.conv;
+const reBadge=s.re?` <span class="pill" style="border-color:#a78bfa66;color:#a78bfa;font-size:9px" data-tip="Same name re-alerted later — the newest row above is the live read; this is the earlier signal, kept for the honest track record.">↻ ${s.re===1?'earlier alert':'earlier ×'+s.re}</span>`:'';
+return `<tr onclick="openDrawer('${s.sym}')"${s.re?' style="opacity:.55"':''}><td class="dim mono">${s.d}</td><td class="sym">${s.sym}${reBadge}</td>
 <td class="dim" style="font-size:11px">${s.kind==='BUY CANDIDATE'?'BUY':'RE-ENTRY'}</td>
-<td class="mono">${s.conv??''}</td><td class="mono">${s.entry??''}</td><td class="mono dim">${s.stop??''}</td>
+<td class="mono">${convCell}</td><td class="mono">${s.entry??''}</td><td class="mono dim">${s.stop??''}</td>
 <td class="mono" style="color:${s.ret>0?'#34d399':s.ret<0?'#f87171':''}">${s.ret!=null?(s.ret>0?'+':'')+s.ret+'%':''}</td>
 <td class="mono" style="color:${rc};font-weight:700">${s.r!=null?(s.r>0?'+':'')+s.r+'R':''}</td>
 <td class="mono dim">${s.maxr!=null?'+'+s.maxr+'R':''}</td>

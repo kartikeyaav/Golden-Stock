@@ -34,8 +34,10 @@ def enrich(symbol: str, company_name: str) -> dict:
 
     now = datetime.now(timezone.utc)
     # ONLY trusted-source headlines feed the scores; untrusted ones are still
-    # shown on the card (flagged) but never move the number (quality control)
-    trusted = [h for h in headlines if h.get("trusted")]
+    # shown on the card (flagged) but never move the number (quality control).
+    # v0.5: multi-stock roundups/listicles are also score-excluded — they name
+    # the company without being about it (user-caught relevance gap 2026-07-18)
+    trusted = [h for h in headlines if h.get("trusted") and not h.get("roundup")]
     items = [{"date": h["date"], "text": h["text"], "source": h["source"]}
              for h in trusted]
 

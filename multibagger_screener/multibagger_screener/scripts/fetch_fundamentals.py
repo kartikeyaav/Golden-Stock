@@ -14,6 +14,7 @@ Runs entirely locally — no LLM calls, no session limits, re-runnable weekly.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 import time
@@ -157,6 +158,18 @@ def main() -> None:
     else:
         focus = pd.read_csv(os.path.join(root, "focus_list.csv"))
         symbols = focus[focus["tag"].isin(["CONFIRMED", "ANTICIPATION"])]["symbol"].tolist()
+        # also cover every name that has alerted (state/alert_details.json):
+        # re-entry/extended alerts live outside CONFIRMED/ANTICIPATION, and
+        # without fundamentals their cards score fundamentals-blind at 45%
+        # coverage (cloud-coverage fix 2026-07-18)
+        adpath = os.path.join(root, "state", "alert_details.json")
+        if os.path.exists(adpath):
+            try:
+                with open(adpath, encoding="utf-8") as f:
+                    alerted = list(json.load(f).keys())
+                symbols = list(dict.fromkeys(symbols + alerted))
+            except ValueError:
+                pass
 
     print(f"fetching {len(symbols)} symbols (pause {PAUSE_SECONDS}s, "
           f"max age {args.max_age_days}d)...", flush=True)

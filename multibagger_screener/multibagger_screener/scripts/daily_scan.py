@@ -34,7 +34,7 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from data.cache import load_ohlcv
-from data.screener_fetch import load_company
+from data.screener_fetch import fetch_company, load_company, save_company
 from scoring.conviction import assess
 from scoring.phase_b import build_dimensions, build_vetoes, tag_archetypes
 from scoring.phase_c import enrich, enrichment_dimensions
@@ -42,7 +42,7 @@ from scoring.stage_tagger import tag_stock
 from scoring.technical_score import compute_atr, compute_entry_plan
 from reports.watchlist_card import render_card
 from scoring.regime import market_risk_scale
-from fetch_fundamentals import flatten
+from fetch_fundamentals import _age_days, flatten
 from position_manager import check_positions
 from sync_positions import check as sync_check
 from update_prices import universe_and_holdings_symbols, update_symbols
@@ -168,6 +168,19 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     (matrix v1/v2, brief section 2B). Phase C enrichment runs here, on the
     1-3 alerted names only."""
     raw = load_company(sym)
+    # cloud-coverage fix (2026-07-18): the cache is only pre-filled for the
+    # weekly CONFIRMED/ANTICIPATION shortlist, so re-entry/extended alerts
+    # scored fundamentals-blind (coverage 45%, five dims "no info"). Alerted
+    # names are 1-3 per night — fetch live when missing/stale, never fatal.
+    if raw is None or _age_days(raw) > 7.0:
+        why = "absent" if raw is None else "stale"
+        try:
+            raw = fetch_company(sym)
+            save_company(sym, raw)
+            print(f"  fundamentals fetched live for {sym} (cache was {why})",
+                  flush=True)
+        except Exception as e:  # noqa: BLE001 — screener.in down != scan down
+            print(f"  fundamentals fetch failed for {sym}: {str(e)[:80]}", flush=True)
     fund_row = flatten(sym, raw) if raw else None
     dims = build_dimensions(tag_result, rs_pctile, fund_row, industry)
 
@@ -210,6 +223,7 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
                         for f in news.get("filings", [])[:3]],
             "headlines": [{"d": h["date"].strftime("%d %b"), "t": h["text"][:110],
                            "s": h["source"], "tr": h.get("trusted", False),
+                           "ru": h.get("roundup", False),
                            "sn": h.get("sentiment", 0)}
                           for h in news.get("headlines", [])[:5]],
         }
