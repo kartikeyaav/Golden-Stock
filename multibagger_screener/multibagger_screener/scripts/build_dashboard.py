@@ -589,9 +589,9 @@ details.actrest summary:hover{color:var(--txt)}
 details.actrest table{opacity:.8}
 @media(max-width:1000px){
 body{flex-direction:column}
-nav{position:static;width:100%;height:auto;display:flex;flex-direction:row;align-items:center;gap:2px;
+nav{position:sticky;top:0;width:100%;height:auto;display:flex;flex-direction:row;align-items:center;gap:2px;
 padding:10px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);
-scrollbar-width:none}
+scrollbar-width:none;background:var(--panel)}
 nav::-webkit-scrollbar{display:none}
 nav h1{padding:0 12px 0 2px;white-space:nowrap}
 .navbtn{width:auto;white-space:nowrap;padding:8px 11px;margin:0;flex:0 0 auto}
@@ -735,7 +735,12 @@ document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  if(b.dataset.t==='picks'&&!window._picks)drawPicks();});
 
 /* header */
-$('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date+' · prices as of '+D.price_date;
+/* next scheduled cloud scan: Mon-Fri 13:05 UTC (+ GitHub cron delay) */
+function nextScanText(){const now=new Date();let d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate(),13,5));
+ while(d<=now||d.getUTCDay()===0||d.getUTCDay()===6)d=new Date(d.getTime()+864e5),d.setUTCHours(13,5,0,0);
+ const h=Math.round((d-now)/36e5);
+ return' · next scan '+d.toLocaleDateString(undefined,{weekday:'short'})+' ~'+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})+' ('+(h<=24?'in ~'+h+'h':d.toLocaleDateString())+')'}
+$('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date+' · prices as of '+D.price_date+nextScanText();
 $('#badges').innerHTML=(D.defensive?'<span class="badge b-amb">DEFENSIVE — HALF SIZE (NIFTY &lt; 150-DMA)</span>':'<span class="badge b-grn">NORMAL RISK</span>')+' '+(D.health_ok?'<span class="badge b-grn">HEALTH OK</span>':'<span class="badge b-red">HEALTH FAILED</span>');
 
 /* KPIs — number + label; the caveat rides in a tooltip, not on screen (v4) */
