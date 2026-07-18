@@ -111,6 +111,21 @@ def recent_analyst_verdicts(days: int = 14) -> str:
     return "\n".join(lines)
 
 
+def _regime_line() -> str:
+    """Market regime context (connectivity audit 2026-07-19): the mechanical
+    plans already half-size in a defensive tape — the committee should know
+    the backdrop it is picking into."""
+    try:
+        from scoring.regime import market_risk_scale
+        if market_risk_scale() < 1.0:
+            return ("\n\nMARKET REGIME: DEFENSIVE (NIFTY < 150-DMA) — "
+                    "mechanical sizing is halved; prefer resilience over "
+                    "beta in marginal calls.")
+        return "\n\nMARKET REGIME: NORMAL (NIFTY above 150-DMA)."
+    except Exception:  # noqa: BLE001 — context, never fatal
+        return ""
+
+
 def build_briefing(cands) -> str:
     lines = [f"CANDIDATES ({len(cands)} mechanically-qualified, all CONFIRMED + veto-passed):", ""]
     for c in cands:
@@ -118,7 +133,7 @@ def build_briefing(cands) -> str:
         lines.append(f"- {c['symbol']} ({c['company']}) | {c['sector']} | "
                      f"conviction {c['score']} | RS {c['rs']} | {c['archetype']}{flag}")
         lines.append(f"    {c['highlights']}")
-    return "\n".join(lines) + recent_analyst_verdicts()
+    return "\n".join(lines) + recent_analyst_verdicts() + _regime_line()
 
 
 def run_committee(briefing: str, model: str, thinking_tokens: int):

@@ -301,9 +301,15 @@ def build_payload() -> dict:
     vpath = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
     if os.path.exists(vpath):
         vs = pd.read_csv(vpath)
-        for _, v in vs.iterrows():
+        vs["logged_at"] = pd.to_datetime(vs["logged_at"], errors="coerce")
+        # connectivity audit 2026-07-19: only attach RECENT verdicts — a
+        # week-old BUY was decorating fresh alerts as if current. 10d covers
+        # the 7d actionable window with slack; the verdict date rides along
+        # so the human sees exactly how fresh the read is.
+        cutoff = pd.Timestamp.now() - pd.Timedelta(days=10)
+        for _, v in vs[vs["logged_at"] >= cutoff].iterrows():
             verdict_by_sym[v["symbol"]] = (f"{v['verdict']}/{v.get('conviction', '')}"
-                                           f"/{v.get('size', '')}")
+                                           f"/{v.get('size', '')} ({v['logged_at']:%d %b})")
     # entry-fidelity labels per buy alert (journal/entry_signals.csv) — shows
     # whether an alert was the exact backtested trigger or a watch-the-pivot
     trigger_by_sym = {}

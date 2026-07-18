@@ -43,6 +43,8 @@ import sys
 from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)  # for scoring.regime in _cross_layer_context
+
 ALERTS_PATH = os.path.join(ROOT, "daily_alerts.md")
 PROTOCOL_PATH = os.path.join(ROOT, "analyst", "DEEP_DIVE_PROTOCOL.md")
 REPORTS_DIR = os.path.join(ROOT, "analyst_reports")
@@ -110,11 +112,48 @@ def extract_card(report: str, symbol: str) -> str:
     return m.group(0) if m else ""
 
 
+def _cross_layer_context(symbol: str) -> str:
+    """Standing committee view + market regime — connectivity audit
+    2026-07-19: the analyst was researching blind to both. If the weekly
+    committee already deep-researched this name, its thesis/risks are the
+    best prior available; and a defensive regime should temper sizing
+    language (the mechanical plan already halves size)."""
+    parts = []
+    try:
+        from scoring.regime import market_risk_scale
+        if market_risk_scale() < 1.0:
+            parts.append("MARKET REGIME: DEFENSIVE (NIFTY < 150-DMA) — "
+                         "mechanical sizing is already halved; weigh your "
+                         "conviction accordingly.")
+    except Exception:  # noqa: BLE001 — context, never fatal
+        pass
+    try:
+        with open(os.path.join(ROOT, "ai_picks.json"), encoding="utf-8") as f:
+            pk = json.load(f)
+        mine = next((p for p in pk.get("picks", []) if p.get("symbol") == symbol), None)
+        if mine:
+            parts.append(
+                f"STANDING WEEKLY COMMITTEE PICK ({pk.get('generated', '?')}, "
+                f"conviction {mine.get('conviction', '?')}): "
+                f"thesis: {(mine.get('thesis') or '')[:300]} | "
+                f"risks: {(mine.get('risks') or '')[:200]} — "
+                "cross-check tonight's evidence against this; note agreement "
+                "or divergence in your verdict.")
+        elif pk.get("picks"):
+            others = ", ".join(p.get("symbol", "?") for p in pk["picks"])
+            parts.append(f"(Weekly committee's current picks: {others} — "
+                         f"{symbol} is NOT among them.)")
+    except (OSError, ValueError):
+        pass
+    return ("\n\n" + "\n\n".join(parts)) if parts else ""
+
+
 def run_deep_dive(symbol: str, card: str) -> str | None:
     with open(PROTOCOL_PATH, "r", encoding="utf-8") as f:
         protocol = f.read()
     prompt = (f"{protocol}\n\n---\n\nTONIGHT'S ALERT — {symbol} "
-              f"(as of {datetime.now():%Y-%m-%d}):\n\n{card}\n\n"
+              f"(as of {datetime.now():%Y-%m-%d}):\n\n{card}"
+              f"{_cross_layer_context(symbol)}\n\n"
               "Do your research now and give the verdict in the exact format.")
     claude_bin = shutil.which("claude")
     if claude_bin is None:
