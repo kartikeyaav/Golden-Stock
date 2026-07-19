@@ -86,6 +86,18 @@ def main() -> int:
             log("no shortlist commit found — nothing to pick from; exit")
             return 0
         if picks_at is not None and picks_at >= shortlist_at:
+            # stranded-output guard (real incident 2026-07-19): the wrapper
+            # died mid-run (sleep/logoff) but the orphaned committee child
+            # finished and wrote fresh picks with nobody left to push them.
+            # Fresh-but-DIRTY picks must still be pushed, else they strand
+            # locally forever (the guard would no-op every boot).
+            p = run(["git", "status", "--porcelain", "--",
+                     "multibagger_screener/multibagger_screener/ai_picks.json"],
+                    cwd=git_root())
+            if (p.stdout or "").strip():
+                log(f"picks ({picks_at:%d %b %H:%M}) are fresh but UNPUSHED "
+                    "(previous run died before commit) — pushing them now")
+                return _commit_and_push(picks_at)
             log(f"picks ({picks_at:%d %b %H:%M}) already cover the latest "
                 f"shortlist ({shortlist_at:%d %b %H:%M}) — no-op; exit")
             return 0
@@ -114,6 +126,10 @@ def main() -> int:
         return 1
 
     # 4. push the picks (retried next boot on failure — guard stays open)
+    return _commit_and_push(picks_at)
+
+
+def _commit_and_push(prev_picks_at: datetime | None) -> int:
     gr = git_root()
     run(["git", "add", "--",
          "multibagger_screener/multibagger_screener/ai_picks.json",
