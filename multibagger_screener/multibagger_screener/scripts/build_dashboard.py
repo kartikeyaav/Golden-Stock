@@ -118,6 +118,14 @@ def build_payload() -> dict:
     ppath = os.path.join(ROOT, "ai_picks.json")
     if os.path.exists(ppath):
         ai_picks = json.load(open(ppath, encoding="utf-8"))
+    # news-first discovery radar (state/news_radar.json, written by the scan)
+    radar = {}
+    rpath = os.path.join(ROOT, "state", "news_radar.json")
+    if os.path.exists(rpath):
+        try:
+            radar = json.load(open(rpath, encoding="utf-8"))
+        except ValueError:
+            pass
     company_by_sym = dict(zip(universe.get("symbol", []), universe.get("company", [])))
 
     state_path = os.path.join(ROOT, "state", "tags_state.json")
@@ -419,6 +427,7 @@ def build_payload() -> dict:
              "state transitions only"],
         ],
         "tags": tag_counts, "alerts": alerts, "verdicts": verdicts, "ai_picks": ai_picks,
+        "radar": radar,
         "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,
@@ -646,6 +655,8 @@ th{font-size:9px}
 <div class="tab on" id="overview">
   <div class="card actcard"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days<span class="info" data-tip="The only panel you act from. BUY SETUP = the exact backtested trigger fired (pivot break on ≥1.5× volume) — open the drawer for the sized plan. WATCH = VCP base ready, breakout not confirmed yet. WEAK = uptrend without the proven trigger. Resolved rows (ran away / faded / vetoed) need nothing — a faded signal is the system saving you from a stale entry.">?</span></h2>
     <div id="actionable"></div></div>
+  <div class="card" id="radarcard" style="display:none"><h2 style="color:#a78bfa">News radar &mdash; material filings<span class="info" data-tip="News-FIRST discovery: every NSE filing since the last scan, whitelist-classified (order wins, M&A, approvals / probes, pledges, exits / fund raises), matched to the universe and cross-referenced with tonight's technical state. CONFLUENCE = positive news on a chart the technical layer already rates CONFIRMED/ANTICIPATION — the names to research first. News moves attention, never entries — trades stay technical.">?</span></h2>
+    <div id="radarbody"></div></div>
   <div class="kpis" id="kpis"></div>
   <div class="funnelline" id="funnel"></div>
   <div class="grid2"><div>
@@ -800,6 +811,29 @@ if(weak.length)h+=`<details class="actrest"><summary>${weak.length} weak signal$
 if(rest.length)h+=`<details class="actrest"><summary>${rest.length} resolved — ran away / faded / vetoed (no action)</summary>
 <table><thead>${hdr}</thead><tbody>`+rest.map(row).join('')+'</tbody></table></details>';
 $('#actionable').innerHTML=h;})();
+
+/* news radar — news-first discovery panel */
+(function(){
+const R=D.radar||{};const hits=R.hits||[];
+if(!hits.length)return;   // silence is the default — card stays hidden
+$('#radarcard').style.display='block';
+const CC={pos:'#34d399',neg:'#f87171',attn:'#fbbf24'};
+const DOT={pos:'▲',neg:'▼',attn:'◆'};
+const shown=hits.slice(0,15);
+$('#radarbody').innerHTML=`<table><thead><tr><th></th><th>Symbol</th><th>Tag</th><th>RS%</th><th>Event</th><th>Filing</th></tr></thead><tbody>`+
+shown.map(h=>{const c=CC[h.cls]||'#94a3b8';
+const badge=h.urgent?'<span class="pill" style="border-color:#f87171;color:#f87171;font-size:9px">HELD</span> ':
+ h.confluence?'<span class="pill" style="border-color:#34d399;color:#34d399;font-size:9px" data-tip="Positive news + a chart the technical layer already rates actionable/forming — research first.">CONFLUENCE</span> ':'';
+return `<tr onclick="openDrawer('${h.sym}')"${h.confluence?' style="background:#34d39908"':h.urgent?' style="background:#f8717108"':''}>
+<td style="color:${c};font-weight:700">${DOT[h.cls]||'•'}</td>
+<td class="sym">${h.sym}${h.n>1?`<span class="ndot" title="${h.n} filings">×${h.n}</span>`:''}</td>
+<td><span class="pill" style="border-color:${TC[h.tag]||'#475569'};color:${TC[h.tag]||'#94a3b8'}">${esc(h.tag||'—')}</span></td>
+<td class="mono">${h.rs!=null?Math.round(h.rs):'—'}</td>
+<td style="color:${c};font-size:11.5px">${esc(h.event)} ${badge}</td>
+<td class="dim wrap" style="font-size:11px;max-width:420px">${esc(h.subject.replace(/has informed the Exchange (regarding|about|that)?/i,'—').slice(0,120))}</td></tr>`}).join('')+
+'</tbody></table>'+(hits.length>15?`<div class="axis" style="margin-top:6px">${hits.length-15} more hits in state/news_radar.json</div>`:'')+
+`<div class="axis" style="margin-top:6px">since ${esc((R.window_start||'').slice(0,16).replace('T',' '))} · news moves attention, never entries</div>`;
+})();
 
 /* tag board */
 $('#tagboard').innerHTML=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<div class="chip" style="border-color:${TC[t]||'#475569'}"><b style="color:${TC[t]||'#94a3b8'}">${t}</b><span>${c}</span></div>`).join('');
