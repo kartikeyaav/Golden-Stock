@@ -57,6 +57,17 @@ def main() -> None:
     args = parser.parse_args()
 
     t0 = time.time()
+    # weekend filings guard (2026-07-19): the NSE feed is a rolling ~400-item
+    # (~1 trading day) window and the daily scan only archives Mon-Fri —
+    # Saturday filings (board meetings are common) could roll out of the feed
+    # before Monday's scan. The Sunday weekly archives them here. Non-fatal.
+    try:
+        sys.path.insert(0, ROOT)
+        from data.announcements_fetch import archive_feed
+        print(f"filings archive (weekend catch): +{archive_feed()} new", flush=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"filings archive skipped ({str(e)[:60]})", flush=True)
+
     # constituent lists change rarely; a download failure shouldn't kill the run
     run_step("universe", "build_universe.py", fatal=False)
     if not args.skip_prices:
