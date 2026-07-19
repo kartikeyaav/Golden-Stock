@@ -106,12 +106,25 @@ def build_payload() -> dict:
     if os.path.exists(dpath):
         details = json.load(open(dpath, encoding="utf-8"))
     # alert-time details from the nightly scan — every alerted name gets a
-    # full drawer, not just the weekly shortlist; alert data is fresher so
-    # it wins on collision
+    # full drawer, not just the weekly shortlist. Merge is COVERAGE-AWARE
+    # (user-caught incoherence 2026-07-19): a fundamentals-blind alert
+    # snapshot (45% coverage, five dims "no data") must not mask a richer
+    # weekly read of the same stock. The alert read wins only when it is at
+    # least as informed; otherwise the weekly dims/score stay and only the
+    # alert's fresher news/plan/date ride along.
     adpath = os.path.join(ROOT, "state", "alert_details.json")
     if os.path.exists(adpath):
         try:
-            details.update(json.load(open(adpath, encoding="utf-8")))
+            for sym, ad in json.load(open(adpath, encoding="utf-8")).items():
+                wd = details.get(sym)
+                if wd is None or (ad.get("coverage") or 0) >= (wd.get("coverage") or 0):
+                    details[sym] = ad
+                else:
+                    merged = dict(wd)
+                    for k in ("news", "plan", "alerted_at"):
+                        if ad.get(k):
+                            merged[k] = ad[k]
+                    details[sym] = merged
         except ValueError:
             pass
     ai_picks = {}
@@ -163,6 +176,7 @@ def build_payload() -> dict:
     # screener rows: focus list enriched with fundamentals where known
     fund_by_sym = {r["symbol"]: r for _, r in funds.iterrows()} if not funds.empty else {}
     score_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("score", [])))
+    cov_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("coverage", [])))
     veto_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("vetoed", [])))
     arch_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("archetypes", [])))
     TIER = {"microcap250": "Micro", "smallcap250": "Small", "midcap150": "Mid"}
@@ -200,6 +214,7 @@ def build_payload() -> dict:
             "close": live_close,
             "turn": round(float(r["turnover_cr"]), 1) if pd.notna(r.get("turnover_cr")) else None,
             "score": round(float(score_by_sym[sym]), 1) if sym in score_by_sym and pd.notna(score_by_sym[sym]) else None,
+            "cov": round(float(cov_by_sym[sym]), 0) if sym in cov_by_sym and pd.notna(cov_by_sym[sym]) else None,
             "veto": bool(veto_by_sym.get(sym, False)),
             "arch": "" if "untagged" in arch else arch[:26],
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
@@ -233,6 +248,7 @@ def build_payload() -> dict:
             "close": live_close,
             "turn": None,
             "score": round(float(score_by_sym[sym]), 1) if sym in score_by_sym and pd.notna(score_by_sym[sym]) else None,
+            "cov": round(float(cov_by_sym[sym]), 0) if sym in cov_by_sym and pd.notna(cov_by_sym[sym]) else None,
             "veto": bool(veto_by_sym.get(sym, False)),
             "arch": "" if "untagged" in arch else arch[:26],
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
@@ -692,7 +708,7 @@ th{font-size:9px}
     <div style="max-height:66vh;overflow:auto">
     <table id="tbl"><thead><tr>
       <th data-k="sym">Symbol</th><th data-k="tier">Cap</th><th data-k="ind">Industry</th><th data-k="tag">Tag</th>
-      <th data-k="rs">RS%</th><th data-k="score">Conviction</th><th data-k="arch">Archetype</th>
+      <th data-k="rs">RS%</th><th data-k="score">Conviction<span class="info" data-tip="Scored at the WEEKLY refresh (Sunday) over the 8 weighted questions. ° = technical read (coverage below 60% — fundamentals were unavailable). A stock's drawer shows its most-informed, most-recent read, which can differ from this weekly ranking number.">?</span></th><th data-k="arch">Archetype</th>
       <th data-k="roce">ROCE</th><th data-k="pe">P/E</th><th data-k="pgttm">PAT TTM%</th>
       <th data-k="close">Price</th><th>120d</th></tr></thead><tbody></tbody></table></div>
   </div>
@@ -902,7 +918,7 @@ $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td class="dim">${esc(r.ind)}</td>
 <td><span class="pill" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${r.tag||''}</span></td>
 <td class="mono">${r.rs??''}</td>
-<td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono">${r.score}</b></span>`:'<span class="dim">—</span>'}</td>
+<td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono"${r.cov!=null&&r.cov<60?` data-tip="Technical read — only ${r.cov}% of the 8 scored questions had data at the weekly refresh. Not comparable with full-coverage conviction scores."`:''}>${r.score}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</b></span>`:'<span class="dim">—</span>'}</td>
 <td class="dim wrap">${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
 <td class="mono" style="color:${r.pgttm>0?'#34d399':r.pgttm<0?'#f87171':''}">${r.pgttm??''}</td>
 <td class="mono">${r.close??''}</td><td>${spark(D.closes[r.sym])}</td></tr>`).join('');}
@@ -944,7 +960,7 @@ return `<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
 <div class="axis" style="margin-left:88px">${esc((labels&&labels[0])||'')} → ${esc((labels&&labels[labels.length-1])||'')}</div>`;}
 function whySection(sym){const dt=D.details[sym];
 if(!dt)return'<div class="mini" style="margin-top:14px"><h3>Why no score breakdown?</h3><div style="font-size:12.5px" class="dim">Full 8-question scoring runs on the actionable shortlist (CONFIRMED + ANTICIPATION). This stock is currently outside it — it re-enters scoring the moment its tag turns actionable.</div></div>';
-let h='<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions</h3>';
+let h=`<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions <span class="axis" style="font-weight:400">read of ${esc(dt.alerted_at||dt.scored_at||'?')} · ${dt.label==='Technical Read'?`coverage ${dt.coverage??'?'}% — technical read`:`coverage ${dt.coverage??100}%`}</span></h3>`;
 (dt.dims||[]).slice().sort((a,b)=>b.w-a.w).forEach(m=>{
 const pct=m.s!=null?Math.round(m.s*100):0;
 const col=m.s==null?'#334155':m.s>=.7?'#34d399':m.s>=.4?'#fbbf24':'#f87171';
@@ -960,7 +976,9 @@ function convergenceSection(sym,r){
     version of the actionable table's chips. Summary pill only when >=2
     explicit AI voices exist: ALIGNED (all positive) or SPLIT. */
  const dt=D.details[sym]||{};
- const mech=r.score!=null?r.score:(dt.score!=null?dt.score:null);
+ // resolved detail first (coverage-aware merge) so this line always agrees
+ // with the drawer's 8-question breakdown; weekly ranking is the fallback
+ const mech=dt.score!=null?dt.score:(r.score!=null?r.score:null);
  const tread=dt.label==='Technical Read';
  const a=(D.actionable||[]).find(x=>x.sym===sym);
  const verdict=a&&a.verdict?a.verdict:null;
@@ -1013,7 +1031,10 @@ window.openDrawer=function(sym){const d=$('#drawer');const r=D.rows.find(x=>x.sy
 const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
 d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
 <h1 style="font-size:20px">${sym} <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${r.tag||''}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
-<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · conviction ${r.score??(D.details[sym]&&D.details[sym].score!=null?D.details[sym].score+(D.details[sym].label==='Technical Read'?' (technical read)':''):'—')}${r.arch?' · '+esc(r.arch):''}</div>
+<div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · ${(()=>{const dt=D.details[sym];
+ if(dt&&dt.score!=null){const tr=dt.label==='Technical Read';
+  return `conviction <span${tr?` data-tip="Technical read — only ${dt.coverage}% of the 8 scored questions had data for this read. Not comparable with full-coverage conviction scores."`:''}>${dt.score}${tr?'<span style="color:#fbbf24">°</span>':''}</span> <span class="axis">(read of ${esc(dt.alerted_at||dt.scored_at||'?')}, coverage ${dt.coverage??'?'}%)</span>`;}
+ return 'conviction '+(r.score??'—')+' <span class="axis">(weekly ranking)</span>';})()}${r.arch?' · '+esc(r.arch):''}</div>
 ${convergenceSection(sym,r)}
 ${planSection(sym,r)}
 ${whySection(sym)}
@@ -1054,7 +1075,7 @@ const filter=s=>{s=s.trim().toUpperCase();
 const render=()=>{list.innerHTML=matches.length?matches.map((r,i)=>`<div class="palrow${i===idx?' on':''}" data-i="${i}">
  <span class="sym">${r.sym}</span>
  <span class="dim" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(r.company)}</span>
- ${r.score!=null?`<b class="mono" style="font-size:12px">${r.score}</b>`:''}
+ ${r.score!=null?`<b class="mono" style="font-size:12px">${r.score}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</b>`:''}
  <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'}">${r.tag||''}</span></div>`).join('')
  :'<div class="palempty">No match among the 611 watched stocks.</div>';
  list.querySelectorAll('.palrow').forEach(el=>el.onclick=()=>{close();openDrawer(matches[+el.dataset.i].sym)});
