@@ -108,10 +108,14 @@ smart_money 12 · financial_strength 10 · catalyst 10 · governance 8+veto ·
 valuation_sanity 5. Fundamentals are point-in-time (`scoring/pit_fundamentals.py`);
 news dims are keyword+trust+sentiment filtered ("news-based v0").
 
-**Entry / risk (mechanical, validated, NEVER AI-driven)**: technical breakout
-(8-pt trend template + VCP + volume) -> two-lot ATR structure (trading lot
-partial@2.5R + 50-DMA trail; core lot exits on weekly close < 30-week MA);
-2.5xATR stop, skip if >12% wide; regime sizing (risk x0.5 when NIFTY < 150-DMA).
+**Entry / risk (mechanical, validated, NEVER AI-driven)**: TWO validated
+technical entry classes — (a) VCP breakout (8-pt trend template + VCP +
+volume over pivot), (b) EPISODIC PIVOT (gap >=8% on >=3x volume, adopted
+2026-07-19, §3L) -> two-lot structure (trading lot partial@2.5R + 50-DMA
+trail; core lot exits on weekly close < 30-week MA); stop = 2.5xATR for
+VCP entries / gap-day low for EP entries, skip if >12% wide; regime sizing
+(risk x0.5 when universe breadth <50% above 200-DMA — adopted 2026-07-19,
+NIFTY/150-DMA as fallback).
 **Sizing basis corrected 2026-07-12** (§3H): fixed-fractional on EQUITY, not
 remaining cash — same rules, just honest measurement. Live plans were never
 affected (they already size off `RISK.capital`); update that config value to
@@ -547,6 +551,70 @@ indicator in the header, mobile table scroll-in-card, 640px tier,
 re-alert grouping in the journal scorecard (↻ pill + muted), ° coverage
 markers in actionable/scorecard.
 
+## 3L. Strategy upgrade session (2026-07-19/20) — journal audit, two
+## adopted improvements, landing page
+
+**Forward-journal audit (first structural read, 9 days in):** integrity
+PASS (0 dupes; missing-stop rows = risk-engine skips by design). Overall
++0.05R at avg 3.9 days elapsed — no expectancy conclusion possible — but
+every STRUCTURAL cut points the right way: conviction bands monotonic
+(<50: -0.06R -> 70+: +0.68R), entry-fidelity ordering as the mechanism
+predicts (AWAITING +0.00R > NO-VCP -0.08R), RE-ENTRY > fresh BUY, analyst
+cohort +0.34R vs +0.02R rest (paper book 6/6 green, +6.6%), 1 stop-out in
+105 (clean -1.0R). Zero VALIDATED entries in 72 labeled alerts — within
+expected frequency (~0.5-1/wk); becomes a finding if still zero by ~mid-Aug.
+Full analysis: strategy_review_2026-07-19.md.
+
+**Research pass** (Minervini progressive exposure, O'Neil market model /
+FTD-distribution, Qullamaggie breakout management, Bonde episodic pivots)
+-> four pre-registered proposals P1-P4; P1-P3 tested same session:
+
+- **P1 BREADTH REGIME — ADOPTED** (sizing matrices v3 + v3b follow-up,
+  §6D of VALIDATION_REPORT, brief §2B #12): risk x0.5 when % of universe
+  above its own 200-DMA < 50%, replacing the NIFTY/150-DMA binary. Won
+  CAGR 49.5% vs 47.7%, maxDD -14.8% vs -17.6%, MAR 3.35 vs 2.70, AND the
+  registered chop-segment guards (P2-seg return +13.6% vs +9.4%, P2-seg
+  DD -14.8% vs -17.6%). Two-step disclosure: v3's strict per-trade P2
+  clause was missed by 0.027R (composition artifact); v3b registered the
+  correct portfolio-level guards BEFORE running. Live: daily_scan computes
+  breadth in its tag loop (costs nothing — every chart already loaded) ->
+  `state/regime.json` (committed by daily.yml); `scoring/regime.py` reads
+  the snapshot, NIFTY/150 fallback when missing/stale (fail-defensive);
+  dashboard badge shows live breadth %. NOTE: the rule flipped the live
+  regime from DEFENSIVE to NORMAL on adoption night (breadth 58.6% > 50%
+  while NIFTY sat below its 150-DMA) — full-size plans again.
+- **P2 PROGRESSIVE EXPOSURE — REJECTED** (same matrix): every variant
+  (trade-feedback, equity-curve, combo) gives up 3.7-5.7pp CAGR. The
+  regime series already does this job; equity-curve feedback double-counts.
+- **P3 EPISODIC PIVOTS — ADOPTED as a live capital-bearing entry class**
+  (EP matrix, §6E, brief §2B #13): gap >=8% on >=3x prior avg volume,
+  close holds the gap, liquidity floors, >=60 bars (young IPOs qualify —
+  closes the IREDA blind spot). Stop = gap-day LOW (floor 0.75xATR), same
+  two-lot plan. Standalone +1.38R / P2 +0.76R (vs +0.31R for VCP — the
+  diversification is the point); COMBINED MAR 2.70 -> 3.58 with LOWER DD.
+  Live wiring: `detect_episodic_pivot` in scoring/technical_score.py;
+  daily_scan fires kind=EPISODIC PIVOT (event alert, idempotent via state
+  `ep_alerted` {sym: bar_date}, 10-day retention); compute_entry_plan
+  takes `stop_price=` override; analyst regex + tripwire include the new
+  kind; journal_outcomes + dashboard (gold EP chips, own DO tooltip,
+  EP-aware status logic — young listings without stage tags are not
+  "faded"). Verified end-to-end in an ISOLATED sandbox copy (real journal
+  untouched): synthetic TITAGARH gap fired alert + card + both journal
+  files + state guard; re-run fired zero duplicates.
+- **P4 (fewer slots, {8,10}) — still open**, cheap one-run test, next
+  matrix session.
+
+**Landing page + UI scrub (user-requested):** `landing.html` — dark
+terminal-aesthetic marketing page (animated scan terminal, ticker of real
+system reads, pipeline steps, capability bento, honest evidence strip with
+count-up numbers, reduced-motion support, self-contained/no CDN). Pages
+now publishes landing as `index.html` and the dashboard at
+`/dashboard.html` (daily.yml publish step — NOTE the dashboard URL moved
+one path deeper; the old bookmark root now shows the landing page).
+"Claude"/model-name references removed from all UI-facing strings
+(dashboard buttons/tooltips/committee footer — `ai_picks.json`'s model
+field is no longer rendered).
+
 ---
 
 ## 4. Live production state (as of 2026-07-19)
@@ -622,7 +690,11 @@ Priority order:
    real alert; committee cross-checks refresh from stale Jul-9 verdicts)
    and the first few News Radar nights (precision in the wild — if noise
    creeps in, tighten the whitelist in `data/news_radar.py`, never
-   blacklist).
+   blacklist). ALSO first live night for the two 3L adoptions: the breadth
+   regime badge (expect NORMAL/full-size — breadth 58.6%) and the EPISODIC
+   PIVOT class (~1/week expected; verify the first real one's card, stop,
+   analyst dive, and journal rows look right). P4 (fewer slots {8,10})
+   remains the one untested cheap matrix cell.
 2. **ANANDRATHI promoter-pledge discrepancy** (committee-flagged vs the
    mechanical "no pledge" read) — the user should confirm before treating
    it as a clean pick; re-veto if a standing pledge is real.
@@ -662,7 +734,14 @@ scoring/pit_fundamentals.py   point-in-time fundamental scores (known_as_of lags
 scoring/phase_b.py            fundamental dims + vetoes + archetypes (froth-vs-inflection valuation)
 scoring/phase_c.py            news/theme/catalyst enrichment dims
 scoring/conviction.py         8-dim composite, coverage renorm, veto cap
-scoring/regime.py             market_risk_scale (half below 150-DMA)
+scoring/regime.py             market_risk_scale (breadth <50% above 200-DMA -> half;
+                              reads state/regime.json, NIFTY/150 fallback — 3L)
+state/regime.json             nightly breadth snapshot (written by daily_scan tag loop)
+scripts/run_sizing_matrix3.py sizing matrix v3: breadth + progressive-exposure overlays
+scripts/run_sizing_matrix3b.py v3b follow-up: chop-segment guards (breadth ADOPTED)
+scripts/run_ep_matrix.py      EP matrix: episodic-pivot entry class (ADOPTED)
+landing.html                  public landing page (Pages index; dashboard at /dashboard.html)
+strategy_review_2026-07-19.md journal audit + research + proposal record (3L)
 backtest/engine.py            two-lot event-driven engine + regime/stress hooks
 backtest/metrics.py           trade/equity/lot stats, costs, benchmark
 scripts/daily_scan.py         nightly job core (safe at any hour — cache guard); logs entry_signals.csv

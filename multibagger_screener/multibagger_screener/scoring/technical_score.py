@@ -22,7 +22,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from config import TECHNICAL, RISK
+from config import EPISODIC, TECHNICAL, RISK
 
 
 def add_moving_averages(df: pd.DataFrame) -> pd.DataFrame:
@@ -232,8 +232,52 @@ def detect_breakout(df: pd.DataFrame, pivot_price: float) -> dict:
     }
 
 
+def detect_episodic_pivot(df: pd.DataFrame) -> dict | None:
+    """Episodic pivot on the LAST bar (EP matrix, ADOPTED 2026-07-19):
+    a violent gap on extreme volume = the market repricing the stock.
+    Second technical entry class next to the VCP breakout — validated
+    standalone +1.38R (P2 +0.76R) and COMBINED MAR 2.70 -> 3.58 with
+    lower drawdown (ep_matrix_report.md). Returns the event facts or
+    None. The stop is the EP DAY'S LOW (floored at stop_atr_floor*ATR);
+    pass it to compute_entry_plan(stop_price=...).
+
+    df: OHLCV ascending. Uses only completed bars (cache guard upstream)."""
+    if df is None or len(df) < EPISODIC.min_bars + 5:
+        return None
+    last, prev = df.iloc[-1], df.iloc[-2]
+    prev_close = float(prev["close"])
+    if prev_close <= 0 or float(last["close"]) < EPISODIC.price_floor:
+        return None
+    # prior-day average volume so the EP's own monster print doesn't
+    # inflate its baseline (mirrors the backtest's shift(1))
+    avg_vol_prior = float(df["volume"].iloc[:-1].rolling(50, min_periods=10)
+                          .mean().iloc[-1])
+    if not np.isfinite(avg_vol_prior) or avg_vol_prior <= 0:
+        return None
+    if avg_vol_prior * float(last["close"]) < EPISODIC.adv_floor_inr:
+        return None
+    gap_pct = (float(last["open"]) / prev_close - 1) * 100
+    vol_mult = float(last["volume"]) / avg_vol_prior
+    held = (float(last["close"]) > float(last["open"])
+            and float(last["close"]) >= prev_close * (1 + EPISODIC.gap_min_pct / 100))
+    if not (gap_pct >= EPISODIC.gap_min_pct
+            and vol_mult >= EPISODIC.vol_mult and held):
+        return None
+    atr = float(compute_atr(df).iloc[-1])
+    stop = min(float(last["low"]), float(last["close"]) - EPISODIC.stop_atr_floor * atr) \
+        if np.isfinite(atr) and atr > 0 else float(last["low"])
+    return {
+        "gap_pct": round(gap_pct, 1),
+        "vol_mult": round(vol_mult, 1),
+        "close": float(last["close"]),
+        "stop_price": round(stop, 2),
+        "bar_date": str(pd.Timestamp(last["date"]).date()),
+    }
+
+
 def compute_entry_plan(entry_price: float, atr: float | None = None,
-                       risk_scale: float = 1.0) -> dict:
+                       risk_scale: float = 1.0,
+                       stop_price: float | None = None) -> dict:
     """Translate config.RISK into concrete numbers for one two-lot trade
     (v2, Design Law #2/#7): ATR-based stop, risk-normalized sizing, trading
     lot + core lot split with their separate exit rules. Falls back to the
@@ -241,8 +285,24 @@ def compute_entry_plan(entry_price: float, atr: float | None = None,
 
     risk_scale: regime sizing, ADOPTED from matrix v3b (2026-07-06) — pass
     0.5 when NIFTY50 closes below its 150-DMA (identical trades, higher CAGR,
-    lower drawdown in test). Sizing only; entries are never filtered."""
-    if atr is not None and atr > 0:
+    lower drawdown in test). Sizing only; entries are never filtered.
+
+    stop_price: event-stop override (EP matrix, adopted 2026-07-19) — the
+    episodic-pivot class stops at the GAP DAY'S LOW, not 2.5xATR. The >12%
+    width skip still applies (Design Law #7)."""
+    if stop_price is not None and 0 < stop_price < entry_price:
+        stop_distance = entry_price - stop_price
+        stop_basis = "EP-day low (event stop)"
+        if stop_distance / entry_price * 100 > RISK.max_stop_loss_pct:
+            return {
+                "entry_price": round(entry_price, 2),
+                "skip": True,
+                "skip_reason": (
+                    f"event stop would be {stop_distance / entry_price * 100:.1f}% wide — "
+                    f"beyond the {RISK.max_stop_loss_pct}% hard cap (Design Law #7)"
+                ),
+            }
+    elif atr is not None and atr > 0:
         stop_distance = RISK.atr_stop_mult * atr
         stop_basis = f"{RISK.atr_stop_mult} x ATR({RISK.atr_period})"
         if stop_distance / entry_price * 100 > RISK.max_stop_loss_pct:

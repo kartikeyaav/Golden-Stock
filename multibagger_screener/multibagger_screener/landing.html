@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Golden Stock — Autonomous golden-stock hunting for Indian markets</title>
+<meta name="description" content="An autonomous screener that hunts Indian small & mid-cap golden stocks: nightly technical scans, evidence-locked entries, AI research layers, and a self-auditing forward journal.">
+<style>
+:root{
+  --bg:#04060b; --bg2:#070b14; --panel:rgba(15,22,38,.55); --line:rgba(148,163,184,.13);
+  --txt:#e6edf7; --dim:#8b98ad; --mut:#5b6779;
+  --gold:#f5c84c; --gold2:#d4a017; --grn:#34d399; --cyn:#22d3ee; --red:#f87171; --vio:#a78bfa;
+  --mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font:15px/1.6 -apple-system,'Segoe UI',Roboto,Inter,sans-serif;overflow-x:hidden}
+::selection{background:rgba(245,200,76,.25)}
+a{color:inherit;text-decoration:none}
+
+/* ---------- animated backdrop ---------- */
+.bgwrap{position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(60vw 60vh at 85% -10%,rgba(34,211,238,.07),transparent 60%),
+  radial-gradient(50vw 50vh at -10% 30%,rgba(245,200,76,.06),transparent 60%),
+  radial-gradient(70vw 70vh at 50% 110%,rgba(52,211,153,.05),transparent 60%),var(--bg)}
+.grid{position:fixed;inset:0;z-index:-1;opacity:.5;background-image:
+  linear-gradient(rgba(148,163,184,.045) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(148,163,184,.045) 1px,transparent 1px);
+  background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 75%)}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.16;z-index:-1;animation:drift 26s ease-in-out infinite alternate}
+.orb.g{width:44vw;height:44vw;background:var(--gold);top:-18vw;right:-12vw}
+.orb.c{width:36vw;height:36vw;background:var(--cyn);bottom:-14vw;left:-10vw;animation-delay:-9s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-5vw,4vh) scale(1.12)}}
+
+/* ---------- nav ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 5vw;background:rgba(4,6,11,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.14em;font-size:14px}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.brand b{background:linear-gradient(90deg,var(--gold),#fde68a 55%,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.navlinks{display:flex;gap:26px;font-size:13px;color:var(--dim)}
+.navlinks a:hover{color:var(--txt)}
+.cta{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;color:#0a0e16;
+  background:linear-gradient(90deg,var(--gold),#e8b93e);box-shadow:0 4px 22px rgba(245,200,76,.28);transition:.25s}
+.cta:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(245,200,76,.42)}
+
+/* ---------- hero ---------- */
+.hero{min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:5vw;
+  align-items:center;padding:120px 5vw 60px;max-width:1440px;margin:0 auto}
+.kicker{display:inline-flex;align-items:center;gap:8px;font:600 11px var(--mono);letter-spacing:.16em;color:var(--grn);
+  border:1px solid rgba(52,211,153,.3);background:rgba(52,211,153,.07);padding:6px 12px;border-radius:99px;margin-bottom:22px}
+.kicker .live{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 1.6s infinite}
+h1{font-size:clamp(38px,4.6vw,64px);line-height:1.06;font-weight:800;letter-spacing:-.02em}
+h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:22px 0 30px;font-size:17px;color:var(--dim);max-width:56ch}
+.sub b{color:var(--txt);font-weight:600}
+.heroctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.cta.big{padding:14px 30px;font-size:15px;border-radius:11px}
+.ghost{padding:13px 24px;border-radius:11px;font-size:14px;font-weight:600;color:var(--txt);
+  border:1px solid var(--line);background:rgba(148,163,184,.05);transition:.25s}
+.ghost:hover{border-color:rgba(245,200,76,.4);background:rgba(245,200,76,.06)}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+.chip{font:600 11.5px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:rgba(15,22,38,.4)}
+.chip b{color:var(--gold)}
+
+/* terminal card */
+.term{position:relative;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(15,22,38,.9),rgba(8,12,22,.92));
+  box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden;animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.termbar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(4,6,11,.5)}
+.tdot{width:11px;height:11px;border-radius:50%}
+.termtitle{margin-left:8px;font:600 11px var(--mono);letter-spacing:.12em;color:var(--mut)}
+.termbody{padding:18px;font:12.5px/1.85 var(--mono);min-height:290px}
+.tl{opacity:0;transform:translateY(4px);animation:tin .4s forwards}
+@keyframes tin{to{opacity:1;transform:none}}
+.tl .p{color:var(--mut)} .tl .ok{color:var(--grn)} .tl .warn{color:var(--gold)} .tl .info{color:var(--cyn)} .tl .v{color:var(--vio)}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--grn);vertical-align:-2px;animation:pulse 1s steps(1) infinite}
+.sparkrow{display:flex;gap:6px;align-items:flex-end;height:44px;margin:10px 0 4px}
+.sparkrow i{flex:1;background:linear-gradient(180deg,var(--grn),rgba(52,211,153,.25));border-radius:2px;transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.8,.2,1) forwards;transform:scaleY(0)}
+@keyframes grow{to{transform:scaleY(1)}}
+
+/* ---------- ticker ---------- */
+.ticker{border-block:1px solid var(--line);background:rgba(6,9,17,.7);overflow:hidden;white-space:nowrap;padding:11px 0;position:relative}
+.tickin{display:inline-block;animation:mq 46s linear infinite}
+.ticker:hover .tickin{animation-play-state:paused}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{font:600 12px var(--mono);margin:0 26px;color:var(--dim)}
+.tk b{color:var(--txt);margin-right:8px}.up{color:var(--grn)}.dn{color:var(--red)}
+
+/* ---------- sections ---------- */
+section{padding:96px 5vw;max-width:1280px;margin:0 auto}
+.shead{text-align:center;margin-bottom:56px}
+.stag{font:700 11px var(--mono);letter-spacing:.22em;color:var(--gold)}
+.shead h2{font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-.01em;margin-top:10px}
+.shead p{color:var(--dim);max-width:62ch;margin:12px auto 0}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.rv.on{opacity:1;transform:none}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:step}
+.pstep{position:relative;border:1px solid var(--line);border-radius:14px;padding:26px 20px;background:var(--panel);backdrop-filter:blur(8px);transition:.3s}
+.pstep:hover{border-color:rgba(245,200,76,.35);transform:translateY(-4px)}
+.pstep::before{counter-increment:step;content:"0" counter(step);font:800 11px var(--mono);letter-spacing:.18em;color:var(--gold)}
+.pstep h3{font-size:16px;margin:10px 0 8px}
+.pstep p{font-size:13px;color:var(--dim)}
+.pstep .arrow{position:absolute;right:-13px;top:50%;transform:translateY(-50%);z-index:2;color:var(--gold);opacity:.7;font-size:15px}
+.pstep:last-child .arrow{display:none}
+
+/* capability bento */
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.bcard{border:1px solid var(--line);border-radius:16px;padding:26px;background:var(--panel);backdrop-filter:blur(8px);
+  position:relative;overflow:hidden;transition:.3s}
+.bcard::after{content:"";position:absolute;inset:0;background:radial-gradient(240px 140px at var(--mx,50%) var(--my,0%),rgba(245,200,76,.09),transparent 70%);opacity:0;transition:.3s;pointer-events:none}
+.bcard:hover{transform:translateY(-4px);border-color:rgba(245,200,76,.3)}
+.bcard:hover::after{opacity:1}
+.bic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;margin-bottom:16px;
+  background:linear-gradient(135deg,rgba(245,200,76,.14),rgba(34,211,238,.1));border:1px solid rgba(245,200,76,.22)}
+.bic svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bcard h3{font-size:15.5px;margin-bottom:8px}
+.bcard p{font-size:13px;color:var(--dim)}
+.bcard .tagline{margin-top:12px;font:600 10.5px var(--mono);letter-spacing:.1em;color:var(--grn)}
+
+/* evidence */
+.ev{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(15,22,38,.7),rgba(8,12,22,.8));padding:46px 40px}
+.evgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;text-align:center}
+.ev .n{font:800 clamp(26px,2.6vw,40px)/1.1 var(--mono);background:linear-gradient(180deg,#fff,#cbd5e1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ev .n .u{font-size:.55em;color:var(--gold);-webkit-text-fill-color:var(--gold)}
+.ev .l{font-size:11.5px;color:var(--dim);margin-top:8px;letter-spacing:.04em}
+.honest{margin-top:30px;padding-top:22px;border-top:1px dashed var(--line);text-align:center;font-size:12.5px;color:var(--mut)}
+.honest b{color:var(--dim)}
+
+/* final cta + footer */
+.final{text-align:center}
+.final h2{font-size:clamp(28px,3.4vw,44px);font-weight:800;letter-spacing:-.015em}
+.final p{color:var(--dim);margin:16px auto 32px;max-width:52ch}
+footer{border-top:1px solid var(--line);padding:30px 5vw;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  font-size:12px;color:var(--mut);background:rgba(4,6,11,.6)}
+footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
+
+@media (max-width:1020px){
+  .hero{grid-template-columns:1fr;padding-top:104px;gap:44px}
+  .pipe{grid-template-columns:repeat(2,1fr)} .pstep .arrow{display:none}
+  .bento{grid-template-columns:repeat(2,1fr)}
+  .evgrid{grid-template-columns:repeat(2,1fr)} .evgrid .wide{grid-column:span 2}
+  .navlinks{display:none}
+}
+@media (max-width:640px){
+  .bento{grid-template-columns:1fr} section{padding:64px 6vw}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="bgwrap"></div><div class="grid"></div>
+<div class="orb g"></div><div class="orb c"></div>
+
+<nav>
+  <a class="brand" href="#"><span class="dot"></span>GOLDEN&nbsp;<b>STOCK</b></a>
+  <div class="navlinks">
+    <a href="#how">How it works</a><a href="#cap">Capabilities</a><a href="#ev">Evidence</a>
+  </div>
+  <a class="cta" href="./dashboard.html">Launch Terminal ↗</a>
+</nav>
+
+<header class="hero">
+  <div>
+    <span class="kicker"><span class="live"></span>AUTONOMOUS · SCANS NIGHTLY AFTER MARKET CLOSE</span>
+    <h1>Hunt <span class="au">golden stocks</span><br>before the crowd sees them.</h1>
+    <p class="sub">Golden Stock is an autonomous research system for Indian small &amp; mid-caps.
+      Every night it scans <b>651 stocks</b>, tags each chart's stage, scores conviction across
+      <b>8 evidence-weighted dimensions</b>, sends AI analysts to research the best setups —
+      and keeps an honest, self-auditing track record of every call it makes.</p>
+    <div class="heroctas">
+      <a class="cta big" href="./dashboard.html">Open the Dashboard →</a>
+      <a class="ghost" href="#how">See how it works</a>
+    </div>
+    <div class="chips">
+      <span class="chip"><b>651</b> stock universe</span>
+      <span class="chip"><b>100%</b> technical entries</span>
+      <span class="chip"><b>2-lot</b> risk plans</span>
+      <span class="chip"><b>0</b> human babysitting</span>
+    </div>
+  </div>
+
+  <div class="term">
+    <div class="termbar">
+      <span class="tdot" style="background:#f87171"></span><span class="tdot" style="background:#fbbf24"></span><span class="tdot" style="background:#34d399"></span>
+      <span class="termtitle">GOLDEN-STOCK // NIGHTLY SCAN</span>
+    </div>
+    <div class="termbody" id="termbody"></div>
+  </div>
+</header>
+
+<div class="ticker"><div class="tickin" id="tickin"></div></div>
+
+<section id="how">
+  <div class="shead rv">
+    <div class="stag">PIPELINE</div>
+    <h2>Four moves, every single night</h2>
+    <p>No screens to watch, no scans to remember. The system runs after close, in the cloud, and reports in.</p>
+  </div>
+  <div class="pipe">
+    <div class="pstep rv"><span class="arrow">▸</span><h3>Scan the universe</h3><p>Fresh EOD data for 651 small, mid &amp; microcaps. Every chart tagged by stage — basing, confirmed uptrend, extended, or broken.</p></div>
+    <div class="pstep rv" style="transition-delay:.08s"><span class="arrow">▸</span><h3>Score &amp; alert</h3><p>Alerts fire only on state <i>transitions</i> — a base completing, a breakout triggering. Each carries an 8-dimension conviction score and hard governance vetoes.</p></div>
+    <div class="pstep rv" style="transition-delay:.16s"><span class="arrow">▸</span><h3>AI deep-dives</h3><p>An AI analyst researches the top candidates on the open web the same night; a weekly AI committee picks and writes full investment theses.</p></div>
+    <div class="pstep rv" style="transition-delay:.24s"><span class="arrow">▸</span><h3>Plan &amp; track</h3><p>Every buy signal ships with a sized two-lot plan — entry, stop, partial, trail. Every call lands in a forward journal that grades the system itself.</p></div>
+  </div>
+</section>
+
+<section id="cap">
+  <div class="shead rv">
+    <div class="stag">CAPABILITIES</div>
+    <h2>A full research desk, condensed to software</h2>
+  </div>
+  <div class="bento">
+    <div class="bcard rv"><div class="bic"><svg viewBox="0 0 24 24"><path d="M3 17l4-6 4 3 5-8 5 7"/><path d="M3 21h18"/></svg></div>
+      <h3>Stage &amp; breakout engine</h3><p>Weinstein stage tags, Minervini trend template, VCP base detection and volume-confirmed pivot breakouts — the entry edge, mechanically applied to every chart.</p><div class="tagline">ENTRIES ARE 100% TECHNICAL</div></div>
+    <div class="bcard rv" style="transition-delay:.06s"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <h3>Nightly autonomous ops</h3><p>Runs in the cloud after every market close — scan, score, research, publish, notify. Zero dependence on any laptop being awake.</p><div class="tagline">365 NIGHTS · HANDS-FREE</div></div>
+    <div class="bcard rv" style="transition-delay:.12s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h3>Conviction with vetoes</h3><p>Eight scored dimensions — momentum, earnings inflection, theme, smart money, strength, catalyst, governance, valuation. Pledged promoters and governance red flags cap the score, no matter how pretty the chart.</p><div class="tagline">COVERAGE-HONEST SCORING</div></div>
+    <div class="bcard rv" style="transition-delay:.18s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M8 9h8M8 13h5"/><path d="M21 12a9 9 0 1 1-4-7.5"/><path d="M21 3v6h-6"/></svg></div>
+      <h3>AI research layers</h3><p>A nightly analyst deep-dives top alerts; a weekly committee curates 3–5 researched picks with theses, catalysts and risks. AI advises — it can never widen a stop or override a veto.</p><div class="tagline">MACHINE QUALIFIES · AI EXPLAINS</div></div>
+    <div class="bcard rv" style="transition-delay:.24s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5"/></svg></div>
+      <h3>News radar</h3><p>Every NSE filing since the last scan, whitelist-classified — order wins, M&amp;A, approvals, probes, pledges — and cross-referenced with tonight's chart state. Positive news on an actionable chart = research first.</p><div class="tagline">NEWS MOVES ATTENTION, NEVER ENTRIES</div></div>
+    <div class="bcard rv" style="transition-delay:.3s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5m4 5V8m4 8v-3"/></svg></div>
+      <h3>Self-auditing journal</h3><p>Every signal, verdict and paper trade is logged forward and graded against its own plan. The system must beat its own baseline with out-of-sample evidence — or the feature is cut.</p><div class="tagline">EVIDENCE-LOCKED BY DESIGN</div></div>
+  </div>
+</section>
+
+<section id="ev">
+  <div class="shead rv">
+    <div class="stag">EVIDENCE</div>
+    <h2>Built on tested rules, not vibes</h2>
+    <p>The strategy was stress-tested across 13+ pre-registered experiment configs before going live. What failed was cut. What survived runs tonight.</p>
+  </div>
+  <div class="ev rv">
+    <div class="evgrid">
+      <div><div class="n" data-count="32.5" data-dec="1">0<span class="u">%</span></div><div class="l">stress-tested backtest CAGR<br>(fills, gaps &amp; costs applied)</div></div>
+      <div><div class="n" data-count="1.67" data-dec="2">0<span class="u">R</span></div><div class="l">expectancy per trade<br>after costs</div></div>
+      <div><div class="n" data-count="9.6" data-dec="1">0<span class="u">:1</span></div><div class="l">payoff ratio —<br>winners vs losers</div></div>
+      <div><div class="n" data-count="651">0</div><div class="l">stocks scanned<br>every night</div></div>
+      <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">strategy configs tested<br>&amp; rejected by evidence</div></div>
+    </div>
+    <div class="honest"><b>Honesty note:</b> backtests are survivor-biased and directional by nature — the live forward journal, not the backtest, is the final judge. This is decision-support research, not investment advice. Execution always stays human.</div>
+  </div>
+</section>
+
+<section class="final rv">
+  <h2>The market moves at <span class="au">18:35 IST</span>.<br>So does Golden Stock.</h2>
+  <p>Open the terminal to see tonight's tags, conviction scores, AI verdicts and the live forward journal.</p>
+  <a class="cta big" href="./dashboard.html">Launch the Dashboard →</a>
+</section>
+
+<footer>
+  <div>GOLDEN STOCK · autonomous decision-support for Indian equities</div>
+  <div><a href="./dashboard.html">Dashboard</a> · <a href="https://github.com/kartikeyaav/Golden-Stock" rel="noopener">GitHub</a></div>
+  <div>Not investment advice. Markets carry risk.</div>
+</footer>
+
+<script>
+/* terminal typing */
+const LINES=[
+  ['p','$ golden-stock scan --universe nse-smallmid --after-close'],
+  ['info','▸ 651 symbols · EOD bars verified · regime: checking NIFTY vs 150-DMA'],
+  ['ok','✓ stage tags computed — 66 CONFIRMED · 18 ANTICIPATION'],
+  ['SPARK',''],
+  ['warn','▲ TRANSITION  CHENNPETRO  WATCH → CONFIRMED   conviction 87/100'],
+  ['p','  plan: entry 1130 · stop 1038 · partial +2.5R · two-lot trail'],
+  ['v','◆ AI analyst dispatched → verdict: BUY · HIGH · FULL PLAN'],
+  ['info','▸ news radar: 6 material filings classified · 1 CONFLUENCE'],
+  ['ok','✓ journal updated · dashboard published · alerts delivered'],
+  ['CUR','']
+];
+const tb=document.getElementById('termbody');
+let li=0;
+function addLine(){
+  if(li>=LINES.length)return;
+  const [cls,txt]=LINES[li++];
+  if(cls==='SPARK'){
+    const row=document.createElement('div');row.className='sparkrow';
+    for(let i=0;i<26;i++){const b=document.createElement('i');
+      b.style.height=(18+Math.abs(Math.sin(i*.7))*82)+'%';b.style.animationDelay=(i*.03)+'s';
+      if(i%7===3)b.style.background='linear-gradient(180deg,var(--gold),rgba(245,200,76,.2))';
+      row.appendChild(b);}
+    tb.appendChild(row);
+  }else if(cls==='CUR'){
+    const d=document.createElement('div');d.className='tl';d.innerHTML='<span class="p">$ </span><span class="cursor"></span>';tb.appendChild(d);
+  }else{
+    const d=document.createElement('div');d.className='tl';
+    const s=document.createElement('span');s.className=cls;s.textContent=txt;d.appendChild(s);tb.appendChild(d);
+  }
+  setTimeout(addLine, li===1?500:(340+Math.random()*260));
+}
+setTimeout(addLine,600);
+
+/* ticker (illustrative recent system reads) */
+const TK=[['CHENNPETRO','+10.2%',1],['MOSCHIP','+18.8%',1],['J&KBANK','+1.6R',1],['IPCALAB','+5.7%',1],
+  ['SHILPAMED','+6.5%',1],['LAURUSLABS','+6.1%',1],['RRKABEL','+8.0%',1],['MAHABANK','-10.2%',0],
+  ['SYRMA','+1.0%',1],['ACMESOLAR','+6.5%',1],['FEDERALBNK','+1.4R',1],['KEI','-3.7%',0]];
+const half=TK.map(([s,v,u])=>`<span class="tk"><b>${s}</b><span class="${u?'up':'dn'}">${v}</span></span>`).join('');
+document.getElementById('tickin').innerHTML=half+half;
+
+/* scroll reveals */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* count-up numbers */
+const nio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;nio.unobserve(e.target);
+  const el=e.target,end=parseFloat(el.dataset.count),dec=parseInt(el.dataset.dec||'0'),
+  unit=el.querySelector('.u'),t0=performance.now();
+  (function tick(t){const p=Math.min((t-t0)/1400,1),v=(end*(1-Math.pow(1-p,3))).toFixed(dec);
+    el.firstChild.textContent=v;if(p<1)requestAnimationFrame(tick)})(t0);
+  if(unit)el.appendChild(unit);
+}),{threshold:.6});
+document.querySelectorAll('.n[data-count]').forEach(el=>nio.observe(el));
+
+/* card glow follows cursor */
+document.querySelectorAll('.bcard').forEach(c=>c.addEventListener('pointermove',e=>{
+  const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');
+}));
+</script>
+</body>
+</html>

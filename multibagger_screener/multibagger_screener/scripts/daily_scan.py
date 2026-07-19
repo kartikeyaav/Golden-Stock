@@ -40,9 +40,10 @@ from scoring.conviction import assess
 from scoring.phase_b import build_dimensions, build_vetoes, tag_archetypes
 from scoring.phase_c import enrich, enrichment_dimensions
 from scoring.stage_tagger import tag_stock
-from scoring.technical_score import compute_atr, compute_entry_plan
+from scoring.technical_score import (compute_atr, compute_entry_plan,
+                                     detect_episodic_pivot)
 from reports.watchlist_card import render_card
-from scoring.regime import market_risk_scale
+from scoring.regime import market_risk_scale, save_breadth_snapshot
 from fetch_fundamentals import _age_days, flatten
 from position_manager import check_positions
 from sync_positions import check as sync_check
@@ -110,9 +111,15 @@ def load_state(path: str) -> dict | None:
     return None
 
 
-def save_state(path: str, tags: dict) -> None:
+def save_state(path: str, tags: dict, ep_alerted: dict | None = None) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     payload = {"date": datetime.now().strftime("%Y-%m-%d"), "tags": tags}
+    if ep_alerted:
+        # EP alerts are one-day EVENTS, not state transitions — remember which
+        # (symbol, bar-date) pairs already fired so a same-evening catch-up
+        # re-run can't journal the same event twice. Keep 10 days.
+        cutoff = (datetime.now() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
+        payload["ep_alerted"] = {s: d for s, d in ep_alerted.items() if d >= cutoff}
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=1)
     # daily snapshot (audit trail for missed-day/late transitions), keep 90
@@ -170,7 +177,8 @@ def entry_status_of(tag_result: dict) -> str:
 
 
 def build_candidate(sym: str, tag_result: dict, industry: str | None,
-                    rs_pctile: float | None, company_name: str = "") -> dict:
+                    rs_pctile: float | None, company_name: str = "",
+                    ep: dict | None = None) -> dict:
     """Conviction card + journal fields for an alerted name. Fundamentals and
     news are CONTEXT for the human (and vetoes) — never a machine gate
     (matrix v1/v2, brief section 2B). Phase C enrichment runs here, on the
@@ -216,8 +224,12 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     df = load_ohlcv(sym)
     atr = float(compute_atr(df).iloc[-1]) if df is not None else None
     risk_scale = market_risk_scale()
+    # EPISODIC PIVOT alerts stop at the gap day's low, not 2.5xATR
+    # (EP matrix, adopted 2026-07-19)
     plan = compute_entry_plan(tag_result["last_close"], atr=atr,
-                              risk_scale=risk_scale) if atr else {}
+                              risk_scale=risk_scale,
+                              stop_price=ep["stop_price"] if ep else None) \
+        if atr else {}
 
     # structured detail blob for the dashboard drawer — SAME schema as
     # run_shortlist's shortlist_details.json, so every alerted name gets the
@@ -249,6 +261,8 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
         }
     detail = {
         "alerted_at": datetime.now().strftime("%Y-%m-%d"),
+        "ep": ({"gap_pct": ep["gap_pct"], "vol_mult": ep["vol_mult"]}
+               if ep else None),
         "score": conviction.score, "coverage": conviction.coverage_pct,
         "label": conviction.label,
         "reasons": tag_result.get("reasons", []),
@@ -263,10 +277,16 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
         "news": news_blob,
     }
 
-    return {
-        "card": render_card(sym, tag_result, conviction, atr=atr,
+    card_text = render_card(sym, tag_result, conviction, atr=atr,
                             archetypes=archetypes, dim_notes=True, news=news,
-                            risk_scale=risk_scale),
+                            risk_scale=risk_scale)
+    if ep:
+        card_text = (f"!! EPISODIC PIVOT — gap +{ep['gap_pct']}% on "
+                     f"{ep['vol_mult']}x volume ({ep['bar_date']}). Event stop "
+                     f"= gap-day low {ep['stop_price']}. Check the news radar "
+                     f"for the catalyst.\n") + card_text
+    return {
+        "card": card_text,
         "detail": detail,
         "close": tag_result["last_close"],
         "atr": round(atr, 2) if atr else "",
@@ -339,15 +359,37 @@ def main() -> None:
     bench = load_ohlcv("NIFTY50")
     today_tags: dict[str, str] = {}
     tag_results: dict[str, dict] = {}
+    ep_hits: dict[str, dict] = {}
+    breadth_above = breadth_total = 0
     for sym in symbols:
         if sym == "NIFTY50":
             continue
         df = load_ohlcv(sym)
-        if df is None or len(df) < 260:
+        if df is None or len(df) < 60:
+            continue
+        # EPISODIC PIVOT (adopted 2026-07-19): event check on tonight's bar.
+        # Needs only 60 bars — young IPOs that can't form 45-week structures
+        # (the IREDA blind spot) are exactly the point of this class.
+        ep = detect_episodic_pivot(df)
+        if ep:
+            ep_hits[sym] = ep
+        # market breadth for the regime rule (sizing matrix v3+v3b, adopted
+        # 2026-07-19): % of universe above its own 200-DMA. Computed here
+        # because this loop already holds every chart — costs nothing.
+        if len(df) >= 200:
+            breadth_total += 1
+            if float(df["close"].iloc[-1]) > float(df["close"].tail(200).mean()):
+                breadth_above += 1
+        if len(df) < 260:
             continue
         t = tag_stock(df, bench)
         today_tags[sym] = t["tag"]
         tag_results[sym] = t
+    # persist BEFORE any market_risk_scale() call so tonight's alerts and
+    # plans size off tonight's breadth (regime.py reads this snapshot)
+    snap = save_breadth_snapshot(breadth_above, breadth_total)
+    print(f"breadth: {snap['breadth_pct_above_200dma']}% of {breadth_total} "
+          f"above their 200-DMA -> risk x{market_risk_scale()}", flush=True)
 
     # FRESH nightly RS percentile across tonight's whole watched universe —
     # the weekly focus_list.csv percentile is up to 6 days stale, and it feeds
@@ -427,6 +469,60 @@ def main() -> None:
             lines.append("")
             lines.append("Minor shifts: " + ", ".join(f"{s} {o}->{n}" for s, o, n in infos))
 
+    # EPISODIC PIVOT alerts (EP matrix, ADOPTED 2026-07-19): one-day EVENTS,
+    # not state transitions — a violent gap on extreme volume. Idempotent via
+    # state ep_alerted {sym: bar_date} (a same-evening catch-up re-run of the
+    # same bar must not journal the event twice). Fires only once a baseline
+    # exists (prev is not None), same convention as transition alerts.
+    ep_alerted: dict[str, str] = dict((prev or {}).get("ep_alerted", {}))
+    if prev is not None and ep_hits:
+        new_eps = {s: e for s, e in ep_hits.items()
+                   if ep_alerted.get(s) != e["bar_date"]}
+        if new_eps:
+            lines.append("")
+            lines.append(f"{len(new_eps)} episodic pivot(s) — gap + volume event:")
+            lines.append("")
+        for sym, e in sorted(new_eps.items(),
+                             key=lambda kv: -kv[1]["vol_mult"]):
+            ep_alerted[sym] = e["bar_date"]
+            tr = tag_results.get(sym)
+            row = {"logged_at": now, "symbol": sym, "kind": "EPISODIC PIVOT",
+                   "old_tag": (prev.get("tags", {}) or {}).get(sym, ""),
+                   "new_tag": today_tags.get(sym, "YOUNG"),
+                   "close": e["close"], "stop_suggested": e["stop_price"],
+                   "rs_pctile": rs_by_sym.get(sym, "")}
+            entry_signal_rows.append({
+                "logged_at": now, "symbol": sym, "kind": "EPISODIC PIVOT",
+                "entry_status": "EP EVENT", "validated_entry": True,
+                "close": e["close"], "pivot_price": "",
+                "breakout_today": True,
+                "breakout_volume_ratio": e["vol_mult"], "vcp_valid": "",
+            })
+            if tr is not None:
+                lines.append(f"- **EPISODIC PIVOT** [EP EVENT]: {sym}  "
+                             f"(gap +{e['gap_pct']}% on {e['vol_mult']}x vol)")
+                cand = build_candidate(sym, tr, industry_by_sym.get(sym),
+                                       rs_by_sym.get(sym),
+                                       company_name=company_by_sym.get(sym, sym),
+                                       ep=e)
+                cards.append(cand.pop("card"))
+                alert_details[sym] = cand.pop("detail")
+                cand.pop("stop_suggested", None)  # keep the EP event stop
+                row.update(cand)
+            else:
+                # young stock (<260 bars — no stage read exists): compact
+                # alert with the event plan; exactly the IPO blind spot the
+                # EP class was adopted to cover
+                plan = compute_entry_plan(e["close"],
+                                          atr=None, risk_scale=market_risk_scale(),
+                                          stop_price=e["stop_price"])
+                stop_txt = (f"stop {e['stop_price']}" if not plan.get("skip")
+                            else f"NO PLAN — {plan.get('skip_reason', '')[:60]}")
+                lines.append(f"- **EPISODIC PIVOT** [EP EVENT]: {sym}  "
+                             f"(gap +{e['gap_pct']}% on {e['vol_mult']}x vol, "
+                             f"young listing, {stop_txt})")
+            journal_rows.append(row)
+
     # news-first discovery radar (2026-07-19): material filings since the
     # last scan, classified + cross-referenced with tonight's technical
     # state. News moves ATTENTION, never entries — trades stay technical.
@@ -480,7 +576,7 @@ def main() -> None:
     if problems:
         lines = lines[:2] + problems + [""] + lines[2:]
 
-    save_state(args.state_file, today_tags)
+    save_state(args.state_file, today_tags, ep_alerted=ep_alerted)
     journal_append(journal_rows)
     entry_signals_append(entry_signal_rows)
     save_alert_details(alert_details)

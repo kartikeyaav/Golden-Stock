@@ -116,12 +116,11 @@ def _regime_line() -> str:
     plans already half-size in a defensive tape — the committee should know
     the backdrop it is picking into."""
     try:
-        from scoring.regime import market_risk_scale
+        from scoring.regime import market_risk_scale, regime_description
         if market_risk_scale() < 1.0:
-            return ("\n\nMARKET REGIME: DEFENSIVE (NIFTY < 150-DMA) — "
-                    "mechanical sizing is halved; prefer resilience over "
-                    "beta in marginal calls.")
-        return "\n\nMARKET REGIME: NORMAL (NIFTY above 150-DMA)."
+            return (f"\n\n{regime_description()} — mechanical sizing is "
+                    "halved; prefer resilience over beta in marginal calls.")
+        return f"\n\n{regime_description()}"
     except Exception:  # noqa: BLE001 — context, never fatal
         return ""
 

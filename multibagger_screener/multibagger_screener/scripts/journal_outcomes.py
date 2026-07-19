@@ -33,7 +33,7 @@ def main() -> None:
         print("no journal yet — outcomes will exist once the first alert is logged")
         return
     j = pd.read_csv(JOURNAL, parse_dates=["logged_at"])
-    buys = j[j["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW"])].copy()
+    buys = j[j["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW", "EPISODIC PIVOT"])].copy()
     if buys.empty:
         print("journal has no buy-type signals yet")
         return

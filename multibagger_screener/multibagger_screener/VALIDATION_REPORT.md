@@ -132,3 +132,77 @@ bound). Honest planning number = the stress row. Caveats: survivor bias
 (directional), single ~2.9y window, microcap liquidity limits as equity
 compounds (revisit past ~1 Cr). Live action: update RISK.capital to actual
 account equity periodically; no code change (live never had the cash-drag).
+
+## 6D. Sizing matrix v3 + v3b — breadth regime rule (2026-07-19, pre-registered, ADOPTED)
+
+Question: can a smarter risk scale beat the adopted binary NIFTY/150-DMA
+rule? Two families tested, entries identical in every cell (sizing only):
+market BREADTH (% of the universe above its own 200-DMA — computed from our
+own cache) and PROGRESSIVE EXPOSURE (risk scaled off the portfolio's own
+trailing results, Minervini-style).
+
+| config | pos | exp/R | CAGR(w) | maxDD | MAR | P2 R |
+|---|---|---|---|---|---|---|
+| A SZ2-B repro (sanity) | 96 | 1.667 | 47.0% | -18.5% | 2.55 | +0.311 |
+| B NIFTY/150 (incumbent) | 96 | 1.653 | 47.7% | -17.6% | 2.70 | +0.312 |
+| C breadth graded | 100 | 1.557 | 46.2% | -14.8% | 3.13 | +0.214 |
+| D breadth binary <50% (ADOPTED) | 100 | 1.575 | 49.5% | -14.8% | 3.35 | +0.235 |
+| E breadth AND nifty | 101 | 1.556 | 46.6% | -14.7% | 3.16 | +0.239 |
+| F progressive (trades) | 108 | 1.234 | 44.0% | -14.7% | 2.99 | +0.221 |
+| G progressive (equity curve) | 101 | 1.551 | 43.9% | -14.3% | 3.08 | +0.201 |
+| H combo | 112 | 1.175 | 42.0% | -14.3% | 2.93 | +0.174 |
+
+PROGRESSIVE EXPOSURE: REJECTED — every variant gives up 3.7-5.7pp CAGR
+(the regime series already does that job; equity-curve feedback double-
+counts it).
+
+BREADTH BINARY (D): beat the incumbent on CAGR (+1.8pp), maxDD (-2.9pp
+BETTER) and MAR (3.35 vs 2.70) but missed v3's strict P2 per-trade
+expectancy clause by 0.027R. Diagnosis: composition — smaller defensive
+sizes free cash, admitting ~4 extra chop entries that dilute PER-TRADE R
+while improving the PORTFOLIO. Per-trade expectancy is sizing-invariant
+for shared trades, so it was the wrong chop guard for a sizing overlay.
+The v3b FOLLOW-UP (registered same evening, before running, with the guard
+the clause was actually protecting — chop-period portfolio survivability):
+
+| config | CAGR(w) | P2-seg return | P2-seg maxDD |
+|---|---|---|---|
+| B NIFTY/150 | 47.7% | +9.4% | -17.6% |
+| D breadth binary | 49.5% | +13.6% | -14.8% |
+
+Both v3b guards PASS — D is better through the chop on both portfolio
+measures. ADOPTED: risk x0.5 when breadth (% of universe above its own
+200-DMA) < 50%, else full; NIFTY/150 kept as the fallback when the breadth
+snapshot is missing/stale (fail-defensive, never silently permissive).
+Live: daily_scan computes breadth in its tag loop -> state/regime.json;
+scoring/regime.py reads it; dashboard badge shows the live breadth %.
+Two-step disclosure: v3's strict rule was NOT met; adoption rests on v3
+(full-window Pareto) + v3b (chop-segment guards), both pre-registered.
+
+## 6E. EP matrix — episodic-pivot entry class (2026-07-19, pre-registered, ADOPTED)
+
+Hypothesis (Bonde/Kullamagi): a violent gap on extreme volume is a SECOND
+technical entry class, independent of the 45-week VCP structure — and a
+shot at the young-IPO blind spot. Stop = EP-day low (floor 0.75xATR),
+two-lot management identical to baseline, equity basis + regime scale:
+
+| config | pos | exp/R | core/R | win% | CAGR(w) | maxDD | MAR | P2 R |
+|---|---|---|---|---|---|---|---|---|
+| EP_A gap>=8% vol>=3x | 83 | 1.377 | 1.888 | 37.0 | 38.2% | -20.9% | 1.83 | +0.760 |
+| EP_B + neglect filter | 53 | 1.169 | 1.458 | 38.1 | 17.0% | -10.0% | 1.71 | +0.711 |
+| EP_C gap>=10% vol>=4x | 43 | 1.868 | 2.627 | 38.4 | 24.8% | -18.6% | 1.34 | +1.033 |
+| BASE VCP only | 96 | 1.653 | 2.821 | 31.2 | 47.7% | -17.6% | 2.70 | +0.312 |
+| COMBINED VCP + EP_A | 142 | 1.337 | 2.203 | 31.3 | 54.5% | -15.2% | 3.58 | +0.527 |
+
+Both pre-registered gates PASS: EP_A validates standalone (>=30 pos,
+exp >= +0.5R, P2 >= 0, DD < 25%) and COMBINED beats BASE on MAR (3.58 vs
+2.70) with LOWER drawdown. The chop story is the point: EPs earn +0.76R in
+the P2 cohort where VCP breakouts earn +0.31R — two uncorrelated entry
+classes diversify the book (blended P2 +0.53R).
+
+ADOPTED as a live capital-bearing alert class: kind=EPISODIC PIVOT (gap
+>=8% on >=3x prior avg volume, close holds the gap, liquidity floors,
+>=60 bars so young IPOs qualify), event stop = gap-day low, same two-lot
+plan, journaled to signals_journal + entry_signals (entry_status=EP EVENT),
+idempotent via state ep_alerted, analyst dives on it like any buy alert.
+News radar supplies catalyst CONTEXT only — the entry is price/volume.
