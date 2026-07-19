@@ -81,6 +81,14 @@ _ROUNDUP_RES = [re.compile(p) for p in (
     r"\bbuy or sell\b", r"\bmarket wrap\b", r"\b(opening|closing) bell\b",
     r"\bstock market (today|live|highlights)\b", r"\bmarket live\b",
     r"\bsensex\b.*\bnifty\b", r"\bmarkets? (open|close)[ds]? (higher|lower|flat)\b",
+    # performance-listicle shapes (user-caught miss 2026-07-19: "Shilpa
+    # Medicare - 10 microcap stocks rally up to 430% in CY26; 5 turn
+    # multibaggers" scored +1 for Shilpa). Listicles say "N ... stocks";
+    # single-company corporate actions say "shares", so this stays safe
+    # for "issue of 10,00,000 equity shares"-type headlines.
+    r"\b\d{1,2}\s+(?:\w+\s+){0,2}stocks\b",
+    r"\bmultibaggers\b",                       # plural = ranked-list marker
+    r"\b(?:up ?to)\s+\d+(?:\.\d+)?\s*%",       # "rally up to 430%" = ranked list
 )]
 
 
