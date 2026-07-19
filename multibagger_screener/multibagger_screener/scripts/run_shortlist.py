@@ -14,6 +14,7 @@ import json
 import os
 import sys
 import time
+from datetime import datetime
 
 import pandas as pd
 
@@ -162,6 +163,13 @@ def main() -> None:
                 plan["partial_price"] = p.get("partial_profit_price")
 
         details[sym] = {
+            # same top-level schema as alert_details.json so the dashboard
+            # can compare vintages coverage-aware instead of blindly letting
+            # a stale fundamentals-blind alert snapshot mask this richer
+            # weekly read (SHILPAMED incoherence, user-caught 2026-07-19)
+            "score": conv.score, "coverage": conv.coverage_pct,
+            "label": conv.label,
+            "scored_at": datetime.now().strftime("%Y-%m-%d"),
             "reasons": tag.get("reasons", []),
             "stage_name": tag.get("stage", {}).get("stage_name", ""),
             "tt_checks": tag.get("trend_template_checks_passed", 0),
