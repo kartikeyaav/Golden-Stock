@@ -1,0 +1,84 @@
+{
+ "generated": "2026-07-19T12:21:24",
+ "window_start": "2026-07-18T00:21:24",
+ "hits": [
+  {
+   "sym": "APLLTD",
+   "cls": "pos",
+   "event": "approval",
+   "subject": "Alembic Pharmaceuticals Limited has informed the Exchange regarding a press release dated July 18, 2026, titled \"Alembic Pharmaceuticals Limited's Partner NATCO",
+   "date": "2026-07-18T20:35:46",
+   "n": 1,
+   "tag": "ANTICIPATION",
+   "rs": 37.5,
+   "held": false,
+   "confluence": true,
+   "urgent": false
+  },
+  {
+   "sym": "ANURAS",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "ANUPAM RASAYAN INDIA LIMITED has informed the Exchange regarding Acquisition (including agreement to acquire) |SUBJECT: Acquisition (including agreement to acqu",
+   "date": "2026-07-18T18:13:34",
+   "n": 1,
+   "tag": "BROKEN",
+   "rs": 51.2,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "NATCOPHARM",
+   "cls": "pos",
+   "event": "approval",
+   "subject": "Natco Pharma Limited has informed the Exchange regarding a press release dated July 18, 2026, titled \"NATCO received Tentative Approval for Olaparib Tablets fro",
+   "date": "2026-07-18T16:39:08",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 50.1,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "NBCC",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "NBCC (India) Limited has informed the Exchange regarding 'Intimation under Regulation 37(6) of SEBI (Listing Obligations and Disclosure Requirements) Regulation",
+   "date": "2026-07-18T15:22:03",
+   "n": 1,
+   "tag": "BROKEN",
+   "rs": 23.6,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "SHAKTIPUMP",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "SHAKTI PUMPS (INDIA) LIMITED has informed the Exchange regarding Acquisition (including agreement to acquire) |SUBJECT: Acquisition (including agreement to acqu",
+   "date": "2026-07-18T10:26:12",
+   "n": 1,
+   "tag": "BROKEN",
+   "rs": 5.9,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "HDBFS",
+   "cls": "attn",
+   "event": "fund raise",
+   "subject": "HDB FINANCIAL SERVICES LTD has informed the Exchange about Board Meeting to be held on 23-Jul-2026 to consider Fund raising. |SUBJECT: Board Meeting Intimation",
+   "date": "2026-07-18T15:35:39",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 36.2,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  }
+ ]
+}
