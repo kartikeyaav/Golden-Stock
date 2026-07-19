@@ -428,6 +428,9 @@ def build_payload() -> dict:
         ],
         "tags": tag_counts, "alerts": alerts, "verdicts": verdicts, "ai_picks": ai_picks,
         "radar": radar,
+        # the committee's weekly review set (ranked top-20): lets the UI say
+        # "reviewed & passed over" vs "not in the review set" — honest signal
+        "reviewed": list(ranked.head(20)["symbol"]) if not ranked.empty else [],
         "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,
@@ -598,6 +601,7 @@ footer{color:var(--faint);font-size:10.5px;margin-top:24px;line-height:1.7}
 .tab{display:none}.tab.on{display:block}
 .acthead{font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
 .dochip{display:inline-block;padding:2.5px 8px;border-radius:5px;border:1px solid;font-size:10px;font-weight:600;letter-spacing:.4px;white-space:nowrap}
+.vchip{display:inline-block;padding:1.5px 6px;border-radius:4px;border:1px solid;font-size:9.5px;font-weight:600;white-space:nowrap;margin:1px 3px 1px 0;cursor:help}
 details.actrest{margin-top:8px}
 details.actrest summary{cursor:pointer;color:var(--dim);font-size:12px;padding:6px 0;list-style-position:outside}
 details.actrest summary:hover{color:var(--txt)}
@@ -774,6 +778,26 @@ $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>`<div class="alert"><span class="ak">${esc(a.kind)}</span><span>${esc(a.text)}</span></div>`).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
 if(D.verdicts){$('#verdictcard').style.display='block';$('#verdicts').textContent=D.verdicts;}
 
+/* convergence voices — one vocabulary used by BOTH the actionable table
+   (compact chips) and the drawer (full lines). Three explicit voices:
+   Analyst (nightly deep-dive, <=10d), Committee (standing weekly picks),
+   News (radar hit since last scan). The machine's voice is the row itself
+   (conviction + tag) — every actionable name already passed its gate. */
+function voiceCommittee(sym){const P=D.ai_picks||{};const picks=P.picks||[];
+ const mine=picks.find(p=>p.symbol===sym);
+ if(mine)return{txt:'pick · '+(mine.conviction||''),cls:'pos',tip:'Standing weekly committee pick ('+(P.generated||'')+', conviction '+(mine.conviction||'?')+'). Thesis in the AI Picks tab.'};
+ if((D.reviewed||[]).includes(sym))return{txt:'passed over',cls:'mut',tip:'The committee reviewed this name in its weekly top-20 set and did not pick it — a considered pass, not an oversight.'};
+ return null;}
+function voiceNews(sym){const hits=(D.radar&&D.radar.hits)||[];const h=hits.find(x=>x.sym===sym);
+ if(!h)return null;
+ return{txt:h.event,cls:h.cls==='pos'?'pos':h.cls==='neg'?'neg':'attn',tip:'News radar ('+(h.date||'').slice(0,10)+'): '+h.subject.slice(0,140)};}
+function voiceChips(sym,verdict){let h='';
+ const VC={pos:'#34d399',neg:'#f87171',attn:'#fbbf24',mut:'#64748b'};
+ if(verdict)h+=`<span class="vchip" style="border-color:#a78bfa55;color:#a78bfa" data-tip="Nightly AI analyst verdict (verdict/conviction/size + date). Only verdicts from the last 10 days attach.">A: ${esc(verdict)}</span>`;
+ const c=voiceCommittee(sym);if(c)h+=`<span class="vchip" style="border-color:${VC[c.cls]}55;color:${VC[c.cls]}" data-tip="${esc(c.tip)}">C: ${esc(c.txt)}</span>`;
+ const n=voiceNews(sym);if(n)h+=`<span class="vchip" style="border-color:${VC[n.cls]}55;color:${VC[n.cls]}" data-tip="${esc(n.tip)}">N: ${esc(n.txt)}</span>`;
+ return h||'<span class="dim">—</span>';}
+
 /* actionable now — v4: one row per symbol (×N = re-alerts), BUY SETUP +
    WATCH rows on top, WEAK and resolved folded behind toggles; each action
    chip explains itself on hover (DOEXPL) instead of per-row prose */
@@ -796,10 +820,10 @@ const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  <td><span class="dochip" data-tip="${esc(DOEXPL[a.dokind]||'')}" style="background:${c}12;color:${c};border-color:${c}45">${a.do}</span></td>
  <td class="sym">${a.sym}${a.n>1?`<span class="ndot" title="alerted ${a.n}× in 7 days">×${a.n}</span>`:''}</td>
  <td class="mono">${a.conv==null?'—':(a.cov!=null&&a.cov<60?`<span data-tip="Technical read — only ${a.cov}% of the 8 scored questions had data (fundamentals unavailable at alert time). Not comparable with full-coverage conviction scores.">${a.conv}<span style="color:#fbbf24">°</span></span>`:a.conv)}</td>
- <td class="dim" style="font-size:11.5px">${a.verdict?esc(a.verdict):'—'}</td>
+ <td style="font-size:11px">${voiceChips(a.sym,a.verdict)}</td>
  <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
  <td class="dim mono">${a.d}</td></tr>`};
-const hdr='<tr><th>Action</th><th>Symbol</th><th>Conv</th><th>Analyst</th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
+const hdr='<tr><th>Action</th><th>Symbol</th><th>Conv</th><th>AI view<span class="info" data-tip="What each AI layer says about this name, side by side. A: = nightly analyst verdict (last 10 days) · C: = weekly committee (pick / reviewed-and-passed-over) · N: = news radar hit since last scan. Empty = that layer has no current view. The machine\'s own view is this row itself — conviction + tag.">?</span></th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
 let h=`<div class="acthead">${nv
  ?`<b style="color:#34d399">&#9679; ${nv} validated buy trigger${nv>1?'s':''} — act today</b>`
  :`<b style="color:#94a3b8">&#9675; No validated triggers — nothing requires action.</b>`}
@@ -931,6 +955,32 @@ h+=`<div style="margin:9px 0"><div style="display:flex;justify-content:space-bet
 <div class="axis" style="line-height:1.5">${esc(m.n||'')}</div></div>`;});
 if((dt.reasons||[]).length)h+=`<div style="margin-top:10px;font-size:12px"><span class="axis">MECHANICAL READ</span><br>${dt.reasons.map(x=>'· '+esc(x)).join('<br>')}</div>`;
 h+='</div>';return h;}
+function convergenceSection(sym,r){
+ /* the four voices, one under the other, full text — the drawer's deep
+    version of the actionable table's chips. Summary pill only when >=2
+    explicit AI voices exist: ALIGNED (all positive) or SPLIT. */
+ const dt=D.details[sym]||{};
+ const mech=r.score!=null?r.score:(dt.score!=null?dt.score:null);
+ const tread=dt.label==='Technical Read';
+ const a=(D.actionable||[]).find(x=>x.sym===sym);
+ const verdict=a&&a.verdict?a.verdict:null;
+ const c=voiceCommittee(sym),n=voiceNews(sym);
+ const rows=[];
+ rows.push(['Machine',mech!=null?('conviction '+mech+(tread?'° (technical read)':'')+(r.tag?' · '+r.tag:'')):'not scored','#5aa2ff']);
+ rows.push(['Analyst',verdict?verdict:'no verdict in the last 10 days','#a78bfa']);
+ rows.push(['Committee',c?(c.txt==='passed over'?'reviewed this week — passed over':'standing pick ('+c.txt.replace('pick · ','')+')'):'not in this week\'s review set','#34d399']);
+ rows.push(['News',n?(n.txt+' — see radar panel'):'quiet since last scan','#fbbf24']);
+ const votes=[];
+ if(verdict)votes.push(/BUY/i.test(verdict));
+ if(c&&c.txt!=='passed over')votes.push(true);else if(c)votes.push(false);
+ if(n)votes.push(n.cls==='pos');
+ let pill='';
+ if(votes.length>=2){const allPos=votes.every(v=>v),anyNeg=votes.some(v=>!v);
+  pill=allPos?'<span class="pill" style="border-color:#34d399;color:#34d399;margin-left:8px" data-tip="Every AI layer with a current view on this name is positive.">ALIGNED '+votes.length+'/'+votes.length+'</span>'
+   :anyNeg?'<span class="pill" style="border-color:#fbbf24;color:#fbbf24;margin-left:8px" data-tip="The AI layers disagree on this name — read each voice below and decide; divergence is information, not noise.">SPLIT</span>':'';}
+ return `<div class="mini" style="margin-top:14px"><h3>Convergence — what each layer says${pill}</h3>
+ <table style="font-size:12.3px">${rows.map(([k,v,col])=>`<tr><td class="dim" style="width:86px;color:${col}">${k}</td><td>${esc(v)}</td></tr>`).join('')}</table>
+ <div class="axis" style="margin-top:5px">voices inform attention — entries and sizing stay mechanical</div></div>`;}
 function planSection(sym,r){const dt=D.details[sym];if(!dt)return'';
 if(r.veto)return`<div class="mini" style="border-color:#f8717155;margin-top:14px"><h3 style="color:#f87171">Vetoed — do not buy</h3><div style="font-size:12.5px">${esc((dt.veto_reasons||[]).join('; '))}</div></div>`;
 if(r.tag==='ANTICIPATION')return`<div class="mini" style="border-color:#5aa2ff44;margin-top:14px"><h3 style="color:#5aa2ff">Watch only — zero capital</h3><div style="font-size:12.5px">Stage-1 base forming. Validated as an alert tier only (+0.41R) — capital waits for the confirmed breakout (+1.27R economics). Horizon if it triggers later: weeks–months (trading lot), months–years (core lot).</div></div>`;
@@ -964,6 +1014,7 @@ const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
 d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
 <h1 style="font-size:20px">${sym} <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${r.tag||''}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
 <div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · conviction ${r.score??(D.details[sym]&&D.details[sym].score!=null?D.details[sym].score+(D.details[sym].label==='Technical Read'?' (technical read)':''):'—')}${r.arch?' · '+esc(r.arch):''}</div>
+${convergenceSection(sym,r)}
 ${planSection(sym,r)}
 ${whySection(sym)}
 <div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">chart not cached for this name yet — it loads with the next scan alert or weekly refresh (or run: python scripts/enrich.py '+sym+')</div>'}</div>
