@@ -265,6 +265,24 @@ class CompositeConfig:
     min_composite_score_to_shortlist: float = 0.6
 
 
+# ---------------------------------------------------------------------------
+# EPISODIC PIVOT (EP matrix, ADOPTED 2026-07-19): second technical entry
+# class — a violent gap on extreme volume (the market repricing a stock).
+# Pre-registered backtest: EP_A standalone +1.38R / P2 +0.76R; COMBINED with
+# VCP breakouts lifted MAR 2.70 -> 3.58 with LOWER drawdown. Entries remain
+# 100% technical (gap + volume are price facts); the news radar supplies
+# catalyst CONTEXT only. See ep_matrix_report.md.
+# ---------------------------------------------------------------------------
+@dataclass
+class EpisodicConfig:
+    gap_min_pct: float = 8.0        # open >= prev_close * (1 + gap/100)
+    vol_mult: float = 3.0           # day volume >= mult * prior avg_vol_50
+    stop_atr_floor: float = 0.75    # stop = EP-day low, never tighter than this * ATR
+    min_bars: int = 60              # enough history for ATR/avg-vol to mean something
+    price_floor: float = 20.0       # skip penny-circuit names
+    adv_floor_inr: float = 1e7      # prior avg daily traded value >= 1 Cr
+
+
 RISK = RiskConfig()
 UNIVERSE = UniverseConfig()
 STAGE = StageConfig()
@@ -273,3 +291,4 @@ CONVICTION = ConvictionConfig()
 FUNDAMENTAL = FundamentalConfig()
 CATALYST = CatalystConfig()
 COMPOSITE = CompositeConfig()
+EPISODIC = EpisodicConfig()

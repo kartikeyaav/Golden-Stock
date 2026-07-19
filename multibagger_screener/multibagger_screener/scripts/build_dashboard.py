@@ -131,6 +131,7 @@ def build_payload() -> dict:
     ppath = os.path.join(ROOT, "ai_picks.json")
     if os.path.exists(ppath):
         ai_picks = json.load(open(ppath, encoding="utf-8"))
+        ai_picks.pop("model", None)  # engine detail — not a UI fact
     # news-first discovery radar (state/news_radar.json, written by the scan)
     radar = {}
     rpath = os.path.join(ROOT, "state", "news_radar.json")
@@ -156,6 +157,17 @@ def build_payload() -> dict:
                  for d, c, s in zip(b["date"], b["close"], b["sma"])]
         regime_defensive = bool(b["close"].iloc[-1] < b["sma"].iloc[-1])
         bench_age = (datetime.now() - bench["date"].iloc[-1]).days
+    # breadth regime rule (adopted 2026-07-19): the badge must show the rule
+    # the sizing actually uses — read the scan's snapshot, NIFTY fallback
+    breadth_pct = None
+    try:
+        from scoring.regime import market_risk_scale as _mrs
+        regime_defensive = _mrs() < 1.0
+        rsnap = json.load(open(os.path.join(ROOT, "state", "regime.json"),
+                               encoding="utf-8"))
+        breadth_pct = rsnap.get("breadth_pct_above_200dma")
+    except Exception:
+        pass
 
     # alerts + verdicts
     alerts, verdicts, scan_date = [], "", ""
@@ -348,7 +360,7 @@ def build_payload() -> dict:
     if not journal.empty:
         jj = journal.copy()
         jj["logged_at"] = pd.to_datetime(jj["logged_at"], errors="coerce")
-        recent = jj[(jj["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW"]))
+        recent = jj[(jj["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW", "EPISODIC PIVOT"]))
                     & (jj["logged_at"] >= pd.Timestamp.now() - pd.Timedelta(days=7))]
         for _, r in recent.iloc[::-1].iterrows():
             sym = r["symbol"]
@@ -359,6 +371,10 @@ def build_payload() -> dict:
             vetoed = str(r.get("vetoed", "")).lower() == "true"
             if vetoed:
                 status = "VETOED"
+            elif str(r["kind"]) == "EPISODIC PIVOT":
+                # EP = one-day event; young listings have no stage tag at all,
+                # so absence of CONFIRMED is not "faded" — only a BROKEN tag is
+                status = "FADED" if tag_now == "BROKEN" else "ACTIONABLE"
             elif tag_now == "CONFIRMED":
                 status = "ACTIONABLE"
             elif tag_now == "EXTENDED":
@@ -398,6 +414,13 @@ def build_payload() -> dict:
     def _do(a):
         if a["status"] == "VETOED":
             return "DO NOT BUY", "veto"
+        # EP alerts are one-day events with their own validated edge (EP
+        # matrix 2026-07-19) — an event stop, not a stage/VCP read, so the
+        # trigger-fidelity ladder below doesn't apply to them
+        if a["kind"] == "EPISODIC PIVOT":
+            if a["status"] == "FADED":
+                return "IGNORE", "mute"
+            return "EP BUY", "ep"
         if a["status"] == "FADED":
             return "IGNORE", "mute"
         if a["status"] == "RAN AWAY":
@@ -412,7 +435,8 @@ def build_payload() -> dict:
     for a in actionable:
         a["do"], a["dokind"] = _do(a)
     actionable.sort(key=lambda a: (_srank.get(a["status"], 9),
-                                   _trank.get(a["trigger"], 9),
+                                   0 if a["kind"] == "EPISODIC PIVOT"
+                                   else _trank.get(a["trigger"], 9),
                                    -(a["conv"] or 0)))
 
     try:
@@ -432,6 +456,7 @@ def build_payload() -> dict:
         "generated": datetime.now().strftime("%d %b %Y, %H:%M"),
         "price_date": str(bench["date"].iloc[-1].date()) if bench is not None and len(bench) else "",
         "scan_date": scan_date, "defensive": regime_defensive,
+        "breadth_pct": breadth_pct,
         "health_ok": bench_age <= 5 and len(tags) > 400,
         "funnel": [
             ["NSE index universe", len(universe), "official constituents, refreshed weekly"],
@@ -662,8 +687,8 @@ th{font-size:9px}
 <div id="runpanel" style="display:none">
   <div class="runhead">RUN (local server)</div>
   <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + dashboard — no AI, no credits">&#8635; Daily scan (no AI)</button>
-  <button class="runbtn" data-job="daily_ai" title="adds the sonnet analyst, max 3 deep-dives — moderate credits">&#8635; Scan + AI analyst</button>
-  <button class="runbtn" data-job="weekly" title="full weekly refresh, AI committee SKIPPED — no Opus credits">&#8635; Weekly refresh (no AI)</button>
+  <button class="runbtn" data-job="daily_ai" title="adds the AI analyst, max 3 deep-dives — moderate credits">&#8635; Scan + AI analyst</button>
+  <button class="runbtn" data-job="weekly" title="full weekly refresh, AI committee SKIPPED — no AI credits">&#8635; Weekly refresh (no AI)</button>
   <div class="runnote">AI committee runs only from the scheduled weekly job &mdash; never from here (credit guard).</div>
   <div id="runstatus"></div>
 </div>
@@ -690,7 +715,7 @@ th{font-size:9px}
 </div>
 
 <div class="tab" id="picks">
-  <div class="card" style="padding:12px 18px"><h2 style="margin:0">AI investment committee<span class="info" data-tip="Claude reads the whole mechanically-scored shortlist (dimensions, conviction, sector, RS), selects the optimum 3-5, deep-researches each on the web, and writes the investment case. The machine qualifies & scores; the AI curates & explains. Entry/stop/size stay mechanical. Picks are journaled and measured vs the mechanical top-N over time.">?</span></h2></div>
+  <div class="card" style="padding:12px 18px"><h2 style="margin:0">AI investment committee<span class="info" data-tip="The AI committee reads the whole mechanically-scored shortlist (dimensions, conviction, sector, RS), selects the optimum 3-5, deep-researches each on the web, and writes the investment case. The machine qualifies & scores; the AI curates & explains. Entry/stop/size stay mechanical. Picks are journaled and measured vs the mechanical top-N over time.">?</span></h2></div>
   <div id="picksbody"></div>
 </div>
 
@@ -778,7 +803,7 @@ function nextScanText(){const now=new Date();let d=new Date(Date.UTC(now.getUTCF
  const h=Math.round((d-now)/36e5);
  return' · next scan '+d.toLocaleDateString(undefined,{weekday:'short'})+' ~'+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})+' ('+(h<=24?'in ~'+h+'h':d.toLocaleDateString())+')'}
 $('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date+' · prices as of '+D.price_date+nextScanText();
-$('#badges').innerHTML=(D.defensive?'<span class="badge b-amb">DEFENSIVE — HALF SIZE (NIFTY &lt; 150-DMA)</span>':'<span class="badge b-grn">NORMAL RISK</span>')+' '+(D.health_ok?'<span class="badge b-grn">HEALTH OK</span>':'<span class="badge b-red">HEALTH FAILED</span>');
+$('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HALF SIZE${D.breadth_pct!=null?' (breadth '+D.breadth_pct+'% &gt;200-DMA)':''}</span>`:`<span class="badge b-grn">NORMAL RISK${D.breadth_pct!=null?' (breadth '+D.breadth_pct+'%)':''}</span>`)+' '+(D.health_ok?'<span class="badge b-grn">HEALTH OK</span>':'<span class="badge b-red">HEALTH FAILED</span>');
 
 /* KPIs — number + label; the caveat rides in a tooltip, not on screen (v4) */
 $('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,'Validated 3y window, after costs. Changing the rules requires new pre-registered evidence.'],
@@ -817,9 +842,10 @@ function voiceChips(sym,verdict){let h='';
 /* actionable now — v4: one row per symbol (×N = re-alerts), BUY SETUP +
    WATCH rows on top, WEAK and resolved folded behind toggles; each action
    chip explains itself on hover (DOEXPL) instead of per-row prose */
-const DOC={act:'#34d399',watch:'#fbbf24',weak:'#94a3b8',warn:'#fbbf24',mute:'#64748b',veto:'#f87171'};
+const DOC={act:'#34d399',ep:'#f5c84c',watch:'#fbbf24',weak:'#94a3b8',warn:'#fbbf24',mute:'#64748b',veto:'#f87171'};
 const DOEXPL={
  act:'Exact backtested trigger fired — pivot break on ≥1.5× volume. Open the drawer for the sized two-lot plan.',
+ ep:'Episodic pivot — a violent gap on extreme volume (≥8% gap, ≥3× volume), the market repricing the stock on new information. Own validated entry class; stop = the gap day\'s low. Check the news radar for the catalyst.',
  watch:'VCP base ready — buy only if price breaks the pivot on ≥1.5× volume. No entry yet.',
  weak:'Uptrend (CONFIRMED tag) but no VCP base/breakout — the validated edge is not established for this entry.',
  warn:'Ran away: price extended after the alert — do not chase; a re-entry alert fires if it cools into a new setup.',
@@ -829,8 +855,8 @@ const DOEXPL={
 const all=D.actionable||[];
 if(!all.length){$('#actionable').innerHTML='<div class="quiet">No buy signals in the last 7 days.</div>';return;}
 const live=all.filter(a=>a.status==='ACTIONABLE'),rest=all.filter(a=>a.status!=='ACTIONABLE');
-const prime=live.filter(a=>a.dokind==='act'||a.dokind==='watch'),weak=live.filter(a=>a.dokind==='weak');
-const nv=prime.filter(a=>a.dokind==='act').length;
+const prime=live.filter(a=>a.dokind==='act'||a.dokind==='ep'||a.dokind==='watch'),weak=live.filter(a=>a.dokind==='weak');
+const nv=prime.filter(a=>a.dokind==='act'||a.dokind==='ep').length;
 const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  return `<tr onclick="openDrawer('${a.sym}')">
  <td><span class="dochip" data-tip="${esc(DOEXPL[a.dokind]||'')}" style="background:${c}12;color:${c};border-color:${c}45">${a.do}</span></td>
@@ -1121,7 +1147,7 @@ $('#jstats').innerHTML=[['Signals logged',D.journal_total??D.journal.length,'Eve
 ['Stopped',D.outcomes.stopped??'—','Signals that hit the suggested stop (-1R, closed).'],
 ['Expectancy to date',D.outcomes.exp!=null?D.outcomes.exp+'R':'—','Forward, unfakeable. The gate for real capital: within ~50% of the +1.67R backtest at meaningful sample size.']]
 .map(k=>`<div class="kpi"><span>${k[0]}<span class="info" data-tip="${esc(k[2])}">?</span></span><b>${k[1]}</b></div>`).join('');
-const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','WATCH CLOSELY':'#5aa2ff','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
+const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','EPISODIC PIVOT':'#f5c84c','WATCH CLOSELY':'#5aa2ff','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
 $('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(j.kind)}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(j.old)+' → ':''}${esc(j.new)}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
 
 /* buy-signal scorecard — same name re-alerting across nights is ONE story:
@@ -1135,7 +1161,7 @@ const tread=s.conv!=null&&s.cov!=null&&s.cov<60;
 const convCell=s.conv==null?'':tread?`<span data-tip="Technical read — only ${s.cov}% of the 8 scored questions had data (fundamentals unavailable at alert time). Not comparable with full-coverage conviction scores.">${s.conv}<span style="color:#fbbf24">°</span></span>`:s.conv;
 const reBadge=s.re?` <span class="pill" style="border-color:#a78bfa66;color:#a78bfa;font-size:9px" data-tip="Same name re-alerted later — the newest row above is the live read; this is the earlier signal, kept for the honest track record.">↻ ${s.re===1?'earlier alert':'earlier ×'+s.re}</span>`:'';
 return `<tr onclick="openDrawer('${s.sym}')"${s.re?' style="opacity:.55"':''}><td class="dim mono">${s.d}</td><td class="sym">${s.sym}${reBadge}</td>
-<td class="dim" style="font-size:11px">${s.kind==='BUY CANDIDATE'?'BUY':'RE-ENTRY'}</td>
+<td class="dim" style="font-size:11px">${s.kind==='BUY CANDIDATE'?'BUY':s.kind==='EPISODIC PIVOT'?'EP':'RE-ENTRY'}</td>
 <td class="mono">${convCell}</td><td class="mono">${s.entry??''}</td><td class="mono dim">${s.stop??''}</td>
 <td class="mono" style="color:${s.ret>0?'#34d399':s.ret<0?'#f87171':''}">${s.ret!=null?(s.ret>0?'+':'')+s.ret+'%':''}</td>
 <td class="mono" style="color:${rc};font-weight:700">${s.r!=null?(s.r>0?'+':'')+s.r+'R':''}</td>
@@ -1173,7 +1199,7 @@ $('#paperbody').innerHTML=h;})();
 const CONVC={HIGH:'#34d399',MEDIUM:'#fbbf24',LOW:'#f87171'};
 function drawPicks(){window._picks=1;const w=$('#picksbody');const P=D.ai_picks||{};
 if(!P.picks||!P.picks.length){w.innerHTML='<div class="card quiet">No AI picks yet. They generate weekly (or run scripts/ai_picks.py). The committee reviews the shortlist and selects 3-5 researched names.</div>';return;}
-let h=`<div class="card" style="border-color:#fbbf2433"><h2 style="color:#fbbf24">Portfolio view</h2><div style="font-size:13.5px;line-height:1.7">${esc(P.portfolio_view||'')}</div><div class="axis" style="margin-top:8px">generated ${esc(P.generated||'')} · model ${esc(P.model||'')}</div></div>`;
+let h=`<div class="card" style="border-color:#fbbf2433"><h2 style="color:#fbbf24">Portfolio view</h2><div style="font-size:13.5px;line-height:1.7">${esc(P.portfolio_view||'')}</div><div class="axis" style="margin-top:8px">generated ${esc(P.generated||'')} · AI investment committee</div></div>`;
 P.picks.forEach((p,i)=>{const m=p.meta||{};const pl=p.plan||{};const cc=CONVC[p.conviction]||'#94a0b0';
 h+=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
 <div><span style="font-size:12px;color:#fbbf24;font-weight:700">PICK ${i+1}</span>

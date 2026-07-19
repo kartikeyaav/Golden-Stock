@@ -210,6 +210,32 @@ locked the following. Changing these requires NEW pre-registered evidence:
    every other over-aggressive lever). Full table: multibagger_screener/
    multibagger_screener/sizing_matrix2_report.md.
 
+12. **Regime scale = market BREADTH, not the index (matrices v3+v3b,
+   2026-07-19):** risk x0.5 whenever the % of the universe above its own
+   200-DMA is below 50% (else full), replacing the NIFTY/150-DMA binary.
+   Beat the incumbent on the full window (CAGR 49.5% vs 47.7%, maxDD -14.8%
+   vs -17.6%, MAR 3.35 vs 2.70) and on the pre-registered chop-segment
+   guards (P2-segment return +13.6% vs +9.4%, P2-segment DD -14.8% vs
+   -17.6%). Two-step disclosure: v3's strict per-trade P2 clause was missed
+   by 0.027R (composition artifact — the clause was the wrong metric for a
+   sizing overlay); adoption rests on v3 full-window Pareto + v3b segment
+   guards, both registered before running. NIFTY/150 stays as the fallback
+   when the breadth snapshot is missing/stale (fail-defensive). Progressive
+   exposure (equity-curve/trade-feedback sizing) was tested in the same
+   matrix and REJECTED (-3.7 to -5.7pp CAGR). Tables:
+   sizing_matrix3_report.md + sizing_matrix3b_report.md.
+
+13. **EPISODIC PIVOT is a second validated technical entry class (EP
+   matrix, 2026-07-19):** gap >= 8% on >= 3x prior average volume, close
+   holds the gap, liquidity floors, >= 60 bars of history (young IPOs
+   deliberately qualify — the IREDA-class blind spot this closes). Stop =
+   the gap day's LOW (floored at 0.75xATR), same two-lot management.
+   Standalone +1.38R with P2 cohort +0.76R (vs +0.31R for VCP breakouts —
+   the diversification is the point); COMBINED book lifted MAR 2.70->3.58
+   with LOWER drawdown. Entries remain 100% technical — the news radar
+   supplies catalyst CONTEXT next to the alert, never a gate. Full table:
+   ep_matrix_report.md.
+
 ---
 
 ## 3. Trade management spec (two-lot structure)

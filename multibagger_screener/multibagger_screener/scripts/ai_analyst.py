@@ -94,7 +94,7 @@ def extract_candidates(report: str) -> list[str]:
     # matched nothing after that, silently killing every nightly deep-dive
     # (audit catch 2026-07-18)
     syms = re.findall(
-        r"\*\*(?:BUY CANDIDATE|RE-ENTRY WINDOW)\*\*(?:\s*\[[^\]]*\])?: (\w[\w&-]*)",
+        r"\*\*(?:BUY CANDIDATE|RE-ENTRY WINDOW|EPISODIC PIVOT)\*\*(?:\s*\[[^\]]*\])?: (\w[\w&-]*)",
         report)
     seen, uniq = set(), []
     for s in syms:
@@ -120,11 +120,10 @@ def _cross_layer_context(symbol: str) -> str:
     language (the mechanical plan already halves size)."""
     parts = []
     try:
-        from scoring.regime import market_risk_scale
+        from scoring.regime import market_risk_scale, regime_description
         if market_risk_scale() < 1.0:
-            parts.append("MARKET REGIME: DEFENSIVE (NIFTY < 150-DMA) — "
-                         "mechanical sizing is already halved; weigh your "
-                         "conviction accordingly.")
+            parts.append(f"{regime_description()} — mechanical sizing is "
+                         "already halved; weigh your conviction accordingly.")
     except Exception:  # noqa: BLE001 — context, never fatal
         pass
     try:
@@ -245,7 +244,7 @@ def main() -> None:
         # "idle" through real buy nights for a week, indistinguishable from
         # a genuinely quiet market. If the words are in the file but the
         # parser sees nothing, that is a BUG, not a quiet night — shout.
-        loose_hits = len(re.findall(r"BUY CANDIDATE|RE-ENTRY WINDOW", report))
+        loose_hits = len(re.findall(r"BUY CANDIDATE|RE-ENTRY WINDOW|EPISODIC PIVOT", report))
         if loose_hits:
             msg = (f"ALERT-FORMAT DRIFT: {loose_hits} buy-type mention(s) in "
                    f"daily_alerts.md but the candidate parser matched none — "

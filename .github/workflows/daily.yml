@@ -89,7 +89,8 @@ jobs:
           # pathspec matches nothing (e.g. analyst_health.json when the AI
           # step is skipped) — that silently dropped the whole forward record
           for p in journal state/tags_state.json state/alert_details.json \
-                   state/analyst_health.json state/news_radar.json daily_alerts.md \
+                   state/analyst_health.json state/news_radar.json state/regime.json \
+                   daily_alerts.md \
                    announcements_archive.csv positions.csv paper_positions.csv; do
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
           done
@@ -141,7 +142,9 @@ jobs:
         run: |
           python scripts/build_dashboard.py
           mkdir -p _site
-          cp dashboard.html _site/index.html
+          # landing page is the front door; the dashboard lives one click in
+          cp landing.html _site/index.html
+          cp dashboard.html _site/dashboard.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: multibagger_screener/multibagger_screener/_site

@@ -257,6 +257,12 @@ def run_backtest(
                                          # and value cap on marked-to-market equity
                                          # (fixed-fractional standard) instead of
                                          # remaining cash; fills still cash-clamped
+    risk_scale_fn=None,                  # sizing matrix v3 (progressive exposure):
+                                         # callable(portfolio, date) -> float, multiplied
+                                         # with the risk_scale series. Lets a config size
+                                         # off the portfolio's OWN trailing results
+                                         # (point-in-time: called before the day's entries,
+                                         # sees only already-closed trades / prior equity).
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """signals_by_stock: {name: generate_signals(...) output}.
     Returns (trades_df — ONE ROW PER LOT, equity_curve_df).
@@ -359,6 +365,12 @@ def run_backtest(
                 if pd.isna(entry_price) or entry_price <= 0:
                     continue
                 stop_distance = RISK.atr_stop_mult * row["atr"]
+                # EP matrix (2026-07-19): a signal row may carry its own stop
+                # (episodic pivots stop at the gap day's low, not 2.5xATR).
+                # Column absent / NaN = classic ATR stop, behavior unchanged.
+                so = row.get("stop_override")
+                if pd.notna(so) and 0 < float(so) < entry_price:
+                    stop_distance = entry_price - float(so)
                 if stop_distance / entry_price * 100 > RISK.max_stop_loss_pct:
                     continue  # untradeably volatile — skip, don't clamp (Design Law #7)
                 avg_vol = row.get("avg_vol_50")
@@ -383,6 +395,8 @@ def run_backtest(
                 prior = risk_scale[risk_scale.index <= date]
                 if len(prior):
                     scale = float(prior.iloc[-1])
+            if risk_scale_fn is not None:
+                scale *= float(risk_scale_fn(portfolio, date))
 
             candidates.sort(key=lambda c: c[0], reverse=True)
             for _, name, entry_price, stop_distance, trading_fraction in candidates:

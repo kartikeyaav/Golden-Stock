@@ -108,7 +108,7 @@ def render_card(name: str, tag_result: dict, conviction: ConvictionResult,
         else:
             if risk_scale < 1.0:
                 lines.append(f"  Entry plan (two-lot, RISK x{risk_scale} — "
-                             "index below its 150-DMA, regime sizing active):")
+                             "defensive regime, sizing halved):")
             else:
                 lines.append(f"  Entry plan (two-lot, risk-normalized):")
             lines.append(f"    entry ~{plan['entry_price']}  stop {plan['stop_loss_price']} "
