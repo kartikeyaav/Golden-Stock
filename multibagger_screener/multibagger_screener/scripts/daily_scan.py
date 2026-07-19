@@ -427,6 +427,19 @@ def main() -> None:
             lines.append("")
             lines.append("Minor shifts: " + ", ".join(f"{s} {o}->{n}" for s, o, n in infos))
 
+    # news-first discovery radar (2026-07-19): material filings since the
+    # last scan, classified + cross-referenced with tonight's technical
+    # state. News moves ATTENTION, never entries — trades stay technical.
+    try:
+        from data.news_radar import radar_md_section, scan_radar
+        radar = scan_radar(today_tags, rs_by_sym, holdings)
+        lines += radar_md_section(radar)
+        if radar.get("hits"):
+            print(f"news radar: {len(radar['hits'])} material filing hit(s)",
+                  flush=True)
+    except Exception as e:  # noqa: BLE001 — discovery must never kill the scan
+        feed_problems.append(f"news radar failed ({str(e)[:60]})")
+
     # position management: track every open position against ITS OWN plan
     pos_alerts, pos_journal = check_positions()
     if pos_alerts:
