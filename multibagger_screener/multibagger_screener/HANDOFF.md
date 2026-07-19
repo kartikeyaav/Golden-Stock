@@ -97,6 +97,10 @@ Universe -> liquidity filter -> RS-percentile focus list (~320, reporting-only)
 (VALIDATED = exact backtested VCP-pivot+volume breakout / AWAITING TRIGGER =
 base live, pivot not cleared / NO VCP BASE = trend read only — logged to
 `journal/entry_signals.csv` for a future forward test, never a gate yet).
+Plus the **News Radar** (§3K): each scan also classifies NSE filings arrived
+since the last run and cross-references tonight's technical state (CONFLUENCE
+= positive news on an actionable chart) — news-first DISCOVERY, attention
+only, never entries.
 
 **8-dimension conviction score** (coverage-honest, 0-100):
 rs_and_stage 20 (LIVE, validated) · earnings_inflection 20 · theme 15 ·
@@ -431,8 +435,136 @@ the first live run is user-triggered; iterate from its logs. TOP RISK: Yahoo
 non-fatal + logged; if many fail, health check shouts. Laptop tasks still
 enabled + healthy (ran today) as the fallback until cloud is proven.
 
-## 4. Live production state (as of 2026-07-12)
+## 3K. Reliability + news-first + convergence overhaul (2026-07-18/19)
 
+Two intense sessions triggered by user reports ("HFCL picked twice",
+"8 questions unanswered", "conviction scores don't match between tabs").
+Everything below is LIVE and verified end-to-end.
+
+**Coverage gap (the "no info" dims) — root-caused + fixed:**
+- The nightly scan read fundamentals from a cache only the weekly job
+  filled, and only for CONFIRMED/ANTICIPATION names -> every cloud
+  re-entry/extended alert scored fundamentals-blind (coverage 45%, 5 of 8
+  dims empty). `daily_scan.build_candidate` now fetches screener.in LIVE
+  for alerted names when the cache is absent/stale — with politeness
+  guards (1.8s pause between fetches, 15/night budget; over-budget names
+  score technical-only and heal at the weekly). `fetch_fundamentals.py`
+  also covers the whole alerted pool (alert_details.json keys), not just
+  the shortlist. Verified: screener.in works from GitHub Actions IPs.
+
+**AI analyst was silently dead ~Jul 10-18 — revived + tripwired:**
+- Buy lines gained an entry-fidelity label ("**KIND** [STATUS]: SYM")
+  ~Jul 10; `extract_candidates()` still expected "**KIND**: SYM", matched
+  NOTHING, and reported "no buy-type alerts" through real 9-alert nights.
+  Same brittle regex dropped buy alerts from the dashboard Tonight panel.
+  Both fixed (optional `[STATUS]` tolerated). Cascade: the paper book
+  (fed by verdicts) was frozen too — self-heals at the next alert.
+- **Format-drift tripwire**: if buy-type words appear in daily_alerts.md
+  but the parser extracts zero candidates, analyst health writes "failed"
+  (which the daily health gate already shouts about) instead of an
+  indistinguishable-from-quiet "idle". Silence can no longer hide drift.
+- Dashboard attaches only analyst verdicts <=10 days old, date shown
+  inline (a Jul-9 BUY was decorating fresh alerts as if current).
+
+**Sentiment v0.5 (news quality):**
+- Multi-stock roundups/listicles ("Top Gainers & Losers: ... HFCL, ...")
+  are detected (`_is_roundup`), forced neutral, EXCLUDED from
+  catalyst/theme scoring, and marked on the card. Sentiment keywords now
+  match word boundaries with suffix tolerance ("cuts" no longer matches
+  "haircuts"; catches fell/tumbles/tanked/...), expanded pos/neg lexicons.
+
+**AI split — credit discipline (weekly committee is LOCAL-ONLY):**
+- See the Ops paragraph above (§3J block): weekly.yml always `--no-ai`;
+  `scripts/weekly_committee_local.py` + Task Scheduler task
+  `MultibaggerWeeklyCommittee` (every logon +2min, Sun 11:00 IST) runs
+  the committee on subscription auth when the cloud's shortlist commit is
+  newer than the picks — plus a **stranded-output guard** (real incident
+  2026-07-19: wrapper died mid-run, orphaned child wrote picks with
+  nobody to push them; the no-op branch now pushes fresh-but-dirty picks).
+- Nightly analyst stays on the API key (max 2 dives, cents, alert nights).
+
+**Cross-layer wiring (user directive: layers COLLABORATE, never race):**
+- Committee already saw analyst verdicts (14d); the analyst now receives
+  the standing committee pick's thesis/risks for the alerted name (or the
+  current pick list if it isn't one) and must note agreement/divergence
+  (`_cross_layer_context`). Both AI layers receive the NIFTY 150-DMA
+  regime line. Do NOT build A-vs-B scoreboard features — the user
+  explicitly rejected parallel-run designs; measurement happens through
+  the forward journal of the one combined output.
+
+**News Radar — news-FIRST discovery (`data/news_radar.py`):**
+- Inverts the price-first flow for DISCOVERY only: every scan classifies
+  NSE filings arrived since the last run (window = since-last-run state,
+  4d cap; the raw feed is ~90% MF-NAV/compliance noise), maps them to
+  universe symbols, and cross-references tonight's technical state.
+- WHITELIST-only classification (silence is the default), word-boundary
+  phrase patterns; three polarities: pos (order wins, expansion, M&A/JV,
+  approvals, buyback, rating upgrades), neg (regulatory action, distress,
+  pledge, management exits, downgrades), attn (fund raises — dilution is
+  direction-ambiguous). Precision traps each handled explicitly + locked
+  in a 24-case suite: SAST Reg-31(4) paperwork (matches "acquisition" via
+  the regulation's own name AND is discloser-titled), ESOP/NCD
+  allotments, NCLT merger-approvals (NOT distress), NCD suspension
+  notices, record dates, surveillance notices. 12-day archive test: 164
+  raw -> 73 clean hits (~6/day).
+- **CONFLUENCE** = positive news on a CONFIRMED/ANTICIPATION chart (the
+  radar's reason to exist); **URGENT** = negative news on a held name.
+- Output: `state/news_radar.json` (committed by daily.yml) -> dashboard
+  Overview panel (hidden when empty) + "## News radar" section in
+  daily_alerts.md (-> Telegram). NEWS MOVES ATTENTION, NEVER ENTRIES.
+
+**Convergence view (the "combined robust output"):**
+- No new panel — the two existing decision surfaces got richer:
+  Actionable's Analyst column became **"AI view"** chips (A: analyst
+  verdict <=10d · C: committee "pick · HIGH" / "passed over" · N: radar
+  hit); the drawer gained **"Convergence — what each layer says"** (
+  Machine/Analyst/Committee/News full lines, honest empty-states,
+  ALIGNED n/n pill when >=2 explicit AI voices agree, SPLIT on
+  divergence — divergence is information, never averaged away).
+- "passed over" vs "not in review set" is a real distinction: payload
+  carries `reviewed` (ranked top-20 = the committee's weekly review set).
+
+**Score coherence (SHILPAMED incoherence, user-caught):**
+- alert_details ALWAYS overwrote weekly shortlist_details in the drawer
+  merge -> a stale fundamentals-blind alert snapshot masked the richer
+  weekly read (drawer header said 72 above five "no data" bars reading
+  56.2). Merge is now COVERAGE-AWARE: the alert read wins only when at
+  least as informed; otherwise weekly dims/score stay and only the
+  alert's fresher news/plan/date ride along.
+- `shortlist_details.json` gained schema parity (score/coverage/label/
+  scored_at) and is now COMMITTED by weekly.yml (it previously existed
+  only inside the cloud workspace — every local rebuild used stale data).
+- Every conviction display declares its vintage: drawer header "read of
+  <date>, coverage X%" (sourced from the RESOLVED detail = same read as
+  the dims below), Screener column ° marker + weekly-vintage tooltip,
+  "Why this score" header shows read date + coverage. Numbers may differ
+  across tabs (different vintages) — but every number says what it is.
+
+**UI (same sessions):** info "?" icons fixed (`.kpi>span` child selector
+— descendant rule was stealing display:block), Overview nav alignment
+(inline margin-top beat the mobile reset), sticky mobile nav, next-scan
+indicator in the header, mobile table scroll-in-card, 640px tier,
+re-alert grouping in the journal scorecard (↻ pill + muted), ° coverage
+markers in actionable/scorecard.
+
+---
+
+## 4. Live production state (as of 2026-07-19)
+
+- **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
+  (GitHub delay ~1.5-2h past 13:05 UTC — fine for EOD), journal commits
+  nightly, Pages publishes the dashboard, Telegram delivers every run
+  (daily heartbeat, user choice). All three secrets set. Laptop Task
+  Scheduler scan jobs DISABLED; the only local job is the weekly
+  committee (`MultibaggerWeeklyCommittee`, subscription auth).
+- **Latest committee picks (2026-07-19, local run on Sunday's fresh
+  shortlist)**: CHENNPETRO(HIGH), LAURUSLABS(HIGH), NAVINFLUOR(MED),
+  BELRISE(MED), RRKABEL(MED). NOTE: committee output is
+  non-deterministic run-to-run (same shortlist, same model, different
+  picks) — that's why every run is journaled (`ai_picks_journal.csv`);
+  the forward journal judges, not any single run.
+- **Forward journal**: ~105 buy signals tracked, expectancy +0.05R
+  (tiny sample, 2 weeks — no conclusions yet).
 - **First real alerts fired 2026-07-07 18:40**: ~10 transitions incl.
   BANDHANBNK/CARBORUNIV/KARURVYSYA (buys), ACUTAAS/ANANDRATHI/SYRMA/J&KBANK
   (re-entries), CDSL/CHOLAHLDNG/NBCC (anticipation).
@@ -456,17 +588,12 @@ enabled + healthy (ran today) as the fallback until cloud is proven.
 ## 5. Open items
 
 **Needs the user (small, all documented in CLOUD.md):**
-1. **Verify the first cloud run** — Actions tab -> "Daily scan (cloud)" ->
-   Run workflow. First run = full price backfill (~20min) + baseline (no
-   alerts — expected, no prior state to diff). Report back what the log says;
-   the untested risk is Yahoo/screener.in rate-limiting GitHub's datacenter IPs.
-2. **Enable GitHub Pages** (Settings -> Pages -> Source = GitHub Actions) for
-   a permanent dashboard URL reachable from anywhere, no laptop needed.
-3. **Add repo secrets** (optional): `TELEGRAM_BOT_TOKEN`+`TELEGRAM_CHAT_ID`
-   (phone alerts — 2-min BotFather setup, see `scripts/send_telegram.py`
-   header) and `ANTHROPIC_API_KEY` (cloud AI analyst/committee — subscription
-   login can't work headless in Actions; API key is pay-per-use, a few
-   cents/day).
+1. ~~Verify the first cloud run~~ **DONE 2026-07-18** — daily + weekly
+   both verified green; Yahoo/screener.in both work from Actions IPs.
+2. ~~Enable GitHub Pages~~ **DONE** — dashboard live at
+   kartikeyaav.github.io/Golden-Stock/, republished every run.
+3. ~~Add repo secrets~~ **DONE 2026-07-18** — all three set; Telegram
+   delivery verified end-to-end.
 4. ~~Disable the laptop Task Scheduler jobs~~ **DONE 2026-07-18** — both
    `MultibaggerDailyScan` and `MultibaggerWeeklyRefresh` are Disabled; cloud is
    the sole runner. (Re-enable only if the cloud is retired — never run both.)
@@ -491,16 +618,20 @@ enabled + healthy (ran today) as the fallback until cloud is proven.
 ## 6. NEXT TASK (what a fresh chat should pick up)
 
 Priority order:
-1. **User verifies the first cloud Actions run** (§5 item 1) — this is the
-   main open thread. If it fails, the log will show why (most likely
-   candidate: Yahoo/screener rate-limiting the GitHub IP range) — fix from
-   there (longer pause / retry logic), don't guess blind.
-2. Once cloud is confirmed: help the user enable Pages, add secrets, and
-   disable the laptop scheduler (§5 items 2-4).
+1. **Watch Monday's scan** (first night the revived analyst can fire on a
+   real alert; committee cross-checks refresh from stale Jul-9 verdicts)
+   and the first few News Radar nights (precision in the wild — if noise
+   creeps in, tighten the whitelist in `data/news_radar.py`, never
+   blacklist).
+2. **ANANDRATHI promoter-pledge discrepancy** (committee-flagged vs the
+   mechanical "no pledge" read) — the user should confirm before treating
+   it as a clean pick; re-veto if a standing pledge is real.
 3. **Forward-journal review** after a few more settled weeks: do analyst
    verdicts / committee picks / VALIDATED-entry-fidelity alerts beat the
    mechanical baseline out-of-sample? This is the evidence gate before any
-   real-capital scale-up.
+   real-capital scale-up. (Journal-earned dim weights are parked on the
+   same clock — the news/theme v0 weights get re-derived from outcomes,
+   not argued about.)
 4. Longer-term strategy work, deliberately PARKED until the forward journal
    has enough data (do not start these speculatively): pyramiding winners,
    regime up-scaling (size UP in strong uptrends, symmetric to the existing
@@ -539,12 +670,21 @@ journal/entry_signals.csv     per-buy-alert entry fidelity (VALIDATED/AWAITING/N
 scripts/daily_job.py          what Task Scheduler actually runs: scan -> analyst -> paper -> outcomes -> dashboard -> telegram
 scripts/weekly_job.py         what Task Scheduler runs Sundays (weekly_refresh wrapper)
 scripts/paper_trader.py       analyst paper book: BUY verdicts -> next-open fills -> two-lot managed, ledgered
-scripts/ai_analyst.py         daily deep-dive (sonnet-5), conviction-prioritized, idempotent
-scripts/ai_picks.py           weekly committee (opus-4-7 + high thinking)
+scripts/ai_analyst.py         daily deep-dive (sonnet-5), conviction-prioritized, idempotent;
+                              format-drift tripwire + committee/regime cross-context (3K)
+scripts/ai_picks.py           weekly committee (sonnet-5, adaptive thinking) — LOCAL-ONLY now,
+                              subscription auth; cloud weekly always --no-ai (3K)
+scripts/weekly_committee_local.py  logon/Sunday wrapper: pull -> freshness guard (shortlist
+                              commit vs picks stamp) -> committee -> push; stranded-output guard
+data/news_radar.py            news-FIRST discovery: whitelist classifier over the NSE filings
+                              archive, symbol matching, confluence/urgent ranking (3K)
+state/news_radar.json         radar output (dashboard panel + since-window baseline), committed nightly
+logs/committee_local.log      local committee wrapper log
 scripts/weekly_refresh.py     full weekly chain
 scripts/build_dashboard.py    dashboard.html generator (RUN panel + command palette, terminal UI)
 scripts/dashboard_server.py   local server: dashboard + run-jobs API (daily / daily_ai / weekly --no-ai; committee excluded)
-scripts/run_shortlist.py      ranked shortlist + shortlist_details.json (drawer data)
+scripts/run_shortlist.py      ranked shortlist + shortlist_details.json (drawer data; carries
+                              score/coverage/label/scored_at, committed by weekly.yml — 3K)
 scripts/position_manager.py   open positions vs their two-lot plans
 scripts/survivorship_check.py Wayback constituent diff
 scripts/import_holdings.py    sync holdings.csv from a Zerodha Console CSV export (no daily Kite login)
@@ -553,7 +693,9 @@ scripts/run_sizing_matrix.py  sizing matrix v1: risk% x position-slot sweep (slo
 scripts/run_sizing_matrix2.py sizing matrix v2: cash- vs equity-basis sizing (equity ADOPTED, ~2x corrected CAGR)
 sizing_matrix_report.md       v1 table + verdict
 sizing_matrix2_report.md      v2 table + verdict (the CAGR-correction evidence)
-state/alert_details.json      per-alert drawer detail blob (30d expiry) — merges into shortlist_details in the dashboard
+state/alert_details.json      per-alert drawer detail blob — merged COVERAGE-AWARE with
+                              shortlist_details in the dashboard (most-informed read wins
+                              dims/score; fresher read contributes news/plan/date — 3K)
 state/analyst_health.json     AI analyst heartbeat (ok/failed/idle), read by daily_scan health check
 journal/entry_signals.csv     per-buy-alert entry fidelity (VALIDATED/AWAITING TRIGGER/NO VCP BASE) — forward test data
 analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders (incl. second-order ecosystem research task)

@@ -74,8 +74,10 @@ the cloud's commits to your laptop for local viewing: `git pull`.
 - **Price + fundamentals caches** (75 MB) → `actions/cache`, keyed per run with
   a rolling restore. A rare cache miss just triggers a one-night full backfill.
 - **The forward record** (journal, `tags_state.json` diff-baseline, alerts,
-  positions) → committed back to the repo each run. Small, durable, survives
-  cache eviction, and doubles as the offsite backup.
+  `news_radar.json` since-window baseline, positions; the weekly also commits
+  `shortlist_details.json` — the drawer's full 8-dim data) → committed back to
+  the repo each run. Small, durable, survives cache eviction, and doubles as
+  the offsite backup.
 - **The dashboard** → GitHub Pages (no git-history bloat) + a run artifact.
 
 ## Known risks to watch on the first runs
