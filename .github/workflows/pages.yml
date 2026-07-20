@@ -1,0 +1,81 @@
+name: Publish site (Pages)
+
+# Publishes the public site to GitHub Pages:
+#   index.html      = landing.html  (the front door)
+#   dashboard.html  = the live command center (one click in from the landing)
+#
+# Decoupled from the scan jobs (2026-07-20) so publishing does NOT wait for a
+# nightly run and is not gated on a scan succeeding. Triggers:
+#   * push to master touching the landing/dashboard SOURCE -> goes live in ~2 min
+#   * after a Daily/Weekly run completes -> republish with the fresh data commit
+#   * manual button (workflow_dispatch)
+# The landing page is fully static, so it publishes even if the dashboard build
+# degrades (missing cache / data) — the front door is never blocked.
+on:
+  push:
+    branches: [master]
+    paths:
+      - "multibagger_screener/multibagger_screener/landing.html"
+      - "multibagger_screener/multibagger_screener/scripts/build_dashboard.py"
+      - ".github/workflows/pages.yml"
+  workflow_run:
+    workflows: ["Daily scan (cloud)", "Weekly refresh (cloud)"]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Pages allows one deployment at a time; serialize and let the newest win
+# without cancelling an in-flight deploy mid-upload.
+concurrency:
+  group: golden-stock-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master   # always publish the tip of master (fresh nightly commit)
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "pandas>=2.0" "numpy>=1.24"
+
+      # the dashboard build reads the price/fundamentals cache (not in git);
+      # restore-keys pulls the most recent cache a scan saved. A miss only
+      # degrades the DASHBOARD — the static landing page still publishes.
+      - name: Restore data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            multibagger_screener/multibagger_screener/data_cache
+            multibagger_screener/multibagger_screener/fundamentals_cache
+          key: golden-data-pages-${{ github.run_id }}
+          restore-keys: golden-data-
+
+      - name: Build site
+        working-directory: multibagger_screener/multibagger_screener
+        run: |
+          mkdir -p _site
+          # landing first — static, must always succeed
+          cp landing.html _site/index.html
+          # dashboard is best-effort (needs the data cache)
+          python scripts/build_dashboard.py && cp dashboard.html _site/dashboard.html \
+            || echo "dashboard build degraded — landing published, dashboard skipped this run"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: multibagger_screener/multibagger_screener/_site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
