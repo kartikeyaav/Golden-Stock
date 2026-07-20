@@ -615,6 +615,23 @@ one path deeper; the old bookmark root now shows the landing page).
 (dashboard buttons/tooltips/committee footer — `ai_picks.json`'s model
 field is no longer rendered).
 
+**Readability overhaul (2026-07-20 evening, user-driven):** (1) TELEGRAM
+now sends a decision-first phone DIGEST built by send_telegram.build_digest
+from daily_alerts.md at send time (validated/EP triggers -> "BUY TRIGGER —
+act", awaiting -> "Watch + pivot", NO-VCP -> "weak-trend, not buys" — the
+SAME vocabulary as the dashboard's DO chips, killing the "phone says BUY,
+dashboard says nothing actionable" contradiction; analyst verdicts as
+one-liners, top-3 radar hits, positions, regime line, dashboard link;
+~500 chars vs the old 20-50KB dump; any digest exception falls back to the
+full-report send). (2) Overview verdicts panel = structured cards (symbol +
+BUY/SKIP pill + conviction + size + one-line WHY, full memo behind a
+toggle) instead of a 4000-char text wall; renamed "AI analyst — tonight's
+deep-dives" with a tooltip explaining analyst (nightly per-alert triage)
+vs AI Picks (weekly committee portfolio). First production night for the
+whole 3L stack ran clean 2026-07-20 15:24Z: 15 alerts, radar LIVE with 5
+hits (WABAG order-win CONFLUENCE), breadth 59.2% -> NORMAL, analyst
+revived (IPCALAB BUY/MEDIUM/HALF — first verdict since Jul-9).
+
 **End-to-end audit (2026-07-20, same session):** full sweep of workflows,
 pipeline, and UI after the 3L adoptions. Fixed: (1) paper_trader's alert
 lookup excluded kind=EPISODIC PIVOT — an analyst BUY on an EP alert would
