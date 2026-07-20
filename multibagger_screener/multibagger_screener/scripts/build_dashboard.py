@@ -189,30 +189,39 @@ def build_payload() -> dict:
         # header split out and the memo kept for a collapsible view
         verdict_items = []
         if vm:
+            def _bullets(section: str, memo: str) -> list[str]:
+                bm = re.search(rf"{section}[^\n]*\n(.*?)(?=\n[A-Z][A-Z ]{{3,}}[:(]|\Z)",
+                               memo, re.S)
+                if not bm:
+                    return []
+                return [ln.strip().lstrip("-").strip()[:220]
+                        for ln in bm.group(1).splitlines()
+                        if ln.strip().startswith("-")]
+
             for m in re.finditer(r"### (\w[\w&-]*)\n(.*?)(?=\n### |\Z)",
                                  vm.group(1), re.S):
                 sym, memo = m.group(1), m.group(2).strip()
                 v = re.search(r"VERDICT:\s*([A-Z]+)", memo)
                 c = re.search(r"CONVICTION:\s*([A-Z]+)", memo)
                 s = re.search(r"SIZE:\s*([A-Z ]+?)\s*$", memo, re.M)
-                why = ""
-                wm = re.search(r"WHY[^\n]*\n(.*?)(?=\n[A-Z][A-Z ]{3,}[:(]|\Z)", memo, re.S)
-                if wm:
-                    bullets = [ln.strip().lstrip("-").strip()
-                               for ln in wm.group(1).splitlines()
-                               if ln.strip().startswith("-")]
-                    why = bullets[0][:230] if bullets else ""
+                whys = _bullets("WHY", memo)
+                risks = _bullets("RISKS", memo)
+                fm = re.search(r"CHANGES MY MIND:\s*(.+?)(?=\n[A-Z][A-Z ]{3,}:|\Z)",
+                               memo, re.S)
                 verdict_items.append({
                     "sym": sym, "verdict": v.group(1) if v else "?",
                     "conv": c.group(1) if c else "",
                     "size": s.group(1).strip() if s else "",
-                    "why": why, "memo": memo[:2600]})
+                    "why": whys[0] if whys else "",
+                    "whys": whys[1:3], "risks": risks[:2],
+                    "flip": (fm.group(1).strip().replace("\n", " ")[:220]
+                             if fm else "")})
             for m in re.finditer(r"\*\*(\w[\w&-]*)\*\* — analyst unavailable"
                                  r" \(([^)]{0,90})", vm.group(1)):
                 verdict_items.append({"sym": m.group(1), "verdict": "N/A",
                                       "conv": "", "size": "",
                                       "why": f"analyst unavailable ({m.group(2)})",
-                                      "memo": ""})
+                                      "whys": [], "risks": [], "flip": ""})
 
     # screener rows: focus list enriched with fundamentals where known
     fund_by_sym = {r["symbol"]: r for _, r in funds.iterrows()} if not funds.empty else {}
@@ -682,6 +691,20 @@ footer{color:var(--faint);font-size:10.5px;margin-top:24px;line-height:1.7}
 .acthead{font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
 .dochip{display:inline-block;padding:2.5px 8px;border-radius:5px;border:1px solid;font-size:10px;font-weight:600;letter-spacing:.4px;white-space:nowrap}
 .vchip{display:inline-block;padding:1.5px 6px;border-radius:4px;border:1px solid;font-size:9.5px;font-weight:600;white-space:nowrap;margin:1px 3px 1px 0;cursor:help}
+/* analyst verdict cards — compact, native */
+.vcard{background:var(--card2);border:1px solid var(--line);border-radius:9px;
+padding:9px 12px;margin-bottom:7px}
+.vrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;cursor:pointer}
+.vrow .sym:hover{text-decoration:underline}
+.vpill{font:600 10px var(--mono,ui-monospace,monospace);letter-spacing:.06em;
+border:1px solid var(--line);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.vpill.dim2{color:var(--dim)}
+.vwhy{font-size:12px;color:var(--dim);line-height:1.5;margin-top:5px;
+display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vmore{margin-top:4px}
+.vmore summary{cursor:pointer;font-size:10.5px;color:var(--mut);list-style-position:outside}
+.vmore summary:hover{color:var(--dim)}
+.vln{font-size:11.5px;color:var(--dim);line-height:1.5;margin-top:5px;padding-left:2px}
 details.actrest{margin-top:8px}
 details.actrest summary{cursor:pointer;color:var(--dim);font-size:12px;padding:6px 0;list-style-position:outside}
 details.actrest summary:hover{color:var(--txt)}
@@ -895,9 +918,9 @@ $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b
 
 /* alerts */
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>`<div class="alert"><span class="ak">${esc(a.kind)}</span><span>${esc(a.text)}</span></div>`).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
-/* analyst verdicts — structured cards (raw-text wall was unreadable).
-   Header line = the decision; first WHY bullet = the one-line reason;
-   full memo folds behind a toggle. */
+/* analyst verdicts — compact native cards: decision row + one reason line;
+   remaining why/risk bullets and the flip condition fold behind a slim
+   toggle. No raw memo text in the UI (memos live in analyst_reports/). */
 (function(){
 const items=D.verdict_items||[];
 if(!items.length){if(D.verdicts){$('#verdictcard').style.display='block';
@@ -906,15 +929,20 @@ $('#verdictcard').style.display='block';
 const VCOL={BUY:'#34d399',SKIP:'#f87171',HOLD:'#fbbf24','N/A':'#64748b'};
 $('#verdicts').innerHTML=items.map(v=>{
  const c=VCOL[v.verdict]||'#94a3b8';
- return `<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:${c}08">
- <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-   <b class="sym" style="cursor:pointer" onclick="openDrawer('${v.sym}')">${v.sym}</b>
-   <span class="pill" style="border-color:${c};color:${c};font-weight:700">${esc(v.verdict)}</span>
-   ${v.conv?`<span class="pill" style="border-color:#47556955">${esc(v.conv)} conviction</span>`:''}
-   ${v.size?`<span class="pill" style="border-color:#47556955">${esc(v.size)}</span>`:''}
+ const more=(v.whys||[]).length||(v.risks||[]).length||v.flip;
+ return `<div class="vcard" style="border-left:2px solid ${c}">
+ <div class="vrow" onclick="openDrawer('${v.sym}')">
+   <b class="sym">${v.sym}</b>
+   <span class="vpill" style="color:${c};border-color:${c}55;background:${c}10">${esc(v.verdict)}</span>
+   ${v.conv?`<span class="vpill dim2">${esc(v.conv)}</span>`:''}
+   ${v.size?`<span class="vpill dim2">${esc(v.size)}</span>`:''}
  </div>
- ${v.why?`<div style="font-size:12px;color:var(--dim);margin-top:6px;line-height:1.5">${esc(v.why)}</div>`:''}
- ${v.memo?`<details style="margin-top:6px"><summary style="cursor:pointer;font-size:11px;color:var(--mut)">full memo — why, risks, what changes the call</summary><div class="memo" style="margin-top:6px">${esc(v.memo)}</div></details>`:''}
+ ${v.why?`<div class="vwhy">${esc(v.why)}</div>`:''}
+ ${more?`<details class="vmore"><summary>why &amp; risks</summary>
+   ${(v.whys||[]).map(w=>`<div class="vln"><span style="color:var(--grn)">▸</span> ${esc(w)}</div>`).join('')}
+   ${(v.risks||[]).map(r=>`<div class="vln"><span style="color:#fbbf24">▸</span> ${esc(r)}</div>`).join('')}
+   ${v.flip?`<div class="vln" style="color:var(--mut)"><span style="color:#a78bfa">⟲</span> flips the call: ${esc(v.flip)}</div>`:''}
+ </details>`:''}
  </div>`;}).join('');
 })();
 
