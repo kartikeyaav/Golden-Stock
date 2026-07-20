@@ -30,6 +30,7 @@ Minor shifts: CANFINHOME WATCH->BROKEN, IOB BROKEN->WATCH, JSWDULUX WATCH->BROKE
 
 _News moves attention, never entries — trades stay technical._
 
+
 ## AI analyst verdicts
 
 ### IPCALAB
@@ -68,6 +69,24 @@ CHECKED: Web search across screener/news aggregators, ICRA/CARE rating commentar
 
 CHANGES MY MIND: A clean Q1FY27 beat (22-Jul) with debt/EBITDA guidance holding ≤5x and a volume-confirmed base forming afterward would flip this toward BUY at half size.
 
+### DCBBANK
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- The card's "SEBI red flag" is a false positive — it's a routine Reg 74(5) demat/rematerialization compliance certificate filed by the RTA (MUFG Intime), not an enforcement action. No governance issue found.
+- Promoter (Aga Khan Fund for Economic Development) confirmed zero share encumbrance for FY26 — pledge veto correctly not triggered, governance score checks out.
+- Real tailwind: Motilal Oswal and Kotak both flagged/added DCB Bank ahead of Q1 (Kotak's model portfolio, MOSL's "up to 36% upside" bank picks), and sell-side expects DCB's cohort (mid-sized private banks: AU/RBL/DCB/IDFC) to outperform on loan growth (3.9-5.4%) and NIM expansion this quarter, while large private banks see NIM compression — a genuine sector-rotation-into-midcap-banks signal, not generic commentary.
+
+RISKS (max 2 bullets):
+- Board meets 24-Jul to approve Q1 results — a binary event 3 days out, and the pivot (194.6) hasn't triggered yet, so a WAIT here avoids buying a VCP base that could gap through the pivot or the stop on results before the mechanical trigger fires.
+- ₹1,500cr QIP is authorized (AGM approved, ~$100mn tranche reportedly targeted mid-FY27) — likely growth capital given loan-growth trajectory, not distress, but sizing/timing/price aren't public yet; worth confirming it's not priced at a discount that caps near-term upside once announced.
+
+CHECKED: NSE/BSE filing text, screener.in, scanx.trade, Economic Times/Moneycontrol coverage, Equirus/sector-wide Q1 FY27 preview commentary.
+CHANGES MY MIND: Clean Q1 print (NIM/loan growth beat) plus a genuine volume breakout through 194.6 post-results — re-trigger the mechanical entry then.
+
+**GRANULES** — analyst unavailable (exit 1: You've hit your session limit · resets 5:20am (Asia/Calcutta)) — review the card manually before acting
 
 ## Cards
 
