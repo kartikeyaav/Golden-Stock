@@ -109,44 +109,8 @@ jobs:
           path: multibagger_screener/multibagger_screener/dashboard.html
           retention-days: 14
 
-  # Publish the dashboard to GitHub Pages (permanent URL, no git-history bloat).
-  # Separate job so a Pages misconfiguration never breaks the critical scan job
-  # above. Enable once: repo Settings -> Pages -> Source = GitHub Actions.
-  publish-dashboard:
-    needs: scan
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: master   # pick up the fresh commit the scan job just pushed
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install "pandas>=2.0" "numpy>=1.24"
-      - name: Restore data cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            multibagger_screener/multibagger_screener/data_cache
-            multibagger_screener/multibagger_screener/fundamentals_cache
-          key: golden-data-${{ github.run_id }}
-          restore-keys: golden-data-
-      - name: Rebuild dashboard for Pages
-        working-directory: multibagger_screener/multibagger_screener
-        run: |
-          python scripts/build_dashboard.py
-          mkdir -p _site
-          # landing page is the front door; the dashboard lives one click in
-          cp landing.html _site/index.html
-          cp dashboard.html _site/dashboard.html
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: multibagger_screener/multibagger_screener/_site
-      - id: deploy
-        uses: actions/deploy-pages@v4
+# Pages publishing moved to its OWN workflow (.github/workflows/pages.yml,
+# 2026-07-20): it triggers on this workflow's completion (workflow_run) so fresh
+# nightly data still republishes, AND on any push to the landing/dashboard
+# source so edits go live immediately without waiting for a scan. A single
+# dedicated deployer avoids two workflows racing on the one Pages deployment.
