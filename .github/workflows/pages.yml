@@ -17,6 +17,7 @@ on:
     paths:
       - "multibagger_screener/multibagger_screener/landing.html"
       - "multibagger_screener/multibagger_screener/scripts/build_dashboard.py"
+      - "multibagger_screener/multibagger_screener/ai_picks.json"  # local committee push
       - ".github/workflows/pages.yml"
   workflow_run:
     workflows: ["Daily scan (cloud)", "Weekly refresh (cloud)"]
@@ -52,10 +53,13 @@ jobs:
       - run: pip install "pandas>=2.0" "numpy>=1.24"
 
       # the dashboard build reads the price/fundamentals cache (not in git);
-      # restore-keys pulls the most recent cache a scan saved. A miss only
-      # degrades the DASHBOARD — the static landing page still publishes.
-      - name: Restore data cache
-        uses: actions/cache@v4
+      # restore-keys pulls the most recent cache a scan saved. RESTORE-ONLY:
+      # this job must never SAVE a cache entry — publish runs would litter the
+      # golden-data- namespace with ~75MB stale copies that the scans' own
+      # restore-keys then match. A miss only degrades the DASHBOARD — the
+      # static landing page still publishes.
+      - name: Restore data cache (read-only)
+        uses: actions/cache/restore@v4
         with:
           path: |
             multibagger_screener/multibagger_screener/data_cache

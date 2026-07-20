@@ -271,8 +271,17 @@ def build_payload() -> dict:
     # detail data: OHLC + fundamentals for shortlist + positions + paper book
     # + every recently-alerted name (details now includes alert_details.json)
     paper_pos = _read_csv("paper_positions.csv")
+    # recent buy-journal symbols too: EPISODIC PIVOT alerts on young listings
+    # (<260 bars) never get an alert_details entry, but they DO appear in the
+    # Actionable panel — without this their drawer chart would be empty
+    recent_buy_syms = []
+    if not journal.empty and "kind" in journal.columns:
+        jb = journal[journal["kind"].isin(
+            ["BUY CANDIDATE", "RE-ENTRY WINDOW", "EPISODIC PIVOT"])]
+        recent_buy_syms = list(jb["symbol"].tail(60))
     detail_syms = (list(ranked.get("symbol", [])) + list(positions.get("symbol", []))
-                   + list(paper_pos.get("symbol", [])) + list(details.keys()))
+                   + list(paper_pos.get("symbol", [])) + list(details.keys())
+                   + recent_buy_syms)
     ohlc = {s: _ohlc(s) for s in dict.fromkeys(detail_syms)}
     fund_series = {s: _fund_series(s) for s in dict.fromkeys(detail_syms)}
 

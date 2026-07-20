@@ -20,3 +20,9 @@ __pycache__/
 
 # test artifacts
 multibagger_screener/multibagger_screener/test_alert.md
+
+# built artifact — Pages rebuilds it fresh every publish; the daily-run
+# artifact carries a downloadable copy (untracked 2026-07-20 audit; it was
+# committed once historically and then never updated by the cloud = stale)
+multibagger_screener/multibagger_screener/dashboard.html
+multibagger_screener/multibagger_screener/_site/
