@@ -129,11 +129,17 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:  # noqa: N802 (stdlib naming)
-        if self.path.split("?")[0] in ("/", "/dashboard.html"):
-            if not os.path.exists(DASHBOARD):
-                self.send_error(404, "dashboard.html not built yet — run a job first")
+        clean = self.path.split("?")[0]
+        if clean in ("/", "/dashboard.html", "/landing.html"):
+            # landing.html served too (2026-07-20): same-origin local preview
+            # of the public front door — Pages serves it as index in prod
+            target = os.path.join(ROOT, "landing.html") \
+                if clean == "/landing.html" else DASHBOARD
+            if not os.path.exists(target):
+                self.send_error(404, os.path.basename(target) +
+                                " not built yet — run a job first")
                 return
-            with open(DASHBOARD, "rb") as f:
+            with open(target, "rb") as f:
                 body = f.read()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")

@@ -679,12 +679,51 @@ main{padding:10px}
 .card{padding:12px 12px;border-radius:10px}
 table{font-size:11.5px}
 th{font-size:9px}
+td,th{padding:5px 6px}
 .minis{grid-template-columns:1fr}
 .kpi b{font-size:16px}
 .acthead{font-size:12px}
 .dochip{font-size:9px;padding:2px 6px}
 .drawer{padding:16px 14px}
-.funnelline{font-size:10.5px;line-height:1.8}}
+.funnelline{font-size:10.5px;line-height:1.8}
+/* phones: drop low-value columns so the decision columns fit without
+   sideways scrolling — the drawer always carries the full detail */
+#actionable th:nth-child(4),#actionable td:nth-child(4),
+#actionable th:nth-child(6),#actionable td:nth-child(6){display:none}          /* AI view · Alerted */
+#actionable .mono{font-size:10px;white-space:nowrap}
+#actionable .sym{font-size:11px}
+#tbl td:first-child{font-size:11px;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tbl th,#tbl td{padding:5px 4px}
+#scoretbl td:nth-child(2){max-width:104px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#scoretbl th:nth-child(3),#scoretbl td:nth-child(3),
+#scoretbl th:nth-child(4),#scoretbl td:nth-child(4){display:none}              /* Type (↻ pill marks re-alerts) · Conv */
+#jstreamtbl th:nth-child(1),#jstreamtbl td:nth-child(1){display:none}          /* When (dates live in the scorecard) */
+#jstreamtbl td:nth-child(4){white-space:normal;font-size:10.5px}               /* Detail wraps instead of forcing width */
+.papertbl th:nth-child(4),.papertbl td:nth-child(4),
+.papertbl th:nth-child(8),.papertbl td:nth-child(8){display:none}              /* Entry ₹ (drawer has the plan) · P&L ₹ (the % stays) */
+.papertbl td:nth-child(2){max-width:88px}
+.ledgertbl th:nth-child(4),.ledgertbl td:nth-child(4),
+.ledgertbl th:nth-child(5),.ledgertbl td:nth-child(5),
+.ledgertbl th:nth-child(8),.ledgertbl td:nth-child(8){display:none}            /* Lot · Shares · Reason */
+#tbl th:nth-child(2),#tbl td:nth-child(2),
+#tbl th:nth-child(3),#tbl td:nth-child(3),
+#tbl th:nth-child(7),#tbl td:nth-child(7),
+#tbl th:nth-child(8),#tbl td:nth-child(8),
+#tbl th:nth-child(9),#tbl td:nth-child(9),
+#tbl th:nth-child(10),#tbl td:nth-child(10),
+#tbl th:nth-child(12),#tbl td:nth-child(12){display:none}                      /* Cap (a filter chip above) · Industry · Archetype · ROCE · P/E · PAT · spark */
+#tbl .scorebar{display:none}                                                   /* conviction: number only on phones */
+.pill{padding:1px 6px;font-size:8.5px}
+#scoretbl th:nth-child(1),#scoretbl td:nth-child(1),
+#scoretbl th:nth-child(5),#scoretbl td:nth-child(5),
+#scoretbl th:nth-child(6),#scoretbl td:nth-child(6){display:none}              /* When · Alert price · Stop */
+#radartbl th:nth-child(4),#radartbl td:nth-child(4),
+#radartbl th:nth-child(6),#radartbl td:nth-child(6){display:none}              /* RS% · Filing text */
+.papertbl th:nth-child(3),.papertbl td:nth-child(3),
+.papertbl th:nth-child(5),.papertbl td:nth-child(5),
+.papertbl th:nth-child(7),.papertbl td:nth-child(7){display:none}              /* Entered · Stop · Shares */
+.papertbl td:nth-child(2){max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.heatgrid{grid-template-columns:1fr 1fr}}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
 <div class="searchhint" onclick="openPalette()"><span>Search stocks&hellip;</span><kbd>Ctrl K</kbd></div>
@@ -759,11 +798,11 @@ th{font-size:9px}
   <div class="kpis" id="jstats"></div>
   <div class="card"><h2>Buy-signal scorecard &mdash; every buy alert, marked to market<span class="info" data-tip="One row per BUY CANDIDATE / RE-ENTRY alert the machine ever fired, scored against its own suggested stop. R = profit in units of initial risk (+2R = made twice what the stop risked). Max R = best excursion so far. stopped = hit the stop (-1R, closed). This table only ever grows — signals never disappear, whatever happens to tags later.">?</span></h2>
   <div style="max-height:44vh;overflow:auto">
-  <table><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv</th><th>Alert &#8377;</th><th>Stop</th>
+  <table id="scoretbl"><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv</th><th>Alert &#8377;</th><th>Stop</th>
   <th>Ret %</th><th>R now</th><th>Max R</th><th>Status</th></tr></thead>
   <tbody id="scorebody"></tbody></table></div></div>
   <div class="card"><h2>All tag events (last 50) &mdash; the raw stream</h2>
-  <table><thead><tr><th>When</th><th>Symbol</th><th>Signal</th><th>Detail</th></tr></thead>
+  <table id="jstreamtbl"><thead><tr><th>When</th><th>Symbol</th><th>Signal</th><th>Detail</th></tr></thead>
   <tbody id="jbody"></tbody></table></div>
 </div>
 
@@ -895,7 +934,7 @@ $('#radarcard').style.display='block';
 const CC={pos:'#34d399',neg:'#f87171',attn:'#fbbf24'};
 const DOT={pos:'▲',neg:'▼',attn:'◆'};
 const shown=hits.slice(0,15);
-$('#radarbody').innerHTML=`<table><thead><tr><th></th><th>Symbol</th><th>Tag</th><th>RS%</th><th>Event</th><th>Filing</th></tr></thead><tbody>`+
+$('#radarbody').innerHTML=`<table id="radartbl"><thead><tr><th></th><th>Symbol</th><th>Tag</th><th>RS%</th><th>Event</th><th>Filing</th></tr></thead><tbody>`+
 shown.map(h=>{const c=CC[h.cls]||'#94a3b8';
 const badge=h.urgent?'<span class="pill" style="border-color:#f87171;color:#f87171;font-size:9px">HELD</span> ':
  h.confluence?'<span class="pill" style="border-color:#34d399;color:#34d399;font-size:9px" data-tip="Positive news + a chart the technical layer already rates actionable/forming — research first.">CONFLUENCE</span> ':'';
@@ -1186,7 +1225,7 @@ const k=[['Net gain',(P.net!=null?(P.net>0?'+':'')+fmtNum(P.net)+' ₹':'—'),(
 ['Open / pending',((P.open||[]).length)+' / '+((P.pending||[]).length),'Open positions / verdicts awaiting their next-session fill.']];
 $('#paperkpi').innerHTML=k.map(x=>`<div class="kpi"><span>${x[0]}<span class="info" data-tip="${esc(x[2])}">?</span></span><b style="color:${String(x[1]).startsWith('+')?'#34d399':String(x[1]).startsWith('-')?'#f87171':'inherit'}">${x[1]}</b></div>`).join('');
 let h='';
-if((P.open||[]).length){h+=`<table style="margin-bottom:14px"><thead><tr><th>Symbol</th><th>Verdict</th><th>Entered</th><th>Entry ₹</th><th>Stop</th><th>Last</th><th>Shares</th><th>P&amp;L ₹</th><th>P&amp;L %</th></tr></thead><tbody>`+
+if((P.open||[]).length){h+=`<table class="papertbl" style="margin-bottom:14px"><thead><tr><th>Symbol</th><th>Verdict</th><th>Entered</th><th>Entry ₹</th><th>Stop</th><th>Last</th><th>Shares</th><th>P&amp;L ₹</th><th>P&amp;L %</th></tr></thead><tbody>`+
 P.open.map(p=>`<tr onclick="openDrawer('${p.sym}')"><td class="sym">${p.sym}</td>
 <td class="dim" style="font-size:11.5px">${esc(p.verdict)}</td><td class="dim mono">${p.entered}</td>
 <td class="mono">${p.entry}</td><td class="mono" style="color:#f87171">${p.stop}</td><td class="mono">${p.last}</td>
@@ -1195,7 +1234,7 @@ P.open.map(p=>`<tr onclick="openDrawer('${p.sym}')"><td class="sym">${p.sym}</td
 <td class="mono" style="color:${p.pnl_pct>=0?'#34d399':'#f87171'}">${p.pnl_pct>0?'+':''}${p.pnl_pct}%</td></tr>`).join('')+'</tbody></table>';}
 if((P.pending||[]).length)h+='<div style="font-size:12.5px;margin-bottom:12px"><span class="axis">AWAITING FILL (next session open)</span><br>'+
 P.pending.map(p=>`<span class="chip" style="border-color:#fbbf24"><b style="color:#fbbf24">${p.sym}</b><span>${esc(p.verdict)} · ${p.d}</span></span>`).join('')+'</div>';
-if((P.ledger||[]).length){h+=`<div class="axis" style="margin:6px 0">RECENT PAPER FILLS</div><table><thead><tr><th>Date</th><th>Symbol</th><th>Action</th><th>Lot</th><th>Shares</th><th>Price</th><th>P&amp;L</th><th>Reason</th></tr></thead><tbody>`+
+if((P.ledger||[]).length){h+=`<div class="axis" style="margin:6px 0">RECENT PAPER FILLS</div><table class="ledgertbl"><thead><tr><th>Date</th><th>Symbol</th><th>Action</th><th>Lot</th><th>Shares</th><th>Price</th><th>P&amp;L</th><th>Reason</th></tr></thead><tbody>`+
 P.ledger.map(l=>`<tr><td class="dim mono">${l.d}</td><td class="sym">${l.sym}</td>
 <td><span class="pill" style="border-color:${l.action==='BUY'?'#34d399':l.action==='SELL'?'#f87171':'#64748b'};color:${l.action==='BUY'?'#34d399':l.action==='SELL'?'#f87171':'#94a3b8'}">${l.action}</span></td>
 <td class="dim">${esc(l.lot)}</td><td class="mono">${l.shares||''}</td><td class="mono">${l.price||''}</td>

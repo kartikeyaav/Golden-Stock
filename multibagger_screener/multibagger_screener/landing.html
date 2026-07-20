@@ -51,8 +51,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:cent
 .kicker{display:inline-flex;align-items:center;gap:8px;font:600 11px var(--mono);letter-spacing:.16em;color:var(--grn);
   border:1px solid rgba(52,211,153,.3);background:rgba(52,211,153,.07);padding:6px 12px;border-radius:99px;margin-bottom:22px}
 .kicker .live{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 1.6s infinite}
-h1{font-size:clamp(38px,4.6vw,64px);line-height:1.06;font-weight:800;letter-spacing:-.02em}
-h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:clamp(38px,4.6vw,64px);line-height:1.06;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
 .sub{margin:22px 0 30px;font-size:17px;color:var(--dim);max-width:56ch}
 .sub b{color:var(--txt);font-weight:600}
 .heroctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
@@ -92,7 +92,7 @@ h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2)
 section{padding:96px 5vw;max-width:1280px;margin:0 auto}
 .shead{text-align:center;margin-bottom:56px}
 .stag{font:700 11px var(--mono);letter-spacing:.22em;color:var(--gold)}
-.shead h2{font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-.01em;margin-top:10px}
+.shead h2{font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-.01em;margin-top:10px;text-wrap:balance}
 .shead p{color:var(--dim);max-width:62ch;margin:12px auto 0}
 .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .rv.on{opacity:1;transform:none}
@@ -146,7 +146,27 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
   .navlinks{display:none}
 }
 @media (max-width:640px){
-  .bento{grid-template-columns:1fr} section{padding:64px 6vw}
+  section{padding:56px 6vw}
+  .shead{margin-bottom:36px}
+  /* hero: flow naturally — min-height:100vh left a dead void under the chips */
+  .hero{min-height:auto;padding:92px 6vw 36px;gap:34px}
+  .kicker{font-size:9.5px;letter-spacing:.1em;padding:5px 10px}
+  h1{font-size:clamp(30px,8.8vw,38px)}
+  .sub{font-size:14.5px;margin:18px 0 24px}
+  .heroctas{flex-direction:column;align-items:stretch;gap:10px}
+  .heroctas .cta.big,.heroctas .ghost{text-align:center}
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:24px}
+  .chip{text-align:center;padding:8px 6px}
+  .termbody{font-size:11px;padding:14px;min-height:0}
+  .pipe{grid-template-columns:1fr}
+  .bento{grid-template-columns:1fr}
+  /* evidence: two tidy columns, the 5th stat spans, no forced label breaks */
+  .ev{padding:28px 16px;border-radius:16px}
+  .evgrid{grid-template-columns:1fr 1fr;gap:20px 10px}
+  .evgrid>div:last-child{grid-column:1/-1}
+  .ev .l{font-size:10.5px}
+  .honest{font-size:11.5px;text-align:left}
+  footer{flex-direction:column;align-items:center;text-align:center;gap:6px;padding:22px 6vw}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
@@ -240,19 +260,19 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
   </div>
   <div class="ev rv">
     <div class="evgrid">
-      <div><div class="n" data-count="32.5" data-dec="1">0<span class="u">%</span></div><div class="l">stress-tested backtest CAGR<br>(fills, gaps &amp; costs applied)</div></div>
-      <div><div class="n" data-count="1.67" data-dec="2">0<span class="u">R</span></div><div class="l">expectancy per trade<br>after costs</div></div>
-      <div><div class="n" data-count="9.6" data-dec="1">0<span class="u">:1</span></div><div class="l">payoff ratio —<br>winners vs losers</div></div>
-      <div><div class="n" data-count="651">0</div><div class="l">stocks scanned<br>every night</div></div>
-      <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">strategy configs tested<br>&amp; rejected by evidence</div></div>
+      <div><div class="n" data-count="32.5" data-dec="1">0<span class="u">%</span></div><div class="l">stress-tested backtest CAGR (fills, gaps &amp; costs applied)</div></div>
+      <div><div class="n" data-count="1.67" data-dec="2">0<span class="u">R</span></div><div class="l">expectancy per trade after costs</div></div>
+      <div><div class="n" data-count="9.6" data-dec="1">0<span class="u">:1</span></div><div class="l">payoff ratio — winners vs losers</div></div>
+      <div><div class="n" data-count="651">0</div><div class="l">stocks scanned every night</div></div>
+      <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">strategy configs tested &amp; rejected by evidence</div></div>
     </div>
     <div class="honest"><b>Honesty note:</b> backtests are survivor-biased and directional by nature — the live forward journal, not the backtest, is the final judge. This is decision-support research, not investment advice. Execution always stays human.</div>
   </div>
 </section>
 
 <section class="final rv">
-  <h2>The market moves at <span class="au">18:35 IST</span>.<br>So does Golden Stock.</h2>
-  <p>Open the terminal to see tonight's tags, conviction scores, AI verdicts and the live forward journal.</p>
+  <h2>The market moves.<br><span class="au">Golden Stock</span> tracks.</h2>
+  <p>Every close — scanned, scored and reported by 18:35 IST. Open the terminal for tonight's tags, conviction scores, AI verdicts and the live forward journal.</p>
   <a class="cta big" href="./dashboard.html">Launch the Dashboard →</a>
 </section>
 
