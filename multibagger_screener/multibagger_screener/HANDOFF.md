@@ -615,6 +615,30 @@ one path deeper; the old bookmark root now shows the landing page).
 (dashboard buttons/tooltips/committee footer — `ai_picks.json`'s model
 field is no longer rendered).
 
+**End-to-end audit (2026-07-20, same session):** full sweep of workflows,
+pipeline, and UI after the 3L adoptions. Fixed: (1) paper_trader's alert
+lookup excluded kind=EPISODIC PIVOT — an analyst BUY on an EP alert would
+have been permanently SKIP-ledgered ("no matching alert"); (2) pages.yml
+cache step SAVED a ~75MB copy per publish, polluting the golden-data-
+restore-key namespace the scans restore from -> now actions/cache/restore
+(read-only), and ai_picks.json added to its push paths so a local
+committee push republishes the dashboard; (3) dashboard.html untracked +
+gitignored (was committed once Jul-18 then never updated by the cloud —
+permanently stale in git, permanently dirty locally; Pages builds it
+fresh); (4) daily_scan: per-symbol try/except around EP+breadth in the tag
+loop (one bad CSV must not kill the scan), breadth-snapshot write failure
+now degrades to the NIFTY fallback + health line instead of aborting, and
+a same-night transition+EP dedupe (EP banner prepends the existing card
+instead of double card + double fundamentals fetch); (5) drawer OHLC
+coverage extended to recent buy-journal symbols (young EP listings have no
+alert_details entry but DO appear in Actionable — chart was empty);
+(6) tests/test_episodic_pivot.py added (detection, negative controls,
+locked-gap stop floor, plan override, legacy path). Verified: sandbox
+end-to-end scan exit 0 (news radar caught its first REAL confluence in the
+wild during the test — WABAG order win on a CONFIRMED RS-93 chart),
+dashboard badge shows "NORMAL RISK (breadth 58.6%)", landing mobile has
+zero horizontal overflow, all 3 workflow YAMLs parse.
+
 ---
 
 ## 4. Live production state (as of 2026-07-19)

@@ -78,7 +78,8 @@ def _signal_for(verdicts_row, signals: pd.DataFrame):
     sym = verdicts_row["symbol"]
     vts = pd.Timestamp(verdicts_row["logged_at"])
     cand = signals[(signals["symbol"] == sym)
-                   & (signals["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW"]))
+                   & (signals["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW",
+                                            "EPISODIC PIVOT"]))
                    & (signals["logged_at"] <= vts)
                    & (signals["logged_at"] >= vts - pd.Timedelta(days=5))]
     return cand.iloc[-1] if len(cand) else None

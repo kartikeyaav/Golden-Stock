@@ -370,26 +370,35 @@ def main() -> None:
         # EPISODIC PIVOT (adopted 2026-07-19): event check on tonight's bar.
         # Needs only 60 bars — young IPOs that can't form 45-week structures
         # (the IREDA blind spot) are exactly the point of this class.
-        ep = detect_episodic_pivot(df)
-        if ep:
-            ep_hits[sym] = ep
-        # market breadth for the regime rule (sizing matrix v3+v3b, adopted
-        # 2026-07-19): % of universe above its own 200-DMA. Computed here
-        # because this loop already holds every chart — costs nothing.
-        if len(df) >= 200:
-            breadth_total += 1
-            if float(df["close"].iloc[-1]) > float(df["close"].tail(200).mean()):
-                breadth_above += 1
+        # Per-symbol guard: one pathological CSV must never kill the scan.
+        try:
+            ep = detect_episodic_pivot(df)
+            if ep:
+                ep_hits[sym] = ep
+            # market breadth for the regime rule (sizing matrix v3+v3b,
+            # adopted 2026-07-19): % of universe above its own 200-DMA.
+            # Computed here because this loop already holds every chart.
+            if len(df) >= 200:
+                breadth_total += 1
+                if float(df["close"].iloc[-1]) > float(df["close"].tail(200).mean()):
+                    breadth_above += 1
+        except Exception as e:  # noqa: BLE001
+            print(f"  ep/breadth check failed for {sym}: {str(e)[:60]}", flush=True)
         if len(df) < 260:
             continue
         t = tag_stock(df, bench)
         today_tags[sym] = t["tag"]
         tag_results[sym] = t
     # persist BEFORE any market_risk_scale() call so tonight's alerts and
-    # plans size off tonight's breadth (regime.py reads this snapshot)
-    snap = save_breadth_snapshot(breadth_above, breadth_total)
-    print(f"breadth: {snap['breadth_pct_above_200dma']}% of {breadth_total} "
-          f"above their 200-DMA -> risk x{market_risk_scale()}", flush=True)
+    # plans size off tonight's breadth (regime.py reads this snapshot).
+    # Never fatal — on failure regime.py falls back to the NIFTY/150 rule.
+    try:
+        snap = save_breadth_snapshot(breadth_above, breadth_total)
+        print(f"breadth: {snap['breadth_pct_above_200dma']}% of {breadth_total} "
+              f"above their 200-DMA -> risk x{market_risk_scale()}", flush=True)
+    except Exception as e:  # noqa: BLE001
+        feed_problems.append(f"breadth snapshot failed ({str(e)[:60]}) — "
+                             "regime fell back to NIFTY/150 rule")
 
     # FRESH nightly RS percentile across tonight's whole watched universe —
     # the weekly focus_list.csv percentile is up to 6 days stale, and it feeds
@@ -406,6 +415,7 @@ def main() -> None:
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [f"# Daily scan — {now}", ""]
     cards: list[str] = []
+    card_idx: dict[str, int] = {}   # sym -> index into cards (same-night dedupe)
     journal_rows: list[dict] = []
     entry_signal_rows: list[dict] = []
     alert_details: dict[str, dict] = {}
@@ -459,6 +469,7 @@ def main() -> None:
                                            industry_by_sym.get(sym), rs_by_sym.get(sym),
                                            company_name=company_by_sym.get(sym, sym))
                     cards.append(cand.pop("card"))
+                    card_idx[sym] = len(cards) - 1
                     alert_details[sym] = cand.pop("detail")
                     row.update(cand)
                 else:
@@ -501,14 +512,28 @@ def main() -> None:
             if tr is not None:
                 lines.append(f"- **EPISODIC PIVOT** [EP EVENT]: {sym}  "
                              f"(gap +{e['gap_pct']}% on {e['vol_mult']}x vol)")
-                cand = build_candidate(sym, tr, industry_by_sym.get(sym),
-                                       rs_by_sym.get(sym),
-                                       company_name=company_by_sym.get(sym, sym),
-                                       ep=e)
-                cards.append(cand.pop("card"))
-                alert_details[sym] = cand.pop("detail")
-                cand.pop("stop_suggested", None)  # keep the EP event stop
-                row.update(cand)
+                if sym in card_idx:
+                    # same-night transition alert already built this card —
+                    # don't rebuild (double card + double fetch); prepend the
+                    # EP banner and note the event on the existing detail
+                    banner = (f"!! EPISODIC PIVOT — gap +{e['gap_pct']}% on "
+                              f"{e['vol_mult']}x volume ({e['bar_date']}). Event "
+                              f"stop = gap-day low {e['stop_price']}. Check the "
+                              f"news radar for the catalyst.\n")
+                    cards[card_idx[sym]] = banner + cards[card_idx[sym]]
+                    if sym in alert_details:
+                        alert_details[sym]["ep"] = {"gap_pct": e["gap_pct"],
+                                                    "vol_mult": e["vol_mult"]}
+                else:
+                    cand = build_candidate(sym, tr, industry_by_sym.get(sym),
+                                           rs_by_sym.get(sym),
+                                           company_name=company_by_sym.get(sym, sym),
+                                           ep=e)
+                    cards.append(cand.pop("card"))
+                    card_idx[sym] = len(cards) - 1
+                    alert_details[sym] = cand.pop("detail")
+                    cand.pop("stop_suggested", None)  # keep the EP event stop
+                    row.update(cand)
             else:
                 # young stock (<260 bars — no stage read exists): compact
                 # alert with the event plan; exactly the IPO blind spot the
