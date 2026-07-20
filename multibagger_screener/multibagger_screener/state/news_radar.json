@@ -1,5 +1,71 @@
 {
- "generated": "2026-07-19T12:43:24",
- "window_start": "2026-07-19T12:28:59",
- "hits": []
+ "generated": "2026-07-20T15:24:46",
+ "window_start": "2026-07-19T12:43:24",
+ "hits": [
+  {
+   "sym": "WABAG",
+   "cls": "pos",
+   "event": "order win",
+   "subject": "WABAG Secures Large Order Inflow from BWSSB for Two Energy-Efficient Wastewater Treatment Facilities |SUBJECT: Bagging/Receiving of orders/contracts",
+   "date": "2026-07-20T06:44:52",
+   "n": 1,
+   "tag": "CONFIRMED",
+   "rs": 94.5,
+   "held": false,
+   "confluence": true,
+   "urgent": false
+  },
+  {
+   "sym": "MINDACORP",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "Minda Corporation Limited has informed regarding acquisition of further shares in Spark Minda Green Mobility Systems Private Limited(WOS) under right issue. |SU",
+   "date": "2026-07-20T11:48:08",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 77.0,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "KAJARIACER",
+   "cls": "pos",
+   "event": "buyback/bonus",
+   "subject": "KAJARIA CERAMICS LIMITED has informed the Exchange about Issue Summary Document (ISD) for Buy-back of Post Issue Stage through Tender offer |SUBJECT: ISD for Bu",
+   "date": "2026-07-20T13:01:35",
+   "n": 2,
+   "tag": "EXTENDED",
+   "rs": 70.8,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "ANANTRAJ",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "Anant Raj Limited has informed the Exchange about Acquisition |SUBJECT: Acquisition",
+   "date": "2026-07-20T15:03:25",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 60.3,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "KPIGREEN",
+   "cls": "pos",
+   "event": "expansion",
+   "subject": "KPI Green Energy Limited has informed the Exchange regarding 'Successful commissioning of 200 MW (AC) / 269 MW (DC) Solar Power capacity for Coal India Limited.",
+   "date": "2026-07-20T11:56:09",
+   "n": 1,
+   "tag": "BROKEN",
+   "rs": 25.2,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  }
+ ]
 }

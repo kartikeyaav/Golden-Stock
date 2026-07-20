@@ -1,6 +1,6 @@
 {
- "checked_at": "2026-07-19 12:43",
- "status": "idle",
- "note": "no buy-type alerts tonight",
- "last_success_at": null
+ "checked_at": "2026-07-20 15:27",
+ "status": "ok",
+ "note": "2/2 dives produced verdicts",
+ "last_success_at": "2026-07-20 15:27"
 }
