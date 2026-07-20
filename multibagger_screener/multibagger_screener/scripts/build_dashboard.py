@@ -170,7 +170,7 @@ def build_payload() -> dict:
         pass
 
     # alerts + verdicts
-    alerts, verdicts, scan_date = [], "", ""
+    alerts, verdicts, scan_date, verdict_items = [], "", "", []
     ap = os.path.join(ROOT, "daily_alerts.md")
     if os.path.exists(ap):
         raw = open(ap, encoding="utf-8").read()
@@ -184,6 +184,35 @@ def build_payload() -> dict:
                   re.findall(r"^- \*\*(.+?)\*\*(?:\s*\[([^\]]*)\])?: (.+)$", raw, re.M)]
         vm = re.search(r"## AI analyst verdicts\n(.*?)(?=\n## |\Z)", raw, re.S)
         verdicts = vm.group(1).strip()[:4000] if vm else ""
+        # structured verdict cards (2026-07-20, user: raw text wall was
+        # unreadable): one entry per deep-dive with the machine-readable
+        # header split out and the memo kept for a collapsible view
+        verdict_items = []
+        if vm:
+            for m in re.finditer(r"### (\w[\w&-]*)\n(.*?)(?=\n### |\Z)",
+                                 vm.group(1), re.S):
+                sym, memo = m.group(1), m.group(2).strip()
+                v = re.search(r"VERDICT:\s*([A-Z]+)", memo)
+                c = re.search(r"CONVICTION:\s*([A-Z]+)", memo)
+                s = re.search(r"SIZE:\s*([A-Z ]+?)\s*$", memo, re.M)
+                why = ""
+                wm = re.search(r"WHY[^\n]*\n(.*?)(?=\n[A-Z][A-Z ]{3,}[:(]|\Z)", memo, re.S)
+                if wm:
+                    bullets = [ln.strip().lstrip("-").strip()
+                               for ln in wm.group(1).splitlines()
+                               if ln.strip().startswith("-")]
+                    why = bullets[0][:230] if bullets else ""
+                verdict_items.append({
+                    "sym": sym, "verdict": v.group(1) if v else "?",
+                    "conv": c.group(1) if c else "",
+                    "size": s.group(1).strip() if s else "",
+                    "why": why, "memo": memo[:2600]})
+            for m in re.finditer(r"\*\*(\w[\w&-]*)\*\* — analyst unavailable"
+                                 r" \(([^)]{0,90})", vm.group(1)):
+                verdict_items.append({"sym": m.group(1), "verdict": "N/A",
+                                      "conv": "", "size": "",
+                                      "why": f"analyst unavailable ({m.group(2)})",
+                                      "memo": ""})
 
     # screener rows: focus list enriched with fundamentals where known
     fund_by_sym = {r["symbol"]: r for _, r in funds.iterrows()} if not funds.empty else {}
@@ -476,7 +505,8 @@ def build_payload() -> dict:
             ["Alerts tonight", len([a for a in alerts if a["kind"] != "POSITION"]),
              "state transitions only"],
         ],
-        "tags": tag_counts, "alerts": alerts, "verdicts": verdicts, "ai_picks": ai_picks,
+        "tags": tag_counts, "alerts": alerts, "verdicts": verdicts,
+        "verdict_items": verdict_items, "ai_picks": ai_picks,
         "radar": radar,
         # the committee's weekly review set (ranked top-20): lets the UI say
         # "reviewed & passed over" vs "not in the review set" — honest signal
@@ -754,7 +784,7 @@ td,th{padding:5px 6px}
   <div class="funnelline" id="funnel"></div>
   <div class="grid2"><div>
     <div class="card"><h2>Tonight</h2><div id="alerts"></div>
-    <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst verdicts</h2><div class="memo" id="verdicts"></div></div></div>
+    <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst &mdash; tonight's deep-dives<span class="info" data-tip="The NIGHTLY analyst: after each scan it web-researches tonight's top buy alerts one by one and answers a single question — take, halve, or skip this specific alert. Different from the AI Picks tab: that is the WEEKLY committee choosing a researched 3-5 name portfolio from the whole shortlist. Analyst = tonight's alert triage · Committee = the week's best ideas.">?</span></h2><div id="verdicts"></div></div></div>
     <div class="card"><h2>NIFTY 50 &middot; regime line (150-DMA)</h2><div id="niftychart" style="height:190px"></div></div>
   </div><div>
     <div class="card"><h2>Tag board<span class="info" data-tip="CONFIRMED = passes all 8 uptrend checks — a monitored pool, not a buy list; you act only on fresh transitions and top conviction, sized by the plan in each stock's drawer. ANTICIPATION = base forming, watch with zero capital.">?</span></h2><div id="tagboard"></div></div>
@@ -865,7 +895,28 @@ $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b
 
 /* alerts */
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>`<div class="alert"><span class="ak">${esc(a.kind)}</span><span>${esc(a.text)}</span></div>`).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
-if(D.verdicts){$('#verdictcard').style.display='block';$('#verdicts').textContent=D.verdicts;}
+/* analyst verdicts — structured cards (raw-text wall was unreadable).
+   Header line = the decision; first WHY bullet = the one-line reason;
+   full memo folds behind a toggle. */
+(function(){
+const items=D.verdict_items||[];
+if(!items.length){if(D.verdicts){$('#verdictcard').style.display='block';
+  $('#verdicts').innerHTML=`<div class="memo">${esc(D.verdicts)}</div>`;}return;}
+$('#verdictcard').style.display='block';
+const VCOL={BUY:'#34d399',SKIP:'#f87171',HOLD:'#fbbf24','N/A':'#64748b'};
+$('#verdicts').innerHTML=items.map(v=>{
+ const c=VCOL[v.verdict]||'#94a3b8';
+ return `<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:${c}08">
+ <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+   <b class="sym" style="cursor:pointer" onclick="openDrawer('${v.sym}')">${v.sym}</b>
+   <span class="pill" style="border-color:${c};color:${c};font-weight:700">${esc(v.verdict)}</span>
+   ${v.conv?`<span class="pill" style="border-color:#47556955">${esc(v.conv)} conviction</span>`:''}
+   ${v.size?`<span class="pill" style="border-color:#47556955">${esc(v.size)}</span>`:''}
+ </div>
+ ${v.why?`<div style="font-size:12px;color:var(--dim);margin-top:6px;line-height:1.5">${esc(v.why)}</div>`:''}
+ ${v.memo?`<details style="margin-top:6px"><summary style="cursor:pointer;font-size:11px;color:var(--mut)">full memo — why, risks, what changes the call</summary><div class="memo" style="margin-top:6px">${esc(v.memo)}</div></details>`:''}
+ </div>`;}).join('');
+})();
 
 /* convergence voices — one vocabulary used by BOTH the actionable table
    (compact chips) and the drawer (full lines). Three explicit voices:
