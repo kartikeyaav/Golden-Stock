@@ -64,7 +64,7 @@ jobs:
           # key) must not abort staging of everything else
           for p in journal state/tags_state.json focus_list.csv universe.csv \
                    shortlist_ranked.csv shortlist_details.json \
-                   fundamentals_flat.csv ai_picks.json; do
+                   fundamentals_flat.csv ai_picks.json capture_audit_report.md; do
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
           done
           if git diff --cached --quiet; then
