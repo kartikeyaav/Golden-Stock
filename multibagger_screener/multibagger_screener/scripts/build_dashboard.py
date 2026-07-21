@@ -606,7 +606,13 @@ main{margin-left:204px;flex:1;padding:20px 28px 40px;max-width:1280px}
 padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--line)}
 .sub{display:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
-h2{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
+/* section headers: brighter + heavier + a brand accent tick, and the info "?"
+   is pushed to the far right so it can never orphan onto its own line after a
+   long header wraps (flex keeps it vertically centered). */
+h2{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;color:#b3becd;
+text-transform:uppercase;letter-spacing:1.1px;margin-bottom:13px;line-height:1.35}
+h2::before{content:"";flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:var(--grn);box-shadow:0 0 8px #34d39955}
+h2 .info{margin-left:auto}
 .info{display:inline-flex;flex:0 0 16px;width:16px;height:16px;border-radius:50%;
 background:var(--card2);border:1px solid var(--line2);color:var(--dim);
 font:700 10px/1 Inter;align-items:center;justify-content:center;cursor:help;margin-left:7px;vertical-align:-2px;
@@ -618,7 +624,7 @@ padding:9px 12px;font:400 11.5px/1.6 Inter;color:#c4cdd8;z-index:100;box-shadow:
 border-radius:12px;padding:13px 6px;justify-content:space-around}
 .kpi{padding:2px 18px;border-left:1px solid var(--line)}
 .kpi:first-child{border-left:0}
-.kpi b{display:block;font-size:21px;font-weight:700;margin-top:3px;letter-spacing:-.3px}
+.kpi b{display:block;font-size:24px;font-weight:700;margin-top:4px;letter-spacing:-.4px;font-variant-numeric:tabular-nums}
 /* child selector: the nested .info "?" must not inherit the label's
    display:block/uppercase styling (it was dropping onto its own line) */
 .kpi>span{color:var(--faint);font-size:9.5px;text-transform:uppercase;letter-spacing:.9px;display:block;white-space:nowrap}
@@ -700,6 +706,7 @@ padding:15px 17px;font:500 14.5px Inter;color:var(--txt)}
 .mtrack{flex:1;height:10px;background:var(--card2);border-radius:5px}
 .mfill{height:10px;border-radius:5px}
 .memo{white-space:pre-wrap;font-size:12.6px;line-height:1.7;color:var(--txt)}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .axis{color:var(--faint);font-size:10px;letter-spacing:.3px}
 .legendline{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
 footer{color:var(--faint);font-size:10.5px;margin-top:24px;line-height:1.7}
@@ -736,11 +743,17 @@ nav h1{padding:0 12px 0 2px;white-space:nowrap}
 nav>.navbtn:first-of-type{margin-top:0}
 .navbtn.on{box-shadow:inset 0 -2px 0 var(--grn)}
 #runpanel{display:none!important}
-main{margin:0;padding:14px;max-width:100%}.grid2{grid-template-columns:1fr}
-.kpis{flex-wrap:wrap;gap:8px}.kpi{border-left:0;padding:2px 10px}
+main{margin:0;padding:14px;max-width:100%;min-width:0;overflow-x:hidden}
+.grid2{grid-template-columns:1fr;min-width:0}
+/* grid items default to min-width:auto and won't shrink below their content's
+   intrinsic width — a wide child (chart canvas, table) then forces the whole
+   column past the viewport. min-width:0 lets them shrink so overflow-x:auto
+   children actually scroll instead of blowing out the page. */
+.grid2>div{min-width:0}
+.kpis{flex-wrap:wrap;gap:10px 8px;padding:14px 10px}.kpi{border-left:0;padding:2px 6px;flex:1 1 40%}
 .searchhint{display:none}.drawer{width:100vw;right:-100vw}
 /* wide tables scroll inside their card instead of clipping at the edge */
-.card{overflow-x:auto}
+.card{overflow-x:auto;min-width:0}
 .badge{white-space:nowrap}
 .top{align-items:flex-start}}
 @media(max-width:640px){
@@ -940,11 +953,11 @@ $('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date+' ·
 $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HALF SIZE${D.breadth_pct!=null?' (breadth '+D.breadth_pct+'% &gt;200-DMA)':''}</span>`:`<span class="badge b-grn">NORMAL RISK${D.breadth_pct!=null?' (breadth '+D.breadth_pct+'%)':''}</span>`)+' '+(D.health_ok?'<span class="badge b-grn">HEALTH OK</span>':'<span class="badge b-red">HEALTH FAILED</span>');
 
 /* KPIs — number + label; the caveat rides in a tooltip, not on screen (v4) */
-$('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,R_GLOSSARY+' Validated 3-year window, after costs.'],
-['CAGR ideal / stressed',D.kpi.cagr,'Survivor-biased, so directional. Stressed = next-open fills + gap-aware stops + full costs — the honest planning number.'],
-['Max drawdown',D.kpi.dd,'Ideal / stressed. Portfolio circuit breaker pauses everything at -25%.'],
-['Payoff ratio',D.kpi.payoff,'Average win : average loss. The edge is few big winners paying for many small stops (~30% win rate by design).']]
-.map(k=>`<div class="kpi"><span>${k[0]}<span class="info" data-tip="${esc(k[2])}">?</span></span><b>${k[1]}</b></div>`).join('');
+$('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,R_GLOSSARY+' Validated 3-year window, after costs.','var(--grn)'],
+['CAGR ideal / stressed',D.kpi.cagr,'Survivor-biased, so directional. Stressed = next-open fills + gap-aware stops + full costs — the honest planning number.','var(--grn)'],
+['Max drawdown',D.kpi.dd,'Ideal / stressed. Portfolio circuit breaker pauses everything at -25%.','var(--amb)'],
+['Payoff ratio',D.kpi.payoff,'Average win : average loss. The edge is few big winners paying for many small stops (~30% win rate by design).','']]
+.map(k=>`<div class="kpi"><span>${k[0]}<span class="info" data-tip="${esc(k[2])}">?</span></span><b${k[3]?` style="color:${k[3]}"`:''}>${k[1]}</b></div>`).join('');
 
 /* funnel — one-line breadcrumb (context, not a decision surface) */
 $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b> ${esc(f[0].toLowerCase())}</span>`).join('<span class="sep">&rsaquo;</span>');
@@ -1138,7 +1151,10 @@ $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 render();
 
 /* chart factory */
-function mkChart(el,h){return LightweightCharts.createChart(el,{height:h,layout:{background:{type:'solid',color:'transparent'},textColor:'#94a0b0',fontFamily:'Inter'},grid:{vertLines:{color:'#1c232e'},horzLines:{color:'#1c232e'}},rightPriceScale:{borderColor:'#232b37'},timeScale:{borderColor:'#232b37'},crosshair:{mode:1}});}
+const _charts=[];
+function mkChart(el,h){const c=LightweightCharts.createChart(el,{height:h,width:el.clientWidth||el.offsetWidth||300,layout:{background:{type:'solid',color:'transparent'},textColor:'#94a0b0',fontFamily:'Inter'},grid:{vertLines:{color:'#1c232e'},horzLines:{color:'#1c232e'}},rightPriceScale:{borderColor:'#232b37'},timeScale:{borderColor:'#232b37'},crosshair:{mode:1}});_charts.push([c,el,h]);return c;}
+/* refit every chart to its container on viewport change (rotate / resize) */
+let _rzt;addEventListener('resize',()=>{clearTimeout(_rzt);_rzt=setTimeout(()=>_charts.forEach(([c,el,h])=>{try{c.resize(el.clientWidth||el.offsetWidth||300,h);}catch(e){}}),120);});
 function sma(data,n){const o=[];for(let i=n-1;i<data.length;i++){let s=0;for(let j=i-n+1;j<=i;j++)s+=data[j][4];o.push({time:data[i][0],value:+(s/n).toFixed(2)});}return o;}
 
 /* nifty overview chart */
@@ -1386,15 +1402,18 @@ $('#paperbody').innerHTML=h;})();
 const CONVC={HIGH:'#34d399',MEDIUM:'#fbbf24',LOW:'#f87171'};
 function drawPicks(){window._picks=1;const w=$('#picksbody');const P=D.ai_picks||{};
 if(!P.picks||!P.picks.length){w.innerHTML='<div class="card quiet">No AI picks yet. They generate weekly (or run scripts/ai_picks.py). The committee reviews the shortlist and selects 3-5 researched names.</div>';return;}
-let h=`<div class="card" style="border-color:#fbbf2433"><h2 style="color:#fbbf24">Portfolio view</h2><div style="font-size:13.5px;line-height:1.7">${esc(P.portfolio_view||'')}</div><div class="axis" style="margin-top:8px">generated ${esc(P.generated||'')} · AI investment committee</div></div>`;
+let h=`<div class="card" style="border-color:#fbbf2433"><h2 style="color:#fbbf24">Committee &mdash; ${P.picks.length} researched picks</h2>
+<div style="display:flex;flex-wrap:wrap;gap:6px">`+P.picks.map(p=>{const cc=CONVC[p.conviction]||'#94a0b0';return `<span class="pill" style="border-color:${cc};color:${cc};cursor:pointer;font-size:11px" onclick="document.getElementById('pk_${p.symbol}').scrollIntoView({behavior:'smooth',block:'start'})">${p.symbol} · ${esc(p.conviction||'')}</span>`;}).join('')+`</div>
+<details class="actrest" style="margin-top:10px"><summary>Why these five — committee reasoning</summary><div style="font-size:12.6px;line-height:1.7;padding:6px 0;color:var(--dim)">${esc(P.portfolio_view||'')}</div></details>
+<div class="axis" style="margin-top:6px">generated ${esc(P.generated||'')} · AI investment committee</div></div>`;
 P.picks.forEach((p,i)=>{const m=p.meta||{};const pl=p.plan||{};const cc=CONVC[p.conviction]||'#94a0b0';
-h+=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+h+=`<div class="card" id="pk_${p.symbol}"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
 <div><span style="font-size:12px;color:#fbbf24;font-weight:700">PICK ${i+1}</span>
 <b class="sym" style="font-size:18px;margin-left:8px">${p.symbol}</b>
 <span class="dim" style="font-size:12.5px"> ${esc(m.company||'')} · ${esc(m.sector||'')}</span></div>
 <div><span class="pill" style="border-color:${cc};color:${cc}">${p.conviction||''} conviction</span>
 <span class="pill" style="border-color:#334155;color:#94a3b8;margin-left:6px">mech ${m.score??'—'} · RS ${m.rs??'—'}</span></div></div>
-<div style="margin-top:11px;font-size:12.8px;line-height:1.6"><span class="axis">SELECTED BECAUSE</span><br>${esc(p.selected_because)}</div>`;
+<div style="margin-top:11px;font-size:12.8px;line-height:1.55"><span class="axis">SELECTED BECAUSE</span><div class="clamp2" style="margin-top:2px">${esc(p.selected_because)}</div></div>`;
 if(pl&&pl.shares_total)h+=`<div class="mini" style="border-color:#34d39933;margin-top:10px"><span class="axis" style="color:#34d399">MECHANICAL PLAN (not AI — the validated engine)</span><br>
 <span style="font-size:13px">Buy <b>${pl.shares_total} sh</b> ≈ ₹${fmtNum(pl.position_value)} · entry ~${pl.entry_price} · stop <span style="color:#f87171">${pl.stop_loss_price}</span> · partial <span style="color:#34d399">${pl.partial_price}</span>${pl.risk_scale<1?' · <span style="color:#fbbf24">HALF SIZE (defensive regime)</span>':''}</span></div>`;
 else h+=`<div class="mini" style="border-color:#f8717144;margin-top:10px"><span class="axis" style="color:#f87171">NO MECHANICAL ENTRY PLAN</span> <span class="info" data-tip="The risk engine skips this name: its ATR-based stop would exceed the 12% hard cap — too volatile to size cleanly (Design Law #7). Watch only, not a buy.">?</span></div>`;
@@ -1409,7 +1428,7 @@ h+=`<details class="actrest"><summary>Full research — thesis, catalyst, manage
 <div style="margin-top:10px" id="pick_${p.symbol}"></div></div>`;});
 w.innerHTML=h;
 P.picks.forEach(p=>{const data=D.ohlc[p.symbol];if(!data||data.length<10)return;
-const c=mkChart(document.getElementById('pick_'+p.symbol),200);
+const c=mkChart(document.getElementById('pick_'+p.symbol),170);
 const cs=c.addCandlestickSeries({upColor:'#34d399',downColor:'#f87171',borderVisible:false,wickUpColor:'#34d399',wickDownColor:'#f87171'});
 cs.setData(data.map(q=>({time:q[0],open:q[1],high:q[2],low:q[3],close:q[4]})));
 c.addLineSeries({color:'#fbbf24',lineWidth:1}).setData(sma(data,150));
