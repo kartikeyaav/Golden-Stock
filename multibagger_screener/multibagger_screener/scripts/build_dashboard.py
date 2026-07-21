@@ -179,7 +179,7 @@ def build_payload() -> dict:
         # buy-type lines carry an entry-fidelity label ("**KIND** [STATUS]: SYM")
         # since ~2026-07-14 — the old strict "**KIND**:" pattern dropped exactly
         # the buy alerts from the Tonight panel (audit catch 2026-07-18)
-        alerts = [{"kind": k, "text": (f"[{s}] " if s else "") + v}
+        alerts = [{"kind": k, "status": s, "text": v}
                   for k, s, v in
                   re.findall(r"^- \*\*(.+?)\*\*(?:\s*\[([^\]]*)\])?: (.+)$", raw, re.M)]
         vm = re.search(r"## AI analyst verdicts\n(.*?)(?=\n## |\Z)", raw, re.S)
@@ -621,9 +621,10 @@ border-radius:12px;padding:13px 6px;justify-content:space-around}
 padding:5px 11px;margin:2px 5px 2px 0;font-size:12px;background:transparent;cursor:pointer;transition:.15s}
 .chip.off{opacity:.32}
 .chip span{color:var(--dim);font-family:var(--mono);font-size:11px}
-.alert{display:flex;gap:10px;padding:10px 13px;border-left:2px solid var(--grn);background:var(--card2);
+.alert{display:flex;gap:10px;padding:10px 13px;border-left:2px solid var(--line);background:var(--card2);
 border-radius:0 8px 8px 0;margin:8px 0;font-size:12.8px}
-.ak{font-weight:600;color:var(--grn);white-space:nowrap}
+.ak{font:600 10px var(--mono,ui-monospace,monospace);letter-spacing:.05em;white-space:nowrap;
+border:1px solid var(--line);border-radius:99px;padding:2px 9px;align-self:center}
 .quiet{color:var(--dim);font-size:12.8px;padding:6px 0}
 table{width:100%;border-collapse:collapse;font-size:12.6px}
 th{color:var(--faint);text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;
@@ -806,7 +807,7 @@ td,th{padding:5px 6px}
   <div class="kpis" id="kpis"></div>
   <div class="funnelline" id="funnel"></div>
   <div class="grid2"><div>
-    <div class="card"><h2>Tonight</h2><div id="alerts"></div>
+    <div class="card"><h2>Tonight &mdash; what the scan saw<span class="info" data-tip="Raw tag transitions from tonight's scan, translated: a stock entering a CONFIRMED uptrend is labeled NEW UPTREND / RE-ENTRY here — it becomes a BUY only if the validated trigger (pivot breakout on ≥1.5× volume) also fired. The Actionable panel above is the decision layer: it tracks these same names for 7 days and tells you which ones actually require action.">?</span></h2><div id="alerts"></div>
     <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst &mdash; tonight's deep-dives<span class="info" data-tip="The NIGHTLY analyst: after each scan it web-researches tonight's top buy alerts one by one and answers a single question — take, halve, or skip this specific alert. Different from the AI Picks tab: that is the WEEKLY committee choosing a researched 3-5 name portfolio from the whole shortlist. Analyst = tonight's alert triage · Committee = the week's best ideas.">?</span></h2><div id="verdicts"></div></div></div>
     <div class="card"><h2>NIFTY 50 &middot; regime line (150-DMA)</h2><div id="niftychart" style="height:190px"></div></div>
   </div><div>
@@ -917,7 +918,24 @@ $('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,'Validated 3y window, afte
 $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b> ${esc(f[0].toLowerCase())}</span>`).join('<span class="sep">&rsaquo;</span>');
 
 /* alerts */
-$('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>`<div class="alert"><span class="ak">${esc(a.kind)}</span><span>${esc(a.text)}</span></div>`).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
+/* Tonight — translate raw scanner kinds into the SAME decision vocabulary
+   as the Actionable panel ("BUY CANDIDATE [NO VCP BASE]" read as a buy and
+   contradicted the "nothing requires action" headline — user-caught). */
+function alertLabel(a){
+ const k=a.kind,s=a.status||'';
+ if(k==='EPISODIC PIVOT')return['EP BUY','#f5c84c'];
+ if(k==='BUY CANDIDATE'||k==='RE-ENTRY WINDOW'){
+  const base=k==='RE-ENTRY WINDOW'?'RE-ENTRY':'NEW UPTREND';
+  if(s==='VALIDATED')return[(k==='RE-ENTRY WINDOW'?'RE-ENTRY ':'')+'BUY SETUP','#34d399'];
+  if(s==='AWAITING TRIGGER')return[base+' · WATCH PIVOT','#fbbf24'];
+  return[base+' · NO TRIGGER','#7f95ab'];}
+ if(k==='WATCH CLOSELY')return['FORMING','#5aa2ff'];
+ if(k==='EXIT WARNING')return['EXIT WARNING','#f87171'];
+ return[k,'#94a3b8'];}
+$('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>{
+ const[lb,c]=alertLabel(a);
+ return `<div class="alert"><span class="ak" style="color:${c};border-color:${c}45;background:${c}0d">${esc(lb)}</span><span>${esc(a.text)}</span></div>`;
+}).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
 /* analyst verdicts — compact native cards: decision row + one reason line;
    remaining why/risk bullets and the flip condition fold behind a slim
    toggle. No raw memo text in the UI (memos live in analyst_reports/). */
@@ -926,7 +944,7 @@ const items=D.verdict_items||[];
 if(!items.length){if(D.verdicts){$('#verdictcard').style.display='block';
   $('#verdicts').innerHTML=`<div class="memo">${esc(D.verdicts)}</div>`;}return;}
 $('#verdictcard').style.display='block';
-const VCOL={BUY:'#34d399',SKIP:'#f87171',HOLD:'#fbbf24','N/A':'#64748b'};
+const VCOL={BUY:'#34d399',SKIP:'#f87171',HOLD:'#fbbf24',WAIT:'#fbbf24','N/A':'#64748b'};
 $('#verdicts').innerHTML=items.map(v=>{
  const c=VCOL[v.verdict]||'#94a3b8';
  const more=(v.whys||[]).length||(v.risks||[]).length||v.flip;

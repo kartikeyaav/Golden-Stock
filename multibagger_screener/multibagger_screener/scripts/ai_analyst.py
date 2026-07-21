@@ -14,20 +14,17 @@ Constraints: max 3 deep dives per day (cost), 10 min timeout per name,
 failures degrade to "analyst unavailable" — the mechanical alert always
 goes out regardless.
 
-ONE-TIME AUTH SETUP (required before this layer works):
-  Option A — subscription login (uses your Claude Pro/Max plan):
-    1. open a terminal, run:  claude
-    2. run:  /login   -> authenticate in the browser
-    3. verify:  python scripts/ai_analyst.py --selftest
-    NOTE: nightly deep-dives then consume your subscription usage limits.
-  Option B — API key (recommended for an UNATTENDED nightly job; pay-per-use,
-    a few cents/day, never competes with your interactive Claude usage):
-    1. get a key at console.anthropic.com
-    2. set it for the scheduled task's environment:
-         setx ANTHROPIC_API_KEY "sk-ant-..."   (then reopen the terminal)
-    3. verify:  python scripts/ai_analyst.py --selftest
+AUTH (user decision 2026-07-20: SUBSCRIPTION ONLY — the cloud runs zero AI
+and no API key is ever used for dives):
+    1. open a terminal, run:  claude   ->  /login
+    2. verify:  python scripts/ai_analyst.py --selftest
+  Dives run on the laptop via scripts/nightly_analyst_local.py (Task
+  Scheduler evening run + Startup-folder logon shim). Alert nights with the
+  laptop off are POOLED (--pool: buy alerts without verdicts, last 5 days)
+  and cleared at the next session, strongest conviction first.
 
     python scripts/ai_analyst.py            # process today's daily_alerts.md
+    python scripts/ai_analyst.py --pool     # pooled mode (what the laptop runs)
     python scripts/ai_analyst.py --selftest # check auth is working
 """
 
@@ -40,7 +37,7 @@ import re
 import shutil
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)  # for scoring.regime in _cross_layer_context
@@ -110,6 +107,89 @@ def extract_card(report: str, symbol: str) -> str:
     m = re.search(rf"={{10,}}\n{re.escape(symbol)}  \[.*?(?=\n={{10,}}\n\w|\n```|\Z)",
                   report, re.S)
     return m.group(0) if m else ""
+
+
+def pending_pool(days: int = 5) -> list[str]:
+    """POOLED mode (2026-07-20, user decision: NO API for nightly dives —
+    subscription/laptop only): buy-type alerts from the last `days` days whose
+    latest alert has no analyst verdict at/after it. This is the backlog a
+    laptop session clears whenever it happens to be on — alert nights with
+    the lid closed just wait. Vetoed alerts are excluded (the protocol
+    auto-SKIPs them; diving would waste the quota). Ranked by alert-night
+    conviction so scarce dives go to the strongest names."""
+    sig_path = os.path.join(ROOT, "journal", "signals_journal.csv")
+    if not os.path.exists(sig_path):
+        return []
+    cutoff = datetime.now() - timedelta(days=days)
+    latest: dict[str, tuple[datetime, float]] = {}
+    with open(sig_path, encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r.get("kind") not in ("BUY CANDIDATE", "RE-ENTRY WINDOW",
+                                     "EPISODIC PIVOT"):
+                continue
+            if str(r.get("vetoed", "")).strip().lower() == "true":
+                continue
+            try:
+                t = datetime.strptime(r["logged_at"], "%Y-%m-%d %H:%M")
+            except (ValueError, KeyError):
+                continue
+            if t < cutoff:
+                continue
+            try:
+                conv = float(r.get("conviction_score") or 0)
+            except ValueError:
+                conv = 0.0
+            cur = latest.get(r["symbol"])
+            if cur is None or t > cur[0]:
+                latest[r["symbol"]] = (t, conv)
+    if not latest:
+        return []
+    verdict_at: dict[str, datetime] = {}
+    if os.path.exists(VERDICTS_CSV):
+        with open(VERDICTS_CSV, encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                try:
+                    t = datetime.strptime(r["logged_at"], "%Y-%m-%d %H:%M")
+                except (ValueError, KeyError):
+                    continue
+                cur = verdict_at.get(r["symbol"])
+                if cur is None or t > cur:
+                    verdict_at[r["symbol"]] = t
+    pend = [(conv, sym) for sym, (t, conv) in latest.items()
+            if verdict_at.get(sym) is None or verdict_at[sym] < t]
+    pend.sort(reverse=True)
+    return [sym for _, sym in pend]
+
+
+def card_from_details(symbol: str) -> str:
+    """Fallback card for POOLED dives on alerts from a PRIOR night — that
+    night's daily_alerts.md is gone, but the scan persisted the structured
+    analysis to state/alert_details.json (30-day window)."""
+    try:
+        d = json.load(open(os.path.join(ROOT, "state", "alert_details.json"),
+                           encoding="utf-8")).get(symbol)
+    except (OSError, ValueError):
+        d = None
+    if not d:
+        return (f"{symbol}: card unavailable (alert older than the detail "
+                "window) — rely on your own research; the mechanical stop/"
+                "size rules still apply.")
+    lines = [f"{symbol}  [{d.get('stage_name', '')}]  alerted {d.get('alerted_at', '')}",
+             f"Conviction {d.get('score', '?')}/100 (coverage {d.get('coverage', '?')}%)"
+             f"  {d.get('label', '')}"]
+    if d.get("ep"):
+        lines.append(f"EPISODIC PIVOT: gap +{d['ep'].get('gap_pct')}% on "
+                     f"{d['ep'].get('vol_mult')}x volume")
+    for dim in (d.get("dims") or [])[:8]:
+        lines.append(f"  [{dim.get('w', ''):>3}] {dim.get('k', ''):<24}"
+                     f" {dim.get('s', '')}  {str(dim.get('n', ''))[:90]}")
+    if d.get("veto_reasons"):
+        lines.append("VETOED: " + "; ".join(d["veto_reasons"]))
+    p = d.get("plan") or {}
+    if p:
+        lines.append(f"Mechanical plan: entry ~{p.get('entry_price')}  stop "
+                     f"{p.get('stop_loss_price')}  shares {p.get('shares_total')}")
+    return "\n".join(lines)
 
 
 def _cross_layer_context(symbol: str) -> str:
@@ -232,12 +312,33 @@ def main() -> None:
         return
     with open(alerts_path, "r", encoding="utf-8") as f:
         report = f.read()
+    # POOLED runs must APPEND to any verdicts already in the file (an earlier
+    # laptop session's batch); same-night re-runs REPLACE (rate-limit retry)
+    pool_mode = "--pool" in sys.argv
+    prior_block = ""
+    if pool_mode:
+        pm = re.search(r"\n## AI analyst verdicts\n(.*?)(?=\n## Cards|\Z)",
+                       report, re.S)
+        if pm:
+            prior_block = pm.group(1).strip("\n")
     # drop any prior verdicts block so re-running (e.g. after a rate-limit
     # reset) refreshes rather than duplicates
     report = re.sub(r"\n## AI analyst verdicts\n.*?(?=\n## Cards|\Z)", "\n",
                     report, flags=re.S)
 
-    candidates = extract_candidates(report)
+    if pool_mode:
+        # laptop-pooled mode (2026-07-20): candidates come from the JOURNAL
+        # backlog (buy alerts last 5d without verdicts), not tonight's file —
+        # alert nights with the laptop off are cleared at the next logon
+        candidates = pending_pool()
+        if not candidates:
+            print("pool empty — every recent buy alert already has a verdict")
+            if not is_test:
+                write_health("idle", "pool empty — no pending dives")
+            return
+        candidates = candidates[:MAX_DIVES_PER_DAY]
+    else:
+        candidates = extract_candidates(report)
     if not candidates:
         # format-drift tripwire (audit 2026-07-18): the strict pattern once
         # went stale against the alert-line format and the analyst sat
@@ -261,9 +362,11 @@ def main() -> None:
     print(f"deep-diving {len(candidates)} name(s): {candidates}", flush=True)
     os.makedirs(REPORTS_DIR, exist_ok=True)
     verdict_lines = ["", "## AI analyst verdicts", ""]
+    if prior_block:
+        verdict_lines += [prior_block, ""]
     n_ok, last_err = 0, ""
     for sym in candidates:
-        card = extract_card(report, sym)
+        card = extract_card(report, sym) or card_from_details(sym)
         memo, err = run_deep_dive(sym, card)
         if memo is None:
             last_err = err or ""
