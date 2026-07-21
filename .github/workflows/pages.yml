@@ -18,6 +18,8 @@ on:
       - "multibagger_screener/multibagger_screener/landing.html"
       - "multibagger_screener/multibagger_screener/scripts/build_dashboard.py"
       - "multibagger_screener/multibagger_screener/ai_picks.json"  # local committee push
+      - "multibagger_screener/multibagger_screener/journal/analyst_verdicts.csv"  # local analyst push
+      - "multibagger_screener/multibagger_screener/daily_alerts.md"
       - ".github/workflows/pages.yml"
   workflow_run:
     workflows: ["Daily scan (cloud)", "Weekly refresh (cloud)"]

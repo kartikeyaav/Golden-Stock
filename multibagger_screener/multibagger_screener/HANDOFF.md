@@ -615,6 +615,43 @@ one path deeper; the old bookmark root now shows the landing page).
 (dashboard buttons/tooltips/committee footer — `ai_picks.json`'s model
 field is no longer rendered).
 
+**Analyst OFF API — laptop-pooled, no cloud AI (2026-07-20, user decision):**
+the cloud now runs ZERO AI — daily.yml's analyst step is REMOVED and
+ANTHROPIC_API_KEY is no longer surfaced there. Nightly deep-dives run on
+the laptop's Claude subscription via `scripts/nightly_analyst_local.py`
+(pull → pool guard → `ai_analyst.py --pool` with any stray API key stripped
+→ commit+push verdicts → optional local Telegram note). NEW `--pool` mode
+in ai_analyst: candidates come from the JOURNAL backlog (buy alerts in the
+last 5 days whose latest alert has no verdict at/after it, vetoes excluded,
+conviction-ranked, capped at MAX_DIVES_PER_DAY=2 per run), NOT tonight's
+file — so **alert nights with the laptop off are POOLED and cleared at the
+next session**, strongest first; `card_from_details()` rebuilds the card
+from state/alert_details.json for prior-night alerts; pool mode APPENDS to
+any existing verdict block (a later session adds to an earlier one).
+Triggers: Task Scheduler `MultibaggerNightlyAnalystEvening` (daily 21:30
+IST) + Startup-folder `GoldenStockNightlyAnalyst.vbs` (logon +3min) — the
+same "runs whenever the laptop is on" pattern as the weekly committee.
+pages.yml push-paths gained analyst_verdicts.csv + daily_alerts.md so a
+local analyst push republishes the dashboard. VERIFIED live 2026-07-21
+01:02: pool had 26, dived top-2 (DCBBANK→WAIT logged+pushed, GRANULES hit
+the session limit → NO verdict logged → stayed pooled for next session =
+the exact resilience pooling is for); DCBBANK dropped to 25 pending.
+Subscription --selftest OK. Weekly committee was already local (§3J/3K) —
+now BOTH AI layers are subscription-only; the API key is fully retired.
+
+**Tonight-panel vocabulary fix (2026-07-20, user: "Actionable shows no buys
+but Tonight has buy candidates — confusing"):** root cause = the Tonight
+panel printed raw scanner kinds (`BUY CANDIDATE`) which read as buys, while
+Actionable correctly required the VALIDATED trigger. Tonight is now titled
+"Tonight — what the scan saw" and every chip is translated into the
+Actionable vocabulary: `BUY CANDIDATE [NO VCP BASE]` → **NEW UPTREND · NO
+TRIGGER** (gray), `[AWAITING TRIGGER]` → **NEW UPTREND · WATCH PIVOT**
+(amber), `[VALIDATED]` → **BUY SETUP** (green), RE-ENTRY → **RE-ENTRY · …**,
+WATCH CLOSELY → **FORMING**, EPISODIC PIVOT → **EP BUY**. Header tooltip
+explains Tonight = raw scan, Actionable = decision layer. The word "BUY"
+now appears only when the validated trigger actually fired — the two panels
+can no longer look contradictory.
+
 **Readability overhaul (2026-07-20 evening, user-driven):** (1) TELEGRAM
 now sends a decision-first phone DIGEST built by send_telegram.build_digest
 from daily_alerts.md at send time (validated/EP triggers -> "BUY TRIGGER —
@@ -796,6 +833,9 @@ scripts/ai_picks.py           weekly committee (sonnet-5, adaptive thinking) —
                               subscription auth; cloud weekly always --no-ai (3K)
 scripts/weekly_committee_local.py  logon/Sunday wrapper: pull -> freshness guard (shortlist
                               commit vs picks stamp) -> committee -> push; stranded-output guard
+scripts/nightly_analyst_local.py  logon(+3m)/21:30-IST wrapper: pull -> pool guard ->
+                              ai_analyst.py --pool (subscription, no API) -> push verdicts;
+                              clears the buy-alert backlog across sessions the laptop is on
 data/news_radar.py            news-FIRST discovery: whitelist classifier over the NSE filings
                               archive, symbol matching, confluence/urgent ranking (3K)
 state/news_radar.json         radar output (dashboard panel + since-window baseline), committed nightly

@@ -29,7 +29,9 @@ jobs:
     env:
       # secrets surfaced as plain env so `if:` can test them (secrets can't be
       # read directly in step conditions). Empty string when the secret is unset.
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # NOTE: ANTHROPIC_API_KEY deliberately NOT surfaced (2026-07-20, user
+      # decision) — the cloud runs ZERO AI. Nightly deep-dives run on the
+      # laptop's subscription via scripts/nightly_analyst_local.py (pooled).
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       PYTHONUNBUFFERED: "1"
@@ -59,11 +61,9 @@ jobs:
       - name: Daily scan (prices + tag + diff + alerts + journal)
         run: python scripts/daily_scan.py
 
-      - name: AI analyst deep-dives (only if ANTHROPIC_API_KEY is set)
-        if: ${{ env.ANTHROPIC_API_KEY != '' }}
-        run: |
-          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true
-          python scripts/ai_analyst.py || echo "analyst degraded (non-fatal)"
+      # AI analyst step REMOVED (2026-07-20, user decision): dives run on the
+      # laptop's subscription (scripts/nightly_analyst_local.py, pooled across
+      # nights the laptop is off) — the cloud never spends API credits.
 
       - name: Paper book + forward outcomes
         run: |
