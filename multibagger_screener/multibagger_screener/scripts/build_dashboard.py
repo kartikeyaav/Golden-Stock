@@ -788,10 +788,10 @@ td,th{padding:5px 6px}
 <button class="navbtn" data-t="journal"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg> Journal</button>
 <div id="runpanel" style="display:none">
   <div class="runhead">RUN (local server)</div>
-  <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + dashboard — no AI, no credits">&#8635; Daily scan (no AI)</button>
-  <button class="runbtn" data-job="daily_ai" title="adds the AI analyst, max 3 deep-dives — moderate credits">&#8635; Scan + AI analyst</button>
-  <button class="runbtn" data-job="weekly" title="full weekly refresh, AI committee SKIPPED — no AI credits">&#8635; Weekly refresh (no AI)</button>
-  <div class="runnote">AI committee runs only from the scheduled weekly job &mdash; never from here (credit guard).</div>
+  <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + rebuild — mechanical only, no AI">&#8635; Daily scan (no AI)</button>
+  <button class="runbtn" data-job="daily_ai" title="also runs the AI analyst on your Claude subscription (pooled deep-dives)">&#8635; Scan + AI analyst</button>
+  <button class="runbtn" data-job="weekly" title="full weekly refresh (universe, prices, fundamentals, shortlist) — AI committee skipped">&#8635; Weekly refresh (no AI)</button>
+  <div class="runnote">Both AI layers run on your Claude subscription, never an API key.</div>
   <div id="runstatus"></div>
 </div>
 </nav>
@@ -809,10 +809,10 @@ td,th{padding:5px 6px}
   <div class="grid2"><div>
     <div class="card"><h2>Tonight &mdash; what the scan saw<span class="info" data-tip="Raw tag transitions from tonight's scan, translated: a stock entering a CONFIRMED uptrend is labeled NEW UPTREND / RE-ENTRY here — it becomes a BUY only if the validated trigger (pivot breakout on ≥1.5× volume) also fired. The Actionable panel above is the decision layer: it tracks these same names for 7 days and tells you which ones actually require action.">?</span></h2><div id="alerts"></div>
     <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst &mdash; tonight's deep-dives<span class="info" data-tip="The NIGHTLY analyst: after each scan it web-researches tonight's top buy alerts one by one and answers a single question — take, halve, or skip this specific alert. Different from the AI Picks tab: that is the WEEKLY committee choosing a researched 3-5 name portfolio from the whole shortlist. Analyst = tonight's alert triage · Committee = the week's best ideas.">?</span></h2><div id="verdicts"></div></div></div>
-    <div class="card"><h2>NIFTY 50 &middot; regime line (150-DMA)</h2><div id="niftychart" style="height:190px"></div></div>
+    <div class="card"><h2>Market trend &mdash; NIFTY 50 vs its 150-day average<span class="info" data-tip="The market's own trend. When the NIFTY is below its 150-day moving average the whole market is weak, and the system automatically halves every position size (defensive regime). The badge at the top shows which mode is active tonight.">?</span></h2><div id="niftychart" style="height:190px"></div></div>
   </div><div>
-    <div class="card"><h2>Tag board<span class="info" data-tip="CONFIRMED = passes all 8 uptrend checks — a monitored pool, not a buy list; you act only on fresh transitions and top conviction, sized by the plan in each stock's drawer. ANTICIPATION = base forming, watch with zero capital.">?</span></h2><div id="tagboard"></div></div>
-    <div class="card"><h2>Sector heat &mdash; avg RS percentile</h2><div class="heatgrid" id="heat"></div></div>
+    <div class="card"><h2>Stage tally &mdash; tonight's chart stages<span class="info" data-tip="How many of the 611 watched stocks sit in each chart stage tonight. CONFIRMED = healthy uptrend, all 8 trend checks pass (a monitored pool, NOT a buy list — act only on a fresh trigger in the Actionable panel). ANTICIPATION = base still forming, watch with zero money. EXTENDED = ran too far above the trend, do not chase. WATCH = neutral, no clear trend. BROKEN = downtrend, avoid.">?</span></h2><div id="tagboard"></div></div>
+    <div class="card"><h2>Sector strength<span class="info" data-tip="Each industry's average Relative Strength percentile tonight (how its stocks rank vs the whole universe). Green = leading sectors, red = lagging. Breakouts work best in leading sectors.">?</span></h2><div class="heatgrid" id="heat"></div></div>
   </div></div>
 </div>
 
@@ -834,10 +834,10 @@ td,th{padding:5px 6px}
     </div>
     <div style="max-height:66vh;overflow:auto">
     <table id="tbl"><thead><tr>
-      <th data-k="sym">Symbol</th><th data-k="tier">Cap</th><th data-k="ind">Industry</th><th data-k="tag">Tag</th>
-      <th data-k="rs">RS%</th><th data-k="score">Conviction<span class="info" data-tip="Scored at the WEEKLY refresh (Sunday) over the 8 weighted questions. ° = technical read (coverage below 60% — fundamentals were unavailable). A stock's drawer shows its most-informed, most-recent read, which can differ from this weekly ranking number.">?</span></th><th data-k="arch">Archetype</th>
-      <th data-k="roce">ROCE</th><th data-k="pe">P/E</th><th data-k="pgttm">PAT TTM%</th>
-      <th data-k="close">Price</th><th>120d</th></tr></thead><tbody></tbody></table></div>
+      <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹12,000 Cr) · Mid (&lt;₹50,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. CONFIRMED = healthy uptrend (act only on a fresh trigger). ANTICIPATION = base forming, watch only. EXTENDED = ran too far, don't chase. WATCH = neutral. BROKEN = downtrend, avoid.">?</span></th>
+      <th data-k="rs">RS%<span class="info" data-tip="Relative Strength percentile (0-100): how this stock's 6-and-12-month return ranks vs the whole universe. 90 = stronger than 90% of stocks. High + rising is what breakouts need.">?</span></th><th data-k="score">Conviction<span class="info" data-tip="0-100 score from the 8 weighted questions (momentum, earnings, theme, smart money, financial strength, catalyst, governance, valuation), scored at the WEEKLY refresh. ° = technical-only read (fundamentals were unavailable, coverage below 60%). A stock's drawer shows its freshest, most-informed read, which can differ from this weekly number.">?</span></th><th data-k="arch">Archetype<span class="info" data-tip="The kind of multibagger story: Turnaround (loss→profit), Quality (steady compounder), Hyper-growth (fast revenue), Super-cycle (sector tailwind). A tag for context, not a gate.">?</span></th>
+      <th data-k="roce">ROCE<span class="info" data-tip="Return on Capital Employed (%): profit the business earns per rupee of capital. Higher = more efficient. Above ~15% is generally healthy.">?</span></th><th data-k="pe">P/E<span class="info" data-tip="Price-to-Earnings: how many years of current profit you pay for the stock. High P/E = pricey OR fast-growing; on a fresh turnaround it can be meaningless (tiny recovering profit).">?</span></th><th data-k="pgttm">PAT TTM%<span class="info" data-tip="Profit-After-Tax growth over the trailing twelve months vs the prior year. The company's bottom-line momentum.">?</span></th>
+      <th data-k="close">Price</th><th>120d<span class="info" data-tip="Price sparkline — the last 120 trading days at a glance.">?</span></th></tr></thead><tbody></tbody></table></div>
   </div>
 </div>
 
@@ -853,9 +853,9 @@ td,th{padding:5px 6px}
   <div class="card"><h2>Buy-signal scorecard &mdash; every buy alert, marked to market<span class="info" data-tip="One row per BUY CANDIDATE / RE-ENTRY alert the machine ever fired, scored against its own suggested stop. R = profit in units of initial risk (+2R = made twice what the stop risked). Max R = best excursion so far. stopped = hit the stop (-1R, closed). This table only ever grows — signals never disappear, whatever happens to tags later.">?</span></h2>
   <div style="max-height:44vh;overflow:auto">
   <table id="scoretbl"><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv</th><th>Alert &#8377;</th><th>Stop</th>
-  <th>Ret %</th><th>R now</th><th>Max R</th><th>Status</th></tr></thead>
+  <th>Ret %<span class="info" data-tip="Plain price return since the alert (%).">?</span></th><th>R now<span class="info" data-tip="Return measured in units of risk. R = the entry-to-stop distance. +2R = made twice what the stop risked; -1R = hit the stop. This is how the system scores itself, because it normalizes every trade to the same risk.">?</span></th><th>Max R<span class="info" data-tip="The best R this alert ever reached (peak favorable move) — shows upside that a tighter or looser exit would have captured.">?</span></th><th>Status</th></tr></thead>
   <tbody id="scorebody"></tbody></table></div></div>
-  <div class="card"><h2>All tag events (last 50) &mdash; the raw stream</h2>
+  <div class="card"><h2>All stage changes (last 50) &mdash; the raw stream<span class="info" data-tip="Every stage transition the scan logged recently (e.g. WATCH → CONFIRMED), newest first — the unfiltered feed behind the scorecard above.">?</span></h2>
   <table id="jstreamtbl"><thead><tr><th>When</th><th>Symbol</th><th>Signal</th><th>Detail</th></tr></thead>
   <tbody id="jbody"></tbody></table></div>
 </div>
@@ -870,6 +870,9 @@ td,th{padding:5px 6px}
 <script>
 const D=%%PAYLOAD%%;
 const TC={CONFIRMED:'#34d399',ANTICIPATION:'#5aa2ff',EXTENDED:'#fbbf24',BROKEN:'#f87171',WATCH:'#64748b'};
+/* R appears in the KPI strip and the scorecard — define it once for the
+   JS-rendered spots (static headers inline the same wording). */
+const R_GLOSSARY='R = one unit of risk (entry-to-stop distance). +2R made twice what it risked; -1R hit the stop. Expectancy = average R per trade — the edge is a few big-R winners paying for many -1R stops.';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/</g,'&lt;');
 
@@ -908,7 +911,7 @@ $('#gen').textContent='generated '+D.generated+' · last scan '+D.scan_date+' ·
 $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HALF SIZE${D.breadth_pct!=null?' (breadth '+D.breadth_pct+'% &gt;200-DMA)':''}</span>`:`<span class="badge b-grn">NORMAL RISK${D.breadth_pct!=null?' (breadth '+D.breadth_pct+'%)':''}</span>`)+' '+(D.health_ok?'<span class="badge b-grn">HEALTH OK</span>':'<span class="badge b-red">HEALTH FAILED</span>');
 
 /* KPIs — number + label; the caveat rides in a tooltip, not on screen (v4) */
-$('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,'Validated 3y window, after costs. Changing the rules requires new pre-registered evidence.'],
+$('#kpis').innerHTML=[['Expectancy / trade',D.kpi.exp,R_GLOSSARY+' Validated 3-year window, after costs.'],
 ['CAGR ideal / stressed',D.kpi.cagr,'Survivor-biased, so directional. Stressed = next-open fills + gap-aware stops + full costs — the honest planning number.'],
 ['Max drawdown',D.kpi.dd,'Ideal / stressed. Portfolio circuit breaker pauses everything at -25%.'],
 ['Payoff ratio',D.kpi.payoff,'Average win : average loss. The edge is few big winners paying for many small stops (~30% win rate by design).']]
@@ -1131,7 +1134,7 @@ return `<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
 <div class="axis" style="margin-left:88px">${esc((labels&&labels[0])||'')} → ${esc((labels&&labels[labels.length-1])||'')}</div>`;}
 function whySection(sym){const dt=D.details[sym];
 if(!dt)return'<div class="mini" style="margin-top:14px"><h3>Why no score breakdown?</h3><div style="font-size:12.5px" class="dim">Full 8-question scoring runs on the actionable shortlist (CONFIRMED + ANTICIPATION). This stock is currently outside it — it re-enters scoring the moment its tag turns actionable.</div></div>';
-let h=`<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions <span class="axis" style="font-weight:400">read of ${esc(dt.alerted_at||dt.scored_at||'?')} · ${dt.label==='Technical Read'?`coverage ${dt.coverage??'?'}% — technical read`:`coverage ${dt.coverage??100}%`}</span></h3>`;
+let h=`<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions <span class="info" data-tip="Each row is one scoring question. The number after the name (w20) is its weight out of 100; the bar and the 0-100 number are how well this stock answered it; the small text is the evidence. Abbreviations: RS = relative-strength percentile · TT = trend template (8 uptrend checks) · VCP = the base pattern a breakout clears · PAT = profit after tax · TTM = trailing twelve months · YoY = vs a year ago. Coverage = how many questions had data (below 60% = technical-only read).">?</span> <span class="axis" style="font-weight:400">read of ${esc(dt.alerted_at||dt.scored_at||'?')} · ${dt.label==='Technical Read'?`coverage ${dt.coverage??'?'}% — technical read`:`coverage ${dt.coverage??100}%`}</span></h3>`;
 (dt.dims||[]).slice().sort((a,b)=>b.w-a.w).forEach(m=>{
 const pct=m.s!=null?Math.round(m.s*100):0;
 const col=m.s==null?'#334155':m.s>=.7?'#34d399':m.s>=.4?'#fbbf24':'#f87171';
