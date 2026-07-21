@@ -26,6 +26,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from data.cache import load_ohlcv
 from data.screener_fetch import load_company
 from paper_trader import summarize as paper_summary
+from reports import vocab
 
 
 def _market_cap(sym: str):
@@ -459,24 +460,26 @@ def build_payload() -> dict:
     # explanation lives in a hover tooltip (DOEXPL in the template), not
     # repeated on every row (v4 verbosity fix)
     def _do(a):
+        # returns (visible label, dokind) — dokind is a stable style hook;
+        # the WORD comes from reports/vocab.py (single source, see module).
         if a["status"] == "VETOED":
-            return "DO NOT BUY", "veto"
+            k = "veto"
         # EP alerts are one-day events with their own validated edge (EP
         # matrix 2026-07-19) — an event stop, not a stage/VCP read, so the
         # trigger-fidelity ladder below doesn't apply to them
-        if a["kind"] == "EPISODIC PIVOT":
-            if a["status"] == "FADED":
-                return "IGNORE", "mute"
-            return "EP BUY", "ep"
-        if a["status"] == "FADED":
-            return "IGNORE", "mute"
-        if a["status"] == "RAN AWAY":
-            return "WAIT", "warn"
-        if a["trigger"] == "VALIDATED":
-            return "BUY SETUP", "act"
-        if a["trigger"] == "AWAITING TRIGGER":
-            return "WATCH", "watch"
-        return "WEAK", "weak"
+        elif a["kind"] == "EPISODIC PIVOT":
+            k = "mute" if a["status"] == "FADED" else "ep"
+        elif a["status"] == "FADED":
+            k = "mute"
+        elif a["status"] == "RAN AWAY":
+            k = "warn"
+        elif a["trigger"] == "VALIDATED":
+            k = "act"
+        elif a["trigger"] == "AWAITING TRIGGER":
+            k = "watch"
+        else:
+            k = "weak"
+        return vocab.DO_LABEL[k], k
     _srank = {"ACTIONABLE": 0, "RAN AWAY": 1, "FADED": 2, "VETOED": 3}
     _trank = {"VALIDATED": 0, "AWAITING TRIGGER": 1, "NO VCP BASE": 2, "": 3}
     for a in actionable:
@@ -510,7 +513,7 @@ def build_payload() -> dict:
             ["Watched nightly", len(tags), "enough history for a mechanical read"],
             ["Focus list", len(focus), "top relative strength (reporting)"],
             ["Actionable tags", tag_counts.get("CONFIRMED", 0) + tag_counts.get("ANTICIPATION", 0),
-             "CONFIRMED + ANTICIPATION today"],
+             "UPTREND + BASING today"],
             ["Alerts tonight", len([a for a in alerts if a["kind"] != "POSITION"]),
              "state transitions only"],
         ],
@@ -530,6 +533,9 @@ def build_payload() -> dict:
         # 21.5% figure was a cash-basis measurement artifact. Ideal-fill /
         # stressed pairs shown; stress = next-open fills + gap stops + costs.
         "kpi": {"exp": "+1.67R", "cagr": "47% / 33%", "dd": "-18.5 / -20.7%", "payoff": "9.6:1"},
+        # single-source display vocabulary (reports/vocab.py) — the JS renders
+        # tags/kinds/do-chips through this so words never drift between surfaces
+        "vocab": vocab.js_payload(),
     }
 
 
@@ -621,6 +627,15 @@ border-radius:12px;padding:13px 6px;justify-content:space-around}
 padding:5px 11px;margin:2px 5px 2px 0;font-size:12px;background:transparent;cursor:pointer;transition:.15s}
 .chip.off{opacity:.32}
 .chip span{color:var(--dim);font-family:var(--mono);font-size:11px}
+/* legend — compact, collapsible key generated from the vocab table */
+.legend{padding:0;margin-bottom:14px}
+.legend>summary{cursor:pointer;font-size:12px;color:var(--dim);padding:11px 16px;list-style-position:outside}
+.legend>summary:hover{color:var(--txt)}
+.lbody{padding:2px 16px 14px}
+.lrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:8px 0}
+.llbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint);width:180px;min-width:180px}
+.lchip{display:inline-block;border:1px solid;border-radius:99px;padding:2px 10px;font:600 10.5px var(--mono,ui-monospace,monospace);letter-spacing:.04em;cursor:default}
+@media(max-width:640px){.llbl{width:100%}}
 .alert{display:flex;gap:10px;padding:10px 13px;border-left:2px solid var(--line);background:var(--card2);
 border-radius:0 8px 8px 0;margin:8px 0;font-size:12.8px}
 .ak{font:600 10px var(--mono,ui-monospace,monospace);letter-spacing:.05em;white-space:nowrap;
@@ -800,18 +815,19 @@ td,th{padding:5px 6px}
 <div class="sub">Alerts fire on state transitions only &middot; entries are technical-only (evidence-locked) &middot; click any stock for the full picture</div>
 
 <div class="tab on" id="overview">
-  <div class="card actcard"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days<span class="info" data-tip="The only panel you act from. BUY SETUP = the exact backtested trigger fired (pivot break on ≥1.5× volume) — open the drawer for the sized plan. WATCH = VCP base ready, breakout not confirmed yet. WEAK = uptrend without the proven trigger. Resolved rows (ran away / faded / vetoed) need nothing — a faded signal is the system saving you from a stale entry.">?</span></h2>
+  <div class="card actcard"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days<span class="info" data-tip="The only panel you act from. BUY NOW = the exact backtested trigger fired (pivot break on ≥1.5× volume). MOMENTUM BUY = an episodic-pivot gap fired (≥8% gap on ≥3× volume) — both are real buys; open the drawer for the sized plan. WATCH = base ready, breakout not confirmed yet. WEAK = in an uptrend but no proven trigger — not a buy. Resolved rows (ran away / faded / vetoed) need nothing — a faded signal is the system saving you from a stale entry.">?</span></h2>
     <div id="actionable"></div></div>
-  <div class="card" id="radarcard" style="display:none"><h2 style="color:#a78bfa">News radar &mdash; material filings<span class="info" data-tip="News-FIRST discovery: every NSE filing since the last scan, whitelist-classified (order wins, M&A, approvals / probes, pledges, exits / fund raises), matched to the universe and cross-referenced with tonight's technical state. CONFLUENCE = positive news on a chart the technical layer already rates CONFIRMED/ANTICIPATION — the names to research first. News moves attention, never entries — trades stay technical.">?</span></h2>
+  <details class="card legend" id="legend"><summary>Legend &mdash; what the tags &amp; buy signals mean (state is not a buy)</summary><div class="lbody" id="legendbody"></div></details>
+  <div class="card" id="radarcard" style="display:none"><h2 style="color:#a78bfa">News radar &mdash; material filings<span class="info" data-tip="News-FIRST discovery: every NSE filing since the last scan, whitelist-classified (order wins, M&A, approvals / probes, pledges, exits / fund raises), matched to the universe and cross-referenced with tonight's technical state. CONFLUENCE = positive news on a chart the technical layer already rates UPTREND/BASING — the names to research first. News moves attention, never entries — trades stay technical.">?</span></h2>
     <div id="radarbody"></div></div>
   <div class="kpis" id="kpis"></div>
   <div class="funnelline" id="funnel"></div>
   <div class="grid2"><div>
-    <div class="card"><h2>Tonight &mdash; what the scan saw<span class="info" data-tip="Raw tag transitions from tonight's scan, translated: a stock entering a CONFIRMED uptrend is labeled NEW UPTREND / RE-ENTRY here — it becomes a BUY only if the validated trigger (pivot breakout on ≥1.5× volume) also fired. The Actionable panel above is the decision layer: it tracks these same names for 7 days and tells you which ones actually require action.">?</span></h2><div id="alerts"></div>
+    <div class="card"><h2>Tonight &mdash; what the scan saw<span class="info" data-tip="Raw stage transitions from tonight's scan, translated into plain words: a stock entering an UPTREND is labeled NEW UPTREND / RE-ENTRY here — it becomes a BUY NOW only if the validated trigger (pivot breakout on ≥1.5× volume) also fired, or a MOMENTUM BUY on an episodic-pivot gap. The Actionable panel above is the decision layer: it tracks these same names for 7 days and tells you which ones actually require action.">?</span></h2><div id="alerts"></div>
     <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst &mdash; tonight's deep-dives<span class="info" data-tip="The NIGHTLY analyst: after each scan it web-researches tonight's top buy alerts one by one and answers a single question — take, halve, or skip this specific alert. Different from the AI Picks tab: that is the WEEKLY committee choosing a researched 3-5 name portfolio from the whole shortlist. Analyst = tonight's alert triage · Committee = the week's best ideas.">?</span></h2><div id="verdicts"></div></div></div>
     <div class="card"><h2>Market trend &mdash; NIFTY 50 vs its 150-day average<span class="info" data-tip="The market's own trend. When the NIFTY is below its 150-day moving average the whole market is weak, and the system automatically halves every position size (defensive regime). The badge at the top shows which mode is active tonight.">?</span></h2><div id="niftychart" style="height:190px"></div></div>
   </div><div>
-    <div class="card"><h2>Stage tally &mdash; tonight's chart stages<span class="info" data-tip="How many of the 611 watched stocks sit in each chart stage tonight. CONFIRMED = healthy uptrend, all 8 trend checks pass (a monitored pool, NOT a buy list — act only on a fresh trigger in the Actionable panel). ANTICIPATION = base still forming, watch with zero money. EXTENDED = ran too far above the trend, do not chase. WATCH = neutral, no clear trend. BROKEN = downtrend, avoid.">?</span></h2><div id="tagboard"></div></div>
+    <div class="card"><h2>Stage tally &mdash; tonight's chart stages<span class="info" data-tip="How many of the 611 watched stocks sit in each chart stage tonight. UPTREND = healthy confirmed uptrend, all 8 trend checks pass (a monitored pool, NOT a buy list — act only on a fresh trigger in the Actionable panel). BASING = base still forming, watch with zero money. EXTENDED = ran too far above the trend, do not chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></h2><div id="tagboard"></div></div>
     <div class="card"><h2>Sector strength<span class="info" data-tip="Each industry's average Relative Strength percentile tonight (how its stocks rank vs the whole universe). Green = leading sectors, red = lagging. Breakouts work best in leading sectors.">?</span></h2><div class="heatgrid" id="heat"></div></div>
   </div></div>
 </div>
@@ -829,12 +845,12 @@ td,th{padding:5px 6px}
       <span id="tierfilters"></span>
       <span style="width:1px;height:22px;background:var(--line);margin:0 4px"></span>
       <span id="tagfilters"></span>
-      <span class="info" data-tip="Cap tiers: Micro < ₹2k Cr (highest multibagger runway, highest risk) · Small ₹2–12k Cr · Mid ₹12–50k Cr · Large > ₹50k Cr. Filter Micro + CONFIRMED for the potential-multibagger view.">?</span>
+      <span class="info" data-tip="Cap tiers: Micro < ₹2k Cr (highest multibagger runway, highest risk) · Small ₹2–12k Cr · Mid ₹12–50k Cr · Large > ₹50k Cr. Filter Micro + UPTREND for the potential-multibagger view.">?</span>
       <span class="dim" style="font-size:12px;margin-left:auto" id="count"></span>
     </div>
     <div style="max-height:66vh;overflow:auto">
     <table id="tbl"><thead><tr>
-      <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹12,000 Cr) · Mid (&lt;₹50,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. CONFIRMED = healthy uptrend (act only on a fresh trigger). ANTICIPATION = base forming, watch only. EXTENDED = ran too far, don't chase. WATCH = neutral. BROKEN = downtrend, avoid.">?</span></th>
+      <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹12,000 Cr) · Mid (&lt;₹50,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. UPTREND = healthy confirmed uptrend (act only on a fresh trigger). BASING = base forming, watch only. EXTENDED = ran too far, don't chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></th>
       <th data-k="rs">RS%<span class="info" data-tip="Relative Strength percentile (0-100): how this stock's 6-and-12-month return ranks vs the whole universe. 90 = stronger than 90% of stocks. High + rising is what breakouts need.">?</span></th><th data-k="score">Conviction<span class="info" data-tip="0-100 score from the 8 weighted questions (momentum, earnings, theme, smart money, financial strength, catalyst, governance, valuation), scored at the WEEKLY refresh. ° = technical-only read (fundamentals were unavailable, coverage below 60%). A stock's drawer shows its freshest, most-informed read, which can differ from this weekly number.">?</span></th><th data-k="arch">Archetype<span class="info" data-tip="The kind of multibagger story: Turnaround (loss→profit), Quality (steady compounder), Hyper-growth (fast revenue), Super-cycle (sector tailwind). A tag for context, not a gate.">?</span></th>
       <th data-k="roce">ROCE<span class="info" data-tip="Return on Capital Employed (%): profit the business earns per rupee of capital. Higher = more efficient. Above ~15% is generally healthy.">?</span></th><th data-k="pe">P/E<span class="info" data-tip="Price-to-Earnings: how many years of current profit you pay for the stock. High P/E = pricey OR fast-growing; on a fresh turnaround it can be meaningless (tiny recovering profit).">?</span></th><th data-k="pgttm">PAT TTM%<span class="info" data-tip="Profit-After-Tax growth over the trailing twelve months vs the prior year. The company's bottom-line momentum.">?</span></th>
       <th data-k="close">Price</th><th>120d<span class="info" data-tip="Price sparkline — the last 120 trading days at a glance.">?</span></th></tr></thead><tbody></tbody></table></div>
@@ -850,12 +866,12 @@ td,th{padding:5px 6px}
 
 <div class="tab" id="journal">
   <div class="kpis" id="jstats"></div>
-  <div class="card"><h2>Buy-signal scorecard &mdash; every buy alert, marked to market<span class="info" data-tip="One row per BUY CANDIDATE / RE-ENTRY alert the machine ever fired, scored against its own suggested stop. R = profit in units of initial risk (+2R = made twice what the stop risked). Max R = best excursion so far. stopped = hit the stop (-1R, closed). This table only ever grows — signals never disappear, whatever happens to tags later.">?</span></h2>
+  <div class="card"><h2>Buy-signal scorecard &mdash; every buy alert, marked to market<span class="info" data-tip="One row per NEW UPTREND / RE-ENTRY / MOMENTUM BUY alert the machine ever fired, scored against its own suggested stop. R = profit in units of initial risk (+2R = made twice what the stop risked). Max R = best excursion so far. stopped = hit the stop (-1R, closed). This table only ever grows — signals never disappear, whatever happens to tags later.">?</span></h2>
   <div style="max-height:44vh;overflow:auto">
   <table id="scoretbl"><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv</th><th>Alert &#8377;</th><th>Stop</th>
   <th>Ret %<span class="info" data-tip="Plain price return since the alert (%).">?</span></th><th>R now<span class="info" data-tip="Return measured in units of risk. R = the entry-to-stop distance. +2R = made twice what the stop risked; -1R = hit the stop. This is how the system scores itself, because it normalizes every trade to the same risk.">?</span></th><th>Max R<span class="info" data-tip="The best R this alert ever reached (peak favorable move) — shows upside that a tighter or looser exit would have captured.">?</span></th><th>Status</th></tr></thead>
   <tbody id="scorebody"></tbody></table></div></div>
-  <div class="card"><h2>All stage changes (last 50) &mdash; the raw stream<span class="info" data-tip="Every stage transition the scan logged recently (e.g. WATCH → CONFIRMED), newest first — the unfiltered feed behind the scorecard above.">?</span></h2>
+  <div class="card"><h2>All stage changes (last 50) &mdash; the raw stream<span class="info" data-tip="Every stage transition the scan logged recently (e.g. NEUTRAL → UPTREND), newest first — the unfiltered feed behind the scorecard above.">?</span></h2>
   <table id="jstreamtbl"><thead><tr><th>When</th><th>Symbol</th><th>Signal</th><th>Detail</th></tr></thead>
   <tbody id="jbody"></tbody></table></div>
 </div>
@@ -870,6 +886,19 @@ td,th{padding:5px 6px}
 <script>
 const D=%%PAYLOAD%%;
 const TC={CONFIRMED:'#34d399',ANTICIPATION:'#5aa2ff',EXTENDED:'#fbbf24',BROKEN:'#f87171',WATCH:'#64748b'};
+/* single-source display vocabulary (reports/vocab.py -> D.vocab). Internal
+   values (CONFIRMED, BUY CANDIDATE, ...) stay in the data + logic + colors
+   above; these helpers turn them into the ONE user-facing word everywhere. */
+const VOCAB=D.vocab||{tags:{},tagtips:{},kinds:{},kindsShort:{},do:{},triggers:{}};
+const tl=t=>(VOCAB.tags[t]||t||'');                          /* state tag -> word */
+const tlt=t=>(VOCAB.tagtips[t]||'');                         /* state tag -> tooltip */
+const kl=k=>(VOCAB.kinds[k]||k||'');                         /* alert kind -> word */
+const kls=k=>(VOCAB.kindsShort[k]||VOCAB.kinds[k]||k||'');   /* alert kind -> compact word */
+/* translate any raw tag words inside a free-text string (e.g. the Tonight
+   parenthetical "(WATCH -> CONFIRMED)") so no internal word leaks alongside
+   the translated chip. Whole-word only; built from the vocab keys. */
+const _tagRe=new RegExp('\\b('+Object.keys(VOCAB.tags||{}).join('|')+')\\b','g');
+const transTags=s=>String(s==null?'':s).replace(_tagRe,m=>VOCAB.tags[m]||m);
 /* R appears in the KPI strip and the scorecard — define it once for the
    JS-rendered spots (static headers inline the same wording). */
 const R_GLOSSARY='R = one unit of risk (entry-to-stop distance). +2R made twice what it risked; -1R hit the stop. Expectancy = average R per trade — the edge is a few big-R winners paying for many -1R stops.';
@@ -926,18 +955,18 @@ $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b
    contradicted the "nothing requires action" headline — user-caught). */
 function alertLabel(a){
  const k=a.kind,s=a.status||'';
- if(k==='EPISODIC PIVOT')return['EP BUY','#f5c84c'];
+ if(k==='EPISODIC PIVOT')return[kl(k),'#f5c84c'];             /* MOMENTUM BUY */
  if(k==='BUY CANDIDATE'||k==='RE-ENTRY WINDOW'){
-  const base=k==='RE-ENTRY WINDOW'?'RE-ENTRY':'NEW UPTREND';
-  if(s==='VALIDATED')return[(k==='RE-ENTRY WINDOW'?'RE-ENTRY ':'')+'BUY SETUP','#34d399'];
-  if(s==='AWAITING TRIGGER')return[base+' · WATCH PIVOT','#fbbf24'];
-  return[base+' · NO TRIGGER','#7f95ab'];}
- if(k==='WATCH CLOSELY')return['FORMING','#5aa2ff'];
- if(k==='EXIT WARNING')return['EXIT WARNING','#f87171'];
- return[k,'#94a3b8'];}
+  const base=kl(k);                                          /* NEW UPTREND / RE-ENTRY */
+  if(s==='VALIDATED')return[(k==='RE-ENTRY WINDOW'?'RE-ENTRY · ':'')+(VOCAB.do.act||'BUY NOW'),'#34d399'];
+  if(s==='AWAITING TRIGGER')return[base+' · '+(VOCAB.triggers['AWAITING TRIGGER']||'WATCH PIVOT'),'#fbbf24'];
+  return[base+' · '+(VOCAB.triggers['NO VCP BASE']||'NO BUY POINT'),'#7f95ab'];}
+ if(k==='WATCH CLOSELY')return[kl(k),'#5aa2ff'];              /* FORMING */
+ if(k==='EXIT WARNING')return[kl(k),'#f87171'];
+ return[kl(k)||k,'#94a3b8'];}
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>{
  const[lb,c]=alertLabel(a);
- return `<div class="alert"><span class="ak" style="color:${c};border-color:${c}45;background:${c}0d">${esc(lb)}</span><span>${esc(a.text)}</span></div>`;
+ return `<div class="alert"><span class="ak" style="color:${c};border-color:${c}45;background:${c}0d">${esc(lb)}</span><span>${transTags(esc(a.text))}</span></div>`;
 }).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
 /* analyst verdicts — compact native cards: decision row + one reason line;
    remaining why/risk bullets and the flip condition fold behind a slim
@@ -995,9 +1024,9 @@ const DOEXPL={
  act:'Exact backtested trigger fired — pivot break on ≥1.5× volume. Open the drawer for the sized two-lot plan.',
  ep:'Episodic pivot — a violent gap on extreme volume (≥8% gap, ≥3× volume), the market repricing the stock on new information. Own validated entry class; stop = the gap day\'s low. Check the news radar for the catalyst.',
  watch:'VCP base ready — buy only if price breaks the pivot on ≥1.5× volume. No entry yet.',
- weak:'Uptrend (CONFIRMED tag) but no VCP base/breakout — the validated edge is not established for this entry.',
+ weak:'In an uptrend (UPTREND) but no base/breakout yet — the validated buy edge is not established for this entry.',
  warn:'Ran away: price extended after the alert — do not chase; a re-entry alert fires if it cools into a new setup.',
- mute:'The setup faded after the alert (tag no longer CONFIRMED) — a stale entry the system saved you from.',
+ mute:'The setup faded after the alert (no longer in an uptrend) — a stale entry the system saved you from.',
  veto:'Hard governance/leverage veto — do not buy regardless of technicals.'};
 (function(){
 const all=D.actionable||[];
@@ -1015,8 +1044,8 @@ const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  <td class="dim mono">${a.d}</td></tr>`};
 const hdr='<tr><th>Action</th><th>Symbol</th><th>Conv</th><th>AI view<span class="info" data-tip="What each AI layer says about this name, side by side. A: = nightly analyst verdict (last 10 days) · C: = weekly committee (pick / reviewed-and-passed-over) · N: = news radar hit since last scan. Empty = that layer has no current view. The machine\'s own view is this row itself — conviction + tag.">?</span></th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
 let h=`<div class="acthead">${nv
- ?`<b style="color:#34d399">&#9679; ${nv} validated buy trigger${nv>1?'s':''} — act today</b>`
- :`<b style="color:#94a3b8">&#9675; No validated triggers — nothing requires action.</b>`}
+ ?`<b style="color:#34d399">&#9679; ${nv} buy signal${nv>1?'s':''} — act today <span class="dim" style="font-weight:400">(BUY NOW / MOMENTUM BUY)</span></b>`
+ :`<b style="color:#94a3b8">&#9675; No buy signals today — nothing requires action.</b>`}
  <span class="dim" style="font-size:11.5px">${prime.length-nv} awaiting pivot &middot; ${weak.length} weak &middot; ${rest.length} resolved</span></div>`;
 if(prime.length)h+=`<table><thead>${hdr}</thead><tbody>`+prime.map(row).join('')+'</tbody></table>';
 else h+=`<div class="quiet">No validated or pivot-ready setups right now${weak.length?' — weak-trend signals folded below':''}.</div>`;
@@ -1025,6 +1054,16 @@ if(weak.length)h+=`<details class="actrest"><summary>${weak.length} weak signal$
 if(rest.length)h+=`<details class="actrest"><summary>${rest.length} resolved — ran away / faded / vetoed (no action)</summary>
 <table><thead>${hdr}</thead><tbody>`+rest.map(row).join('')+'</tbody></table></details>';
 $('#actionable').innerHTML=h;})();
+
+/* legend — a compact key built from the SAME vocab table the panels use, so
+   it can never describe a word the UI doesn't actually show. States and
+   actions on two rows; each chip hovers its own definition. */
+(function(){const el=$('#legendbody');if(!el)return;
+ const st=(VOCAB.tagOrder||[]).map(t=>`<span class="lchip" data-tip="${esc(tlt(t))}" style="border-color:${TC[t]||'#475569'};color:${TC[t]||'#94a3b8'}">${esc(tl(t))}</span>`).join('');
+ const ac=(VOCAB.doOrder||[]).map(k=>`<span class="lchip" data-tip="${esc(DOEXPL[k]||'')}" style="border-color:${DOC[k]||'#475569'};color:${DOC[k]||'#94a3b8'}">${esc((VOCAB.do||{})[k]||k)}</span>`).join('');
+ el.innerHTML=`<div class="lrow"><span class="llbl">Chart state — where the stock is</span>${st}</div>
+  <div class="lrow"><span class="llbl">Action — what to do</span>${ac}</div>
+  <div class="axis" style="margin-top:10px;line-height:1.6">A stock's <b>state</b> is not a buy signal. Only <b style="color:#34d399">BUY NOW</b> (validated breakout) and <b style="color:#f5c84c">MOMENTUM BUY</b> (episodic-pivot gap) are real buys — everything else is watch, wait, or avoid. Hover any chip for its full meaning.</div>`;})();
 
 /* news radar — news-first discovery panel */
 (function(){
@@ -1041,7 +1080,7 @@ const badge=h.urgent?'<span class="pill" style="border-color:#f87171;color:#f871
 return `<tr onclick="openDrawer('${h.sym}')"${h.confluence?' style="background:#34d39908"':h.urgent?' style="background:#f8717108"':''}>
 <td style="color:${c};font-weight:700">${DOT[h.cls]||'•'}</td>
 <td class="sym">${h.sym}${h.n>1?`<span class="ndot" title="${h.n} filings">×${h.n}</span>`:''}</td>
-<td><span class="pill" style="border-color:${TC[h.tag]||'#475569'};color:${TC[h.tag]||'#94a3b8'}">${esc(h.tag||'—')}</span></td>
+<td><span class="pill" data-tip="${esc(tlt(h.tag))}" style="border-color:${TC[h.tag]||'#475569'};color:${TC[h.tag]||'#94a3b8'}">${esc(tl(h.tag)||'—')}</span></td>
 <td class="mono">${h.rs!=null?Math.round(h.rs):'—'}</td>
 <td style="color:${c};font-size:11.5px">${esc(h.event)} ${badge}</td>
 <td class="dim wrap" style="font-size:11px;max-width:420px">${esc(h.subject.replace(/has informed the Exchange (regarding|about|that)?/i,'—').slice(0,120))}</td></tr>`}).join('')+
@@ -1050,7 +1089,7 @@ return `<tr onclick="openDrawer('${h.sym}')"${h.confluence?' style="background:#
 })();
 
 /* tag board */
-$('#tagboard').innerHTML=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<div class="chip" style="border-color:${TC[t]||'#475569'}"><b style="color:${TC[t]||'#94a3b8'}">${t}</b><span>${c}</span></div>`).join('');
+$('#tagboard').innerHTML=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<div class="chip" data-tip="${esc(tlt(t))}" style="border-color:${TC[t]||'#475569'}"><b style="color:${TC[t]||'#94a3b8'}">${esc(tl(t))}</b><span>${c}</span></div>`).join('');
 
 /* heat */
 $('#heat').innerHTML=D.heat.map(h=>{const g=h.rs>=60?'#34d399':h.rs>=45?'#fbbf24':'#f87171';
@@ -1072,7 +1111,7 @@ $('#tierfilters').innerHTML=['Micro','Small','Mid','Large'].map(t=>`<span class=
 +`<span class="chip off" data-focus style="border-color:#7c8db0" title="show only the ~320-name RS focus list (reporting view); off = full watched universe"><b style="color:#94a3b8">Focus only</b></span>`;
 let focusOnly=false;
 document.querySelector('[data-focus]').onclick=e=>{focusOnly=!focusOnly;e.currentTarget.classList.toggle('off',!focusOnly);render();};
-$('#tagfilters').innerHTML=Object.keys(TC).map(t=>`<span class="chip" data-tag="${t}" style="border-color:${TC[t]}"><b style="color:${TC[t]}">${t}</b></span>`).join('');
+$('#tagfilters').innerHTML=Object.keys(TC).map(t=>`<span class="chip" data-tag="${t}" data-tip="${esc(tlt(t))}" style="border-color:${TC[t]}"><b style="color:${TC[t]}">${esc(tl(t))}</b></span>`).join('');
 document.querySelectorAll('[data-tag]').forEach(c=>c.onclick=()=>{const t=c.dataset.tag;
 activeTags.has(t)?(activeTags.delete(t),c.classList.add('off')):(activeTags.add(t),c.classList.remove('off'));render();});
 document.querySelectorAll('[data-tier]').forEach(c=>c.onclick=()=>{const t=c.dataset.tier;
@@ -1090,7 +1129,7 @@ $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td class="sym">${r.sym}${r.veto?' <span style="color:#f87171">⛔</span>':''}</td>
 <td><span class="pill" style="border-color:${TIERC[r.tier]||'#475569'};color:${TIERC[r.tier]||'#94a3b8'}" title="${fmtCr(r.mcap)}">${r.tier||'—'}</span></td>
 <td class="dim">${esc(r.ind)}</td>
-<td><span class="pill" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${r.tag||''}</span></td>
+<td><span class="pill" data-tip="${esc(tlt(r.tag))}" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${esc(tl(r.tag))}</span></td>
 <td class="mono">${r.rs??''}</td>
 <td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono"${r.cov!=null&&r.cov<60?` data-tip="Technical read — only ${r.cov}% of the 8 scored questions had data at the weekly refresh. Not comparable with full-coverage conviction scores."`:''}>${r.score}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</b></span>`:'<span class="dim">—</span>'}</td>
 <td class="dim wrap">${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
@@ -1133,7 +1172,7 @@ return `<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
 <div class="axis">${fmtNum(lo)}–${fmtNum(hi)}</div></div></div>
 <div class="axis" style="margin-left:88px">${esc((labels&&labels[0])||'')} → ${esc((labels&&labels[labels.length-1])||'')}</div>`;}
 function whySection(sym){const dt=D.details[sym];
-if(!dt)return'<div class="mini" style="margin-top:14px"><h3>Why no score breakdown?</h3><div style="font-size:12.5px" class="dim">Full 8-question scoring runs on the actionable shortlist (CONFIRMED + ANTICIPATION). This stock is currently outside it — it re-enters scoring the moment its tag turns actionable.</div></div>';
+if(!dt)return'<div class="mini" style="margin-top:14px"><h3>Why no score breakdown?</h3><div style="font-size:12.5px" class="dim">Full 8-question scoring runs on the actionable shortlist (UPTREND + BASING names). This stock is currently outside it — it re-enters scoring the moment its tag turns actionable.</div></div>';
 let h=`<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions <span class="info" data-tip="Each row is one scoring question. The number after the name (w20) is its weight out of 100; the bar and the 0-100 number are how well this stock answered it; the small text is the evidence. Abbreviations: RS = relative-strength percentile · TT = trend template (8 uptrend checks) · VCP = the base pattern a breakout clears · PAT = profit after tax · TTM = trailing twelve months · YoY = vs a year ago. Coverage = how many questions had data (below 60% = technical-only read).">?</span> <span class="axis" style="font-weight:400">read of ${esc(dt.alerted_at||dt.scored_at||'?')} · ${dt.label==='Technical Read'?`coverage ${dt.coverage??'?'}% — technical read`:`coverage ${dt.coverage??100}%`}</span></h3>`;
 (dt.dims||[]).slice().sort((a,b)=>b.w-a.w).forEach(m=>{
 const pct=m.s!=null?Math.round(m.s*100):0;
@@ -1158,7 +1197,7 @@ function convergenceSection(sym,r){
  const verdict=a&&a.verdict?a.verdict:null;
  const c=voiceCommittee(sym),n=voiceNews(sym);
  const rows=[];
- rows.push(['Machine',mech!=null?('conviction '+mech+(tread?'° (technical read)':'')+(r.tag?' · '+r.tag:'')):'not scored','#5aa2ff']);
+ rows.push(['Machine',mech!=null?('conviction '+mech+(tread?'° (technical read)':'')+(r.tag?' · '+tl(r.tag):'')):'not scored','#5aa2ff']);
  rows.push(['Analyst',verdict?verdict:'no verdict in the last 10 days','#a78bfa']);
  rows.push(['Committee',c?(c.txt==='passed over'?'reviewed this week — passed over':'standing pick ('+c.txt.replace('pick · ','')+')'):'not in this week\'s review set','#34d399']);
  rows.push(['News',n?(n.txt+' — see radar panel'):'quiet since last scan','#fbbf24']);
@@ -1204,7 +1243,7 @@ return h+'</div>';}
 window.openDrawer=function(sym){const d=$('#drawer');const r=D.rows.find(x=>x.sym===sym)||{};
 const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
 d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
-<h1 style="font-size:20px">${sym} <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${r.tag||''}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
+<h1 style="font-size:20px">${sym} <span class="pill" data-tip="${esc(tlt(r.tag))}" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${esc(tl(r.tag))}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
 <div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · ${(()=>{const dt=D.details[sym];
  if(dt&&dt.score!=null){const tr=dt.label==='Technical Read';
   return `conviction <span${tr?` data-tip="Technical read — only ${dt.coverage}% of the 8 scored questions had data for this read. Not comparable with full-coverage conviction scores."`:''}>${dt.score}${tr?'<span style="color:#fbbf24">°</span>':''}</span> <span class="axis">(read of ${esc(dt.alerted_at||dt.scored_at||'?')}, coverage ${dt.coverage??'?'}%)</span>`;}
@@ -1250,7 +1289,7 @@ const render=()=>{list.innerHTML=matches.length?matches.map((r,i)=>`<div class="
  <span class="sym">${r.sym}</span>
  <span class="dim" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(r.company)}</span>
  ${r.score!=null?`<b class="mono" style="font-size:12px">${r.score}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</b>`:''}
- <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'}">${r.tag||''}</span></div>`).join('')
+ <span class="pill" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'}">${esc(tl(r.tag))}</span></div>`).join('')
  :'<div class="palempty">No match among the 611 watched stocks.</div>';
  list.querySelectorAll('.palrow').forEach(el=>el.onclick=()=>{close();openDrawer(matches[+el.dataset.i].sym)});
  const on=list.querySelector('.palrow.on');if(on)on.scrollIntoView({block:'nearest'});};
@@ -1296,7 +1335,7 @@ $('#jstats').innerHTML=[['Signals logged',D.journal_total??D.journal.length,'Eve
 ['Expectancy to date',D.outcomes.exp!=null?D.outcomes.exp+'R':'—','Forward, unfakeable. The gate for real capital: within ~50% of the +1.67R backtest at meaningful sample size.']]
 .map(k=>`<div class="kpi"><span>${k[0]}<span class="info" data-tip="${esc(k[2])}">?</span></span><b>${k[1]}</b></div>`).join('');
 const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','EPISODIC PIVOT':'#f5c84c','WATCH CLOSELY':'#5aa2ff','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
-$('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(j.kind)}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(j.old)+' → ':''}${esc(j.new)}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
+$('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(kl(j.kind))}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(tl(j.old))+' → ':''}${esc(tl(j.new))}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
 
 /* buy-signal scorecard — same name re-alerting across nights is ONE story:
    the newest row is the live read, earlier rows get a ↻ marker + muted style
@@ -1309,7 +1348,7 @@ const tread=s.conv!=null&&s.cov!=null&&s.cov<60;
 const convCell=s.conv==null?'':tread?`<span data-tip="Technical read — only ${s.cov}% of the 8 scored questions had data (fundamentals unavailable at alert time). Not comparable with full-coverage conviction scores.">${s.conv}<span style="color:#fbbf24">°</span></span>`:s.conv;
 const reBadge=s.re?` <span class="pill" style="border-color:#a78bfa66;color:#a78bfa;font-size:9px" data-tip="Same name re-alerted later — the newest row above is the live read; this is the earlier signal, kept for the honest track record.">↻ ${s.re===1?'earlier alert':'earlier ×'+s.re}</span>`:'';
 return `<tr onclick="openDrawer('${s.sym}')"${s.re?' style="opacity:.55"':''}><td class="dim mono">${s.d}</td><td class="sym">${s.sym}${reBadge}</td>
-<td class="dim" style="font-size:11px">${s.kind==='BUY CANDIDATE'?'BUY':s.kind==='EPISODIC PIVOT'?'EP':'RE-ENTRY'}</td>
+<td class="dim" style="font-size:11px">${esc(kls(s.kind))}</td>
 <td class="mono">${convCell}</td><td class="mono">${s.entry??''}</td><td class="mono dim">${s.stop??''}</td>
 <td class="mono" style="color:${s.ret>0?'#34d399':s.ret<0?'#f87171':''}">${s.ret!=null?(s.ret>0?'+':'')+s.ret+'%':''}</td>
 <td class="mono" style="color:${rc};font-weight:700">${s.r!=null?(s.r>0?'+':'')+s.r+'R':''}</td>
