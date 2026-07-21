@@ -80,6 +80,9 @@ def main() -> None:
     else:
         run_step("AI committee picks", "ai_picks.py", fatal=False)  # needs claude auth; skips cleanly if absent
     run_step("journal outcomes (forward scorecard)", "journal_outcomes.py", fatal=False)
+    # top-mover capture-recall audit (prices are fresh from step 2) — journals
+    # a weekly recall read next to the signal/outcome journals for review
+    run_step("capture audit (top-mover recall)", "capture_audit.py", fatal=False)
     run_step("dashboard", "build_dashboard.py", fatal=False)
 
     print(f"\n{'=' * 60}")
