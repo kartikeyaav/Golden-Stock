@@ -269,6 +269,9 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
         "stage_name": tag_result.get("stage", {}).get("stage_name", ""),
         "tt_checks": tag_result.get("trend_template_checks_passed", 0),
         "vcp": tag_result.get("vcp_valid", False),
+        # VCP breakout pivot for the drawer chart geometry (display only);
+        # kept in parity with run_shortlist's shortlist_details.json blob.
+        "pivot_price": tag_result.get("pivot_price"),
         "dims": [{"k": d["key"], "w": d["weight"], "s": d["score"],
                   "live": d["live"], "n": str(d["notes"])[:220]}
                  for d in conviction.per_dimension],

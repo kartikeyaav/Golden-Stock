@@ -58,6 +58,11 @@ def main() -> None:
         # favorable excursion measured only until the stop was hit (if it was)
         favorable_window = after[after["date"] <= stop_hit_date] if hit_stop else after
         max_fav_r = (float(favorable_window["high"].max()) - entry) / risk if risk else None
+        # adverse excursion mirrors the favorable one: the worst low reached
+        # over the same window, expressed in R against the suggested-stop risk
+        # (negative). Feeds future stop-width study — DISPLAY ONLY, no stop
+        # change now. A stopped trade lands at/below -1R (gap-throughs < -1R).
+        max_adv_r = (float(favorable_window["low"].min()) - entry) / risk if risk else None
         last_close = float(after["close"].iloc[-1])
 
         rows.append({
@@ -65,6 +70,7 @@ def main() -> None:
             "days_elapsed": int((after["date"].iloc[-1] - r["logged_at"]).days),
             "return_to_date_pct": round((last_close / entry - 1) * 100, 2),
             "max_favorable_R": round(max_fav_r, 2) if max_fav_r is not None else "",
+            "max_adverse_R": round(max_adv_r, 2) if max_adv_r is not None else "",
             "hit_suggested_stop": hit_stop,
             "r_to_date": round((last_close - entry) / risk, 2) if risk and not hit_stop else (-1.0 if hit_stop else ""),
             "status": "stopped" if hit_stop else "open",

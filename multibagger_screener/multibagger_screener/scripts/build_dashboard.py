@@ -94,6 +94,127 @@ def _fund_series(sym: str) -> dict:
     return out
 
 
+# --- Journal forensics (Journal tab) -------------------------------------
+# Cohort expectancy + R-distribution built from journal_outcomes.csv joined
+# with entry_signals.csv (nearest alert date per symbol) and
+# analyst_verdicts.csv. This is the FORWARD evidence that gates real-capital
+# scaling — a measurement of the append-only journal, never a decision input.
+
+_RHIST_BINS = [
+    ("<=-1", lambda x: x <= -1),
+    ("-1..-0.5", lambda x: -1 < x <= -0.5),
+    ("-0.5..0", lambda x: -0.5 < x <= 0),
+    ("0..0.5", lambda x: 0 < x <= 0.5),
+    ("0.5..1", lambda x: 0.5 < x <= 1),
+    ("1..2", lambda x: 1 < x <= 2),
+    ("2..3", lambda x: 2 < x <= 3),
+    (">3", lambda x: x > 3),
+]
+
+
+def _conv_band(v):
+    if v is None or pd.isna(v):
+        return None
+    v = float(v)
+    return "<50" if v < 50 else "50-60" if v < 60 else "60-70" if v < 70 else "70+"
+
+
+def _build_forensics(outcomes: pd.DataFrame) -> dict:
+    if outcomes is None or outcomes.empty:
+        return {}
+    df = outcomes.copy()
+    df["logged_at"] = pd.to_datetime(df["logged_at"], errors="coerce")
+    df["_r"] = pd.to_numeric(df.get("r_to_date"), errors="coerce")
+    df["_mfe"] = pd.to_numeric(df.get("max_favorable_R"), errors="coerce")
+    df["_mae"] = pd.to_numeric(df.get("max_adverse_R"), errors="coerce")
+    df["_conv"] = pd.to_numeric(df.get("conviction_score"), errors="coerce")
+    df["_status"] = df.get("status", "").astype(str)
+
+    def _load(name):
+        p = os.path.join(ROOT, "journal", name)
+        if not os.path.exists(p):
+            return None
+        f = pd.read_csv(p)
+        f["logged_at"] = pd.to_datetime(f["logged_at"], errors="coerce")
+        return f
+
+    es = _load("entry_signals.csv")       # entry-fidelity labels
+    ver = _load("analyst_verdicts.csv")   # BUY / SKIP verdicts
+
+    def _nearest(frame, sym, when, col):
+        if frame is None or col not in frame.columns:
+            return None
+        sub = frame[frame["symbol"] == sym]
+        if sub.empty or pd.isna(when):
+            return None
+        i = (sub["logged_at"] - when).abs().idxmin()
+        v = sub.loc[i, col]
+        return str(v) if pd.notna(v) else None
+
+    df["_fidelity"] = [_nearest(es, r.symbol, r.logged_at, "entry_status")
+                       for r in df.itertuples()]
+    df["_verdict"] = [_nearest(ver, r.symbol, r.logged_at, "verdict")
+                      for r in df.itertuples()]
+
+    def _kind_label(k):
+        return {"RE-ENTRY WINDOW": "RE-ENTRY"}.get(str(k), str(k))
+
+    def _verdict_label(v):
+        if v is None:
+            return "no verdict"
+        return "BUY" if str(v).upper() == "BUY" else "SKIP-or-WAIT"
+
+    df["_kind"] = df.get("kind", "").map(_kind_label)
+    df["_vlabel"] = df["_verdict"].map(_verdict_label)
+    df["_cband"] = df["_conv"].map(_conv_band)
+
+    def _agg(sub):
+        r = sub["_r"].dropna()
+        mfe = sub["_mfe"].dropna()
+        mae = sub["_mae"].dropna()
+        n = int(len(sub))
+        return {
+            "n": n,
+            "open": int((sub["_status"] == "open").sum()),
+            "stopped": int((sub["_status"] == "stopped").sum()),
+            "avg_r": round(float(r.mean()), 2) if len(r) else None,
+            "med_r": round(float(r.median()), 2) if len(r) else None,
+            "max_r": round(float(mfe.max()), 2) if len(mfe) else None,
+            "hit_stop_pct": round(float((sub["_status"] == "stopped").mean() * 100), 0),
+            "avg_mfe": round(float(mfe.mean()), 2) if len(mfe) else None,
+            "avg_mae": round(float(mae.mean()), 2) if len(mae) else None,
+        }
+
+    def _section(title, col, order):
+        rows = []
+        for label in order:
+            sub = df[df[col] == label]
+            n = int(len(sub))
+            if n == 0:
+                continue
+            if n < 3:
+                rows.append({"cohort": label, "n": n, "small": True})
+            else:
+                rows.append({"cohort": label, **_agg(sub)})
+        return {"title": title, "rows": rows}
+
+    sections = [
+        _section("By signal kind", "_kind",
+                 ["BUY CANDIDATE", "RE-ENTRY", "EPISODIC PIVOT"]),
+        _section("By conviction band", "_cband", ["<50", "50-60", "60-70", "70+"]),
+        _section("By entry fidelity", "_fidelity",
+                 ["VALIDATED", "AWAITING TRIGGER", "NO VCP BASE"]),
+        _section("By analyst verdict", "_vlabel",
+                 ["BUY", "SKIP-or-WAIT", "no verdict"]),
+    ]
+
+    rvals = df["_r"].dropna()
+    hist = [{"label": lab, "n": int(rvals.map(fn).sum())} for lab, fn in _RHIST_BINS]
+
+    return {"sections": sections, "hist": hist,
+            "n_total": int(df["_r"].notna().sum())}
+
+
 def build_payload() -> dict:
     universe = _read_csv("universe.csv")
     focus = _read_csv("focus_list.csv")
@@ -452,11 +573,17 @@ def build_payload() -> dict:
             conv = _num(r.get("conviction_score"), 0)
             if conv is None and sym in score_by_sym and pd.notna(score_by_sym[sym]):
                 conv = round(float(score_by_sym[sym]), 0)
+            # score coherence (2026-07-22): the Conv column shows the CURRENT
+            # read (same _score_cov the drawer/screener show), with the frozen
+            # alert-night number carried alongside for a "was X at alert" note
+            # when they diverge. Display only — the journaled value is untouched.
+            cur_conv, cur_cov = _score_cov(sym)
             actionable.append({
                 "sym": sym, "d": f"{r['logged_at']:%d %b}", "kind": str(r["kind"]),
                 "alert_px": alert_px, "now_px": now_px,
                 "chg": round((now_px / alert_px - 1) * 100, 1) if now_px and alert_px else None,
-                "conv": conv, "cov": _num(r.get("coverage_pct"), 0), "tag": tag_now,
+                "conv": conv, "cov": _num(r.get("coverage_pct"), 0),
+                "cur_conv": cur_conv, "cur_cov": cur_cov, "tag": tag_now,
                 "trigger": trigger_by_sym.get(sym, ""),
                 "verdict": verdict_by_sym.get(sym, ""), "status": status})
 
@@ -544,6 +671,7 @@ def build_payload() -> dict:
         "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,
+        "forensics": _build_forensics(outcomes),
         "actionable": actionable, "paper": paper,
         "outcomes": out_stats, "nifty": nifty,
         "heat": heat,
@@ -899,9 +1027,14 @@ td,th{padding:5px 6px}
   <div class="kpis" id="jstats"></div>
   <div class="card"><h2>Buy-signal scorecard &mdash; every buy alert, marked to market<span class="info" data-tip="One row per NEW UPTREND / RE-ENTRY / MOMENTUM BUY alert the machine ever fired, scored against its own suggested stop. R = profit in units of initial risk (+2R = made twice what the stop risked). Max R = best excursion so far. stopped = hit the stop (-1R, closed). This table only ever grows — signals never disappear, whatever happens to tags later.">?</span></h2>
   <div style="max-height:44vh;overflow:auto">
-  <table id="scoretbl"><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv</th><th>Alert &#8377;</th><th>Stop</th>
+  <table id="scoretbl"><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv<span class="dim" style="font-weight:400"> at alert</span><span class="info" data-tip="The conviction at the moment this alert fired — a frozen record, never revised. The stock's current read can differ; the Overview Actionable panel and the drawer show the live number.">?</span></th><th>Alert &#8377;</th><th>Stop</th>
   <th>Ret %<span class="info" data-tip="Plain price return since the alert (%).">?</span></th><th>R now<span class="info" data-tip="Return measured in units of risk. R = the entry-to-stop distance. +2R = made twice what the stop risked; -1R = hit the stop. This is how the system scores itself, because it normalizes every trade to the same risk.">?</span></th><th>Max R<span class="info" data-tip="The best R this alert ever reached (peak favorable move) — shows upside that a tighter or looser exit would have captured.">?</span></th><th>Status</th></tr></thead>
   <tbody id="scorebody"></tbody></table></div></div>
+  <div class="card"><h2>Journal forensics &mdash; cohort expectancy &amp; excursions<span class="info" data-tip="The forward evidence, sliced. Every buy-type signal in the append-only journal, marked to market against its own suggested stop, grouped into cohorts. This is what will gate scaling to real capital — measured, not asserted.">?</span></h2>
+  <div class="dim" style="font-size:12.5px;margin:-2px 0 12px">The forward, out-of-sample record that gates real-capital scaling: expectancy by cohort, honest at small samples (rows appear only at n&nbsp;&ge;&nbsp;3). MFE/MAE are the best and worst excursions in R — MAE informs future stop-width tests (display only; no stop changes now).</div>
+  <div id="forensics"></div>
+  <h3 style="margin:16px 0 6px;font-size:13px">R-distribution — where signals stand today</h3>
+  <div id="rhist"></div></div>
   <div class="card"><h2>All stage changes (last 50) &mdash; the raw stream<span class="info" data-tip="Every stage transition the scan logged recently (e.g. NEUTRAL → UPTREND), newest first — the unfiltered feed behind the scorecard above.">?</span></h2>
   <table id="jstreamtbl"><thead><tr><th>When</th><th>Symbol</th><th>Signal</th><th>Detail</th></tr></thead>
   <tbody id="jbody"></tbody></table></div>
@@ -1065,11 +1198,25 @@ if(!all.length){$('#actionable').innerHTML='<div class="quiet">No buy signals in
 const live=all.filter(a=>a.status==='ACTIONABLE'),rest=all.filter(a=>a.status!=='ACTIONABLE');
 const prime=live.filter(a=>a.dokind==='act'||a.dokind==='ep'||a.dokind==='watch'),weak=live.filter(a=>a.dokind==='weak');
 const nv=prime.filter(a=>a.dokind==='act'||a.dokind==='ep').length;
+/* Conv column shows the CURRENT read (cur_conv, same _score_cov as the
+   screener/drawer), falling back to the alert-night number. When the two
+   diverge by >=1.0 a subtle * marks a "was X at alert (date)" tooltip. */
+const convCellAct=a=>{const cv=a.cur_conv!=null?a.cur_conv:a.conv;
+ if(cv==null)return '—';
+ const cc=a.cur_conv!=null?a.cur_cov:a.cov;
+ const drift=a.cur_conv!=null&&a.conv!=null&&Math.abs(a.cur_conv-a.conv)>=1.0;
+ const tech=cc!=null&&cc<60;
+ let tip='';
+ if(drift)tip='was '+a.conv+' at alert ('+a.d+')';
+ if(tech)tip=(tip?tip+' · ':'')+'Technical read — only '+cc+'% of the 8 scored questions had data. Not comparable with full-coverage conviction scores.';
+ const star=tech?'<span style="color:#fbbf24">°</span>':'';
+ const dm=drift?'<span style="color:#5aa2ff" title="current read differs from the alert-night value">*</span>':'';
+ return tip?`<span data-tip="${tip}">${cv}${star}${dm}</span>`:`${cv}${star}`;};
 const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  return `<tr onclick="openDrawer('${a.sym}')">
  <td><span class="dochip" data-tip="${esc(DOEXPL[a.dokind]||'')}" style="background:${c}12;color:${c};border-color:${c}45">${a.do}</span></td>
  <td class="sym">${a.sym}${a.n>1?`<span class="ndot" title="alerted ${a.n}× in 7 days">×${a.n}</span>`:''}</td>
- <td class="mono">${a.conv==null?'—':(a.cov!=null&&a.cov<60?`<span data-tip="Technical read — only ${a.cov}% of the 8 scored questions had data (fundamentals unavailable at alert time). Not comparable with full-coverage conviction scores.">${a.conv}<span style="color:#fbbf24">°</span></span>`:a.conv)}</td>
+ <td class="mono">${convCellAct(a)}</td>
  <td style="font-size:11px">${voiceChips(a.sym,a.verdict)}</td>
  <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
  <td class="dim mono">${a.d}</td></tr>`};
@@ -1280,12 +1427,15 @@ d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
 <h1 style="font-size:20px">${sym} <span class="pill" data-tip="${esc(tlt(r.tag))}" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'};margin-left:6px">${esc(tl(r.tag))}</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
 <div class="dim" style="font-size:12.5px;margin:4px 0 14px">${esc(r.company||'')} · ${esc(r.ind||'')}${r.tier?' · <b style="color:'+(TIERC[r.tier]||'#94a3b8')+'">'+r.tier+'-cap</b>'+(r.mcap?' '+fmtCr(r.mcap):''):''} · RS percentile ${r.rs??'—'} · ${(()=>{const dt=D.details[sym];
  if(dt&&dt.score!=null){const tr=dt.label==='Technical Read';
-  return `conviction <span${tr?` data-tip="Technical read — only ${dt.coverage}% of the 8 scored questions had data for this read. Not comparable with full-coverage conviction scores."`:''}>${dt.score}${tr?'<span style="color:#fbbf24">°</span>':''}</span> <span class="axis">(read of ${esc(dt.alerted_at||dt.scored_at||'?')}, coverage ${dt.coverage??'?'}%)</span>`;}
+  const _a=(D.actionable||[]).find(x=>x.sym===sym);
+  const _was=(_a&&_a.conv!=null&&Math.abs(dt.score-_a.conv)>=1.0)?` <span class="axis" data-tip="This name's current read differs from the conviction frozen when it alerted.">(was ${_a.conv} at alert)</span>`:'';
+  return `conviction <span${tr?` data-tip="Technical read — only ${dt.coverage}% of the 8 scored questions had data for this read. Not comparable with full-coverage conviction scores."`:''}>${dt.score}${tr?'<span style="color:#fbbf24">°</span>':''}</span> <span class="axis">(read of ${esc(dt.alerted_at||dt.scored_at||'?')}, coverage ${dt.coverage??'?'}%)</span>${_was}`;}
  return 'conviction '+(r.score??'—')+' <span class="axis">(weekly ranking)</span>';})()}${r.arch?' · '+esc(r.arch):''}</div>
 ${convergenceSection(sym,r)}
 ${planSection(sym,r)}
 ${whySection(sym)}
 <div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">chart not cached for this name yet — it loads with the next scan alert or weekly refresh (or run: python scripts/enrich.py '+sym+')</div>'}</div>
+${hasOhlc?'<div id="drswrap"><div class="axis" style="margin:8px 0 2px">RS vs NIFTY <span class="info" data-tip="Relative strength = this stock close divided by the NIFTY close, set to 1.0 at the window start. A rising line means the stock is outperforming the market; a falling line means it is lagging. Computed client-side from the same price history the candles use.">?</span></div><div id="drs" style="height:80px"></div></div>':''}
 ${newsSection(sym)}
 <div class="minis">
 <div class="mini"><h3>Quarterly net profit (₹ Cr per quarter)</h3>${miniBars(f.q_labels||[],f.np||[])}</div>
@@ -1306,7 +1456,32 @@ const pos=D.positions.find(p=>p.sym===sym);
 if(pos){cs.createPriceLine({price:pos.stop,color:'#f87171',lineStyle:2,title:'stop'});
 cs.createPriceLine({price:pos.be,color:'#fbbf24',lineStyle:2,title:'b/e'});
 cs.createPriceLine({price:pos.partial,color:'#34d399',lineStyle:2,title:'partial 2.5R'});}
-c.timeScale().fitContent();}};
+/* trade geometry from the drawer detail plan — display only, honest empty
+   state (a line draws only when its datum exists). A real position already
+   shows its own stop/b-e/partial above, so for those names we add only the
+   VCP pivot to avoid doubling; otherwise draw the full plan geometry. */
+const _dtl=D.details[sym]||{};const _pl=_dtl.plan||{};
+if(_dtl.pivot_price!=null)cs.createPriceLine({price:_dtl.pivot_price,color:'#5aa2ff',lineStyle:2,title:'pivot'});
+if(!pos){
+ if(_pl.stop_loss_price!=null)cs.createPriceLine({price:_pl.stop_loss_price,color:'#f87171',lineStyle:2,title:'stop'});
+ if(_pl.breakeven_trigger!=null)cs.createPriceLine({price:_pl.breakeven_trigger,color:'#fbbf24',lineStyle:2,title:'b/e'});
+ if(_pl.partial_price!=null)cs.createPriceLine({price:_pl.partial_price,color:'#34d399',lineStyle:2,title:'+2.5R'});}
+c.timeScale().fitContent();
+/* RS vs NIFTY pane — stock close / NIFTY close, date-matched and normalized
+   to 1.0 at the window start. Computed client-side from D.ohlc + D.nifty (no
+   new per-stock series embedded). Hidden when <10 aligned points. */
+(function(){const wrap=$('#drswrap');if(!wrap)return;
+ const nx={};(D.nifty||[]).forEach(p=>{nx[p[0]]=p[1];});
+ const rs=[];let base=null;
+ for(const p of data){const nv=nx[p[0]];if(nv==null||!nv)continue;
+  const ratio=p[4]/nv;if(base==null)base=ratio;
+  rs.push({time:p[0],value:+(ratio/base).toFixed(4)});}
+ if(rs.length<10){wrap.remove();return;}
+ const rc=mkChart($('#drs'),80);
+ const rl=rc.addLineSeries({color:'#a78bfa',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
+ rl.setData(rs);
+ rl.createPriceLine({price:1,color:'#475569',lineStyle:3,title:'start'});
+ rc.timeScale().fitContent();})();}};
 window.closeDrawer=function(){$('#drawer').classList.remove('open');$('#ovl').classList.remove('show');};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
 
@@ -1389,6 +1564,40 @@ return `<tr onclick="openDrawer('${s.sym}')"${s.re?' style="opacity:.55"':''}><t
 <td class="mono dim">${s.maxr!=null?'+'+s.maxr+'R':''}</td>
 <td><span class="pill" style="border-color:${st};color:${st}">${esc(s.status)}</span></td></tr>`}).join('')
 :'<tr><td colspan="10" class="quiet">No buy signals tracked yet.</td></tr>';
+
+/* journal forensics — cohort expectancy table + R-distribution histogram.
+   Cohorts appear only at n>=3 (honest small-sample handling); MFE/MAE are the
+   best/worst excursions in R. All display — measures the append-only journal,
+   never a decision input. */
+(function(){const F=D.forensics||{};const el=$('#forensics');
+ if(!el)return;
+ const rcol=v=>v==null?'#94a0b0':v>0?'#34d399':v<0?'#f87171':'#94a0b0';
+ const cell=(v,col)=>v==null?'<td class="mono dim">—</td>'
+  :`<td class="mono"${col?` style="color:${rcol(v)};font-weight:700"`:''}>${v>0?'+':''}${v}R</td>`;
+ if(!F.sections||!F.sections.length){el.innerHTML='<div class="quiet">No forward signals tracked yet — this fills as buy alerts age.</div>';}
+ else{let h='<div style="overflow:auto"><table id="fortbl"><thead><tr><th>Cohort</th><th>n</th><th>open</th><th>stopped</th><th>avg R</th><th>med R</th><th>max R</th><th>hit-stop %</th><th>avg MFE</th><th>avg MAE</th></tr></thead><tbody>';
+  F.sections.forEach(sec=>{
+   h+=`<tr><td colspan="10" style="font-weight:700;font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:#cbd5e1;padding:12px 9px 4px;cursor:default">${esc(sec.title)}</td></tr>`;
+   if(!sec.rows||!sec.rows.length){h+='<tr><td colspan="10" class="axis" style="cursor:default">no signals in these cohorts yet</td></tr>';return;}
+   sec.rows.forEach(r=>{
+    if(r.small){h+=`<tr class="dim" style="cursor:default"><td>${esc(r.cohort)}</td><td class="mono">${r.n}</td><td colspan="8" class="axis">n too small (need &ge;3) — held back until it grows</td></tr>`;return;}
+    h+=`<tr style="cursor:default"><td>${esc(r.cohort)}</td><td class="mono">${r.n}</td>`
+      +`<td class="mono dim">${r.open}</td><td class="mono dim">${r.stopped}</td>`
+      +cell(r.avg_r,true)+cell(r.med_r,false)+cell(r.max_r,false)
+      +`<td class="mono">${r.hit_stop_pct!=null?r.hit_stop_pct+'%':''}</td>`
+      +cell(r.avg_mfe,false)+cell(r.avg_mae,false)+'</tr>';});});
+  h+='</tbody></table></div>';el.innerHTML=h;}
+ const H=F.hist||[];const rh=$('#rhist');if(!rh)return;
+ if(!H.length||!H.some(b=>b.n>0)){rh.innerHTML='<div class="quiet">No R values computed yet.</div>';return;}
+ const mx=Math.max(...H.map(b=>b.n))||1;
+ const barcol=l=>l==='<=-1'?'#f87171':(l.charAt(0)==='-'?'#fbbf24':'#34d399');
+ rh.innerHTML='<div style="display:flex;align-items:flex-end;gap:6px;height:120px">'+H.map(b=>{
+  const hh=b.n/mx*100;
+  return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">
+   <div class="mono axis" style="font-size:10px;margin-bottom:2px">${b.n||''}</div>
+   <div title="${esc(b.label)}: ${b.n} signal${b.n===1?'':'s'}" style="width:100%;height:${b.n?Math.max(hh,3):0}%;background:${barcol(b.label)};opacity:.82;border-radius:3px 3px 0 0"></div></div>`;}).join('')
+  +'</div><div style="display:flex;gap:6px;margin-top:4px">'+H.map(b=>`<div class="axis" style="flex:1;text-align:center;font-size:9.5px">${esc(b.label)}</div>`).join('')+'</div>'
+  +`<div class="axis" style="margin-top:7px">R to date across ${F.n_total||0} signals with a computed R. Left of zero = underwater, right = in profit; -1R is a full stop-out. Bins in units of R (initial risk).</div>`;})();
 
 /* paper book */
 (function(){const P=D.paper||{};

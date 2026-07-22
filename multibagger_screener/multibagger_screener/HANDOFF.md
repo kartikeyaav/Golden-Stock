@@ -695,6 +695,51 @@ zero horizontal overflow, all 3 workflow YAMLs parse.
 
 ---
 
+## 3M. Chart geometry + journal forensics + score coherence (2026-07-21/22)
+
+Three DISPLAY-ONLY dashboard features under the evidence lock — no change to
+alerts, tags, entries, stops, sizing, or journaling.
+
+- **Drawer trade geometry + RS line.** The drawer candle chart now draws the
+  plan's stop / breakeven / +2.5R price lines and the VCP `pivot` (lightweight
+  `createPriceLine`, same pattern as Positions). Lines draw only when the datum
+  exists (honest empty state); when a real position exists its own lines show,
+  so we add only the pivot there to avoid doubling. Below the candles a ~80px
+  "RS vs NIFTY" pane plots stock-close ÷ NIFTY-close, date-matched and
+  normalized to 1.0 at window start — computed CLIENT-SIDE from `D.ohlc`+
+  `D.nifty` (no new per-stock series embedded), hidden when <10 aligned points.
+  Schema: `pivot_price` (from `tag_stock`) added to the drawer detail blob in
+  BOTH `run_shortlist.py` and `daily_scan.build_candidate` (parity kept). Old
+  blobs without the key null-guard fine; the key populates on the next
+  weekly/nightly write.
+
+- **Journal forensics (Journal tab).** New cohort-expectancy table built from
+  `journal_outcomes.csv` joined with `entry_signals.csv` (nearest alert date)
+  and `analyst_verdicts.csv`: cohorts by signal kind, conviction band
+  (<50/50-60/60-70/70+), entry-fidelity label, and analyst verdict — columns
+  n / open / stopped / avg-R / med-R / max-R / hit-stop% / avg-MFE / avg-MAE,
+  rows shown only at n≥3 (else an "n too small" note). Plus an R-distribution
+  histogram (8 bins, CSS bars). `journal_outcomes.py` extended with
+  `max_adverse_R` (worst low excursion in R vs suggested-stop risk, mirrors
+  `max_favorable_R`) — new derived column, regenerated. Framed as the forward
+  evidence that gates real-capital scaling; MAE informs future stop-width tests
+  (display only, no stop change now). No A/B machine-vs-AI framing.
+
+- **Score coherence.** Overview Actionable "Conv" column now shows the CURRENT
+  read from `_score_cov(sym)` (fallback: journal alert value); when the two
+  differ ≥1.0 a subtle `*` marks a "was X at alert (date)" tooltip. Journal
+  scorecard "Conv" header labelled "at alert" (frozen record). Drawer header
+  appends "(was X at alert)" when the current read diverges ≥1.0 from the
+  alert-night conviction. No journaled value touched on disk.
+
+Verified: all 3 test scripts exit 0, build exits 0, payload asserts pass
+(forensics kind+conviction cohorts present, pivot_price null-guarded,
+USHAMART screener row 71.3 / cov 100 regression intact), main inline script
+passes `node --check`, and a served render shows forensics + RS pane + drift
+tooltips with zero console errors.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
