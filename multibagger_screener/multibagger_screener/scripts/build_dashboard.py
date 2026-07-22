@@ -262,6 +262,13 @@ def build_payload() -> dict:
             radar = json.load(open(rpath, encoding="utf-8"))
         except ValueError:
             pass
+    # current price on each radar hit (display only) — the radar is a decision
+    # surface and the price matters when judging a name; uses the same
+    # partial-bar-guarded cache as every other price on the dashboard.
+    for _h in radar.get("hits", []):
+        _dfp = load_ohlcv(_h.get("sym"))
+        _h["price"] = (round(float(_dfp["close"].iloc[-1]), 2)
+                       if _dfp is not None and len(_dfp) else None)
     company_by_sym = dict(zip(universe.get("symbol", []), universe.get("company", [])))
 
     state_path = os.path.join(ROOT, "state", "tags_state.json")
@@ -920,8 +927,8 @@ td,th{padding:5px 6px}
 .funnelline{font-size:10.5px;line-height:1.8}
 /* phones: drop low-value columns so the decision columns fit without
    sideways scrolling — the drawer always carries the full detail */
-#actionable th:nth-child(4),#actionable td:nth-child(4),
-#actionable th:nth-child(6),#actionable td:nth-child(6){display:none}          /* AI view · Alerted */
+#actionable th:nth-child(5),#actionable td:nth-child(5),
+#actionable th:nth-child(7),#actionable td:nth-child(7){display:none}          /* AI view · Alerted (Price added at col 3) */
 #actionable .mono{font-size:10px;white-space:nowrap}
 #actionable .sym{font-size:11px}
 #tbl td:first-child{font-size:11px;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -949,8 +956,8 @@ td,th{padding:5px 6px}
 #scoretbl th:nth-child(1),#scoretbl td:nth-child(1),
 #scoretbl th:nth-child(5),#scoretbl td:nth-child(5),
 #scoretbl th:nth-child(6),#scoretbl td:nth-child(6){display:none}              /* When · Alert price · Stop */
-#radartbl th:nth-child(4),#radartbl td:nth-child(4),
-#radartbl th:nth-child(6),#radartbl td:nth-child(6){display:none}              /* RS% · Filing text */
+#radartbl th:nth-child(5),#radartbl td:nth-child(5),
+#radartbl th:nth-child(7),#radartbl td:nth-child(7){display:none}              /* RS% · Filing text (Price added at col 3) */
 .papertbl th:nth-child(3),.papertbl td:nth-child(3),
 .papertbl th:nth-child(5),.papertbl td:nth-child(5),
 .papertbl th:nth-child(7),.papertbl td:nth-child(7){display:none}              /* Entered · Stop · Shares */
@@ -1220,11 +1227,12 @@ const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  return `<tr onclick="openDrawer('${a.sym}')">
  <td><span class="dochip" data-tip="${esc(DOEXPL[a.dokind]||'')}" style="background:${c}12;color:${c};border-color:${c}45">${a.do}</span></td>
  <td class="sym">${a.sym}${a.n>1?`<span class="ndot" title="alerted ${a.n}× in 7 days">×${a.n}</span>`:''}</td>
+ <td class="mono">${a.now_px!=null?'&#8377;'+a.now_px:'—'}</td>
  <td class="mono">${convCellAct(a)}</td>
  <td style="font-size:11px">${voiceChips(a.sym,a.verdict)}</td>
  <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
  <td class="dim mono">${a.d}</td></tr>`};
-const hdr='<tr><th>Action</th><th>Symbol</th><th>Conv</th><th>AI view<span class="info" data-tip="What each AI layer says about this name, side by side. A: = nightly analyst verdict (last 10 days) · C: = weekly committee (pick / reviewed-and-passed-over) · N: = news radar hit since last scan. Empty = that layer has no current view. The machine\'s own view is this row itself — conviction + tag.">?</span></th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
+const hdr='<tr><th>Action</th><th>Symbol</th><th>Price</th><th>Conv</th><th>AI view<span class="info" data-tip="What each AI layer says about this name, side by side. A: = nightly analyst verdict (last 10 days) · C: = weekly committee (pick / reviewed-and-passed-over) · N: = news radar hit since last scan. Empty = that layer has no current view. The machine\'s own view is this row itself — conviction + tag.">?</span></th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
 let h=`<div class="acthead">${nv
  ?`<b style="color:#34d399">&#9679; ${nv} buy signal${nv>1?'s':''} — act today <span class="dim" style="font-weight:400">(BUY NOW / MOMENTUM BUY)</span></b>`
  :`<b style="color:#94a3b8">&#9675; No buy signals today — nothing requires action.</b>`}
@@ -1255,13 +1263,14 @@ $('#radarcard').style.display='block';
 const CC={pos:'#34d399',neg:'#f87171',attn:'#fbbf24'};
 const DOT={pos:'▲',neg:'▼',attn:'◆'};
 const shown=hits.slice(0,15);
-$('#radarbody').innerHTML=`<table id="radartbl"><thead><tr><th></th><th>Symbol</th><th>Tag</th><th>RS%</th><th>Event</th><th>Filing</th></tr></thead><tbody>`+
+$('#radarbody').innerHTML=`<table id="radartbl"><thead><tr><th></th><th>Symbol</th><th>Price</th><th>Tag</th><th>RS%</th><th>Event</th><th>Filing</th></tr></thead><tbody>`+
 shown.map(h=>{const c=CC[h.cls]||'#94a3b8';
 const badge=h.urgent?'<span class="pill" style="border-color:#f87171;color:#f87171;font-size:9px">HELD</span> ':
  h.confluence?'<span class="pill" style="border-color:#34d399;color:#34d399;font-size:9px" data-tip="Positive news + a chart the technical layer already rates actionable/forming — research first.">CONFLUENCE</span> ':'';
 return `<tr onclick="openDrawer('${h.sym}')"${h.confluence?' style="background:#34d39908"':h.urgent?' style="background:#f8717108"':''}>
 <td style="color:${c};font-weight:700">${DOT[h.cls]||'•'}</td>
 <td class="sym">${h.sym}${h.n>1?`<span class="ndot" title="${h.n} filings">×${h.n}</span>`:''}</td>
+<td class="mono">${h.price!=null?'&#8377;'+h.price:'—'}</td>
 <td><span class="pill" data-tip="${esc(tlt(h.tag))}" style="border-color:${TC[h.tag]||'#475569'};color:${TC[h.tag]||'#94a3b8'}">${esc(tl(h.tag)||'—')}</span></td>
 <td class="mono">${h.rs!=null?Math.round(h.rs):'—'}</td>
 <td style="color:${c};font-size:11.5px">${esc(h.event)} ${badge}</td>
