@@ -174,6 +174,10 @@ def main() -> None:
             "stage_name": tag.get("stage", {}).get("stage_name", ""),
             "tt_checks": tag.get("trend_template_checks_passed", 0),
             "vcp": tag.get("vcp_valid", False),
+            # VCP breakout pivot for the drawer chart geometry (display only);
+            # kept in parity with daily_scan.build_candidate's detail blob.
+            # Old blobs without this key null-guard fine in the JS.
+            "pivot_price": tag.get("pivot_price"),
             "dims": [{"k": d["key"], "w": d["weight"], "s": d["score"],
                       "live": d["live"], "n": d["notes"][:220]}
                      for d in conv.per_dimension],
