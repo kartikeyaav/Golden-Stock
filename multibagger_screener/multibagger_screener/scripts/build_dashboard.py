@@ -353,23 +353,27 @@ def build_payload() -> dict:
     arch_by_sym = dict(zip(ranked.get("symbol", []), ranked.get("archetypes", [])))
 
     def _score_cov(sym):
-        """Screener score/coverage for one row. Prefer the SAME merged `details`
-        read the drawer + Actionable panel show (weekly shortlist_details, with
-        tonight's alert_details winning coverage-aware) so every surface shows
-        one number; fall back to the ranked CSV as a safety net. This is why a
-        name that turned CONFIRMED mid-week — scored by the nightly scan, not
-        last Sunday's batch (e.g. USHAMART) — is no longer blank here until the
-        weekly refresh. Display only: tags/entries/sizing are untouched."""
+        """Screener (score, coverage, vetoed) for one row. Prefer the SAME
+        merged `details` read the drawer + Actionable panel show (weekly
+        shortlist_details, with tonight's alert_details winning coverage-aware)
+        so every surface shows one number; fall back to the ranked CSV as a
+        safety net. This is why a name that turned CONFIRMED mid-week — scored
+        by the nightly scan, not last Sunday's batch (e.g. USHAMART) — is no
+        longer blank here until the weekly refresh. The veto flag RIDES WITH the
+        score's source: an alert-only vetoed name (not in the weekly shortlist)
+        must still show the veto marker, not a bare 25. Display only:
+        tags/entries/sizing are untouched."""
         d = details.get(sym)
         if d is not None and d.get("score") is not None:
             cov = d.get("coverage")
             return (round(float(d["score"]), 1),
-                    round(float(cov), 0) if cov is not None else None)
+                    round(float(cov), 0) if cov is not None else None,
+                    bool(d.get("veto_reasons")))
         if sym in score_by_sym and pd.notna(score_by_sym[sym]):
             c = (round(float(cov_by_sym[sym]), 0)
                  if sym in cov_by_sym and pd.notna(cov_by_sym[sym]) else None)
-            return round(float(score_by_sym[sym]), 1), c
-        return None, None
+            return round(float(score_by_sym[sym]), 1), c, bool(veto_by_sym.get(sym, False))
+        return None, None, bool(veto_by_sym.get(sym, False))
 
     TIER = {"microcap250": "Micro", "smallcap250": "Small", "midcap150": "Mid"}
 
@@ -406,7 +410,7 @@ def build_payload() -> dict:
             "close": live_close,
             "turn": round(float(r["turnover_cr"]), 1) if pd.notna(r.get("turnover_cr")) else None,
             "score": _score_cov(sym)[0], "cov": _score_cov(sym)[1],
-            "veto": bool(veto_by_sym.get(sym, False)),
+            "veto": _score_cov(sym)[2],
             "arch": "" if "untagged" in arch else arch[:26],
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
             "pgttm": f.get("profit_growth_ttm"),
@@ -439,7 +443,7 @@ def build_payload() -> dict:
             "close": live_close,
             "turn": None,
             "score": _score_cov(sym)[0], "cov": _score_cov(sym)[1],
-            "veto": bool(veto_by_sym.get(sym, False)),
+            "veto": _score_cov(sym)[2],
             "arch": "" if "untagged" in arch else arch[:26],
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
             "pgttm": f.get("profit_growth_ttm"),
@@ -577,7 +581,7 @@ def build_payload() -> dict:
             # read (same _score_cov the drawer/screener show), with the frozen
             # alert-night number carried alongside for a "was X at alert" note
             # when they diverge. Display only — the journaled value is untouched.
-            cur_conv, cur_cov = _score_cov(sym)
+            cur_conv, cur_cov, _ = _score_cov(sym)
             actionable.append({
                 "sym": sym, "d": f"{r['logged_at']:%d %b}", "kind": str(r["kind"]),
                 "alert_px": alert_px, "now_px": now_px,
