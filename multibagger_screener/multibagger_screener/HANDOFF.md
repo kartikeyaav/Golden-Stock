@@ -740,6 +740,109 @@ tooltips with zero console errors.
 
 ---
 
+## 3N. Penny / nano-cap screen + system audit (2026-07-25)
+
+Two deliverables. The audit is in `AUDIT_2026-07-25.md` (read it — Finding 1
+is the most consequential thing found since the equity-basis sizing
+correction). Summary of the audit:
+
+- **F1 (critical)** The nightly scan is structurally blind to ~**73%** of the
+  entries the backtest validated. Measured: the engine's entry fires 66 times
+  in a 60-stock/6.2-year sample (~1.7/week across 611 names); the live tagger
+  agrees on 55/66; but only **15 of 55** fell on a tag-TRANSITION day, and
+  transitions are the only thing the scan alerts on. Live corroboration
+  (through the 07-24 cloud run): **117** buy alerts, **zero** VALIDATED,
+  forward expectancy **-0.20R** (was +0.14R on 07-21) vs backtest +1.67R. Fix is
+  the EP pattern — fire `validated_entry` as an **event** alert (idempotent by
+  `{symbol: bar_date}`), which adds no gate and no signal, it only makes an
+  already-validated entry alertable. **NOT implemented — needs your go-ahead
+  because it changes what fires nightly.**
+- **F2 (high)** `journal_outcomes.py` never applies the two-lot exits and
+  enters at the alert-night close, so the forward number is not comparable
+  with the backtest number it is meant to gate.
+- **F3-F8** gap-through stops booked at exactly -1R · capture-recall headline
+  excludes ineligible movers before computing the ratio · **holdings.csv and
+  positions.csv are public** in the repo and on Pages · `RISK.capital` still
+  the ₹10L placeholder · EP class has not fired yet (watch) · universe
+  blindness (addressed below).
+
+**PENNY / NANO-CAP SCREEN — a second, separate universe.** The main system
+watches 651 index constituents; real penny names are in none of those indices.
+User decisions (2026-07-25): universe = **price < ₹100 OR mcap < ₹1,000 Cr**
+(both arms, filterable in the UI); status = **research-only, journaled, zero
+capital**.
+
+- **Data spine** `data/nse_all.py` — four free unauthenticated NSE sources,
+  all verified working: `EQUITY_L.csv` (symbol master + series + listing date),
+  the daily **bhavcopy** (OHLC + turnover + trade count for every security,
+  UDiFF zip), `sec_list.csv` (**circuit band** + GSM stage), and
+  `api/reportASM` (ASM long/short). Cached under `nse_cache/` (gitignored,
+  refetches in ~1 min).
+- **The screen's edge is the exclusions, not the score.** In this class you
+  lose because you cannot EXIT: a 2-5% band, trade-to-trade (BE) settlement,
+  GSM/ASM surveillance or a circuit-locked tape turns a -8% stop into a -40%
+  hole. `scripts/build_penny_universe.py` applies hard gates first —
+  EQ series only · band >= 10% · no GSM · no ASM · >= ₹0.5 Cr median daily
+  turnover · >= 300 trades/day · traded every session · <= 20% of sessions
+  circuit-locked · price >= ₹5 · listed >= 1 year. First run:
+  **2,479 EQ securities -> 1,251 tradable -> 218 penny/nano** (157 on the price
+  arm, 94 on the mcap arm, overlapping; 112 more held pending a market-cap read
+  and resolving as the fundamentals cache fills). Every reject keeps its reason
+  in `penny_excluded.csv` and the funnel is shown in the UI.
+- **Score** `scoring/penny_score.py`, five blocks, coverage-renormalized and
+  veto-capped exactly like the main conviction score: inflection 30 (loss->
+  profit only counts when the OPM series confirms it — Design Law #5),
+  momentum 25 (RS ranked *within the penny universe*, trend template, 52w
+  position, volume expansion, EP), ownership 20 (promoter level+trend, pledge,
+  any institutional holder at all — most shells have none), tradability 15
+  (scored, not just gated), valuation 10 (froth guard only). **Vetoes** cap at
+  25: pledge >10%, promoter stake <15%, share capital up >50% in 3y (serial
+  dilution is the value-transfer pattern in this class), trailing sales <₹10 Cr.
+- **Wiring** `scripts/penny_fundamentals.py` (separate from
+  `fetch_fundamentals.py` so penny names can never leak into
+  `fundamentals_flat.csv`; shares only the page cache) ·
+  `scripts/penny_scan.py` -> `penny_ranked.csv`, `penny_report.md`,
+  `state/penny_details.json`, and the append-only `journal/penny_journal.csv`
+  (top 20 per run, one row per symbol per day) · **Penny tab** in the dashboard
+  (hidden until the scan has run; amber accent, arm/stage/veto filters, funnel
+  panel, per-name drawer with the five blocks, risk flags and a "can you get
+  out?" table) · added to `weekly_refresh.py` as three non-fatal steps
+  (`--skip-penny` to skip) with the fundamentals fetch capped at 150/run.
+- **Honesty guardrails baked in:** the tab, the report and the drawer all state
+  that no backtest stands behind these reads; suggested discipline (<=5% of
+  book in the class, <=1% per name) is shown as guidance, never as a sized
+  plan; the reference stop exists only so the journal can score outcomes.
+- **First live result:** 59 of 218 (27%) carry a hard veto — JPPOWER (73%
+  pledge), HCC (82% pledge), IDEA (share capital +123% in 3y AND negative net
+  worth), INOXWIND (+430% dilution), PAISALO (+102% dilution — it ranked #1
+  before fundamentals landed, which is the whole argument for putting the
+  survival screen ahead of the score). Veto refinement made during the build:
+  "no promoter" alone does NOT veto when institutions hold >=25% — IDFC First
+  and Ujjivan SFB are widely held by design, not abandoned; they get a risk
+  flag instead.
+- **The journal was reset once, deliberately.** The first run's rows were
+  written before the fundamentals landed (40% coverage, zero vetoes wired) and
+  would have poisoned the forward record from day one — same call as the
+  synthetic-row removal in the 2026-07-07 audit. It had never been committed or
+  published. The record now starts 2026-07-25 with the complete scorer.
+- **Tests** `tests/test_penny_screen.py` — 35 checks, all green (vetoes fire
+  and cap, coverage renormalizes, the margin guard separates confirmed from
+  unconfirmed turnarounds, tradability scoring, risk flags, and the bhavcopy
+  liquidity/circuit statistics).
+
+**Known limitation, stated plainly:** the price arm admits large companies with
+many shares outstanding (South Indian Bank, Vodafone Idea, Ujjivan). That is
+inherent to a price-based definition — filter the tab to the **MCAP** arm for
+genuine nano-caps. The mcap arm needs the fundamentals cache filled for the 601
+pending names before it is complete.
+
+**The next honest step for this screen** is a pre-registered backtest of the
+penny score through `backtest/engine.py` with the same two-lot rules and costs,
+against the technical-only baseline. Until that exists these are ideas with a
+liquidity check, not signals.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -809,6 +912,14 @@ tooltips with zero console errors.
 ## 6. NEXT TASK (what a fresh chat should pick up)
 
 Priority order:
+
+0. **DECIDE ON AUDIT FINDING 1** (`AUDIT_2026-07-25.md`) — the scan cannot see
+   ~73% of the entries the backtest validated, and has fired zero of them in
+   86 live alerts. The fix mirrors the already-adopted EP event wiring and adds
+   no gate. This outranks everything below: until it lands, the live system is
+   not trading the system that was validated. Finding 2 (the forward journal
+   measures a different quantity than the backtest) is the necessary companion —
+   fixing F1 without F2 means the new alerts still get scored on the wrong ruler.
 1. **Watch Monday's scan** (first night the revived analyst can fire on a
    real alert; committee cross-checks refresh from stale Jul-9 verdicts)
    and the first few News Radar nights (precision in the wild — if noise
@@ -894,6 +1005,16 @@ scripts/position_manager.py   open positions vs their two-lot plans
 scripts/survivorship_check.py Wayback constituent diff
 scripts/import_holdings.py    sync holdings.csv from a Zerodha Console CSV export (no daily Kite login)
 scripts/backup_push.py        commits+pushes the forward record to GitHub nightly (non-fatal)
+AUDIT_2026-07-25.md           system audit: the validated-entry visibility gap (F1) + 7 more, with measurements
+data/nse_all.py               whole NSE cash market: symbol master, bhavcopy, circuit band + GSM, ASM
+scripts/build_penny_universe.py  penny/nano universe = tradability gates first, then price<100 OR mcap<1000Cr
+scripts/penny_fundamentals.py    screener.in for penny names (never touches fundamentals_flat.csv)
+scoring/penny_score.py        5-block penny score + survival vetoes (research only, no backtest)
+scripts/penny_scan.py         rank + report + append-only journal/penny_journal.csv
+penny_universe.csv            names that survived the gates      penny_excluded.csv  every reject + reason
+penny_ranked.csv              scored + ranked                    penny_report.md     the readable output
+state/penny_details.json      drawer blob   state/penny_meta.json  funnel counts (single source for the UI)
+tests/test_penny_screen.py    32 checks on the penny screen's judgement
 scripts/run_sizing_matrix.py  sizing matrix v1: risk% x position-slot sweep (slots REJECTED, risk saturates)
 scripts/run_sizing_matrix2.py sizing matrix v2: cash- vs equity-basis sizing (equity ADOPTED, ~2x corrected CAGR)
 sizing_matrix_report.md       v1 table + verdict

@@ -57,6 +57,15 @@ JOBS: dict[str, list[tuple[str, str, list[str]]]] = {
     "weekly": [
         ("weekly refresh (committee SKIPPED)", "weekly_refresh.py", ["--no-ai"]),
     ],
+    # penny / nano-cap research screen — its own button because it hits NSE +
+    # screener.in and takes a few minutes, and because it must never be
+    # confused with the validated pipeline above (zero capital, no alerts)
+    "penny": [
+        ("penny universe (whole NSE + tradability gates)", "build_penny_universe.py", []),
+        ("penny fundamentals (capped, cache-aware)", "penny_fundamentals.py", ["--limit", "150"]),
+        ("penny screen (rank + journal)", "penny_scan.py", []),
+        ("dashboard", "build_dashboard.py", []),
+    ],
 }
 
 

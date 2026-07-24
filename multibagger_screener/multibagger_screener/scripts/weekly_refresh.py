@@ -7,6 +7,7 @@ weekend job). Chains, in order, stopping on hard failure:
   3. build_focus_list.py      liquidity + RS percentile + stage tags
   4. fetch_fundamentals.py    screener pages for shortlist names (cache-aware)
   5. run_shortlist.py         ranked conviction report
+  6. penny_* (non-fatal)      the separate penny/nano-cap research screen
 
 Outputs: universe.csv, focus_list.csv, fundamentals_flat.csv,
 shortlist_report.md, shortlist_ranked.csv + a summary printed at the end.
@@ -54,6 +55,8 @@ def main() -> None:
     parser.add_argument("--skip-prices", action="store_true")
     parser.add_argument("--no-ai", action="store_true",
                         help="skip the AI committee (ai_picks.py) — no claude credits used")
+    parser.add_argument("--skip-penny", action="store_true",
+                        help="skip the penny/nano-cap research screen")
     args = parser.parse_args()
 
     t0 = time.time()
@@ -80,6 +83,17 @@ def main() -> None:
     else:
         run_step("AI committee picks", "ai_picks.py", fatal=False)  # needs claude auth; skips cleanly if absent
     run_step("journal outcomes (forward scorecard)", "journal_outcomes.py", fatal=False)
+    # penny / nano-cap research screen — a SEPARATE universe built from the
+    # whole NSE cash market. Non-fatal and last-but-one on purpose: it is
+    # research output with zero capital attached, so it must never be able to
+    # break the validated weekly chain. The fundamentals step is capped so a
+    # weekend run stays polite to screener.in and fills in over several weeks.
+    if not args.skip_penny:
+        run_step("penny universe (whole NSE + tradability gates)",
+                 "build_penny_universe.py", fatal=False)
+        run_step("penny fundamentals (capped, cache-aware)",
+                 "penny_fundamentals.py", "--limit", "150", fatal=False)
+        run_step("penny screen (rank + journal)", "penny_scan.py", fatal=False)
     # top-mover capture-recall audit (prices are fresh from step 2) — journals
     # a weekly recall read next to the signal/outcome journals for review
     run_step("capture audit (top-mover recall)", "capture_audit.py", fatal=False)

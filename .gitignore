@@ -5,6 +5,9 @@ telegram_config.json
 # regenerable data caches (rebuilt by fetch scripts)
 multibagger_screener/multibagger_screener/data_cache/
 multibagger_screener/multibagger_screener/fundamentals_cache/
+# raw NSE downloads for the penny screen (bhavcopy stack, symbol master,
+# band/GSM/ASM lists) — all re-fetchable in ~1 min
+multibagger_screener/multibagger_screener/nse_cache/
 
 # operational noise
 multibagger_screener/multibagger_screener/logs/

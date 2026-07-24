@@ -283,6 +283,62 @@ class EpisodicConfig:
     adv_floor_inr: float = 1e7      # prior avg daily traded value >= 1 Cr
 
 
+# ---------------------------------------------------------------------------
+# PENNY / NANO-CAP SCREEN (added 2026-07-25) — a SEPARATE research surface,
+# not part of the validated system. The main universe is 651 index
+# constituents; genuine penny names sit outside every one of those indices.
+#
+# Design stance: in this class the edge is in the EXCLUSIONS, not the score.
+# Low-priced Indian stocks are where circuit limits, trade-to-trade settlement,
+# surveillance (GSM/ASM/ESM), pledged promoters and outright shells live — and
+# an entry you cannot exit is not a trade. So the gates below are hard and the
+# score only ever ranks what already survived them.
+#
+# NOTHING here feeds the validated system's entries, sizing or alerts. Picks
+# are journaled (journal/penny_journal.csv) and must beat a pre-registered
+# baseline out-of-sample before they earn a rupee — same rule as every other
+# unproven layer in this project.
+# ---------------------------------------------------------------------------
+@dataclass
+class PennyConfig:
+    # --- universe arms (a name qualifies on EITHER) ---
+    max_price: float = 100.0            # colloquial "penny stock" in India
+    max_market_cap_cr: float = 1000.0   # micro/nano-cap by value
+
+    # --- hard tradability gates (see data/nse_all.py for why each exists) ---
+    allowed_series: tuple = ("EQ",)     # BE/BZ = trade-to-trade, SM/ST = SME
+    min_band_pct: float = 10.0          # 2%/5% band = cannot exit on bad news
+    exclude_gsm: bool = True            # exchange says: pricing vs fundamentals
+    exclude_asm: bool = True            # exchange says: manipulation/volatility
+    min_price: float = 5.0              # below this the tick is ~1% of price
+    min_median_turnover_cr: float = 0.5  # ~Rs50L/day: a Rs5L position stays
+                                         # under Sykes' 10%-of-volume rule
+    min_median_trades: int = 300        # fewer = one operator's book
+    max_circuit_frac: float = 0.20      # lives on circuits -> stops can't fill
+    require_all_sessions_traded: bool = True
+    min_listing_age_days: int = 365     # needs a year to read a trend at all
+    liquidity_sessions: int = 25        # bhavcopy stack depth for the stats
+
+    # --- survival screen (screener.in fundamentals) ---
+    veto_pledge_pct: float = 10.0       # same hard veto as the main system
+    veto_promoter_min_pct: float = 15.0  # near-zero promoter stake = no skin
+    max_dilution_3y_pct: float = 50.0   # serial equity issuance = value transfer
+    min_sales_cr: float = 10.0          # below this it is a shell, not a business
+
+    # --- scoring block weights (sum to 100) ---
+    weights: Dict[str, float] = field(default_factory=lambda: {
+        "inflection": 30.0,     # loss->profit / margin + sales acceleration
+        "momentum": 25.0,       # RS, trend structure, volume expansion
+        "ownership": 20.0,      # promoter + institutional footprint, no pledge
+        "tradability": 15.0,    # turnover, trade count, band headroom
+        "valuation": 10.0,      # froth guard, not a cheapness hunt
+    })
+
+    # position guidance shown on cards (NOT a validated sizing rule)
+    suggested_max_book_pct: float = 5.0   # total penny exposure
+    suggested_max_position_pct: float = 1.0
+
+
 RISK = RiskConfig()
 UNIVERSE = UniverseConfig()
 STAGE = StageConfig()
@@ -292,3 +348,4 @@ FUNDAMENTAL = FundamentalConfig()
 CATALYST = CatalystConfig()
 COMPOSITE = CompositeConfig()
 EPISODIC = EpisodicConfig()
+PENNY = PennyConfig()

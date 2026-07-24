@@ -215,6 +215,101 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
             "n_total": int(df["_r"].notna().sum())}
 
 
+def _build_penny() -> dict | None:
+    """Penny / nano-cap research surface (scripts/penny_scan.py).
+
+    Returns None when the screen has never been run — the tab then hides
+    itself rather than rendering an empty promise. This payload is entirely
+    separate from the main system's rows/details: penny reads are unvalidated
+    research and must never be confused with conviction scores that sit on
+    backtested evidence."""
+    ranked = _read_csv("penny_ranked.csv")
+    if ranked.empty:
+        return None
+    details = {}
+    dpath = os.path.join(ROOT, "state", "penny_details.json")
+    if os.path.exists(dpath):
+        try:
+            with open(dpath, encoding="utf-8") as f:
+                details = json.load(f)
+        except ValueError:
+            details = {}
+
+    def _n(v):
+        return None if pd.isna(v) else (float(v) if isinstance(v, (int, float)) else v)
+
+    def _s(v, limit: int = 0) -> str:
+        """CSV blanks come back as float('nan'), which is TRUTHY — `v or ''`
+        would render the literal string 'nan' in the UI."""
+        s = "" if v is None or (isinstance(v, float) and pd.isna(v)) else str(v)
+        return s[:limit] if limit else s
+
+    rows = []
+    for _, r in ranked.iterrows():
+        rows.append({
+            "sym": str(r["symbol"]),
+            "company": _s(r.get("company"), 40),
+            "score": _n(r.get("score")), "cov": _n(r.get("coverage_pct")),
+            "veto": bool(r.get("vetoed")),
+            "vetowhy": _s(r.get("veto_reasons"), 200),
+            "arch": _s(r.get("archetypes")),
+            "arm": _s(r.get("arm")),
+            "close": _n(r.get("close")), "tag": _s(r.get("tag")),
+            "rs": _n(r.get("rs_pctile")),
+            "mcap": _n(r.get("market_cap_cr")),
+            "turn": _n(r.get("median_turnover_cr")),
+            "trades": _n(r.get("median_trades")),
+            "band": _n(r.get("band_pct")),
+            "circ": _n(r.get("circuit_frac")),
+            "run3m": _n(r.get("run_3m_pct")),
+            "volx": _n(r.get("vol_expansion")),
+            "ep": bool(r.get("ep")),
+            "idx": bool(r.get("in_index_universe")),
+            "stop": _n(r.get("stop_suggested")),
+            "stopwhy": _s(r.get("stop_basis")),
+            "flags": [s.strip() for s in _s(r.get("risk_flags")).split("|") if s.strip()],
+        })
+
+    # closes for sparklines — small (120 points x ~160 names)
+    closes = {}
+    for row in rows:
+        df = load_ohlcv(row["sym"])
+        if df is not None and len(df) > 30:
+            closes[row["sym"]] = [round(float(c), 2) for c in df["close"].tail(120)]
+
+    # funnel: what the gates threw out and why (transparency, same spirit as
+    # the "Watching — not qualified" panel on the screener tab)
+    ex = _read_csv("penny_excluded.csv")
+    funnel = []
+    if not ex.empty and "exclude_reason" in ex.columns:
+        first = ex["exclude_reason"].fillna("").astype(str).str.split(";").str[0].str.strip()
+        first = first.str.replace(r"Rs[\d.,]+", "Rs*", regex=True) \
+                     .str.replace(r"\b\d+\b", "N", regex=True)
+        funnel = [{"why": w[:110], "n": int(n)}
+                  for w, n in first[first != ""].value_counts().head(9).items()]
+
+    # funnel counts come from the builder's own meta file so the two surfaces
+    # cannot drift (the builder knows which "pending" names also passed the
+    # hard gates; recomputing that here is how disagreements start)
+    meta = {}
+    mpath = os.path.join(ROOT, "state", "penny_meta.json")
+    if os.path.exists(mpath):
+        try:
+            with open(mpath, encoding="utf-8") as f:
+                meta = json.load(f)
+        except ValueError:
+            meta = {}
+
+    return {"rows": rows, "details": details, "closes": closes, "funnel": funnel,
+            "as_of": meta.get("as_of", ""),
+            "n_excluded": meta.get("excluded", int(len(ex))),
+            "n_pending": meta.get("mcap_pending", 0),
+            "sessions": meta.get("sessions"),
+            "eq_securities": meta.get("eq_securities"),
+            "scored": int(ranked["score"].notna().sum()),
+            "vetoed": int(ranked["vetoed"].astype(bool).sum())}
+
+
 def build_payload() -> dict:
     universe = _read_csv("universe.csv")
     focus = _read_csv("focus_list.csv")
@@ -658,6 +753,92 @@ def build_payload() -> dict:
         heat = [{"ind": str(i)[:24], "rs": round(float(r["mean"]), 0), "n": int(r["count"])}
                 for i, r in g.iterrows()][:18]
 
+    # --- "Watching — not qualified" (Screener tab, bottom) ---------------
+    # Funnel transparency: names the system itself REJECTED or has NOT YET
+    # confirmed, each carrying the machine-readable reason it is blocked.
+    # DISPLAY ONLY — never a buy surface: nothing here touches tags, entries,
+    # sizing or scoring. Names graduate into the main screener automatically
+    # when they qualify (the dashboard rebuilds nightly, so no state is kept).
+    # Three sources, deduped by symbol — one name can carry several reasons:
+    #   1. vetoed shortlist names (hard governance/leverage caps)
+    #   2. low-coverage names — conviction not scorable (<60% of the 8 dims),
+    #      kept only when otherwise interesting so the list stays short
+    #   3. news-radar hits WITHOUT technical confluence (news moved, the chart
+    #      has not — attention only, never an entry)
+    watch: dict = {}
+    rs_by_sym = {r["sym"]: r["rs"] for r in screener_rows}
+
+    def _watch_price(sym):
+        c = closes.get(sym)
+        if c:
+            return c[-1]
+        _d = load_ohlcv(sym)
+        return round(float(_d["close"].iloc[-1]), 2) if _d is not None and len(_d) else None
+
+    def _watch_row(sym):
+        if sym not in watch:
+            sc, cov, _ = _score_cov(sym)
+            watch[sym] = {
+                "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
+                "stage": tags.get(sym, ""), "rs": rs_by_sym.get(sym),
+                "score": sc, "cov": cov, "price": _watch_price(sym),
+                "signal": "", "flags": []}
+        return watch[sym]
+
+    # 1. vetoed names (hard cap at 25; AI cannot override — data-based)
+    if not ranked.empty and "vetoed" in ranked.columns:
+        for _, r in ranked[ranked["vetoed"] == True].iterrows():  # noqa: E712
+            row = _watch_row(str(r["symbol"]))
+            reason = str(r.get("veto_reasons") or "").strip() or "governance/leverage veto"
+            row["flags"].append({"why": f"Vetoed: {reason}", "danger": True})
+            if not row["signal"]:
+                row["signal"] = (f"score {row['score']}" if row["score"] is not None
+                                 else "hard veto")
+
+    # 2. low-coverage names — conviction not scorable. "Interesting" = an
+    #    actionable/basing tag OR a decent score, else it just clutters the view.
+    for sym, dt in details.items():
+        cov = dt.get("coverage")
+        if cov is None or cov >= 60:
+            continue
+        stg, sc = tags.get(sym, ""), dt.get("score")
+        if not (stg in ("CONFIRMED", "ANTICIPATION")
+                or (sc is not None and float(sc) >= 60)):
+            continue
+        row = _watch_row(sym)
+        row["flags"].append({
+            "why": f"Coverage {round(float(cov))}% — conviction not scorable",
+            "danger": False})
+        if not row["signal"] and row["score"] is not None:
+            row["signal"] = f"score {row['score']}° (technical read)"
+
+    # 3. news-radar hits without confluence (news-first attention, no trigger).
+    #    Only the latest scan window exists (no radar archive) — the tooltip
+    #    says so. Positive/attn hits are opportunities-in-waiting; negative
+    #    ("neg") hits are red flags and are marked as such, not opportunities.
+    for h in radar.get("hits", []):
+        if h.get("confluence") or not h.get("sym"):
+            continue
+        row = _watch_row(h["sym"])
+        neg = h.get("cls") == "neg"
+        # raw stage word kept in the text — the JS runs it through transTags()
+        # so the chart stage reads in the same vocabulary as every other panel
+        row["flags"].append({
+            "why": f"News: {h.get('event', 'filing')} — chart "
+                   f"{h.get('tag') or 'untagged'}, no technical trigger",
+            "danger": neg})
+        if not row["signal"]:
+            row["signal"] = f"{'red flag' if neg else 'news'}: {h.get('event', 'filing')}"
+
+    # danger = any hard/red-flag reason (veto or negative news) → red text;
+    # otherwise the reason is amber (not-yet-qualified, not disqualified)
+    watch_rows = []
+    for row in watch.values():
+        row["danger"] = any(f["danger"] for f in row["flags"])
+        watch_rows.append(row)
+    # red flags first (they matter most), then by score desc, then symbol
+    watch_rows.sort(key=lambda r: (not r["danger"], -(r["score"] or 0), r["sym"]))
+
     return {
         "generated": datetime.now().strftime("%d %b %Y, %H:%M"),
         "price_date": str(bench["date"].iloc[-1].date()) if bench is not None and len(bench) else "",
@@ -679,7 +860,8 @@ def build_payload() -> dict:
         # the committee's weekly review set (ranked top-20): lets the UI say
         # "reviewed & passed over" vs "not in the review set" — honest signal
         "reviewed": list(ranked.head(20)["symbol"]) if not ranked.empty else [],
-        "rows": screener_rows, "closes": closes, "ohlc": ohlc, "details": details,
+        "rows": screener_rows, "watch": watch_rows,
+        "closes": closes, "ohlc": ohlc, "details": details,
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,
         "forensics": _build_forensics(outcomes),
@@ -693,6 +875,9 @@ def build_payload() -> dict:
         # single-source display vocabulary (reports/vocab.py) — the JS renders
         # tags/kinds/do-chips through this so words never drift between surfaces
         "vocab": vocab.js_payload(),
+        # penny / nano-cap research surface (unvalidated, zero capital) — None
+        # until scripts/penny_scan.py has run at least once
+        "penny": _build_penny(),
     }
 
 
@@ -889,6 +1074,18 @@ details.actrest{margin-top:8px}
 details.actrest summary{cursor:pointer;color:var(--dim);font-size:12px;padding:6px 0;list-style-position:outside}
 details.actrest summary:hover{color:var(--txt)}
 details.actrest table{opacity:.8}
+/* Watching — not qualified: de-emphasized vs the qualified table above — a
+   distinct amber left border + slightly muted so it can never be mistaken for
+   the main screener. The "Blocked by" reason is the loudest column. */
+.watchcard{border-left:3px solid #fbbf2455;opacity:.9}
+.watchcard h2::before{background:var(--amb);box-shadow:0 0 8px #fbbf2455}
+#watchbody table{font-size:12.4px}
+#watchbody td{color:var(--dim)}
+#watchbody .sym{color:var(--txt)}
+.why{font-size:11.8px;line-height:1.45;white-space:normal;color:var(--amb)}
+.why.red{color:var(--red)}
+.why .rf{font:600 9px var(--mono);border:1px solid #f8717138;background:#f8717112;color:var(--red);border-radius:5px;padding:1px 5px;margin-right:5px;letter-spacing:.4px}
+.watchsig{white-space:normal;color:var(--faint);font-size:11.5px}
 @media(max-width:1000px){
 body{flex-direction:column}
 nav{position:sticky;top:0;width:100%;height:auto;display:flex;flex-direction:row;align-items:center;gap:2px;
@@ -969,6 +1166,7 @@ td,th{padding:5px 6px}
 <button class="navbtn on" data-t="overview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Overview</button>
 <button class="navbtn" data-t="picks"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg> AI Picks</button>
 <button class="navbtn" data-t="screener"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Screener</button>
+<button class="navbtn" data-t="penny" id="pennynav" style="display:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10h4a1.8 1.8 0 010 3.6h-4"/></svg> Penny</button>
 <button class="navbtn" data-t="positions"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Positions</button>
 <button class="navbtn" data-t="journal"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg> Journal</button>
 <div id="runpanel" style="display:none">
@@ -976,6 +1174,7 @@ td,th{padding:5px 6px}
   <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + rebuild — mechanical only, no AI">&#8635; Daily scan (no AI)</button>
   <button class="runbtn" data-job="daily_ai" title="also runs the AI analyst on your Claude subscription (pooled deep-dives)">&#8635; Scan + AI analyst</button>
   <button class="runbtn" data-job="weekly" title="full weekly refresh (universe, prices, fundamentals, shortlist) — AI committee skipped">&#8635; Weekly refresh (no AI)</button>
+  <button class="runbtn" data-job="penny" title="rebuild the penny/nano-cap research screen: whole-NSE universe + tradability gates, capped fundamentals fetch, rank + journal">&#8635; Penny screen</button>
   <div class="runnote">Both AI layers run on your Claude subscription, never an API key.</div>
   <div id="runstatus"></div>
 </div>
@@ -1024,6 +1223,50 @@ td,th{padding:5px 6px}
       <th data-k="rs">RS%<span class="info" data-tip="Relative Strength percentile (0-100): how this stock's 6-and-12-month return ranks vs the whole universe. 90 = stronger than 90% of stocks. High + rising is what breakouts need.">?</span></th><th data-k="score">Conviction<span class="info" data-tip="0-100 score from the 8 weighted questions (momentum, earnings, theme, smart money, financial strength, catalyst, governance, valuation), scored at the WEEKLY refresh. ° = technical-only read (fundamentals were unavailable, coverage below 60%). A stock's drawer shows its freshest, most-informed read, which can differ from this weekly number.">?</span></th><th data-k="arch">Archetype<span class="info" data-tip="The kind of multibagger story: Turnaround (loss→profit), Quality (steady compounder), Hyper-growth (fast revenue), Super-cycle (sector tailwind). A tag for context, not a gate.">?</span></th>
       <th data-k="roce">ROCE<span class="info" data-tip="Return on Capital Employed (%): profit the business earns per rupee of capital. Higher = more efficient. Above ~15% is generally healthy.">?</span></th><th data-k="pe">P/E<span class="info" data-tip="Price-to-Earnings: how many years of current profit you pay for the stock. High P/E = pricey OR fast-growing; on a fresh turnaround it can be meaningless (tiny recovering profit).">?</span></th><th data-k="pgttm">PAT TTM%<span class="info" data-tip="Profit-After-Tax growth over the trailing twelve months vs the prior year. The company's bottom-line momentum.">?</span></th>
       <th data-k="close">Price</th><th>120d<span class="info" data-tip="Price sparkline — the last 120 trading days at a glance.">?</span></th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <!-- Watching — not qualified: funnel transparency, DISPLAY ONLY. These are
+       names the system's OWN rules exclude (vetoed / not-yet-scorable / news
+       moved but the chart hasn't). Muted + left-bordered so it cannot read as
+       the qualified list. Names graduate into the table above automatically. -->
+  <div class="card watchcard" id="watchcard">
+    <h2>Watching &mdash; not qualified<span class="info" data-tip="Names the system's OWN rules currently EXCLUDE, shown for transparency and so a maturing setup is on your radar early. A name lands here for at least one machine reason: it was VETOED (hard governance/leverage cap), its conviction is NOT YET SCORABLE (coverage below 60% of the 8 questions), or the NEWS RADAR flagged a filing while the chart has no technical trigger (news moves attention, never entries). These are NOT recommendations and carry no buy affordance. They graduate into the screener above automatically the moment they qualify — the dashboard rebuilds nightly, so this is always tonight's view. News radar shows only the latest scan window (no archive is kept).">?</span></h2>
+    <div id="watchbody"></div>
+  </div>
+</div>
+
+<div class="tab" id="penny">
+  <div class="card" style="border-color:#fbbf2440">
+    <h2 style="color:#fbbf24;margin-bottom:6px">Penny &amp; nano-cap screen &mdash; research only, zero capital<span class="info" data-tip="A SEPARATE surface from the main system. The main system's evidence (+1.67R per trade, walk-forward tested, 13 rejected overlays) says nothing about this screen — it has not been backtested. Every name here is written to journal/penny_journal.csv so that in a few months there is a measured answer instead of an opinion. Nothing here fires an alert, sizes a position, or implies capital.">?</span></h2>
+    <div class="dim" style="font-size:12.5px;line-height:1.55">
+      In this class you usually lose money because you <b>cannot get out</b>, not because you picked the wrong story.
+      So the screen is exclusions first: only the normal <b>EQ</b> settlement series, no <b>GSM/ASM</b> surveillance names,
+      a circuit band of at least <b>10%</b>, real daily turnover and trade counts, no names that live locked at their circuit,
+      and at least a year of listed history. Only what survives all of that ever gets scored.
+      <span id="pennymeta"></span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="fbar2">
+      <input id="pq" placeholder="search symbol / company..." style="width:190px">
+      <span id="pennyarms"></span>
+      <span style="width:1px;height:22px;background:var(--line);margin:0 4px"></span>
+      <span id="pennytags"></span>
+      <span class="chip off" id="pennyvetochip" style="border-color:#f87171"><b style="color:#f87171">show vetoed</b></span>
+      <span class="info" data-tip="Arm = why the name is in this universe. PRICE = share price under ₹100 (the colloquial Indian 'penny stock' — note a ₹40 share of a ₹9,000 Cr bank is NOT a small company). MCAP = market cap under ₹1,000 Cr (genuinely small by value). Filter to MCAP for true nano-caps.">?</span>
+      <span class="dim" style="font-size:12px;margin-left:auto" id="pcount"></span>
+    </div>
+    <div style="max-height:64vh;overflow:auto">
+    <table id="ptbl"><thead><tr>
+      <th data-k="sym">Symbol</th><th data-k="arm">Arm<span class="info" data-tip="PRICE = under ₹100 a share. MCAP = under ₹1,000 Cr market cap. A name can qualify on both.">?</span></th>
+      <th data-k="score">Score<span class="info" data-tip="0-100 over five blocks: business inflection 30, momentum 25, ownership 20, tradability 15, valuation sanity 10. Coverage-honest — blocks with no data are dropped and the rest re-weighted, so a low-coverage score is NOT comparable with a full one. This score has no backtest behind it.">?</span></th>
+      <th data-k="cov">Cov</th><th data-k="tag">Stage</th><th data-k="rs">RS<span class="info" data-tip="Relative strength percentile ranked WITHIN the penny universe — a nano-cap's peer group is other nano-caps, not the Nifty Midcap 150.">?</span></th>
+      <th data-k="mcap">Cap</th><th data-k="turn">Turnover<span class="info" data-tip="Median daily traded value over the last 25 sessions. The practical rule of thumb is to stay under ~10% of daily volume, so ₹1 Cr/day supports roughly a ₹10 lakh position — no more.">?</span></th>
+      <th data-k="run3m">3m<span class="info" data-tip="Price change over the last three months. A name already up 100%+ carries late-stage risk.">?</span></th>
+      <th data-k="close">Price</th><th>120d</th><th>Risk</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card watchcard">
+    <h2>What the gates threw out<span class="info" data-tip="Every rejected name and the machine reason, counted. This is the funnel: the screen's value is mostly here, not in the ranking above. Full list with per-name reasons: penny_excluded.csv.">?</span></h2>
+    <div id="pennyfunnel"></div>
   </div>
 </div>
 
@@ -1328,6 +1571,27 @@ $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td class="mono">${r.close??''}</td><td>${spark(D.closes[r.sym])}</td></tr>`).join('');}
 render();
 
+/* "Watching — not qualified" — funnel-transparency table under the screener.
+   DISPLAY ONLY, no buy affordance: the "Blocked by" reason is the loudest cell
+   and the whole card is muted (see .watchcard). Empty => one honest line, not a
+   hidden card (transparency means saying "nothing to watch" too). */
+(function(){const w=D.watch||[];const el=$('#watchbody');if(!el)return;
+if(!w.length){el.innerHTML='<div class="quiet">Nothing on watch tonight &mdash; every interesting name is either qualified or uninteresting.</div>';return;}
+el.innerHTML=`<div style="overflow:auto"><table><thead><tr>
+<th>Symbol</th><th>Company</th><th>Stage</th><th>RS%</th><th>Score</th><th>Price</th>
+<th>Signal<span class="info" data-tip="What is interesting about this name — the news event that fired, or its current conviction read. It is why the name is worth watching, not a reason to buy.">?</span></th>
+<th>Blocked by<span class="info" data-tip="The exact machine reason the system excludes this name tonight — a hard veto, an unscorable conviction (low coverage), or news without a technical trigger. Amber = not yet qualified; red = a hard veto or a negative-news red flag.">?</span></th></tr></thead><tbody>`+
+w.map(r=>`<tr onclick="openDrawer('${r.sym}')">
+<td class="sym">${r.sym}${r.danger?' <span style="color:#f87171">⛔</span>':''}</td>
+<td>${esc(r.company)}</td>
+<td>${r.stage?`<span class="pill" data-tip="${esc(tlt(r.stage))}" style="border-color:${TC[r.stage]||'#475569'};color:${TC[r.stage]||'#94a3b8'}">${esc(tl(r.stage))}</span>`:'<span class="dim">—</span>'}</td>
+<td class="mono">${r.rs??''}</td>
+<td class="mono">${r.score!=null?r.score+(r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''):'<span class="dim">—</span>'}</td>
+<td class="mono">${r.price??''}</td>
+<td class="watchsig">${esc(transTags(r.signal))}</td>
+<td><span class="why${r.danger?' red':''}">${r.flags.map(f=>(f.danger&&f.why.slice(0,4).toUpperCase()!=='VETO'?'<span class="rf">FLAG</span>':'')+esc(transTags(f.why))).join('<br>')}</span></td>
+</tr>`).join('')+'</tbody></table></div>';})();
+
 /* chart factory */
 const _charts=[];
 function mkChart(el,h){const c=LightweightCharts.createChart(el,{height:h,width:el.clientWidth||el.offsetWidth||300,layout:{background:{type:'solid',color:'transparent'},textColor:'#94a0b0',fontFamily:'Inter'},grid:{vertLines:{color:'#1c232e'},horzLines:{color:'#1c232e'}},rightPriceScale:{borderColor:'#232b37'},timeScale:{borderColor:'#232b37'},crosshair:{mode:1}});_charts.push([c,el,h]);return c;}
@@ -1434,6 +1698,99 @@ ${n.events.length?' · events: <b style="color:#5aa2ff">'+esc(n.events.join(', '
 (n.headlines||[]).forEach(x=>{const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
 h+=`<div style="font-size:12px;margin:4px 0${x.ru?';opacity:.55':''}">${dot} <span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)}${x.tr?'':' — unverified'}${x.ru?' — market roundup, excluded from score':''})</span></div>`;});
 return h+'</div>';}
+/* ---- Penny / nano-cap tab -------------------------------------------------
+   A deliberately separate surface. Its scores are NOT conviction scores: no
+   backtest stands behind them, so the copy, the amber accent and the drawer
+   all say so rather than letting a number borrow the main system's
+   credibility. Hidden entirely until scripts/penny_scan.py has run. */
+(function(){const P=D.penny;if(!P||!P.rows||!P.rows.length)return;
+$('#pennynav').style.display='';
+const armC={price:'#fbbf24',mcap:'#34d399','price+mcap':'#a78bfa'};
+let prows=P.rows.slice(),psK='score',psA=false,showVeto=false;
+let pArms=new Set(['price','mcap','price+mcap']);
+const ptags=[...new Set(prows.map(r=>r.tag).filter(Boolean))];
+let pTags=new Set(ptags);
+$('#pennymeta').innerHTML=`<br><br>Market data as of <b>${esc(P.as_of||'?')}</b>${P.sessions?` (${P.sessions} sessions of full-market bhavcopy)`:''}:
+ <b>${P.eq_securities??'?'}</b> NSE equities &rarr; <b>${prows.length}</b> survived the gates
+ &rarr; <b>${P.vetoed}</b> of those carry a hard veto${P.n_pending?` &middot; <b>${P.n_pending}</b> more are held pending a market-cap read (they resolve as fundamentals fill in)`:''}.
+ Suggested discipline if you ever act on this: at most <b>5%</b> of the book in this class, <b>1%</b> in any one name.`;
+$('#pennyarms').innerHTML=['price','mcap','price+mcap'].map(a=>
+ `<span class="chip" data-parm="${a}" style="border-color:${armC[a]}"><b style="color:${armC[a]}">${a==='price+mcap'?'both':a.toUpperCase()}</b></span>`).join('');
+$('#pennytags').innerHTML=ptags.map(t=>`<span class="chip" data-ptag="${t}" style="border-color:${TC[t]||'#64748b'}"><b style="color:${TC[t]||'#94a3b8'}">${esc(tl(t))}</b></span>`).join('');
+document.querySelectorAll('[data-parm]').forEach(c=>c.onclick=()=>{const a=c.dataset.parm;
+ pArms.has(a)?(pArms.delete(a),c.classList.add('off')):(pArms.add(a),c.classList.remove('off'));prender();});
+document.querySelectorAll('[data-ptag]').forEach(c=>c.onclick=()=>{const t=c.dataset.ptag;
+ pTags.has(t)?(pTags.delete(t),c.classList.add('off')):(pTags.add(t),c.classList.remove('off'));prender();});
+$('#pennyvetochip').onclick=e=>{showVeto=!showVeto;e.currentTarget.classList.toggle('off',!showVeto);prender();};
+$('#pq').oninput=prender;
+document.querySelectorAll('#ptbl th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;
+ psA=(psK===k)?!psA:false;psK=k;prender();});
+$('#pennyfunnel').innerHTML=(P.funnel&&P.funnel.length)
+ ?`<table><thead><tr><th>Excluded because</th><th style="text-align:right">Names</th></tr></thead><tbody>`+
+  P.funnel.map(f=>`<tr><td class="wrap">${esc(f.why)}</td><td class="mono" style="text-align:right">${f.n}</td></tr>`).join('')+
+  `</tbody></table><div class="quiet" style="margin-top:8px">Counted by each name's FIRST failing gate; a name usually fails several. Per-name reasons live in <code>penny_excluded.csv</code>.</div>`
+ :'<div class="quiet">No exclusion data — run scripts/build_penny_universe.py.</div>';
+function prender(){const q=$('#pq').value.toUpperCase();
+ let out=prows.filter(r=>(showVeto||!r.veto)&&pArms.has(r.arm)&&(!r.tag||pTags.has(r.tag))&&(r.sym.includes(q)||r.company.toUpperCase().includes(q)));
+ out.sort((a,b)=>{let x=a[psK],y=b[psK];if(x==null)return 1;if(y==null)return -1;
+  if(typeof x==='string')return psA?x.localeCompare(y):y.localeCompare(x);return psA?x-y:y-x;});
+ $('#pcount').textContent=out.length+' names';
+ $('#ptbl tbody').innerHTML=out.map(r=>`<tr onclick="openPennyDrawer('${r.sym}')"${r.veto?' style="opacity:.55"':''}>
+ <td class="sym">${r.sym}${r.veto?' <span style="color:#f87171">⛔</span>':''}${r.ep?' <span style="color:#fbbf24" title="episodic pivot: gap on 3x volume">⚡</span>':''}${r.idx?' <span class="axis" title="also in the main 651-name index universe">·idx</span>':''}</td>
+ <td><span class="pill" style="border-color:${armC[r.arm]||'#475569'};color:${armC[r.arm]||'#94a3b8'}">${r.arm==='price+mcap'?'both':(r.arm||'').toUpperCase()}</span></td>
+ <td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%;background:#fbbf24"></div></span><b class="mono">${r.score}</b></span>`:'<span class="dim">—</span>'}</td>
+ <td class="mono"${r.cov!=null&&r.cov<60?' data-tip="Partial read — most scoring blocks had no data. Not comparable with a full-coverage score."':''}>${r.cov!=null?r.cov+'%':''}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</td>
+ <td>${r.tag?`<span class="pill" data-tip="${esc(tlt(r.tag))}" style="border-color:${TC[r.tag]||'#475569'};color:${TC[r.tag]||'#94a3b8'}">${esc(tl(r.tag))}</span>`:'<span class="dim">—</span>'}</td>
+ <td class="mono">${r.rs!=null?Math.round(r.rs):''}</td>
+ <td class="mono">${r.mcap!=null?fmtCr(r.mcap):'<span class="dim">—</span>'}</td>
+ <td class="mono">${r.turn!=null?'₹'+r.turn.toFixed(2)+' Cr':''}</td>
+ <td class="mono" style="color:${r.run3m>0?'#34d399':r.run3m<0?'#f87171':''}">${r.run3m!=null?r.run3m.toFixed(0)+'%':''}</td>
+ <td class="mono">${r.close!=null?r.close.toFixed(2):''}</td>
+ <td>${spark(P.closes[r.sym])}</td>
+ <td>${r.flags&&r.flags.length?`<span class="pill" style="border-color:#f8717166;color:#f87171" data-tip="${esc(r.flags.join(' · '))}">${r.flags.length} flag${r.flags.length>1?'s':''}</span>`:'<span class="dim">—</span>'}</td></tr>`).join('');}
+prender();
+
+window.openPennyDrawer=function(sym){const d=$('#drawer');
+ const r=(D.penny.rows||[]).find(x=>x.sym===sym)||{};const dt=(D.penny.details||{})[sym]||{};
+ const blocks=dt.blocks||[];
+ const BN={inflection:'Business inflection — did the business actually turn?',
+  momentum:'Momentum — is the market already voting?',
+  ownership:'Ownership &amp; governance — who else is here?',
+  tradability:'Tradability — can you get out?',
+  valuation:'Valuation sanity — froth guard'};
+ const bl=blocks.slice().sort((a,b)=>b.w-a.w).map(b=>{
+  const pct=b.s!=null?Math.round(b.s*100):0;
+  const col=b.s==null?'#334155':b.s>=.7?'#34d399':b.s>=.4?'#fbbf24':'#f87171';
+  return `<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:12px">
+  <span>${BN[b.k]||b.k} <span class="axis">w${b.w}</span></span>
+  <b class="mono" style="color:${col}">${b.s==null?'no data':pct}</b></div>
+  <div class="mtrack" style="height:7px;margin:4px 0"><div class="mfill" style="height:7px;width:${b.s==null?0:pct}%;background:${col}"></div></div>
+  <div class="axis" style="line-height:1.5">${esc(b.n||'')}</div></div>`;}).join('');
+ d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
+ <h1 style="font-size:20px">${sym} <span class="pill" style="border-color:#fbbf24;color:#fbbf24;margin-left:6px">PENNY SCREEN</span>${r.veto?' <span class="badge b-red">VETOED</span>':''}</h1>
+ <div class="dim" style="font-size:12.5px;margin:4px 0 12px">${esc(r.company||'')} · ${r.mcap!=null?fmtCr(r.mcap):'market cap pending'} · ₹${r.close!=null?r.close.toFixed(2):'—'} · RS ${r.rs!=null?Math.round(r.rs):'—'} within the penny universe${r.arch?' · '+esc(r.arch):''}</div>
+ <div class="card" style="border-color:#fbbf2440;padding:10px 12px;margin-bottom:12px">
+  <b style="color:#fbbf24">Research read, not a signal.</b> <span class="dim">Score
+  ${r.score!=null?r.score:'—'}/100 at ${dt.coverage??'?'}% coverage. This screen has no backtest behind it, so the
+  number ranks ideas — it does not carry the main system's evidence. Journaled to
+  <code>penny_journal.csv</code>; zero capital until it proves itself out-of-sample.</span></div>
+ ${r.veto?`<div class="card" style="border-color:#f8717166;padding:10px 12px;margin-bottom:12px"><b style="color:#f87171">VETOED — capped at 25</b><div class="dim" style="margin-top:4px">${esc(r.vetowhy)}</div></div>`:''}
+ ${(r.flags&&r.flags.length)?`<div class="card" style="padding:10px 12px;margin-bottom:12px"><b style="color:#fbbf24">Risk flags</b><ul style="margin:6px 0 0 16px;padding:0" class="dim">${r.flags.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
+ <div class="mini" style="margin-top:14px"><h3>Why this score &mdash; five weighted blocks</h3>${bl||'<div class="quiet">no blocks scored</div>'}</div>
+ <h2 style="font-size:13px;margin:16px 0 8px">Can you get out?</h2>
+ <table><tbody>
+ <tr><td class="dim">Median daily turnover</td><td class="mono">${r.turn!=null?'₹'+r.turn.toFixed(2)+' Cr':'—'}</td></tr>
+ <tr><td class="dim">Median trades per day</td><td class="mono">${r.trades!=null?Math.round(r.trades).toLocaleString():'—'}</td></tr>
+ <tr><td class="dim">Circuit band</td><td class="mono">${r.band!=null?r.band+'%':'—'}</td></tr>
+ <tr><td class="dim">Sessions closed at circuit</td><td class="mono">${r.circ!=null?(r.circ*100).toFixed(0)+'%':'—'}</td></tr>
+ <tr><td class="dim">Reference stop</td><td class="mono">${r.stop!=null?'₹'+r.stop.toFixed(2):'<span style="color:#f87171">none</span>'} <span class="axis">${esc(r.stopwhy||'')}</span></td></tr>
+ </tbody></table>
+ <div class="quiet" style="margin-top:6px">The reference stop is for the forward journal only — it is not a sized plan. A position bigger than roughly a tenth of daily volume cannot be exited at any stop you write down.</div>
+ <h2 style="font-size:13px;margin:16px 0 8px">Last 120 sessions</h2>
+ <div>${spark(D.penny.closes[sym],320,90)}</div>`;
+ $('#ovl').classList.add('show');d.classList.add('open');};
+})();
+
 window.openDrawer=function(sym){const d=$('#drawer');const r=D.rows.find(x=>x.sym===sym)||{};
 const f=D.fund[sym]||{};const hasOhlc=(D.ohlc[sym]||[]).length>10;
 d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>

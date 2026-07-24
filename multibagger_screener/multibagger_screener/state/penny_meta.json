@@ -1,0 +1,13 @@
+{
+ "as_of": "2026-07-24",
+ "built_at": "2026-07-25 03:19",
+ "sessions": 25,
+ "eq_securities": 2479,
+ "passed_gates": 1251,
+ "qualified": 218,
+ "price_arm": 157,
+ "mcap_arm": 94,
+ "mcap_pending": 112,
+ "in_index_universe": 49,
+ "excluded": 2261
+}

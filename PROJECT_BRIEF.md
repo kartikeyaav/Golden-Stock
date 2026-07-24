@@ -238,6 +238,36 @@ locked the following. Changing these requires NEW pre-registered evidence:
 
 ---
 
+## 2C. The penny / nano-cap screen — deliberately OUTSIDE the lock (2026-07-25)
+
+A second universe, built from the whole NSE cash market (~2,400 EQ securities)
+rather than the 651 index constituents, because genuine penny and nano-cap
+names are in no index. Universe = **price < ₹100 OR market cap < ₹1,000 Cr**,
+both arms kept separate and filterable.
+
+Its relationship to everything above is the point:
+
+- It is **not covered by any evidence in §2B or VALIDATION_REPORT.md.** No
+  backtest stands behind its score. It therefore carries **zero capital**,
+  fires **no alerts**, and sizes **no positions**.
+- It cannot leak into the validated system: its own universe file, its own
+  fundamentals file (never `fundamentals_flat.csv`), its own journal, its own
+  dashboard tab.
+- It earns its place the same way every other layer had to: a pre-registered
+  backtest through `backtest/engine.py` with the same two-lot rules and costs,
+  measured against the technical-only baseline. Until then its output is
+  research, and the UI says so on every surface.
+- Its design premise differs from the main system's on purpose. Here the
+  dominant risk is **not being able to exit** — circuit bands, trade-to-trade
+  settlement, GSM/ASM surveillance, one-operator order books. So tradability
+  is a hard gate before anything is scored, and the honest majority of the
+  work is in `penny_excluded.csv`, not in the ranking.
+
+Suggested exposure discipline if it is ever acted on manually: ≤5% of the book
+in this class in total, ≤1% in any one name.
+
+---
+
 ## 3. Trade management spec (two-lot structure)
 
 This is Design Law #2 and it exists because the exemplars **drew down 30-50%
