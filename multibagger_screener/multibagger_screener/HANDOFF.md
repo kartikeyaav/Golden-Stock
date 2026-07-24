@@ -1,11 +1,17 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-07-13 (consolidation pass before a fresh chat).**
+**Last updated: 2026-07-25** (audit + penny screen; §6 rewritten as a
+next-session brief).
 This is the single "where we are / what's next" doc. For strategy read
 `../../PROJECT_BRIEF.md` (it lives at the git root `files/`, NOT in this
 folder); for the evidence read `VALIDATION_REPORT.md`; for cloud ops read
-`CLOUD.md`. Sections 3-3J below are a chronological work-log (kept for
+`CLOUD.md`. Sections 3-3N below are a chronological work-log (kept for
 context) — sections 0/1/2/4/5/6/7 are the CURRENT state, kept fresh.
+
+> **If you are a fresh session: read `AUDIT_2026-07-25.md`, then §6 Task 1.**
+> The live system is currently firing an entry class that no backtest
+> validated, and has never once fired the one that was. That outranks
+> everything else in this document.
 
 ---
 
@@ -895,14 +901,22 @@ liquidity check, not signals.
    (monthly is enough) — makes the corrected fixed-fractional sizing (§3H)
    actually track reality; live plans size off this constant.
 
+6. **DECIDE: implement Audit Finding 1?** (`AUDIT_2026-07-25.md`, §6 Task 1.)
+   It changes what fires nightly, so it needs an explicit yes. Everything else
+   in this list is smaller than this one.
+7. **DECIDE: public vs private repo** (§6 Task 4). `holdings.csv` and
+   `positions.csv` are personal financial data and are currently public.
+
 **Needs time:**
-6. **Forward journal** must accumulate a few weeks. Then review: do analyst
+8. **Forward journal** must accumulate a few weeks. Then review: do analyst
    verdicts + committee picks beat the mechanical baseline, and do VALIDATED
    entry-fidelity alerts (§3D, `journal/entry_signals.csv`) beat WEAK ones?
-   (the real-capital gate, per brief).
+   (the real-capital gate, per brief). **Caveat:** Finding 2 says the current
+   forward number is not comparable to the backtest number — this review only
+   means something after §6 Task 1c lands.
 
 **Alert volume — INVESTIGATED 2026-07-09, still the working assumption:**
-7. Evidence-locked scan watches the whole universe (611 names), so alert
+9. Evidence-locked scan watches the whole universe (611 names), so alert
    volume runs ~4x a naive "150-name watchlist" estimate; this is intentional
    (lock #3 forbids shrinking the watch set) and cost is already capped
    (analyst max 3 dives/day, conviction-ranked). No action needed.
@@ -911,45 +925,149 @@ liquidity check, not signals.
 
 ## 6. NEXT TASK (what a fresh chat should pick up)
 
-Priority order:
+**Start here. Read `AUDIT_2026-07-25.md` before touching anything.** Task 1 is
+not one improvement among several — until it lands, the live system is not the
+system the evidence describes.
 
-0. **DECIDE ON AUDIT FINDING 1** (`AUDIT_2026-07-25.md`) — the scan cannot see
-   ~73% of the entries the backtest validated, and has fired zero of them in
-   86 live alerts. The fix mirrors the already-adopted EP event wiring and adds
-   no gate. This outranks everything below: until it lands, the live system is
-   not trading the system that was validated. Finding 2 (the forward journal
-   measures a different quantity than the backtest) is the necessary companion —
-   fixing F1 without F2 means the new alerts still get scored on the wrong ruler.
-1. **Watch Monday's scan** (first night the revived analyst can fire on a
-   real alert; committee cross-checks refresh from stale Jul-9 verdicts)
-   and the first few News Radar nights (precision in the wild — if noise
-   creeps in, tighten the whitelist in `data/news_radar.py`, never
-   blacklist). ALSO first live night for the two 3L adoptions: the breadth
-   regime badge (expect NORMAL/full-size — breadth 58.6%) and the EPISODIC
-   PIVOT class (~1/week expected; verify the first real one's card, stop,
-   analyst dive, and journal rows look right). P4 (fewer slots {8,10})
-   remains the one untested cheap matrix cell.
-2. **ANANDRATHI promoter-pledge discrepancy** (committee-flagged vs the
-   mechanical "no pledge" read) — the user should confirm before treating
-   it as a clean pick; re-veto if a standing pledge is real.
-3. **Forward-journal review** after a few more settled weeks: do analyst
-   verdicts / committee picks / VALIDATED-entry-fidelity alerts beat the
-   mechanical baseline out-of-sample? This is the evidence gate before any
-   real-capital scale-up. (Journal-earned dim weights are parked on the
-   same clock — the news/theme v0 weights get re-derived from outcomes,
-   not argued about.)
-4. Longer-term strategy work, deliberately PARKED until the forward journal
-   has enough data (do not start these speculatively): pyramiding winners,
-   regime up-scaling (size UP in strong uptrends, symmetric to the existing
-   down-scaling), an IPO-base module for young stocks that can't form
-   45-week structures, and relaxing the 15% position-value cap (the one
-   sizing lever the matrix flagged as untested).
+---
 
-Do NOT: add fundamental/news/AI signals into the ENTRY or SIZING decision
-(evidence-locked, now 11 items in PROJECT_BRIEF.md §2B). AI stays
+### TASK 1 (do this first) — make the validated entry alertable  [F1 + F2 together]
+
+**Why:** the backtested entry (+1.67R) fires ~1.7×/week across the universe,
+but the scan only alerts on tag TRANSITIONS, and only 27% of validated entries
+land on a transition day. Result: **117 live buy alerts, zero validated,
+forward -0.20R.** Full measurements + how to re-run them: `AUDIT_2026-07-25.md`.
+
+**Ask the user to confirm before shipping** — it changes what arrives on their
+phone each night. Then:
+
+**1a. `scripts/daily_scan.py` — new event alert.** Copy the EPISODIC PIVOT
+wiring exactly (it already solved this shape of problem; see the `ep_hits` /
+`ep_alerted` blocks):
+  - the tag loop already computes `tag_results[sym]` for every name, and
+    `tag_stock` already returns `validated_entry` / `pivot_price` /
+    `breakout_volume_ratio` — nothing new is computed, nothing is gated
+  - collect `entry_hits = {sym: tr for sym, tr in tag_results.items()
+    if tr.get("validated_entry")}`
+  - fire `kind = "BUY TRIGGER"` for each, transition or not
+  - idempotency: `state["entry_alerted"] = {sym: last_date}`, 10-day retention,
+    written by `save_state` alongside `ep_alerted` — a catch-up re-run of the
+    same bar must not double-journal
+  - same-night dedupe with an existing transition card for that symbol
+    (`card_idx`) — prepend a banner, do not build a second card
+  - expected volume ~1-2/week, so no cost concern; `ai_analyst` picks them up
+    automatically once its buy-kind regex includes the new kind (**check
+    `ai_analyst.py` and `paper_trader.py` — both filter on kind strings; the
+    Jul-20 audit found paper_trader silently dropping EPISODIC PIVOT for
+    exactly this reason**)
+
+**1b. Label the EXTENDED divergence (F1b).** 9 of 66 engine entries land on
+days the tagger calls EXTENDED and refuses to label. The backtest TOOK those.
+Do not change the tag — add the label (`entry_status = "VALIDATED (EXTENDED)"`)
+so the forward journal can measure whether skipping them helps or hurts.
+
+**1c. `scripts/journal_outcomes.py` — measure what the backtest measured (F2).**
+Today it only reports open/stopped-at-exactly-1R, entered at the alert-night
+close. Add a `plan_followed_R` column alongside the existing raw read:
+  - fill at the NEXT session's open (the backtest's stress-validated fill)
+  - apply the two-lot rules: partial at +2.5R, stop→breakeven at +1.5R,
+    trading lot trails the 50-DMA, core lot exits on a weekly close below the
+    150-DMA (reuse `position_manager.check_positions` logic rather than
+    re-implementing it)
+  - book gap-throughs at the actual gap fill, not -1.0R (F3)
+  - keep both columns and label them in the Journal tab — the raw read stays
+    for continuity, `plan_followed_R` is the one comparable to +1.67R
+
+**Acceptance:** a synthetic fixture where a stock is CONFIRMED for 10 days and
+breaks out on day 7 must produce exactly one BUY TRIGGER alert, one
+`entry_signals.csv` row, zero duplicates on re-run, and a `plan_followed_R`
+that matches a hand-computed two-lot result. Test in an **isolated sandbox copy
+with `--state-file`** — note the Jul-07 lesson that `--state-file` runs still
+write the real journal, so copy the project dir rather than trusting the flag.
+
+---
+
+### TASK 2 — the playground (user deferred it 2026-07-25: "we will do the playground later")
+
+Multi-user paper trading, ₹1L starting capital, driven off the screener.
+Decisions already taken so a fresh session does not re-litigate them:
+
+- **It needs a backend.** The dashboard is a static file on GitHub Pages;
+  real logins are impossible there. Build ONE engine in Python (accounts,
+  orders, fills, P&L) + a stdlib `sqlite3` store + a thin HTTP API, and have
+  the Playground tab talk to it. **Do not** write a second engine in JS for
+  the static copy — this project's recurring bug class is two surfaces
+  drifting apart.
+- **Separate server from `dashboard_server.py`.** That one binds 127.0.0.1 and
+  exposes RUN buttons; a multi-user playground must never sit behind the same
+  door. New `scripts/playground_server.py`, no run-job endpoints.
+- **Fills at the NEXT session's open**, same convention as `paper_trader.py`
+  and the validated stress mode — it also makes "buy at yesterday's close
+  knowing today's move" impossible.
+- **Order tickets pre-filled from the mechanical plan**, scaled to ₹1L
+  (1.25% risk, 15% position-value cap) so the playground teaches the actual
+  discipline and generates data on whether people who follow the plan do better.
+- **Task 4 (privacy) is a hard prerequisite** — do not add other people's
+  accounts to a system that publishes the owner's positions.
+
+---
+
+### TASK 3 — penny screen follow-ups (`§3N`, shipped 2026-07-25)
+
+1. **Close the mcap arm.** 112 names are still held pending a market-cap read.
+   `python scripts/penny_fundamentals.py --limit 150` twice more finishes it;
+   the weekly job does this automatically at 150/run.
+2. **Pre-registered penny backtest** — the honest next step, and the only thing
+   that can move this screen off "research". Run the penny universe through
+   `backtest/engine.py` with the same two-lot rules and costs, against the
+   technical-only baseline. Register the hypothesis and the pass criteria
+   BEFORE running it (the discipline that killed 13 prior overlays).
+   Caveat to state up front: the penny universe is survivor-biased worse than
+   the index universe — delisted shells are simply gone from the master.
+3. Watch the first few weekly runs for NSE rate-limiting from GitHub Actions
+   IPs (bhavcopy + `api/reportASM`). All penny steps are non-fatal, so a block
+   shows up as a skipped step, not a broken pipeline.
+
+---
+
+### TASK 4 — privacy (F5), needed before anything is shared
+
+`holdings.csv` and `positions.csv` carry real symbols, quantities and entry
+prices, and the repo + Pages site are public. Either scrub them from the repo
+(and history) and keep them local, or make the repo private and publish only
+the built dashboard. The user has not chosen yet — **ask, don't assume.**
+
+---
+
+### TASK 5 — the standing watch list (unchanged, lower priority than the above)
+
+- **ANANDRATHI promoter-pledge discrepancy** — committee-flagged vs the
+  mechanical "no pledge" read; confirm before treating it as a clean pick.
+- **EP class has still never fired** (adopted 2026-07-19). ~1/week expected.
+  If it is still zero by mid-August, that is a finding, not weather.
+- **News Radar precision in the wild** — if noise creeps in, tighten the
+  whitelist in `data/news_radar.py`, never blacklist.
+- **P4 (fewer slots {8,10})** remains the one cheap untested matrix cell.
+- **Forward-journal review** once the cohort matures: do analyst verdicts,
+  committee picks and VALIDATED-fidelity alerts beat the mechanical baseline?
+  This is the real-capital gate. Note Task 1c changes the ruler — the review
+  is only meaningful after it lands.
+- **Parked until the journal has data** (do not start speculatively):
+  pyramiding winners, regime up-scaling, an IPO-base module, relaxing the 15%
+  position-value cap.
+
+---
+
+**Do NOT:** add fundamental/news/AI signals into the ENTRY or SIZING decision
+(evidence-locked, 11 items in PROJECT_BRIEF.md §2B — the penny screen lives
+outside that lock precisely so it cannot contaminate it, see §2C). AI stays
 context/curation/veto only. Do NOT re-run the sizing or entry matrices without
 a new pre-registered hypothesis — re-litigating settled evidence wastes the
 discipline that makes this system trustworthy.
+
+**Environment gotcha added 2026-07-25:** the Bash tool here is Git Bash.
+PowerShell here-strings (`@'...'@`) do not work in it and will silently corrupt
+a `git commit -m` message. Use a heredoc, or `git commit -F file`.
 
 ---
 
