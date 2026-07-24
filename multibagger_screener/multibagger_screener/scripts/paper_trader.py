@@ -34,7 +34,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config import RISK
+from config import RISK, BUY_ALERT_KINDS
 from data.cache import load_ohlcv
 from scoring.regime import market_risk_scale
 from position_manager import check_positions, append_ledger
@@ -78,8 +78,7 @@ def _signal_for(verdicts_row, signals: pd.DataFrame):
     sym = verdicts_row["symbol"]
     vts = pd.Timestamp(verdicts_row["logged_at"])
     cand = signals[(signals["symbol"] == sym)
-                   & (signals["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW",
-                                            "EPISODIC PIVOT"]))
+                   & (signals["kind"].isin(BUY_ALERT_KINDS))
                    & (signals["logged_at"] <= vts)
                    & (signals["logged_at"] >= vts - pd.Timedelta(days=5))]
     return cand.iloc[-1] if len(cand) else None

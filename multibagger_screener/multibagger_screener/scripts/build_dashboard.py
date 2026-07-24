@@ -23,6 +23,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from config import BUY_ALERT_KINDS
 from data.cache import load_ohlcv
 from data.screener_fetch import load_company
 from paper_trader import summarize as paper_summary
@@ -200,10 +201,11 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
 
     sections = [
         _section("By signal kind", "_kind",
-                 ["BUY CANDIDATE", "RE-ENTRY", "EPISODIC PIVOT"]),
+                 ["BUY CANDIDATE", "RE-ENTRY", "EPISODIC PIVOT", "BUY TRIGGER"]),
         _section("By conviction band", "_cband", ["<50", "50-60", "60-70", "70+"]),
         _section("By entry fidelity", "_fidelity",
-                 ["VALIDATED", "AWAITING TRIGGER", "NO VCP BASE"]),
+                 ["VALIDATED", "VALIDATED (EXTENDED)", "AWAITING TRIGGER",
+                  "NO VCP BASE"]),
         _section("By analyst verdict", "_vlabel",
                  ["BUY", "SKIP-or-WAIT", "no verdict"]),
     ]
@@ -560,8 +562,7 @@ def build_payload() -> dict:
     # Actionable panel — without this their drawer chart would be empty
     recent_buy_syms = []
     if not journal.empty and "kind" in journal.columns:
-        jb = journal[journal["kind"].isin(
-            ["BUY CANDIDATE", "RE-ENTRY WINDOW", "EPISODIC PIVOT"])]
+        jb = journal[journal["kind"].isin(BUY_ALERT_KINDS)]
         recent_buy_syms = list(jb["symbol"].tail(60))
     detail_syms = (list(ranked.get("symbol", [])) + list(positions.get("symbol", []))
                    + list(paper_pos.get("symbol", [])) + list(details.keys())
@@ -653,7 +654,7 @@ def build_payload() -> dict:
     if not journal.empty:
         jj = journal.copy()
         jj["logged_at"] = pd.to_datetime(jj["logged_at"], errors="coerce")
-        recent = jj[(jj["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW", "EPISODIC PIVOT"]))
+        recent = jj[(jj["kind"].isin(BUY_ALERT_KINDS))
                     & (jj["logged_at"] >= pd.Timestamp.now() - pd.Timedelta(days=7))]
         for _, r in recent.iloc[::-1].iterrows():
             sym = r["symbol"]
@@ -722,17 +723,22 @@ def build_payload() -> dict:
             k = "mute" if a["status"] == "FADED" else "ep"
         elif a["status"] == "FADED":
             k = "mute"
+        # a BUY TRIGGER on an EXTENDED name is the labelled F1b divergence, not
+        # a green light — "RAN AWAY" -> WAIT is exactly the right read for it
         elif a["status"] == "RAN AWAY":
             k = "warn"
         elif a["trigger"] == "VALIDATED":
             k = "act"
+        elif a["trigger"] == "VALIDATED (EXTENDED)":
+            k = "warn"
         elif a["trigger"] == "AWAITING TRIGGER":
             k = "watch"
         else:
             k = "weak"
         return vocab.DO_LABEL[k], k
     _srank = {"ACTIONABLE": 0, "RAN AWAY": 1, "FADED": 2, "VETOED": 3}
-    _trank = {"VALIDATED": 0, "AWAITING TRIGGER": 1, "NO VCP BASE": 2, "": 3}
+    _trank = {"VALIDATED": 0, "AWAITING TRIGGER": 1, "NO VCP BASE": 2,
+              "VALIDATED (EXTENDED)": 2, "": 3}
     for a in actionable:
         a["do"], a["dokind"] = _do(a)
     actionable.sort(key=lambda a: (_srank.get(a["status"], 9),
@@ -1373,6 +1379,12 @@ $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b
    contradicted the "nothing requires action" headline — user-caught). */
 function alertLabel(a){
  const k=a.kind,s=a.status||'';
+ /* the backtested entry, fired as an event (AUDIT_2026-07-25 F1). The
+    EXTENDED variant is a labelled deviation the live system skips — it must
+    never render green. */
+ if(k==='BUY TRIGGER')return s.indexOf('EXTENDED')>=0
+   ?[(VOCAB.triggers['VALIDATED (EXTENDED)']||'TRIGGER, BUT EXTENDED'),'#fbbf24']
+   :[(VOCAB.triggers['VALIDATED']||'BUY TRIGGER'),'#34d399'];
  if(k==='EPISODIC PIVOT')return[kl(k),'#f5c84c'];             /* MOMENTUM BUY */
  if(k==='BUY CANDIDATE'||k==='RE-ENTRY WINDOW'){
   const base=kl(k);                                          /* NEW UPTREND / RE-ENTRY */
@@ -1913,7 +1925,7 @@ $('#jstats').innerHTML=[['Signals logged',D.journal_total??D.journal.length,'Eve
 ['Stopped',D.outcomes.stopped??'—','Signals that hit the suggested stop (-1R, closed).'],
 ['Expectancy to date',D.outcomes.exp!=null?D.outcomes.exp+'R':'—','Forward, unfakeable. The gate for real capital: within ~50% of the +1.67R backtest at meaningful sample size.']]
 .map(k=>`<div class="kpi"><span>${k[0]}<span class="info" data-tip="${esc(k[2])}">?</span></span><b>${k[1]}</b></div>`).join('');
-const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','EPISODIC PIVOT':'#f5c84c','WATCH CLOSELY':'#5aa2ff','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
+const JK={'BUY CANDIDATE':'#34d399','RE-ENTRY WINDOW':'#a78bfa','EPISODIC PIVOT':'#f5c84c','BUY TRIGGER':'#22d3ee','WATCH CLOSELY':'#5aa2ff','EXIT WARNING':'#f87171','MANAGE':'#fbbf24'};
 $('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono">${j.d}</td><td class="sym">${j.sym}</td><td><span class="pill" style="border-color:${JK[j.kind]||'#475569'};color:${JK[j.kind]||'#94a3b8'}">${esc(kl(j.kind))}</span></td><td class="dim">${j.old&&j.old!=='nan'?esc(tl(j.old))+' → ':''}${esc(tl(j.new))}</td></tr>`).join(''):'<tr><td colspan="4" class="quiet">Journal is empty — it fills automatically as real alerts fire (a synthetic test entry was removed in the 2026-07-07 audit).</td></tr>';
 
 /* buy-signal scorecard — same name re-alerting across nights is ONE story:

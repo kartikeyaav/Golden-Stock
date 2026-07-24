@@ -339,6 +339,27 @@ class PennyConfig:
     suggested_max_position_pct: float = 1.0
 
 
+# ---------------------------------------------------------------------------
+# ALERT KINDS — the single source of truth for "is this a buy-type alert?"
+#
+# This list is consumed by ai_analyst (which names to deep-dive), paper_trader
+# (which verdicts to fill), journal_outcomes (which rows to score) and the
+# dashboard. It lives here because keeping four private copies in sync has
+# now failed twice in production: the Jul-18 audit found ai_analyst's regex
+# had stopped matching buy lines after a label was added (the analyst reported
+# "no buy alerts" through real 9-alert nights for ~8 days), and the Jul-20
+# audit found paper_trader silently dropping EPISODIC PIVOT after that class
+# was adopted. Add a new buy-type alert HERE and every consumer picks it up.
+# ---------------------------------------------------------------------------
+BUY_ALERT_KINDS: tuple = (
+    "BUY CANDIDATE",     # * -> CONFIRMED transition
+    "RE-ENTRY WINDOW",   # EXTENDED -> CONFIRMED transition
+    "EPISODIC PIVOT",    # gap + volume event (EP matrix, adopted 2026-07-19)
+    "BUY TRIGGER",       # the backtested VCP breakout, fired as an EVENT
+                         # (AUDIT_2026-07-25 F1, adopted 2026-07-25)
+)
+
+
 RISK = RiskConfig()
 UNIVERSE = UniverseConfig()
 STAGE = StageConfig()

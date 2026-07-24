@@ -233,6 +233,17 @@ def tag_stock(df: pd.DataFrame, bench_df: pd.DataFrame | None = None) -> dict:
         # the alert is a real backtest entry ONLY when the CONFIRMED tag
         # coincides with a fresh volume breakout over the VCP pivot
         "validated_entry": bool(tag == "CONFIRMED" and breakout.get("breakout")),
+        # The BACKTEST's own entry condition, which never consults the tag:
+        # trend template + live VCP + pivot cleared on volume. It differs from
+        # validated_entry on EXTENDED days — 9 of 66 engine entries in the
+        # AUDIT_2026-07-25 sample landed on days the tagger calls EXTENDED and
+        # the backtest TOOK them, while live silently skipped. Exposed so the
+        # divergence is LABELLED and measurable (F1b); skipping may well be the
+        # safer behaviour, but it is an untested deviation and must not be
+        # invisible. (Stage-3 engine entries stay out of reach here: `vcp` is
+        # only evaluated when stage == 2. That was 2 of the 66.)
+        "engine_entry": bool(tt.passed and vcp.get("valid")
+                             and breakout.get("breakout")),
         "last_close": float(df["close"].iloc[-1]),
         "last_date": str(df["date"].iloc[-1].date()),
     }

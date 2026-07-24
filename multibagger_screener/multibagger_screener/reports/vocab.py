@@ -62,6 +62,7 @@ KIND_LABEL = {
     "RE-ENTRY WINDOW": "RE-ENTRY",
     "WATCH CLOSELY": "FORMING",
     "EPISODIC PIVOT": "MOMENTUM BUY",
+    "BUY TRIGGER": "BUY TRIGGER",
     "EXIT WARNING": "EXIT WARNING",
     "MANAGE": "MANAGE",
     "POSITION": "POSITION",
@@ -71,14 +72,20 @@ KIND_LABEL_SHORT = {   # compact cells (scorecard) — keep to one short token
     "RE-ENTRY WINDOW": "RE-ENTRY",
     "WATCH CLOSELY": "FORMING",
     "EPISODIC PIVOT": "MOMENTUM",
+    "BUY TRIGGER": "TRIGGER",
     "EXIT WARNING": "EXIT",
     "MANAGE": "MANAGE",
     "POSITION": "POSITION",
 }
 
 # --- TRIGGER fidelity: how real the buy signal is ---------------------------
+# "VALIDATED (EXTENDED)" is the engine's own entry firing on a day the tagger
+# calls EXTENDED. The backtest took those; the live system skips them. It is
+# labelled so the divergence is measurable, and deliberately does NOT read as
+# a buy (AUDIT_2026-07-25 F1b).
 TRIGGER_LABEL = {
     "VALIDATED": "BUY TRIGGER",
+    "VALIDATED (EXTENDED)": "TRIGGER, BUT EXTENDED",
     "AWAITING TRIGGER": "WATCH PIVOT",
     "NO VCP BASE": "NO BUY POINT",
 }

@@ -21,6 +21,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from config import BUY_ALERT_KINDS
 from data.cache import load_ohlcv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,7 +34,7 @@ def main() -> None:
         print("no journal yet — outcomes will exist once the first alert is logged")
         return
     j = pd.read_csv(JOURNAL, parse_dates=["logged_at"])
-    buys = j[j["kind"].isin(["BUY CANDIDATE", "RE-ENTRY WINDOW", "EPISODIC PIVOT"])].copy()
+    buys = j[j["kind"].isin(BUY_ALERT_KINDS)].copy()
     if buys.empty:
         print("journal has no buy-type signals yet")
         return

@@ -7,11 +7,16 @@ The focus list remains a reporting/prioritization convenience only.
 
   1. incremental price update (whole universe + holdings + benchmark)
   2. re-tag every watched name (mechanical stage tags)
-  3. DIFF vs saved state -> transitions only:
+  3a. DIFF vs saved state -> transitions:
         * -> CONFIRMED                BUY CANDIDATE (conviction card attached)
         EXTENDED -> CONFIRMED         RE-ENTRY WINDOW (card attached)
         * -> ANTICIPATION             WATCH CLOSELY (zero capital)
         holding -> BROKEN             EXIT WARNING
+  3b. EVENTS (not transitions — fire on any watched name, idempotent by bar):
+        VCP pivot cleared on volume   BUY TRIGGER  <- the backtested entry
+        gap >=8% on >=3x volume       EPISODIC PIVOT
+      Transitions alone were missing ~73% of validated entries; see
+      AUDIT_2026-07-25.md Finding 1.
   4. append every alert to journal/signals_journal.csv (append-only — this
      is the forward-validation record; never edit it by hand)
   5. save state; write daily_alerts.md (the file the Telegram job sends)
@@ -65,6 +70,11 @@ ENTRY_SIGNALS_FIELDS = ["logged_at", "symbol", "kind", "entry_status",
                         "validated_entry", "close", "pivot_price",
                         "breakout_today", "breakout_volume_ratio", "vcp_valid"]
 
+# A name that keeps closing over its pivot on volume would otherwise alert
+# several nights running. One BUY TRIGGER per name per this many days; matches
+# the state-retention window in save_state.
+BUY_TRIGGER_COOLDOWN_DAYS = 10
+
 
 def health_check(today_tags: dict, symbols: list[str],
                  extra_problems: list[str] | None = None) -> list[str]:
@@ -111,15 +121,20 @@ def load_state(path: str) -> dict | None:
     return None
 
 
-def save_state(path: str, tags: dict, ep_alerted: dict | None = None) -> None:
+def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
+               entry_alerted: dict | None = None) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     payload = {"date": datetime.now().strftime("%Y-%m-%d"), "tags": tags}
+    cutoff = (datetime.now() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
     if ep_alerted:
         # EP alerts are one-day EVENTS, not state transitions — remember which
         # (symbol, bar-date) pairs already fired so a same-evening catch-up
         # re-run can't journal the same event twice. Keep 10 days.
-        cutoff = (datetime.now() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
         payload["ep_alerted"] = {s: d for s, d in ep_alerted.items() if d >= cutoff}
+    if entry_alerted:
+        # BUY TRIGGER alerts are events too, on exactly the same terms.
+        payload["entry_alerted"] = {s: d for s, d in entry_alerted.items()
+                                    if d >= cutoff}
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=1)
     # daily snapshot (audit trail for missed-day/late transitions), keep 90
@@ -171,6 +186,11 @@ def entry_status_of(tag_result: dict) -> str:
     """Human label for how faithfully an alert matches the backtested trigger."""
     if tag_result.get("validated_entry"):
         return "VALIDATED"          # fresh volume breakout over VCP pivot
+    if tag_result.get("engine_entry"):
+        # the engine's condition fired but the tag refuses to call it a buy —
+        # almost always because the name is EXTENDED above its 50-DMA. The
+        # backtest took these; live skips them. Label, don't hide (F1b).
+        return "VALIDATED (EXTENDED)"
     if tag_result.get("vcp_valid"):
         return "AWAITING TRIGGER"   # VCP base live, pivot not yet cleared on volume
     return "NO VCP BASE"            # trend-following read only
@@ -483,6 +503,90 @@ def main() -> None:
             lines.append("")
             lines.append("Minor shifts: " + ", ".join(f"{s} {o}->{n}" for s, o, n in infos))
 
+    # BUY TRIGGER alerts (AUDIT_2026-07-25 Finding 1, ADOPTED 2026-07-25).
+    #
+    # The entry the +1.67R evidence is actually built on — a VCP pivot cleared
+    # on volume inside a passing trend template — was already computed for
+    # EVERY watched name every night by tag_stock, and then thrown away for all
+    # but the handful that happened to change tag. Measured on a 60-stock /
+    # 6.2-year sample: the engine's entry fires 66 times, the live tagger
+    # agrees on 55, but only 15 of those 55 land on a tag-TRANSITION day — so
+    # ~73% of validated entries could never produce an alert. Live
+    # corroboration: 117 buy-type alerts through 2026-07-24, ZERO ever
+    # labelled VALIDATED.
+    #
+    # This fires it as an EVENT, mirroring EPISODIC PIVOT. No new signal, no
+    # new gate, no threshold moved, nothing recomputed — an already-validated
+    # entry simply becomes alertable. Expected ~1.7/week across 611 names.
+    entry_alerted: dict[str, str] = dict((prev or {}).get("entry_alerted", {}))
+    if prev is not None:
+        # names that already got a buy-type card tonight (a transition that was
+        # ITSELF the validated entry) — record the event so it can't re-fire
+        # tomorrow, but don't build a second alert for the same thing
+        already_carded = set(card_idx)
+        entry_hits = {s: tr for s, tr in tag_results.items()
+                      if tr.get("validated_entry") or tr.get("engine_entry")}
+        new_entries = {}
+        for sym, tr in entry_hits.items():
+            bar = tr.get("last_date", "")
+            # idempotent on the bar (a same-evening catch-up re-run must not
+            # double-journal), plus a cooldown so a name that keeps closing
+            # over its pivot on volume doesn't alert three nights running.
+            # 10 days matches the state-retention window in save_state.
+            last = entry_alerted.get(sym)
+            if last and (pd.Timestamp(bar) - pd.Timestamp(last)).days < BUY_TRIGGER_COOLDOWN_DAYS:
+                continue
+            entry_alerted[sym] = bar
+            if sym not in already_carded:
+                new_entries[sym] = tr
+        if new_entries:
+            lines.append("")
+            lines.append(f"{len(new_entries)} BUY TRIGGER(s) — the backtested "
+                         f"entry fired (VCP pivot cleared on volume):")
+            lines.append("")
+        # strongest first: a validated entry on the biggest volume expansion
+        for sym, tr in sorted(new_entries.items(),
+                              key=lambda kv: -(kv[1].get("breakout_volume_ratio") or 0)):
+            status = entry_status_of(tr)
+            volx = tr.get("breakout_volume_ratio")
+            vol_txt = f"{volx:.1f}x vol" if volx else "volume confirmed"
+            # ONE trailing parenthesised group — send_telegram's ALERT_RX
+            # parses these lines, so keep the shape identical to every other
+            # alert line rather than appending a second group
+            detail = f"pivot {tr.get('pivot_price')} cleared on {vol_txt}"
+            if status == "VALIDATED (EXTENDED)":
+                detail += ("; tagger says EXTENDED — the backtest TOOK these, "
+                           "live has been skipping them")
+            lines.append(f"- **BUY TRIGGER** [{status}]: {sym}  ({detail})")
+            entry_signal_rows.append({
+                "logged_at": now, "symbol": sym, "kind": "BUY TRIGGER",
+                "entry_status": status,
+                "validated_entry": tr.get("validated_entry"),
+                "close": tr["last_close"], "pivot_price": tr.get("pivot_price"),
+                "breakout_today": tr.get("breakout_today"),
+                "breakout_volume_ratio": volx,
+                "vcp_valid": tr.get("vcp_valid"),
+            })
+            row = {"logged_at": now, "symbol": sym, "kind": "BUY TRIGGER",
+                   "old_tag": (prev.get("tags", {}) or {}).get(sym, ""),
+                   "new_tag": today_tags.get(sym, ""),
+                   "rs_pctile": rs_by_sym.get(sym, "")}
+            cand = build_candidate(sym, tr, industry_by_sym.get(sym),
+                                   rs_by_sym.get(sym),
+                                   company_name=company_by_sym.get(sym, sym))
+            banner = (f"!! BUY TRIGGER — pivot {tr.get('pivot_price')} cleared on "
+                      f"{vol_txt} ({tr.get('last_date')}). This is the exact "
+                      f"entry the backtest validated.\n")
+            if status == "VALIDATED (EXTENDED)":
+                banner += ("!! ...but the tag reads EXTENDED. The backtest took "
+                           "these; the live system has been skipping them. "
+                           "Labelled for measurement — not a recommendation.\n")
+            cards.append(banner + cand.pop("card"))
+            card_idx[sym] = len(cards) - 1
+            alert_details[sym] = cand.pop("detail")
+            row.update(cand)
+            journal_rows.append(row)
+
     # EPISODIC PIVOT alerts (EP matrix, ADOPTED 2026-07-19): one-day EVENTS,
     # not state transitions — a violent gap on extreme volume. Idempotent via
     # state ep_alerted {sym: bar_date} (a same-evening catch-up re-run of the
@@ -604,7 +708,8 @@ def main() -> None:
     if problems:
         lines = lines[:2] + problems + [""] + lines[2:]
 
-    save_state(args.state_file, today_tags, ep_alerted=ep_alerted)
+    save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
+               entry_alerted=entry_alerted)
     journal_append(journal_rows)
     entry_signals_append(entry_signal_rows)
     save_alert_details(alert_details)

@@ -42,6 +42,12 @@ from datetime import datetime, timedelta
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)  # for scoring.regime in _cross_layer_context
 
+from config import BUY_ALERT_KINDS
+
+# built from the ONE list in config.py — this regex silently stopped matching
+# twice before (see config.BUY_ALERT_KINDS), so it is no longer hand-written
+_KINDS_RE = "|".join(re.escape(k) for k in BUY_ALERT_KINDS)
+
 ALERTS_PATH = os.path.join(ROOT, "daily_alerts.md")
 PROTOCOL_PATH = os.path.join(ROOT, "analyst", "DEEP_DIVE_PROTOCOL.md")
 REPORTS_DIR = os.path.join(ROOT, "analyst_reports")
@@ -91,7 +97,7 @@ def extract_candidates(report: str) -> list[str]:
     # matched nothing after that, silently killing every nightly deep-dive
     # (audit catch 2026-07-18)
     syms = re.findall(
-        r"\*\*(?:BUY CANDIDATE|RE-ENTRY WINDOW|EPISODIC PIVOT)\*\*(?:\s*\[[^\]]*\])?: (\w[\w&-]*)",
+        rf"\*\*(?:{_KINDS_RE})\*\*(?:\s*\[[^\]]*\])?: (\w[\w&-]*)",
         report)
     seen, uniq = set(), []
     for s in syms:
@@ -124,8 +130,7 @@ def pending_pool(days: int = 5) -> list[str]:
     latest: dict[str, tuple[datetime, float]] = {}
     with open(sig_path, encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r.get("kind") not in ("BUY CANDIDATE", "RE-ENTRY WINDOW",
-                                     "EPISODIC PIVOT"):
+            if r.get("kind") not in BUY_ALERT_KINDS:
                 continue
             if str(r.get("vetoed", "")).strip().lower() == "true":
                 continue
@@ -345,7 +350,7 @@ def main() -> None:
         # "idle" through real buy nights for a week, indistinguishable from
         # a genuinely quiet market. If the words are in the file but the
         # parser sees nothing, that is a BUG, not a quiet night — shout.
-        loose_hits = len(re.findall(r"BUY CANDIDATE|RE-ENTRY WINDOW|EPISODIC PIVOT", report))
+        loose_hits = len(re.findall(_KINDS_RE, report))
         if loose_hits:
             msg = (f"ALERT-FORMAT DRIFT: {loose_hits} buy-type mention(s) in "
                    f"daily_alerts.md but the candidate parser matched none — "

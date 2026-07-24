@@ -99,9 +99,15 @@ def build_digest(raw: str) -> str:
     health = [ln.strip() for ln in raw.splitlines()[:15] if ln.strip().startswith("!!")]
 
     act, watch, weak, forming, exits, eps = [], [], [], [], [], []
+    trig, trig_ext = [], []
     for kind, status, sym, extra in ALERT_RX.findall(raw):
         kind = kind.strip()
-        if kind == "EPISODIC PIVOT":
+        if kind == "BUY TRIGGER":
+            # the backtested entry, fired as an event (AUDIT_2026-07-25 F1).
+            # The EXTENDED variant is a labelled deviation, not a green light —
+            # it gets its own line so the phone never blurs the two.
+            (trig_ext if "EXTENDED" in status else trig).append((sym, extra))
+        elif kind == "EPISODIC PIVOT":
             eps.append((sym, extra))
         elif kind in ("BUY CANDIDATE", "RE-ENTRY WINDOW"):
             if status == "VALIDATED":
@@ -125,15 +131,22 @@ def build_digest(raw: str) -> str:
         L.append(h)
     L.append("")
 
-    n_act = len(act) + len(eps)
+    n_act = len(act) + len(eps) + len(trig)
     if n_act:
         L.append(f"● {n_act} BUY TRIGGER{'S' if n_act > 1 else ''} — act today")
+        for sym, extra in trig:
+            L.append(f"  ▲ {sym} — validated breakout ({extra or 'pivot cleared on volume'})")
         for sym in act:
             L.append(f"  ▲ {sym} — validated breakout, sized plan on the dashboard")
         for sym, extra in eps:
             L.append(f"  ▲ {sym} — episodic pivot ({extra or 'gap + volume event'})")
     else:
         L.append("○ No buy triggers tonight — nothing requires action.")
+    if trig_ext:
+        L.append("")
+        L.append(f"◐ {len(trig_ext)} breakout(s) on EXTENDED names — logged, not recommended")
+        for sym, _extra in trig_ext:
+            L.append(f"  · {sym} — backtest took these, live skips them (being measured)")
     if exits:
         for sym in exits:
             L.append(f"  ▼ EXIT WARNING: {sym} — held name broke down, check the plan")
