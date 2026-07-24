@@ -1,3 +1,3 @@
 symbol,entry_date,entry_price,initial_stop,stop_current,shares_trading,shares_core,trading_open,core_open,partial_taken,breakeven_moved,notes
 MOSCHIP,2026-07-04,208.485,190.14,208.485,100,100,True,True,True,True,seeded from Zerodha holding; stop set 2.5xATR at seed time (not original trade stop)
-DIACABS,2026-07-12,224.62,195.37,224.62,50,50,True,True,False,True,seeded from Zerodha holding (avg price); stop 2.5xATR at seed time (13.0% wide - past the 12% new-entry cap but position risk only ~0.29% of capital); alerted BUY CANDIDATE 2026-07-10 score 63.9
+DIACABS,2026-07-12,224.62,195.37,224.62,50,50,True,True,True,True,seeded from Zerodha holding (avg price); stop 2.5xATR at seed time (13.0% wide - past the 12% new-entry cap but position risk only ~0.29% of capital); alerted BUY CANDIDATE 2026-07-10 score 63.9
