@@ -30,6 +30,45 @@ _News moves attention, never entries — trades stay technical._
 1 position-management alert(s):
 - **POSITION**: DIACABS — PARTIAL PROFIT 2.5R hit at 297.75 — sell ~16 sh of trading lot
 
+## AI analyst verdicts
+
+### STLTECH
+VERDICT: SKIP
+CONVICTION: HIGH
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Story checks out clean: Q1 FY27 revenue +87%, EBITDA margin at 20-quarter high (20.8%), net debt-free post ₹1,500 Cr QIP, and a genuine $1.11B AI-data-center optical connectivity order (part of ₹18,618 Cr order book) — real structural driver, not a one-off.
+- Both governance flags resolve as false positives: the "SEBI" NSE filing is a routine nil-deviation disclosure on preferential-warrant proceeds (funds used exactly as planned); the promoter stake drop (44.45%→42.29%) is dilution from the QIP raise, not promoter selling — Twin Star Overseas' warrants would actually raise promoter stake to ~47.75% on conversion.
+- Irrelevant either way: the card's own entry plan already resolves to SKIP on structural grounds (ATR stop 15.4% wide vs 12% hard cap, no VCP breakout trigger) — there is no tradeable plan to take or halve, regardless of fundamentals.
+
+RISKS (max 2 bullets):
+- Stock is up huge already (500%+ per one source) and sits extended above its base with no confirmed volume breakout — chasing here has poor risk/reward even if a tighter setup existed.
+- P/E 123 on a still-recovering earnings base; any hiccup in AI-data-center capex spend globally hits both the multiple and the growth narrative simultaneously.
+
+CHECKED: Web search — freepressjournal/prnewswire/equitybulls Q1 FY27 results & order book, BSE/NSE corporate filings on Reg 32(6) nil-deviation and QIP/warrant shareholding, general SEBI-action/litigation search (nothing material found).
+
+CHANGES MY MIND: A subsequent low-volatility VCP base forms with ATR stop inside the 12% cap — then re-evaluate as a fresh signal, since the fundamental story is genuinely strong.
+
+### RADICO
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story verified as real, not one-off: FY26 net profit +75% YoY, Q4 FY26 PAT +93%, driven by Prestige & Above premiumization (volumes +28.5%, now >70% of IMFL value) — MD called it an explicit "inflection point" on the concall, consistent with the card's earnings score.
+- No red flags found: no recent pledge activity (last pledge release was 2020), no SEBI action/auditor issue surfaced; "not a SEBI Large Corporate" designation is a neutral administrative note, not a governance concern.
+- Sector tailwind is real but mixed: UP/Maharashtra excise-led price hikes support realizations, and Radico's in-house ENA production (Rs 6-9/L margin edge) partially insulates it from the industry-wide packaging cost spike (glass +20%, cartons +100%) that's squeezing peers.
+
+RISKS (max 2 bullets):
+- Q1 FY27 results land imminently — board meeting July 28, concall July 29 — just days after this alert; a binary earnings-gap risk sits right on top of entry that the mechanical stop wasn't sized for, and expectations are now high after three strong quarters.
+- Valuation is stretched (P/E ~89, card already flags this 0.25) with RS percentile 89 — most of the good news may already be priced in, raising "sell the news" risk into the print.
+
+CHECKED: Web search — Business Standard/ScanX/Whalesbook (Q4/FY26 results, concall commentary), shareholding/pledge history, CIABC/BAI packaging-cost and state excise-hike coverage (UP, Maharashtra).
+
+CHANGES MY MIND: A weak Q1 FY27 print or margin miss on July 28-29 (packaging/ENA cost pass-through failing) would flip this to SKIP; conversely, continued Prestige & Above beat would support staying at half size post-results.
+
+
 ## Cards
 
 ```
