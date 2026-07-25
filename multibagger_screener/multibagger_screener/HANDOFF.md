@@ -949,6 +949,105 @@ ineligible names stated inline instead of silently leaving the denominator.
 
 ---
 
+## 3P. News memory, Sectors tab, committee unfreeze (2026-07-26)
+
+Four user-requested strategic changes. Commit `b4d1105`, pushed.
+
+### The committee had been dead for a week — inverted timeouts
+
+`ai_picks.json` was dated **19 Jul 17:27** while the shortlist it feeds on was
+committed **25 Jul 23:42**. The freshness guard was open the whole time; the
+job kept dying. Root cause was three nested budgets in the wrong order:
+
+| layer | was | is |
+|---|---|---|
+| `ai_picks.TIMEOUT_S` (the CLI) | 900s | **10800s (3h)** |
+| `weekly_committee_local` subprocess | 1200s | **12000s (3h20m)** |
+| Task Scheduler `ExecutionTimeLimit` | PT4H | PT4H |
+
+The observed run is ~2h50m, so *every* scheduled attempt was killed and the
+only picks that ever landed came from an orphaned child a later logon swept
+up ("fresh but UNPUSHED" in `logs/committee_local.log`). `TIMEOUT_S` is not the
+cost lever — `MAX_TURNS` is; the budget can be generous.
+
+The tab now computes `age_days` at build time, shows a coloured badge, and
+past one weekly cycle (≥8d) prints a **NOT THIS WEEK'S READ** banner. The
+failure was invisible for a week behind a 10px grey footnote.
+
+### News radar: from a nightly window to a 90-day memory
+
+The complaint was that the radar felt like an independent scan. It was worse
+than that — `news_radar.py` windows from the last scan and overwrites its state
+file nightly, so it *cannot* express duration. Two measurements shaped the fix
+(16 days of archive: 18,307 filings, 4,017 universe-matched, 221 material
+across 122 names):
+
+1. **Filings are not stories.** GABRIEL led the raw count with 9 hits = one
+   acquisition (HL Klemove) plus the preferential issue funding it, filed 9
+   times over 4 days. Counting filings ranks companies by paperwork.
+   `data/news_pressure.py` collapses same-company/same-event-class inside
+   `NEWS.story_gap_days` (5d) into one story dated at its FIRST filing —
+   221 raw → 145 stories — and decays from that date (half-life 21d), so
+   re-filing cannot refresh your own pressure.
+2. **News does not lead the trigger.** Names with a positive filing produced a
+   later BUY/RE-ENTRY alert **6/82 = 7.3%** against a **108/651 = 16.6%**
+   universe base rate; names with 2+ distinct stories, **0 of 7**. Sixteen days
+   proves nothing on its own, but it points the same direction as every
+   rejected overlay here (sector-heat gating, PIT-fundamentals gating).
+
+So the radar was **not** rebuilt as a discovery funnel. It is a dossier and a
+risk watch: `NEWS-PRIMED` + the story history is stamped on the card at the
+moment the *technical* trigger fires, `news_primed`/`news_pressure`/
+`news_stories` are frozen into `entry_signals.csv`, and Journal forensics gains
+a **By news memory** cohort. The panel is now three sections — Risk on your
+exposure / Building / Tonight's filings — and the drawer shows a 90-day news
+memory block. Nothing gates, ranks or sizes.
+
+`state/news_pressure.json` is DERIVED (rebuilt nightly from the committed
+archive). The only forward RECORD is the frozen columns — a cohort you can
+recompute proves nothing.
+
+### Sectors tab (`scoring/themes.py`)
+
+18 cross-industry themes over the same universe the scan watches. NSE's 22
+macro-industries are accounting categories: BEL and DATAPATTNS are one story in
+different buckets; APARINDS and POWERINDIA are one grid-capex trade. Membership
+= explicit seeds + name/industry patterns, and a stock may sit in several
+themes on purpose.
+
+**Heat is a RANK across themes, not an absolute score.** The absolute version
+was built first and compressed all 18 into 33–41 — arithmetically true (the
+whole tape moves together) and useless for ordering a reading queue. Blend is
+3m move 45 / chart breadth 40 / news per name 15; themes under 4 names are
+flagged `thin`, excluded from the ranking and sorted last, because a two-name
+median is noise.
+
+Two greedy patterns caught against the real name list, both worth remembering:
+`\bhealthcare\b` is the NSE *industry* string and dragged all 63 pharma names
+into a hospitals theme; `\blabs?\b` then caught Alkem/Ipca/Laurus
+**Laboratories**, which are drug makers.
+
+The banner states the binding evidence: sector heat was tested as an entry
+filter and REJECTED (matrix v2 config E: +0.22R at a 40% gate, +0.11R at 60%,
+vs +1.27R ungated — monotonic the wrong way). This tab orients research; every
+name still has to fire the same trigger. `state/themes.json` is written for the
+weekly committee, which now receives the map and writes a `THEME READ` block
+into `ai_picks.json` (absent = mechanical table stands alone).
+
+### Penny tab
+
+Raw filenames removed from user-facing copy, the five-line intro cut to two,
+meta reshaped as a funnel line, type scale normalised to the rest of the app.
+
+### Note for the next editor
+
+`entry_signals.csv` gained three columns. `_widen_entry_signals_header()`
+migrates value-preservingly and **raises** on anything that is not a clean
+prefix — appending wide rows under a narrow header would silently shift every
+value in the one file that has to stay trustworthy.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -1039,6 +1138,23 @@ for what shipped.** The live open items are §5 #7 (make the repo private, one
 user action with a Pages caveat) and #5 (`RISK.capital`, user deferred). Then
 Task 3.2 (a pre-registered penny backtest) is the only thing that can move the
 penny screen off "research", and Task 2 (the playground) is user-deferred.
+
+**Added 2026-07-26 (§3P):** two new layers are now accruing forward evidence
+and neither may be given weight until it has a number.
+- **NEWS-PRIMED cohort.** `entry_signals.csv` freezes the news read per alert;
+  Journal forensics renders it as "By news memory". The 16-day pre-study says
+  news does NOT lead the trigger (7.3% vs a 16.6% base rate), so the prior is
+  that this cohort shows nothing. Revisit at n ≥ 30 per arm. If primed alerts
+  do not beat unprimed, delete the label — do not keep it because the panel
+  looks good.
+- **Theme heat.** Untested by construction and explicitly barred from gating
+  (matrix v2 config E rejected sector gating outright). If it is ever proposed
+  as an input, it needs its own pre-registered config, not an argument.
+
+Also worth a cheap check next session: the committee is due to run Sunday
+11:00 IST against the fixed timeouts. Confirm `ai_picks.json` refreshed and
+that `logs/committee_local.log` shows a clean commit+push rather than another
+"fresh but UNPUSHED" recovery.
 
 ---
 
@@ -1253,7 +1369,15 @@ state/alert_details.json      per-alert drawer detail blob — merged COVERAGE-A
                               shortlist_details in the dashboard (most-informed read wins
                               dims/score; fresher read contributes news/plan/date — 3K)
 state/analyst_health.json     AI analyst heartbeat (ok/failed/idle), read by daily_scan health check
-journal/entry_signals.csv     per-buy-alert entry fidelity (VALIDATED/AWAITING TRIGGER/NO VCP BASE) — forward test data
+journal/entry_signals.csv     per-buy-alert entry fidelity (VALIDATED/AWAITING TRIGGER/NO VCP BASE) — forward test
+                              data; also freezes news_primed/news_pressure/news_stories per alert (3P)
+data/news_pressure.py         90d story-level news memory (dedupes repeat filings of one event, decays from
+                              the first filing). Derived — state/news_pressure.json is rebuildable
+scoring/themes.py             18 cross-industry themes + relative heat rank (Sectors tab; research only —
+                              sector gating was tested and REJECTED, matrix v2 config E)
+state/themes.json             theme table for the weekly committee's THEME READ block
+tests/test_news_pressure.py   story dedupe + decay + primed threshold (8 pytest checks)
+tests/test_themes.py          membership traps + heat spread (9 pytest checks)
 analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders (incl. second-order ecosystem research task)
 analyst/PICKS_PROTOCOL.md     committee standing orders (incl. second-order research + analyst-verdict cross-check)
 CLOUD.md                      GitHub Actions setup + operations (cache design, secrets, Pages, risks)
