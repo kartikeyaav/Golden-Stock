@@ -897,7 +897,10 @@ def build_payload() -> dict:
     if not focus.empty:
         g = focus.groupby("industry")["rs_pctile"].agg(["mean", "count"])
         g = g[g["count"] >= 3].sort_values("mean", ascending=False)
-        heat = [{"ind": str(i)[:24], "rs": round(float(r["mean"]), 0), "n": int(r["count"])}
+        # full industry name — the bar layout ellipsizes in CSS if it has to.
+        # The old hard [:24] cut produced permanent stumps like
+        # "Oil Gas & Consumable Fue" even when the column had room.
+        heat = [{"ind": str(i), "rs": round(float(r["mean"]), 0), "n": int(r["count"])}
                 for i, r in g.iterrows()][:18]
 
     # --- "Watching — not qualified" (Screener tab, bottom) ---------------
@@ -1046,10 +1049,14 @@ TEMPLATE = r"""<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
-:root{--bg:#0e1116;--panel:#12161d;--card:#151b23;--card2:#1b222d;--line:#232b37;--line2:#303c4c;
---txt:#e6e9ee;--dim:#94a0b0;--faint:#67748b;--grn:#34d399;--red:#f87171;--amb:#fbbf24;--blu:#5aa2ff;--vio:#a78bfa;
+:root{--bg:#0b0e13;--panel:#10141b;--card:#141922;--card2:#1a212b;--line:#212936;--line2:#2e3846;
+--txt:#e8ecf2;--dim:#94a0b0;--faint:#67748b;--grn:#34d399;--red:#f87171;--amb:#fbbf24;--blu:#5aa2ff;--vio:#a78bfa;
+--teal:#5eead4;--ep:#f5c84c;
+--r:14px;--r2:10px;--r3:8px;
+--sh:0 1px 2px #00000040;--sh2:0 8px 28px #00000059;
 --mono:'JetBrains Mono',ui-monospace,Consolas,monospace}
 *{box-sizing:border-box;margin:0}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 ::selection{background:#34d39930}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:#2b3543;border-radius:8px}
@@ -1059,8 +1066,9 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-seri
 .mono,td.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px}
 nav{width:204px;background:var(--panel);border-right:1px solid var(--line);padding:18px 10px;position:fixed;height:100vh;
 z-index:40;display:flex;flex-direction:column}
-nav h1{font-size:14.5px;font-weight:700;padding:2px 12px 14px;letter-spacing:-.2px}
-nav h1 span{color:var(--grn)}
+nav h1{font-size:15px;font-weight:700;padding:2px 12px 14px;letter-spacing:-.35px}
+nav h1 span{background:linear-gradient(92deg,var(--grn),#22d3ee);-webkit-background-clip:text;
+background-clip:text;color:transparent}
 .navbtn{display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border:0;border-radius:8px;
 background:transparent;color:var(--dim);font:500 13px Inter;cursor:pointer;margin:1px 0;text-align:left;
 transition:background .12s,color .12s}
@@ -1094,16 +1102,20 @@ main{margin-left:204px;flex:1;padding:20px 28px 40px;max-width:1280px}
 .b-amb{background:#fbbf2412;color:var(--amb);border:1px solid #fbbf2438}
 .b-grn{background:#34d39912;color:var(--grn);border:1px solid #34d39938}
 .b-red{background:#f8717112;color:var(--red);border:1px solid #f8717138}
-.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
-padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--line)}
-.sub{display:none}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
-/* section headers: brighter + heavier + a brand accent tick, and the info "?"
-   is pushed to the far right so it can never orphan onto its own line after a
-   long header wraps (flex keeps it vertically centered). */
-h2{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;color:#b3becd;
-text-transform:uppercase;letter-spacing:1.1px;margin-bottom:13px;line-height:1.35}
-h2::before{content:"";flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:var(--grn);box-shadow:0 0 8px #34d39955}
+/* sticky context bar: regime + health + freshness must stay legible while you
+   scroll a long tab, so it rides above the content instead of scrolling away */
+.top{position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;
+flex-wrap:wrap;gap:10px;padding:14px 0 12px;margin-bottom:18px;border-bottom:1px solid var(--line);
+background:linear-gradient(var(--bg) 76%,#0b0e13d9);backdrop-filter:blur(8px)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:17px 19px;
+margin-bottom:14px;box-shadow:var(--sh)}
+/* section headers: sentence case at a readable size (the old 11px all-caps
+   micro-label made every heading the same visual weight as its own footnotes).
+   The accent tick carries the hierarchy; the "?" is pushed right so it can
+   never orphan onto its own line after a long header wraps. */
+h2{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:650;color:#dbe2ea;
+letter-spacing:-.1px;margin-bottom:14px;line-height:1.35}
+h2::before{content:"";flex:0 0 auto;width:3px;height:15px;border-radius:2px;background:var(--grn);box-shadow:0 0 8px #34d39955}
 h2 .info{margin-left:auto}
 .info{display:inline-flex;flex:0 0 16px;width:16px;height:16px;border-radius:50%;
 background:var(--card2);border:1px solid var(--line2);color:var(--dim);
@@ -1112,14 +1124,14 @@ text-transform:none;letter-spacing:0;transition:.12s}
 .info:hover{color:var(--txt);border-color:var(--dim);background:#232c39}
 .tip{position:fixed;display:none;max-width:320px;background:#1e2632;border:1px solid var(--line2);border-radius:8px;
 padding:9px 12px;font:400 11.5px/1.6 Inter;color:#c4cdd8;z-index:100;box-shadow:0 10px 32px #0009;pointer-events:none}
-.kpis{display:flex;gap:0;margin-bottom:14px;background:var(--card);border:1px solid var(--line);
-border-radius:12px;padding:13px 6px;justify-content:space-around}
-.kpi{padding:2px 18px;border-left:1px solid var(--line)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;margin-bottom:14px;
+background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 6px;box-shadow:var(--sh)}
+.kpi{padding:2px 20px;border-left:1px solid var(--line)}
 .kpi:first-child{border-left:0}
-.kpi b{display:block;font-size:24px;font-weight:700;margin-top:4px;letter-spacing:-.4px;font-variant-numeric:tabular-nums}
+.kpi b{display:block;font-size:26px;font-weight:700;margin-top:5px;letter-spacing:-.7px;font-variant-numeric:tabular-nums}
 /* child selector: the nested .info "?" must not inherit the label's
    display:block/uppercase styling (it was dropping onto its own line) */
-.kpi>span{color:var(--faint);font-size:9.5px;text-transform:uppercase;letter-spacing:.9px;display:block;white-space:nowrap}
+.kpi>span{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;display:block;white-space:nowrap}
 .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
 .chip{display:inline-flex;gap:7px;align-items:center;border:1px solid;border-radius:7px;
 padding:5px 11px;margin:2px 5px 2px 0;font-size:12px;background:transparent;cursor:pointer;transition:.15s}
@@ -1134,8 +1146,10 @@ padding:5px 11px;margin:2px 5px 2px 0;font-size:12px;background:transparent;curs
 .llbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint);width:180px;min-width:180px}
 .lchip{display:inline-block;border:1px solid;border-radius:99px;padding:2px 10px;font:600 10.5px var(--mono,ui-monospace,monospace);letter-spacing:.04em;cursor:default}
 @media(max-width:640px){.llbl{width:100%}}
-.alert{display:flex;gap:10px;padding:10px 13px;border-left:2px solid var(--line);background:var(--card2);
-border-radius:0 8px 8px 0;margin:8px 0;font-size:12.8px}
+.alert{display:flex;gap:11px;align-items:center;padding:9px 13px;border-left:2px solid var(--line);
+background:var(--card2);border-radius:0 var(--r3) var(--r3) 0;margin:6px 0;font-size:12.8px;
+cursor:pointer;transition:background .12s}
+.alert:hover{background:#212a36}
 .ak{font:600 10px var(--mono,ui-monospace,monospace);letter-spacing:.05em;white-space:nowrap;
 border:1px solid var(--line);border-radius:99px;padding:2px 9px;align-self:center}
 .quiet{color:var(--dim);font-size:12.8px;padding:6px 0}
@@ -1159,9 +1173,28 @@ input,select{background:var(--bg);border:1px solid var(--line);border-radius:8px
 padding:7px 12px;font:500 12.5px Inter;outline:0}
 input:focus{border-color:var(--dim)}
 .fbar2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.heatgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.heatcell{border-radius:8px;padding:9px 11px;font-size:11.5px;border:1px solid var(--line)}
-.heatcell b{display:block;font-size:15px;font-family:var(--mono)}
+/* sector strength — a ranked bar list reads as an ordering. The old 3-column
+   grid of coloured tiles gave 18 industries the same visual weight, so the
+   leader and the laggard looked equally important. */
+.heatgrid{display:flex;flex-direction:column;gap:1px}
+.sbar{display:grid;grid-template-columns:1fr 86px 30px;align-items:center;gap:11px;padding:4px 1px;font-size:12px}
+.sbar .sname{color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sbar .sn{color:var(--faint);font-size:10.5px}
+/* both must be block: a plain inline <span> ignores width/height, which
+   silently rendered the fill as a zero-size box */
+.sbar .strack{display:block;position:relative;height:6px;background:#242d3a;border-radius:99px;overflow:hidden}
+/* hairline at the 50th percentile — the bars all sit in a narrow band, so
+   without a reference mark "above or below the market" is not readable */
+.sbar .strack::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:#0b0e13cc}
+.sbar .sfill{display:block;height:6px;border-radius:99px;min-width:3px}
+.sbar .sval{font-family:var(--mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+/* stage tally — one stacked bar shows the distribution at a glance; five
+   separate count chips made the reader do the arithmetic */
+.dist{display:flex;height:10px;border-radius:99px;overflow:hidden;background:var(--card2);margin-bottom:13px}
+.distkey{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px}
+.distkey>div{display:flex;align-items:center;gap:8px;font-size:12.4px;cursor:help}
+.distkey i{width:8px;height:8px;border-radius:2px;flex:0 0 auto}
+.distkey b{font-family:var(--mono);font-variant-numeric:tabular-nums;margin-left:auto;color:var(--dim)}
 .drawer{position:fixed;top:0;right:-720px;width:700px;height:100vh;background:#141a22fa;
 border-left:1px solid var(--line2);z-index:50;transition:right .25s cubic-bezier(.2,.8,.2,1);
 overflow-y:auto;padding:22px;backdrop-filter:blur(10px)}
@@ -1172,8 +1205,11 @@ overflow-y:auto;padding:22px;backdrop-filter:blur(10px)}
 padding:6px 12px;cursor:pointer;font-weight:600}
 .minis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
 .mini{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px}
-.mini h3{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.9px;margin-bottom:9px}
-.actcard{border-color:#34d3992e}
+.mini h3{font-size:11.5px;font-weight:600;color:#c3ccd8;letter-spacing:0;margin-bottom:9px}
+.mini h3 .axis{font-weight:400;margin-left:5px}
+/* the hero: this is the only panel you act from, so it is the only card that
+   carries an accent wash and a heavier border — everything else is reference */
+.actcard{border-color:#34d39938;background:linear-gradient(#34d3990a,transparent 120px),var(--card)}
 .funnelline{color:var(--faint);font-size:11px;margin:2px 4px 14px;font-family:var(--mono)}
 .funnelline b{color:var(--dim);font-weight:600}
 .funnelline .sep{color:var(--line2);padding:0 7px}
@@ -1222,8 +1258,8 @@ font-family:var(--mono);font-size:12px;color:var(--dim);white-space:nowrap}
 .legendline{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
 footer{color:var(--faint);font-size:10.5px;margin-top:24px;line-height:1.7}
 .tab{display:none}.tab.on{display:block}
-.acthead{font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
-.dochip{display:inline-block;padding:2.5px 8px;border-radius:5px;border:1px solid;font-size:10px;font-weight:600;letter-spacing:.4px;white-space:nowrap}
+.acthead{font-size:15px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;letter-spacing:-.2px}
+.dochip{display:inline-block;padding:3px 9px;border-radius:6px;border:1px solid;font-size:10.5px;font-weight:600;letter-spacing:.4px;white-space:nowrap}
 .vchip{display:inline-block;padding:1.5px 6px;border-radius:4px;border:1px solid;font-size:9.5px;font-weight:600;white-space:nowrap;margin:1px 3px 1px 0;cursor:help}
 /* analyst verdict cards — compact, native */
 .vcard{background:var(--card2);border:1px solid var(--line);border-radius:9px;
@@ -1328,7 +1364,8 @@ td,th{padding:5px 6px}
 .papertbl th:nth-child(5),.papertbl td:nth-child(5),
 .papertbl th:nth-child(7),.papertbl td:nth-child(7){display:none}              /* Entered · Stop · Shares */
 .papertbl td:nth-child(2){max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.heatgrid{grid-template-columns:1fr 1fr}}
+.sbar{grid-template-columns:1fr 56px 28px;gap:8px;font-size:11.5px}
+.distkey{grid-template-columns:1fr}}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
 <div class="searchhint" onclick="openPalette()"><span>Search stocks&hellip;</span><kbd>Ctrl K</kbd></div>
@@ -1340,59 +1377,55 @@ td,th{padding:5px 6px}
 <button class="navbtn" data-t="positions"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Positions</button>
 <button class="navbtn" data-t="journal"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg> Journal</button>
 <div id="runpanel" style="display:none">
-  <div class="runhead">RUN (local server)</div>
-  <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + rebuild — mechanical only, no AI">&#8635; Daily scan (no AI)</button>
+  <div class="runhead">RUN</div>
+  <button class="runbtn" data-job="daily" title="scan + paper book + outcomes + rebuild — mechanical only, no AI">&#8635; Daily scan</button>
   <button class="runbtn" data-job="daily_ai" title="also runs the AI analyst on your Claude subscription (pooled deep-dives)">&#8635; Scan + AI analyst</button>
-  <button class="runbtn" data-job="weekly" title="full weekly refresh (universe, prices, fundamentals, shortlist) — AI committee skipped">&#8635; Weekly refresh (no AI)</button>
+  <button class="runbtn" data-job="weekly" title="full weekly refresh (universe, prices, fundamentals, shortlist) — AI committee skipped">&#8635; Weekly refresh</button>
   <button class="runbtn" data-job="penny" title="rebuild the penny/nano-cap research screen: whole-NSE universe + tradability gates, capped fundamentals fetch, rank + journal">&#8635; Penny screen</button>
-  <div class="runnote">Both AI layers run on your Claude subscription, never an API key.</div>
   <div id="runstatus"></div>
 </div>
 </nav>
 <main>
 <div class="top"><div id="badges"></div><div class="dim" style="font-size:12px" id="gen"></div></div>
-<div class="sub">Alerts fire on state transitions only &middot; entries are technical-only (evidence-locked) &middot; click any stock for the full picture</div>
 
 <div class="tab on" id="overview">
-  <div class="card actcard"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days<span class="info" data-tip="The only panel you act from. BUY NOW = the exact backtested trigger fired (pivot break on ≥1.5× volume). MOMENTUM BUY = an episodic-pivot gap fired (≥8% gap on ≥3× volume) — both are real buys; open the drawer for the sized plan. WATCH = base ready, breakout not confirmed yet. WEAK = in an uptrend but no proven trigger — not a buy. Resolved rows (ran away / faded / vetoed) need nothing — a faded signal is the system saving you from a stale entry.">?</span></h2>
+  <div class="card actcard"><h2 style="color:var(--grn)">Actionable now<span class="info" data-tip="The only panel you act from, covering the last 7 days of buy signals. BUY NOW = the backtested trigger fired (pivot break on ≥1.5× volume). MOMENTUM BUY = an episodic-pivot gap (≥8% on ≥3× volume). Both are real buys — open the drawer for the sized plan. WATCH = base ready, no breakout yet. WEAK = uptrend, no proven trigger. Resolved rows need nothing.">?</span></h2>
     <div id="actionable"></div></div>
-  <details class="card legend" id="legend"><summary>Legend &mdash; what the tags &amp; buy signals mean (state is not a buy)</summary><div class="lbody" id="legendbody"></div></details>
-  <div class="card" id="radarcard" style="display:none"><h2 style="color:#a78bfa">News radar<span class="info" data-tip="First-party NSE filings only (never scraped headlines, which mis-attribute), whitelist-classified into order wins, expansions, M&A, approvals, probes, pledges, exits and fund raises. Repeat filings of ONE event collapse into one story, so this measures news rather than paperwork. Three sections: what has been BUILDING over weeks, what landed TONIGHT, and negative filings on names you hold or were just alerted on. Measured over 16 days of archive, filings did NOT predict the technical trigger — names with positive news alerted at 7.3% against a 16.6% base rate. So nothing here gates, ranks or sizes anything; it is context, and it is being scored in the Journal tab like every other layer.">?</span>
+  <details class="card legend" id="legend"><summary>Legend &mdash; a state is not a buy</summary><div class="lbody" id="legendbody"></div></details>
+  <div class="card" id="radarcard" style="display:none"><h2 style="color:var(--vio)">News radar<span class="info" data-tip="First-party NSE filings only, whitelist-classified into order wins, expansions, M&A, approvals, probes, pledges, exits and fund raises. Repeat filings of one event collapse into a single story, so this measures news rather than paperwork. Measured over 16 days of archive, filings did NOT predict the technical trigger — names with positive news alerted at 7.3% against a 16.6% base rate. Nothing here gates, ranks or sizes anything.">?</span>
     <span class="axis" style="margin-left:auto" id="radarage"></span></h2>
     <div id="radarbody"></div></div>
   <div class="kpis" id="kpis"></div>
   <div class="funnelline" id="funnel"></div>
   <div class="grid2"><div>
-    <div class="card"><h2>Tonight &mdash; what the scan saw<span class="info" data-tip="Raw stage transitions from tonight's scan, translated into plain words: a stock entering an UPTREND is labeled NEW UPTREND / RE-ENTRY here — it becomes a BUY NOW only if the validated trigger (pivot breakout on ≥1.5× volume) also fired, or a MOMENTUM BUY on an episodic-pivot gap. The Actionable panel above is the decision layer: it tracks these same names for 7 days and tells you which ones actually require action.">?</span></h2><div id="alerts"></div>
-    <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst &mdash; tonight's deep-dives<span class="info" data-tip="The NIGHTLY analyst: after each scan it web-researches tonight's top buy alerts one by one and answers a single question — take, halve, or skip this specific alert. Different from the AI Picks tab: that is the WEEKLY committee choosing a researched 3-5 name portfolio from the whole shortlist. Analyst = tonight's alert triage · Committee = the week's best ideas.">?</span></h2><div id="verdicts"></div></div></div>
-    <div class="card"><h2>Market trend &mdash; NIFTY 50 vs its 150-day average<span class="info" data-tip="The market's own trend. When the NIFTY is below its 150-day moving average the whole market is weak, and the system automatically halves every position size (defensive regime). The badge at the top shows which mode is active tonight.">?</span></h2><div id="niftychart" style="height:190px"></div></div>
+    <div class="card"><h2>Tonight<span class="info" data-tip="Tonight's stage transitions in plain words. A stock entering an uptrend is NEW UPTREND / RE-ENTRY here — it becomes a BUY NOW only if the validated trigger (pivot breakout on ≥1.5× volume) also fired, or a MOMENTUM BUY on an episodic-pivot gap. The Actionable panel above is the decision layer.">?</span></h2><div id="alerts"></div>
+    <div id="verdictcard" style="display:none;margin-top:14px"><h2>AI analyst<span class="info" data-tip="The nightly analyst web-researches tonight's top buy alerts and answers one question each — take, halve, or skip. Distinct from AI Picks, which is the weekly committee choosing a researched 3-5 name portfolio from the whole shortlist.">?</span></h2><div id="verdicts"></div></div></div>
+    <div class="card"><h2>Market trend<span class="info" data-tip="NIFTY 50 against its 150-day average. Below it, the whole market is weak and the system halves every position size. The badge at the top shows tonight's mode.">?</span></h2><div id="niftychart" style="height:190px"></div></div>
   </div><div>
-    <div class="card"><h2>Stage tally &mdash; tonight's chart stages<span class="info" data-tip="How many of the 611 watched stocks sit in each chart stage tonight. UPTREND = healthy confirmed uptrend, all 8 trend checks pass (a monitored pool, NOT a buy list — act only on a fresh trigger in the Actionable panel). BASING = base still forming, watch with zero money. EXTENDED = ran too far above the trend, do not chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></h2><div id="tagboard"></div></div>
-    <div class="card"><h2>Sector strength<span class="info" data-tip="Each industry's average Relative Strength percentile tonight (how its stocks rank vs the whole universe). Green = leading sectors, red = lagging. Breakouts work best in leading sectors.">?</span></h2><div class="heatgrid" id="heat"></div></div>
+    <div class="card"><h2>Stage tally<span class="info" data-tip="Where tonight's watched universe sits. UPTREND = all 8 trend checks pass (a monitored pool, NOT a buy list). BASING = base forming, watch only. EXTENDED = ran too far, do not chase. NEUTRAL = no clear trend. DOWNTREND = avoid.">?</span></h2><div id="tagboard"></div></div>
+    <div class="card"><h2>Sector strength<span class="info" data-tip="Each industry's average Relative Strength percentile tonight — how its stocks rank against the whole universe. The hairline on each bar marks the 50th percentile, i.e. the market average. Breakouts work best in leading sectors.">?</span></h2><div class="heatgrid" id="heat"></div></div>
   </div></div>
 </div>
 
 <div class="tab" id="picks">
-  <div class="card" style="padding:12px 18px"><h2 style="margin:0">AI investment committee<span class="info" data-tip="The AI committee reads the whole mechanically-scored shortlist (dimensions, conviction, sector, RS), selects the optimum 3-5, deep-researches each on the web, and writes the investment case. The machine qualifies & scores; the AI curates & explains. Entry/stop/size stay mechanical. Picks are journaled and measured vs the mechanical top-N over time.">?</span></h2></div>
+  <!-- header is rendered by drawPicks() with the live pick count + age badge;
+       a static duplicate above it was just a second title saying the same thing -->
   <div id="picksbody"></div>
 </div>
 
 <div class="tab" id="sectors">
   <div class="card" style="border-color:#5eead43a">
-    <h2 style="color:#5eead4">Sectors &amp; themes<span class="info" data-tip="NSE files every company into one of 22 macro-industries — accounting categories, not investment themes. The things that actually run cut across them: BEL and Data Patterns sit in different industries and are one story; Apar and Hitachi Energy are one grid-capex trade. This tab is a second, deliberate classification over the SAME universe the scan watches, so a theme can be read as what it is. Membership is an explicit list per theme, widened by name patterns so new listings join automatically; a stock can belong to several, because it does.">?</span>
-      <span class="pill" style="border-color:#5eead4;color:#5eead4">RESEARCH ONLY</span></h2>
-    <div class="dim" style="font-size:12.6px;line-height:1.65;max-width:78ch">
-      Where the money and the news are moving, over the <b id="thn">&mdash;</b> names the scan already watches.
-      Heat combines three-month momentum, how much of the theme the chart layer rates actionable,
-      and accumulated news flow &mdash; all of it visible elsewhere on this dashboard.
+    <h2 style="color:var(--teal)">Sectors &amp; themes<span class="info" data-tip="NSE files every company into one of 22 macro-industries — accounting categories, not investment themes. The things that actually run cut across them: BEL and Data Patterns sit in different industries and are one story; Apar and Hitachi Energy are one grid-capex trade. This is a second classification over the same universe the scan watches. Membership is an explicit list per theme, widened by name patterns so new listings join automatically; a stock can belong to several.">?</span>
+      <span class="pill" style="border-color:var(--teal);color:var(--teal)">RESEARCH ONLY</span></h2>
+    <div class="dim" style="font-size:12.8px;line-height:1.65;max-width:76ch">
+      Where money and news are moving across the <b id="thn">&mdash;</b> names the scan watches.
+      Heat blends 3-month momentum, chart breadth and news flow.
     </div>
     <div class="mini" style="border-color:#f8717133;margin-top:12px">
-      <span class="axis" style="color:#f87171">HEAT RANKS ATTENTION, NOT MONEY</span>
+      <span class="axis" style="color:var(--red)">HEAT RANKS ATTENTION, NOT MONEY</span>
       <div class="dim" style="font-size:12.4px;line-height:1.6;margin-top:4px">
-        Sector heat was tested as an entry filter and rejected: <b>+0.22R</b> at a 40% gate and
-        <b>+0.11R</b> at 60%, against <b>+1.27R</b> ungated &mdash; worse the more it gated, because
-        stocks lead their sector's turn. Nothing here changes an entry, a stop or a size.
-        A name in a hot theme still has to fire the same trigger as any other name.
+        Tested as an entry filter and rejected &mdash; <b>+0.22R</b> gated at 40%, <b>+0.11R</b> at 60%,
+        against <b>+1.27R</b> ungated. Nothing here changes an entry, a stop or a size.
       </div>
     </div>
   </div>
@@ -1436,19 +1469,18 @@ td,th{padding:5px 6px}
        moved but the chart hasn't). Muted + left-bordered so it cannot read as
        the qualified list. Names graduate into the table above automatically. -->
   <div class="card watchcard" id="watchcard">
-    <h2>Watching &mdash; not qualified<span class="info" data-tip="Names the system's OWN rules currently EXCLUDE, shown for transparency and so a maturing setup is on your radar early. A name lands here for at least one machine reason: it was VETOED (hard governance/leverage cap), its conviction is NOT YET SCORABLE (coverage below 60% of the 8 questions), or the NEWS RADAR flagged a filing while the chart has no technical trigger (news moves attention, never entries). These are NOT recommendations and carry no buy affordance. They graduate into the screener above automatically the moment they qualify — the dashboard rebuilds nightly, so this is always tonight's view. News radar shows only the latest scan window (no archive is kept).">?</span></h2>
+    <h2>Watching &mdash; not qualified<span class="info" data-tip="Names the system's own rules currently EXCLUDE, shown for transparency. A name lands here because it was VETOED (hard governance/leverage cap), its conviction is NOT YET SCORABLE (under 60% coverage of the 8 questions), or the news radar flagged a filing while the chart has no trigger. Not recommendations — they graduate into the screener above automatically the moment they qualify.">?</span></h2>
     <div id="watchbody"></div>
   </div>
 </div>
 
 <div class="tab" id="penny">
   <div class="card" style="border-color:#fbbf2440">
-    <h2 style="color:#fbbf24">Penny &amp; nano-cap<span class="info" data-tip="A separate surface from the main system. The main system's evidence — +1.67R per trade, walk-forward tested, thirteen rejected overlays — says nothing about this screen, which has never been backtested. Every name is recorded so that in a few months there is a measured answer rather than an opinion. Nothing here fires an alert, sizes a position or implies capital.">?</span>
-      <span class="pill" style="border-color:#fbbf24;color:#fbbf24">RESEARCH ONLY</span></h2>
-    <div class="dim" style="font-size:12.6px;line-height:1.65;max-width:74ch">
-      Here you lose by not being able to <b>get out</b>, not by picking the wrong story.
-      So the screen is exclusions first &mdash; normal settlement series, no surveillance names,
-      a real circuit band, genuine turnover, and a year of listed history. Only survivors get scored.
+    <h2 style="color:var(--amb)">Penny &amp; nano-cap<span class="info" data-tip="A separate surface from the main system, never backtested — the +1.67R evidence says nothing about it. Every name is recorded so that in a few months there is a measured answer rather than an opinion. Nothing here fires an alert, sizes a position or implies capital.">?</span>
+      <span class="pill" style="border-color:var(--amb);color:var(--amb)">RESEARCH ONLY</span></h2>
+    <div class="dim" style="font-size:12.8px;line-height:1.65;max-width:74ch">
+      Here you lose by not being able to <b>get out</b>. So it is exclusions first &mdash; normal settlement
+      series, no surveillance names, a real circuit band, genuine turnover, a year of history. Only survivors get scored.
     </div>
     <div style="margin-top:10px;line-height:1.7;font-size:11.8px;color:var(--dim)" id="pennymeta"></div>
   </div>
@@ -1478,7 +1510,7 @@ td,th{padding:5px 6px}
 </div>
 
 <div class="tab" id="positions">
-  <div class="card" style="border-color:#a78bfa3a"><h2 style="color:var(--vio)">Paper book &mdash; every analyst BUY, traded on paper<span class="info" data-tip="Each analyst BUY verdict is auto-entered at the NEXT session's open, sized by the mechanical plan (FULL/HALF respected, regime-scaled, ₹10L notional book), and exited by the same two-lot rules as real positions. Nothing is discretionary — this is the running audit of whether the analyst layer makes money.">?</span></h2>
+  <div class="card" style="border-color:#a78bfa3a"><h2 style="color:var(--vio)">Paper book<span class="info" data-tip="Every analyst BUY verdict, auto-entered at the next session's open, sized by the mechanical plan (FULL/HALF respected, regime-scaled, ₹10L notional book) and exited by the same two-lot rules as real positions. Nothing discretionary — the running audit of whether the analyst layer makes money.">?</span></h2>
   <div class="kpis" id="paperkpi" style="margin-bottom:12px"></div>
   <div id="paperbody"></div></div>
   <div id="poswrap"></div>
@@ -1486,17 +1518,16 @@ td,th{padding:5px 6px}
 
 <div class="tab" id="journal">
   <div class="kpis" id="jstats"></div>
-  <div class="card"><h2>Buy-signal scorecard &mdash; every buy alert, marked to market<span class="info" data-tip="One row per NEW UPTREND / RE-ENTRY / MOMENTUM BUY alert the machine ever fired, scored against its own suggested stop. R = profit in units of initial risk (+2R = made twice what the stop risked). Max R = best excursion so far. stopped = hit the stop (-1R, closed). This table only ever grows — signals never disappear, whatever happens to tags later.">?</span></h2>
+  <div class="card"><h2>Buy-signal scorecard<span class="info" data-tip="One row per buy alert the machine ever fired, marked to market against its own suggested stop. R = profit in units of initial risk (+2R = twice what the stop risked). Max R = best excursion so far. This table only ever grows — signals never disappear, whatever happens to tags later.">?</span></h2>
   <div style="max-height:44vh;overflow:auto">
   <table id="scoretbl"><thead><tr><th>When</th><th>Symbol</th><th>Type</th><th>Conv<span class="dim" style="font-weight:400"> at alert</span><span class="info" data-tip="The conviction at the moment this alert fired — a frozen record, never revised. The stock's current read can differ; the Overview Actionable panel and the drawer show the live number.">?</span></th><th>Alert &#8377;</th><th>Stop</th>
   <th>Ret %<span class="info" data-tip="Plain price return since the alert (%).">?</span></th><th>R now<span class="info" data-tip="Return measured in units of risk. R = the entry-to-stop distance. +2R = made twice what the stop risked; -1R = hit the stop. This is how the system scores itself, because it normalizes every trade to the same risk.">?</span></th><th>Max R<span class="info" data-tip="The best R this alert ever reached (peak favorable move) — shows upside that a tighter or looser exit would have captured.">?</span></th><th>Status</th></tr></thead>
   <tbody id="scorebody"></tbody></table></div></div>
-  <div class="card"><h2>Journal forensics &mdash; cohort expectancy &amp; excursions<span class="info" data-tip="The forward evidence, sliced. Every buy-type signal in the append-only journal, marked to market against its own suggested stop, grouped into cohorts. This is what will gate scaling to real capital — measured, not asserted.">?</span></h2>
-  <div class="dim" style="font-size:12.5px;margin:-2px 0 12px">The forward, out-of-sample record that gates real-capital scaling: expectancy by cohort, honest at small samples (rows appear only at n&nbsp;&ge;&nbsp;3). MFE/MAE are the best and worst excursions in R — MAE informs future stop-width tests (display only; no stop changes now).</div>
+  <div class="card"><h2>Journal forensics<span class="info" data-tip="The forward, out-of-sample record that gates real-capital scaling: expectancy by cohort, honest at small samples (rows appear only at n ≥ 3). MFE/MAE are the best and worst excursions in R — MAE informs future stop-width tests. Display only; no stop changes now.">?</span></h2>
   <div id="forensics"></div>
-  <h3 style="margin:16px 0 6px;font-size:13px">R-distribution — where signals stand today</h3>
+  <h3 style="margin:18px 0 8px;font-size:12.5px;font-weight:650;color:#cbd5e1">R-distribution today</h3>
   <div id="rhist"></div></div>
-  <div class="card"><h2>All stage changes (last 50) &mdash; the raw stream<span class="info" data-tip="Every stage transition the scan logged recently (e.g. NEUTRAL → UPTREND), newest first — the unfiltered feed behind the scorecard above.">?</span></h2>
+  <div class="card"><h2>Stage changes<span class="info" data-tip="The last 50 stage transitions the scan logged (e.g. NEUTRAL → UPTREND), newest first — the unfiltered feed behind the scorecard above.">?</span></h2>
   <table id="jstreamtbl"><thead><tr><th>When</th><th>Symbol</th><th>Signal</th><th>Detail</th></tr></thead>
   <tbody id="jbody"></tbody></table></div>
 </div>
@@ -1506,7 +1537,8 @@ td,th{padding:5px 6px}
 <input id="palq" placeholder="Search stocks — symbol or company&hellip;" autocomplete="off">
 <div class="pallist" id="pallist"></div></div></div>
 <div class="drawer" id="drawer"></div>
-<footer>Data: NSE constituents &middot; Yahoo OHLCV (verified vs Zerodha) &middot; screener.in public pages &middot; NSE announcements RSS &middot; Google News. Decision support only &mdash; not investment advice.</footer>
+<footer>Decision support only &mdash; not investment advice.
+<span class="info" data-tip="Sources: NSE index constituents · Yahoo daily OHLCV (verified paisa-exact against Zerodha) · screener.in public company pages · NSE corporate-announcements RSS · Google News.">?</span></footer>
 </main>
 <script>
 const D=%%PAYLOAD%%;
@@ -1597,7 +1629,18 @@ function alertLabel(a){
  return[kl(k)||k,'#94a3b8'];}
 $('#alerts').innerHTML=D.alerts.length?D.alerts.map(a=>{
  const[lb,c]=alertLabel(a);
- return `<div class="alert"><span class="ak" style="color:${c};border-color:${c}45;background:${c}0d">${esc(lb)}</span><span>${transTags(esc(a.text))}</span></div>`;
+ /* the label already states what the transition means ("NEW UPTREND · WATCH
+    PIVOT"), so a trailing raw "(NEUTRAL -> CONFIRMED)" prints the same fact
+    twice. Fold a pure tag transition into a tooltip; keep any parenthetical
+    that carries real detail (pivot price, gap %, volume multiple). */
+ const raw=String(a.text||'');
+ const m=raw.match(/^(\S+)\s*\((.*)\)\s*$/);
+ const sym=(m?m[1]:raw.split(/\s+/)[0]||'').replace(/[^A-Z0-9&_.-]/gi,'');
+ const det=m?m[2].trim():'';
+ const isTrans=/^[A-Z]+\s*-+>\s*[A-Z]+$/.test(det);
+ return `<div class="alert"${sym?` onclick="openDrawer('${sym}')"`:''}${isTrans?` title="${esc(transTags(det))}"`:''}>
+  <span class="ak" style="color:${c};border-color:${c}45;background:${c}0d">${esc(lb)}</span>
+  <span><b class="sym">${esc(sym||raw)}</b>${!isTrans&&det?` <span class="dim">${transTags(esc(det))}</span>`:''}</span></div>`;
 }).join(''):'<div class="quiet">No transitions tonight — silence is the system working.</div>';
 /* analyst verdicts — compact native cards: decision row + one reason line;
    remaining why/risk bullets and the flip condition fold behind a slim
@@ -1709,7 +1752,7 @@ $('#actionable').innerHTML=h;})();
  const ac=(VOCAB.doOrder||[]).map(k=>`<span class="lchip" data-tip="${esc(DOEXPL[k]||'')}" style="border-color:${DOC[k]||'#475569'};color:${DOC[k]||'#94a3b8'}">${esc((VOCAB.do||{})[k]||k)}</span>`).join('');
  el.innerHTML=`<div class="lrow"><span class="llbl">Chart state — where the stock is</span>${st}</div>
   <div class="lrow"><span class="llbl">Action — what to do</span>${ac}</div>
-  <div class="axis" style="margin-top:10px;line-height:1.6">A stock's <b>state</b> is not a buy signal. Only <b style="color:#34d399">BUY NOW</b> (validated breakout) and <b style="color:#f5c84c">MOMENTUM BUY</b> (episodic-pivot gap) are real buys — everything else is watch, wait, or avoid. Hover any chip for its full meaning.</div>`;})();
+  <div class="axis" style="margin-top:10px;line-height:1.6">Only <b style="color:#34d399">BUY NOW</b> and <b style="color:#f5c84c">MOMENTUM BUY</b> are real buys. Hover any chip for its meaning.</div>`;})();
 
 /* ---- News radar ------------------------------------------------------------
    Rebuilt 2026-07-26. The old panel dumped one night's filings and forgot
@@ -1738,7 +1781,30 @@ const DOT={pos:'▲',neg:'▼',attn:'◆'};
 const rowBy={};(D.rows||[]).forEach(r=>rowBy[r.sym]=r);
 const held=new Set((D.positions||[]).map(p=>p.sym));
 const alerted=new Set((D.actionable||[]).map(a=>a.sym));
-const clean=s=>esc(String(s||'').replace(/has informed the Exchange (regarding|about|that)?/i,'—'));
+/* NSE filing subjects arrive as machine text, always shaped
+   "<COMPANY> has informed the Exchange about <the actual thing> |SUBJECT: <class>".
+   The company prefix duplicates the Symbol column and the |SUBJECT: tail
+   duplicates the Event column, so on this table both are pure noise. Strip
+   them, drop XBRL markers and numbered-list scaffolding, then cut on a WORD
+   boundary. (The old code sliced already-escaped HTML at 120 chars, which
+   could halve an entity — &amp; became &am — and always ended mid-word.) */
+const tidy=s=>{const src=String(s||'');
+ /* the feed itself caps each subject at 160 chars, so a long filing arrives
+    already cut mid-word ("...Approval for furth"). Drop that fragment. */
+ const clipped=src.length>=155;
+ let t=src
+ .replace(/\|SUBJECT:.*$/is,'')
+ .replace(/^.*?has informed the Exchange\s*(?:regarding|about|that)?\s*/i,'')
+ .replace(/^The Board of Directors of the Company at its meeting held on today[^,]*,\s*inter alia\s*/i,'Board ')
+ .replace(/[-\s]*\bXBRL\b/ig,'')
+ .replace(/\s*:\s*\d+\.\s*/g,' ')          /* ":1. Incorporation of ..." */
+ .replace(/([a-z)])\s*\d+\.\s+/g,'$1; ')   /* "...Kingdom2. Approval..."  */
+ .replace(/\s+/g,' ').trim()
+ .replace(/^[,;:.–—-]+\s*/,'');
+ if(clipped)t=t.replace(/\s+\S*$/,'')+'…';
+ return t.charAt(0).toUpperCase()+t.slice(1);};
+const cut=(t,n)=>{if(t.length<=n)return t;const i=t.lastIndexOf(' ',n);
+ return t.slice(0,i>n*0.6?i:n).replace(/[\s,;:.–—-]+$/,'')+'…';};
 const days=iso=>{const t=Date.parse(iso);return isFinite(t)?Math.round((Date.now()-t)/864e5):null;};
 const ago=n=>n==null?'':n<=0?'today':n===1?'1d ago':n+'d ago';
 
@@ -1770,8 +1836,8 @@ if(risk.length)h+=sect('Risk on your exposure',
  <td class="axis">${ago(days((x.m.events||[]).filter(e=>e[1]==='neg').map(e=>e[2])[0]))}</td></tr>`).join('')+
  '</tbody></table>');
 
-if(building.length)h+=sect('Building — a story forming, chart not yet confirmed',
- 'Names accumulating positive developments over weeks while the technical layer still reads WATCH or BASING. Repeat filings of one event count once. This is a research queue, NOT a buy list: over the archive so far these names alerted LESS often than the universe average, so the system will not act on any of them until its own trigger fires. If one does trigger, the alert carries this history.',
+if(building.length)h+=sect('Building — chart not yet confirmed',
+ 'Names accumulating positive developments over weeks while the chart still reads WATCH or BASING. Repeat filings of one event count once. A research queue, NOT a buy list — over the archive so far these names alerted LESS often than the universe average. Nothing acts until the technical trigger fires.',
  `<table><thead><tr><th>Symbol</th><th>Price</th><th>Chart</th><th>RS%</th><th>What has been building</th></tr></thead><tbody>`+
  building.map(x=>`<tr onclick="openDrawer('${x.sym}')">
  <td class="sym" style="color:#a78bfa">${x.sym}</td>
@@ -1787,6 +1853,7 @@ if(tonight.length)h+=sect('Tonight&rsquo;s filings',
  tonight.map(x=>{const c=CC[x.cls]||'#94a3b8';
  const badge=x.urgent?'<span class="pill" style="border-color:#f87171;color:#f87171;font-size:9px">HELD</span> ':
   x.confluence?'<span class="pill" style="border-color:#34d399;color:#34d399;font-size:9px" data-tip="Positive news on a chart the technical layer already rates actionable or forming — research first.">CONFLUENCE</span> ':'';
+ const full=tidy(x.subject);
  return `<tr onclick="openDrawer('${x.sym}')"${x.confluence?' style="background:#34d39908"':x.urgent?' style="background:#f8717108"':''}>
  <td style="color:${c};font-weight:700">${DOT[x.cls]||'•'}</td>
  <td class="sym">${x.sym}${x.n>1?`<span class="ndot" title="${x.n} filings on the same story">×${x.n}</span>`:''}</td>
@@ -1794,7 +1861,7 @@ if(tonight.length)h+=sect('Tonight&rsquo;s filings',
  <td><span class="pill" data-tip="${esc(tlt(x.tag))}" style="border-color:${TC[x.tag]||'#475569'};color:${TC[x.tag]||'#94a3b8'}">${esc(tl(x.tag)||'—')}</span></td>
  <td class="mono">${x.rs!=null?Math.round(x.rs):'—'}</td>
  <td style="color:${c};font-size:11.5px">${esc(x.event)} ${badge}</td>
- <td class="dim wrap" style="font-size:11px;max-width:380px">${clean(x.subject).slice(0,120)}</td></tr>`}).join('')+
+ <td class="dim wrap" style="font-size:11.5px;max-width:400px" data-tip="${esc(full)}">${esc(cut(full,96))}</td></tr>`}).join('')+
  '</tbody></table>'+(hits.length>12?`<div class="axis" style="margin-top:6px">${hits.length-12} more tonight</div>`:''));
 
 $('#radarbody').innerHTML=h||'<div class="quiet">No material filings in memory yet.</div>';
@@ -1803,12 +1870,22 @@ $('#radarage').textContent=(memSyms.length?memSyms.length+' names in '+(lb||90)+
  +(R.window_start?' · tonight since '+String(R.window_start).slice(0,16).replace('T',' '):'');
 })();
 
-/* tag board */
-$('#tagboard').innerHTML=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]).map(([t,c])=>`<div class="chip" data-tip="${esc(tlt(t))}" style="border-color:${TC[t]||'#475569'}"><b style="color:${TC[t]||'#94a3b8'}">${esc(tl(t))}</b><span>${c}</span></div>`).join('');
+/* stage tally — one stacked distribution bar + a keyed count list. The old
+   version was five bordered chips: it showed the numbers but not the SHAPE,
+   and whether the market is mostly trending or mostly broken is the single
+   question this panel exists to answer. */
+(function(){const ent=Object.entries(D.tags).sort((a,b)=>b[1]-a[1]);
+ const tot=ent.reduce((s,e)=>s+e[1],0)||1;
+ $('#tagboard').innerHTML=
+  '<div class="dist">'+ent.map(([t,c])=>`<span style="width:${(c/tot*100).toFixed(2)}%;background:${TC[t]||'#475569'}" title="${esc(tl(t))} · ${c} (${Math.round(c/tot*100)}%)"></span>`).join('')+'</div>'
+  +'<div class="distkey">'+ent.map(([t,c])=>`<div data-tip="${esc(tlt(t))}"><i style="background:${TC[t]||'#475569'}"></i><span style="color:${TC[t]||'#94a3b8'}">${esc(tl(t))}</span><b>${c}</b></div>`).join('')+'</div>';})();
 
-/* heat */
+/* sector strength — ranked bars: the ordering is the information */
 $('#heat').innerHTML=D.heat.map(h=>{const g=h.rs>=60?'#34d399':h.rs>=45?'#fbbf24':'#f87171';
-return `<div class="heatcell" style="background:${g}14;border-color:${g}33"><b style="color:${g}">${h.rs}</b>${esc(h.ind)}<span class="dim"> · ${h.n}</span></div>`}).join('');
+return `<div class="sbar" title="${esc(h.ind)} — ${h.n} stocks, average RS percentile ${h.rs}">
+<span class="sname">${esc(h.ind)} <span class="sn">${h.n}</span></span>
+<span class="strack"><span class="sfill" style="width:${Math.max(h.rs,3)}%;background:${g}"></span></span>
+<span class="sval" style="color:${g}">${h.rs}</span></div>`}).join('');
 
 /* sparkline svg */
 function spark(a,w=96,h=26){if(!a||a.length<2)return'';const lo=Math.min(...a),hi=Math.max(...a),r=(hi-lo)||1;
@@ -2172,15 +2249,15 @@ d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
 ${convergenceSection(sym,r)}
 ${planSection(sym,r)}
 ${whySection(sym)}
-<div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">chart not cached for this name yet — it loads with the next scan alert or weekly refresh (or run: python scripts/enrich.py '+sym+')</div>'}</div>
+<div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">No chart cached yet &mdash; it loads with the next alert or weekly refresh.<span class="info" data-tip="To pull it now: python scripts/enrich.py '+sym+'">?</span></div>'}</div>
 ${hasOhlc?'<div id="drswrap"><div class="axis" style="margin:8px 0 2px">RS vs NIFTY <span class="info" data-tip="Relative strength = this stock close divided by the NIFTY close, set to 1.0 at the window start. A rising line means the stock is outperforming the market; a falling line means it is lagging. Computed client-side from the same price history the candles use.">?</span></div><div id="drs" style="height:80px"></div></div>':''}
 ${newsMemorySection(sym)}
 ${newsSection(sym)}
 <div class="minis">
-<div class="mini"><h3>Quarterly net profit (₹ Cr per quarter)</h3>${miniBars(f.q_labels||[],f.np||[])}</div>
-<div class="mini"><h3>Operating margin % (quarterly)</h3>${miniLine(f.opm,'#5aa2ff','OPM %',f.q_labels)}</div>
-<div class="mini"><h3>Borrowings ₹ Cr (yearly — falling = deleveraging)</h3>${miniLine(f.debt,'#fbbf24','debt',f.bs_labels)}</div>
-<div class="mini"><h3>Shareholding % (quarterly)</h3>${miniLine(f.prom,'#a78bfa','Promoter',f.sh_labels)}${miniLine(f.fii,'#34d399','FII',f.sh_labels)}${miniLine(f.dii,'#5aa2ff','DII',f.sh_labels)}</div>
+<div class="mini"><h3>Net profit &#8377;Cr <span class="axis">quarterly</span></h3>${miniBars(f.q_labels||[],f.np||[])}</div>
+<div class="mini"><h3>Operating margin % <span class="axis">quarterly</span></h3>${miniLine(f.opm,'#5aa2ff','OPM %',f.q_labels)}</div>
+<div class="mini"><h3>Borrowings &#8377;Cr <span class="axis">yearly &middot; falling = deleveraging</span></h3>${miniLine(f.debt,'#fbbf24','debt',f.bs_labels)}</div>
+<div class="mini"><h3>Shareholding % <span class="axis">quarterly</span></h3>${miniLine(f.prom,'#a78bfa','Promoter',f.sh_labels)}${miniLine(f.fii,'#34d399','FII',f.sh_labels)}${miniLine(f.dii,'#5aa2ff','DII',f.sh_labels)}</div>
 </div>`;
 $('#ovl').classList.add('show');d.classList.add('open');
 if(hasOhlc){const c=mkChart($('#dchart'),300);
@@ -2312,7 +2389,7 @@ return `<tr onclick="openDrawer('${s.sym}')"${s.re?' style="opacity:.55"':''}><t
 <td class="mono">${convCell}</td><td class="mono">${s.entry??''}</td><td class="mono dim">${s.stop??''}</td>
 <td class="mono" style="color:${s.ret>0?'#34d399':s.ret<0?'#f87171':''}">${s.ret!=null?(s.ret>0?'+':'')+s.ret+'%':''}</td>
 <td class="mono" style="color:${rc};font-weight:700" data-tip="${rtip}">${rv!=null?(rv>0?'+':'')+rv+'R':''}${s.sized===false?'<span style="color:#fbbf24">*</span>':''}</td>
-<td class="mono dim">${s.maxr!=null?'+'+s.maxr+'R':''}</td>
+<td class="mono dim">${s.maxr!=null?(s.maxr>0?'+':'')+s.maxr+'R':''}</td>
 <td><span class="pill" style="border-color:${st};color:${st}">${esc(s.status)}</span></td></tr>`}).join('')
 :'<tr><td colspan="10" class="quiet">No buy signals tracked yet.</td></tr>';
 
@@ -2388,7 +2465,7 @@ const ageTxt=pAge==null?'':pAge<=0?'today':pAge===1?'yesterday':pAge+' days ago'
 const ageBadge=pAge==null?'':
  `<span class="pill" style="border-color:${pStale?'#f87171':pAge>=4?'#fbbf24':'#34d399'};color:${pStale?'#f87171':pAge>=4?'#fbbf24':'#34d399'}"
    data-tip="${pStale?'These picks are older than one committee cycle. The weekly job has not produced a fresh set — check logs/committee_local.log.':'Within the normal weekly cycle.'}">${pStale?'STALE · ':''}${esc(ageTxt)}</span>`;
-let h=`<div class="card" style="border-color:${pStale?'#f8717144':'#fbbf2433'}"><h2 style="color:#fbbf24">Committee &mdash; ${P.picks.length} researched picks <span style="margin-left:auto">${ageBadge}</span></h2>
+let h=`<div class="card" style="border-color:${pStale?'#f8717144':'#fbbf2433'}"><h2 style="color:var(--amb)">Committee &mdash; ${P.picks.length} researched picks<span class="info" data-tip="The weekly committee reads the whole mechanically-scored shortlist, selects the optimum 3-5, deep-researches each on the web and writes the investment case. The machine qualifies and scores; the AI curates and explains. Entry, stop and size stay mechanical. Picks are journaled and measured against the mechanical top-N.">?</span><span style="margin-left:8px">${ageBadge}</span></h2>
 ${pStale?`<div class="mini" style="border-color:#f8717144;margin:0 0 10px"><span class="axis" style="color:#f87171">NOT THIS WEEK'S READ</span><br><span style="font-size:12.6px">Selected ${esc(ageTxt)} against the shortlist as it stood then. The names below have not been re-examined since — treat them as a record of that run, not a current view.</span></div>`:''}
 <div style="display:flex;flex-wrap:wrap;gap:6px">`+P.picks.map(p=>{const cc=CONVC[p.conviction]||'#94a0b0';return `<span class="pill" style="border-color:${cc};color:${cc};cursor:pointer;font-size:11px" onclick="document.getElementById('pk_${p.symbol}').scrollIntoView({behavior:'smooth',block:'start'})">${p.symbol} · ${esc(p.conviction||'')}</span>`;}).join('')+`</div>
 <details class="actrest" style="margin-top:10px"><summary>Why these ${P.picks.length===5?'five':P.picks.length} — committee reasoning</summary><div style="font-size:12.6px;line-height:1.7;padding:6px 0;color:var(--dim)">${esc(P.portfolio_view||'')}</div></details>
