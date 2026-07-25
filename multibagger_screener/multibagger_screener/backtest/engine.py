@@ -257,6 +257,19 @@ def run_backtest(
                                          # and value cap on marked-to-market equity
                                          # (fixed-fractional standard) instead of
                                          # remaining cash; fills still cash-clamped
+    max_stop_pct: Optional[float] = None,  # override RISK.max_stop_loss_pct for
+                                         # this run. Default None = the config
+                                         # value, so every historical config
+                                         # reproduces exactly. journal_outcomes
+                                         # raises it to measure the names the
+                                         # live risk engine SKIPS as too
+                                         # volatile — those carry no stop, so
+                                         # they carry no R, so they were absent
+                                         # from the forward record entirely
+                                         # (2026-07-25 DIACABS forensics). This
+                                         # is a MEASUREMENT hook: raising it
+                                         # here never makes such a name
+                                         # tradeable, it only makes it visible.
     risk_scale_fn=None,                  # sizing matrix v3 (progressive exposure):
                                          # callable(portfolio, date) -> float, multiplied
                                          # with the risk_scale series. Lets a config size
@@ -371,7 +384,8 @@ def run_backtest(
                 so = row.get("stop_override")
                 if pd.notna(so) and 0 < float(so) < entry_price:
                     stop_distance = entry_price - float(so)
-                if stop_distance / entry_price * 100 > RISK.max_stop_loss_pct:
+                cap = RISK.max_stop_loss_pct if max_stop_pct is None else max_stop_pct
+                if stop_distance / entry_price * 100 > cap:
                     continue  # untradeably volatile — skip, don't clamp (Design Law #7)
                 avg_vol = row.get("avg_vol_50")
                 vol_strength = (row["volume"] / avg_vol) if avg_vol else 0.0

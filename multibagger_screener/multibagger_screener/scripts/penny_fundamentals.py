@@ -32,7 +32,8 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data.screener_fetch import fetch_company, load_company, save_company
+from data.screener_fetch import (fetch_company, has_real_data, load_company,
+                                 save_company)
 from fetch_fundamentals import _age_days, flatten
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -103,7 +104,10 @@ def run(symbols: list[str], max_age_days: float, limit: int | None) -> pd.DataFr
     for i, sym in enumerate(symbols, 1):
         data = load_company(sym)
         stale = data is not None and _age_days(data) > max_age_days
-        if data is None or stale:
+        # an empty parse cached by the pre-2026-07-25 consolidated-fallback bug
+        # is not a cache hit — it is a blind spot that never heals on its own
+        poisoned = data is not None and not has_real_data(data)
+        if data is None or stale or poisoned:
             if limit is not None and fetched >= limit:
                 # SKIP, don't stop: names further down the list may already be
                 # cached and cost nothing. The cap exists to bound NETWORK

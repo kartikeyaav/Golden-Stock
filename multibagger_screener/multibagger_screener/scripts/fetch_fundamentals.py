@@ -24,7 +24,8 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import CONVICTION
-from data.screener_fetch import fetch_company, load_company, save_company
+from data.screener_fetch import (fetch_company, has_real_data, load_company,
+                                 save_company)
 
 PAUSE_SECONDS = 1.8
 
@@ -179,13 +180,18 @@ def main() -> None:
         data = None if args.refresh else load_company(sym)
         if data is not None and _age_days(data) > args.max_age_days:
             data = None  # stale — refetch
+        if data is not None and not has_real_data(data):
+            data = None  # empty parse cached by the pre-2026-07-25 fallback bug
         if data is None:
             try:
                 data = fetch_company(sym)
                 save_company(sym, data)
                 fetched_n += 1
-                if not data.get("quarters", {}).get("rows"):
-                    empty_quarters += 1  # parser-health signal
+                # parser-health signal. Tests DATA, not structure: the empty
+                # consolidated page renders row labels with no columns, so the
+                # old `quarters["rows"]` test scored it healthy (2026-07-25).
+                if not has_real_data(data):
+                    empty_quarters += 1
                 time.sleep(PAUSE_SECONDS)
             except Exception as e:  # noqa: BLE001
                 failures.append(sym)

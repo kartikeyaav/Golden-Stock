@@ -103,6 +103,10 @@ class PennyRead:
     archetypes: list[str] = field(default_factory=list)
     blocks: list[dict] = field(default_factory=list)
     label: str = "Penny read"
+    # did the SURVIVAL SCREEN actually run? See `veto_inputs_present`. A name
+    # with no readable fundamentals is not a clean name — it is an unexamined
+    # one, and it must never outrank a name we have actually checked.
+    assessed: bool = True
 
     def display(self) -> str:
         if self.score is None:
@@ -116,6 +120,27 @@ class PennyRead:
 # ---------------------------------------------------------------------------
 # VETOES — survival screen. These cap the score; momentum cannot outvote them.
 # ---------------------------------------------------------------------------
+def veto_inputs_present(fund: dict | None) -> bool:
+    """Could the survival screen run at all on this name?
+
+    `build_vetoes` returns [] for two completely different situations: "we
+    checked and it is clean" and "we could not check". Collapsing them is how
+    an unexamined name ends up at the top of the table — no veto fires, the
+    composite renormalizes over the momentum blocks that survived, and the
+    screen rewards the company it knows least about. Measured 2026-07-25: the
+    22 names whose screener.in parse had failed averaged 63.0/100 against 51.7
+    for fully-read names, and held ranks 1, 2, 3, 4, 6, 8, 9, 12 and 13.
+
+    So the two cases get separated here: the survival screen counts as having
+    RUN only when at least one of the inputs a veto tests actually exists.
+    """
+    if not fund:
+        return False
+    return any(_num(fund, k) is not None for k in
+               ("pledge_pct", "promoter_pct", "equity_cap_now",
+                "sales_ttm_cr", "sales_latest_cr", "net_worth_cr"))
+
+
 def build_vetoes(fund: dict | None) -> list[Veto]:
     if not fund:
         return []
@@ -489,6 +514,15 @@ def assess_penny(symbol: str, fund: dict | None, tech: dict | None,
     if vetoes and score is not None:
         score = min(score, VETO_CAP)
 
+    assessed = veto_inputs_present(fund)
+    if not assessed:
+        label = ("NOT ASSESSED — no readable fundamentals, so none of the "
+                 "survival vetoes could run on this name")
+    elif coverage >= MIN_COVERAGE_FOR_SCORE * 100:
+        label = "Penny read"
+    else:
+        label = "Partial read — most blocks have no data"
+
     return PennyRead(
         symbol=symbol,
         score=round(score, 1) if score is not None else None,
@@ -500,6 +534,6 @@ def assess_penny(symbol: str, fund: dict | None, tech: dict | None,
         blocks=[{"key": d.key, "weight": weights.get(d.key, 0.0),
                  "score": d.score, "live": d.score is not None, "notes": d.notes}
                 for d in dims],
-        label=("Penny read" if coverage >= MIN_COVERAGE_FOR_SCORE * 100
-               else "Partial read — most blocks have no data"),
+        label=label,
+        assessed=assessed,
     )

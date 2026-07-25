@@ -108,9 +108,28 @@ def test_coverage_honesty() -> None:
     check("fundamentals missing -> coverage is momentum+tradability weight only",
           abs(tech_only.coverage_pct - expected) < 0.6,
           f"got {tech_only.coverage_pct}, expected ~{expected}")
-    check("partial read is labelled as such",
-          "Partial" in tech_only.label or tech_only.coverage_pct >= 50,
-          tech_only.label)
+    # a name with no readable fundamentals is UNEXAMINED, not clean: none of
+    # the survival vetoes can run on it, so it must announce that and must not
+    # be treated as an assessed name (audit 2026-07-25)
+    check("no fundamentals -> flagged NOT ASSESSED",
+          tech_only.assessed is False and "NOT ASSESSED" in tech_only.label,
+          f"assessed={tech_only.assessed} label={tech_only.label}")
+    check("full inputs -> assessed", full.assessed is True, str(full.assessed))
+    # the trap the tier split closes: an unexamined name outscoring a checked
+    # one, because nothing bad could be found against it
+    dirty = dict(_clean_fund())
+    dirty["pledge_pct"] = 40.0
+    vetoed = assess_penny("TEST", dirty, GOOD_TECH, GOOD_UNI)
+    check("unexamined name can outscore a vetoed one on raw score alone",
+          (tech_only.score or 0) > (vetoed.score or 0),
+          f"unexamined {tech_only.score} vs vetoed {vetoed.score}")
+    check("...but it is not assessed, so ranking must separate the two",
+          tech_only.assessed is False and vetoed.vetoed is True,
+          f"{tech_only.assessed} / {vetoed.vetoed}")
+    # one veto input is enough for the survival screen to count as having run
+    check("a single veto input counts as assessed",
+          assess_penny("TEST", {"promoter_pct": 55.0}, GOOD_TECH, GOOD_UNI).assessed,
+          "promoter_pct alone should make the name assessable")
 
     none = assess_penny("TEST", None, None, None)
     check("no inputs at all -> no score, no fake number",

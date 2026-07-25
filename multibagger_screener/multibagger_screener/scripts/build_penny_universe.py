@@ -141,8 +141,16 @@ def build(sessions: int | None = None) -> pd.DataFrame:
     df["exclude_reason"] = reasons
 
     # ---------------- universe arms ----------------
-    price_arm = df["last_close"] < PENNY.max_price
+    # The price arm carries its own market-cap ceiling: a cheap SHARE is not a
+    # small COMPANY (banks and PSUs with huge share counts trade under Rs100
+    # while being worth tens of thousands of crore, and any 1:10 split would
+    # manufacture a "penny stock" out of thin air). Names whose cap has not
+    # been read yet are given the benefit of the doubt on this arm and resolve
+    # once fundamentals land.
+    cheap = df["last_close"] < PENNY.max_price
+    price_arm = cheap & ~(df["market_cap_cr"] >= PENNY.price_arm_max_market_cap_cr)
     mcap_arm = df["market_cap_cr"].notna() & (df["market_cap_cr"] < PENNY.max_market_cap_cr)
+    # a cap read is still worth chasing for any cheap name (it decides the arm)
     mcap_pending = df["market_cap_cr"].isna() & ~price_arm
     df["arm"] = ""
     df.loc[price_arm, "arm"] = "price"
@@ -161,6 +169,14 @@ def build(sessions: int | None = None) -> pd.DataFrame:
     df.loc[tradable & ~(price_arm | mcap_arm) & ~mcap_pending, "exclude_reason"] = (
         f"not penny/nano — price >= Rs{PENNY.max_price:.0f} and "
         f"mcap >= Rs{PENNY.max_market_cap_cr:.0f} Cr")
+    # ...and say so for the pending ones too. They used to land in the excluded
+    # file with an EMPTY reason: not in the universe, not honestly excluded
+    # either — 112 names invisible in a funnel whose whole point is that every
+    # reject is accounted for (audit 2026-07-25).
+    df.loc[pending, "exclude_reason"] = (
+        "held pending a market-cap read — passes every tradability gate, "
+        "price >= Rs100, and its market cap is not in the fundamentals cache "
+        "yet (resolves on a later penny_fundamentals run)")
 
     keep_cols = ["symbol", "company", "series", "arm", "last_close", "market_cap_cr",
                  "median_turnover_cr", "min_turnover_cr", "median_trades",

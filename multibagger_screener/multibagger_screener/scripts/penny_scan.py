@@ -232,7 +232,7 @@ def run(no_update: bool = False, top: int = 20) -> pd.DataFrame:
             "symbol": sym,
             "company": (u or {}).get("company", ""),
             "score": read.score, "coverage_pct": read.coverage_pct,
-            "vetoed": read.vetoed,
+            "vetoed": read.vetoed, "assessed": read.assessed,
             "veto_reasons": "; ".join(read.veto_reasons),
             "archetypes": " + ".join(read.archetypes),
             "arm": (u or {}).get("arm", ""),
@@ -270,7 +270,16 @@ def run(no_update: bool = False, top: int = 20) -> pd.DataFrame:
         }
 
     df = pd.DataFrame(rows)
-    df = df.sort_values(["vetoed", "score"], ascending=[True, False],
+    # THREE TIERS, in this order (audit 2026-07-25):
+    #   0  assessed + clean   — the survival screen ran and found nothing fatal
+    #   1  NOT ASSESSED       — fundamentals unreadable, so no veto could fire
+    #   2  vetoed             — checked and failed
+    # Tier 1 used to rank inside tier 0 and dominated the top of the table:
+    # unexamined names carry no penalties, so renormalizing over the surviving
+    # momentum blocks floats them upward. Not knowing is not a virtue.
+    df["tier"] = df["vetoed"].astype(int) * 2 + (~df["assessed"]).astype(int)
+    df.loc[df["vetoed"], "tier"] = 2
+    df = df.sort_values(["tier", "score"], ascending=[True, False],
                         na_position="last").reset_index(drop=True)
     df["rank"] = df.index + 1
     df.to_csv(OUT_RANKED, index=False)
@@ -286,7 +295,10 @@ def run(no_update: bool = False, top: int = 20) -> pd.DataFrame:
     run_date = datetime.now().strftime("%Y-%m-%d")
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     jrows = []
-    for _, r in df[(~df["vetoed"]) & df["score"].notna()].head(top).iterrows():
+    # only tier 0 is journaled — an unexamined name is not a forward "pick",
+    # and logging it as one would put the same bias into the forward record
+    # that the tier split just took out of the table
+    for _, r in df[(df["tier"] == 0) & df["score"].notna()].head(top).iterrows():
         jrows.append({"logged_at": now, "run_date": run_date, "symbol": r["symbol"],
                       "rank": int(r["rank"]), "score": r["score"],
                       "coverage_pct": r["coverage_pct"], "vetoed": r["vetoed"],
@@ -308,7 +320,8 @@ def run(no_update: bool = False, top: int = 20) -> pd.DataFrame:
 
 
 def write_report(df: pd.DataFrame, top: int) -> None:
-    live = df[(~df["vetoed"]) & df["score"].notna()]
+    live = df[(df["tier"] == 0) & df["score"].notna()]
+    unassessed = df[df["tier"] == 1]
     vetoed = df[df["vetoed"]]
     lines = [
         f"# Penny / nano-cap screen — {datetime.now():%Y-%m-%d %H:%M}",
@@ -345,6 +358,21 @@ def write_report(df: pd.DataFrame, top: int) -> None:
             f"{r['score']:.0f} | {r['coverage_pct']:.0f}% | {r.get('tag') or '—'} | "
             f"{rs} | Rs{r['median_turnover_cr']:.2f} Cr | {cap} | "
             f"{r.get('archetypes') or '—'} | {n_flags or '—'} |")
+    if len(unassessed):
+        lines += ["", f"## Not assessed ({len(unassessed)})",
+                  "",
+                  "Their screener.in page carried no readable financials, so **none of",
+                  "the survival vetoes could run** — no pledge check, no dilution check,",
+                  "no shell check. They are ranked below every assessed name and kept",
+                  "out of the journal, because an unexamined company is not a clean one.",
+                  "They heal automatically once the page parses "
+                  "(`scripts/heal_fundamentals_cache.py`).",
+                  "", "| Symbol | Arm | Stage | RS | What is missing |",
+                  "|--------|-----|-------|---:|-----------------|"]
+        for _, r in unassessed.head(25).iterrows():
+            rs = f"{r['rs_pctile']:.0f}" if pd.notna(r.get("rs_pctile")) else "—"
+            lines.append(f"| {r['symbol']} | {str(r.get('arm') or '—').upper()} | "
+                         f"{r.get('tag') or '—'} | {rs} | fundamentals unreadable |")
     if len(vetoed):
         lines += ["", f"## Vetoed ({len(vetoed)}) — capped at 25, momentum cannot outvote these",
                   "", "| Symbol | Reason |", "|--------|--------|"]

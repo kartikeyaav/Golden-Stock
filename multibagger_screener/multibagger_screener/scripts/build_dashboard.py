@@ -126,6 +126,11 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
     df = outcomes.copy()
     df["logged_at"] = pd.to_datetime(df["logged_at"], errors="coerce")
     df["_r"] = pd.to_numeric(df.get("r_to_date"), errors="coerce")
+    # the second ruler (audit F2): the signal replayed through the SAME engine
+    # that produced +1.67R — next-open fill, two-lot exits, gap-aware stops,
+    # costs. `_r` above marks to market from the alert-night close and books
+    # every stop at exactly -1R, so it never was comparable to the backtest.
+    df["_pr"] = pd.to_numeric(df.get("plan_followed_R"), errors="coerce")
     df["_mfe"] = pd.to_numeric(df.get("max_favorable_R"), errors="coerce")
     df["_mae"] = pd.to_numeric(df.get("max_adverse_R"), errors="coerce")
     df["_conv"] = pd.to_numeric(df.get("conviction_score"), errors="coerce")
@@ -171,6 +176,7 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
 
     def _agg(sub):
         r = sub["_r"].dropna()
+        pr = sub["_pr"].dropna()
         mfe = sub["_mfe"].dropna()
         mae = sub["_mae"].dropna()
         n = int(len(sub))
@@ -179,6 +185,8 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
             "open": int((sub["_status"] == "open").sum()),
             "stopped": int((sub["_status"] == "stopped").sum()),
             "avg_r": round(float(r.mean()), 2) if len(r) else None,
+            "plan_r": round(float(pr.mean()), 2) if len(pr) else None,
+            "plan_n": int(len(pr)),
             "med_r": round(float(r.median()), 2) if len(r) else None,
             "max_r": round(float(mfe.max()), 2) if len(mfe) else None,
             "hit_stop_pct": round(float((sub["_status"] == "stopped").mean() * 100), 0),
@@ -253,6 +261,10 @@ def _build_penny() -> dict | None:
             "company": _s(r.get("company"), 40),
             "score": _n(r.get("score")), "cov": _n(r.get("coverage_pct")),
             "veto": bool(r.get("vetoed")),
+            # assessed = the survival vetoes could actually be evaluated. False
+            # means the fundamentals are unreadable, so a clean row here is
+            # "unexamined", not "checked and fine" (audit 2026-07-25).
+            "asd": bool(r.get("assessed", True)),
             "vetowhy": _s(r.get("veto_reasons"), 200),
             "arch": _s(r.get("archetypes")),
             "arm": _s(r.get("arm")),
@@ -309,6 +321,8 @@ def _build_penny() -> dict | None:
             "sessions": meta.get("sessions"),
             "eq_securities": meta.get("eq_securities"),
             "scored": int(ranked["score"].notna().sum()),
+            "unassessed": int((~ranked.get(
+                "assessed", pd.Series(True, index=ranked.index)).astype(bool)).sum()),
             "vetoed": int(ranked["vetoed"].astype(bool).sum())}
 
 
@@ -615,6 +629,15 @@ def build_payload() -> dict:
                 "stop": _num(r.get("stop_suggested")),
                 "ret": _num(r.get("return_to_date_pct"), 1),
                 "r": _num(r.get("r_to_date")), "maxr": _num(r.get("max_favorable_R")),
+                # plan-followed R (audit F2) + whether the live risk engine
+                # would actually have sized it. 17% of signals carry NO stop
+                # (2.5xATR wider than the 12% cap, Design Law #7) — those had
+                # every R column blank, so they were invisible in the record
+                # despite being real signals. DIACABS was the case that showed
+                # it: +1.53R, and the scorecard had nothing to say about it.
+                "planr": _num(r.get("plan_followed_R")),
+                "sized": (None if pd.isna(r.get("plan_sized"))
+                          else bool(r.get("plan_sized"))),
                 "status": str(r.get("status", "")),
                 "conv": _num(r.get("conviction_score"), 0),
                 # coverage: <60% means the number is a coverage-limited
@@ -1742,13 +1765,21 @@ $('#pennyfunnel').innerHTML=(P.funnel&&P.funnel.length)
   P.funnel.map(f=>`<tr><td class="wrap">${esc(f.why)}</td><td class="mono" style="text-align:right">${f.n}</td></tr>`).join('')+
   `</tbody></table><div class="quiet" style="margin-top:8px">Counted by each name's FIRST failing gate; a name usually fails several. Per-name reasons live in <code>penny_excluded.csv</code>.</div>`
  :'<div class="quiet">No exclusion data — run scripts/build_penny_universe.py.</div>';
+/* three populations, never interleaved: 0 = the survival screen ran and found
+   nothing fatal · 1 = fundamentals unreadable so NO veto could run · 2 = vetoed.
+   Tier is the primary sort no matter which column you click, because an
+   unexamined name scoring 89 and a checked name scoring 89 are not the same
+   claim — and the unexamined one scores higher precisely BECAUSE nothing was
+   found to hold against it (audit 2026-07-25). */
+const ptier=r=>r.veto?2:(r.asd===false?1:0);
 function prender(){const q=$('#pq').value.toUpperCase();
  let out=prows.filter(r=>(showVeto||!r.veto)&&pArms.has(r.arm)&&(!r.tag||pTags.has(r.tag))&&(r.sym.includes(q)||r.company.toUpperCase().includes(q)));
- out.sort((a,b)=>{let x=a[psK],y=b[psK];if(x==null)return 1;if(y==null)return -1;
+ out.sort((a,b)=>{const t=ptier(a)-ptier(b);if(t)return t;
+  let x=a[psK],y=b[psK];if(x==null)return 1;if(y==null)return -1;
   if(typeof x==='string')return psA?x.localeCompare(y):y.localeCompare(x);return psA?x-y:y-x;});
  $('#pcount').textContent=out.length+' names';
- $('#ptbl tbody').innerHTML=out.map(r=>`<tr onclick="openPennyDrawer('${r.sym}')"${r.veto?' style="opacity:.55"':''}>
- <td class="sym">${r.sym}${r.veto?' <span style="color:#f87171">⛔</span>':''}${r.ep?' <span style="color:#fbbf24" title="episodic pivot: gap on 3x volume">⚡</span>':''}${r.idx?' <span class="axis" title="also in the main 651-name index universe">·idx</span>':''}</td>
+ $('#ptbl tbody').innerHTML=out.map(r=>`<tr onclick="openPennyDrawer('${r.sym}')"${r.veto||r.asd===false?' style="opacity:.55"':''}>
+ <td class="sym">${r.sym}${r.veto?' <span style="color:#f87171">⛔</span>':''}${r.asd===false?' <span style="color:#94a3b8" data-tip="NOT ASSESSED — this company\'s screener.in page carried no readable financials, so none of the survival vetoes (pledge, dilution, shell, negative net worth) could run on it. Its score comes only from the blocks that had data, which is why an unchecked name can look strong. Ranked below every assessed name.">◌</span>':''}${r.ep?' <span style="color:#fbbf24" title="episodic pivot: gap on 3x volume">⚡</span>':''}${r.idx?' <span class="axis" title="also in the main 651-name index universe">·idx</span>':''}</td>
  <td><span class="pill" style="border-color:${armC[r.arm]||'#475569'};color:${armC[r.arm]||'#94a3b8'}">${r.arm==='price+mcap'?'both':(r.arm||'').toUpperCase()}</span></td>
  <td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%;background:#fbbf24"></div></span><b class="mono">${r.score}</b></span>`:'<span class="dim">—</span>'}</td>
  <td class="mono"${r.cov!=null&&r.cov<60?' data-tip="Partial read — most scoring blocks had no data. Not comparable with a full-coverage score."':''}>${r.cov!=null?r.cov+'%':''}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</td>
@@ -1933,7 +1964,19 @@ $('#jbody').innerHTML=D.journal.length?D.journal.map(j=>`<tr><td class="dim mono
    (each stays a real journaled signal — the record never shrinks).
    Conv numbers at <60% data coverage carry a ° = "technical read". */
 $('#scorebody').innerHTML=(D.scorecard&&D.scorecard.length)?D.scorecard.map(s=>{
-const rc=s.r==null?'':s.r>0?'#34d399':s.r<0?'#f87171':'#94a0b0';
+/* the R shown is the PLAN-FOLLOWED one when available (next-open fill, two-lot
+   exits, gap-aware stops, costs — the number comparable to the backtest). It
+   also rescues the ~17% of signals the risk engine refuses to size: 2.5xATR
+   wider than the 12% cap means no stop, which meant no R at all, which meant
+   the name simply vanished from its own track record. DIACABS was the one the
+   user caught: a real +1.5R signal showing a blank row. */
+const rv=s.planr!=null?s.planr:s.r;
+const rc=rv==null?'':rv>0?'#34d399':rv<0?'#f87171':'#94a0b0';
+const rtip=s.planr!=null
+ ?(s.sized===false
+   ?'Plan-followed R measured against a REFERENCE stop (2.5xATR). The live risk engine SKIPS this name — its stop is wider than the 12% cap — so no capital was ever implied. Measured only so the record is not blind to its own most volatile cohort.'
+   :'Plan-followed R: filled at the next session&#39;s open, two-lot exits, gap-aware stops, costs. This is the number comparable to the backtest&#39;s +1.67R.')
+ :'Marked to market from the alert-night close against the suggested stop.';
 const st=s.status==='stopped'?'#f87171':s.status==='open'?'#34d399':'#64748b';
 const tread=s.conv!=null&&s.cov!=null&&s.cov<60;
 const convCell=s.conv==null?'':tread?`<span data-tip="Technical read — only ${s.cov}% of the 8 scored questions had data (fundamentals unavailable at alert time). Not comparable with full-coverage conviction scores.">${s.conv}<span style="color:#fbbf24">°</span></span>`:s.conv;
@@ -1942,7 +1985,7 @@ return `<tr onclick="openDrawer('${s.sym}')"${s.re?' style="opacity:.55"':''}><t
 <td class="dim" style="font-size:11px">${esc(kls(s.kind))}</td>
 <td class="mono">${convCell}</td><td class="mono">${s.entry??''}</td><td class="mono dim">${s.stop??''}</td>
 <td class="mono" style="color:${s.ret>0?'#34d399':s.ret<0?'#f87171':''}">${s.ret!=null?(s.ret>0?'+':'')+s.ret+'%':''}</td>
-<td class="mono" style="color:${rc};font-weight:700">${s.r!=null?(s.r>0?'+':'')+s.r+'R':''}</td>
+<td class="mono" style="color:${rc};font-weight:700" data-tip="${rtip}">${rv!=null?(rv>0?'+':'')+rv+'R':''}${s.sized===false?'<span style="color:#fbbf24">*</span>':''}</td>
 <td class="mono dim">${s.maxr!=null?'+'+s.maxr+'R':''}</td>
 <td><span class="pill" style="border-color:${st};color:${st}">${esc(s.status)}</span></td></tr>`}).join('')
 :'<tr><td colspan="10" class="quiet">No buy signals tracked yet.</td></tr>';
@@ -1957,15 +2000,15 @@ return `<tr onclick="openDrawer('${s.sym}')"${s.re?' style="opacity:.55"':''}><t
  const cell=(v,col)=>v==null?'<td class="mono dim">—</td>'
   :`<td class="mono"${col?` style="color:${rcol(v)};font-weight:700"`:''}>${v>0?'+':''}${v}R</td>`;
  if(!F.sections||!F.sections.length){el.innerHTML='<div class="quiet">No forward signals tracked yet — this fills as buy alerts age.</div>';}
- else{let h='<div style="overflow:auto"><table id="fortbl"><thead><tr><th>Cohort</th><th>n</th><th>open</th><th>stopped</th><th>avg R</th><th>med R</th><th>max R</th><th>hit-stop %</th><th>avg MFE</th><th>avg MAE</th></tr></thead><tbody>';
+ else{let h='<div style="overflow:auto"><table id="fortbl"><thead><tr><th>Cohort</th><th>n</th><th>open</th><th>stopped</th><th>plan R<span class="info" data-tip="THE COMPARABLE NUMBER. The signal replayed through the same backtest engine that produced +1.67R: filled at the NEXT session&#39;s open, two-lot exits (partial at +2.5R, breakeven at +1.5R, 50-DMA trail, weekly 30-week-MA core exit), gap-throughs booked at the actual fill, costs applied. Compare this column with +1.67R — not the raw one.">?</span></th><th>raw R<span class="info" data-tip="The original reading, kept for continuity: marked to market from the alert-night close, every stop booked at exactly -1.0R, no exit rules applied. It answers &#39;where is this signal now?&#39;, NOT &#39;what would the plan have made?&#39; — so it was never comparable to the backtest.">?</span></th><th>med R</th><th>max R</th><th>hit-stop %</th><th>avg MFE</th><th>avg MAE</th></tr></thead><tbody>';
   F.sections.forEach(sec=>{
-   h+=`<tr><td colspan="10" style="font-weight:700;font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:#cbd5e1;padding:12px 9px 4px;cursor:default">${esc(sec.title)}</td></tr>`;
-   if(!sec.rows||!sec.rows.length){h+='<tr><td colspan="10" class="axis" style="cursor:default">no signals in these cohorts yet</td></tr>';return;}
+   h+=`<tr><td colspan="11" style="font-weight:700;font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:#cbd5e1;padding:12px 9px 4px;cursor:default">${esc(sec.title)}</td></tr>`;
+   if(!sec.rows||!sec.rows.length){h+='<tr><td colspan="11" class="axis" style="cursor:default">no signals in these cohorts yet</td></tr>';return;}
    sec.rows.forEach(r=>{
-    if(r.small){h+=`<tr class="dim" style="cursor:default"><td>${esc(r.cohort)}</td><td class="mono">${r.n}</td><td colspan="8" class="axis">n too small (need &ge;3) — held back until it grows</td></tr>`;return;}
+    if(r.small){h+=`<tr class="dim" style="cursor:default"><td>${esc(r.cohort)}</td><td class="mono">${r.n}</td><td colspan="9" class="axis">n too small (need &ge;3) — held back until it grows</td></tr>`;return;}
     h+=`<tr style="cursor:default"><td>${esc(r.cohort)}</td><td class="mono">${r.n}</td>`
       +`<td class="mono dim">${r.open}</td><td class="mono dim">${r.stopped}</td>`
-      +cell(r.avg_r,true)+cell(r.med_r,false)+cell(r.max_r,false)
+      +cell(r.plan_r,true)+cell(r.avg_r,false)+cell(r.med_r,false)+cell(r.max_r,false)
       +`<td class="mono">${r.hit_stop_pct!=null?r.hit_stop_pct+'%':''}</td>`
       +cell(r.avg_mfe,false)+cell(r.avg_mae,false)+'</tr>';});});
   h+='</tbody></table></div>';el.innerHTML=h;}

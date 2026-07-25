@@ -386,16 +386,35 @@ def append_journal(audit_date: str, windows: list[dict]) -> None:
 
 
 CAUGHT_LABELS = {"CAUGHT EARLY", "CAUGHT", "CAUGHT LATE", "ALREADY FLAGGED"}
+# structurally outside the strategy — a legitimate reason not to have caught a
+# mover, and therefore exactly the kind of exclusion that must not be allowed
+# to quietly disappear from the denominator (audit 2026-07-25, Finding 4)
+INELIGIBLE_LABELS = {"NOT_IN_UNIVERSE", "TOO YOUNG", "NO STRUCTURE",
+                     "EXTENDED / NO ENTRY", "ANTICIPATION ONLY"}
 
 
 def recall_line(results: list[dict]) -> str:
-    eligible = [r for r in results if r["classification"] != "NOT_IN_UNIVERSE"]
-    caught = [r for r in eligible if r["classification"] in CAUGHT_LABELS]
-    n = len(eligible)
-    return (f"{len(caught)}/{n} identified as buyable at some point "
-            f"({sum(1 for r in eligible if r['classification'] in ('CAUGHT EARLY','CAUGHT'))} "
-            f"early/mid, {sum(1 for r in eligible if r['classification']=='CAUGHT LATE')} late, "
-            f"{sum(1 for r in eligible if r['classification']=='ALREADY FLAGGED')} already-standing)")
+    """BOTH ratios, always.
+
+    The eligible-only ratio answers "when the strategy could act, did it?" —
+    a fair question, and the one the classification work exists to support.
+    The raw ratio answers "of the market's biggest movers, how many did I
+    own?" — which is what a reader assumes a recall number means. Printing
+    only the first reads as 3/3 when the honest headline is 3/7.
+    """
+    scored = [r for r in results if r["classification"] != "NOT_IN_UNIVERSE"]
+    eligible = [r for r in scored if r["classification"] not in INELIGIBLE_LABELS]
+    caught_all = [r for r in scored if r["classification"] in CAUGHT_LABELS]
+    caught_el = [r for r in eligible if r["classification"] in CAUGHT_LABELS]
+    ex = len(scored) - len(eligible)
+    return (f"**{len(caught_all)}/{len(scored)}** of the top movers caught "
+            f"(raw) · **{len(caught_el)}/{len(eligible)}** of the ones the "
+            f"strategy could act on"
+            + (f" ({ex} structurally ineligible: too young / no Stage-2 "
+               f"structure / never paused)" if ex else "")
+            + f" — {sum(1 for r in scored if r['classification'] in ('CAUGHT EARLY','CAUGHT'))} "
+              f"early/mid, {sum(1 for r in scored if r['classification']=='CAUGHT LATE')} late, "
+              f"{sum(1 for r in scored if r['classification']=='ALREADY FLAGGED')} already-standing")
 
 
 def write_report(audit_date: str, windows: list[dict]) -> None:

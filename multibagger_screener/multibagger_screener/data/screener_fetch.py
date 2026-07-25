@@ -148,6 +148,28 @@ def parse_company_page(html: str) -> dict:
     }
 
 
+def has_real_data(parsed: dict) -> bool:
+    """Did this page actually carry financials, or only the shape of them?
+
+    A single-entity filer (most banks, insurers and standalone-only companies)
+    HAS a /consolidated/ URL — screener.in renders it with the row labels in
+    place and every data column empty. The old acceptance test looked at
+    `quarters["rows"]`, which is non-empty on exactly those pages, so the
+    standalone fallback never fired and an empty parse was cached as a valid
+    record. A cached empty record is worse than no record: the name scores
+    fundamentals-blind AND becomes unvetoable (build_vetoes returns [] on no
+    data), so it ranks HIGHER than a company we actually know something bad
+    about. Measured 2026-07-25: 52 of 651 main-universe names and 22 of 218
+    penny names were poisoned this way, and the penny tab's entire top of
+    table was made of them.
+
+    So the test is data, not structure: at least one dated column in the
+    quarterly table, or a parsed top-ratios box.
+    """
+    q = parsed.get("quarters") or {}
+    return bool(q.get("columns")) or bool(parsed.get("top_ratios"))
+
+
 def fetch_company(symbol: str, prefer_consolidated: bool = True) -> dict:
     """Fetch one company. Tries consolidated statements first (matters for
     banks/NBFCs/holdcos), falls back to standalone when consolidated is empty."""
@@ -158,19 +180,26 @@ def fetch_company(symbol: str, prefer_consolidated: bool = True) -> dict:
         urls.reverse()
 
     last_err = None
+    best: dict | None = None
     for url in urls:
         try:
             html = _get(url)
             parsed = parse_company_page(html)
-            has_quarters = bool(parsed.get("quarters", {}).get("rows"))
-            if has_quarters or url == urls[-1]:
-                parsed["symbol"] = symbol
-                parsed["source_url"] = url
-                parsed["fetched_at"] = datetime.now().isoformat(timespec="seconds")
+            parsed["symbol"] = symbol
+            parsed["source_url"] = url
+            parsed["fetched_at"] = datetime.now().isoformat(timespec="seconds")
+            if has_real_data(parsed):
                 return parsed
+            best = best or parsed
         except Exception as e:  # noqa: BLE001 — try the fallback URL
             last_err = e
-    raise RuntimeError(f"{symbol}: {last_err}")
+    # every URL parsed empty — that is a FAILURE, not a result. Raising keeps
+    # the junk out of the cache so the next run retries instead of inheriting
+    # a permanently blind record.
+    raise RuntimeError(
+        f"{symbol}: no financials parsed from "
+        f"{best.get('source_url') if best else 'any page'}"
+        + (f" ({last_err})" if last_err else ""))
 
 
 def save_company(symbol: str, data: dict) -> Path:

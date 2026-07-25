@@ -304,6 +304,16 @@ class PennyConfig:
     # --- universe arms (a name qualifies on EITHER) ---
     max_price: float = 100.0            # colloquial "penny stock" in India
     max_market_cap_cr: float = 1000.0   # micro/nano-cap by value
+    # ...but a low share price on its own is a numerological artifact, not a
+    # small company: a bank with a lot of shares outstanding trades at Rs40
+    # while being worth Rs12,000 Cr, and a 1:10 split would drop any company
+    # into this arm overnight. Before this ceiling the price arm's top ranks
+    # were Equitas SFB, Ujjivan SFB, South Indian Bank and Bank of Maharashtra
+    # (Rs62,325 Cr), with Vodafone Idea (Rs1.4 lakh Cr) also inside the
+    # universe. So the price arm now also has to be a smallish company; the
+    # mcap arm is unchanged and remains the strict definition.
+    # (User decision 2026-07-25, after the arm was measured.)
+    price_arm_max_market_cap_cr: float = 5000.0
 
     # --- hard tradability gates (see data/nse_all.py for why each exists) ---
     allowed_series: tuple = ("EQ",)     # BE/BZ = trade-to-trade, SM/ST = SME

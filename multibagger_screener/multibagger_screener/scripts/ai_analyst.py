@@ -73,7 +73,19 @@ def write_health(status: str, note: str = "") -> None:
                   f, indent=1)
 
 MODEL = "claude-sonnet-5"      # capable + economical for a nightly memo
-MAX_DIVES_PER_DAY = 2   # was 3 — cost discipline (2026-07-16)
+MAX_DIVES_PER_DAY = 4   # 3 -> 2 for cost discipline (2026-07-16), back to 4
+                        # on 2026-07-25: the scan fires ~8 buy alerts a night,
+                        # so at 2 the analyst reviewed under a quarter of them.
+                        # These run on the laptop subscription, not the API —
+                        # the cost is session usage, and a session limit mid-run
+                        # is already handled (the unreviewed names stay pooled).
+# scarce dives should go to signals still worth acting on. Ranking on
+# conviction alone let a 4-day-old alert outrank tonight's, and you cannot
+# enter a 4-day-old signal at its alert price. Each day of age costs this many
+# conviction points in the QUEUE ONLY — it never touches a journaled score, and
+# over the pool's 5-day horizon it discounts the oldest by 25 points, so a
+# strong name from last night still competes while a stale one steps aside.
+POOL_AGE_PENALTY_PER_DAY = 5.0
 MAX_TURNS = 15          # cap the agentic research loop per dive: unbounded
                         # turns re-process a growing context each step and
                         # dominate API cost; 15 is ample for a 250-word verdict
@@ -160,7 +172,9 @@ def pending_pool(days: int = 5) -> list[str]:
                 cur = verdict_at.get(r["symbol"])
                 if cur is None or t > cur:
                     verdict_at[r["symbol"]] = t
-    pend = [(conv, sym) for sym, (t, conv) in latest.items()
+    now = datetime.now()
+    pend = [(conv - POOL_AGE_PENALTY_PER_DAY * max((now - t).days, 0), sym)
+            for sym, (t, conv) in latest.items()
             if verdict_at.get(sym) is None or verdict_at[sym] < t]
     pend.sort(reverse=True)
     return [sym for _, sym in pend]

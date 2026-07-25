@@ -1,17 +1,16 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-07-25** (audit + penny screen; §6 rewritten as a
-next-session brief).
+**Last updated: 2026-07-25 evening** (audit F1 shipped; the fundamentals-cache
+poisoning bug found and fixed; penny screen corrected; local AI jobs revived).
 This is the single "where we are / what's next" doc. For strategy read
 `../../PROJECT_BRIEF.md` (it lives at the git root `files/`, NOT in this
 folder); for the evidence read `VALIDATION_REPORT.md`; for cloud ops read
 `CLOUD.md`. Sections 3-3N below are a chronological work-log (kept for
 context) — sections 0/1/2/4/5/6/7 are the CURRENT state, kept fresh.
 
-> **If you are a fresh session: read `AUDIT_2026-07-25.md`, then §6 Task 1.**
-> The live system is currently firing an entry class that no backtest
-> validated, and has never once fired the one that was. That outranks
-> everything else in this document.
+> **If you are a fresh session: read `AUDIT_2026-07-25.md`, then §3O.**
+> Audit Findings 1, 1b, 2, 3, 4 and 5 are DONE (§3O). What remains open is
+> listed in §5 and needs either the user or forward time, not code.
 
 ---
 
@@ -849,6 +848,107 @@ liquidity check, not signals.
 
 ---
 
+## 3O. Cache poisoning, penny correction, AI revival (2026-07-25 evening)
+
+Four user questions drove this session; all four had a real defect behind them.
+
+**THE ROOT-CAUSE BUG — an empty parse cached as a valid record.**
+`fetch_company` accepted the `/consolidated/` page whenever the quarterly table
+had ROWS. A single-entity filer — most banks and insurers, and any company that
+files standalone only — HAS a `/consolidated/` URL, and screener.in renders it
+with row labels present and every data column empty. The test passed, the
+standalone fallback never fired, and the empty parse was written to cache with
+a fresh timestamp, so the age check never retried it.
+
+The damage is asymmetric, which is what made it expensive: a name with no
+fundamentals does not score LOW. `build_vetoes` returns `[]` on no data, the
+composite renormalizes over whichever blocks survived, and the name floats to
+the TOP. Measured at discovery: **52 of 651 main-universe names** (BANDHANBNK,
+DCBBANK, KARURVYSYA, DATAPATTNS, STARHEALTH, NETWEB, CUB, GRSE, BDL…) and
+**22 of 218 penny names**, and those 22 held penny ranks 1, 2, 3, 4, 6, 8, 9,
+12 and 13. Across the penny universe `corr(score, coverage) = -0.335` — the
+less the screen knew about a company, the higher it ranked it.
+
+- `data/screener_fetch.py`: new `has_real_data()` (dated quarter columns, or a
+  parsed top-ratios box); the fallback now tries both URLs and RAISES when
+  neither carries data, so junk can never reach the cache.
+- Both fetchers treat an empty cached record as a miss, so this heals itself.
+- `scripts/heal_fundamentals_cache.py` (new): one-shot repair + standing audit,
+  scoped to the watched universes (`--all` to include ETFs, `--dry-run`).
+  **65 of 68 healed**; 3 (AGL, TIPSMUSIC, VMART) have no readable page under
+  that symbol code and now fail loudly instead of scoring blind.
+- `parser_health` was testing the same wrong thing (`quarters["rows"]`) — fixed.
+- Shortlist rescored on real data: 29 names moved ≥4 points (BANDHANBNK -12.9,
+  ASTERDM +31.6, KARURVYSYA +12.3, FEDFINA +12.3, WELCORP +15.7).
+- `tests/test_screener_fetch.py` (new, network-stubbed) locks the behaviour.
+
+**PENNY SCREEN — three fixes.**
+1. **Tier split.** `PennyRead.assessed` (`veto_inputs_present`) separates "we
+   checked and it is clean" from "we could not check". Ranking is now tier 0
+   assessed-and-clean → tier 1 NOT ASSESSED → tier 2 vetoed, tier first no
+   matter which column is sorted; only tier 0 is journaled. After the heal
+   tier 1 is empty and coverage is 100% across all 178 names.
+2. **Price-arm market-cap ceiling** (`PENNY.price_arm_max_market_cap_cr =
+   5000`, user decision). A cheap SHARE is not a small COMPANY — the arm's top
+   ranks were Equitas SFB ₹8,961 Cr, Ujjivan SFB ₹13,761 Cr, Bank of
+   Maharashtra ₹62,325 Cr, with Vodafone Idea (₹1.4 lakh Cr) inside the
+   universe. 222 → **178 names**; overlap with the main index universe fell
+   49 → 8; the top of the table is now DJML ₹411 Cr, PREMIERPOL ₹831 Cr,
+   ATALREAL ₹382 Cr. The mcap arm is unchanged.
+3. **The blank exclusion reason.** 112 tradable names sat in
+   `penny_excluded.csv` with an EMPTY `exclude_reason` — neither in the
+   universe nor honestly excluded, invisible in a funnel whose whole point is
+   that every reject is accounted for. They now carry "held pending a
+   market-cap read", and the heal closed all but 15 of them.
+
+The penny journal was consolidated to a single coherent run: 40 rows written
+under the broken parse or a superseded universe definition moved to
+`journal/quarantine_penny_prefix_2026-07-25.csv` (append-only journals are
+never edited silently — same handling as the 2026-07-09 intraday incident).
+
+**FORWARD RULER (Findings 2 + 3) — `plan_followed_R` shipped.**
+`journal_outcomes.py` now reports TWO rulers. RAW (unchanged, kept for
+continuity) marks to market from the alert-night close and books every stop at
+exactly -1R. PLAN-FOLLOWED replays each signal **through `backtest/engine.py`
+itself** — next-session-open fill, two-lot exits, gap-aware stop fills, costs —
+so it cannot drift from the +1.67R it is compared against. Current read:
+raw -0.18R vs plan-followed **-0.23R over 127 signals**.
+Also: **17% of signals (25 of 150) carried NO stop** because 2.5×ATR exceeded
+the 12% cap and the risk engine skipped them — every R column was blank, so
+they were invisible in the record, and they are not a random sample (they are
+the most volatile names, where a 30%-win/9.6:1 strategy keeps its right tail).
+They are now measured against a reference stop and flagged `plan_sized=False`
+(engine gained a `max_stop_pct` measurement hook; default unchanged so every
+historical config reproduces). **DIACABS is the case that exposed this**: a
+real +1.53R signal showing a blank scorecard row. Both rulers now appear in the
+Journal tab (plan R first, raw R beside it, each with a tooltip saying what it
+measures).
+
+**Finding 4** — `capture_audit.recall_line` prints BOTH ratios now: raw
+(of all top movers) and eligible-only, with the count of structurally
+ineligible names stated inline instead of silently leaving the denominator.
+
+**LOCAL AI JOBS WERE NOT RUNNING** (the user's report: "no update on the UI").
+- `MultibaggerNightlyAnalystEvening` had `DisallowStartIfOnBatteries=true`,
+  `StopIfGoingOnBatteries=true` and no `StartWhenAvailable` — last result
+  `0x800710E0` ("the operator or administrator has refused the request", i.e.
+  battery). **No verdict since 2026-07-21.** This is the same defect fixed for
+  the scan jobs after the 2026-07-09 incident, reintroduced by `schtasks`
+  defaults when the task was created on 07-21.
+- `MultibaggerWeeklyCommittee` had `ExecutionTimeLimit=PT1H` while a committee
+  run takes ~2h50m — the wrapper was killed mid-run on 07-19 (result 1067,
+  process aborted), which is what the "stranded output" guard was papering
+  over. Raised to 4h.
+- Both now: battery-OK, `StartWhenAvailable`, sane limits. Verified live —
+  a real pooled run produced STLTECH SKIP and RADICO BUY and pushed them.
+- **Dive cadence** (user decision): `MAX_DIVES_PER_DAY` 2 → **4** (the scan
+  fires ~8 buy alerts a night; at 2 the analyst saw under a quarter of them),
+  and `pending_pool` now applies `POOL_AGE_PENALTY_PER_DAY = 5.0` — a
+  queue-only discount so a 4-day-old alert stops outranking tonight's. Nothing
+  journaled is touched.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -901,11 +1001,20 @@ liquidity check, not signals.
    (monthly is enough) — makes the corrected fixed-fractional sizing (§3H)
    actually track reality; live plans size off this constant.
 
-6. **DECIDE: implement Audit Finding 1?** (`AUDIT_2026-07-25.md`, §6 Task 1.)
-   It changes what fires nightly, so it needs an explicit yes. Everything else
-   in this list is smaller than this one.
-7. **DECIDE: public vs private repo** (§6 Task 4). `holdings.csv` and
-   `positions.csv` are personal financial data and are currently public.
+6. ~~DECIDE: implement Audit Finding 1?~~ **DONE 2026-07-25** — `BUY TRIGGER`
+   fires as an event alert (commit `c4744a9`), F1b labels the EXTENDED
+   divergence, and F2/F3's `plan_followed_R` landed the same day (§3O).
+7. **MAKE THE REPO PRIVATE** — user chose this 2026-07-25 for Finding 5
+   (`holdings.csv` / `positions.csv` are real personal financial data on a
+   public repo + public Pages site). Not doable from here (no `gh` auth):
+   github.com/kartikeyaav/Golden-Stock → Settings → General → Danger Zone →
+   Change visibility → Private. **CAVEAT the user must weigh first:** GitHub
+   Pages from a PRIVATE repo requires a paid plan (Pro/Team/Enterprise). On
+   the free plan, going private takes `kartikeyaav.github.io/Golden-Stock/`
+   offline — the dashboard is then local-only (`dashboard_server.py`) or via
+   the run artifact. If that trade is unacceptable, the fallback is scrubbing
+   both CSVs from the repo and its history and teaching `daily.yml` /
+   `backup_push.py` not to commit them.
 
 **Needs time:**
 8. **Forward journal** must accumulate a few weeks. Then review: do analyst
@@ -925,13 +1034,15 @@ liquidity check, not signals.
 
 ## 6. NEXT TASK (what a fresh chat should pick up)
 
-**Start here. Read `AUDIT_2026-07-25.md` before touching anything.** Task 1 is
-not one improvement among several — until it lands, the live system is not the
-system the evidence describes.
+**Task 1 below is DONE (2026-07-25) — kept for the reasoning trail; see §3O
+for what shipped.** The live open items are §5 #7 (make the repo private, one
+user action with a Pages caveat) and #5 (`RISK.capital`, user deferred). Then
+Task 3.2 (a pre-registered penny backtest) is the only thing that can move the
+penny screen off "research", and Task 2 (the playground) is user-deferred.
 
 ---
 
-### TASK 1 (do this first) — make the validated entry alertable  [F1 + F2 together]
+### ~~TASK 1~~ DONE — make the validated entry alertable  [F1 + F2 together]
 
 **Why:** the backtested entry (+1.67R) fires ~1.7×/week across the universe,
 but the scan only alerts on tag TRANSITIONS, and only 27% of validated entries
@@ -1012,11 +1123,12 @@ Decisions already taken so a fresh session does not re-litigate them:
 
 ---
 
-### TASK 3 — penny screen follow-ups (`§3N`, shipped 2026-07-25)
+### TASK 3 — penny screen follow-ups (`§3N` shipped, `§3O` corrected)
 
-1. **Close the mcap arm.** 112 names are still held pending a market-cap read.
-   `python scripts/penny_fundamentals.py --limit 150` twice more finishes it;
-   the weekly job does this automatically at 150/run.
+1. ~~Close the mcap arm.~~ **DONE 2026-07-25** — the pending list went 112 → 15
+   once the cache-poisoning bug (§3O) was fixed and the fundamentals fetched;
+   every one of the 178 universe names now has a market-cap reading. The
+   weekly job keeps the remainder closing at 150 fetches/run.
 2. **Pre-registered penny backtest** — the honest next step, and the only thing
    that can move this screen off "research". Run the penny universe through
    `backtest/engine.py` with the same two-lot rules and costs, against the
@@ -1030,12 +1142,12 @@ Decisions already taken so a fresh session does not re-litigate them:
 
 ---
 
-### TASK 4 — privacy (F5), needed before anything is shared
+### TASK 4 — privacy (F5): DECIDED, awaiting one user click
 
-`holdings.csv` and `positions.csv` carry real symbols, quantities and entry
-prices, and the repo + Pages site are public. Either scrub them from the repo
-(and history) and keep them local, or make the repo private and publish only
-the built dashboard. The user has not chosen yet — **ask, don't assume.**
+The user chose **make the repo private** (2026-07-25). See §5 #7 for the exact
+steps and the GitHub-Pages-on-a-private-repo caveat they need to weigh. Do not
+force-push a history rewrite unless they change their mind and pick the scrub
+option instead.
 
 ---
 
