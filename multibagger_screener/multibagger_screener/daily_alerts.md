@@ -30,6 +30,7 @@ _News moves attention, never entries — trades stay technical._
 1 position-management alert(s):
 - **POSITION**: DIACABS — PARTIAL PROFIT 2.5R hit at 297.75 — sell ~16 sh of trading lot
 
+
 ## AI analyst verdicts
 
 ### STLTECH
@@ -67,6 +68,41 @@ RISKS (max 2 bullets):
 CHECKED: Web search — Business Standard/ScanX/Whalesbook (Q4/FY26 results, concall commentary), shareholding/pledge history, CIABC/BAI packaging-cost and state excise-hike coverage (UP, Maharashtra).
 
 CHANGES MY MIND: A weak Q1 FY27 print or margin miss on July 28-29 (packaging/ENA cost pass-through failing) would flip this to SKIP; conversely, continued Prestige & Above beat would support staying at half size post-results.
+
+### JAMNAAUTO
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- No pledge/SEBI/auditor red flags found — promoter pledge is only ~1.52% of holding as of Jul 2026 (low risk), no controversy or compliance lapses in recent filings.
+- Earnings inflection has a real, verifiable driver, not a one-off: JAI is India's dominant parabolic-spring OEM supplier (~65% OEM share) to Tata Motors CV and Ashok Leyland, and both are in a genuine M&HCV upcycle — Tata Motors CV +28% YoY (Apr 2026), industry targeting 1M units by FY28 vs 960K in FY26, backed by NHAI's ₹3.5 lakh cr FY27-29 infra pipeline driving tipper/M&HCV demand.
+- Second-order tailwind is direct and mechanical: JAI's margin mix is also improving as OEMs shift conventional→parabolic springs (higher value/tonne), reinforcing the deleveraging trend already flagged on the card.
+
+RISKS (max 2 bullets):
+- Steel is the dominant input cost; a spike without pass-through could compress the single-digit margins faster than volume growth can offset.
+- Weak catalyst/theme score (0.0/0.3) means no active re-rating narrative in the market yet, and JAMNAAUTO isn't on this week's committee shortlist — upside may lag until CV-cycle data gets wider coverage.
+
+CHECKED: WebSearch across screener.in/scanx/business-standard/tradebrains for pledge/SEBI status, Q1FY27 results availability, CV-industry (Tata Motors/Ashok Leyland) demand data, and JAI's spring-margin/export profile.
+CHANGES MY MIND: Any Q1FY27 CV OEM volume miss (Tata/Ashok Leyland MoM decline) or a steel-price spike without OEM price pass-through would flip this to WAIT.
+
+### USHAMART
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- No red flags found: promoters confirm zero pledge/encumbrance in FY26, no SEBI enforcement, auditor change is a routine rotation to MSKA & Associates (replacing SRBC's expiring term), not a resignation-under-cloud.
+- Earnings story checks out independently: FY26 close showed record quarterly EBITDA and a debt-free standalone balance sheet, and India Ratings upgraded long-term facilities to AA- — corroborates the card's deleveraging (417→229 Cr) and PAT-inflection numbers from an outside source.
+- Sector tailwind is real but generic (mining/infra capex, National Infrastructure Pipeline) — no specific customer/competitor transmission channel found, consistent with the card's weak theme_tailwind (0.3) and catalyst (0.167) scores.
+
+RISKS (max 2 bullets):
+- Q1 FY27 results are due July 27 (board meeting) with the earnings call July 28 — literally 2-3 days after this alert. That's a binary gap-risk event sitting right on top of the mechanical entry (~500.2)/stop (462.44), which the card doesn't flag.
+- Full valuation (PEG 2.32) plus the stock already down from its 52-wk high (527.5→~491) and absent from this week's committee shortlist — thin margin for error if the print disappoints.
+
+CHECKED: WebSearch across screener/trendlyne/scanx/tipranks/business-standard for USHAMART news, SEBI/pledge/auditor disclosures, Q1FY27 results calendar, and India wire-rope/mining-capex demand context.
+
+CHANGES MY MIND: A clean or better-than-expected Q1 FY27 print (July 27-28) with no fresh promoter/governance surprise would clear the event risk — re-enter on the mechanical plan post-print if the setup still holds.
 
 
 ## Cards
