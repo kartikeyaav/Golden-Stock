@@ -34,6 +34,12 @@ LOG_PATH = os.path.join(ROOT, "logs", "committee_local.log")
 PICKS_PATH = os.path.join(ROOT, "ai_picks.json")
 SHORTLIST_REL = "multibagger_screener/multibagger_screener/shortlist_ranked.csv"
 
+# Must sit ABOVE ai_picks.TIMEOUT_S (3h) and BELOW the scheduled task's
+# ExecutionTimeLimit (PT4H), so the innermost budget is the one that bites and
+# the wrapper always survives to log and push. Inverting this ordering is what
+# stranded the 19-Jul picks and froze the committee for a week.
+COMMITTEE_TIMEOUT_S = 12000   # 3h20m
+
 
 def log(msg: str) -> None:
     os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
@@ -112,9 +118,10 @@ def main() -> int:
     try:
         proc = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "ai_picks.py")],
                               capture_output=True, text=True, encoding="utf-8",
-                              errors="replace", timeout=1200, cwd=ROOT, env=env)
+                              errors="replace", timeout=COMMITTEE_TIMEOUT_S,
+                              cwd=ROOT, env=env)
     except subprocess.TimeoutExpired:
-        log("ai_picks.py timed out after 1200s — will retry next boot")
+        log(f"ai_picks.py timed out after {COMMITTEE_TIMEOUT_S}s — will retry next boot")
         return 1
     tail = "\n".join((proc.stdout or "").strip().splitlines()[-3:])
     log(f"ai_picks.py exit {proc.returncode}: {tail[:300]}")

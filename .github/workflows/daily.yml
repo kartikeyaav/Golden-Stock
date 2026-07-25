@@ -88,8 +88,13 @@ jobs:
           # add each path separately: git add aborts ALL staging if any one
           # pathspec matches nothing (e.g. analyst_health.json when the AI
           # step is skipped) — that silently dropped the whole forward record
+          # news_pressure/themes are DERIVED (rebuilt from the archive + price
+          # cache every run) but are committed anyway: the weekly committee
+          # runs on the laptop off a git pull, and without state/themes.json
+          # its briefing would silently lose the theme map.
           for p in journal state/tags_state.json state/alert_details.json \
                    state/analyst_health.json state/news_radar.json state/regime.json \
+                   state/news_pressure.json state/themes.json \
                    daily_alerts.md \
                    announcements_archive.csv positions.csv paper_positions.csv; do
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"

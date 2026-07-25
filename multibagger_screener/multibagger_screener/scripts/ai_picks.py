@@ -36,7 +36,14 @@ PROTOCOL = os.path.join(ROOT, "analyst", "PICKS_PROTOCOL.md")
 OUT_MD = os.path.join(ROOT, "ai_picks.md")
 OUT_JSON = os.path.join(ROOT, "ai_picks.json")
 JOURNAL = os.path.join(ROOT, "journal", "ai_picks_journal.csv")
-TIMEOUT_S = 900
+TIMEOUT_S = 10800   # 3h. NOT a cost lever — MAX_TURNS is. The old 900s was
+                    # BELOW the observed run time: the 2026-07-19 committee
+                    # needed ~2h50m, so the CLI was killed, the orphaned child
+                    # finished anyway and wrote picks nobody was left to push
+                    # (see logs/committee_local.log). Every scheduled run since
+                    # died the same way, which is why the picks went stale for
+                    # a week. Budget now sits inside the task's PT4H limit:
+                    #   CLI 3h  <  wrapper 3h20m  <  Task Scheduler 4h.
 MAX_TURNS = 30   # cap the committee's research loop: unbounded turns
                  # re-process a growing context each step (the other half of
                  # the 2026-07-16 $1.9/run cost); 30 covers 5 researched picks
@@ -125,6 +132,34 @@ def _regime_line() -> str:
         return ""
 
 
+def theme_table() -> str:
+    """Tonight's mechanical theme heat (scoring/themes.py), straight from the
+    dashboard payload the user reads. Given to the committee so its narrative
+    describes the SAME map the Sectors tab shows, instead of inventing a
+    private one — the recurring failure mode when two layers each name their
+    own sectors."""
+    path = os.path.join(ROOT, "state", "themes.json")
+    if not os.path.exists(path):
+        return ""
+    try:
+        with open(path, encoding="utf-8") as f:
+            themes = json.load(f).get("themes", [])
+    except (OSError, ValueError):
+        return ""
+    if not themes:
+        return ""
+    lines = ["", "THEME MAP (mechanical, tonight — heat is RELATIVE rank across "
+             "themes, never an entry signal; sector gating was tested and rejected):"]
+    for t in themes[:12]:
+        if t.get("thin"):
+            continue
+        conf = ", ".join(t.get("confirmed", [])[:6]) or "none chart-confirmed"
+        lines.append(f"- {t['name']}: heat {t.get('heat')} | 3m {t.get('ret3m')}% | "
+                     f"{t.get('breadth')}% actionable | {t['n']} names | "
+                     f"news {t.get('news')} | confirmed: {conf}")
+    return "\n".join(lines)
+
+
 def build_briefing(cands) -> str:
     lines = [f"CANDIDATES ({len(cands)} mechanically-qualified, all CONFIRMED + veto-passed):", ""]
     for c in cands:
@@ -132,7 +167,8 @@ def build_briefing(cands) -> str:
         lines.append(f"- {c['symbol']} ({c['company']}) | {c['sector']} | "
                      f"conviction {c['score']} | RS {c['rs']} | {c['archetype']}{flag}")
         lines.append(f"    {c['highlights']}")
-    return "\n".join(lines) + recent_analyst_verdicts() + _regime_line()
+    return ("\n".join(lines) + recent_analyst_verdicts()
+            + theme_table() + _regime_line())
 
 
 def run_committee(briefing: str, model: str, thinking_tokens: int):
@@ -220,7 +256,13 @@ def main():
         print(f"FAILED: {err}")
         sys.exit(1)
 
-    portfolio = re.search(r"PORTFOLIO VIEW:\s*(.+?)(?=\n=== )", memo, re.S)
+    portfolio = re.search(r"PORTFOLIO VIEW:\s*(.+?)(?=\nTHEME READ:|\n=== )", memo, re.S)
+    # the Sectors tab's narrative overlay; absent or "none" simply leaves the
+    # mechanical theme table standing on its own
+    theme = re.search(r"THEME READ:\s*(.+?)(?=\n=== |\Z)", memo, re.S)
+    theme_read = theme.group(1).strip() if theme else ""
+    if theme_read.lower().startswith("none"):
+        theme_read = ""
     picks = parse_picks(memo, cands)
 
     with open(OUT_MD, "w", encoding="utf-8") as f:
@@ -229,6 +271,7 @@ def main():
         json.dump({"generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
                    "model": args.model,
                    "portfolio_view": portfolio.group(1).strip() if portfolio else "",
+                   "theme_read": theme_read,
                    "picks": picks}, f, default=str, indent=1)
 
     os.makedirs(os.path.dirname(JOURNAL), exist_ok=True)

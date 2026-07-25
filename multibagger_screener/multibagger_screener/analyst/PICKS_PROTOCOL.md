@@ -56,6 +56,15 @@ the quantitative floor — but to apply judgment the machine cannot.
 PORTFOLIO VIEW: <2-3 sentences: what these picks have in common, how they
 diversify, any market-regime caveat (e.g. index below 150-DMA = be selective)>
 
+THEME READ: <4-6 sentences on the THEME MAP given above, if one was provided —
+otherwise write "none". Connect the dots the per-name research cannot: which
+themes are genuinely early versus already crowded, where news flow is running
+ahead of price (or the reverse), which theme the picks above are really an
+expression of, and any theme where the mechanical heat looks misleading and
+why. Name the themes exactly as the map names them. This is orientation for a
+human reader — do NOT recommend buying a theme, and do not name stocks outside
+the candidate list.>
+
 === PICK 1: <SYMBOL> ===
 SELECTED BECAUSE: <1-2 sentences tying the mechanical numbers — score, RS,
   strongest dimensions, sector — to why it made the cut>

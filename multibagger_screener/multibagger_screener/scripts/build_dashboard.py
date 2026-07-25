@@ -161,6 +161,16 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
                        for r in df.itertuples()]
     df["_verdict"] = [_nearest(ver, r.symbol, r.logged_at, "verdict")
                       for r in df.itertuples()]
+    # the news layer's own ruler (2026-07-26). Frozen at alert time in
+    # entry_signals.csv, so this cohort answers "did alerts with a story
+    # already building behind them do better?" with a number rather than an
+    # opinion — the same test the 13 rejected overlays had to pass. Rows from
+    # before the column existed read blank and are excluded, not defaulted.
+    _primed = [_nearest(es, r.symbol, r.logged_at, "news_primed")
+               for r in df.itertuples()]
+    df["_news"] = ["news building first" if str(v).lower() == "true"
+                   else "no prior news" if str(v).lower() == "false" else None
+                   for v in _primed]
 
     def _kind_label(k):
         return {"RE-ENTRY WINDOW": "RE-ENTRY"}.get(str(k), str(k))
@@ -216,6 +226,8 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
                   "NO VCP BASE"]),
         _section("By analyst verdict", "_vlabel",
                  ["BUY", "SKIP-or-WAIT", "no verdict"]),
+        _section("By news memory", "_news",
+                 ["news building first", "no prior news"]),
     ]
 
     rvals = df["_r"].dropna()
@@ -223,6 +235,85 @@ def _build_forensics(outcomes: pd.DataFrame) -> dict:
 
     return {"sections": sections, "hist": hist,
             "n_total": int(df["_r"].notna().sum())}
+
+
+def _build_themes(rows: list[dict], closes: dict, news_mem: dict,
+                  details: dict, ai_picks: dict) -> dict:
+    """Sectors tab: cross-industry themes over the machine's own universe.
+
+    Every number here is recomputed from data already on this page — tonight's
+    tags, the same price cache the charts draw from, the same news memory the
+    radar shows — so a reader can check any of it by hand. Nothing new is
+    inferred and nothing is scored privately.
+
+    IMPORTANT, and stated in the UI too: sector heat was tested as an entry
+    filter in matrix v2 and REJECTED (+0.22R at a 40% gate, +0.11R at 60%, vs
+    +1.27R ungated — monotonic in the wrong direction, because stocks lead
+    their sector's turn). This tab therefore orients research. It never ranks
+    money."""
+    from scoring.themes import THEMES, membership, rank_heat, summarize
+
+    rows_by_sym = {r["sym"]: r for r in rows}
+    members = membership(rows)
+
+    # 3-month return from the same 120-close series the sparklines use
+    ret3m = {}
+    for sym, cl in (closes or {}).items():
+        if cl and len(cl) >= 64 and cl[-64]:
+            ret3m[sym] = (cl[-1] / cl[-64] - 1.0) * 100.0
+
+    press = {s: d.get("p", 0.0) for s, d in (news_mem.get("syms") or {}).items()}
+    pick_syms = {p.get("symbol") for p in (ai_picks.get("picks") or [])}
+
+    out = []
+    for t in THEMES:
+        s = summarize(rows_by_sym, members[t.key], ret3m, press)
+        if not s.get("n"):
+            continue
+        # leaders: the theme's own names, ranked the way the system ranks
+        # anything — its state first, then relative strength, then momentum
+        def _rank(sym):
+            r = rows_by_sym[sym]
+            return (0 if r.get("tag") == "CONFIRMED" else
+                    1 if r.get("tag") == "ANTICIPATION" else
+                    2 if r.get("tag") == "EXTENDED" else 3,
+                    -(r.get("rs") or 0), -(ret3m.get(sym) or 0))
+        leaders = []
+        for sym in sorted(members[t.key], key=_rank)[:12]:
+            r = rows_by_sym[sym]
+            d = details.get(sym) or {}
+            leaders.append({
+                "sym": sym, "company": r.get("company", ""),
+                "tag": r.get("tag", ""), "rs": r.get("rs"),
+                "close": r.get("close"), "mcap": r.get("mcap"),
+                "tier": r.get("tier", ""), "arch": r.get("arch", ""),
+                "score": d.get("score", r.get("score")),
+                "ret3m": round(ret3m[sym], 1) if sym in ret3m else None,
+                "news": round(press.get(sym, 0.0), 2),
+                "pick": sym in pick_syms,
+            })
+        out.append({"key": t.key, "name": t.name, "blurb": t.blurb,
+                    **s, "leaders": leaders})
+
+    rank_heat(out)   # relative across tonight's themes, so it must run on the set
+    out.sort(key=lambda x: (x.get("thin", False), -(x.get("heat") or 0)))
+
+    # persisted so the weekly committee narrates THIS map rather than naming
+    # its own sectors — two layers each inventing a taxonomy is how a
+    # dashboard stops agreeing with itself
+    try:
+        tpath = os.path.join(ROOT, "state", "themes.json")
+        os.makedirs(os.path.dirname(tpath), exist_ok=True)
+        with open(tpath, "w", encoding="utf-8") as f:
+            json.dump({"generated": datetime.now().isoformat(timespec="seconds"),
+                       "themes": [{k: v for k, v in t.items() if k != "leaders"}
+                                  for t in out]}, f, indent=1)
+    except OSError:
+        pass
+
+    return {"themes": out,
+            # the committee's narrative, when it has one (weekly, optional)
+            "read": ai_picks.get("theme_read", "")}
 
 
 def _build_penny() -> dict | None:
@@ -365,6 +456,15 @@ def build_payload() -> dict:
     if os.path.exists(ppath):
         ai_picks = json.load(open(ppath, encoding="utf-8"))
         ai_picks.pop("model", None)  # engine detail — not a UI fact
+        # AGE, computed here rather than left to the reader. The committee is a
+        # WEEKLY job, so "the same five names again" is either correct (nothing
+        # changed) or a silently dead job — and the 2026-07-19 timeout incident
+        # was the second kind, invisible for a week behind a 10px footnote.
+        try:
+            gen = datetime.strptime(ai_picks.get("generated", ""), "%Y-%m-%d %H:%M")
+            ai_picks["age_days"] = (datetime.now() - gen).days
+        except ValueError:
+            ai_picks["age_days"] = None
     # news-first discovery radar (state/news_radar.json, written by the scan)
     radar = {}
     rpath = os.path.join(ROOT, "state", "news_radar.json")
@@ -380,6 +480,24 @@ def build_payload() -> dict:
         _dfp = load_ohlcv(_h.get("sym"))
         _h["price"] = (round(float(_dfp["close"].iloc[-1]), 2)
                        if _dfp is not None and len(_dfp) else None)
+    # ROLLING NEWS MEMORY (state/news_pressure.json, 2026-07-26). The radar
+    # above is one night's window and is overwritten nightly; this is the
+    # 90-day story-level read behind it, and it is what lets the panel show a
+    # story that has been BUILDING rather than only what landed since the last
+    # scan. Derived, rebuilt every night, safe to delete.
+    news_mem = {}
+    npath = os.path.join(ROOT, "state", "news_pressure.json")
+    if os.path.exists(npath):
+        try:
+            _nm = json.load(open(npath, encoding="utf-8"))
+            news_mem = {"generated": _nm.get("generated", ""),
+                        "lookback_days": _nm.get("lookback_days"),
+                        # only names carrying real flow reach the UI; the long
+                        # tail of single-filing names is noise on a panel
+                        "syms": {s: d for s, d in (_nm.get("syms") or {}).items()
+                                 if d.get("n_pos", 0) >= 1 or d.get("n_neg", 0)}}
+        except ValueError:
+            pass
     company_by_sym = dict(zip(universe.get("symbol", []), universe.get("company", [])))
 
     state_path = os.path.join(ROOT, "state", "tags_state.json")
@@ -885,7 +1003,7 @@ def build_payload() -> dict:
         ],
         "tags": tag_counts, "alerts": alerts, "verdicts": verdicts,
         "verdict_items": verdict_items, "ai_picks": ai_picks,
-        "radar": radar,
+        "radar": radar, "news_mem": news_mem,
         # the committee's weekly review set (ranked top-20): lets the UI say
         # "reviewed & passed over" vs "not in the review set" — honest signal
         "reviewed": list(ranked.head(20)["symbol"]) if not ranked.empty else [],
@@ -907,6 +1025,9 @@ def build_payload() -> dict:
         # penny / nano-cap research surface (unvalidated, zero capital) — None
         # until scripts/penny_scan.py has run at least once
         "penny": _build_penny(),
+        # cross-industry themes (scoring/themes.py) — research surface only;
+        # sector heat was tested as a gate and rejected (matrix v2 config E)
+        "themes": _build_themes(screener_rows, closes, news_mem, details, ai_picks),
     }
 
 
@@ -1069,6 +1190,25 @@ padding:15px 17px;font:500 14.5px Inter;color:var(--txt)}
 .palrow .sym{min-width:104px}
 .palrow .pill{margin-left:auto;flex:0 0 auto}
 .palempty{padding:18px;color:var(--faint);font-size:13px}
+/* themes: one collapsed row per theme, opening onto its member table. Rows
+   over cards — a dozen themes as cards is a wall; as rows it is a ranking. */
+.thbox{border:1px solid var(--line);border-radius:9px;margin:7px 0;background:var(--card2);overflow:hidden}
+.thbox[open]{border-color:#5eead43a}
+.thbox>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:13px;
+padding:11px 14px;transition:.15s}
+.thbox>summary::-webkit-details-marker{display:none}
+.thbox>summary:hover{background:var(--card)}
+.thheat{flex:0 0 auto;border:1px solid;border-radius:7px;min-width:42px;text-align:center;
+padding:4px 0;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+.thname{font-size:13.4px;font-weight:600;letter-spacing:-.1px}
+.thstats{margin-left:auto;display:flex;gap:16px;align-items:baseline;
+font-family:var(--mono);font-size:12px;color:var(--dim);white-space:nowrap}
+/* the member table is wider than a phone: it scrolls inside its own box, so
+   the page itself never gains a horizontal scrollbar (.thbox is overflow:hidden
+   for its rounded corners, which would otherwise CLIP the extra columns away
+   with no way to reach them) */
+.thbody{padding:4px 14px 14px;border-top:1px solid var(--line);overflow-x:auto}
+@media(max-width:820px){.thstats{display:none}}
 .posrow{display:flex;justify-content:space-between;margin:3px 0;font-size:12.8px}
 .track{height:7px;background:var(--card2);border-radius:4px;margin:11px 0 6px;position:relative}
 .trackfill{height:7px;border-radius:4px;background:linear-gradient(90deg,var(--red),var(--amb),var(--grn))}
@@ -1194,6 +1334,7 @@ td,th{padding:5px 6px}
 <div class="searchhint" onclick="openPalette()"><span>Search stocks&hellip;</span><kbd>Ctrl K</kbd></div>
 <button class="navbtn on" data-t="overview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Overview</button>
 <button class="navbtn" data-t="picks"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg> AI Picks</button>
+<button class="navbtn" data-t="sectors"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg> Sectors</button>
 <button class="navbtn" data-t="screener"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg> Screener</button>
 <button class="navbtn" data-t="penny" id="pennynav" style="display:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10h4a1.8 1.8 0 010 3.6h-4"/></svg> Penny</button>
 <button class="navbtn" data-t="positions"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Positions</button>
@@ -1216,7 +1357,8 @@ td,th{padding:5px 6px}
   <div class="card actcard"><h2 style="color:var(--grn)">Actionable now &mdash; buy signals, last 7 days<span class="info" data-tip="The only panel you act from. BUY NOW = the exact backtested trigger fired (pivot break on ≥1.5× volume). MOMENTUM BUY = an episodic-pivot gap fired (≥8% gap on ≥3× volume) — both are real buys; open the drawer for the sized plan. WATCH = base ready, breakout not confirmed yet. WEAK = in an uptrend but no proven trigger — not a buy. Resolved rows (ran away / faded / vetoed) need nothing — a faded signal is the system saving you from a stale entry.">?</span></h2>
     <div id="actionable"></div></div>
   <details class="card legend" id="legend"><summary>Legend &mdash; what the tags &amp; buy signals mean (state is not a buy)</summary><div class="lbody" id="legendbody"></div></details>
-  <div class="card" id="radarcard" style="display:none"><h2 style="color:#a78bfa">News radar &mdash; material filings<span class="info" data-tip="News-FIRST discovery: every NSE filing since the last scan, whitelist-classified (order wins, M&A, approvals / probes, pledges, exits / fund raises), matched to the universe and cross-referenced with tonight's technical state. CONFLUENCE = positive news on a chart the technical layer already rates UPTREND/BASING — the names to research first. News moves attention, never entries — trades stay technical.">?</span></h2>
+  <div class="card" id="radarcard" style="display:none"><h2 style="color:#a78bfa">News radar<span class="info" data-tip="First-party NSE filings only (never scraped headlines, which mis-attribute), whitelist-classified into order wins, expansions, M&A, approvals, probes, pledges, exits and fund raises. Repeat filings of ONE event collapse into one story, so this measures news rather than paperwork. Three sections: what has been BUILDING over weeks, what landed TONIGHT, and negative filings on names you hold or were just alerted on. Measured over 16 days of archive, filings did NOT predict the technical trigger — names with positive news alerted at 7.3% against a 16.6% base rate. So nothing here gates, ranks or sizes anything; it is context, and it is being scored in the Journal tab like every other layer.">?</span>
+    <span class="axis" style="margin-left:auto" id="radarage"></span></h2>
     <div id="radarbody"></div></div>
   <div class="kpis" id="kpis"></div>
   <div class="funnelline" id="funnel"></div>
@@ -1233,6 +1375,42 @@ td,th{padding:5px 6px}
 <div class="tab" id="picks">
   <div class="card" style="padding:12px 18px"><h2 style="margin:0">AI investment committee<span class="info" data-tip="The AI committee reads the whole mechanically-scored shortlist (dimensions, conviction, sector, RS), selects the optimum 3-5, deep-researches each on the web, and writes the investment case. The machine qualifies & scores; the AI curates & explains. Entry/stop/size stay mechanical. Picks are journaled and measured vs the mechanical top-N over time.">?</span></h2></div>
   <div id="picksbody"></div>
+</div>
+
+<div class="tab" id="sectors">
+  <div class="card" style="border-color:#5eead43a">
+    <h2 style="color:#5eead4">Sectors &amp; themes<span class="info" data-tip="NSE files every company into one of 22 macro-industries — accounting categories, not investment themes. The things that actually run cut across them: BEL and Data Patterns sit in different industries and are one story; Apar and Hitachi Energy are one grid-capex trade. This tab is a second, deliberate classification over the SAME universe the scan watches, so a theme can be read as what it is. Membership is an explicit list per theme, widened by name patterns so new listings join automatically; a stock can belong to several, because it does.">?</span>
+      <span class="pill" style="border-color:#5eead4;color:#5eead4">RESEARCH ONLY</span></h2>
+    <div class="dim" style="font-size:12.6px;line-height:1.65;max-width:78ch">
+      Where the money and the news are moving, over the <b id="thn">&mdash;</b> names the scan already watches.
+      Heat combines three-month momentum, how much of the theme the chart layer rates actionable,
+      and accumulated news flow &mdash; all of it visible elsewhere on this dashboard.
+    </div>
+    <div class="mini" style="border-color:#f8717133;margin-top:12px">
+      <span class="axis" style="color:#f87171">HEAT RANKS ATTENTION, NOT MONEY</span>
+      <div class="dim" style="font-size:12.4px;line-height:1.6;margin-top:4px">
+        Sector heat was tested as an entry filter and rejected: <b>+0.22R</b> at a 40% gate and
+        <b>+0.11R</b> at 60%, against <b>+1.27R</b> ungated &mdash; worse the more it gated, because
+        stocks lead their sector's turn. Nothing here changes an entry, a stop or a size.
+        A name in a hot theme still has to fire the same trigger as any other name.
+      </div>
+    </div>
+  </div>
+  <div class="card" id="thnarrcard" style="display:none">
+    <h2>The committee's read<span class="info" data-tip="Written by the weekly AI committee, which sees this same theme table plus its own web research. Absent until the committee next runs — the mechanical table above does not depend on it.">?</span></h2>
+    <div class="memo" id="thnarr"></div>
+  </div>
+  <div class="card">
+    <div class="fbar2">
+      <span class="axis">SORT</span>
+      <span class="chip" data-thk="heat"><b>heat</b></span>
+      <span class="chip off" data-thk="ret3m"><b>3-month move</b></span>
+      <span class="chip off" data-thk="breadth"><b>chart breadth</b></span>
+      <span class="chip off" data-thk="news"><b>news flow</b></span>
+      <span class="dim" style="font-size:12px;margin-left:auto" id="thcount"></span>
+    </div>
+    <div id="thgrid"></div>
+  </div>
 </div>
 
 <div class="tab" id="screener">
@@ -1265,14 +1443,14 @@ td,th{padding:5px 6px}
 
 <div class="tab" id="penny">
   <div class="card" style="border-color:#fbbf2440">
-    <h2 style="color:#fbbf24;margin-bottom:6px">Penny &amp; nano-cap screen &mdash; research only, zero capital<span class="info" data-tip="A SEPARATE surface from the main system. The main system's evidence (+1.67R per trade, walk-forward tested, 13 rejected overlays) says nothing about this screen — it has not been backtested. Every name here is written to journal/penny_journal.csv so that in a few months there is a measured answer instead of an opinion. Nothing here fires an alert, sizes a position, or implies capital.">?</span></h2>
-    <div class="dim" style="font-size:12.5px;line-height:1.55">
-      In this class you usually lose money because you <b>cannot get out</b>, not because you picked the wrong story.
-      So the screen is exclusions first: only the normal <b>EQ</b> settlement series, no <b>GSM/ASM</b> surveillance names,
-      a circuit band of at least <b>10%</b>, real daily turnover and trade counts, no names that live locked at their circuit,
-      and at least a year of listed history. Only what survives all of that ever gets scored.
-      <span id="pennymeta"></span>
+    <h2 style="color:#fbbf24">Penny &amp; nano-cap<span class="info" data-tip="A separate surface from the main system. The main system's evidence — +1.67R per trade, walk-forward tested, thirteen rejected overlays — says nothing about this screen, which has never been backtested. Every name is recorded so that in a few months there is a measured answer rather than an opinion. Nothing here fires an alert, sizes a position or implies capital.">?</span>
+      <span class="pill" style="border-color:#fbbf24;color:#fbbf24">RESEARCH ONLY</span></h2>
+    <div class="dim" style="font-size:12.6px;line-height:1.65;max-width:74ch">
+      Here you lose by not being able to <b>get out</b>, not by picking the wrong story.
+      So the screen is exclusions first &mdash; normal settlement series, no surveillance names,
+      a real circuit band, genuine turnover, and a year of listed history. Only survivors get scored.
     </div>
+    <div style="margin-top:10px;line-height:1.7;font-size:11.8px;color:var(--dim)" id="pennymeta"></div>
   </div>
   <div class="card">
     <div class="fbar2">
@@ -1294,7 +1472,7 @@ td,th{padding:5px 6px}
       <th data-k="close">Price</th><th>120d</th><th>Risk</th></tr></thead><tbody></tbody></table></div>
   </div>
   <div class="card watchcard">
-    <h2>What the gates threw out<span class="info" data-tip="Every rejected name and the machine reason, counted. This is the funnel: the screen's value is mostly here, not in the ranking above. Full list with per-name reasons: penny_excluded.csv.">?</span></h2>
+    <h2>What the gates threw out<span class="info" data-tip="Every rejected name and the machine reason, counted. The screen's value is mostly here, not in the ranking above.">?</span></h2>
     <div id="pennyfunnel"></div>
   </div>
 </div>
@@ -1533,28 +1711,96 @@ $('#actionable').innerHTML=h;})();
   <div class="lrow"><span class="llbl">Action — what to do</span>${ac}</div>
   <div class="axis" style="margin-top:10px;line-height:1.6">A stock's <b>state</b> is not a buy signal. Only <b style="color:#34d399">BUY NOW</b> (validated breakout) and <b style="color:#f5c84c">MOMENTUM BUY</b> (episodic-pivot gap) are real buys — everything else is watch, wait, or avoid. Hover any chip for its full meaning.</div>`;})();
 
-/* news radar — news-first discovery panel */
+/* ---- News radar ------------------------------------------------------------
+   Rebuilt 2026-07-26. The old panel dumped one night's filings and forgot
+   them, so a story running for six weeks looked exactly like a filing from
+   last night — the user's standing complaint, and true by construction.
+
+   Now three questions, in the order they are worth answering:
+     BUILDING  — names accumulating positive developments over WEEKS that the
+                 chart has not yet confirmed. This is the section the old panel
+                 could not produce at all.
+     TONIGHT   — what actually landed since the last scan (the old panel).
+     RISK      — negative filings on names held or recently alerted. The one
+                 unambiguously actionable class.
+
+   D.news_mem is the 90-day story-level memory; D.radar is tonight's window.
+   Tag/RS/price for a memory name are joined from D.rows, so a building name
+   needs no radar hit tonight to appear. */
 (function(){
 const R=D.radar||{};const hits=R.hits||[];
-if(!hits.length)return;   // silence is the default — card stays hidden
+const MEM=(D.news_mem||{}).syms||{};
+const memSyms=Object.keys(MEM);
+if(!hits.length&&!memSyms.length)return;  // silence stays the default
 $('#radarcard').style.display='block';
 const CC={pos:'#34d399',neg:'#f87171',attn:'#fbbf24'};
 const DOT={pos:'▲',neg:'▼',attn:'◆'};
-const shown=hits.slice(0,15);
-$('#radarbody').innerHTML=`<table id="radartbl"><thead><tr><th></th><th>Symbol</th><th>Price</th><th>Tag</th><th>RS%</th><th>Event</th><th>Filing</th></tr></thead><tbody>`+
-shown.map(h=>{const c=CC[h.cls]||'#94a3b8';
-const badge=h.urgent?'<span class="pill" style="border-color:#f87171;color:#f87171;font-size:9px">HELD</span> ':
- h.confluence?'<span class="pill" style="border-color:#34d399;color:#34d399;font-size:9px" data-tip="Positive news + a chart the technical layer already rates actionable/forming — research first.">CONFLUENCE</span> ':'';
-return `<tr onclick="openDrawer('${h.sym}')"${h.confluence?' style="background:#34d39908"':h.urgent?' style="background:#f8717108"':''}>
-<td style="color:${c};font-weight:700">${DOT[h.cls]||'•'}</td>
-<td class="sym">${h.sym}${h.n>1?`<span class="ndot" title="${h.n} filings">×${h.n}</span>`:''}</td>
-<td class="mono">${h.price!=null?'&#8377;'+h.price:'—'}</td>
-<td><span class="pill" data-tip="${esc(tlt(h.tag))}" style="border-color:${TC[h.tag]||'#475569'};color:${TC[h.tag]||'#94a3b8'}">${esc(tl(h.tag)||'—')}</span></td>
-<td class="mono">${h.rs!=null?Math.round(h.rs):'—'}</td>
-<td style="color:${c};font-size:11.5px">${esc(h.event)} ${badge}</td>
-<td class="dim wrap" style="font-size:11px;max-width:420px">${esc(h.subject.replace(/has informed the Exchange (regarding|about|that)?/i,'—').slice(0,120))}</td></tr>`}).join('')+
-'</tbody></table>'+(hits.length>15?`<div class="axis" style="margin-top:6px">${hits.length-15} more hits in state/news_radar.json</div>`:'')+
-`<div class="axis" style="margin-top:6px">since ${esc((R.window_start||'').slice(0,16).replace('T',' '))} · news moves attention, never entries</div>`;
+const rowBy={};(D.rows||[]).forEach(r=>rowBy[r.sym]=r);
+const held=new Set((D.positions||[]).map(p=>p.sym));
+const alerted=new Set((D.actionable||[]).map(a=>a.sym));
+const clean=s=>esc(String(s||'').replace(/has informed the Exchange (regarding|about|that)?/i,'—'));
+const days=iso=>{const t=Date.parse(iso);return isFinite(t)?Math.round((Date.now()-t)/864e5):null;};
+const ago=n=>n==null?'':n<=0?'today':n===1?'1d ago':n+'d ago';
+
+/* --- 1. BUILDING: multi-development names the chart hasn't confirmed --- */
+const building=memSyms.map(s=>({sym:s,m:MEM[s],r:rowBy[s]||{}}))
+ .filter(x=>x.m.primed&&!['CONFIRMED','EXTENDED'].includes(x.r.tag))
+ .sort((a,b)=>b.m.p-a.m.p).slice(0,10);
+
+/* --- 2. TONIGHT: this scan's window, story-aware --- */
+const tonight=hits.slice(0,12);
+
+/* --- 3. RISK: negatives where you have or nearly have exposure --- */
+const risk=memSyms.map(s=>({sym:s,m:MEM[s],r:rowBy[s]||{}}))
+ .filter(x=>x.m.n_neg>0&&(held.has(x.sym)||alerted.has(x.sym)))
+ .sort((a,b)=>b.m.rp-a.m.rp);
+
+const sect=(title,tip,body)=>`<div style="margin-top:14px">
+ <div class="axis" style="margin-bottom:6px;letter-spacing:.8px;text-transform:uppercase">${title}<span class="info" data-tip="${tip}">?</span></div>${body}</div>`;
+
+let h='';
+
+if(risk.length)h+=sect('Risk on your exposure',
+ 'Negative filings (probes, penalties, pledge invocations, auditor or KMP exits, downgrades, distress) on a name you hold or that alerted in the last seven days. Read the filing before you act on anything else on this page.',
+ `<table><thead><tr><th>Symbol</th><th>Price</th><th>What filed</th><th>When</th></tr></thead><tbody>`+
+ risk.map(x=>`<tr onclick="openDrawer('${x.sym}')" style="background:#f8717110">
+ <td class="sym" style="color:#f87171">${x.sym}${held.has(x.sym)?' <span class="pill" style="border-color:#f87171;color:#f87171;font-size:9px">HELD</span>':''}</td>
+ <td class="mono">${x.r.close!=null?'&#8377;'+x.r.close.toFixed(2):'—'}</td>
+ <td class="dim" style="font-size:11.5px">${esc((x.m.events||[]).filter(e=>e[1]==='neg').map(e=>e[0]).join(', '))}</td>
+ <td class="axis">${ago(days((x.m.events||[]).filter(e=>e[1]==='neg').map(e=>e[2])[0]))}</td></tr>`).join('')+
+ '</tbody></table>');
+
+if(building.length)h+=sect('Building — a story forming, chart not yet confirmed',
+ 'Names accumulating positive developments over weeks while the technical layer still reads WATCH or BASING. Repeat filings of one event count once. This is a research queue, NOT a buy list: over the archive so far these names alerted LESS often than the universe average, so the system will not act on any of them until its own trigger fires. If one does trigger, the alert carries this history.',
+ `<table><thead><tr><th>Symbol</th><th>Price</th><th>Chart</th><th>RS%</th><th>What has been building</th></tr></thead><tbody>`+
+ building.map(x=>`<tr onclick="openDrawer('${x.sym}')">
+ <td class="sym" style="color:#a78bfa">${x.sym}</td>
+ <td class="mono">${x.r.close!=null?'&#8377;'+x.r.close.toFixed(2):'—'}</td>
+ <td><span class="pill" data-tip="${esc(tlt(x.r.tag))}" style="border-color:${TC[x.r.tag]||'#475569'};color:${TC[x.r.tag]||'#94a3b8'}">${esc(tl(x.r.tag)||'—')}</span></td>
+ <td class="mono">${x.r.rs!=null?Math.round(x.r.rs):'—'}</td>
+ <td class="dim wrap" style="font-size:11.5px;max-width:420px">${esc(x.m.summary||'')}</td></tr>`).join('')+
+ '</tbody></table>');
+
+if(tonight.length)h+=sect('Tonight&rsquo;s filings',
+ 'Everything material that arrived since the last scan, cross-referenced with tonight\'s chart state. CONFLUENCE = positive news on a chart the technical layer already rates actionable or forming.',
+ `<table><thead><tr><th></th><th>Symbol</th><th>Price</th><th>Chart</th><th>RS%</th><th>Event</th><th>Filing</th></tr></thead><tbody>`+
+ tonight.map(x=>{const c=CC[x.cls]||'#94a3b8';
+ const badge=x.urgent?'<span class="pill" style="border-color:#f87171;color:#f87171;font-size:9px">HELD</span> ':
+  x.confluence?'<span class="pill" style="border-color:#34d399;color:#34d399;font-size:9px" data-tip="Positive news on a chart the technical layer already rates actionable or forming — research first.">CONFLUENCE</span> ':'';
+ return `<tr onclick="openDrawer('${x.sym}')"${x.confluence?' style="background:#34d39908"':x.urgent?' style="background:#f8717108"':''}>
+ <td style="color:${c};font-weight:700">${DOT[x.cls]||'•'}</td>
+ <td class="sym">${x.sym}${x.n>1?`<span class="ndot" title="${x.n} filings on the same story">×${x.n}</span>`:''}</td>
+ <td class="mono">${x.price!=null?'&#8377;'+x.price:'—'}</td>
+ <td><span class="pill" data-tip="${esc(tlt(x.tag))}" style="border-color:${TC[x.tag]||'#475569'};color:${TC[x.tag]||'#94a3b8'}">${esc(tl(x.tag)||'—')}</span></td>
+ <td class="mono">${x.rs!=null?Math.round(x.rs):'—'}</td>
+ <td style="color:${c};font-size:11.5px">${esc(x.event)} ${badge}</td>
+ <td class="dim wrap" style="font-size:11px;max-width:380px">${clean(x.subject).slice(0,120)}</td></tr>`}).join('')+
+ '</tbody></table>'+(hits.length>12?`<div class="axis" style="margin-top:6px">${hits.length-12} more tonight</div>`:''));
+
+$('#radarbody').innerHTML=h||'<div class="quiet">No material filings in memory yet.</div>';
+const lb=(D.news_mem||{}).lookback_days;
+$('#radarage').textContent=(memSyms.length?memSyms.length+' names in '+(lb||90)+'d memory':'')
+ +(R.window_start?' · tonight since '+String(R.window_start).slice(0,16).replace('T',' '):'');
 })();
 
 /* tag board */
@@ -1718,6 +1964,24 @@ return`<div class="mini" style="border-color:#34d39944;margin-top:14px"><h3 styl
 <tr><td class="dim">Partial at</td><td class="mono" style="color:#34d399">${p.partial_price} — sell ⅓ of trading lot (${p.shares_trading_lot} sh lot)</td></tr>
 <tr><td class="dim">Core lot</td><td class="mono">${p.shares_core_lot} sh — exits only on weekly close &lt; 30-week MA</td></tr>
 <tr><td class="dim">Horizon</td><td>trading lot: weeks–months · core lot: months–years (the multibagger seat)</td></tr></table></div>`;}
+/* The 90-day story memory for one name, above the 30-day headline panel: what
+   had been building BEFORE tonight, which is the question a single-window feed
+   could never answer. Drawn from the same state the radar reads, so a name
+   shows its history even when it has no alert-time news blob. */
+function newsMemorySection(sym){
+ const m=((D.news_mem||{}).syms||{})[sym];
+ if(!m||(!m.n_pos&&!m.n_neg))return'';
+ const c=m.primed?'#a78bfa':'#94a0b0';
+ const ev=(m.events||[]).slice(0,6).map(e=>
+  `<div style="font-size:11.8px;margin:3px 0"><span class="axis">${String(e[2]).slice(0,10)}</span>
+   <span style="color:${e[1]==='neg'?'#f87171':e[1]==='pos'?'#34d399':'#fbbf24'}">${esc(e[0])}</span></div>`).join('');
+ return `<div class="mini" style="margin-top:14px;border-color:${c}33">
+ <h3 style="color:${c}">News memory (90d)${m.primed?' &mdash; primed':''}</h3>
+ <div class="dim" style="font-size:12px;margin-bottom:6px">${esc(m.summary||'')}</div>
+ ${ev}
+ <div class="axis" style="margin-top:5px;line-height:1.5">Repeat filings of one event count once.
+ Context only &mdash; measured in the Journal tab, never an entry signal.</div></div>`;}
+
 function newsSection(sym){const dt=D.details[sym];if(!dt||!dt.news)return'';const n=dt.news;
 const sc=n.sentiment>0.15?'#34d399':n.sentiment<-0.15?'#f87171':'#94a0b0';
 const sl=n.sentiment>0.15?'positive':n.sentiment<-0.15?'negative':'neutral';
@@ -1733,6 +1997,64 @@ ${n.events.length?' · events: <b style="color:#5aa2ff">'+esc(n.events.join(', '
 (n.headlines||[]).forEach(x=>{const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
 h+=`<div style="font-size:12px;margin:4px 0${x.ru?';opacity:.55':''}">${dot} <span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)}${x.tr?'':' — unverified'}${x.ru?' — market roundup, excluded from score':''})</span></div>`;});
 return h+'</div>';}
+/* ---- Sectors & themes tab -------------------------------------------------
+   The bridge between "what is going on in the market" and "what my machine
+   already thinks about it". Every leader row carries the SAME tag the screener
+   shows and opens the SAME drawer, so a theme is never a separate universe of
+   names — it is a lens over the one the scan watches. */
+(function(){const T=(D.themes||{}).themes||[];if(!T.length)return;
+const read=(D.themes||{}).read||'';
+if(read){$('#thnarrcard').style.display='block';$('#thnarr').textContent=read;}
+$('#thn').textContent=(D.rows||[]).length;
+let thK='heat';
+const heatCol=h=>h>=62?'#34d399':h>=48?'#5eead4':h>=36?'#fbbf24':'#f87171';
+const pct=v=>v==null?'—':(v>0?'+':'')+v.toFixed(0)+'%';
+
+function thrender(){
+ /* thin themes always last, whatever the sort: a two-name median is not a
+    reading worth ranking against a twenty-name one */
+ const list=T.slice().sort((a,b)=>(a.thin?1:0)-(b.thin?1:0)||(b[thK]||0)-(a[thK]||0));
+ $('#thcount').textContent=list.length+' themes · '+
+  list.reduce((s,t)=>s+t.n,0)+' memberships';
+ $('#thgrid').innerHTML=list.map(t=>{
+  const c=heatCol(t.heat);
+  const rows=t.leaders.map(l=>`<tr onclick="openDrawer('${l.sym}')">
+   <td class="sym">${l.sym}${l.pick?' <span class="pill" style="border-color:#fbbf24;color:#fbbf24;font-size:9px" data-tip="A current weekly committee pick.">PICK</span>':''}</td>
+   <td class="dim wrap" style="font-size:11.5px;max-width:210px">${esc(l.company||'')}</td>
+   <td><span class="pill" data-tip="${esc(tlt(l.tag))}" style="border-color:${TC[l.tag]||'#475569'};color:${TC[l.tag]||'#94a3b8'}">${esc(tl(l.tag)||'—')}</span></td>
+   <td class="mono">${l.score!=null?l.score:'—'}</td>
+   <td class="mono">${l.rs!=null?Math.round(l.rs):'—'}</td>
+   <td class="mono" style="color:${l.ret3m>0?'#34d399':l.ret3m<0?'#f87171':''}">${pct(l.ret3m)}</td>
+   <td class="mono">${l.close!=null?'&#8377;'+l.close.toFixed(2):'—'}</td>
+   <td class="mono">${l.mcap!=null?fmtCr(l.mcap):'—'}</td>
+   <td>${l.news>0?`<span class="pill" style="border-color:#a78bfa66;color:#a78bfa;font-size:9px" data-tip="Accumulated positive filing flow over the last 90 days — see the News radar on the Overview tab.">NEWS</span>`:''}</td></tr>`).join('');
+  return `<details class="thbox">
+  <summary>
+   <span class="thheat" style="border-color:${t.thin?'#33415555':c+'55'};color:${t.thin?'#64748b':c}"
+    data-tip="${t.thin?'Too few names in this theme to rank honestly — a median over two or three stocks is noise. Shown for completeness, always last.':'Heat is RELATIVE: hotter than '+Math.round(t.heat)+'% of the other themes tonight, blending three-month move (45%), how much of the theme the chart layer rates actionable (40%) and news flow per name (15%). Not a probability of anything.'}"><b>${t.thin?'&middot;':Math.round(t.heat)}</b></span>
+   <span class="thname">${esc(t.name)}</span>
+   <span class="thstats">
+     <span data-tip="Median three-month price move across the theme's members.">${pct(t.ret3m)} <span class="axis">3m</span></span>
+     <span data-tip="Share of the theme's names the chart layer currently rates UPTREND or BASING.">${Math.round(t.breadth)}% <span class="axis">actionable</span></span>
+     <span data-tip="Number of the scan's names in this theme.">${t.n} <span class="axis">names</span></span>
+     ${t.news>0?`<span data-tip="Accumulated positive filing flow across the theme in the last 90 days." style="color:#a78bfa">${t.news.toFixed(1)} <span class="axis">news</span></span>`:''}
+   </span>
+  </summary>
+  <div class="thbody">
+   <div class="dim" style="font-size:12.4px;line-height:1.6;margin-bottom:10px;max-width:76ch">${esc(t.blurb)}</div>
+   ${t.confirmed.length?`<div class="axis" style="margin-bottom:8px">CHART-CONFIRMED IN THIS THEME &middot; ${t.confirmed.map(s=>`<b style="color:#34d399">${s}</b>`).join(', ')}</div>`:'<div class="axis" style="margin-bottom:8px">NOTHING IN THIS THEME IS CHART-CONFIRMED TONIGHT</div>'}
+   <table><thead><tr><th>Symbol</th><th>Company</th><th>Chart</th><th>Conv</th><th>RS%</th><th>3m</th><th>Price</th><th>Cap</th><th></th></tr></thead>
+   <tbody>${rows}</tbody></table>
+   ${t.n>t.leaders.length?`<div class="axis" style="margin-top:6px">${t.n-t.leaders.length} more in this theme &mdash; use the Screener tab</div>`:''}
+  </div></details>`;}).join('');}
+
+document.querySelectorAll('[data-thk]').forEach(c=>c.onclick=()=>{
+ thK=c.dataset.thk;
+ document.querySelectorAll('[data-thk]').forEach(x=>x.classList.toggle('off',x!==c));
+ thrender();});
+thrender();
+})();
+
 /* ---- Penny / nano-cap tab -------------------------------------------------
    A deliberately separate surface. Its scores are NOT conviction scores: no
    backtest stands behind them, so the copy, the amber accent and the drawer
@@ -1745,10 +2067,13 @@ let prows=P.rows.slice(),psK='score',psA=false,showVeto=false;
 let pArms=new Set(['price','mcap','price+mcap']);
 const ptags=[...new Set(prows.map(r=>r.tag).filter(Boolean))];
 let pTags=new Set(ptags);
-$('#pennymeta').innerHTML=`<br><br>Market data as of <b>${esc(P.as_of||'?')}</b>${P.sessions?` (${P.sessions} sessions of full-market bhavcopy)`:''}:
- <b>${P.eq_securities??'?'}</b> NSE equities &rarr; <b>${prows.length}</b> survived the gates
- &rarr; <b>${P.vetoed}</b> of those carry a hard veto${P.n_pending?` &middot; <b>${P.n_pending}</b> more are held pending a market-cap read (they resolve as fundamentals fill in)`:''}.
- Suggested discipline if you ever act on this: at most <b>5%</b> of the book in this class, <b>1%</b> in any one name.`;
+/* Meta reads as a funnel, not a paragraph: the numbers are the point and the
+   prose around them was doing no work. */
+$('#pennymeta').innerHTML=`<b>${P.eq_securities??'?'}</b> NSE equities
+ &rarr; <b>${prows.length}</b> survived the gates
+ &rarr; <b>${P.vetoed}</b> vetoed${P.n_pending?` &middot; <b>${P.n_pending}</b> awaiting a market-cap read`:''}
+ <span class="axis">&nbsp;&middot;&nbsp; as of ${esc(P.as_of||'?')}${P.sessions?`, ${P.sessions} sessions`:''}</span>
+ <br><span class="axis">If you ever act on this: at most 5% of the book in this class, 1% in one name.</span>`;
 $('#pennyarms').innerHTML=['price','mcap','price+mcap'].map(a=>
  `<span class="chip" data-parm="${a}" style="border-color:${armC[a]}"><b style="color:${armC[a]}">${a==='price+mcap'?'both':a.toUpperCase()}</b></span>`).join('');
 $('#pennytags').innerHTML=ptags.map(t=>`<span class="chip" data-ptag="${t}" style="border-color:${TC[t]||'#64748b'}"><b style="color:${TC[t]||'#94a3b8'}">${esc(tl(t))}</b></span>`).join('');
@@ -1763,8 +2088,8 @@ document.querySelectorAll('#ptbl th[data-k]').forEach(th=>th.onclick=()=>{const 
 $('#pennyfunnel').innerHTML=(P.funnel&&P.funnel.length)
  ?`<table><thead><tr><th>Excluded because</th><th style="text-align:right">Names</th></tr></thead><tbody>`+
   P.funnel.map(f=>`<tr><td class="wrap">${esc(f.why)}</td><td class="mono" style="text-align:right">${f.n}</td></tr>`).join('')+
-  `</tbody></table><div class="quiet" style="margin-top:8px">Counted by each name's FIRST failing gate; a name usually fails several. Per-name reasons live in <code>penny_excluded.csv</code>.</div>`
- :'<div class="quiet">No exclusion data — run scripts/build_penny_universe.py.</div>';
+  `</tbody></table><div class="axis" style="margin-top:8px;line-height:1.6">Counted by each name's first failing gate &mdash; most fail several.</div>`
+ :'<div class="quiet">No exclusion data yet &mdash; run the penny screen from the sidebar.</div>';
 /* three populations, never interleaved: 0 = the survival screen ran and found
    nothing fatal · 1 = fundamentals unreadable so NO veto could run · 2 = vetoed.
    Tier is the primary sort no matter which column you click, because an
@@ -1814,9 +2139,9 @@ window.openPennyDrawer=function(sym){const d=$('#drawer');
  <div class="dim" style="font-size:12.5px;margin:4px 0 12px">${esc(r.company||'')} · ${r.mcap!=null?fmtCr(r.mcap):'market cap pending'} · ₹${r.close!=null?r.close.toFixed(2):'—'} · RS ${r.rs!=null?Math.round(r.rs):'—'} within the penny universe${r.arch?' · '+esc(r.arch):''}</div>
  <div class="card" style="border-color:#fbbf2440;padding:10px 12px;margin-bottom:12px">
   <b style="color:#fbbf24">Research read, not a signal.</b> <span class="dim">Score
-  ${r.score!=null?r.score:'—'}/100 at ${dt.coverage??'?'}% coverage. This screen has no backtest behind it, so the
-  number ranks ideas — it does not carry the main system's evidence. Journaled to
-  <code>penny_journal.csv</code>; zero capital until it proves itself out-of-sample.</span></div>
+  ${r.score!=null?r.score:'—'}/100 at ${dt.coverage??'?'}% coverage. No backtest stands behind this
+  number &mdash; it ranks ideas, it does not carry the main system's evidence. Recorded for
+  forward scoring; zero capital until it earns it.</span></div>
  ${r.veto?`<div class="card" style="border-color:#f8717166;padding:10px 12px;margin-bottom:12px"><b style="color:#f87171">VETOED — capped at 25</b><div class="dim" style="margin-top:4px">${esc(r.vetowhy)}</div></div>`:''}
  ${(r.flags&&r.flags.length)?`<div class="card" style="padding:10px 12px;margin-bottom:12px"><b style="color:#fbbf24">Risk flags</b><ul style="margin:6px 0 0 16px;padding:0" class="dim">${r.flags.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
  <div class="mini" style="margin-top:14px"><h3>Why this score &mdash; five weighted blocks</h3>${bl||'<div class="quiet">no blocks scored</div>'}</div>
@@ -1849,6 +2174,7 @@ ${planSection(sym,r)}
 ${whySection(sym)}
 <div id="dchart" style="height:300px;margin-top:14px">${hasOhlc?'':'<div class="quiet">chart not cached for this name yet — it loads with the next scan alert or weekly refresh (or run: python scripts/enrich.py '+sym+')</div>'}</div>
 ${hasOhlc?'<div id="drswrap"><div class="axis" style="margin:8px 0 2px">RS vs NIFTY <span class="info" data-tip="Relative strength = this stock close divided by the NIFTY close, set to 1.0 at the window start. A rising line means the stock is outperforming the market; a falling line means it is lagging. Computed client-side from the same price history the candles use.">?</span></div><div id="drs" style="height:80px"></div></div>':''}
+${newsMemorySection(sym)}
 ${newsSection(sym)}
 <div class="minis">
 <div class="mini"><h3>Quarterly net profit (₹ Cr per quarter)</h3>${miniBars(f.q_labels||[],f.np||[])}</div>
@@ -2053,10 +2379,19 @@ $('#paperbody').innerHTML=h;})();
 /* AI picks */
 const CONVC={HIGH:'#34d399',MEDIUM:'#fbbf24',LOW:'#f87171'};
 function drawPicks(){window._picks=1;const w=$('#picksbody');const P=D.ai_picks||{};
-if(!P.picks||!P.picks.length){w.innerHTML='<div class="card quiet">No AI picks yet. They generate weekly (or run scripts/ai_picks.py). The committee reviews the shortlist and selects 3-5 researched names.</div>';return;}
-let h=`<div class="card" style="border-color:#fbbf2433"><h2 style="color:#fbbf24">Committee &mdash; ${P.picks.length} researched picks</h2>
+if(!P.picks||!P.picks.length){w.innerHTML='<div class="card quiet">No picks yet. The committee reviews the whole scored shortlist once a week and selects three to five researched names.</div>';return;}
+/* Age is a first-class fact here, not a footnote: the committee runs weekly,
+   so identical picks are either "nothing changed" or "the job is dead". */
+const pAge=P.age_days;
+const pStale=pAge!=null&&pAge>=8;
+const ageTxt=pAge==null?'':pAge<=0?'today':pAge===1?'yesterday':pAge+' days ago';
+const ageBadge=pAge==null?'':
+ `<span class="pill" style="border-color:${pStale?'#f87171':pAge>=4?'#fbbf24':'#34d399'};color:${pStale?'#f87171':pAge>=4?'#fbbf24':'#34d399'}"
+   data-tip="${pStale?'These picks are older than one committee cycle. The weekly job has not produced a fresh set — check logs/committee_local.log.':'Within the normal weekly cycle.'}">${pStale?'STALE · ':''}${esc(ageTxt)}</span>`;
+let h=`<div class="card" style="border-color:${pStale?'#f8717144':'#fbbf2433'}"><h2 style="color:#fbbf24">Committee &mdash; ${P.picks.length} researched picks <span style="margin-left:auto">${ageBadge}</span></h2>
+${pStale?`<div class="mini" style="border-color:#f8717144;margin:0 0 10px"><span class="axis" style="color:#f87171">NOT THIS WEEK'S READ</span><br><span style="font-size:12.6px">Selected ${esc(ageTxt)} against the shortlist as it stood then. The names below have not been re-examined since — treat them as a record of that run, not a current view.</span></div>`:''}
 <div style="display:flex;flex-wrap:wrap;gap:6px">`+P.picks.map(p=>{const cc=CONVC[p.conviction]||'#94a0b0';return `<span class="pill" style="border-color:${cc};color:${cc};cursor:pointer;font-size:11px" onclick="document.getElementById('pk_${p.symbol}').scrollIntoView({behavior:'smooth',block:'start'})">${p.symbol} · ${esc(p.conviction||'')}</span>`;}).join('')+`</div>
-<details class="actrest" style="margin-top:10px"><summary>Why these five — committee reasoning</summary><div style="font-size:12.6px;line-height:1.7;padding:6px 0;color:var(--dim)">${esc(P.portfolio_view||'')}</div></details>
+<details class="actrest" style="margin-top:10px"><summary>Why these ${P.picks.length===5?'five':P.picks.length} — committee reasoning</summary><div style="font-size:12.6px;line-height:1.7;padding:6px 0;color:var(--dim)">${esc(P.portfolio_view||'')}</div></details>
 <div class="axis" style="margin-top:6px">generated ${esc(P.generated||'')} · AI investment committee</div></div>`;
 P.picks.forEach((p,i)=>{const m=p.meta||{};const pl=p.plan||{};const cc=CONVC[p.conviction]||'#94a0b0';
 h+=`<div class="card" id="pk_${p.symbol}"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">

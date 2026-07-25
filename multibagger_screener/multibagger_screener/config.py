@@ -370,6 +370,54 @@ BUY_ALERT_KINDS: tuple = (
 )
 
 
+# ---------------------------------------------------------------------------
+# NEWS PRESSURE (2026-07-26) — persistent memory for the news radar.
+#
+# The radar was single-window: it showed the filings since the last scan and
+# then forgot them, so "has this name been in the news for a while?" was
+# unanswerable. This config drives a rolling, decayed, STORY-level read.
+#
+# Two measurements from the real archive shaped every number here:
+#  * Filings are not stories. GABRIEL filed its HL Klemove acquisition and the
+#    preferential issue funding it NINE times across four days. Counting
+#    filings ranks companies by paperwork volume, so same-event filings inside
+#    story_gap_days collapse into ONE story.
+#  * News does not predict the technical trigger. Over 16 days, names with a
+#    positive filing alerted at 7.3% vs a 16.6% universe base rate (0 of 7 for
+#    names with 2+ stories). So pressure NEVER gates, ranks or sizes anything.
+#    It is context on the card and a labelled cohort in the forward record —
+#    it earns its place with a measured number or it goes, exactly like the 13
+#    rejected overlays.
+# ---------------------------------------------------------------------------
+@dataclass
+class NewsPressureConfig:
+    lookback_days: int = 90
+    half_life_days: float = 21.0    # a 3-week-old order win counts half
+    story_gap_days: int = 5         # same company + same event class inside
+                                    # this window = one story, not N filings
+
+    # Per-class weight. M&A/JV is deliberately the lightest positive: it is
+    # 56% of all classified hits (the broadest, noisiest vocabulary), and a
+    # subsidiary incorporation is not an order book.
+    event_weight: Dict[str, float] = field(default_factory=lambda: {
+        "order win": 1.0, "expansion": 1.0, "approval": 0.9,
+        "rating upgrade": 0.7, "M&A/JV": 0.6, "buyback/bonus": 0.5,
+        "fund raise": 0.5,
+        # negatives carry their own scale; they are never netted against
+        # positives — a company can have both, and netting hides the risk
+        "distress": 1.0, "regulatory action": 1.0, "pledge": 1.0,
+        "management exit": 0.6, "rating downgrade": 0.8,
+        "regulatory letter": 0.7,
+    })
+
+    # PRIMED = enough accumulated positive story flow to be worth a mention
+    # when (if) the technical trigger eventually fires. Both must hold.
+    primed_min_stories: int = 2
+    primed_min_pressure: float = 1.0
+    # "building" on the dashboard = primed but NOT yet technically actionable
+    building_exclude_tags: tuple = ("CONFIRMED", "EXTENDED")
+
+
 RISK = RiskConfig()
 UNIVERSE = UniverseConfig()
 STAGE = StageConfig()
@@ -380,3 +428,4 @@ CATALYST = CatalystConfig()
 COMPOSITE = CompositeConfig()
 EPISODIC = EpisodicConfig()
 PENNY = PennyConfig()
+NEWS = NewsPressureConfig()

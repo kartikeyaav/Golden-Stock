@@ -39,6 +39,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from config import NEWS
 from data.cache import load_ohlcv
 from data.screener_fetch import fetch_company, load_company, save_company
 from scoring.conviction import assess
@@ -66,9 +67,16 @@ JOURNAL_FIELDS = ["logged_at", "symbol", "kind", "old_tag", "new_tag", "close",
 # backtested triggers (VALIDATED) outperform the CONFIRMED-but-no-breakout
 # ones?" without ever having gated the alerts on it. Own schema, own file.
 ENTRY_SIGNALS_PATH = os.path.join(ROOT, "journal", "entry_signals.csv")
+# news_primed / news_pressure appended 2026-07-26: the news layer's own ruler.
+# Frozen here at alert time and never recomputed, so "did NEWS-PRIMED alerts
+# outperform?" becomes a measurable cohort — the same discipline that made
+# entry_status auditable without ever gating on it. A cohort you can rewrite
+# proves nothing, which is why these live in the record and not in the
+# derived state file.
 ENTRY_SIGNALS_FIELDS = ["logged_at", "symbol", "kind", "entry_status",
                         "validated_entry", "close", "pivot_price",
-                        "breakout_today", "breakout_volume_ratio", "vcp_valid"]
+                        "breakout_today", "breakout_volume_ratio", "vcp_valid",
+                        "news_primed", "news_pressure", "news_stories"]
 
 # A name that keeps closing over its pivot on volume would otherwise alert
 # several nights running. One BUY TRIGGER per name per this many days; matches
@@ -161,11 +169,44 @@ def journal_append(rows: list[dict]) -> None:
             w.writerow({k: r.get(k, "") for k in JOURNAL_FIELDS})
 
 
+def _widen_entry_signals_header() -> None:
+    """One-time, value-preserving widening when new columns are added.
+
+    Appending 13-field rows under a 10-field header silently shifts every new
+    value into the wrong column, which would corrupt the one file that has to
+    stay trustworthy. So: if the header is a strict PREFIX of the current
+    schema, rewrite it with the new columns left blank on historic rows (they
+    genuinely had no news read) and say so out loud. Anything other than a
+    clean prefix is a real divergence — refuse and let a human look."""
+    if not os.path.exists(ENTRY_SIGNALS_PATH):
+        return
+    with open(ENTRY_SIGNALS_PATH, encoding="utf-8", newline="") as f:
+        rows = list(csv.reader(f))
+    if not rows:
+        return
+    head = rows[0]
+    if head == ENTRY_SIGNALS_FIELDS:
+        return
+    if head != ENTRY_SIGNALS_FIELDS[:len(head)]:
+        raise RuntimeError(
+            f"entry_signals.csv header diverges from the schema: {head}")
+    pad = [""] * (len(ENTRY_SIGNALS_FIELDS) - len(head))
+    with open(ENTRY_SIGNALS_PATH, "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(ENTRY_SIGNALS_FIELDS)
+        for r in rows[1:]:
+            w.writerow(r + pad)
+    print(f"entry_signals.csv widened by {len(pad)} column(s); "
+          f"{len(rows) - 1} historic rows preserved, new fields blank",
+          flush=True)
+
+
 def entry_signals_append(rows: list[dict]) -> None:
     """Append entry-fidelity rows (buy/re-entry alerts only). Additive file."""
     if not rows:
         return
     os.makedirs(os.path.dirname(ENTRY_SIGNALS_PATH), exist_ok=True)
+    _widen_entry_signals_header()
     new_file = not os.path.exists(ENTRY_SIGNALS_PATH)
     with open(ENTRY_SIGNALS_PATH, "a", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=ENTRY_SIGNALS_FIELDS)
@@ -173,6 +214,40 @@ def entry_signals_append(rows: list[dict]) -> None:
             w.writeheader()
         for r in rows:
             w.writerow({k: r.get(k, "") for k in ENTRY_SIGNALS_FIELDS})
+
+
+# Rolling news memory, loaded once per scan and shared by the card builder and
+# the record stamper. ONE accessor rather than a lookup at each call site: this
+# file already learned that lesson twice (BUY_ALERT_KINDS exists because four
+# private copies of "is this a buy alert?" drifted apart in production).
+_NEWS_READS: dict = {}
+
+
+def news_pressure_for(sym: str):
+    """PressureRead for a symbol, or None if the memory is unavailable. Never
+    raises — no news memory must degrade to exactly the pre-2026-07-26
+    behaviour, which was no news memory at all."""
+    global _NEWS_READS
+    if not _NEWS_READS:
+        try:
+            from data.news_pressure import load as load_pressure
+            _NEWS_READS = load_pressure() or {"__empty__": True}
+        except Exception:  # noqa: BLE001
+            _NEWS_READS = {"__empty__": True}
+    return _NEWS_READS.get(sym)
+
+
+def stamp_news_pressure(rows: list[dict]) -> None:
+    """Freeze each alert's news read into the forward record, in place.
+
+    Applied to EVERY entry-signal row from one place, so a new alert class
+    cannot quietly ship without its news label the way EPISODIC PIVOT once
+    shipped without paper-trader support."""
+    for r in rows:
+        p = news_pressure_for(r.get("symbol", ""))
+        r["news_primed"] = bool(p.primed) if p else False
+        r["news_pressure"] = round(p.pressure, 3) if p else 0.0
+        r["news_stories"] = p.n_pos if p else 0
 
 
 # live screener.in fetch politeness (see build_candidate): matches the batch
@@ -300,9 +375,30 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
         "news": news_blob,
     }
 
+    # NEWS MEMORY (2026-07-26): what has been building on this name BEFORE
+    # tonight. Answers the standing question the single-window radar could not
+    # ("has this been in the news a while?") at the only moment it matters —
+    # when the technical trigger has actually fired. Context on the card and a
+    # frozen label in the record; it changes no entry, stop or size.
+    press = news_pressure_for(sym)
+    if press is not None and (press.n_pos or press.n_neg):
+        detail["news_pressure"] = {
+            "p": press.pressure, "rp": press.risk_pressure,
+            "n_pos": press.n_pos, "n_neg": press.n_neg,
+            "primed": press.primed, "summary": press.summary(),
+            "events": press.events[:6],
+        }
+
     card_text = render_card(sym, tag_result, conviction, atr=atr,
                             archetypes=archetypes, dim_notes=True, news=news,
                             risk_scale=risk_scale)
+    if press is not None and press.primed:
+        card_text = (f"NEWS-PRIMED — {press.summary()}. The story was building "
+                     f"before this trigger; unproven as an edge, tracked in the "
+                     f"forward record.\n") + card_text
+    elif press is not None and press.n_neg:
+        card_text = (f"NEWS RISK — {press.n_neg} negative filing(s) in the last "
+                     f"{NEWS.lookback_days}d. Read them before acting.\n") + card_text
     if ep:
         card_text = (f"!! EPISODIC PIVOT — gap +{ep['gap_pct']}% on "
                      f"{ep['vol_mult']}x volume ({ep['bar_date']}). Event stop "
@@ -378,6 +474,17 @@ def main() -> None:
         print(f"filings archive: +{n_new} new NSE announcements", flush=True)
     except Exception as e:  # noqa: BLE001
         feed_problems.append(f"NSE announcements feed unreachable ({str(e)[:60]})")
+
+    # rolling news memory over that archive (2026-07-26). Derived and fully
+    # rebuildable — the archive is the source of truth. Feeds card context and
+    # the radar's "building" section; gates nothing.
+    try:
+        from data.news_pressure import scan as scan_news_pressure
+        _np = scan_news_pressure()
+        print(f"news memory: {len(_np)} symbols, "
+              f"{sum(1 for r in _np.values() if r.primed)} primed", flush=True)
+    except Exception as e:  # noqa: BLE001 — context must never kill the scan
+        feed_problems.append(f"news memory failed ({str(e)[:60]})")
 
     bench = load_ohlcv("NIFTY50")
     today_tags: dict[str, str] = {}
@@ -711,6 +818,7 @@ def main() -> None:
     save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
                entry_alerted=entry_alerted)
     journal_append(journal_rows)
+    stamp_news_pressure(entry_signal_rows)
     entry_signals_append(entry_signal_rows)
     save_alert_details(alert_details)
 
