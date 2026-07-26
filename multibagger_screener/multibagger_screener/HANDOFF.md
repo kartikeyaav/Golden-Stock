@@ -2,16 +2,19 @@
 
 **Last updated: 2026-07-26** (capital gate PRE-REGISTERED; exit-risk
 surveillance on the main universe; freshness header; stale KPIs corrected;
-dashboard + landing overhauled — see §3Q).
+dashboard + landing REBUILT as a trading terminal with a 615-stock universe
+map — see §3Q).
 This is the single "where we are / what's next" doc. For strategy read
 `../../PROJECT_BRIEF.md` (it lives at the git root `files/`, NOT in this
 folder); for the evidence read `VALIDATION_REPORT.md`; for cloud ops read
 `CLOUD.md`. Sections 3-3N below are a chronological work-log (kept for
 context) — sections 0/1/2/4/5/6/7 are the CURRENT state, kept fresh.
 
-> **If you are a fresh session: read `AUDIT_2026-07-25.md`, then §3O.**
-> Audit Findings 1, 1b, 2, 3, 4 and 5 are DONE (§3O). What remains open is
-> listed in §5 and needs either the user or forward time, not code.
+> **If you are a fresh session: read `CAPITAL_GATE.md`, then §3Q, then §5.**
+> The gate is registered and OPEN at 0/40 — it is the number this project
+> exists to produce, and §6 says do not add features until it has a sample.
+> For the audit trail behind the current scan, `AUDIT_2026-07-25.md` + §3O.
+> What remains open is in §5 and needs the user or forward time, not code.
 
 ---
 
@@ -26,17 +29,22 @@ buy candidates (with second-order ecosystem research — customers/suppliers/
 competitors, not just company-named news), and a weekly job refreshes
 everything + an AI investment committee picks 3-5 researched names (now
 cross-fed the daily analyst's recent verdicts). Entries are 100% technical
-(backtest-validated, never AI/fundamental-gated). The dashboard was fully
-revamped (terminal aesthetic, Ctrl+K command palette, decision-first
-Actionable panel with plain-English DO chips and filters) and its data flow
-unified (screener/actionable/drawer used to show inconsistent coverage —
-fixed). **The backtested read was corrected 2026-07-12: sizing was measured
-off remaining cash, undersizing every late entry — equity-basis sizing is the
-same rules, same entries, just honest measurement, and it roughly DOUBLES the
-CAGR read** (see §3H). **The system is essentially complete and live, now
-laptop-independent.** Cloud run verified, Telegram live, API key set (all
-2026-07-18). What remains is mostly time (the forward journal must accumulate
-before real capital scales).
+(backtest-validated, never AI/fundamental-gated). **As of 2026-07-26 the whole
+thing points at one number: a PRE-REGISTERED capital gate (`CAPITAL_GATE.md`)
+that decides whether real money is ever deployed — 40 validated signals at
+>= +0.50R, beating a momentum ETF, by 2026-12-31. It stands at 0/40 and every
+threshold was fixed before the cohort existed.** The dashboard is a trading
+terminal built around it (universe heatmap of all 615 watched names, gate and
+regime dials, live tape, Ctrl+K palette, decision-first Actionable panel).
+**The backtested read was corrected 2026-07-12: sizing was measured off
+remaining cash, undersizing every late entry — equity-basis sizing is the same
+rules, same entries, just honest measurement, and it roughly DOUBLES the CAGR
+read** (see §3H). **The system is complete, live and laptop-independent
+— and has NOT yet demonstrated its validated entry in the forward record.**
+The scan was structurally blind to 73% of the entries the backtest took until
+2026-07-25 (audit F1); the corrected trigger fires for the first time from
+2026-07-27, which is when the gate cohort starts. What remains is time and
+discipline, not code.
 
 ---
 
@@ -96,13 +104,18 @@ the Run panel, or the published copy at `kartikeyaav.github.io/Golden-Stock/`
 **Universe**: Nifty Smallcap 250 + Midcap 150 + Microcap 250 = 651 names. `universe.csv`.
 
 **Pipeline** (nightly + weekly):
-Universe -> liquidity filter -> RS-percentile focus list (~320, reporting-only)
--> mechanical stage tags (all 611 taggable, the FULL universe — evidence lock)
--> transition diff vs saved state -> alerts only on state changes -> per-alert:
-8-dim conviction score + vetoes + two-lot plan + **entry-fidelity label**
-(VALIDATED = exact backtested VCP-pivot+volume breakout / AWAITING TRIGGER =
-base live, pivot not cleared / NO VCP BASE = trend read only — logged to
-`journal/entry_signals.csv` for a future forward test, never a gate yet).
+Universe -> liquidity filter -> RS-percentile focus list (~300, reporting-only)
+-> mechanical stage tags (every name with enough history — ~615 tonight, the
+FULL universe, evidence lock; both counts drift with the weekly refresh, so
+read them off the dashboard funnel line rather than trusting this sentence)
+-> transition diff vs saved state -> alerts on state changes, **plus the
+validated entry fired as an EVENT** (`BUY TRIGGER`, adopted 2026-07-25 — audit
+F1 found transitions alone missed 73% of the entries the backtest took)
+-> per-alert: 8-dim conviction score + vetoes + two-lot plan +
+**entry-fidelity label** (VALIDATED = exact backtested VCP-pivot+volume
+breakout / AWAITING TRIGGER = base live, pivot not cleared / NO VCP BASE =
+trend read only — logged to `journal/entry_signals.csv`; VALIDATED is now the
+cohort the capital gate judges, see §3Q).
 Plus the **News Radar** (§3K): each scan also classifies NSE filings arrived
 since the last run and cross-references tonight's technical state (CONFLUENCE
 = positive news on an actionable chart) — news-first DISCOVERY, attention
@@ -145,18 +158,26 @@ governance red flags. Data-based; AI cannot override.
   **last 14 days of daily-analyst verdicts** as cross-layer context (overlap =
   confirmation; rejecting a daily BUY must be explained in one line).
 
-**Dashboard** (`dashboard.html`, single self-contained SPA — revamped 2026-07-12,
-§3H/terminal aesthetic + command palette): tabs = Overview / AI Picks /
-Screener (full 611-name universe with a "Focus only" chip, cap-tier + tag
-filters) / Positions / Journal / Validation. **Ctrl+K (or `/`) opens a fuzzy
-search palette** across all 611 stocks -> arrow-nav -> Enter opens the drawer.
-Overview leads with the **Actionable panel** (the only tab you act from):
+**Dashboard** (`dashboard.html`, single self-contained SPA — rebuilt as a
+trading terminal 2026-07-26, §3Q): tabs = Overview / AI Picks / Sectors /
+Screener (full 615-name universe with a "Focus only" chip, cap-tier + tag
+filters) / Penny / Positions / Journal. A **live tape** runs above every tab.
+Overview opens on three instruments — **capital-gate dial** (the number the
+system exists to produce), **market-regime dial** (the breadth rule that sizes
+tonight's trades) and tonight's scan — then the **UNIVERSE MAP**: all 615
+watched stocks as one grid, ranked by relative strength, coloured by stage,
+ringed if alerted in the last 7 days. **Ctrl+K (or `/`) opens a fuzzy
+search palette** across every watched stock -> arrow-nav -> Enter opens the
+drawer. Below the map, the **Actionable panel** (the only thing you act from):
 headline verdict line, every row a plain-English DO chip (BUY SETUP / WATCH /
 WEAK / WAIT / IGNORE / DO NOT BUY), filter chips (do-kind isolate-on-click +
 conviction floor), resolved signals collapsed. Click any stock anywhere ->
 drawer with candlestick chart + why-this-score + plan + news + fundamental
-trend charts (drawer data now covers every alerted name, not just the weekly
-shortlist — §3F). KPI strip shows ideal/stressed pairs (see §3H for why).
+trend charts + an **exit-risk panel** when the name carries an ASM/GSM/band
+flag (drawer data covers every alerted name, not just the weekly shortlist —
+§3F). A **freshness strip** in the header ages every subsystem against its own
+cadence. KPI strip shows the ADOPTED config's ideal/stressed pairs, sourced
+from `config.EVIDENCE` (it was hardcoded and two adoptions stale until §3Q).
 
 **Ops**: **Cloud-first as of 2026-07-12** — GitHub Actions (`daily.yml` +
 `weekly.yml`, see CLOUD.md) runs regardless of the laptop; dashboard publishes
@@ -1130,14 +1151,39 @@ pre-registered evidence. A missing snapshot renders as UNKNOWN, never clean.
   hardcoded `1.25%`/`₹10L`/`611`/`~320`, "since 2026-07-05" (journal starts
   07-07), "max 3 dives" (it is 4).
 
-### Visual overhaul + generated landing page
+### Visual rebuild — v6 "terminal" (same day, second pass)
 
-Dashboard: new token set, ambient depth, glass nav, staggered card entrance,
-the gate hero with a progress ring, and motion that respects
-`prefers-reduced-motion`. The old CSS was kept as the base layer — it carries
-a lot of hard-won mobile fixes — and the new work layers on top.
+**The first pass failed and the user was right about why.** It kept the v4
+skeleton and repainted it: new tokens, glass nav, softer shadows. The result
+still read as a dark admin panel — paragraphs where a terminal shows numbers,
+flat grey boxes of equal visual weight, and **no market visualisation anywhere
+above the fold.** Lesson worth keeping: a token swap is not a redesign. What
+changed the verdict was changing what is ON the page, not how it is shaded.
 
-`landing.html` is now **generated** by `scripts/build_landing.py` from the same
+Rebuilt against how trading desks actually present data — dense monospace
+numerics, high contrast on near-black, heatmaps, little whitespace:
+
+- **UNIVERSE MAP** (`#heatmap`) — all 615 watched stocks as one grid, ranked
+  by relative strength, coloured by chart stage, with opacity carrying
+  strength so the SHAPE of the market reads at a glance. Names alerted in the
+  last 7 days carry a ring; any cell opens the standard drawer. This is the
+  panel every earlier version was missing, and it is the one that made the
+  page look like a market instead of a report.
+- **Instrument row** replaces the prose hero: capital-gate dial + condition
+  LEDs · market-regime dial (the breadth rule that actually sizes tonight's
+  trades) · tonight's-scan readout.
+- **Live tape** across the top. Real reads only — gate, regime, stage counts,
+  benchmark, exit-risk count, movers. A tape of invented numbers on a system
+  whose whole claim is an auditable record would be the one unforgivable
+  decoration; if you extend it, keep that rule.
+- Panels became terminal windows (title bar, accent tick, 6px radius); tables
+  went dense monospace with a green edge-glow on hover; `spark()` now draws a
+  gradient-filled area with a glowing last point, and the Actionable table
+  carries a 60d sparkline column.
+- `landing.html` moved to the same palette and leads with the same live
+  universe map, built from `state/tags_state.json` + `focus_list.csv`.
+
+`landing.html` is **generated** by `scripts/build_landing.py` from the same
 state the dashboard reads. The old hand-written page advertised +1.67R and a
 32.5% CAGR after both were superseded, and its terminal mock still described
 the retired NIFTY regime rule. Positioning moved from "autonomous golden-stock
@@ -1146,12 +1192,27 @@ record is the product* — with a "what it refuses" section listing every
 rejected overlay and a "what this is not" section stating the forward record is
 unproven.
 
-**Note for the next editor:** the preview browser throttles `requestAnimationFrame`
-and CSS transitions when the tab is not painting, and custom properties inside
-`@keyframes` did not substitute — an early version of the progress ring sat at
-zero fill while displaying a real number. Ring offsets are now set as static
-attributes with a `setTimeout` nudge. A progress ring that lies is worse than
-one that does not move.
+### Notes for the next editor (all cost real debugging time)
+
+- **`main` needs `min-width:0`.** As a flex child it cannot shrink below its
+  widest descendant, so one unwrapped strip (the health pips) pushed the whole
+  page 250px wide. The same fix already existed on `.grid2>div`; it was missing
+  on `main` itself.
+- **Function-hoisting is not binding-hoisting.** `spark()` is called by the
+  instrument panels ~400 lines above its own source. A `let` declared beside it
+  is still in the temporal dead zone at that moment — the ReferenceError blanked
+  every panel below the tape, and the page looked *plausible* rather than
+  broken. Its counter now lives on the function (`spark._n`). Anything the
+  instruments call must own its state the same way.
+- **The preview browser throttles `requestAnimationFrame` and CSS transitions**
+  when the tab is not painting, so rAF-based reveals silently never run there.
+  Use `setTimeout`. Custom properties inside `@keyframes` also failed to
+  substitute — an early progress ring sat at zero fill while printing a real
+  number. Dial/ring offsets are now static attributes nudged by `setTimeout`.
+  **A gauge that lies is worse than one that does not move.**
+- **Screenshots work; large viewports time out.** 1280x820 and 375x812 capture
+  fine, 1440x900 does not. For below-the-fold, set a tall viewport (1280x1700)
+  rather than scrolling — scrolling produced blank captures.
 
 ---
 
@@ -1206,11 +1267,14 @@ one that does not move.
 5. **Update `config.RISK.capital`** to the real account equity periodically
    (monthly is enough) — makes the corrected fixed-fractional sizing (§3H)
    actually track reality; live plans size off this constant.
+   **GATE PREREQUISITE (CAPITAL_GATE.md §6):** at the ₹10L placeholder every
+   sized plan on screen is fiction. Must be real before any capital moves.
 
 6. ~~DECIDE: implement Audit Finding 1?~~ **DONE 2026-07-25** — `BUY TRIGGER`
    fires as an event alert (commit `c4744a9`), F1b labels the EXTENDED
    divergence, and F2/F3's `plan_followed_R` landed the same day (§3O).
-7. **MAKE THE REPO PRIVATE** — user chose this 2026-07-25 for Finding 5
+7. **MAKE THE REPO PRIVATE** — **also a GATE PREREQUISITE (CAPITAL_GATE.md
+   §6).** User chose this 2026-07-25 for Finding 5
    (`holdings.csv` / `positions.csv` are real personal financial data on a
    public repo + public Pages site). Not doable from here (no `gh` auth):
    github.com/kartikeyaav/Golden-Stock → Settings → General → Danger Zone →
@@ -1221,6 +1285,15 @@ one that does not move.
    the run artifact. If that trade is unacceptable, the fallback is scrubbing
    both CSVs from the repo and its history and teaching `daily.yml` /
    `backup_push.py` not to commit them.
+
+**Needs watching (added 2026-07-26):**
+8b. **The 07-27 scan is the first that can produce a gate signal.** Confirm a
+   `BUY TRIGGER` fires, lands in `journal/entry_signals.csv` with
+   `entry_status=VALIDATED`, and appears in `state/gate.json` as cohort n=1.
+   If the whole week passes at 0, that is a FREQUENCY finding to investigate
+   (CAPITAL_GATE.md §5) — not a reason to loosen the cohort definition.
+   The EP class has also still never fired since adoption on 2026-07-19; if it
+   is still zero by mid-August that is a finding, not weather.
 
 **Needs time:**
 8. **Forward journal** must accumulate a few weeks. Then review: do analyst
@@ -1496,6 +1569,9 @@ tests/test_news_pressure.py   story dedupe + decay + primed threshold (8 pytest 
 tests/test_themes.py          membership traps + heat spread (9 pytest checks)
 analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders (incl. second-order ecosystem research task)
 analyst/PICKS_PROTOCOL.md     committee standing orders (incl. second-order research + analyst-verdict cross-check)
+scripts/build_dashboard.py    ALSO holds the whole UI (CSS + HTML + JS in TEMPLATE). The v6 "terminal"
+                              rules sit LAST in the stylesheet and deliberately override the v4 card
+                              styling; the universe map, dials and tape are rendered in the script block
 CAPITAL_GATE.md               THE pre-registration: the threshold that decides real capital, fixed
                               2026-07-26 before the cohort existed. Amendment log in §9 — never edit silently
 scripts/gate_status.py        computes the gate standing -> state/gate.json; keeps the validated cohort,
