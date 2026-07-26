@@ -1,0 +1,126 @@
+{
+ "generated": "2026-07-26 12:29",
+ "registered": "2026-07-26",
+ "verdict": "ACCRUING",
+ "progress_pct": 0.0,
+ "deadline": "2026-12-31",
+ "days_to_deadline": 157,
+ "ruler": "plan_followed_R",
+ "required": {
+  "min_signals": 40,
+  "min_age_days": 30,
+  "min_expectancy_r": 0.5,
+  "max_hit_stop_pct": 55.0,
+  "max_share_from_best_trade_pct": 60.0,
+  "pass_capital_pct": 25.0
+ },
+ "cohort": {
+  "n": 0,
+  "n_qualifying": 0,
+  "expectancy_r": null
+ },
+ "cohort_running": {
+  "n": 0,
+  "n_qualifying": 0,
+  "expectancy_r": null
+ },
+ "legacy": {
+  "n": 150,
+  "n_qualifying": 108,
+  "n_unsized": 19,
+  "expectancy_r": -0.273,
+  "median_r": -0.225,
+  "sum_r": -29.5,
+  "win_rate_pct": 25.9,
+  "hit_stop_pct": 8.4,
+  "best_trade_share_pct": 10.3,
+  "best_r": 1.57,
+  "worst_r": -3.85,
+  "signal_basis_return_pct": -36.87,
+  "first": "2026-07-07",
+  "last": "2026-07-24"
+ },
+ "extended": {
+  "n": 0,
+  "n_qualifying": 0,
+  "expectancy_r": null
+ },
+ "conditions": {
+  "sample": {
+   "ok": false,
+   "detail": "0 of 40 qualifying signals (closed, or aged 30d+)"
+  },
+  "expectancy": {
+   "ok": null,
+   "detail": "no qualifying signals yet"
+  },
+  "beats_benchmark": {
+   "ok": null,
+   "detail": "not measurable yet"
+  },
+  "hit_stop": {
+   "ok": null,
+   "detail": "no closed signals yet"
+  },
+  "concentration": {
+   "ok": null,
+   "detail": "no winners yet"
+  }
+ },
+ "benchmark": {
+  "sym": "MOMENTUM100",
+  "ret_pct": null,
+  "why": "window too short",
+  "label": "Momentum-quality ETF (MidSmall 400)",
+  "note": "Nifty MidSmallcap400 Momentum Quality 100 ETF \u2014 the investable alternative to running this system."
+ },
+ "benchmark2": {
+  "sym": "NIFTY50",
+  "ret_pct": null,
+  "why": "window too short",
+  "label": "NIFTY 50"
+ },
+ "benchmark_context": {
+  "3m": {
+   "bench": {
+    "sym": "MOMENTUM100",
+    "ret_pct": 2.64,
+    "first": 64.83,
+    "last": 66.54,
+    "from": "2026-04-27",
+    "to": "2026-07-24",
+    "sessions": 65
+   },
+   "bench2": {
+    "sym": "NIFTY50",
+    "ret_pct": -1.35,
+    "first": 24092.7,
+    "last": 23767.45,
+    "from": "2026-04-27",
+    "to": "2026-07-24",
+    "sessions": 62
+   }
+  },
+  "12m": {
+   "bench": {
+    "sym": "MOMENTUM100",
+    "ret_pct": 7.57,
+    "first": 61.86,
+    "last": 66.54,
+    "from": "2025-07-28",
+    "to": "2026-07-24",
+    "sessions": 247
+   },
+   "bench2": {
+    "sym": "NIFTY50",
+    "ret_pct": -3.7,
+    "first": 24680.9,
+    "last": 23767.45,
+    "from": "2025-07-28",
+    "to": "2026-07-24",
+    "sessions": 244
+   }
+  }
+ },
+ "cohort_definition": "BUY TRIGGER + EPISODIC PIVOT alerts from 2026-07-25 \u2014 the entries the backtest validated. Excludes VALIDATED (EXTENDED), which the live system skips, and unsized signals the risk engine refuses."
+}

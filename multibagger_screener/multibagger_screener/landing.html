@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Golden Stock — Autonomous golden-stock hunting for Indian markets</title>
-<meta name="description" content="An autonomous screener that hunts Indian small & mid-cap golden stocks: nightly technical scans, evidence-locked entries, AI research layers, and a self-auditing forward journal.">
+<title>Golden Stock — a screener trying to prove itself in public</title>
+<meta name="description" content="An autonomous Indian small &amp; mid-cap screener with an append-only forward journal and a capital gate registered before the data existed. Evidence-locked entries, AI research as context only, and every rejected idea kept on the record.">
 <style>
 :root{
   --bg:#04060b; --bg2:#070b14; --panel:rgba(15,22,38,.55); --line:rgba(148,163,184,.13);
@@ -17,6 +17,8 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--txt);font:15px/1.6 -apple-system,'Segoe UI',Roboto,Inter,sans-serif;overflow-x:hidden}
 ::selection{background:rgba(245,200,76,.25)}
 a{color:inherit;text-decoration:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}
+ .rv{opacity:1!important;transform:none!important}}
 
 /* ---------- animated backdrop ---------- */
 .bgwrap{position:fixed;inset:0;z-index:-2;background:
@@ -26,7 +28,8 @@ a{color:inherit;text-decoration:none}
 .grid{position:fixed;inset:0;z-index:-1;opacity:.5;background-image:
   linear-gradient(rgba(148,163,184,.045) 1px,transparent 1px),
   linear-gradient(90deg,rgba(148,163,184,.045) 1px,transparent 1px);
-  background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 75%)}
+  background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 75%);
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 75%)}
 .orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.16;z-index:-1;animation:drift 26s ease-in-out infinite alternate}
 .orb.g{width:44vw;height:44vw;background:var(--gold);top:-18vw;right:-12vw}
 .orb.c{width:36vw;height:36vw;background:var(--cyn);bottom:-14vw;left:-10vw;animation-delay:-9s}
@@ -51,9 +54,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:cent
 .kicker{display:inline-flex;align-items:center;gap:8px;font:600 11px var(--mono);letter-spacing:.16em;color:var(--grn);
   border:1px solid rgba(52,211,153,.3);background:rgba(52,211,153,.07);padding:6px 12px;border-radius:99px;margin-bottom:22px}
 .kicker .live{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 1.6s infinite}
-h1{font-size:clamp(38px,4.6vw,64px);line-height:1.06;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
-h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
-.sub{margin:22px 0 30px;font-size:17px;color:var(--dim);max-width:56ch}
+h1{font-size:clamp(36px,4.4vw,60px);line-height:1.06;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:22px 0 30px;font-size:16.5px;color:var(--dim);max-width:58ch}
 .sub b{color:var(--txt);font-weight:600}
 .heroctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
 .cta.big{padding:14px 30px;font-size:15px;border-radius:11px}
@@ -64,21 +67,26 @@ h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2)
 .chip{font:600 11.5px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:rgba(15,22,38,.4)}
 .chip b{color:var(--gold)}
 
-/* terminal card */
-.term{position:relative;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(15,22,38,.9),rgba(8,12,22,.92));
-  box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden;animation:float 7s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.termbar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(4,6,11,.5)}
-.tdot{width:11px;height:11px;border-radius:50%}
-.termtitle{margin-left:8px;font:600 11px var(--mono);letter-spacing:.12em;color:var(--mut)}
-.termbody{padding:18px;font:12.5px/1.85 var(--mono);min-height:290px}
-.tl{opacity:0;transform:translateY(4px);animation:tin .4s forwards}
-@keyframes tin{to{opacity:1;transform:none}}
-.tl .p{color:var(--mut)} .tl .ok{color:var(--grn)} .tl .warn{color:var(--gold)} .tl .info{color:var(--cyn)} .tl .v{color:var(--vio)}
-.cursor{display:inline-block;width:8px;height:14px;background:var(--grn);vertical-align:-2px;animation:pulse 1s steps(1) infinite}
-.sparkrow{display:flex;gap:6px;align-items:flex-end;height:44px;margin:10px 0 4px}
-.sparkrow i{flex:1;background:linear-gradient(180deg,var(--grn),rgba(52,211,153,.25));border-radius:2px;transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.8,.2,1) forwards;transform:scaleY(0)}
-@keyframes grow{to{transform:scaleY(1)}}
+/* ---------- the gate card (hero right) ---------- */
+.gatecard{border:1px solid rgba(34,211,238,.22);border-radius:18px;padding:28px;
+  background:linear-gradient(180deg,rgba(15,22,38,.92),rgba(8,12,22,.94));
+  box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);position:relative;overflow:hidden}
+.gatecard::after{content:"";position:absolute;top:0;left:-40%;width:40%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,.7),transparent);animation:sheen 7s linear infinite}
+@keyframes sheen{to{left:120%}}
+.gtop{display:flex;align-items:center;gap:20px}
+.ring{position:relative;width:150px;height:150px;flex:0 0 auto}
+.ring svg{transform:rotate(-90deg)}
+.ringtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ringtxt b{font:800 30px/1 var(--mono);letter-spacing:-1px}
+.ringtxt small{font:600 9.5px var(--mono);letter-spacing:.14em;color:var(--mut);margin-top:6px;text-transform:uppercase}
+.gstat{font:700 10.5px var(--mono);letter-spacing:.16em;padding:5px 12px;border-radius:99px;border:1px solid;display:inline-block}
+.gtitle{font-size:17px;font-weight:700;margin:12px 0 6px;letter-spacing:-.01em}
+.gtext{font-size:13px;color:var(--dim);line-height:1.62}
+.gmeta{margin-top:16px;padding-top:15px;border-top:1px solid var(--line);display:grid;gap:9px}
+.gmrow{display:flex;justify-content:space-between;gap:12px;font-size:12.4px}
+.gmrow span{color:var(--mut)}
+.gmrow b{font-family:var(--mono);font-weight:700}
 
 /* ---------- ticker ---------- */
 .ticker{border-block:1px solid var(--line);background:rgba(6,9,17,.7);overflow:hidden;white-space:nowrap;padding:11px 0;position:relative}
@@ -89,11 +97,11 @@ h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2)
 .tk b{color:var(--txt);margin-right:8px}.up{color:var(--grn)}.dn{color:var(--red)}
 
 /* ---------- sections ---------- */
-section{padding:96px 5vw;max-width:1280px;margin:0 auto}
-.shead{text-align:center;margin-bottom:56px}
+section{padding:92px 5vw;max-width:1280px;margin:0 auto}
+.shead{text-align:center;margin-bottom:52px}
 .stag{font:700 11px var(--mono);letter-spacing:.22em;color:var(--gold)}
-.shead h2{font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-.01em;margin-top:10px;text-wrap:balance}
-.shead p{color:var(--dim);max-width:62ch;margin:12px auto 0}
+.shead h2{font-size:clamp(24px,3vw,36px);font-weight:800;letter-spacing:-.01em;margin-top:10px;text-wrap:balance}
+.shead p{color:var(--dim);max-width:64ch;margin:12px auto 0}
 .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .rv.on{opacity:1;transform:none}
 
@@ -107,7 +115,7 @@ section{padding:96px 5vw;max-width:1280px;margin:0 auto}
 .pstep .arrow{position:absolute;right:-13px;top:50%;transform:translateY(-50%);z-index:2;color:var(--gold);opacity:.7;font-size:15px}
 .pstep:last-child .arrow{display:none}
 
-/* capability bento */
+/* bento */
 .bento{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .bcard{border:1px solid var(--line);border-radius:16px;padding:26px;background:var(--panel);backdrop-filter:blur(8px);
   position:relative;overflow:hidden;transition:.3s}
@@ -122,55 +130,49 @@ section{padding:96px 5vw;max-width:1280px;margin:0 auto}
 .bcard .tagline{margin-top:12px;font:600 10.5px var(--mono);letter-spacing:.1em;color:var(--grn)}
 
 /* evidence */
-.ev{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(15,22,38,.7),rgba(8,12,22,.8));padding:46px 40px}
+.ev{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(15,22,38,.7),rgba(8,12,22,.8));padding:44px 40px}
 .evgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;text-align:center}
-.ev .n{font:800 clamp(26px,2.6vw,40px)/1.1 var(--mono);background:linear-gradient(180deg,#fff,#cbd5e1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ev .n{font:800 clamp(24px,2.5vw,38px)/1.1 var(--mono);background:linear-gradient(180deg,#fff,#cbd5e1);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ev .n .u{font-size:.55em;color:var(--gold);-webkit-text-fill-color:var(--gold)}
 .ev .l{font-size:11.5px;color:var(--dim);margin-top:8px;letter-spacing:.04em}
-.honest{margin-top:30px;padding-top:22px;border-top:1px dashed var(--line);text-align:center;font-size:12.5px;color:var(--mut)}
+.honest{margin-top:28px;padding-top:20px;border-top:1px dashed var(--line);text-align:center;font-size:12.5px;color:var(--mut);line-height:1.7}
 .honest b{color:var(--dim)}
+
+/* refusals — the credibility section */
+.ref{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.rcard{border:1px solid var(--line);border-left:2px solid var(--red);border-radius:12px;padding:18px 20px;background:rgba(248,113,113,.035)}
+.rcard h4{font-size:13.5px;margin-bottom:5px}
+.rcard p{font-size:12.6px;color:var(--dim)}
+.rcard .verdict{font:700 10px var(--mono);letter-spacing:.14em;color:var(--red);margin-bottom:8px}
+
+/* limits */
+.limits{border:1px solid rgba(245,200,76,.25);border-radius:16px;padding:30px 34px;background:rgba(245,200,76,.035)}
+.limits ul{list-style:none;display:grid;gap:13px;margin-top:16px}
+.limits li{font-size:13.4px;color:var(--dim);padding-left:24px;position:relative;line-height:1.6}
+.limits li::before{content:"—";position:absolute;left:0;color:var(--gold)}
+.limits li b{color:var(--txt)}
 
 /* final cta + footer */
 .final{text-align:center}
-.final h2{font-size:clamp(28px,3.4vw,44px);font-weight:800;letter-spacing:-.015em}
-.final p{color:var(--dim);margin:16px auto 32px;max-width:52ch}
+.final h2{font-size:clamp(26px,3.2vw,42px);font-weight:800;letter-spacing:-.015em}
+.final p{color:var(--dim);margin:16px auto 32px;max-width:56ch}
 footer{border-top:1px solid var(--line);padding:30px 5vw;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
   font-size:12px;color:var(--mut);background:rgba(4,6,11,.6)}
 footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 
-@media (max-width:1020px){
-  .hero{grid-template-columns:1fr;padding-top:104px;gap:44px}
-  .pipe{grid-template-columns:repeat(2,1fr)} .pstep .arrow{display:none}
-  .bento{grid-template-columns:repeat(2,1fr)}
-  .evgrid{grid-template-columns:repeat(2,1fr)} .evgrid .wide{grid-column:span 2}
+@media(max-width:980px){
+  .hero{grid-template-columns:1fr;padding-top:100px;gap:40px}
+  .pipe,.bento,.ref{grid-template-columns:1fr}
+  .pstep .arrow{display:none}
+  .evgrid{grid-template-columns:repeat(2,1fr);gap:22px}
   .navlinks{display:none}
+  section{padding:64px 5vw}
+  .ev{padding:30px 22px}
 }
-@media (max-width:640px){
-  section{padding:56px 6vw}
-  .shead{margin-bottom:36px}
-  /* hero: flow naturally — min-height:100vh left a dead void under the chips */
-  .hero{min-height:auto;padding:92px 6vw 36px;gap:34px}
-  .kicker{font-size:9.5px;letter-spacing:.1em;padding:5px 10px}
-  h1{font-size:clamp(30px,8.8vw,38px)}
-  .sub{font-size:14.5px;margin:18px 0 24px}
-  .heroctas{flex-direction:column;align-items:stretch;gap:10px}
-  .heroctas .cta.big,.heroctas .ghost{text-align:center}
-  .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:24px}
-  .chip{text-align:center;padding:8px 6px}
-  .termbody{font-size:11px;padding:14px;min-height:0}
-  .pipe{grid-template-columns:1fr}
-  .bento{grid-template-columns:1fr}
-  /* evidence: two tidy columns, the 5th stat spans, no forced label breaks */
-  .ev{padding:28px 16px;border-radius:16px}
-  .evgrid{grid-template-columns:1fr 1fr;gap:20px 10px}
-  .evgrid>div:last-child{grid-column:1/-1}
-  .ev .l{font-size:10.5px}
-  .honest{font-size:11.5px;text-align:left}
-  footer{flex-direction:column;align-items:center;text-align:center;gap:6px;padding:22px 6vw}
-}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
-  .rv{opacity:1;transform:none}
+@media(max-width:560px){
+  .gtop{flex-direction:column;align-items:flex-start;gap:14px}
+  .evgrid{grid-template-columns:1fr 1fr;gap:18px}
+  .limits{padding:22px 18px}
 }
 </style>
 </head>
@@ -179,171 +181,299 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 <div class="orb g"></div><div class="orb c"></div>
 
 <nav>
-  <a class="brand" href="#"><span class="dot"></span>GOLDEN&nbsp;<b>STOCK</b></a>
+  <div class="brand"><span class="dot"></span>GOLDEN<b>STOCK</b></div>
   <div class="navlinks">
-    <a href="#how">How it works</a><a href="#cap">Capabilities</a><a href="#ev">Evidence</a>
+    <a href="#gate">The gate</a><a href="#how">How it works</a>
+    <a href="#refused">What it refuses</a><a href="#limits">Limitations</a>
   </div>
-  <a class="cta" href="./dashboard.html">Launch Terminal ↗</a>
+  <a class="cta" href="dashboard.html">Open the terminal</a>
 </nav>
 
-<header class="hero">
+<!-- ============ HERO ============ -->
+<div class="hero">
   <div>
-    <span class="kicker"><span class="live"></span>AUTONOMOUS · SCANS NIGHTLY AFTER MARKET CLOSE</span>
-    <h1>Hunt <span class="au">golden stocks</span><br>before the crowd sees them.</h1>
-    <p class="sub">Golden Stock is an autonomous research system for Indian small &amp; mid-caps.
-      Every night it scans <b>651 stocks</b>, tags each chart's stage, scores conviction across
-      <b>8 evidence-weighted dimensions</b>, sends AI analysts to research the best setups —
-      and keeps an honest, self-auditing track record of every call it makes.</p>
+    <div class="kicker"><span class="live"></span>LIVE · BREADTH 53.2% ABOVE 200-DMA · NORMAL SIZE</div>
+    <h1>Most screeners show you picks.<br>This one shows you <span class="au">whether it works.</span></h1>
+    <p class="sub">An autonomous screener for Indian small &amp; mid-caps: it scans
+      <b>615 stocks</b> every weeknight, sizes each trade mechanically, and writes every
+      signal to an <b>append-only journal before the outcome is known</b>. It has not been given a
+      rupee of real capital, and it will not be until a threshold registered
+      <b>before the data existed</b> is met.</p>
     <div class="heroctas">
-      <a class="cta big" href="./dashboard.html">Open the Dashboard →</a>
-      <a class="ghost" href="#how">See how it works</a>
+      <a class="cta big" href="dashboard.html">Open the live terminal →</a>
+      <a class="ghost" href="#gate">See the gate it has to clear</a>
     </div>
     <div class="chips">
       <span class="chip"><b>651</b> stock universe</span>
-      <span class="chip"><b>100%</b> technical entries</span>
-      <span class="chip"><b>2-lot</b> risk plans</span>
-      <span class="chip"><b>0</b> human babysitting</span>
+      <span class="chip"><b>221</b> signals journaled</span>
+      <span class="chip"><b>13+</b> ideas tested &amp; rejected</span>
+      <span class="chip"><b>0</b> rupees deployed</span>
     </div>
   </div>
 
-  <div class="term">
-    <div class="termbar">
-      <span class="tdot" style="background:#f87171"></span><span class="tdot" style="background:#fbbf24"></span><span class="tdot" style="background:#34d399"></span>
-      <span class="termtitle">GOLDEN-STOCK // NIGHTLY SCAN</span>
+  <div class="gatecard">
+    <div class="gtop">
+      <div class="ring">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="62" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"/>
+          <circle id="gring" cx="75" cy="75" r="62" fill="none" stroke="var(--cyn)" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray="389.6" stroke-dashoffset="389.6"
+            style="transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1) .3s"/>
+        </svg>
+        <div class="ringtxt"><b style="color:var(--cyn)">0<span style="color:var(--mut);font-size:17px">/40</span></b>
+          <small>signals banked</small></div>
+      </div>
+      <div>
+        <span class="gstat" style="color:var(--cyn);border-color:var(--cyn)55;background:var(--cyn)12">
+          GATE OPEN</span>
+        <div class="gtitle">The capital gate</div>
+        <div class="gtext">A pass needs <b style="color:var(--txt)">40 validated signals</b> averaging
+          <b style="color:var(--txt)">+0.50R</b> — and it has to beat a momentum ETF
+          you could buy in one click. Registered 2026-07-26, before a single
+          qualifying signal existed.</div>
+      </div>
     </div>
-    <div class="termbody" id="termbody"></div>
+    <div class="gmeta">
+      <div class="gmrow"><span>Running read (decides nothing)</span>
+        <b style="color:var(--dim)">—</b></div>
+      <div class="gmrow"><span>Pre-fix legacy cohort</span>
+        <b style="color:var(--dim)">-0.27R over 150</b></div>
+      <div class="gmrow"><span>Momentum ETF it must beat · 12m</span>
+        <b style="color:var(--grn)">+7.6%</b></div>
+      <div class="gmrow"><span>Decision deadline</span>
+        <b>2026-12-31 · 157d</b></div>
+    </div>
   </div>
-</header>
+</div>
 
-<div class="ticker"><div class="tickin" id="tickin"></div></div>
+<!-- ============ TICKER ============ -->
+<div class="ticker"><div class="tickin" id="tick"></div></div>
 
+<!-- ============ GATE ============ -->
+<section id="gate">
+  <div class="shead rv">
+    <div class="stag">THE ONLY NUMBER THAT MATTERS</div>
+    <h2>A threshold written down before the data arrived</h2>
+    <p>"Wait and see how it does" is not a test — at +0.30R you can read it as
+      <em>nearly there</em> or <em>it failed</em>, and both readings stay available forever.
+      So the bar was fixed in advance, in public, with the anti-gaming clauses attached.</p>
+  </div>
+  <div class="ref rv">
+    <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
+      <div class="verdict" style="color:var(--cyn)">CONDITION 1 — EXPECTANCY</div>
+      <h4>+0.50R per trade, minimum</h4>
+      <p>About half the stressed backtest read. A system delivering under half its own
+        stress-tested expectancy is not the system that was validated.</p>
+    </div>
+    <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
+      <div class="verdict" style="color:var(--cyn)">CONDITION 2 — THE DUMB ALTERNATIVE</div>
+      <h4>It must beat a momentum ETF</h4>
+      <p>Mid/small-cap, momentum-ranked, quality-screened — the same factor exposure, one click,
+        ~0.5% a year. If the ETF wins, the rational allocation is the ETF.</p>
+    </div>
+    <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
+      <div class="verdict" style="color:var(--cyn)">CONDITION 3 &amp; 4 — DISCIPLINE</div>
+      <h4>Not a lottery ticket, not a bleed</h4>
+      <p>No more than 60% of the gains from one trade, and no more
+        than 55% of signals stopping out. A mean built from one runner is not an edge.</p>
+    </div>
+    <div class="rcard" style="border-left-color:var(--gold);background:rgba(245,200,76,.035)">
+      <div class="verdict" style="color:var(--gold)">WHAT A PASS BUYS</div>
+      <h4>25% of intended capital — not the account</h4>
+      <p>Clearing a pre-set bar on 40 signals is meaningful and still small enough to be luck.
+        The next tranche needs its own review, 90 days later, against the same document.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW ============ -->
 <section id="how">
   <div class="shead rv">
-    <div class="stag">PIPELINE</div>
-    <h2>Four moves, every single night</h2>
-    <p>No screens to watch, no scans to remember. The system runs after close, in the cloud, and reports in.</p>
+    <div class="stag">THE PIPELINE</div>
+    <h2>Price decides. Everything else explains.</h2>
+    <p>Entries are 100% technical and evidence-locked. Fundamentals, news and AI research
+      can veto, shrink or annotate a trade — none of them can create one.</p>
   </div>
-  <div class="pipe">
-    <div class="pstep rv"><span class="arrow">▸</span><h3>Scan the universe</h3><p>Fresh EOD data for 651 small, mid &amp; microcaps. Every chart tagged by stage — basing, confirmed uptrend, extended, or broken.</p></div>
-    <div class="pstep rv" style="transition-delay:.08s"><span class="arrow">▸</span><h3>Score &amp; alert</h3><p>Alerts fire only on state <i>transitions</i> — a base completing, a breakout triggering. Each carries an 8-dimension conviction score and hard governance vetoes.</p></div>
-    <div class="pstep rv" style="transition-delay:.16s"><span class="arrow">▸</span><h3>AI deep-dives</h3><p>An AI analyst researches the top candidates on the open web the same night; a weekly AI committee picks and writes full investment theses.</p></div>
-    <div class="pstep rv" style="transition-delay:.24s"><span class="arrow">▸</span><h3>Plan &amp; track</h3><p>Every buy signal ships with a sized two-lot plan — entry, stop, partial, trail. Every call lands in a forward journal that grades the system itself.</p></div>
-  </div>
-</section>
-
-<section id="cap">
-  <div class="shead rv">
-    <div class="stag">CAPABILITIES</div>
-    <h2>A full research desk, condensed to software</h2>
-  </div>
-  <div class="bento">
-    <div class="bcard rv"><div class="bic"><svg viewBox="0 0 24 24"><path d="M3 17l4-6 4 3 5-8 5 7"/><path d="M3 21h18"/></svg></div>
-      <h3>Stage &amp; breakout engine</h3><p>Weinstein stage tags, Minervini trend template, VCP base detection and volume-confirmed pivot breakouts — the entry edge, mechanically applied to every chart.</p><div class="tagline">ENTRIES ARE 100% TECHNICAL</div></div>
-    <div class="bcard rv" style="transition-delay:.06s"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-      <h3>Nightly autonomous ops</h3><p>Runs in the cloud after every market close — scan, score, research, publish, notify. Zero dependence on any laptop being awake.</p><div class="tagline">365 NIGHTS · HANDS-FREE</div></div>
-    <div class="bcard rv" style="transition-delay:.12s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
-      <h3>Conviction with vetoes</h3><p>Eight scored dimensions — momentum, earnings inflection, theme, smart money, strength, catalyst, governance, valuation. Pledged promoters and governance red flags cap the score, no matter how pretty the chart.</p><div class="tagline">COVERAGE-HONEST SCORING</div></div>
-    <div class="bcard rv" style="transition-delay:.18s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M8 9h8M8 13h5"/><path d="M21 12a9 9 0 1 1-4-7.5"/><path d="M21 3v6h-6"/></svg></div>
-      <h3>AI research layers</h3><p>A nightly analyst deep-dives top alerts; a weekly committee curates 3–5 researched picks with theses, catalysts and risks. AI advises — it can never widen a stop or override a veto.</p><div class="tagline">MACHINE QUALIFIES · AI EXPLAINS</div></div>
-    <div class="bcard rv" style="transition-delay:.24s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5"/></svg></div>
-      <h3>News radar</h3><p>Every NSE filing since the last scan, whitelist-classified — order wins, M&amp;A, approvals, probes, pledges — and cross-referenced with tonight's chart state. Positive news on an actionable chart = research first.</p><div class="tagline">NEWS MOVES ATTENTION, NEVER ENTRIES</div></div>
-    <div class="bcard rv" style="transition-delay:.3s"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5m4 5V8m4 8v-3"/></svg></div>
-      <h3>Self-auditing journal</h3><p>Every signal, verdict and paper trade is logged forward and graded against its own plan. The system must beat its own baseline with out-of-sample evidence — or the feature is cut.</p><div class="tagline">EVIDENCE-LOCKED BY DESIGN</div></div>
+  <div class="pipe rv">
+    <div class="pstep"><span class="arrow">▸</span><h3>Scan the universe</h3>
+      <p>615 small, mid &amp; microcaps re-tagged nightly by chart stage — basing, uptrend,
+        extended or broken. Tonight: <b style="color:var(--grn)">85</b> in a confirmed uptrend.</p></div>
+    <div class="pstep"><span class="arrow">▸</span><h3>Wait for the trigger</h3>
+      <p>Two validated entries and no others: a volume breakout over a VCP pivot, or an episodic
+        pivot — a gap of 8%+ on 3× volume. An uptrend on its own is not a buy.</p></div>
+    <div class="pstep"><span class="arrow">▸</span><h3>Size it mechanically</h3>
+      <p>ATR stop, fixed-fractional risk, two-lot exit, half size when market breadth is weak.
+        The plan is written before the trade, never adjusted after.</p></div>
+    <div class="pstep"><h3>Journal it forever</h3>
+      <p>Every signal is recorded before the outcome exists, then scored through the same backtest
+        engine it is compared against. Nothing is ever quietly deleted.</p></div>
   </div>
 </section>
 
-<section id="ev">
+<!-- ============ CAPABILITIES ============ -->
+<section>
   <div class="shead rv">
-    <div class="stag">EVIDENCE</div>
-    <h2>Built on tested rules, not vibes</h2>
-    <p>The strategy was stress-tested across 13+ pre-registered experiment configs before going live. What failed was cut. What survived runs tonight.</p>
+    <div class="stag">WHAT RUNS EVERY NIGHT</div>
+    <h2>Six layers, one combined output</h2>
+    <p>They cross-feed rather than compete — divergence between layers is shown, never averaged away.</p>
+  </div>
+  <div class="bento rv">
+    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7h-5v5"/></svg></div>
+      <h3>Mechanical core</h3><p>Stage tagging, trend template, VCP detection, relative strength and a
+      breadth-based regime switch that halves risk when the market weakens.</p>
+      <div class="tagline">BACKTESTED · EVIDENCE-LOCKED</div></div>
+    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <h3>Nightly AI analyst</h3><p>Deep-researches the top buy alerts and answers one question each —
+      take, halve or skip. It can only ever be <em>more</em> conservative.</p>
+      <div class="tagline">CONTEXT ONLY · ON PROBATION</div></div>
+    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg></div>
+      <h3>Weekly committee</h3><p>Reads the whole scored shortlist, picks 4 researched names
+      and writes the investment case — including why it passed on the analyst's calls.</p>
+      <div class="tagline">CURATION · JOURNALED</div></div>
+    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/></svg></div>
+      <h3>News radar &amp; 90-day memory</h3><p>NSE filings classified into real events, with repeat filings of
+      one story collapsed so paperwork volume can't masquerade as news flow.</p>
+      <div class="tagline">MOVES ATTENTION · NEVER ENTRIES</div></div>
+    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M12 3l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/></svg></div>
+      <h3>Exit-risk surveillance</h3><p>ASM, GSM, circuit bands and settlement series on every watched name —
+      <b style="color:var(--gold)">66 of 652</b> currently carry a flag. A stop you can't fill isn't a stop.</p>
+      <div class="tagline">RISK DISPLAY · NEVER A FILTER</div></div>
+    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10h4a1.8 1.8 0 010 3.6h-4"/></svg></div>
+      <h3>Penny screen</h3><p>A separate nano-cap universe where the edge is the exclusions: surveillance,
+      circuit bands, dilution and shells are filtered before anything is scored.</p>
+      <div class="tagline">RESEARCH ONLY · ZERO CAPITAL</div></div>
+  </div>
+</section>
+
+<!-- ============ EVIDENCE ============ -->
+<section>
+  <div class="shead rv">
+    <div class="stag">THE BACKTEST</div>
+    <h2>What the rules did on history</h2>
+    <p>Evidence that the rules had an edge on past data — <em>not</em> a forecast, and not the same
+      thing as the forward record above.</p>
   </div>
   <div class="ev rv">
     <div class="evgrid">
-      <div><div class="n" data-count="32.5" data-dec="1">0<span class="u">%</span></div><div class="l">stress-tested backtest CAGR (fills, gaps &amp; costs applied)</div></div>
-      <div><div class="n" data-count="1.67" data-dec="2">0<span class="u">R</span></div><div class="l">expectancy per trade after costs</div></div>
-      <div><div class="n" data-count="9.6" data-dec="1">0<span class="u">:1</span></div><div class="l">payoff ratio — winners vs losers</div></div>
-      <div><div class="n" data-count="651">0</div><div class="l">stocks scanned every night</div></div>
-      <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">strategy configs tested &amp; rejected by evidence</div></div>
+      <div><div class="n" data-count="1.337" data-dec="2">0<span class="u">R</span></div><div class="l">expectancy per trade, after costs</div></div>
+      <div><div class="n" data-count="54.5" data-dec="1">0<span class="u">%</span></div><div class="l">window CAGR (stressed: 32.5%)</div></div>
+      <div><div class="n" data-count="15.2" data-dec="1">0<span class="u">%</span></div><div class="l">maximum drawdown</div></div>
+      <div><div class="n" data-count="31.3" data-dec="0">0<span class="u">%</span></div><div class="l">win rate — the edge is the payoff, not accuracy</div></div>
+      <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">configurations tested and rejected</div></div>
     </div>
-    <div class="honest"><b>Honesty note:</b> backtests are survivor-biased and directional by nature — the live forward journal, not the backtest, is the final judge. This is decision-support research, not investment advice. Execution always stays human.</div>
+    <div class="honest">
+      <b>Read this before you believe any of it.</b> The window is roughly three years and
+      survivor-biased, so these numbers are directional rather than predictive. The stressed
+      column applies next-open fills, gap-aware stops and full costs — that is the honest one.
+      Live, this system has journaled 221 signals and its validated entry has fired
+      <b>zero</b> times so far, because the alert that fires it shipped only days ago.
+      That gap between backtest and forward record is the whole reason the gate exists.
+    </div>
   </div>
 </section>
 
+<!-- ============ REFUSALS ============ -->
+<section id="refused">
+  <div class="shead rv">
+    <div class="stag">THE PART NOBODY ADVERTISES</div>
+    <h2>Every idea that was tested and thrown away</h2>
+    <p>Each of these was a plausible improvement, pre-registered, measured, and killed by its own
+      number. They are kept on the record because a system that only publishes its wins
+      has told you nothing.</p>
+  </div>
+  <div class="ref rv">
+    <div class="rcard"><div class="verdict">REJECTED</div><h4>Gating entries on fundamentals</h4>
+      <p>Price leads reported fundamentals in this universe. Every fundamental filter on entries
+        made the expectancy worse, not better.</p></div>
+    <div class="rcard"><div class="verdict">REJECTED</div><h4>Buying only in hot sectors</h4>
+      <p>+0.22R gated at 40% sector heat, +0.11R at 60%, against +1.27R ungated — monotonically
+        the wrong way. Sector heat is now a reading tab, not a filter.</p></div>
+    <div class="rcard"><div class="verdict">REJECTED</div><h4>Holding more positions</h4>
+      <p>Expectancy fell from 1.29R to 0.89R as slots went 12 → 20. The queue already takes the
+        best breakouts; extra slots only buy the weaker ones.</p></div>
+    <div class="rcard"><div class="verdict">REJECTED</div><h4>Progressive exposure</h4>
+      <p>Scaling risk off the portfolio's own recent results cost 3.7–5.7 percentage points of CAGR.
+        The market-regime rule already did that job.</p></div>
+    <div class="rcard"><div class="verdict">REJECTED</div><h4>News as a leading indicator</h4>
+      <p>Names with positive filings went on to trigger 7.3% of the time against a 16.6% base rate.
+        News stayed as context and risk, never as a signal.</p></div>
+    <div class="rcard"><div class="verdict">CORRECTED</div><h4>Its own headline numbers</h4>
+      <p>An internal audit found the scan was blind to 73% of the entries it had validated, and a
+        caching bug was ranking companies higher the less it knew about them. Both are documented,
+        dated and fixed.</p></div>
+  </div>
+</section>
+
+<!-- ============ LIMITS ============ -->
+<section id="limits">
+  <div class="shead rv">
+    <div class="stag">STRAIGHT ANSWERS</div>
+    <h2>What this is not</h2>
+  </div>
+  <div class="limits rv">
+    <ul>
+      <li><b>It is not advice, and not a service.</b> It is one person's decision-support system,
+        published so its record can be checked. Nothing here is a recommendation to buy anything.</li>
+      <li><b>It has not proven itself yet.</b> The forward journal is young and its pre-fix cohort is
+        negative. The validated entry has fired zero times live. That is stated on the dashboard in
+        the same size as everything else.</li>
+      <li><b>The backtest is survivor-biased.</b> Delisted and failed companies are not in the
+        universe file, which flatters every historical number on this page.</li>
+      <li><b>The AI layers are unproven and on probation.</b> They add context and can veto; they have
+        never been allowed to create a trade, and both have silently broken for a week at a time.</li>
+      <li><b>Small-caps are illiquid and can trap you.</b> Circuit bands and surveillance can make an
+        exit impossible at any price you planned — which is why exit risk is now shown on every name.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ FINAL ============ -->
 <section class="final rv">
-  <h2>The market moves.<br><span class="au">Golden Stock</span> tracks.</h2>
-  <p>Every close — scanned, scored and reported by 18:35 IST. Open the terminal for tonight's tags, conviction scores, AI verdicts and the live forward journal.</p>
-  <a class="cta big" href="./dashboard.html">Launch the Dashboard →</a>
+  <h2>Watch it try to earn the money.</h2>
+  <p>The terminal is live: tonight's signals, the full journal, the cohort table, and the gate
+    counting up or failing in public.</p>
+  <a class="cta big" href="dashboard.html">Open the terminal →</a>
 </section>
 
 <footer>
-  <div>GOLDEN STOCK · autonomous decision-support for Indian equities</div>
-  <div><a href="./dashboard.html">Dashboard</a> · <a href="https://github.com/kartikeyaav/Golden-Stock" rel="noopener">GitHub</a></div>
-  <div>Not investment advice. Markets carry risk.</div>
+  <div>© Golden Stock · decision support, not investment advice · data as of 26 Jul 2026</div>
+  <div><a href="dashboard.html">Terminal</a> &nbsp;·&nbsp; <a href="#gate">The gate</a>
+    &nbsp;·&nbsp; <a href="#limits">Limitations</a></div>
 </footer>
 
 <script>
-/* terminal typing */
-const LINES=[
-  ['p','$ golden-stock scan --universe nse-smallmid --after-close'],
-  ['info','▸ 651 symbols · EOD bars verified · regime: checking NIFTY vs 150-DMA'],
-  ['ok','✓ stage tags computed — 66 CONFIRMED · 18 ANTICIPATION'],
-  ['SPARK',''],
-  ['warn','▲ TRANSITION  CHENNPETRO  WATCH → CONFIRMED   conviction 87/100'],
-  ['p','  plan: entry 1130 · stop 1038 · partial +2.5R · two-lot trail'],
-  ['v','◆ AI analyst dispatched → verdict: BUY · HIGH · FULL PLAN'],
-  ['info','▸ news radar: 6 material filings classified · 1 CONFLUENCE'],
-  ['ok','✓ journal updated · dashboard published · alerts delivered'],
-  ['CUR','']
-];
-const tb=document.getElementById('termbody');
-let li=0;
-function addLine(){
-  if(li>=LINES.length)return;
-  const [cls,txt]=LINES[li++];
-  if(cls==='SPARK'){
-    const row=document.createElement('div');row.className='sparkrow';
-    for(let i=0;i<26;i++){const b=document.createElement('i');
-      b.style.height=(18+Math.abs(Math.sin(i*.7))*82)+'%';b.style.animationDelay=(i*.03)+'s';
-      if(i%7===3)b.style.background='linear-gradient(180deg,var(--gold),rgba(245,200,76,.2))';
-      row.appendChild(b);}
-    tb.appendChild(row);
-  }else if(cls==='CUR'){
-    const d=document.createElement('div');d.className='tl';d.innerHTML='<span class="p">$ </span><span class="cursor"></span>';tb.appendChild(d);
-  }else{
-    const d=document.createElement('div');d.className='tl';
-    const s=document.createElement('span');s.className=cls;s.textContent=txt;d.appendChild(s);tb.appendChild(d);
-  }
-  setTimeout(addLine, li===1?500:(340+Math.random()*260));
-}
-setTimeout(addLine,600);
+/* the ring: set after paint so the transition runs; setTimeout rather than
+   rAF because a background tab never fires rAF and the ring would then sit
+   at zero while claiming a real number */
+setTimeout(function(){var r=document.getElementById('gring');
+ if(r)r.setAttribute('stroke-dashoffset','389.6');},80);
 
-/* ticker (illustrative recent system reads) */
-const TK=[['CHENNPETRO','+10.2%',1],['MOSCHIP','+18.8%',1],['J&KBANK','+1.6R',1],['IPCALAB','+5.7%',1],
-  ['SHILPAMED','+6.5%',1],['LAURUSLABS','+6.1%',1],['RRKABEL','+8.0%',1],['MAHABANK','-10.2%',0],
-  ['SYRMA','+1.0%',1],['ACMESOLAR','+6.5%',1],['FEDERALBNK','+1.4R',1],['KEI','-3.7%',0]];
-const half=TK.map(([s,v,u])=>`<span class="tk"><b>${s}</b><span class="${u?'up':'dn'}">${v}</span></span>`).join('');
-document.getElementById('tickin').innerHTML=half+half;
+/* reveal on scroll */
+var io=new IntersectionObserver(function(es){es.forEach(function(e){
+ if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
 
-/* scroll reveals */
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.15});
-document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+/* count-up on the evidence strip */
+var nio=new IntersectionObserver(function(es){es.forEach(function(e){
+ if(!e.isIntersecting)return; nio.unobserve(e.target);
+ var el=e.target,to=parseFloat(el.dataset.count),dec=parseInt(el.dataset.dec||'0',10),
+     unit=el.querySelector('.u'),u=unit?unit.outerHTML:'',t0=performance.now();
+ (function step(t){var k=Math.min(1,(t-t0)/1100),v=to*(1-Math.pow(1-k,3));
+   el.innerHTML=v.toFixed(dec)+u; if(k<1)requestAnimationFrame(step);
+   else el.innerHTML=to.toFixed(dec)+u;})(t0);
+});},{threshold:.5});
+document.querySelectorAll('.n[data-count]').forEach(function(el){nio.observe(el);});
 
-/* count-up numbers */
-const nio=new IntersectionObserver(es=>es.forEach(e=>{
-  if(!e.isIntersecting)return;nio.unobserve(e.target);
-  const el=e.target,end=parseFloat(el.dataset.count),dec=parseInt(el.dataset.dec||'0'),
-  unit=el.querySelector('.u'),t0=performance.now();
-  (function tick(t){const p=Math.min((t-t0)/1400,1),v=(end*(1-Math.pow(1-p,3))).toFixed(dec);
-    el.firstChild.textContent=v;if(p<1)requestAnimationFrame(tick)})(t0);
-  if(unit)el.appendChild(unit);
-}),{threshold:.6});
-document.querySelectorAll('.n[data-count]').forEach(el=>nio.observe(el));
+/* bento hover spotlight */
+document.querySelectorAll('.bcard').forEach(function(c){
+ c.addEventListener('mousemove',function(e){var b=c.getBoundingClientRect();
+  c.style.setProperty('--mx',(e.clientX-b.left)+'px');
+  c.style.setProperty('--my',(e.clientY-b.top)+'px');});});
 
-/* card glow follows cursor */
-document.querySelectorAll('.bcard').forEach(c=>c.addEventListener('pointermove',e=>{
-  const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');
-}));
+/* ticker — real reads from tonight's state, duplicated for a seamless loop */
+var TK=[["UNIVERSE", "615 watched nightly", "up"], ["CONFIRMED UPTREND", "85 names", "up"], ["GATE", "0/40 signals banked", "dn"], ["REGIME", "breadth 53.2% \u2014 full size", "up"], ["EXIT RISK", "66 names flagged ASM/GSM/band", "dn"], ["JOURNAL", "221 signals, append-only", "up"], ["NEWS RADAR", "17 material filings in window", "up"], ["PENNY SCREEN", "178 survivors of the gates", "up"], ["CAPITAL DEPLOYED", "0 \u2014 gate not yet cleared", "dn"], ["DEADLINE", "2026-12-31", "up"]];
+document.getElementById('tick').innerHTML=TK.concat(TK).map(function(t){
+ return '<span class="tk"><b>'+t[0]+'</b><span class="'+t[2]+'">'+t[1]+'</span></span>';}).join('');
 </script>
 </body>
 </html>

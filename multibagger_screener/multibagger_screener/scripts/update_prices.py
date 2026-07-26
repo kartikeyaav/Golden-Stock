@@ -20,12 +20,20 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from config import GATE
 from data.cache import CACHE_DIR, load_manifest
 from data.yahoo_loader import fetch_yahoo_daily
 from data.cache import save_ohlcv
 
 FULL_BACKFILL_START = "2019-01-01"
-_SPECIAL_YAHOO = {"NIFTY50": "^NSEI"}
+# NIFTY50 is the RS benchmark the scoring uses. GATE.benchmark_symbol is the
+# capital gate's "dumb alternative" — a momentum-quality mid/small-cap ETF you
+# could buy instead of running any of this (CAPITAL_GATE.md §4 condition 2).
+# Its TRADED price is what we want, tracking error and expenses included.
+_SPECIAL_YAHOO = {"NIFTY50": "^NSEI", GATE.benchmark_symbol: GATE.benchmark_yahoo}
+# every price refresh keeps both benchmarks current, so the gate can never be
+# evaluated against a stale comparator
+BENCHMARK_SYMBOLS = ["NIFTY50", GATE.benchmark_symbol]
 # if the fresh fetch disagrees with the cached history on the overlap window by
 # more than this, Yahoo has re-adjusted the whole series (split/bonus) and our
 # cached history is at the OLD scale — beyond any circuit band, so it can only
@@ -97,7 +105,7 @@ def universe_and_holdings_symbols(root: str) -> list[str]:
     """The FULL watch set. Matrix evidence (2026-07-06): the validated system
     entered breakouts from the whole universe — the daily scan must watch the
     whole universe too, or the focus-list filter becomes an untested gate."""
-    symbols = ["NIFTY50"]
+    symbols = list(BENCHMARK_SYMBOLS)
     universe_path = os.path.join(root, "universe.csv")
     if os.path.exists(universe_path):
         symbols += pd.read_csv(universe_path)["symbol"].tolist()
@@ -113,7 +121,7 @@ def universe_and_holdings_symbols(root: str) -> list[str]:
 
 
 def focus_and_holdings_symbols(root: str) -> list[str]:
-    symbols = ["NIFTY50"]
+    symbols = list(BENCHMARK_SYMBOLS)
     focus_path = os.path.join(root, "focus_list.csv")
     if os.path.exists(focus_path):
         symbols += pd.read_csv(focus_path)["symbol"].tolist()
@@ -138,7 +146,7 @@ def main() -> None:
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if args.all:
-        symbols = ["NIFTY50"] + pd.read_csv(os.path.join(root, "universe.csv"))["symbol"].tolist()
+        symbols = BENCHMARK_SYMBOLS + pd.read_csv(os.path.join(root, "universe.csv"))["symbol"].tolist()
     elif args.focus:
         symbols = focus_and_holdings_symbols(root)
     else:

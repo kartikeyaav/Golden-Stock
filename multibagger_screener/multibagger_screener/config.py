@@ -350,6 +350,135 @@ class PennyConfig:
 
 
 # ---------------------------------------------------------------------------
+# EVIDENCE — the validated read of the CONFIGURATION THE SYSTEM ACTUALLY RUNS.
+#
+# This block exists because the dashboard's headline KPIs were hardcoded to
+# sizing-matrix v2 config B (+1.67R / 47.4% / -18.5%) and stayed there through
+# TWO adoptions: breadth-regime sizing (v3b, 2026-07-19) and the episodic-pivot
+# entry class (EP matrix, same day). The strip was describing a configuration
+# the system had stopped being. Numbers live here now, with the run that
+# produced each one, so a future adoption updates one place and every surface
+# follows.
+#
+# HONEST CAVEAT, carried in `combined_note` and shown in the UI: the two
+# adoptions were pre-registered and measured SEPARATELY. There is no matrix
+# cell running breadth regime AND the EP class together. The headline below is
+# the COMBINED VCP+EP row (which used the NIFTY/150 regime); breadth was
+# adopted on the VCP-only family, where it improved MAR 2.70 -> 3.35 with a
+# 2.9pp shallower drawdown. Claiming their gains stack would be exactly the
+# kind of unregistered arithmetic this project refuses elsewhere.
+# ---------------------------------------------------------------------------
+@dataclass
+class EvidenceConfig:
+    # the live entry set: VCP breakout + episodic pivot, equity-basis sizing
+    # (VALIDATION_REPORT 6E, "COMBINED VCP + EP_A")
+    expectancy_r: float = 1.337
+    cagr_pct: float = 54.5
+    max_dd_pct: float = -15.2
+    mar: float = 3.58
+    win_rate_pct: float = 31.3
+    positions: int = 142
+    source: str = "VALIDATION_REPORT 6E — COMBINED VCP + EP_A (pre-registered)"
+
+    # deployment stress: next-open fills + gap-aware stops + full costs. Only
+    # ever run on the VCP-only config (6C, "B STRESS"), so it is a FLOOR read
+    # for the combined system, not its measurement. Labelled as such in the UI.
+    stress_expectancy_r: float = 1.102
+    stress_cagr_pct: float = 32.5
+    stress_max_dd_pct: float = -20.7
+    stress_source: str = "VALIDATION_REPORT 6C — B STRESS (VCP-only basis)"
+
+    # VCP-only baseline, kept because most of the project's prose quotes it
+    vcp_only_expectancy_r: float = 1.667
+    payoff_ratio: str = "9.6:1"
+
+    combined_note: str = (
+        "Breadth-regime sizing and the EP entry class were adopted from "
+        "separate pre-registered matrices; no cell ran both. Headline = the "
+        "combined-entry row (NIFTY/150 regime); breadth improved the VCP-only "
+        "family to MAR 3.35 at -14.8% drawdown. The gains are not added.")
+
+
+# ---------------------------------------------------------------------------
+# REAL-CAPITAL GATE (pre-registered 2026-07-26 — see CAPITAL_GATE.md)
+#
+# The project's standing rule is that the forward journal, not the backtest,
+# decides whether real money scales. That rule had no NUMBER, which makes it
+# unfalsifiable: at +0.3R over 40 signals one reads "nearly there" and at the
+# same number one reads "it failed" — whichever the mood suggests. Every
+# threshold below was fixed BEFORE the cohort it judges existed (the BUY
+# TRIGGER event alert shipped 2026-07-25; the first scan that can produce a
+# qualifying signal runs 2026-07-27).
+#
+# Changing any of these values is a re-registration: date it, state what
+# moved, and keep the old row in CAPITAL_GATE.md. Never edit one silently.
+# ---------------------------------------------------------------------------
+@dataclass
+class CapitalGateConfig:
+    # --- the cohort being judged ------------------------------------------
+    # Only the entries the backtest actually validated. The 117 legacy buy
+    # alerts (transition-day BUY CANDIDATE / RE-ENTRY WINDOW, zero of them
+    # VALIDATED) are NOT the strategy; measuring them and calling it the
+    # system's record is what produced the misleading -0.23R headline.
+    cohort_kinds: tuple = ("BUY TRIGGER", "EPISODIC PIVOT")
+    cohort_entry_status: tuple = ("VALIDATED", "EP EVENT")
+    cohort_start_date: str = "2026-07-25"   # the day the trigger became alertable
+
+    # --- the ruler ---------------------------------------------------------
+    # plan_followed_R only. The raw column marks to market from the alert
+    # close and books every stop at exactly -1R; it was never comparable to
+    # the backtest and must not be the thing a capital decision reads.
+    ruler: str = "plan_followed_R"
+
+    # --- sample size -------------------------------------------------------
+    # A signal counts once it is CLOSED or has aged past min_age_days, so an
+    # open winner cannot be counted at its peak and a losing cohort cannot be
+    # kept "still open" indefinitely.
+    min_signals: int = 40
+    min_age_days: int = 30
+
+    # --- pass thresholds (ALL must hold) -----------------------------------
+    # 0.50R is ~45% of the stressed VCP read (+1.10R) and ~37% of the combined
+    # ideal (+1.34R). Derivation: survivor bias inflates the backtest, live
+    # slippage and missed fills take more, and a system delivering under half
+    # its stressed expectancy is not the system that was validated.
+    min_expectancy_r: float = 0.50
+    # the dumb alternative must lose. If a momentum-quality ETF you could have
+    # bought with one click beats the machine, the machine is a hobby.
+    must_beat_benchmark: bool = True
+    # discipline checks: a positive mean built out of one lottery ticket, or a
+    # cohort that keeps stopping out, both fail.
+    max_hit_stop_pct: float = 55.0
+    max_share_from_best_trade_pct: float = 60.0
+
+    # --- deadline ----------------------------------------------------------
+    # If the sample has not arrived by here, that is a FREQUENCY finding about
+    # the trigger (it fires too rarely to build a book on), not a pass and not
+    # an excuse to lower the bar.
+    deadline: str = "2026-12-31"
+
+    # --- what a pass authorizes -------------------------------------------
+    # Deliberately small. A pass moves the system off zero, it does not hand
+    # it the account; the next tranche needs its own registered review.
+    pass_capital_pct: float = 25.0
+    review_interval_days: int = 90
+
+    # --- benchmark ---------------------------------------------------------
+    # Mirae Nifty MidSmallcap400 Momentum Quality 100 ETF — the closest thing
+    # to "this strategy, bought as a product": mid/small-cap, momentum-ranked,
+    # quality-screened, one click, ~0.5% cost. Its TRADED price is used (not
+    # the index), because tracking error and expenses are part of what you
+    # would actually have earned.
+    benchmark_symbol: str = "MOMENTUM100"
+    benchmark_yahoo: str = "MOM100.NS"
+    benchmark_label: str = "Momentum-quality ETF (MidSmall 400)"
+    benchmark_note: str = ("Nifty MidSmallcap400 Momentum Quality 100 ETF — the "
+                           "investable alternative to running this system.")
+    secondary_benchmark_symbol: str = "NIFTY50"
+    secondary_benchmark_label: str = "NIFTY 50"
+
+
+# ---------------------------------------------------------------------------
 # ALERT KINDS — the single source of truth for "is this a buy-type alert?"
 #
 # This list is consumed by ai_analyst (which names to deep-dive), paper_trader
@@ -429,3 +558,5 @@ COMPOSITE = CompositeConfig()
 EPISODIC = EpisodicConfig()
 PENNY = PennyConfig()
 NEWS = NewsPressureConfig()
+EVIDENCE = EvidenceConfig()
+GATE = CapitalGateConfig()

@@ -17,6 +17,8 @@ on:
     paths:
       - "multibagger_screener/multibagger_screener/landing.html"
       - "multibagger_screener/multibagger_screener/scripts/build_dashboard.py"
+      - "multibagger_screener/multibagger_screener/scripts/build_landing.py"
+      - "multibagger_screener/multibagger_screener/state/gate.json"
       - "multibagger_screener/multibagger_screener/ai_picks.json"  # local committee push
       - "multibagger_screener/multibagger_screener/journal/analyst_verdicts.csv"  # local analyst push
       - "multibagger_screener/multibagger_screener/daily_alerts.md"
@@ -73,7 +75,12 @@ jobs:
         working-directory: multibagger_screener/multibagger_screener
         run: |
           mkdir -p _site
-          # landing first — static, must always succeed
+          # landing first — it is GENERATED from the committed state files
+          # (gate, regime, surveillance) so its numbers cannot drift from the
+          # system the way the old hand-written page's did. If generation
+          # fails we still publish the last committed copy: the front door is
+          # never blocked.
+          python scripts/build_landing.py || echo "landing regen degraded — publishing committed copy"
           cp landing.html _site/index.html
           # dashboard is best-effort (needs the data cache)
           python scripts/build_dashboard.py && cp dashboard.html _site/dashboard.html \

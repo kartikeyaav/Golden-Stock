@@ -1,7 +1,8 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-07-25 evening** (audit F1 shipped; the fundamentals-cache
-poisoning bug found and fixed; penny screen corrected; local AI jobs revived).
+**Last updated: 2026-07-26** (capital gate PRE-REGISTERED; exit-risk
+surveillance on the main universe; freshness header; stale KPIs corrected;
+dashboard + landing overhauled — see §3Q).
 This is the single "where we are / what's next" doc. For strategy read
 `../../PROJECT_BRIEF.md` (it lives at the git root `files/`, NOT in this
 folder); for the evidence read `VALIDATION_REPORT.md`; for cloud ops read
@@ -1048,6 +1049,112 @@ value in the one file that has to stay trustworthy.
 
 ---
 
+## 3Q. The capital gate, exit risk, and a UI that states its own age (2026-07-26)
+
+Four changes, all driven by one observation: the system had grown six
+information surfaces while the single number it exists to produce — a positive
+forward expectancy — had no threshold, no deadline and no widget.
+
+### The gate is now pre-registered (`CAPITAL_GATE.md`, `config.GATE`)
+
+Written the day BEFORE the first scan that can produce a qualifying signal, so
+the cohort it judges did not exist when the numbers were chosen. **40 validated
+signals, mean `plan_followed_R` ≥ +0.50R, must beat a momentum-quality ETF over
+the same window, ≤55% stop-outs, ≤60% of gains from one trade, by 2026-12-31.**
+A pass authorizes 25% of intended capital, not the account. §8 of that file
+carries the anti-gaming clauses (no post-hoc exclusions, no mid-flight ruler
+swaps, no swapping the benchmark for a weaker one); §9 is the amendment log.
+
+`scripts/gate_status.py` computes the standing into `state/gate.json` and keeps
+**three populations apart**, which is the substantive part:
+
+- **GATE COHORT** — `BUY TRIGGER` + `EPISODIC PIVOT` from 2026-07-25. Currently
+  **0 of 40**; the trigger shipped after the last scan, so the first can arrive
+  Monday 07-27.
+- **LEGACY** — the 150 pre-fix transition alerts, **−0.27R** (plan ruler, sized
+  only). Zero of them were the validated entry (F1). Kept visible, reported
+  apart, never folded in. Judging the strategy by them is as wrong as judging
+  it by the backtest.
+- **EXCLUDED** — `VALIDATED (EXTENDED)` (the live system skips those entries)
+  and unsized signals (the risk engine refuses them). Both measured, neither
+  averaged in.
+
+Note the trap found while building it: applying the closed-or-aged rule to a
+17-day-old journal selects only the stop-outs and reports −1.81R. The gate
+needs that rule; the running read must not use it. Both are computed and
+labelled rather than one being quietly chosen.
+
+### The benchmark is now a pass condition, not a footnote
+
+`MOMENTUM100` (Mirae Nifty MidSmallcap400 Momentum Quality 100 ETF, Yahoo
+`MOM100.NS`, cached back to 2019) refreshes with every price update. Same
+factor exposure as this system, one click, ~0.5%/yr. **Trailing 12m: ETF
++7.6% vs NIFTY −3.7%** — that is the bar. Until the cohort exists the gate
+window is empty, so the card shows trailing 3m/12m context explicitly labelled
+as NOT the test (substituting a friendlier window is what §8 forbids).
+
+### Exit risk on the main universe (`scripts/surveillance_snapshot.py`)
+
+The penny screen has always gated on ASM/GSM/circuit band/settlement series,
+on the argument that you lose in that class because you cannot GET OUT. The
+main 651 were never checked. They are now: **66 of 652 carry a flag**, and the
+first run found them in exactly the places that matter —
+
+- **DIACABS, a live holding, is on a 5% band.** Its stop sits 18% below the
+  last price: **four consecutive limit-down sessions away.** It cannot fill in
+  one move. The drawer now says this in those words.
+- **STLTECH** (alerted within 7 days): ASM + 5% band + BE trade-to-trade.
+- 2 of 4 committee picks flagged (PARAS on ASM); 7 of 61 names alerted in the
+  last week.
+
+**DISPLAY ONLY — it flags, it does not gate.** No matrix has tested
+surveillance as an entry filter, and the evidence lock says a gate needs
+pre-registered evidence. A missing snapshot renders as UNKNOWN, never clean.
+
+### The UI states its own age, and stopped lying about its own numbers
+
+- **Freshness strip** in the header: one pip per moving part, each judged
+  against ITS OWN cadence (a weekly committee at 3 days is calm, a nightly
+  analyst at 3 days is loud). Both AI layers have died silently for ~a week
+  each and on both occasions the page looked completely normal.
+- **The KPI strip was two adoptions stale.** It read +1.67R / 47.4% / −18.5%
+  — sizing-matrix v2 config B — after breadth regime AND the EP class were
+  adopted. Now from `config.EVIDENCE`: **+1.34R / 54.5% / −15.2% / MAR 3.58**
+  (6E COMBINED VCP+EP), with the stressed pair shown underneath instead of
+  hidden in a tooltip, and a carried caveat that the two adoptions were
+  measured separately and their gains are NOT added.
+- **The Market-trend tooltip still said the NIFTY/150-DMA sets position size.**
+  It has not since 2026-07-19. A live line under the chart now names the rule
+  actually in force and tonight's breadth reading.
+- Also fixed: `+1.27R` (superseded cash-basis) in the anticipation note,
+  hardcoded `1.25%`/`₹10L`/`611`/`~320`, "since 2026-07-05" (journal starts
+  07-07), "max 3 dives" (it is 4).
+
+### Visual overhaul + generated landing page
+
+Dashboard: new token set, ambient depth, glass nav, staggered card entrance,
+the gate hero with a progress ring, and motion that respects
+`prefers-reduced-motion`. The old CSS was kept as the base layer — it carries
+a lot of hard-won mobile fixes — and the new work layers on top.
+
+`landing.html` is now **generated** by `scripts/build_landing.py` from the same
+state the dashboard reads. The old hand-written page advertised +1.67R and a
+32.5% CAGR after both were superseded, and its terminal mock still described
+the retired NIFTY regime rule. Positioning moved from "autonomous golden-stock
+hunting" to the only claim that is both true and hard to copy: *the track
+record is the product* — with a "what it refuses" section listing every
+rejected overlay and a "what this is not" section stating the forward record is
+unproven.
+
+**Note for the next editor:** the preview browser throttles `requestAnimationFrame`
+and CSS transitions when the tab is not painting, and custom properties inside
+`@keyframes` did not substitute — an early version of the progress ring sat at
+zero fill while displaying a real number. Ring offsets are now set as static
+attributes with a `setTimeout` nudge. A progress ring that lies is worse than
+one that does not move.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -1138,6 +1245,15 @@ for what shipped.** The live open items are §5 #7 (make the repo private, one
 user action with a Pages caveat) and #5 (`RISK.capital`, user deferred). Then
 Task 3.2 (a pre-registered penny backtest) is the only thing that can move the
 penny screen off "research", and Task 2 (the playground) is user-deferred.
+
+**Added 2026-07-26 (§3Q) — the standing instruction now:** the capital gate is
+registered and OPEN at 0/40. Do not add features until it has a sample. The
+first qualifying signal can arrive on the 07-27 scan; the honest next moves are
+(a) watch that `BUY TRIGGER` actually fires and lands in `entry_signals.csv`,
+(b) §5 #5 and #7 — `RISK.capital` and repo privacy — both of which must be
+closed BEFORE any capital moves, and (c) the one cheap untested matrix cell,
+P4. A trailing-speed test (20-DMA vs the 50-DMA trail on the trading lot,
+Qullamaggie-style) is the other pre-registerable idea worth a run.
 
 **Added 2026-07-26 (§3P):** two new layers are now accruing forward evidence
 and neither may be given weight until it has a number.
@@ -1380,6 +1496,16 @@ tests/test_news_pressure.py   story dedupe + decay + primed threshold (8 pytest 
 tests/test_themes.py          membership traps + heat spread (9 pytest checks)
 analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders (incl. second-order ecosystem research task)
 analyst/PICKS_PROTOCOL.md     committee standing orders (incl. second-order research + analyst-verdict cross-check)
+CAPITAL_GATE.md               THE pre-registration: the threshold that decides real capital, fixed
+                              2026-07-26 before the cohort existed. Amendment log in §9 — never edit silently
+scripts/gate_status.py        computes the gate standing -> state/gate.json; keeps the validated cohort,
+                              the pre-fix legacy cohort and the excluded classes strictly apart
+scripts/surveillance_snapshot.py  ASM/GSM/circuit band/series for the MAIN universe -> state/surveillance.json
+                              (display-only exit risk; a missing snapshot is UNKNOWN, never clean)
+scripts/build_landing.py      generates landing.html from live state — the old hand-written page drifted
+                              two adoptions behind the system it advertised
+tests/test_capital_gate.py    19 checks: cohort isolation, the closed-or-aged rule, unsized exclusion,
+                              concentration/stop guards, benchmark windowing
 CLOUD.md                      GitHub Actions setup + operations (cache design, secrets, Pages, risks)
 .github/workflows/daily.yml   cloud daily pipeline (13:05 UTC Mon-Fri) + Pages publish
 .github/workflows/weekly.yml  cloud weekly refresh (04:30 UTC Sun)

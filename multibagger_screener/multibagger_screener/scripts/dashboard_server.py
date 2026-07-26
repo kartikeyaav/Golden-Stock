@@ -45,13 +45,15 @@ JOBS: dict[str, list[tuple[str, str, list[str]]]] = {
         ("scan", "daily_scan.py", []),
         ("paper book", "paper_trader.py", []),
         ("outcomes", "journal_outcomes.py", []),
+        ("capital gate", "gate_status.py", []),
         ("dashboard", "build_dashboard.py", []),
     ],
     "daily_ai": [
         ("scan", "daily_scan.py", []),
-        ("AI analyst (sonnet, max 3 dives)", "ai_analyst.py", []),
+        ("AI analyst (pooled deep-dives)", "ai_analyst.py", []),
         ("paper book", "paper_trader.py", []),
         ("outcomes", "journal_outcomes.py", []),
+        ("capital gate", "gate_status.py", []),
         ("dashboard", "build_dashboard.py", []),
     ],
     "weekly": [

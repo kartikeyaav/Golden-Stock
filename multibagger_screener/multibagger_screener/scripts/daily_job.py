@@ -26,7 +26,15 @@ def main() -> None:
                                     ("analyst", "ai_analyst.py", False),
                                     ("paper", "paper_trader.py", False),
                                     ("outcomes", "journal_outcomes.py", False),
+                                    # exit-risk flags before the gate + dashboard
+                                    # read them; non-fatal because NSE blocks
+                                    # datacenter IPs from time to time and a
+                                    # missing snapshot means "unknown", not
+                                    # "clean"
+                                    ("surveillance", "surveillance_snapshot.py", False),
+                                    ("gate", "gate_status.py", False),
                                     ("dashboard", "build_dashboard.py", False),
+                                    ("landing", "build_landing.py", False),
                                     ("telegram", "send_telegram.py", False),
                                     ("backup", "backup_push.py", False)]:
             proc = subprocess.run([sys.executable, os.path.join(SCRIPTS, script)],

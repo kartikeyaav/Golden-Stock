@@ -1,0 +1,911 @@
+{
+ "generated": "2026-07-26 12:29",
+ "n_checked": 652,
+ "n_flagged": 66,
+ "asm_total": 195,
+ "syms": {
+  "ACMESOLAR": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "ACUTAAS": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "CPPLUS": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "AEGISLOG": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "AEGISVOPAK": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "ABDL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "BLUEJET": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "CEMPRO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "COHANCE": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "EMCURE": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "EMMVEE": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "GALLANTT": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "HFCL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "IGIL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "KIRLOSENG": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "THELEELA": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "OLAELEC": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "SCHNEIDER": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "TRAVELFOOD": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "WOCKPHARMA": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "ECLERX": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "BAJAJHFL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "ICICIAMC": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "JSWINFRA": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "KALYANKJIL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": null,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "LGEINDIA": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "AXISCADES": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
+  },
+  "AEQUS": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "AKUMS": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "AGL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "APOLLO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "ASTRAMICRO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "ATLANTAELE": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "BALAMINES": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "BBOX": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "CRIZAC": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "CUPID": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "DIACABS": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
+  },
+  "ELLEN": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "EMBDL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "UTLSOLAR": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "GRWRHITECH": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "JAIBALAJI": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "Not normal rolling settlement \u2014 trade-to-trade or SME. Compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
+  "JUSTDIAL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "KRN": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "Not normal rolling settlement \u2014 trade-to-trade or SME. Compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
+  "LLOYDSENGG": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "MSTCLTD": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "MTARTECH": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage IV",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "Not normal rolling settlement \u2014 trade-to-trade or SME. Compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "ASM"
+  },
+  "BECTORFOOD": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "OSWALPUMPS": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "PNGJL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "PARAS": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "PARKHOSPS": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "QPOWER": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "Not normal rolling settlement \u2014 trade-to-trade or SME. Compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
+  "SAATVIKGL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "STYL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "LOTUSDEV": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
+  },
+  "STLTECH": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage IV",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "Not normal rolling settlement \u2014 trade-to-trade or SME. Compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "ASM"
+  },
+  "SUDEEPPHRM": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "SPARC": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "TDPOWERSYS": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "TVSSCS": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "THANGAMAYL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "TRIVENI": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "Not normal rolling settlement \u2014 trade-to-trade or SME. Compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
+  "DBREALTY": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "Not normal rolling settlement \u2014 trade-to-trade or SME. Compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
+  "WEBELSOLAR": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "Additional Surveillance Measure \u2014 the exchange is signalling manipulation or abnormal volatility. 100% margin, no intraday leverage, no pledging."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  }
+ },
+ "note": "Display only. Surveillance has never been tested as an entry filter here, so it flags and does not gate."
+}

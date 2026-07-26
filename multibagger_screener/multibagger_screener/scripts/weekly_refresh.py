@@ -97,7 +97,14 @@ def main() -> None:
     # top-mover capture-recall audit (prices are fresh from step 2) — journals
     # a weekly recall read next to the signal/outcome journals for review
     run_step("capture audit (top-mover recall)", "capture_audit.py", fatal=False)
+    # exit-risk surveillance for the MAIN universe (display only, never a
+    # gate) — the same NSE feeds the penny screen already gates on
+    run_step("exit-risk surveillance (ASM/GSM/band)",
+             "surveillance_snapshot.py", fatal=False)
+    # the pre-registered capital gate, recomputed from the journal
+    run_step("capital gate (CAPITAL_GATE.md)", "gate_status.py", fatal=False)
     run_step("dashboard", "build_dashboard.py", fatal=False)
+    run_step("landing page", "build_landing.py", fatal=False)
 
     print(f"\n{'=' * 60}")
     print(f"WEEKLY REFRESH COMPLETE in {(time.time() - t0) / 60:.1f} min")

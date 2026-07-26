@@ -70,8 +70,22 @@ jobs:
           python scripts/paper_trader.py || echo "paper degraded (non-fatal)"
           python scripts/journal_outcomes.py || echo "outcomes degraded (non-fatal)"
 
-      - name: Build dashboard
-        run: python scripts/build_dashboard.py
+      # exchange surveillance (ASM/GSM/circuit band/series) for the MAIN
+      # universe — display-only exit risk, never a gate. Non-fatal: NSE
+      # sometimes blocks datacenter IPs, and a missing snapshot renders as
+      # UNKNOWN rather than clean.
+      - name: Exit-risk surveillance
+        run: python scripts/surveillance_snapshot.py || echo "surveillance degraded (non-fatal)"
+
+      # the pre-registered capital gate (CAPITAL_GATE.md) — recomputed from
+      # the append-only journal every night
+      - name: Capital gate
+        run: python scripts/gate_status.py || echo "gate degraded (non-fatal)"
+
+      - name: Build dashboard + landing page
+        run: |
+          python scripts/build_dashboard.py
+          python scripts/build_landing.py || echo "landing degraded (non-fatal)"
 
       - name: Telegram (only if configured)
         if: ${{ env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != '' }}
@@ -95,6 +109,7 @@ jobs:
           for p in journal state/tags_state.json state/alert_details.json \
                    state/analyst_health.json state/news_radar.json state/regime.json \
                    state/news_pressure.json state/themes.json \
+                   state/surveillance.json state/gate.json \
                    daily_alerts.md \
                    announcements_archive.csv positions.csv paper_positions.csv; do
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
