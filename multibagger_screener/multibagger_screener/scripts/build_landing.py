@@ -75,7 +75,24 @@ def facts() -> dict:
     for t in tags.values():
         tag_counts[t] = tag_counts.get(t, 0) + 1
 
+    # one cell per watched stock for the hero map, strongest first
+    import csv as _csv
+    rs_by = {}
+    fp = os.path.join(ROOT, "focus_list.csv")
+    if os.path.exists(fp):
+        try:
+            for r in _csv.DictReader(open(fp, encoding="utf-8")):
+                try:
+                    rs_by[r["symbol"]] = float(r["rs_pctile"])
+                except (ValueError, KeyError, TypeError):
+                    pass
+        except OSError:
+            pass
+    cells = sorted(((rs_by.get(sym, -1.0), sym, tag) for sym, tag in tags.items()),
+                   key=lambda x: -x[0])
+
     return {
+        "cells": [[t, round(r, 1) if r >= 0 else None] for r, _s, t in cells],
         "universe": _rows("universe.csv"),
         "watched": len(tags),
         "actionable": tag_counts.get("CONFIRMED", 0) + tag_counts.get("ANTICIPATION", 0),
@@ -125,9 +142,9 @@ def render(f: dict) -> str:
 <meta name="description" content="An autonomous Indian small &amp; mid-cap screener with an append-only forward journal and a capital gate registered before the data existed. Evidence-locked entries, AI research as context only, and every rejected idea kept on the record.">
 <style>
 :root{{
-  --bg:#04060b; --bg2:#070b14; --panel:rgba(15,22,38,.55); --line:rgba(148,163,184,.13);
-  --txt:#e6edf7; --dim:#8b98ad; --mut:#5b6779;
-  --gold:#f5c84c; --gold2:#d4a017; --grn:#34d399; --cyn:#22d3ee; --red:#f87171; --vio:#a78bfa;
+  --bg:#04060a; --bg2:#06090f; --panel:rgba(10,15,23,.62); --line:rgba(148,163,184,.12);
+  --txt:#e9f0f7; --dim:#8c9bb0; --mut:#5d6d83;
+  --gold:#00ff9d; --gold2:#00c47a; --grn:#00ff9d; --cyn:#22d3ee; --red:#ff4d5e; --vio:#b18cff;
   --mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
 }}
 *{{margin:0;padding:0;box-sizing:border-box}}
@@ -205,6 +222,20 @@ h1 .au{{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2
 .gmrow{{display:flex;justify-content:space-between;gap:12px;font-size:12.4px}}
 .gmrow span{{color:var(--mut)}}
 .gmrow b{{font-family:var(--mono);font-weight:700}}
+
+/* ---------- universe map (hero) ---------- */
+.mapcard{{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;
+  background:linear-gradient(180deg,rgba(10,15,23,.95),rgba(6,9,15,.95));
+  box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}}
+.maphead{{display:flex;justify-content:space-between;gap:10px;font:700 9px var(--mono);
+  letter-spacing:.16em;color:var(--mut);margin-bottom:9px}}
+.maphead span:first-child{{color:var(--grn)}}
+.map{{display:grid;grid-template-columns:repeat(auto-fill,minmax(8px,1fr));gap:1.5px}}
+.map i{{aspect-ratio:1;border-radius:1.5px;opacity:0;animation:cellin .45s ease forwards}}
+@keyframes cellin{{to{{opacity:var(--o,1)}}}}
+.maplegend{{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font:600 9px var(--mono);
+  letter-spacing:.11em;color:var(--mut);text-transform:uppercase}}
+.maplegend i{{width:7px;height:7px;border-radius:2px;display:inline-block;margin-right:4px}}
 
 /* ---------- ticker ---------- */
 .ticker{{border-block:1px solid var(--line);background:rgba(6,9,17,.7);overflow:hidden;white-space:nowrap;padding:11px 0;position:relative}}
@@ -329,6 +360,18 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
     </div>
   </div>
 
+  <div>
+  <div class="mapcard">
+    <div class="maphead"><span>UNIVERSE MAP</span><span>{f['watched']} WATCHED · RANKED BY STRENGTH</span></div>
+    <div class="map" id="map"></div>
+    <div class="maplegend">
+      <span><i style="background:#00ff9d"></i>uptrend</span>
+      <span><i style="background:#4d9fff"></i>basing</span>
+      <span><i style="background:#ffb020"></i>extended</span>
+      <span><i style="background:#64748b"></i>neutral</span>
+      <span><i style="background:#ff4d5e"></i>downtrend</span>
+    </div>
+  </div>
   <div class="gatecard">
     <div class="gtop">
       <div class="ring">
@@ -361,6 +404,7 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
       <div class="gmrow"><span>Decision deadline</span>
         <b>{g.get('deadline', '')}{f' · {days}d' if days is not None else ''}</b></div>
     </div>
+  </div>
   </div>
 </div>
 
@@ -588,6 +632,17 @@ document.querySelectorAll('.bcard').forEach(function(c){{
   c.style.setProperty('--mx',(e.clientX-b.left)+'px');
   c.style.setProperty('--my',(e.clientY-b.top)+'px');}});}});
 
+/* universe map: real stages, ranked by relative strength. Cells fade in
+   across ~700ms so the market assembles rather than appears. */
+var CELLS={{cells_json}};
+var CMAP={{CONFIRMED:'#00ff9d',ANTICIPATION:'#4d9fff',EXTENDED:'#ffb020',
+ BROKEN:'#ff4d5e',WATCH:'#64748b'}};
+document.getElementById('map').innerHTML=CELLS.map(function(c,i){{
+ var col=CMAP[c[0]]||'#3a4759', rs=c[1];
+ var o=(rs==null?0.3:0.34+0.66*(rs/100)).toFixed(2);
+ return '<i style="background:'+col+';--o:'+o+';animation-delay:'+Math.round(i/CELLS.length*700)+'ms"></i>';
+}}).join('');
+
 /* ticker — real reads from tonight's state, duplicated for a seamless loop */
 var TK={{ticker_json}};
 document.getElementById('tick').innerHTML=TK.concat(TK).map(function(t){{
@@ -622,7 +677,9 @@ def ticker(f: dict) -> list:
 
 def build() -> None:
     f = facts()
-    html = render(f).replace("{ticker_json}", json.dumps(ticker(f)))
+    html = (render(f)
+            .replace("{ticker_json}", json.dumps(ticker(f)))
+            .replace("{cells_json}", json.dumps(f["cells"], separators=(",", ":"))))
     with open(OUT, "w", encoding="utf-8") as fh:
         fh.write(html)
     print(f"landing -> {OUT}  ({os.path.getsize(OUT) / 1024:.0f} KB)  "

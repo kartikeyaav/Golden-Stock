@@ -1193,14 +1193,14 @@ TEMPLATE = r"""<!DOCTYPE html>
    surfaces that actually read as layers, and ONE accent doing the work
    (green = act). Token names are unchanged from v4 so every existing
    component inherits the new look without being touched. */
-:root{--bg:#080a0f;--bg2:#0a0d13;--panel:#0d1118;--card:#111721;--card2:#171f2b;
---line:#1f2836;--line2:#2c3747;--line3:#3a4759;
---txt:#e9eef5;--dim:#95a2b3;--faint:#68758c;--mut:#5b6779;
---grn:#2ee6a8;--red:#ff6b6b;--amb:#fbbf24;--blu:#5aa2ff;--vio:#a78bfa;
---teal:#5eead4;--ep:#f5c84c;--cyan:#22d3ee;
---grn-dim:#2ee6a81f;--red-dim:#ff6b6b1f;--amb-dim:#fbbf241f;
---r:14px;--r2:10px;--r3:8px;
---sh:0 1px 2px #00000055;--sh2:0 8px 28px #00000070;
+:root{--bg:#04060a;--bg2:#06090f;--panel:#080c13;--card:#0a0f17;--card2:#101722;
+--line:#16202e;--line2:#22303f;--line3:#33445a;
+--txt:#e9f0f7;--dim:#8c9bb0;--faint:#5d6d83;--mut:#4e5d72;
+--grn:#00ff9d;--red:#ff4d5e;--amb:#ffb020;--blu:#4d9fff;--vio:#b18cff;
+--teal:#5eead4;--ep:#ffc23d;--cyan:#22d3ee;
+--grn-dim:#00ff9d18;--red-dim:#ff4d5e18;--amb-dim:#ffb02018;
+--r:6px;--r2:5px;--r3:4px;
+--sh:0 1px 2px #00000066;--sh2:0 10px 34px #00000080;
 --glow:0 0 24px -6px;
 --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
 --ease:cubic-bezier(.2,.8,.2,1)}
@@ -1268,7 +1268,10 @@ margin-top:6px;max-height:180px;overflow-y:auto;font:10px/1.5 ui-monospace,Conso
 white-space:pre-wrap;word-break:break-all;color:var(--dim)}
 @keyframes runpulse{50%{opacity:.45}}
 .runlive{color:var(--amb);animation:runpulse 1.2s infinite}
-main{margin-left:212px;flex:1;padding:20px 28px 40px;max-width:1320px}
+/* min-width:0 is load-bearing: as a flex child, main defaults to
+   min-width:auto and cannot shrink below its widest descendant, so one
+   unwrapped strip (the health pips) pushed the whole page 250px wide */
+main{margin-left:212px;flex:1;min-width:0;padding:20px 28px 40px;max-width:1320px}
 .badge{padding:4px 10px;border-radius:6px;font-size:10.5px;font-weight:600;letter-spacing:.3px;
 display:inline-flex;align-items:center;gap:6px}
 .b-amb{background:#fbbf2412;color:var(--amb);border:1px solid #fbbf2438}
@@ -1638,7 +1641,8 @@ td,th{padding:5px 6px}
 /* phones: drop low-value columns so the decision columns fit without
    sideways scrolling — the drawer always carries the full detail */
 #actionable th:nth-child(5),#actionable td:nth-child(5),
-#actionable th:nth-child(7),#actionable td:nth-child(7){display:none}          /* AI view · Alerted (Price added at col 3) */
+#actionable th:nth-child(7),#actionable td:nth-child(7),
+#actionable th:nth-child(8),#actionable td:nth-child(8){display:none}          /* AI view · Alerted · 60d spark */
 #actionable .mono{font-size:10px;white-space:nowrap}
 #actionable .sym{font-size:11px}
 #tbl td:first-child{font-size:11px;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1674,6 +1678,149 @@ td,th{padding:5px 6px}
 .papertbl td:nth-child(2){max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sbar{grid-template-columns:1fr 56px 28px;gap:8px;font-size:11.5px}
 .distkey{grid-template-columns:1fr}}
+
+/* ==================================================================
+   v6 TERMINAL — the visual rebuild.
+   v5 was a polished admin panel: prose in the hero, flat equal-weight
+   grey boxes, no market visualisation anywhere above the fold. A trading
+   desk reads the opposite way — dense numerics, monospace everywhere,
+   high contrast on near-black, and the market itself drawn rather than
+   described. These rules come last so they win over the v4 card styling.
+   ================================================================== */
+
+/* --- panels are terminal windows, not floating cards ----------------- */
+.card{background:linear-gradient(180deg,#ffffff04,transparent 60px),var(--card);
+ border:1px solid var(--line);border-radius:var(--r);padding:0;overflow:visible;
+ box-shadow:0 1px 0 #ffffff06 inset,var(--sh)}
+/* every h2 becomes the window's title bar */
+.card>h2,.card>h2:first-child{margin:0;padding:9px 14px;border-bottom:1px solid var(--line);
+ background:linear-gradient(180deg,#ffffff07,#ffffff02);border-radius:var(--r) var(--r) 0 0;
+ font:700 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#b8c6d6}
+.card>h2::before{width:2px;height:11px;border-radius:0;background:var(--grn);box-shadow:0 0 10px var(--grn)}
+/* the body needs the padding the card gave up */
+.card>*:not(h2){margin-left:14px;margin-right:14px}
+.card>*:not(h2):last-child{margin-bottom:14px}
+.card>h2+*{margin-top:13px}
+.card>div[id]:only-of-type{margin-bottom:14px}
+.actcard{border-color:#00ff9d33;background:linear-gradient(180deg,#00ff9d0a,transparent 90px),var(--card)}
+.actcard>h2{color:var(--grn)}
+
+/* --- LED status dot, used across panels ------------------------------ */
+.led{width:6px;height:6px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.led.on{background:var(--grn);box-shadow:0 0 8px var(--grn);animation:livepulse 2.4s infinite}
+.led.wn{background:var(--amb);box-shadow:0 0 8px var(--amb)}
+.led.no{background:var(--red);box-shadow:0 0 8px var(--red);animation:livepulse 1.3s infinite}
+.led.off{background:var(--mut)}
+
+/* --- ticker tape ------------------------------------------------------ */
+.tape{position:relative;overflow:hidden;white-space:nowrap;border:1px solid var(--line);
+ border-radius:var(--r);background:linear-gradient(90deg,#0b1119,#080c13);margin-bottom:12px;
+ height:30px;display:flex;align-items:center}
+.tape::before,.tape::after{content:"";position:absolute;top:0;bottom:0;width:60px;z-index:2;pointer-events:none}
+.tape::before{left:0;background:linear-gradient(90deg,#080c13,transparent)}
+.tape::after{right:0;background:linear-gradient(270deg,#080c13,transparent)}
+.tapein{display:inline-block;animation:tapescroll 64s linear infinite;will-change:transform}
+.tape:hover .tapein{animation-play-state:paused}
+@keyframes tapescroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{display:inline-flex;align-items:center;gap:8px;margin:0 22px;font:600 11px var(--mono);
+ letter-spacing:.04em;color:var(--dim)}
+.tk b{color:#c9d6e5;font-weight:700}
+.tk .up{color:var(--grn)}.tk .dn{color:var(--red)}.tk .fl{color:var(--amb)}
+
+/* --- hero row: three instrument panels -------------------------------- */
+.hero3{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.9fr) minmax(0,.85fr);
+ gap:12px;margin-bottom:12px}
+.inst{position:relative;overflow:hidden}
+.instbody{padding:14px}
+.bignum{font:700 40px/1 var(--mono);letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.lbl{font:600 9.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+
+/* --- radial gauges (gate progress, market breadth) -------------------- */
+.gauge{position:relative;display:grid;place-items:center}
+.gauge svg{display:block;overflow:visible}
+.gauge .gtr{stroke:#ffffff0d}
+.gauge .gfl{stroke-linecap:round;transition:stroke-dashoffset 1.6s var(--ease) .2s;
+ filter:drop-shadow(0 0 6px currentColor)}
+.gaugetxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1}
+.gaugetxt b{font:700 30px/1 var(--mono);letter-spacing:-1.5px}
+.gaugetxt s{text-decoration:none;font:600 9px var(--mono);letter-spacing:.14em;color:var(--faint);margin-top:5px;text-transform:uppercase}
+
+/* --- condition LEDs (gate) -------------------------------------------- */
+.leds{display:grid;gap:5px;margin-top:2px}
+.ldrow{display:grid;grid-template-columns:8px 1fr auto;gap:8px;align-items:center;
+ font:10.5px var(--mono);color:var(--dim);padding:4.5px 8px;border-radius:4px;background:#ffffff04;
+ border:1px solid var(--line);cursor:help;transition:.15s;white-space:nowrap;overflow:hidden}
+.ldrow em{overflow:hidden;text-overflow:ellipsis;letter-spacing:.09em;text-transform:uppercase;font-size:9.5px}
+.ldrow span{font-size:9px;letter-spacing:.1em}
+.ldrow:hover{background:#ffffff09;border-color:var(--line2)}
+.ldrow em{font-style:normal;color:#c2cfdd;letter-spacing:.02em}
+.ldrow span{color:var(--faint);font-size:10px;text-align:right}
+
+/* --- UNIVERSE HEATMAP — the signature visual -------------------------
+   Every watched stock as one cell, ranked by relative strength, coloured
+   by chart stage. It is the market on one screen: where the strength is,
+   how broad it is, and whether tonight's actionable names sit at the
+   strong end or are scattered. Clicking a cell opens the same drawer as
+   every other surface. */
+.hmwrap{padding:0 14px 14px}
+.hm{display:grid;grid-template-columns:repeat(auto-fill,minmax(9px,1fr));gap:1.5px;margin-top:4px}
+.hc{aspect-ratio:1;border-radius:2px;cursor:pointer;position:relative;
+ opacity:0;animation:hcin .5s var(--ease) forwards;
+ transition:transform .12s var(--ease),box-shadow .12s,outline-color .12s;
+ outline:1px solid transparent;outline-offset:0}
+@keyframes hcin{to{opacity:1}}
+.hc:hover{transform:scale(3);z-index:5;outline-color:#fff;box-shadow:0 0 0 1px #000,0 6px 18px #000c}
+/* a hit tonight gets a ring so it is findable inside 600 cells */
+.hc.sig{outline-color:#ffffffb0;box-shadow:0 0 7px #00ff9daa}
+.hmlegend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:11px;
+ font:600 9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.hmlegend i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:-1px}
+.hmaxis{display:flex;justify-content:space-between;font:600 9px var(--mono);
+ letter-spacing:.12em;color:var(--mut);text-transform:uppercase;margin-bottom:5px}
+
+/* --- dense data tables ------------------------------------------------ */
+table{font-size:12px}
+th{font:700 9.5px var(--mono);letter-spacing:.12em;color:var(--faint);
+ background:#0b1018;border-bottom:1px solid var(--line2);padding:7px 9px}
+td{padding:6px 9px;border-bottom:1px solid #101825}
+tbody tr:hover{background:#00ff9d08;box-shadow:inset 2px 0 0 var(--grn)}
+.sym{font-family:var(--mono);font-weight:700;letter-spacing:.02em}
+.dochip{border-radius:3px;font:700 9.5px var(--mono);letter-spacing:.08em;padding:3px 7px}
+.pill{border-radius:3px;font:700 9.5px var(--mono);letter-spacing:.07em}
+.vchip{border-radius:3px;font:700 9px var(--mono)}
+
+/* --- KPI strip as instrument readouts --------------------------------- */
+.kpis{background:var(--card);border-radius:var(--r);padding:0;overflow:hidden;
+ grid-template-columns:repeat(auto-fit,minmax(148px,1fr))}
+.kpi{padding:13px 16px;border-left:1px solid var(--line);position:relative}
+.kpi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+ background:linear-gradient(90deg,var(--grn),transparent);opacity:.28}
+.kpi b{font-size:25px;letter-spacing:-1.2px}
+.kpi>span{font:600 9.5px var(--mono);letter-spacing:.14em}
+.kpi small{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em}
+
+/* --- nav: instrument rail --------------------------------------------- */
+nav{background:linear-gradient(180deg,#080c13,#06090f)}
+.navbtn{border-radius:4px;font:600 12px Inter;letter-spacing:.01em}
+.navbtn.on{background:linear-gradient(90deg,#00ff9d16,transparent)}
+.navbtn.on svg{filter:drop-shadow(0 0 5px var(--grn))}
+nav h1{font:800 14px var(--mono);letter-spacing:.06em}
+.searchhint{border-radius:4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em}
+.runbtn{border-radius:4px;font:600 11px var(--mono);letter-spacing:.06em}
+.runhead{font-family:var(--mono);letter-spacing:.18em}
+
+/* --- misc terminal polish --------------------------------------------- */
+.badge{border-radius:4px;font:700 10px var(--mono);letter-spacing:.1em}
+.hpip{border-radius:4px;font-size:9.5px;letter-spacing:.06em}
+.chip{border-radius:4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em}
+.axis{font-family:var(--mono);letter-spacing:.08em}
+.mini{border-radius:5px;background:#0b1018}
+.drawer{background:#070b11f8}
+.gate{border-color:#00ff9d2e}
+@media(max-width:1100px){.hero3{grid-template-columns:1fr 1fr}
+ .hero3>.inst:first-child{grid-column:1/-1}}
+@media(max-width:700px){.hero3{grid-template-columns:1fr}
+ .hm{grid-template-columns:repeat(auto-fill,minmax(11px,1fr))}}
 </style></head><body>
 <nav><h1>Golden<span>Stock</span></h1>
 <div class="searchhint" onclick="openPalette()"><span>Search stocks&hellip;</span><kbd>Ctrl K</kbd></div>
@@ -1697,13 +1844,28 @@ td,th{padding:5px 6px}
 <div class="top"><div id="badges"></div><div class="health" id="healthstrip"></div>
 <div class="dim" style="font-size:12px" id="gen"></div></div>
 
+<!-- live tape: real reads from tonight's state, not decoration -->
+<div class="tape"><div class="tapein" id="tapein"></div></div>
+
 <div class="tab on" id="overview">
-  <!-- THE GATE. Everything else on this page is an input to this number:
-       the alerts are candidates, the AI layers are curation, the penny and
-       theme surfaces are research. This card answers the only question the
-       project exists to answer, against thresholds fixed before the cohort
-       it judges existed (CAPITAL_GATE.md). -->
-  <div class="card gate" id="gatecard" style="display:none"></div>
+  <!-- INSTRUMENT ROW. The gate is the number the whole system exists to
+       produce; breadth is the rule that sizes every trade tonight; the third
+       panel is what the scan actually found. Three gauges instead of three
+       paragraphs. -->
+  <div class="hero3">
+    <div class="card inst gate" id="gatecard" style="display:none"></div>
+    <div class="card inst" id="marketinst"></div>
+    <div class="card inst" id="tonightinst"></div>
+  </div>
+  <!-- the market on one screen: every watched stock, ranked by relative
+       strength, coloured by chart stage -->
+  <div class="card" id="heatcard">
+    <h2>Universe map<span class="info" data-tip="Every stock the scan watches tonight, one cell each, ranked left-to-right and top-to-bottom by relative strength — strongest first. Colour is the chart stage. A white ring marks a name that fired a buy-type alert in the last seven days, so you can see instantly whether tonight's signals sit at the strong end of the market or are scattered through the middle. Hover any cell for the name; click to open it.">?</span>
+      <span class="axis" style="margin-left:auto" id="hmmeta"></span></h2>
+    <div class="hmwrap"><div class="hmaxis"><span>◄ strongest relative strength</span><span>weakest ►</span></div>
+      <div class="hm" id="heatmap"></div>
+      <div class="hmlegend" id="hmlegend"></div></div>
+  </div>
   <div class="card actcard"><h2 style="color:var(--grn)">Actionable now<span class="info" data-tip="The only panel you act from, covering the last 7 days of buy signals. BUY NOW = the backtested trigger fired (pivot break on ≥1.5× volume). MOMENTUM BUY = an episodic-pivot gap (≥8% on ≥3× volume). Both are real buys — open the drawer for the sized plan. WATCH = base ready, no breakout yet. WEAK = uptrend, no proven trigger. Resolved rows need nothing.">?</span></h2>
     <div id="actionable"></div></div>
   <details class="card legend" id="legend"><summary>Legend &mdash; a state is not a buy</summary><div class="lbody" id="legendbody"></div></details>
@@ -1941,6 +2103,127 @@ $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HAL
  el.innerHTML=H.map(h=>`<span class="hpip ${h.state}" data-tip="${esc(h.label+' — last ran '+ago(h.age)+' ago. '+(h.detail||'')+'. '+h.tip)}">
   <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(h.age)}</s></span>`).join('');})();
 
+/* ---- instrument helpers ------------------------------------------------
+   One radial-gauge factory for every dial on the page, so the gate and the
+   breadth meter cannot drift apart visually. Offsets are set with setTimeout
+   rather than rAF: a background tab never fires rAF, and a dial frozen at
+   zero while printing a real number is a lying instrument. */
+let _gid=0;
+function gauge(pct,color,big,small,size){size=size||124;
+ const r=(size-14)/2,C=2*Math.PI*r,id='gg'+(++_gid);
+ const off=C*(1-Math.max(0,Math.min(100,pct))/100);
+ setTimeout(()=>{const e=document.getElementById(id);if(e)e.setAttribute('stroke-dashoffset',off.toFixed(1));},70);
+ return `<div class="gauge" style="width:${size}px;height:${size}px">
+  <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform:rotate(-90deg)">
+   <circle class="gtr" cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke-width="8"/>
+   <circle class="gfl" id="${id}" cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}"
+    stroke-width="8" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" style="color:${color}"/>
+  </svg><div class="gaugetxt"><b style="color:${color}">${big}</b><s>${small}</s></div></div>`;}
+
+/* ---- ticker tape ------------------------------------------------------
+   Real reads only. A tape of invented numbers on a system whose whole claim
+   is an auditable record would be the one unforgivable decoration. */
+(function(){const el=$('#tapein');if(!el)return;
+ const G=D.gate||{},c=G.cohort||{},run=G.cohort_running||{},leg=G.legacy||{};
+ const bm=((G.benchmark_context||{})['12m']||{});
+ const tags=D.tags||{};const need=(G.required||{}).min_signals||40;
+ const mv=(D.actionable||[]).filter(a=>a.chg!=null).sort((x,y)=>y.chg-x.chg);
+ const items=[
+  ['GATE',(c.n_qualifying||0)+'/'+need+' BANKED',(c.n_qualifying||0)?'up':'fl'],
+  ['REGIME',D.breadth_pct!=null?'BREADTH '+D.breadth_pct+'%':'—',D.defensive?'dn':'up'],
+  ['SIZE',D.defensive?'HALF':'FULL',D.defensive?'dn':'up'],
+  ['UPTREND',(tags.CONFIRMED||0)+' NAMES','up'],
+  ['BASING',(tags.ANTICIPATION||0)+' NAMES','fl'],
+  ['BROKEN',(tags.BROKEN||0)+' NAMES','dn'],
+  ['WATCHED',(D.rows||[]).length+' STOCKS','fl'],
+  ['SIGNALS',(D.journal_total||0)+' JOURNALED','fl'],
+  ['RUNNING R',run.expectancy_r!=null?(run.expectancy_r>0?'+':'')+run.expectancy_r+'R':'NO DATA',
+   (run.expectancy_r||0)>0?'up':'fl'],
+  ['LEGACY R',leg.expectancy_r!=null?(leg.expectancy_r>0?'+':'')+leg.expectancy_r+'R':'—',
+   (leg.expectancy_r||0)>0?'up':'dn'],
+  ['MOM100 12M',(bm.bench||{}).ret_pct!=null?((bm.bench.ret_pct>0?'+':'')+bm.bench.ret_pct+'%'):'—',
+   ((bm.bench||{}).ret_pct||0)>0?'up':'dn'],
+  ['NIFTY 12M',(bm.bench2||{}).ret_pct!=null?((bm.bench2.ret_pct>0?'+':'')+bm.bench2.ret_pct+'%'):'—',
+   ((bm.bench2||{}).ret_pct||0)>0?'up':'dn'],
+  ['EXIT RISK',Object.keys(D.surv||{}).length+' FLAGGED','dn'],
+  ['RADAR',((D.radar||{}).hits||[]).length+' FILINGS','fl'],
+  ['CAPITAL','0 DEPLOYED','fl'],
+ ];
+ mv.slice(0,4).forEach(a=>items.push([a.sym,(a.chg>0?'+':'')+a.chg+'%',a.chg>0?'up':'dn']));
+ const html=items.map(t=>`<span class="tk"><b>${esc(t[0])}</b><span class="${t[2]}">${esc(t[1])}</span></span>`).join('');
+ el.innerHTML=html+html;})();
+
+/* ---- market instrument: the rule that sizes tonight's trades ---------- */
+(function(){const el=$('#marketinst');if(!el)return;
+ const b=D.breadth_pct,def=D.defensive;
+ const col=b==null?'var(--mut)':def?'var(--amb)':'var(--grn)';
+ const n=D.nifty||[];const last=n.length?n[n.length-1][1]:null;
+ const first=n.length>60?n[n.length-60][1]:(n.length?n[0][1]:null);
+ const chg=(last&&first)?((last/first-1)*100):null;
+ el.innerHTML=`<h2>Market regime<span class="info" data-tip="The rule that decides position size tonight. Since 2026-07-19 it is universe BREADTH — the share of watched stocks trading above their own 200-day average. Below 50% every plan is halved. This replaced a NIFTY/150-DMA switch after the breadth rule won on return, drawdown and chop survivability in a pre-registered matrix. The NIFTY line below is context, not the rule.">?</span></h2>
+ <div class="instbody" style="display:flex;gap:14px;align-items:center">
+  ${gauge(b==null?0:b,col,(b==null?'—':b+'%'),'above 200-DMA',118)}
+  <div style="flex:1;min-width:0">
+   <div class="lbl">position size</div>
+   <div style="font:700 21px/1.1 var(--mono);color:${col};margin:4px 0 2px;letter-spacing:-.5px">
+    ${def?'HALF':'FULL'}</div>
+   <div class="axis" style="line-height:1.5">${b==null?'breadth snapshot missing — NIFTY/150 fallback'
+     :def?'breadth under the 50% line':'breadth above the 50% line'}</div>
+   <div style="margin-top:9px">${spark((D.nifty||[]).map(p=>p[1]).slice(-90),150,34)}</div>
+   <div class="axis">NIFTY 50 · 90d ${chg!=null?`<span style="color:${chg>0?'var(--grn)':'var(--red)'}">${chg>0?'+':''}${chg.toFixed(1)}%</span>`:''}</div>
+  </div></div>`;})();
+
+/* ---- tonight instrument: what the scan actually found ----------------- */
+(function(){const el=$('#tonightinst');if(!el)return;
+ const A=D.actionable||[];
+ const buys=A.filter(a=>a.status==='ACTIONABLE'&&(a.dokind==='act'||a.dokind==='ep')).length;
+ const watch=A.filter(a=>a.status==='ACTIONABLE'&&a.dokind==='watch').length;
+ const weak=A.filter(a=>a.status==='ACTIONABLE'&&a.dokind==='weak').length;
+ const tags=D.tags||{};const tot=Object.values(tags).reduce((s,v)=>s+v,0)||1;
+ const bar=(n,c,t)=>`<div style="flex:1"><div style="height:4px;border-radius:2px;background:#ffffff0d;overflow:hidden">
+   <div style="height:4px;width:${Math.min(100,n/Math.max(1,tot)*100*8)}%;background:${c};box-shadow:0 0 8px ${c}"></div></div>
+   <div class="axis" style="margin-top:5px">${t}</div><div style="font:700 17px var(--mono);color:${c};letter-spacing:-.5px">${n}</div></div>`;
+ el.innerHTML=`<h2>Tonight's scan<span class="info" data-tip="What the mechanical layer found on the last completed session. BUY = the validated trigger fired (pivot breakout on volume, or an episodic-pivot gap) — the only rows that are actually buys. WATCH = a base is ready but the pivot has not cleared. WEAK = in an uptrend with no proven trigger. The Actionable panel below is where you act.">?</span></h2>
+ <div class="instbody">
+  <div style="display:flex;align-items:baseline;gap:9px">
+   <span class="bignum" style="color:${buys?'var(--grn)':'var(--mut)'}">${buys}</span>
+   <span class="lbl" style="color:${buys?'var(--grn)':'var(--faint)'}">buy trigger${buys===1?'':'s'} tonight</span></div>
+  <div class="axis" style="margin:6px 0 14px;line-height:1.5">${buys?'Open the Actionable panel for the sized plan.':'Nothing requires action. Silence is the system working.'}</div>
+  <div style="display:flex;gap:10px">${bar(watch,'var(--amb)','awaiting pivot')}${bar(weak,'var(--faint)','weak trend')}${bar((D.radar||{}).hits?D.radar.hits.length:0,'var(--vio)','filings')}</div>
+ </div>`;})();
+
+/* ---- UNIVERSE HEATMAP -------------------------------------------------
+   615 stocks as one picture, ranked by relative strength and coloured by
+   chart stage. This is the panel the old design was missing entirely: it
+   answers "where is the strength, how broad is it, and are tonight's
+   signals in it?" before you read a single row. */
+(function(){const el=$('#heatmap');if(!el)return;
+ const rows=(D.rows||[]).slice();
+ if(!rows.length){el.innerHTML='<div class="quiet">No universe data.</div>';return;}
+ /* rank: RS percentile where we have it, conviction as the fallback, so a
+    non-focus name still lands somewhere honest rather than at the end */
+ const key=r=>r.rs!=null?r.rs:(r.score!=null?r.score*0.9:-1);
+ rows.sort((a,b)=>key(b)-key(a));
+ const sig=new Set((D.actionable||[]).map(a=>a.sym));
+ const held=new Set((D.positions||[]).map(p=>p.sym));
+ const N=rows.length;
+ el.innerHTML=rows.map((r,i)=>{
+  const c=TC[r.tag]||'#3a4759';
+  /* strength drives opacity so the grid reads as a gradient even within one
+     colour — the shape of the market, not just its composition */
+  const k=key(r);const op=k<0?0.28:0.34+0.66*(k/100);
+  const t=`${r.sym} · ${tl(r.tag)||'untagged'}${r.rs!=null?' · RS '+Math.round(r.rs):''}`
+   +`${r.score!=null?' · conviction '+r.score:''}${r.close!=null?' · ₹'+r.close:''}`
+   +`${held.has(r.sym)?' · HELD':''}${sig.has(r.sym)?' · alerted in the last 7 days':''}`;
+  return `<i class="hc${sig.has(r.sym)?' sig':''}" data-s="${r.sym}" title="${esc(t)}"
+   style="background:${c};opacity:${op.toFixed(2)};animation-delay:${(i/N*700).toFixed(0)}ms"></i>`;}).join('');
+ el.onclick=e=>{const c=e.target.closest('.hc');if(c)openDrawer(c.dataset.s);};
+ const counts={};rows.forEach(r=>{counts[r.tag]=(counts[r.tag]||0)+1;});
+ $('#hmlegend').innerHTML=(VOCAB.tagOrder||Object.keys(TC)).filter(t=>counts[t])
+  .map(t=>`<span data-tip="${esc(tlt(t))}"><i style="background:${TC[t]}"></i>${esc(tl(t))} ${counts[t]}</span>`).join('')
+  +`<span style="margin-left:auto"><i style="background:transparent;outline:1px solid #fff;box-shadow:0 0 6px #00ff9d"></i>alerted in 7d ${sig.size}</span>`;
+ $('#hmmeta').textContent=N+' watched · ranked by relative strength';})();
+
 /* ---- THE CAPITAL GATE -------------------------------------------------
    The number the system exists to produce. Pre-registered 2026-07-26 in
    CAPITAL_GATE.md, before the cohort it judges existed — which is the only
@@ -1956,99 +2239,35 @@ $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HAL
 (function(){const G=D.gate;const el=$('#gatecard');if(!G||!el||G.verdict==='UNKNOWN')return;
 el.style.display='';
 const V=G.verdict;
-const col=V==='PASSED'?'var(--grn)':V==='FAILED'?'var(--red)':'var(--blu)';
+const col=V==='PASSED'?'var(--grn)':V==='FAILED'?'var(--red)':'var(--cyan)';
 el.classList.add(V==='PASSED'?'g-pass':V==='FAILED'?'g-fail':'g-accruing');
 const c=G.cohort||{},run=G.cohort_running||{},leg=G.legacy||{},req=G.required||{};
 const need=req.min_signals||40,have=c.n_qualifying||0;
-const pct=Math.min(100,have/need*100);
-const RAD=58,CIRC=2*Math.PI*RAD;
-const CONDN={sample:'Sample size',expectancy:'Expectancy clears the bar',
- beats_benchmark:'Beats the buy-it-instead ETF',hit_stop:'Stop-outs under control',
- concentration:'Not one lucky trade'};
-const conds=Object.entries(G.conditions||{}).map(([k,v])=>{
- const cls=v.ok===true?'y':v.ok===false?'n':'q';
- const mark=v.ok===true?'✓':v.ok===false?'✕':'?';
- return `<div class="cond ${cls}"><i>${mark}</i><div><b>${CONDN[k]||k}</b><span>${esc(v.detail)}</span></div></div>`;}).join('');
-
-/* benchmark race — signed bars around a centre line, all three scaled to
-   the same axis so the comparison is visual, not arithmetic */
-const B=G.benchmark||{},B2=G.benchmark2||{};
-const series=[['This system',run.signal_basis_return_pct,'var(--grn)',
-   'Every qualifying signal taken at '+(D.risk_pct||1.25)+'% risk, summed in R and converted to percent. A SIGNAL basis, not a portfolio: no 12-slot cap, no compounding, no correlation between names.'],
- [B.label||'Momentum ETF',B.ret_pct,'var(--vio)',(B.note||'')+' Traded price, so tracking error and fees are included — this is what you would actually have earned.'],
- [B2.label||'NIFTY 50',B2.ret_pct,'var(--dim)','The broad-market reference.']];
-const vals=series.map(s=>s[1]).filter(v=>v!=null);
-const mx=Math.max(0.5,...vals.map(v=>Math.abs(v)));
-/* Until the cohort exists there is no gate window and therefore nothing to
-   race. Show the comparator's trailing numbers instead — CONTEXT, labelled
-   as such — because a benchmark that disappears from the page is a benchmark
-   that quietly stops being checked. These lookbacks are not condition 2. */
-const CTX=G.benchmark_context||{};
-const ctxRow=(k,lbl)=>{const c=CTX[k];if(!c||c.bench.ret_pct==null)return'';
- const f=(v,c2)=>v==null?'<span class="dim">—</span>':`<b style="color:${v>0?'var(--grn)':v<0?'var(--red)':'var(--dim)'}">${v>0?'+':''}${v.toFixed(1)}%</b>`;
- return `<div style="display:flex;gap:18px;font-size:12.2px;margin:5px 0">
-  <span class="dim" style="width:64px">${lbl}</span>
-  <span style="color:var(--vio)">${esc(B.label||'ETF')} ${f(c.bench.ret_pct)}</span>
-  <span class="dim">${esc(B2.label||'NIFTY')} ${f(c.bench2.ret_pct)}</span></div>`;};
-const ctxBlock=(!vals.length&&(CTX['12m']||{}).bench)?`<div class="race">
- <div class="axis" style="margin-bottom:8px">WHAT YOU ARE COMPETING WITH
-  <span class="info" data-tip="Trailing performance of the comparator, shown so it stays visible while the cohort accrues. This is CONTEXT — condition 2 of the gate compares the system against this ETF over the COHORT's own window, which does not exist yet. Reading a friendlier window as the test is exactly what the pre-registration forbids.">?</span></div>
- ${ctxRow('3m','3 months')}${ctxRow('12m','12 months')}
- <div class="axis" style="margin-top:7px;line-height:1.55">A momentum-quality ETF is one click and about 0.5% a year. The gate's own comparison starts the day the first validated signal does.</div>
-</div>`:'';
-const race=vals.length?`<div class="race">
- <div class="axis" style="margin-bottom:8px">FORWARD RETURN SINCE ${esc((B.from||G.registered||'').slice(0,10))} — SYSTEM vs THE THINGS YOU COULD HAVE BOUGHT INSTEAD</div>
- ${series.map(([n,v,c2,tip])=>{
-   if(v==null)return `<div class="rrow"><span class="rname"><i style="background:${c2}"></i>${esc(n)}</span><span class="rtrack"></span><span class="rval dim">—</span></div>`;
-   const w=Math.abs(v)/mx*50;const left=v>=0?50:50-w;
-   return `<div class="rrow"><span class="rname" data-tip="${esc(tip)}"><i style="background:${c2}"></i>${esc(n)}</span>
-   <span class="rtrack"><span class="rfill" style="left:${left}%;width:${w}%;background:${c2};opacity:.85"></span></span>
-   <span class="rval" style="color:${v>0?'var(--grn)':v<0?'var(--red)':'var(--dim)'}">${v>0?'+':''}${v.toFixed(1)}%</span></div>`}).join('')}
- <div class="axis" style="margin-top:7px;line-height:1.55">A momentum-quality ETF is one click and about 0.5% a year. Condition 2 of the gate is that it must lose &mdash; if it wins, the rational allocation is the ETF.</div>
- </div>`:'';
-
-const headline=V==='PASSED'?'The forward record cleared the pre-registered bar.'
- :V==='FAILED'?'The forward record did not clear the bar. Capital stays at zero.'
- :have===0?'No qualifying signals yet — the record starts here.'
- :'Accruing evidence. Nothing is decided until the sample arrives.';
-const sub=V==='ACCRUING'
- ?`The backtest is not evidence about the future and this system has never yet demonstrated its validated entry live. ${esc(G.cohort_definition||'')} A pass at ${need} signals authorizes <b>${req.pass_capital_pct}% of intended capital</b> &mdash; not the account.`
- :esc(G.cohort_definition||'');
-
-el.innerHTML=`<div class="gwrap">
- <div class="gring">
-  <svg width="132" height="132" viewBox="0 0 132 132">
-   <circle class="gtrack" cx="66" cy="66" r="${RAD}" fill="none" stroke-width="9"/>
-   <circle class="gbar" cx="66" cy="66" r="${RAD}" fill="none" stroke="${col}" stroke-width="9"
-    stroke-dasharray="${CIRC.toFixed(1)}" stroke-dashoffset="${CIRC.toFixed(1)}" id="gbar"/>
-  </svg>
-  <div class="gringtxt"><b style="color:${col}">${have}<span style="color:var(--faint);font-size:15px">/${need}</span></b>
-   <span>signals banked</span></div>
+const CONDN={sample:'Sample',expectancy:'Expectancy',beats_benchmark:'Beats ETF',
+ hit_stop:'Stop-outs',concentration:'Concentration'};
+const leds=Object.entries(G.conditions||{}).map(([k,v])=>{
+ const cls=v.ok===true?'on':v.ok===false?'no':'off';
+ return `<div class="ldrow" data-tip="${esc(v.detail)}"><i class="led ${cls}"></i>
+  <em>${CONDN[k]||k}</em><span>${v.ok===true?'PASS':v.ok===false?'FAIL':'PENDING'}</span></div>`;}).join('');
+el.innerHTML=`<h2 style="color:${col}">Capital gate
+ <span class="info" data-tip="The pre-registered forward test that decides whether this system gets real money. Every threshold was fixed on ${esc(G.registered||'')}, BEFORE a single qualifying signal existed — which is the only thing that makes it a test rather than a story told afterwards. Cohort: ${esc(G.cohort_definition||'')} A pass authorizes ${req.pass_capital_pct}% of intended capital, not the account. Full document: CAPITAL_GATE.md.">?</span>
+ <span class="axis" style="margin-left:auto;color:${col}">${V==='ACCRUING'?'OPEN':V}</span></h2>
+<div class="instbody" style="display:flex;gap:16px;align-items:flex-start">
+ <div style="flex:0 0 auto">
+  ${gauge(have/need*100,col,have+'<span style="color:var(--mut);font-size:16px">/'+need+'</span>','banked',124)}
+  <div class="axis" style="text-align:center;margin-top:8px;line-height:1.5">
+   ${G.days_to_deadline>0?G.days_to_deadline+'d to '+esc(G.deadline):'deadline passed'}</div>
  </div>
- <div>
-  <span class="gverdict" style="color:${col};border-color:${col}55;background:${col}12">
-   ${V==='ACCRUING'?'GATE OPEN · ACCRUING':V==='PASSED'?'GATE PASSED':'GATE FAILED'}</span>
-  <span class="axis" style="margin-left:9px">registered ${esc(G.registered||'')} · ${G.days_to_deadline>0?G.days_to_deadline+' days to '+esc(G.deadline):'deadline '+esc(G.deadline)+' passed'}
-   <span class="info" data-tip="Every threshold was fixed on 2026-07-26, before a single qualifying signal existed. If the sample has not arrived by ${esc(G.deadline)} that is a finding about how often the trigger fires — not a pass, and not a reason to lower the bar.">?</span></span>
-  <div class="ghead">${headline}</div>
-  <div class="gsub">${sub}</div>
-  <div class="gconds">${conds}</div>
-  ${race}${ctxBlock}
-  <div class="axis" style="margin-top:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:10px">
-   RUNNING READ (decides nothing): <b style="color:${(run.expectancy_r||0)>0?'var(--grn)':'var(--dim)'}">${run.expectancy_r!=null?(run.expectancy_r>0?'+':'')+run.expectancy_r+'R':'—'}</b>
-   over ${run.n||0} validated signal${run.n===1?'':'s'} marked to date
-   <span class="info" data-tip="The gate counts a signal only once it is closed or 30 days old, so an open winner cannot be banked at its peak. This line is the same cohort marked to today — useful to watch, deliberately not the decision.">?</span>
-   &nbsp;·&nbsp; LEGACY COHORT: <b class="dim">${leg.expectancy_r!=null?(leg.expectancy_r>0?'+':'')+leg.expectancy_r+'R':'—'}</b> over ${leg.n||0} pre-fix alerts
-   <span class="info" data-tip="The transition-day alerts the scan fired from 7 to 24 July, ZERO of which were the validated trigger — audit F1 found the scan was structurally blind to 73% of the entries the backtest took. A real record of what the scan used to do, kept visible and reported apart. It is not the strategy under test and it is never folded into the gate.">?</span>
+ <div style="flex:1;min-width:0">
+  <div class="leds">${leds}</div>
+  <div class="axis" style="margin-top:9px;line-height:1.6;border-top:1px solid var(--line);padding-top:8px">
+   RUNNING <b style="color:${(run.expectancy_r||0)>0?'var(--grn)':'var(--dim)'}">${run.expectancy_r!=null?(run.expectancy_r>0?'+':'')+run.expectancy_r+'R':'—'}</b> <span class="dim">n=${run.n||0}</span>
+   <span class="info" data-tip="The same cohort marked to today rather than to the gate's closed-or-aged rule. Useful to watch week to week; it decides nothing. Applying the gate rule to a journal this young would report only its stop-outs.">?</span>
+   &nbsp;·&nbsp; LEGACY <b class="dim">${leg.expectancy_r!=null?(leg.expectancy_r>0?'+':'')+leg.expectancy_r+'R':'—'}</b> <span class="dim">n=${leg.n||0}</span>
+   <span class="info" data-tip="The transition-day alerts the scan fired before the validated trigger became alertable on 2026-07-25 — zero of them were the backtested entry (audit F1). A real record of what the scan used to do, kept visible and reported apart. Never folded into the gate.">?</span>
   </div>
- </div></div>`;
-/* set the true offset once the element is in the document. setTimeout, not
-   rAF: the transition needs a painted frame at the starting value first, and
-   this also guarantees the ring lands on the right number even if the
-   transition is disabled by prefers-reduced-motion. */
-setTimeout(()=>{const b=document.getElementById('gbar');
- if(b)b.setAttribute('stroke-dashoffset',(CIRC*(1-pct/100)).toFixed(1));},60);
-})();
+ </div>
+</div>`;})();
 
 /* KPIs — the BACKTEST, clearly labelled as such. These numbers were
    hardcoded to sizing-matrix v2 and stayed there through two adoptions, so
@@ -2199,8 +2418,9 @@ const row=a=>{const c=DOC[a.dokind]||'#94a3b8';
  <td class="mono">${convCellAct(a)}</td>
  <td style="font-size:11px">${voiceChips(a.sym,a.verdict)}</td>
  <td class="mono">${a.alert_px??''} &rarr; ${a.now_px??''} <span style="color:${a.chg>0?'#34d399':a.chg<0?'#f87171':'#64748b'}">${a.chg!=null?(a.chg>0?'+':'')+a.chg+'%':''}</span></td>
- <td class="dim mono">${a.d}</td></tr>`};
-const hdr='<tr><th>Action</th><th>Symbol</th><th>Price</th><th>Conv</th><th>AI view<span class="info" data-tip="What each AI layer says about this name, side by side. A: = nightly analyst verdict (last 10 days) · C: = weekly committee (pick / reviewed-and-passed-over) · N: = news radar hit since last scan. Empty = that layer has no current view. The machine\'s own view is this row itself — conviction + tag.">?</span></th><th>Alert &rarr; now</th><th>Alerted</th></tr>';
+ <td class="dim mono">${a.d}</td>
+ <td>${spark((D.closes[a.sym]||[]).slice(-60),74,22)}</td></tr>`};
+const hdr='<tr><th>Action</th><th>Symbol</th><th>Price</th><th>Conv</th><th>AI view<span class="info" data-tip="What each AI layer says about this name, side by side. A: = nightly analyst verdict (last 10 days) · C: = weekly committee (pick / reviewed-and-passed-over) · N: = news radar hit since last scan. Empty = that layer has no current view. The machine\'s own view is this row itself — conviction + tag.">?</span></th><th>Alert &rarr; now</th><th>Alerted</th><th>60d<span class="info" data-tip="Closing price over the last 60 sessions. Shape first: a name breaking out of a base looks different from one bleeding down into the alert.">?</span></th></tr>';
 let h=`<div class="acthead">${nv
  ?`<b style="color:#34d399">&#9679; ${nv} buy signal${nv>1?'s':''} — act today <span class="dim" style="font-weight:400">(BUY NOW / MOMENTUM BUY)</span></b>`
  :`<b style="color:#94a3b8">&#9675; No buy signals today — nothing requires action.</b>`}
@@ -2357,10 +2577,25 @@ return `<div class="sbar" title="${esc(h.ind)} — ${h.n} stocks, average RS per
 <span class="sval" style="color:${g}">${h.rs}</span></div>`}).join('');
 
 /* sparkline svg */
-function spark(a,w=96,h=26){if(!a||a.length<2)return'';const lo=Math.min(...a),hi=Math.max(...a),r=(hi-lo)||1;
-const p=a.map((v,i)=>`${(i*w/(a.length-1)).toFixed(1)},${(h-2-(v-lo)/r*(h-5)).toFixed(1)}`).join(' ');
-const c=a[a.length-1]>=a[0]?'#34d399':'#f87171';
-return `<svg width="${w}" height="${h}"><polyline fill="none" stroke="${c}" stroke-width="1.5" points="${p}"/></svg>`}
+/* the gradient id counter lives ON the function: `spark` is hoisted and is
+   called by the instrument panels far above its own source line, so any
+   `let` beside it would still be in the temporal dead zone at that point
+   (this threw ReferenceError and blanked every panel below the tape). */
+function spark(a,w=96,h=26){spark._n=(spark._n||0)+1;if(!a||a.length<2)return'';const lo=Math.min(...a),hi=Math.max(...a),r=(hi-lo)||1;
+const pts=a.map((v,i)=>[(i*w/(a.length-1)),(h-2-(v-lo)/r*(h-5))]);
+const p=pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');
+const up=a[a.length-1]>=a[0];const c=up?'#00ff9d':'#ff4d5e';const id='sp'+spark._n;
+const last=pts[pts.length-1];
+/* area fill under the line: a bare polyline reads as a scribble at this size,
+   the filled shape reads as a price series */
+return `<svg width="${w}" height="${h}" style="display:block;overflow:visible">
+<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="${c}" stop-opacity=".34"/><stop offset="100%" stop-color="${c}" stop-opacity="0"/>
+</linearGradient></defs>
+<polygon fill="url(#${id})" points="0,${h} ${p} ${w},${h}"/>
+<polyline fill="none" stroke="${c}" stroke-width="1.4" stroke-linejoin="round" points="${p}"/>
+<circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="1.9" fill="${c}"
+ style="filter:drop-shadow(0 0 4px ${c})"/></svg>`}
 
 /* screener table */
 const TIERC={Micro:'#9ec5f4',Small:'#6da7ec',Mid:'#3f87e8',Large:'#64748b'};

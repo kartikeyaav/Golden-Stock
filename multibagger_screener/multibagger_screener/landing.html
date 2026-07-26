@@ -7,9 +7,9 @@
 <meta name="description" content="An autonomous Indian small &amp; mid-cap screener with an append-only forward journal and a capital gate registered before the data existed. Evidence-locked entries, AI research as context only, and every rejected idea kept on the record.">
 <style>
 :root{
-  --bg:#04060b; --bg2:#070b14; --panel:rgba(15,22,38,.55); --line:rgba(148,163,184,.13);
-  --txt:#e6edf7; --dim:#8b98ad; --mut:#5b6779;
-  --gold:#f5c84c; --gold2:#d4a017; --grn:#34d399; --cyn:#22d3ee; --red:#f87171; --vio:#a78bfa;
+  --bg:#04060a; --bg2:#06090f; --panel:rgba(10,15,23,.62); --line:rgba(148,163,184,.12);
+  --txt:#e9f0f7; --dim:#8c9bb0; --mut:#5d6d83;
+  --gold:#00ff9d; --gold2:#00c47a; --grn:#00ff9d; --cyn:#22d3ee; --red:#ff4d5e; --vio:#b18cff;
   --mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -87,6 +87,20 @@ h1 .au{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2)
 .gmrow{display:flex;justify-content:space-between;gap:12px;font-size:12.4px}
 .gmrow span{color:var(--mut)}
 .gmrow b{font-family:var(--mono);font-weight:700}
+
+/* ---------- universe map (hero) ---------- */
+.mapcard{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;
+  background:linear-gradient(180deg,rgba(10,15,23,.95),rgba(6,9,15,.95));
+  box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}
+.maphead{display:flex;justify-content:space-between;gap:10px;font:700 9px var(--mono);
+  letter-spacing:.16em;color:var(--mut);margin-bottom:9px}
+.maphead span:first-child{color:var(--grn)}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(8px,1fr));gap:1.5px}
+.map i{aspect-ratio:1;border-radius:1.5px;opacity:0;animation:cellin .45s ease forwards}
+@keyframes cellin{to{opacity:var(--o,1)}}
+.maplegend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font:600 9px var(--mono);
+  letter-spacing:.11em;color:var(--mut);text-transform:uppercase}
+.maplegend i{width:7px;height:7px;border-radius:2px;display:inline-block;margin-right:4px}
 
 /* ---------- ticker ---------- */
 .ticker{border-block:1px solid var(--line);background:rgba(6,9,17,.7);overflow:hidden;white-space:nowrap;padding:11px 0;position:relative}
@@ -211,6 +225,18 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
     </div>
   </div>
 
+  <div>
+  <div class="mapcard">
+    <div class="maphead"><span>UNIVERSE MAP</span><span>615 WATCHED · RANKED BY STRENGTH</span></div>
+    <div class="map" id="map"></div>
+    <div class="maplegend">
+      <span><i style="background:#00ff9d"></i>uptrend</span>
+      <span><i style="background:#4d9fff"></i>basing</span>
+      <span><i style="background:#ffb020"></i>extended</span>
+      <span><i style="background:#64748b"></i>neutral</span>
+      <span><i style="background:#ff4d5e"></i>downtrend</span>
+    </div>
+  </div>
   <div class="gatecard">
     <div class="gtop">
       <div class="ring">
@@ -243,6 +269,7 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
       <div class="gmrow"><span>Decision deadline</span>
         <b>2026-12-31 · 157d</b></div>
     </div>
+  </div>
   </div>
 </div>
 
@@ -469,6 +496,17 @@ document.querySelectorAll('.bcard').forEach(function(c){
  c.addEventListener('mousemove',function(e){var b=c.getBoundingClientRect();
   c.style.setProperty('--mx',(e.clientX-b.left)+'px');
   c.style.setProperty('--my',(e.clientY-b.top)+'px');});});
+
+/* universe map: real stages, ranked by relative strength. Cells fade in
+   across ~700ms so the market assembles rather than appears. */
+var CELLS=[["EXTENDED",100.0],["CONFIRMED",99.8],["WATCH",99.7],["CONFIRMED",99.5],["CONFIRMED",99.3],["WATCH",99.2],["EXTENDED",99.0],["CONFIRMED",98.9],["CONFIRMED",98.7],["CONFIRMED",98.5],["CONFIRMED",98.4],["CONFIRMED",98.2],["CONFIRMED",98.0],["WATCH",97.9],["CONFIRMED",97.7],["CONFIRMED",97.6],["EXTENDED",97.4],["CONFIRMED",97.2],["CONFIRMED",97.0],["WATCH",97.0],["CONFIRMED",96.7],["WATCH",96.6],["CONFIRMED",96.4],["CONFIRMED",96.2],["WATCH",96.0],["EXTENDED",96.0],["CONFIRMED",95.8],["WATCH",95.6],["WATCH",95.4],["CONFIRMED",95.3],["WATCH",95.1],["EXTENDED",94.9],["WATCH",94.8],["CONFIRMED",94.5],["CONFIRMED",94.5],["CONFIRMED",94.3],["CONFIRMED",94.1],["CONFIRMED",94.0],["CONFIRMED",93.7],["CONFIRMED",93.7],["CONFIRMED",93.5],["CONFIRMED",93.2],["CONFIRMED",93.2],["CONFIRMED",92.9],["WATCH",92.9],["CONFIRMED",92.7],["EXTENDED",92.5],["BROKEN",92.3],["CONFIRMED",92.2],["EXTENDED",92.0],["EXTENDED",91.8],["WATCH",91.7],["CONFIRMED",91.5],["WATCH",91.4],["EXTENDED",91.2],["WATCH",91.0],["CONFIRMED",90.9],["CONFIRMED",90.7],["CONFIRMED",90.5],["WATCH",90.4],["CONFIRMED",90.2],["CONFIRMED",90.0],["CONFIRMED",89.9],["EXTENDED",89.6],["CONFIRMED",89.6],["WATCH",89.4],["WATCH",89.2],["WATCH",89.1],["CONFIRMED",88.8],["CONFIRMED",88.8],["WATCH",88.6],["EXTENDED",88.4],["CONFIRMED",88.3],["WATCH",88.1],["CONFIRMED",87.9],["WATCH",87.8],["EXTENDED",87.6],["CONFIRMED",87.4],["CONFIRMED",87.3],["WATCH",87.1],["WATCH",86.9],["WATCH",86.8],["WATCH",86.6],["WATCH",86.5],["WATCH",86.2],["CONFIRMED",86.2],["CONFIRMED",86.0],["CONFIRMED",85.7],["CONFIRMED",85.7],["BROKEN",85.5],["WATCH",85.3],["WATCH",85.2],["CONFIRMED",85.0],["WATCH",84.8],["WATCH",84.7],["WATCH",84.5],["CONFIRMED",84.3],["CONFIRMED",84.2],["BROKEN",84.0],["WATCH",83.8],["WATCH",83.7],["WATCH",83.5],["CONFIRMED",83.4],["WATCH",83.2],["WATCH",83.0],["CONFIRMED",82.8],["WATCH",82.8],["WATCH",82.5],["WATCH",82.3],["WATCH",82.3],["CONFIRMED",82.1],["WATCH",81.8],["WATCH",81.8],["WATCH",81.6],["EXTENDED",81.4],["WATCH",81.2],["WATCH",81.0],["WATCH",81.0],["CONFIRMED",80.8],["CONFIRMED",80.6],["CONFIRMED",80.4],["CONFIRMED",80.3],["CONFIRMED",80.0],["WATCH",80.0],["WATCH",79.8],["WATCH",79.6],["CONFIRMED",79.4],["CONFIRMED",79.2],["EXTENDED",79.2],["WATCH",79.0],["CONFIRMED",78.8],["CONFIRMED",78.6],["CONFIRMED",78.3],["WATCH",78.3],["CONFIRMED",78.3],["EXTENDED",78.0],["WATCH",77.7],["WATCH",77.7],["WATCH",77.5],["WATCH",77.1],["WATCH",77.1],["WATCH",77.1],["WATCH",77.1],["WATCH",76.7],["WATCH",76.5],["WATCH",76.3],["CONFIRMED",76.3],["WATCH",75.9],["WATCH",75.9],["CONFIRMED",75.7],["WATCH",75.4],["EXTENDED",75.4],["WATCH",75.1],["WATCH",75.1],["WATCH",74.9],["WATCH",74.6],["EXTENDED",74.6],["WATCH",74.6],["CONFIRMED",74.2],["CONFIRMED",74.1],["WATCH",73.8],["WATCH",73.8],["WATCH",73.4],["WATCH",73.4],["EXTENDED",73.4],["CONFIRMED",73.0],["CONFIRMED",73.0],["CONFIRMED",72.8],["WATCH",72.6],["CONFIRMED",72.4],["WATCH",72.3],["WATCH",72.1],["WATCH",71.9],["CONFIRMED",71.5],["WATCH",71.5],["WATCH",71.5],["WATCH",71.5],["WATCH",70.9],["CONFIRMED",70.9],["WATCH",70.9],["CONFIRMED",70.9],["WATCH",70.5],["WATCH",70.3],["WATCH",70.1],["WATCH",70.0],["WATCH",69.8],["WATCH",69.5],["WATCH",69.5],["CONFIRMED",69.5],["WATCH",69.2],["BROKEN",69.0],["WATCH",68.8],["WATCH",68.8],["WATCH",68.5],["WATCH",68.3],["WATCH",68.3],["WATCH",68.0],["WATCH",67.8],["WATCH",67.8],["WATCH",67.5],["WATCH",67.3],["BROKEN",67.3],["WATCH",66.9],["WATCH",66.9],["WATCH",66.9],["WATCH",66.4],["WATCH",66.4],["WATCH",66.4],["WATCH",66.0],["WATCH",66.0],["CONFIRMED",65.7],["CONFIRMED",65.6],["WATCH",65.4],["WATCH",65.3],["WATCH",65.1],["WATCH",64.9],["WATCH",64.8],["BROKEN",64.5],["WATCH",64.5],["WATCH",64.2],["WATCH",64.2],["WATCH",63.9],["WATCH",63.9],["WATCH",63.5],["WATCH",63.5],["WATCH",63.3],["WATCH",63.1],["WATCH",63.0],["WATCH",62.7],["WATCH",62.7],["WATCH",62.5],["WATCH",62.3],["WATCH",62.2],["WATCH",62.0],["CONFIRMED",61.8],["WATCH",61.7],["WATCH",61.3],["WATCH",61.3],["WATCH",61.3],["WATCH",61.0],["WATCH",60.8],["WATCH",60.7],["WATCH",60.5],["WATCH",60.3],["WATCH",60.3],["WATCH",59.1],["WATCH",51.7],["WATCH",50.6],["BROKEN",48.9],["WATCH",48.7],["ANTICIPATION",48.3],["WATCH",48.0],["BROKEN",47.6],["WATCH",46.5],["WATCH",45.5],["BROKEN",41.8],["WATCH",40.3],["WATCH",39.4],["WATCH",39.0],["WATCH",39.0],["WATCH",37.5],["ANTICIPATION",35.2],["WATCH",33.6],["WATCH",32.6],["WATCH",32.1],["WATCH",31.8],["WATCH",31.0],["WATCH",30.6],["WATCH",29.7],["WATCH",28.6],["BROKEN",27.2],["WATCH",25.8],["BROKEN",25.3],["BROKEN",24.8],["ANTICIPATION",23.8],["WATCH",22.3],["BROKEN",22.0],["BROKEN",21.5],["WATCH",20.2],["WATCH",20.2],["BROKEN",19.1],["WATCH",18.4],["WATCH",17.8],["WATCH",16.2],["BROKEN",16.0],["WATCH",15.7],["BROKEN",15.7],["WATCH",15.2],["BROKEN",13.7],["WATCH",13.4],["BROKEN",12.9],["BROKEN",9.7],["WATCH",9.3],["WATCH",7.7],["WATCH",7.2],["WATCH",6.7],["BROKEN",6.1],["WATCH",5.1],["BROKEN",0.8],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["ANTICIPATION",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["CONFIRMED",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["ANTICIPATION",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["CONFIRMED",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["CONFIRMED",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["CONFIRMED",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null]];
+var CMAP={CONFIRMED:'#00ff9d',ANTICIPATION:'#4d9fff',EXTENDED:'#ffb020',
+ BROKEN:'#ff4d5e',WATCH:'#64748b'};
+document.getElementById('map').innerHTML=CELLS.map(function(c,i){
+ var col=CMAP[c[0]]||'#3a4759', rs=c[1];
+ var o=(rs==null?0.3:0.34+0.66*(rs/100)).toFixed(2);
+ return '<i style="background:'+col+';--o:'+o+';animation-delay:'+Math.round(i/CELLS.length*700)+'ms"></i>';
+}).join('');
 
 /* ticker — real reads from tonight's state, duplicated for a seamless loop */
 var TK=[["UNIVERSE", "615 watched nightly", "up"], ["CONFIRMED UPTREND", "85 names", "up"], ["GATE", "0/40 signals banked", "dn"], ["REGIME", "breadth 53.2% \u2014 full size", "up"], ["EXIT RISK", "66 names flagged ASM/GSM/band", "dn"], ["JOURNAL", "221 signals, append-only", "up"], ["NEWS RADAR", "17 material filings in window", "up"], ["PENNY SCREEN", "178 survivors of the gates", "up"], ["CAPITAL DEPLOYED", "0 \u2014 gate not yet cleared", "dn"], ["DEADLINE", "2026-12-31", "up"]];
