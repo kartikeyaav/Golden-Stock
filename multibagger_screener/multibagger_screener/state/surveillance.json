@@ -1,7 +1,7 @@
 {
- "generated": "2026-07-26 12:29",
+ "generated": "2026-07-26 07:36",
  "n_checked": 652,
- "n_flagged": 66,
+ "n_flagged": 65,
  "asm_total": 195,
  "syms": {
   "ACMESOLAR": {
@@ -366,18 +366,6 @@
    "worst": "ASM"
   },
   "AKUMS": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "The day's permitted range is narrower than a normal ATR stop. A gap to the limit locks the tape and no stop fills at any price you wrote down."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
-  "AGL": {
    "flags": [
     {
      "code": "BAND 10%",

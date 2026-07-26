@@ -27,3 +27,31 @@ audit_date,window,rank,symbol,window_return_pct,turnover_cr,classification,ident
 2026-07-16,6m,5,GRWRHITECH,138.0,45.06,CAUGHT,True,CONFIRMED (watch pivot),2026-05-12,4948.1,45.2,146.7,0.31,,,flagged mid-move
 2026-07-16,6m,6,CUPID,129.1,355.42,CAUGHT EARLY,True,VALIDATED VCP ENTRY,2026-01-15,92.97,143.1,143.1,1.0,2026-03-09,,already CONFIRMED entering the window; flagged with most of the move still ahead
 2026-07-16,6m,7,CEMPRO,128.2,86.4,CAUGHT EARLY,True,EPISODIC PIVOT,2026-04-30,815.25,102.1,134.5,0.76,,2026-04-30,flagged with most of the move still ahead
+2026-07-24,1w,1,DIACABS,32.7,397.92,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-17,222.38,34.5,34.5,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-07-24,1w,2,BLUESTONE,28.9,1580.18,TOO YOUNG,False,,,,,45.1,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-07-24,1w,3,LOTUSDEV,28.9,184.66,TOO YOUNG,False,,,,,29.3,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-07-24,1w,4,DATAPATTNS,12.2,1059.98,CAUGHT LATE,True,CONFIRMED (watch pivot),2026-07-22,4782.8,1.0,18.3,0.06,,,"flagged, but most of the move was already gone"
+2026-07-24,1w,5,TARC,11.0,39.86,NO STRUCTURE,False,,,,,13.4,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-07-24,1w,6,FLUOROCHEM,10.3,141.45,EXTENDED / NO ENTRY,False,,,,,12.1,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up
+2026-07-24,1w,7,M&MFIN,10.0,651.76,NO STRUCTURE,False,,,,,18.6,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-07-24,1m,1,KALYANKJIL,52.5,1964.95,NO STRUCTURE,False,,,,,60.0,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-07-24,1m,2,BLUESTONE,45.6,377.29,TOO YOUNG,False,,,,,63.9,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-07-24,1m,3,DIACABS,44.4,203.93,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-24,204.43,46.3,46.3,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-07-24,1m,4,SHAREINDIA,39.3,141.72,NO STRUCTURE,False,,,,,42.9,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-07-24,1m,5,PFOCUS,35.2,17.24,EXTENDED / NO ENTRY,False,,,,,39.0,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up
+2026-07-24,1m,6,ECLERX,33.5,103.68,NO STRUCTURE,False,,,,,45.3,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-07-24,1m,7,JUSTDIAL,32.3,359.69,NO STRUCTURE,False,,,,,52.2,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-07-24,3m,1,CEMPRO,122.2,153.68,CAUGHT EARLY,True,EPISODIC PIVOT,2026-04-30,815.25,102.3,154.3,0.66,,2026-04-30,flagged with most of the move still ahead
+2026-07-24,3m,2,STLTECH,111.7,160.36,CAUGHT LATE,True,CONFIRMED (watch pivot),2026-07-01,590.75,3.3,155.2,0.02,,,"flagged, but most of the move was already gone"
+2026-07-24,3m,3,HFCL,96.4,810.98,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,163.68,40.2,129.0,0.31,,,flagged mid-move
+2026-07-24,3m,4,AEGISLOG,88.9,286.75,EXTENDED / NO ENTRY,False,,,,,100.8,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up; was on the ANTICIPATION watchlist first (zero-capital tier)
+2026-07-24,3m,5,CUPID,88.7,483.2,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-05-18,120.84,87.0,99.8,0.87,,,flagged with most of the move still ahead
+2026-07-24,3m,6,DIACABS,82.5,149.68,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-11,193.73,54.3,84.9,0.64,,,flagged with most of the move still ahead
+2026-07-24,3m,7,THANGAMAYL,81.8,116.61,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-04-24,3799.3,88.6,88.6,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-07-24,6m,1,STLTECH,538.3,167.97,CAUGHT,True,CONFIRMED (watch pivot),2026-03-23,173.2,292.6,669.2,0.44,,,flagged mid-move
+2026-07-24,6m,2,HFCL,222.2,519.97,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,163.68,40.2,275.6,0.15,,,flagged mid-move
+2026-07-24,6m,3,CUPID,168.7,357.12,CAUGHT EARLY,True,VALIDATED VCP ENTRY,2026-02-03,83.04,172.2,184.5,0.93,2026-03-09,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-07-24,6m,4,CPPLUS,154.0,80.22,TOO YOUNG,False,,,,,177.1,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-07-24,6m,5,MTARTECH,141.9,631.37,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-01-27,2528.8,244.6,263.1,0.93,,,flagged with most of the move still ahead
+2026-07-24,6m,6,DIACABS,139.2,90.18,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,193.73,54.3,142.3,0.38,,,flagged mid-move
+2026-07-24,6m,7,GRWRHITECH,135.1,45.31,CAUGHT,True,CONFIRMED (watch pivot),2026-05-12,4948.1,45.2,144.7,0.31,,,flagged mid-move
