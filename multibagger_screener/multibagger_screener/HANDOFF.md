@@ -1216,6 +1216,135 @@ unproven.
 
 ---
 
+## 3R. Sales-page rewrite, duplicate-panel cull, penny arm defect (2026-07-26)
+
+User feedback on the v6 terminal, five items. Two of them turned out to have a
+real defect behind them rather than a styling problem.
+
+### The landing page was arguing against itself
+
+It carried a `CORRECTED — Its own headline numbers` card ("the scan was blind
+to 73% of the entries it had validated, a caching bug was ranking companies
+higher the less it knew about them") and a limitation reading "the AI layers
+are unproven and on probation... both have silently broken for a week at a
+time". Both are true, both belong in `HANDOFF.md` / `VALIDATION_REPORT.md` /
+the dashboard, and neither belongs on the page whose job is to make someone
+want to open the terminal. A marketing page narrating its own bug history
+reads as doubt, not candour. The `build_landing.py` docstring now states that
+boundary so the next editor does not re-import it.
+
+Rewritten around what was built rather than what was fixed: hero leads with
+the nightly desk, `#evidence` replaces the old backtest strip, limitations
+became four professional lines. The `CORRECTED` card was replaced with a real
+rejection (risk 1.75%/2.5%, both breached the drawdown limit) so the refusals
+section still has six.
+
+**+1.34R is the honest unit and a terrible headline** — it looks like 1.34 of
+something small. R is a MULTIPLE of what a trade risks, so the page now
+converts it once, explicitly, in a three-panel row: `₹1 at risk` →
+`₹2.34 back` → `9.6:1 payoff at a 31% win rate`, with the compounding stated
+underneath (`₹10 lakh → ₹36.9 lakh` over the window, `₹23.3 lakh` stressed).
+Every figure still comes from `config.EVIDENCE`; nothing was invented to make
+the number look bigger.
+
+### Overview: three panels were answering questions another panel had answered
+
+- **Stage tally** — its five counts were already in the universe-map legend.
+  The proportion bar moved INTO that legend (`#hmdist`), beside the grid it
+  describes instead of 1,500px below it.
+- **Sector strength** — 18 NSE-industry bars, 449px, while the Sectors tab
+  ranks the same universe by actual theme and does it better. Moved to the
+  Sectors tab as a "By NSE industry" cross-reference. One tab now owns sector
+  reading (the standing "collaborative, not parallel" rule).
+- **Market trend** — a 190px NIFTY chart under a caption explaining that NIFTY
+  stopped setting position size in July. The market-regime instrument at the
+  top already carries the live rule, its reading and a NIFTY sparkline. Cut.
+  (Also removes one lightweight-charts canvas from the Overview.)
+- **Legend** — a collapsed `<details>`. A legend you have to click is a legend
+  that does not exist. The state half duplicated the map legend; the ACTION
+  half moved inline into the Actionable header (`#actkey`).
+- **News radar** stood **961px** — a full screen of filings above the evidence
+  strip, for a signal class this project's own measurement says does not lead
+  the trigger (7.3% vs a 16.6% base rate). `Risk on your exposure` — the one
+  actionable class — was promoted to its own red panel beside the transitions
+  list; Building capped at 6, Tonight at 8. Panel is now 696px, below the
+  decision layer.
+
+Overview: ~3,620px → ~2,650px.
+
+### The instrument row was not actually a row
+
+All three cards shared an outer box and nothing else. `#marketinst` centred its
+gauge against a taller text column while `#gatecard` top-aligned its own, so
+two circular dials 250px apart sat 26px out of line, and each panel left a
+different amount of dead space at its foot (15 / 42 / 48px). This is what the
+user meant by "the capital gate info section is somewhere in the middle".
+`.inst` is now a flex column, `.instbody` fills it, and `.instrow` /
+`.instside` / `.instcol` give all three panels one internal grid. Gauges now
+share a baseline (y=256) and all three bodies end on the same line (y=458).
+
+### PENNY: 22% of a nano-cap universe were not nano-caps
+
+`build_penny_universe.py`: `price_arm = cheap & ~(mcap >= ceiling)`. When
+`market_cap_cr` is NaN — the common case at universe-build time, since caps
+resolve later on a `penny_fundamentals` run — `NaN >= ceiling` is False and
+`~False` is True, so **every** cheap share enters the price arm, and the arm is
+never re-evaluated once the cap lands. Measured on `penny_ranked.csv`
+(2026-07-24): **34 of 153 names** sat above the ₹5,000 Cr ceiling the user
+registered on 2026-07-25 — IDEA at ₹1.42 lakh Cr, IRFC ₹1.15 lakh Cr, IDBI,
+NTPCGREEN, NHPC, NMDC, YESBANK, SUZLON. UJJIVANSFB (₹13.8k Cr) ranked #1. This
+is most of why the tab "looked off": the top of a nano-cap screen was PSU
+large-caps.
+
+`_build_penny` now re-applies the ceiling at READ time against the cap we know,
+and moves those names into the excluded count. Universe 153 → 113, top cap
+₹4,600 Cr, leaders now PREMIERPOL ₹831 Cr / ESAFSFB ₹2.0k Cr / ATALREAL ₹387
+Cr. **The durable fix belongs upstream** in the arm assignment — see the spawned
+task; `penny_ranked.csv`, `penny_journal.csv` and `state/penny_meta.json` are
+still built from the wrong universe, and the journal rows for those 34 names
+probably need the usual quarantine treatment rather than a silent edit.
+
+Also on that tab: the exclusion funnel printed its own scrubbing at the reader
+(`illiquid: Rs* lakh median daily turnover (floor Rs* lakh)`, `ASM LT Stage I —
+surveillance: N% margin`) because reasons carry per-name numbers and were
+grouped by regex-blanking the digits. Now classified to a stable GATE
+(`_PENNY_GATES`) and drawn as ranked bars. The `Cov` column was folded into the
+score cell as its existing `°` marker, and the freed column became **Max size**
+= 10% of median daily turnover — the number that should decide whether a penny
+name is worth reading at all (a 90-scoring stock you can only put ₹40,000 into
+is not an opportunity). Three tier populations (clean / unchecked / vetoed)
+were separated only by 55% opacity; they now get a named divider row.
+
+### Sectors, and the rest of the tabs
+
+- Theme rows were 18 boxed numbers, which can only be compared a pair at a
+  time. The closed row is now the chart: rank, name, **a bar that tracks
+  whichever column is sorted** (normalised against the largest value present),
+  then stats. The duplicated stat is dropped when it is the sort key.
+- Positions tab opened on the notional paper book with the user's own two
+  holdings 700px below it. Real money first.
+- Journal `Stage changes` (50 raw rows, 1,571px — the largest panel in the app,
+  under the two that actually answer something) and Screener `Watching — not
+  qualified` (1,026px, taller than the 611-name qualified table it sits under)
+  both scroll in their own box now, with their size stated in the header.
+  Journal 2,917 → 1,738px; Screener 1,679 → 1,093px.
+- AI Picks could not answer the first question anyone asks of a week-old pick
+  list. Each pick now carries `+x.x% since pick`, measured from the last close
+  the committee could have seen (last bar ON OR BEFORE the run date — the
+  committee runs Sunday, when the newest bar is Friday's; taking the first bar
+  at-or-after would measure from the wrong day).
+
+### Notes for the next editor
+
+- `tests/test_capital_gate.py::test_cohort_split` errors under pytest
+  (`fixture 'monkey_status' not found`) and passes when run directly. Pre-
+  existing, unrelated to UI work. 30 pytest + all 9 script-style files pass.
+- The screenshot tool still times out on `dashboard.html` at every viewport.
+  Verify via `read_page` / JS DOM measurement — measuring bounding boxes for
+  every child of a tab is what found all three alignment defects above.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri

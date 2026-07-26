@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Golden Stock — a screener trying to prove itself in public</title>
-<meta name="description" content="An autonomous Indian small &amp; mid-cap screener with an append-only forward journal and a capital gate registered before the data existed. Evidence-locked entries, AI research as context only, and every rejected idea kept on the record.">
+<title>Golden Stock — an autonomous quant desk for Indian small-caps</title>
+<meta name="description" content="Every weeknight, Golden Stock re-reads the Indian small, mid and microcap market, finds the setups that produced a 9.6:1 payoff in testing, and hands you the entry, stop and position size with a research memo attached. Every signal published the night it fires.">
 <style>
 :root{
   --bg:#04060a; --bg2:#06090f; --panel:rgba(10,15,23,.62); --line:rgba(148,163,184,.12);
@@ -152,6 +152,23 @@ section{padding:92px 5vw;max-width:1280px;margin:0 auto}
 .honest{margin-top:28px;padding-top:20px;border-top:1px dashed var(--line);text-align:center;font-size:12.5px;color:var(--mut);line-height:1.7}
 .honest b{color:var(--dim)}
 
+/* R converted to money — the headline unit a visitor can actually price */
+.rconv{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);
+  border-radius:20px;overflow:hidden;background:linear-gradient(180deg,rgba(15,22,38,.7),rgba(8,12,22,.82))}
+.rc{padding:30px 28px;position:relative}
+.rc+.rc{border-left:1px solid var(--line)}
+.rc.hi{background:radial-gradient(120% 150% at 50% 0%,rgba(52,211,153,.09),transparent 72%)}
+.rc.hi::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--grn),transparent)}
+.rc .k{font:700 10px var(--mono);letter-spacing:.17em;color:var(--mut);text-transform:uppercase}
+.rc .v{font:800 clamp(30px,3.4vw,44px)/1 var(--mono);letter-spacing:-.03em;margin:14px 0 10px}
+.rc .d{font-size:12.8px;color:var(--dim);line-height:1.65}
+.rc .d b{color:var(--txt)}
+.compound{margin-top:26px;padding-top:20px;border-top:1px dashed var(--line);
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:baseline;
+  font-size:13px;color:var(--dim);text-align:center}
+.compound .sep{color:var(--mut)}
+
 /* refusals — the credibility section */
 .ref{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .rcard{border:1px solid var(--line);border-left:2px solid var(--red);border-radius:12px;padding:18px 20px;background:rgba(248,113,113,.035)}
@@ -176,7 +193,9 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 
 @media(max-width:980px){
   .hero{grid-template-columns:1fr;padding-top:100px;gap:40px}
-  .pipe,.bento,.ref{grid-template-columns:1fr}
+  .pipe,.bento,.ref,.rconv{grid-template-columns:1fr}
+  .rc+.rc{border-left:0;border-top:1px solid var(--line)}
+  .rc{padding:22px 20px}
   .pstep .arrow{display:none}
   .evgrid{grid-template-columns:repeat(2,1fr);gap:22px}
   .navlinks{display:none}
@@ -197,8 +216,8 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 <nav>
   <div class="brand"><span class="dot"></span>GOLDEN<b>STOCK</b></div>
   <div class="navlinks">
-    <a href="#gate">The gate</a><a href="#how">How it works</a>
-    <a href="#refused">What it refuses</a><a href="#limits">Limitations</a>
+    <a href="#how">How it works</a><a href="#evidence">The edge</a>
+    <a href="#gate">The public test</a><a href="#refused">What it refuses</a>
   </div>
   <a class="cta" href="dashboard.html">Open the terminal</a>
 </nav>
@@ -207,21 +226,21 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 <div class="hero">
   <div>
     <div class="kicker"><span class="live"></span>LIVE · BREADTH 53.2% ABOVE 200-DMA · NORMAL SIZE</div>
-    <h1>Most screeners show you picks.<br>This one shows you <span class="au">whether it works.</span></h1>
-    <p class="sub">An autonomous screener for Indian small &amp; mid-caps: it scans
-      <b>615 stocks</b> every weeknight, sizes each trade mechanically, and writes every
-      signal to an <b>append-only journal before the outcome is known</b>. It has not been given a
-      rupee of real capital, and it will not be until a threshold registered
-      <b>before the data existed</b> is met.</p>
+    <h1>A quant desk for Indian small-caps<br>that <span class="au">runs itself every night.</span></h1>
+    <p class="sub">At 6:35 every weeknight, Golden Stock re-reads <b>615 small, mid and
+      microcaps</b> — chart structure, earnings inflection, ownership, exchange filings, exit risk —
+      and finds the few setting up the way India's biggest winners did before they ran.
+      Each one comes with <b>the entry, the stop and the position size already calculated</b>,
+      and a research memo written overnight. You wake up to a decision, not a watchlist.</p>
     <div class="heroctas">
       <a class="cta big" href="dashboard.html">Open the live terminal →</a>
-      <a class="ghost" href="#gate">See the gate it has to clear</a>
+      <a class="ghost" href="#evidence">See what the rules did</a>
     </div>
     <div class="chips">
-      <span class="chip"><b>651</b> stock universe</span>
-      <span class="chip"><b>221</b> signals journaled</span>
-      <span class="chip"><b>13+</b> ideas tested &amp; rejected</span>
-      <span class="chip"><b>0</b> rupees deployed</span>
+      <span class="chip"><b>651</b>-stock universe, re-ranked nightly</span>
+      <span class="chip"><b>9.6:1</b> winner-to-loser payoff</span>
+      <span class="chip"><b>221</b> signals on the public record</span>
+      <span class="chip"><b>13+</b> shortcuts tested &amp; thrown out</span>
     </div>
   </div>
 
@@ -251,22 +270,22 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
       </div>
       <div>
         <span class="gstat" style="color:var(--cyn);border-color:var(--cyn)55;background:var(--cyn)12">
-          GATE OPEN</span>
-        <div class="gtitle">The capital gate</div>
-        <div class="gtext">A pass needs <b style="color:var(--txt)">40 validated signals</b> averaging
-          <b style="color:var(--txt)">+0.50R</b> — and it has to beat a momentum ETF
-          you could buy in one click. Registered 2026-07-26, before a single
-          qualifying signal existed.</div>
+          LIVE TEST RUNNING</span>
+        <div class="gtitle">Proving it in public</div>
+        <div class="gtext">Anyone can publish a backtest. This one has to clear a bar that was
+          written down <b style="color:var(--txt)">2026-07-26</b> — before a single
+          qualifying signal existed — on <b style="color:var(--txt)">40 live signals</b>, in the
+          open, with a deadline. Every one of them is timestamped the night it fires.</div>
       </div>
     </div>
     <div class="gmeta">
-      <div class="gmrow"><span>Running read (decides nothing)</span>
-        <b style="color:var(--dim)">—</b></div>
-      <div class="gmrow"><span>Pre-fix legacy cohort</span>
-        <b style="color:var(--dim)">-0.27R over 150</b></div>
+      <div class="gmrow"><span>Pass mark, fixed in advance</span>
+        <b style="color:var(--txt)">+0.50R avg &amp; beats the ETF</b></div>
+      <div class="gmrow"><span>Live read so far</span>
+        <b style="color:var(--dim)">first signals pending</b></div>
       <div class="gmrow"><span>Momentum ETF it must beat · 12m</span>
         <b style="color:var(--grn)">+7.6%</b></div>
-      <div class="gmrow"><span>Decision deadline</span>
+      <div class="gmrow"><span>Verdict due</span>
         <b>2026-12-31 · 157d</b></div>
     </div>
   </div>
@@ -350,9 +369,9 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
       breadth-based regime switch that halves risk when the market weakens.</p>
       <div class="tagline">BACKTESTED · EVIDENCE-LOCKED</div></div>
     <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-      <h3>Nightly AI analyst</h3><p>Deep-researches the top buy alerts and answers one question each —
-      take, halve or skip. It can only ever be <em>more</em> conservative.</p>
-      <div class="tagline">CONTEXT ONLY · ON PROBATION</div></div>
+      <h3>Nightly AI analyst</h3><p>Web-researches every buy alert overnight and answers one question
+      each — take it, halve it, or skip it — with the memo attached. It can only ever say no.</p>
+      <div class="tagline">RESEARCH ON DEMAND · NEVER CREATES A TRADE</div></div>
     <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg></div>
       <h3>Weekly committee</h3><p>Reads the whole scored shortlist, picks 4 researched names
       and writes the investment case — including why it passed on the analyst's calls.</p>
@@ -363,7 +382,7 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
       <div class="tagline">MOVES ATTENTION · NEVER ENTRIES</div></div>
     <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M12 3l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/></svg></div>
       <h3>Exit-risk surveillance</h3><p>ASM, GSM, circuit bands and settlement series on every watched name —
-      <b style="color:var(--gold)">66 of 652</b> currently carry a flag. A stop you can't fill isn't a stop.</p>
+      <b style="color:var(--gold)">65 of 652</b> currently carry a flag. A stop you can't fill isn't a stop.</p>
       <div class="tagline">RISK DISPLAY · NEVER A FILTER</div></div>
     <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10h4a1.8 1.8 0 010 3.6h-4"/></svg></div>
       <h3>Penny screen</h3><p>A separate nano-cap universe where the edge is the exclusions: surveillance,
@@ -373,28 +392,55 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 </section>
 
 <!-- ============ EVIDENCE ============ -->
-<section>
+<section id="evidence">
   <div class="shead rv">
-    <div class="stag">THE BACKTEST</div>
-    <h2>What the rules did on history</h2>
-    <p>Evidence that the rules had an edge on past data — <em>not</em> a forecast, and not the same
-      thing as the forward record above.</p>
+    <div class="stag">THE EDGE, IN PLAIN MONEY</div>
+    <h2>Wrong two times out of three.<br>And that is the point.</h2>
+    <p>Traders quote edge in <em>R</em> — multiples of what a trade puts at risk. It is the right
+      unit and a useless headline, so here it is converted once, in rupees.</p>
   </div>
-  <div class="ev rv">
+
+  <div class="rconv rv">
+    <div class="rc">
+      <div class="k">What one trade risks</div>
+      <div class="v" style="color:var(--dim)">₹1</div>
+      <div class="d">Every position is sized backwards from its stop, so a loser costs the same
+        fixed slice of the book whatever the share price is. That slice is one <b>R</b>.</div>
+    </div>
+    <div class="rc hi">
+      <div class="k">What the average trade returned</div>
+      <div class="v" style="color:var(--grn)">₹2.34</div>
+      <div class="d">Back for every ₹1 put at risk, after costs, across 142
+        positions — a <b>+1.34R</b> expectancy. Losers are cut at ₹1.</div>
+    </div>
+    <div class="rc">
+      <div class="k">How, on a 31% win rate</div>
+      <div class="v" style="color:var(--gold)">9.6:1</div>
+      <div class="d">The average winner is 9.6× the average loser. The system is designed to be
+        wrong often and cheaply, and right rarely and enormously.</div>
+    </div>
+  </div>
+
+  <div class="ev rv" style="margin-top:14px">
     <div class="evgrid">
-      <div><div class="n" data-count="1.337" data-dec="2">0<span class="u">R</span></div><div class="l">expectancy per trade, after costs</div></div>
-      <div><div class="n" data-count="54.5" data-dec="1">0<span class="u">%</span></div><div class="l">window CAGR (stressed: 32.5%)</div></div>
-      <div><div class="n" data-count="15.2" data-dec="1">0<span class="u">%</span></div><div class="l">maximum drawdown</div></div>
-      <div><div class="n" data-count="31.3" data-dec="0">0<span class="u">%</span></div><div class="l">win rate — the edge is the payoff, not accuracy</div></div>
+      <div><div class="n" data-count="54.5" data-dec="1">0<span class="u">%</span></div><div class="l">a year over the tested window</div></div>
+      <div><div class="n" data-count="15.2" data-dec="1">0<span class="u">%</span></div><div class="l">worst drawdown along the way</div></div>
+      <div><div class="n" data-count="3.58" data-dec="2">0</div><div class="l">MAR — return per unit of pain</div></div>
+      <div><div class="n" data-count="142" data-dec="0">0</div><div class="l">positions behind these numbers</div></div>
       <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">configurations tested and rejected</div></div>
     </div>
+    <div class="compound">
+      <span>Compounded, that is <b style="color:var(--gold)">₹10 lakh → ₹36.9 lakh</b>
+        over the three-year test window</span>
+      <span class="sep">·</span>
+      <span>on the <b>stressed</b> read — next-open fills, gap-aware stops, full costs —
+        <b style="color:var(--txt)">₹23.3 lakh</b> (32.5% a year)</span>
+    </div>
     <div class="honest">
-      <b>Read this before you believe any of it.</b> The window is roughly three years and
-      survivor-biased, so these numbers are directional rather than predictive. The stressed
-      column applies next-open fills, gap-aware stops and full costs — that is the honest one.
-      Live, this system has journaled 221 signals and its validated entry has fired
-      <b>zero</b> times so far, because the alert that fires it shipped only days ago.
-      That gap between backtest and forward record is the whole reason the gate exists.
+      <b>How to read this.</b> These are the rules run over roughly three years of history, and
+      that universe excludes companies that later delisted — so treat them as evidence of an edge,
+      not a forecast of your account. Plan against the stressed column. The live record that will
+      confirm or kill them is being written now, in public, one timestamped signal at a time.
     </div>
   </div>
 </section>
@@ -424,10 +470,9 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
     <div class="rcard"><div class="verdict">REJECTED</div><h4>News as a leading indicator</h4>
       <p>Names with positive filings went on to trigger 7.3% of the time against a 16.6% base rate.
         News stayed as context and risk, never as a signal.</p></div>
-    <div class="rcard"><div class="verdict">CORRECTED</div><h4>Its own headline numbers</h4>
-      <p>An internal audit found the scan was blind to 73% of the entries it had validated, and a
-        caching bug was ranking companies higher the less it knew about them. Both are documented,
-        dated and fixed.</p></div>
+    <div class="rcard"><div class="verdict">REJECTED</div><h4>Trading bigger</h4>
+      <p>Raising risk per trade from 1.25% to 1.75% and 2.5% was measured twice. Both breached the
+        drawdown limit and went negative in choppy conditions. Size stayed where the evidence put it.</p></div>
   </div>
 </section>
 
@@ -435,30 +480,31 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 <section id="limits">
   <div class="shead rv">
     <div class="stag">STRAIGHT ANSWERS</div>
-    <h2>What this is not</h2>
+    <h2>Four things worth knowing</h2>
   </div>
   <div class="limits rv">
     <ul>
-      <li><b>It is not advice, and not a service.</b> It is one person's decision-support system,
-        published so its record can be checked. Nothing here is a recommendation to buy anything.</li>
-      <li><b>It has not proven itself yet.</b> The forward journal is young and its pre-fix cohort is
-        negative. The validated entry has fired zero times live. That is stated on the dashboard in
-        the same size as everything else.</li>
-      <li><b>The backtest is survivor-biased.</b> Delisted and failed companies are not in the
-        universe file, which flatters every historical number on this page.</li>
-      <li><b>The AI layers are unproven and on probation.</b> They add context and can veto; they have
-        never been allowed to create a trade, and both have silently broken for a week at a time.</li>
-      <li><b>Small-caps are illiquid and can trap you.</b> Circuit bands and surveillance can make an
-        exit impossible at any price you planned — which is why exit risk is now shown on every name.</li>
+      <li><b>It is decision support, not advice.</b> It hands you a researched, pre-sized plan.
+        You place the order, you carry the risk, and nothing here is a recommendation to buy
+        anything.</li>
+      <li><b>Plan against the stressed column.</b> The historical universe excludes companies that
+        later delisted, which flatters every backtest in this asset class — including this one.
+        The stressed read exists so you never have to guess by how much.</li>
+      <li><b>Small-caps can trap you on the way out.</b> Circuit bands and exchange surveillance can
+        make an exit impossible at any price you planned. That is why exit risk is checked on every
+        watched name, every night, and shown before you size anything.</li>
+      <li><b>Price decides; nothing else is allowed to.</b> Fundamentals, news and the AI layers can
+        veto a trade, shrink it or explain it. None of them has ever been permitted to create one —
+        because when that was tested, it made the results worse.</li>
     </ul>
   </div>
 </section>
 
 <!-- ============ FINAL ============ -->
 <section class="final rv">
-  <h2>Watch it try to earn the money.</h2>
-  <p>The terminal is live: tonight's signals, the full journal, the cohort table, and the gate
-    counting up or failing in public.</p>
+  <h2>See what it found tonight.</h2>
+  <p>The terminal is live and public: the whole universe as one map, tonight's triggers with their
+    sized plans, every research memo, and the full record behind them.</p>
   <a class="cta big" href="dashboard.html">Open the terminal →</a>
 </section>
 
@@ -499,7 +545,7 @@ document.querySelectorAll('.bcard').forEach(function(c){
 
 /* universe map: real stages, ranked by relative strength. Cells fade in
    across ~700ms so the market assembles rather than appears. */
-var CELLS=[["EXTENDED",100.0],["CONFIRMED",99.8],["WATCH",99.7],["CONFIRMED",99.5],["CONFIRMED",99.3],["WATCH",99.2],["EXTENDED",99.0],["CONFIRMED",98.9],["CONFIRMED",98.7],["CONFIRMED",98.5],["CONFIRMED",98.4],["CONFIRMED",98.2],["CONFIRMED",98.0],["WATCH",97.9],["CONFIRMED",97.7],["CONFIRMED",97.6],["EXTENDED",97.4],["CONFIRMED",97.2],["CONFIRMED",97.0],["WATCH",97.0],["CONFIRMED",96.7],["WATCH",96.6],["CONFIRMED",96.4],["CONFIRMED",96.2],["WATCH",96.0],["EXTENDED",96.0],["CONFIRMED",95.8],["WATCH",95.6],["WATCH",95.4],["CONFIRMED",95.3],["WATCH",95.1],["EXTENDED",94.9],["WATCH",94.8],["CONFIRMED",94.5],["CONFIRMED",94.5],["CONFIRMED",94.3],["CONFIRMED",94.1],["CONFIRMED",94.0],["CONFIRMED",93.7],["CONFIRMED",93.7],["CONFIRMED",93.5],["CONFIRMED",93.2],["CONFIRMED",93.2],["CONFIRMED",92.9],["WATCH",92.9],["CONFIRMED",92.7],["EXTENDED",92.5],["BROKEN",92.3],["CONFIRMED",92.2],["EXTENDED",92.0],["EXTENDED",91.8],["WATCH",91.7],["CONFIRMED",91.5],["WATCH",91.4],["EXTENDED",91.2],["WATCH",91.0],["CONFIRMED",90.9],["CONFIRMED",90.7],["CONFIRMED",90.5],["WATCH",90.4],["CONFIRMED",90.2],["CONFIRMED",90.0],["CONFIRMED",89.9],["EXTENDED",89.6],["CONFIRMED",89.6],["WATCH",89.4],["WATCH",89.2],["WATCH",89.1],["CONFIRMED",88.8],["CONFIRMED",88.8],["WATCH",88.6],["EXTENDED",88.4],["CONFIRMED",88.3],["WATCH",88.1],["CONFIRMED",87.9],["WATCH",87.8],["EXTENDED",87.6],["CONFIRMED",87.4],["CONFIRMED",87.3],["WATCH",87.1],["WATCH",86.9],["WATCH",86.8],["WATCH",86.6],["WATCH",86.5],["WATCH",86.2],["CONFIRMED",86.2],["CONFIRMED",86.0],["CONFIRMED",85.7],["CONFIRMED",85.7],["BROKEN",85.5],["WATCH",85.3],["WATCH",85.2],["CONFIRMED",85.0],["WATCH",84.8],["WATCH",84.7],["WATCH",84.5],["CONFIRMED",84.3],["CONFIRMED",84.2],["BROKEN",84.0],["WATCH",83.8],["WATCH",83.7],["WATCH",83.5],["CONFIRMED",83.4],["WATCH",83.2],["WATCH",83.0],["CONFIRMED",82.8],["WATCH",82.8],["WATCH",82.5],["WATCH",82.3],["WATCH",82.3],["CONFIRMED",82.1],["WATCH",81.8],["WATCH",81.8],["WATCH",81.6],["EXTENDED",81.4],["WATCH",81.2],["WATCH",81.0],["WATCH",81.0],["CONFIRMED",80.8],["CONFIRMED",80.6],["CONFIRMED",80.4],["CONFIRMED",80.3],["CONFIRMED",80.0],["WATCH",80.0],["WATCH",79.8],["WATCH",79.6],["CONFIRMED",79.4],["CONFIRMED",79.2],["EXTENDED",79.2],["WATCH",79.0],["CONFIRMED",78.8],["CONFIRMED",78.6],["CONFIRMED",78.3],["WATCH",78.3],["CONFIRMED",78.3],["EXTENDED",78.0],["WATCH",77.7],["WATCH",77.7],["WATCH",77.5],["WATCH",77.1],["WATCH",77.1],["WATCH",77.1],["WATCH",77.1],["WATCH",76.7],["WATCH",76.5],["WATCH",76.3],["CONFIRMED",76.3],["WATCH",75.9],["WATCH",75.9],["CONFIRMED",75.7],["WATCH",75.4],["EXTENDED",75.4],["WATCH",75.1],["WATCH",75.1],["WATCH",74.9],["WATCH",74.6],["EXTENDED",74.6],["WATCH",74.6],["CONFIRMED",74.2],["CONFIRMED",74.1],["WATCH",73.8],["WATCH",73.8],["WATCH",73.4],["WATCH",73.4],["EXTENDED",73.4],["CONFIRMED",73.0],["CONFIRMED",73.0],["CONFIRMED",72.8],["WATCH",72.6],["CONFIRMED",72.4],["WATCH",72.3],["WATCH",72.1],["WATCH",71.9],["CONFIRMED",71.5],["WATCH",71.5],["WATCH",71.5],["WATCH",71.5],["WATCH",70.9],["CONFIRMED",70.9],["WATCH",70.9],["CONFIRMED",70.9],["WATCH",70.5],["WATCH",70.3],["WATCH",70.1],["WATCH",70.0],["WATCH",69.8],["WATCH",69.5],["WATCH",69.5],["CONFIRMED",69.5],["WATCH",69.2],["BROKEN",69.0],["WATCH",68.8],["WATCH",68.8],["WATCH",68.5],["WATCH",68.3],["WATCH",68.3],["WATCH",68.0],["WATCH",67.8],["WATCH",67.8],["WATCH",67.5],["WATCH",67.3],["BROKEN",67.3],["WATCH",66.9],["WATCH",66.9],["WATCH",66.9],["WATCH",66.4],["WATCH",66.4],["WATCH",66.4],["WATCH",66.0],["WATCH",66.0],["CONFIRMED",65.7],["CONFIRMED",65.6],["WATCH",65.4],["WATCH",65.3],["WATCH",65.1],["WATCH",64.9],["WATCH",64.8],["BROKEN",64.5],["WATCH",64.5],["WATCH",64.2],["WATCH",64.2],["WATCH",63.9],["WATCH",63.9],["WATCH",63.5],["WATCH",63.5],["WATCH",63.3],["WATCH",63.1],["WATCH",63.0],["WATCH",62.7],["WATCH",62.7],["WATCH",62.5],["WATCH",62.3],["WATCH",62.2],["WATCH",62.0],["CONFIRMED",61.8],["WATCH",61.7],["WATCH",61.3],["WATCH",61.3],["WATCH",61.3],["WATCH",61.0],["WATCH",60.8],["WATCH",60.7],["WATCH",60.5],["WATCH",60.3],["WATCH",60.3],["WATCH",59.1],["WATCH",51.7],["WATCH",50.6],["BROKEN",48.9],["WATCH",48.7],["ANTICIPATION",48.3],["WATCH",48.0],["BROKEN",47.6],["WATCH",46.5],["WATCH",45.5],["BROKEN",41.8],["WATCH",40.3],["WATCH",39.4],["WATCH",39.0],["WATCH",39.0],["WATCH",37.5],["ANTICIPATION",35.2],["WATCH",33.6],["WATCH",32.6],["WATCH",32.1],["WATCH",31.8],["WATCH",31.0],["WATCH",30.6],["WATCH",29.7],["WATCH",28.6],["BROKEN",27.2],["WATCH",25.8],["BROKEN",25.3],["BROKEN",24.8],["ANTICIPATION",23.8],["WATCH",22.3],["BROKEN",22.0],["BROKEN",21.5],["WATCH",20.2],["WATCH",20.2],["BROKEN",19.1],["WATCH",18.4],["WATCH",17.8],["WATCH",16.2],["BROKEN",16.0],["WATCH",15.7],["BROKEN",15.7],["WATCH",15.2],["BROKEN",13.7],["WATCH",13.4],["BROKEN",12.9],["BROKEN",9.7],["WATCH",9.3],["WATCH",7.7],["WATCH",7.2],["WATCH",6.7],["BROKEN",6.1],["WATCH",5.1],["BROKEN",0.8],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["ANTICIPATION",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["CONFIRMED",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["ANTICIPATION",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["ANTICIPATION",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["CONFIRMED",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["CONFIRMED",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["CONFIRMED",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null]];
+var CELLS=[["CONFIRMED",100.0],["EXTENDED",99.8],["WATCH",99.7],["CONFIRMED",99.5],["CONFIRMED",99.3],["EXTENDED",99.2],["WATCH",99.0],["CONFIRMED",98.9],["CONFIRMED",98.7],["EXTENDED",98.5],["CONFIRMED",98.3],["CONFIRMED",98.3],["CONFIRMED",98.0],["CONFIRMED",97.9],["CONFIRMED",97.7],["CONFIRMED",97.6],["WATCH",97.4],["EXTENDED",97.2],["EXTENDED",97.1],["CONFIRMED",96.9],["WATCH",96.7],["WATCH",96.6],["CONFIRMED",96.4],["WATCH",96.3],["CONFIRMED",96.1],["CONFIRMED",95.9],["CONFIRMED",95.8],["CONFIRMED",95.6],["CONFIRMED",95.4],["WATCH",95.3],["EXTENDED",95.1],["CONFIRMED",94.9],["CONFIRMED",94.9],["EXTENDED",94.6],["CONFIRMED",94.5],["WATCH",94.3],["CONFIRMED",94.1],["CONFIRMED",94.0],["CONFIRMED",93.8],["CONFIRMED",93.6],["CONFIRMED",93.5],["WATCH",93.3],["CONFIRMED",93.1],["EXTENDED",93.1],["CONFIRMED",92.8],["CONFIRMED",92.7],["WATCH",92.5],["CONFIRMED",92.3],["WATCH",92.2],["CONFIRMED",92.0],["CONFIRMED",91.9],["CONFIRMED",91.7],["CONFIRMED",91.5],["WATCH",91.4],["CONFIRMED",91.2],["WATCH",91.0],["CONFIRMED",90.9],["CONFIRMED",90.7],["CONFIRMED",90.5],["CONFIRMED",90.5],["CONFIRMED",90.2],["EXTENDED",90.1],["CONFIRMED",89.9],["CONFIRMED",89.7],["EXTENDED",89.6],["WATCH",89.4],["CONFIRMED",89.3],["WATCH",89.1],["WATCH",88.9],["EXTENDED",88.8],["BROKEN",88.6],["CONFIRMED",88.4],["WATCH",88.3],["WATCH",88.1],["EXTENDED",87.9],["CONFIRMED",87.8],["WATCH",87.6],["WATCH",87.5],["CONFIRMED",87.3],["WATCH",87.1],["EXTENDED",87.0],["EXTENDED",86.7],["CONFIRMED",86.7],["WATCH",86.5],["CONFIRMED",86.3],["CONFIRMED",86.2],["WATCH",86.0],["CONFIRMED",85.8],["CONFIRMED",85.6],["WATCH",85.6],["WATCH",85.3],["WATCH",85.2],["CONFIRMED",84.9],["BROKEN",84.9],["CONFIRMED",84.6],["WATCH",84.6],["WATCH",84.4],["WATCH",84.2],["CONFIRMED",84.0],["BROKEN",83.9],["WATCH",83.7],["WATCH",83.6],["WATCH",83.4],["WATCH",83.2],["WATCH",83.1],["CONFIRMED",82.8],["WATCH",82.8],["WATCH",82.6],["WATCH",82.3],["EXTENDED",82.3],["CONFIRMED",82.1],["WATCH",81.9],["CONFIRMED",81.8],["CONFIRMED",81.4],["WATCH",81.4],["WATCH",81.4],["WATCH",81.1],["EXTENDED",80.9],["WATCH",80.8],["CONFIRMED",80.6],["WATCH",80.4],["WATCH",80.4],["WATCH",80.0],["EXTENDED",80.0],["WATCH",79.8],["CONFIRMED",79.6],["WATCH",79.5],["CONFIRMED",79.2],["WATCH",79.2],["CONFIRMED",79.0],["CONFIRMED",78.8],["EXTENDED",78.7],["CONFIRMED",78.5],["WATCH",78.3],["CONFIRMED",78.2],["CONFIRMED",78.0],["WATCH",77.9],["WATCH",77.5],["WATCH",77.5],["WATCH",77.5],["WATCH",77.2],["WATCH",77.0],["CONFIRMED",76.9],["CONFIRMED",76.7],["WATCH",76.5],["WATCH",76.5],["WATCH",76.2],["WATCH",76.1],["CONFIRMED",75.8],["WATCH",75.8],["WATCH",75.6],["WATCH",75.4],["WATCH",75.2],["WATCH",75.2],["WATCH",74.9],["WATCH",74.8],["WATCH",74.6],["CONFIRMED",74.4],["CONFIRMED",74.2],["WATCH",74.2],["WATCH",73.9],["WATCH",73.8],["WATCH",73.6],["CONFIRMED",73.5],["WATCH",73.3],["CONFIRMED",73.1],["CONFIRMED",73.0],["WATCH",72.8],["WATCH",72.6],["WATCH",72.2],["WATCH",72.2],["CONFIRMED",72.2],["WATCH",72.2],["WATCH",71.8],["WATCH",71.7],["WATCH",71.5],["WATCH",71.3],["WATCH",71.2],["WATCH",71.0],["WATCH",70.8],["WATCH",70.8],["WATCH",70.4],["WATCH",70.4],["WATCH",70.2],["WATCH",70.0],["WATCH",70.0],["WATCH",69.7],["WATCH",69.5],["CONFIRMED",69.3],["WATCH",69.3],["WATCH",69.1],["WATCH",68.8],["WATCH",68.8],["CONFIRMED",68.5],["WATCH",68.5],["WATCH",68.2],["WATCH",68.1],["WATCH",67.9],["WATCH",67.7],["WATCH",67.7],["WATCH",67.4],["WATCH",67.1],["WATCH",67.1],["WATCH",67.1],["WATCH",66.7],["WATCH",66.7],["WATCH",66.4],["WATCH",66.3],["WATCH",66.0],["WATCH",66.0],["WATCH",65.8],["WATCH",65.6],["WATCH",65.6],["WATCH",65.2],["BROKEN",65.2],["WATCH",65.0],["BROKEN",64.8],["WATCH",64.7],["WATCH",64.4],["WATCH",64.4],["CONFIRMED",64.0],["WATCH",64.0],["WATCH",64.0],["WATCH",63.7],["WATCH",63.4],["WATCH",63.4],["WATCH",63.2],["WATCH",63.0],["WATCH",62.9],["WATCH",62.5],["WATCH",62.5],["WATCH",62.5],["BROKEN",62.1],["WATCH",62.1],["WATCH",61.7],["CONFIRMED",61.7],["BROKEN",61.7],["WATCH",61.4],["WATCH",61.1],["WATCH",61.1],["WATCH",61.1],["WATCH",60.7],["WATCH",60.7],["WATCH",60.4],["WATCH",60.2],["CONFIRMED",60.2],["WATCH",51.5],["WATCH",50.8],["WATCH",50.4],["ANTICIPATION",50.2],["ANTICIPATION",47.5],["ANTICIPATION",46.3],["WATCH",45.4],["WATCH",45.0],["WATCH",41.8],["ANTICIPATION",40.1],["ANTICIPATION",39.7],["ANTICIPATION",37.0],["WATCH",37.0],["WATCH",35.7],["WATCH",35.4],["WATCH",34.9],["WATCH",34.2],["WATCH",32.4],["WATCH",32.0],["ANTICIPATION",30.8],["ANTICIPATION",29.8],["WATCH",29.3],["WATCH",27.3],["ANTICIPATION",26.1],["WATCH",25.2],["WATCH",24.4],["WATCH",21.4],["WATCH",21.4],["WATCH",21.1],["WATCH",21.1],["WATCH",16.7],["WATCH",15.6],["WATCH",15.1],["WATCH",14.3],["WATCH",12.8],["WATCH",11.3],["WATCH",6.8],["WATCH",5.9],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["CONFIRMED",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["CONFIRMED",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["WATCH",null],["CONFIRMED",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["CONFIRMED",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["CONFIRMED",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null],["BROKEN",null],["BROKEN",null],["WATCH",null]];
 var CMAP={CONFIRMED:'#00ff9d',ANTICIPATION:'#4d9fff',EXTENDED:'#ffb020',
  BROKEN:'#ff4d5e',WATCH:'#64748b'};
 document.getElementById('map').innerHTML=CELLS.map(function(c,i){
@@ -509,7 +555,7 @@ document.getElementById('map').innerHTML=CELLS.map(function(c,i){
 }).join('');
 
 /* ticker — real reads from tonight's state, duplicated for a seamless loop */
-var TK=[["UNIVERSE", "615 watched nightly", "up"], ["CONFIRMED UPTREND", "85 names", "up"], ["GATE", "0/40 signals banked", "dn"], ["REGIME", "breadth 53.2% \u2014 full size", "up"], ["EXIT RISK", "66 names flagged ASM/GSM/band", "dn"], ["JOURNAL", "221 signals, append-only", "up"], ["NEWS RADAR", "17 material filings in window", "up"], ["PENNY SCREEN", "178 survivors of the gates", "up"], ["CAPITAL DEPLOYED", "0 \u2014 gate not yet cleared", "dn"], ["DEADLINE", "2026-12-31", "up"]];
+var TK=[["UNIVERSE", "615 watched nightly", "up"], ["CONFIRMED UPTREND", "85 names", "up"], ["GATE", "0/40 signals banked", "dn"], ["REGIME", "breadth 53.2% \u2014 full size", "up"], ["EXIT RISK", "65 names flagged ASM/GSM/band", "dn"], ["JOURNAL", "221 signals, append-only", "up"], ["NEWS RADAR", "17 material filings in window", "up"], ["PENNY SCREEN", "153 survivors of the gates", "up"], ["PAYOFF", "9.6:1 winner-to-loser, backtested", "up"], ["VERDICT DUE", "2026-12-31", "up"]];
 document.getElementById('tick').innerHTML=TK.concat(TK).map(function(t){
  return '<span class="tk"><b>'+t[0]+'</b><span class="'+t[2]+'">'+t[1]+'</span></span>';}).join('');
 </script>

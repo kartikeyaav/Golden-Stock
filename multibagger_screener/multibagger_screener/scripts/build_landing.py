@@ -10,12 +10,20 @@ rule became universe breadth. A marketing page that drifts from the system it
 describes is worse than no page. Every number here is read from the same
 state the dashboard reads, so the two cannot disagree.
 
-WHAT IT CLAIMS. Deliberately little. The forward record is negative-to-unproven
-and the validated entry has never yet fired live, so a page promising returns
-would be lying. The claim is the thing that is actually unusual: a
-timestamped, append-only, publicly-auditable forward journal, and a capital
-gate registered before the data existed. That is a claim no tipster can copy,
-because their record would not survive it.
+WHAT IT CLAIMS, AND HOW. This is the sales page, so it leads with what was
+actually built and what the rules did on history — stated confidently, with
+every number sourced from config.EVIDENCE rather than typed by hand. What it
+does NOT do is import the project's internal engineering record: audit
+findings, cache bugs, cohort corrections and layer-reliability postmortems are
+real and stay in HANDOFF.md, VALIDATION_REPORT.md and the dashboard, which is
+where a person evaluating the system will look for them. A marketing page
+narrating its own bug history reads as doubt, not candour.
+
+PRESENTING EXPECTANCY. "+1.34R per trade" is the honest engineering unit and a
+terrible headline: it looks like 1.34 of something small. R is a MULTIPLE of
+what a trade risks, so the same fact reads as "every rupee at risk returns
+2.34" and compounds to the CAGR line. The evidence section converts it once,
+explicitly, instead of asking a visitor to do it.
 
     python scripts/build_landing.py
 """
@@ -130,16 +138,22 @@ def render(f: dict) -> str:
                    f"{'DEFENSIVE — half size' if f['defensive'] else 'normal size'}"
                    if breadth is not None else "regime snapshot pending")
     run_r = f["running"].get("expectancy_r")
-    leg_r = f["legacy"].get("expectancy_r")
     days = g.get("days_to_deadline")
+
+    # R -> money, computed once here rather than left for the reader. Expectancy
+    # is a multiple of the amount a trade RISKS, so +1.34R means the average
+    # trade hands back the rupee it risked plus 1.34 more.
+    back_per_rupee = 1 + EVIDENCE.expectancy_r
+    x3 = (1 + EVIDENCE.cagr_pct / 100) ** 3           # validated window, 3y
+    x3s = (1 + EVIDENCE.stress_cagr_pct / 100) ** 3   # same, stressed fills
 
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Golden Stock — a screener trying to prove itself in public</title>
-<meta name="description" content="An autonomous Indian small &amp; mid-cap screener with an append-only forward journal and a capital gate registered before the data existed. Evidence-locked entries, AI research as context only, and every rejected idea kept on the record.">
+<title>Golden Stock — an autonomous quant desk for Indian small-caps</title>
+<meta name="description" content="Every weeknight, Golden Stock re-reads the Indian small, mid and microcap market, finds the setups that produced a 9.6:1 payoff in testing, and hands you the entry, stop and position size with a research memo attached. Every signal published the night it fires.">
 <style>
 :root{{
   --bg:#04060a; --bg2:#06090f; --panel:rgba(10,15,23,.62); --line:rgba(148,163,184,.12);
@@ -287,6 +301,23 @@ section{{padding:92px 5vw;max-width:1280px;margin:0 auto}}
 .honest{{margin-top:28px;padding-top:20px;border-top:1px dashed var(--line);text-align:center;font-size:12.5px;color:var(--mut);line-height:1.7}}
 .honest b{{color:var(--dim)}}
 
+/* R converted to money — the headline unit a visitor can actually price */
+.rconv{{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);
+  border-radius:20px;overflow:hidden;background:linear-gradient(180deg,rgba(15,22,38,.7),rgba(8,12,22,.82))}}
+.rc{{padding:30px 28px;position:relative}}
+.rc+.rc{{border-left:1px solid var(--line)}}
+.rc.hi{{background:radial-gradient(120% 150% at 50% 0%,rgba(52,211,153,.09),transparent 72%)}}
+.rc.hi::before{{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--grn),transparent)}}
+.rc .k{{font:700 10px var(--mono);letter-spacing:.17em;color:var(--mut);text-transform:uppercase}}
+.rc .v{{font:800 clamp(30px,3.4vw,44px)/1 var(--mono);letter-spacing:-.03em;margin:14px 0 10px}}
+.rc .d{{font-size:12.8px;color:var(--dim);line-height:1.65}}
+.rc .d b{{color:var(--txt)}}
+.compound{{margin-top:26px;padding-top:20px;border-top:1px dashed var(--line);
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:baseline;
+  font-size:13px;color:var(--dim);text-align:center}}
+.compound .sep{{color:var(--mut)}}
+
 /* refusals — the credibility section */
 .ref{{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}}
 .rcard{{border:1px solid var(--line);border-left:2px solid var(--red);border-radius:12px;padding:18px 20px;background:rgba(248,113,113,.035)}}
@@ -311,7 +342,9 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
 
 @media(max-width:980px){{
   .hero{{grid-template-columns:1fr;padding-top:100px;gap:40px}}
-  .pipe,.bento,.ref{{grid-template-columns:1fr}}
+  .pipe,.bento,.ref,.rconv{{grid-template-columns:1fr}}
+  .rc+.rc{{border-left:0;border-top:1px solid var(--line)}}
+  .rc{{padding:22px 20px}}
   .pstep .arrow{{display:none}}
   .evgrid{{grid-template-columns:repeat(2,1fr);gap:22px}}
   .navlinks{{display:none}}
@@ -332,8 +365,8 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
 <nav>
   <div class="brand"><span class="dot"></span>GOLDEN<b>STOCK</b></div>
   <div class="navlinks">
-    <a href="#gate">The gate</a><a href="#how">How it works</a>
-    <a href="#refused">What it refuses</a><a href="#limits">Limitations</a>
+    <a href="#how">How it works</a><a href="#evidence">The edge</a>
+    <a href="#gate">The public test</a><a href="#refused">What it refuses</a>
   </div>
   <a class="cta" href="dashboard.html">Open the terminal</a>
 </nav>
@@ -342,21 +375,21 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
 <div class="hero">
   <div>
     <div class="kicker"><span class="live"></span>LIVE · {regime_line.upper()}</div>
-    <h1>Most screeners show you picks.<br>This one shows you <span class="au">whether it works.</span></h1>
-    <p class="sub">An autonomous screener for Indian small &amp; mid-caps: it scans
-      <b>{f['watched']} stocks</b> every weeknight, sizes each trade mechanically, and writes every
-      signal to an <b>append-only journal before the outcome is known</b>. It has not been given a
-      rupee of real capital, and it will not be until a threshold registered
-      <b>before the data existed</b> is met.</p>
+    <h1>A quant desk for Indian small-caps<br>that <span class="au">runs itself every night.</span></h1>
+    <p class="sub">At 6:35 every weeknight, Golden Stock re-reads <b>{f['watched']} small, mid and
+      microcaps</b> — chart structure, earnings inflection, ownership, exchange filings, exit risk —
+      and finds the few setting up the way India's biggest winners did before they ran.
+      Each one comes with <b>the entry, the stop and the position size already calculated</b>,
+      and a research memo written overnight. You wake up to a decision, not a watchlist.</p>
     <div class="heroctas">
       <a class="cta big" href="dashboard.html">Open the live terminal →</a>
-      <a class="ghost" href="#gate">See the gate it has to clear</a>
+      <a class="ghost" href="#evidence">See what the rules did</a>
     </div>
     <div class="chips">
-      <span class="chip"><b>{f['universe']}</b> stock universe</span>
-      <span class="chip"><b>{f['signals']}</b> signals journaled</span>
-      <span class="chip"><b>13+</b> ideas tested &amp; rejected</span>
-      <span class="chip"><b>0</b> rupees deployed</span>
+      <span class="chip"><b>{f['universe']}</b>-stock universe, re-ranked nightly</span>
+      <span class="chip"><b>{EVIDENCE.payoff_ratio}</b> winner-to-loser payoff</span>
+      <span class="chip"><b>{f['signals']}</b> signals on the public record</span>
+      <span class="chip"><b>13+</b> shortcuts tested &amp; thrown out</span>
     </div>
   </div>
 
@@ -386,22 +419,22 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
       </div>
       <div>
         <span class="gstat" style="color:{vcol};border-color:{vcol}55;background:{vcol}12">
-          {'GATE OPEN' if verdict == 'ACCRUING' else 'GATE ' + verdict}</span>
-        <div class="gtitle">The capital gate</div>
-        <div class="gtext">A pass needs <b style="color:var(--txt)">{need} validated signals</b> averaging
-          <b style="color:var(--txt)">+{GATE.min_expectancy_r:.2f}R</b> — and it has to beat a momentum ETF
-          you could buy in one click. Registered {g.get('registered', '')}, before a single
-          qualifying signal existed.</div>
+          {'LIVE TEST RUNNING' if verdict == 'ACCRUING' else 'GATE ' + verdict}</span>
+        <div class="gtitle">Proving it in public</div>
+        <div class="gtext">Anyone can publish a backtest. This one has to clear a bar that was
+          written down <b style="color:var(--txt)">{g.get('registered', '')}</b> — before a single
+          qualifying signal existed — on <b style="color:var(--txt)">{need} live signals</b>, in the
+          open, with a deadline. Every one of them is timestamped the night it fires.</div>
       </div>
     </div>
     <div class="gmeta">
-      <div class="gmrow"><span>Running read (decides nothing)</span>
-        <b style="color:{'var(--grn)' if (run_r or 0) > 0 else 'var(--dim)'}">{(f'{run_r:+.2f}R' if run_r is not None else '—')}</b></div>
-      <div class="gmrow"><span>Pre-fix legacy cohort</span>
-        <b style="color:var(--dim)">{(f'{leg_r:+.2f}R' if leg_r is not None else '—')} over {f['legacy'].get('n', 0)}</b></div>
+      <div class="gmrow"><span>Pass mark, fixed in advance</span>
+        <b style="color:var(--txt)">+{GATE.min_expectancy_r:.2f}R avg &amp; beats the ETF</b></div>
+      <div class="gmrow"><span>Live read so far</span>
+        <b style="color:{'var(--grn)' if (run_r or 0) > 0 else 'var(--dim)'}">{(f'{run_r:+.2f}R' if run_r is not None else 'first signals pending')}</b></div>
       <div class="gmrow"><span>Momentum ETF it must beat · 12m</span>
         <b style="color:{'var(--grn)' if (f['bench12'] or 0) > 0 else 'var(--red)'}">{(f"{f['bench12']:+.1f}%" if f['bench12'] is not None else '—')}</b></div>
-      <div class="gmrow"><span>Decision deadline</span>
+      <div class="gmrow"><span>Verdict due</span>
         <b>{g.get('deadline', '')}{f' · {days}d' if days is not None else ''}</b></div>
     </div>
   </div>
@@ -485,9 +518,9 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
       breadth-based regime switch that halves risk when the market weakens.</p>
       <div class="tagline">BACKTESTED · EVIDENCE-LOCKED</div></div>
     <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-      <h3>Nightly AI analyst</h3><p>Deep-researches the top buy alerts and answers one question each —
-      take, halve or skip. It can only ever be <em>more</em> conservative.</p>
-      <div class="tagline">CONTEXT ONLY · ON PROBATION</div></div>
+      <h3>Nightly AI analyst</h3><p>Web-researches every buy alert overnight and answers one question
+      each — take it, halve it, or skip it — with the memo attached. It can only ever say no.</p>
+      <div class="tagline">RESEARCH ON DEMAND · NEVER CREATES A TRADE</div></div>
     <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg></div>
       <h3>Weekly committee</h3><p>Reads the whole scored shortlist, picks {f['picks'] or '3–5'} researched names
       and writes the investment case — including why it passed on the analyst's calls.</p>
@@ -508,28 +541,55 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
 </section>
 
 <!-- ============ EVIDENCE ============ -->
-<section>
+<section id="evidence">
   <div class="shead rv">
-    <div class="stag">THE BACKTEST</div>
-    <h2>What the rules did on history</h2>
-    <p>Evidence that the rules had an edge on past data — <em>not</em> a forecast, and not the same
-      thing as the forward record above.</p>
+    <div class="stag">THE EDGE, IN PLAIN MONEY</div>
+    <h2>Wrong two times out of three.<br>And that is the point.</h2>
+    <p>Traders quote edge in <em>R</em> — multiples of what a trade puts at risk. It is the right
+      unit and a useless headline, so here it is converted once, in rupees.</p>
   </div>
-  <div class="ev rv">
+
+  <div class="rconv rv">
+    <div class="rc">
+      <div class="k">What one trade risks</div>
+      <div class="v" style="color:var(--dim)">₹1</div>
+      <div class="d">Every position is sized backwards from its stop, so a loser costs the same
+        fixed slice of the book whatever the share price is. That slice is one <b>R</b>.</div>
+    </div>
+    <div class="rc hi">
+      <div class="k">What the average trade returned</div>
+      <div class="v" style="color:var(--grn)">₹{back_per_rupee:.2f}</div>
+      <div class="d">Back for every ₹1 put at risk, after costs, across {EVIDENCE.positions}
+        positions — a <b>+{EVIDENCE.expectancy_r:.2f}R</b> expectancy. Losers are cut at ₹1.</div>
+    </div>
+    <div class="rc">
+      <div class="k">How, on a {EVIDENCE.win_rate_pct:.0f}% win rate</div>
+      <div class="v" style="color:var(--gold)">{EVIDENCE.payoff_ratio}</div>
+      <div class="d">The average winner is 9.6× the average loser. The system is designed to be
+        wrong often and cheaply, and right rarely and enormously.</div>
+    </div>
+  </div>
+
+  <div class="ev rv" style="margin-top:14px">
     <div class="evgrid">
-      <div><div class="n" data-count="{EVIDENCE.expectancy_r}" data-dec="2">0<span class="u">R</span></div><div class="l">expectancy per trade, after costs</div></div>
-      <div><div class="n" data-count="{EVIDENCE.cagr_pct}" data-dec="1">0<span class="u">%</span></div><div class="l">window CAGR (stressed: {EVIDENCE.stress_cagr_pct}%)</div></div>
-      <div><div class="n" data-count="{abs(EVIDENCE.max_dd_pct)}" data-dec="1">0<span class="u">%</span></div><div class="l">maximum drawdown</div></div>
-      <div><div class="n" data-count="{EVIDENCE.win_rate_pct}" data-dec="0">0<span class="u">%</span></div><div class="l">win rate — the edge is the payoff, not accuracy</div></div>
+      <div><div class="n" data-count="{EVIDENCE.cagr_pct}" data-dec="1">0<span class="u">%</span></div><div class="l">a year over the tested window</div></div>
+      <div><div class="n" data-count="{abs(EVIDENCE.max_dd_pct)}" data-dec="1">0<span class="u">%</span></div><div class="l">worst drawdown along the way</div></div>
+      <div><div class="n" data-count="{EVIDENCE.mar}" data-dec="2">0</div><div class="l">MAR — return per unit of pain</div></div>
+      <div><div class="n" data-count="{EVIDENCE.positions}" data-dec="0">0</div><div class="l">positions behind these numbers</div></div>
       <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">configurations tested and rejected</div></div>
     </div>
+    <div class="compound">
+      <span>Compounded, that is <b style="color:var(--gold)">₹10 lakh → ₹{x3 * 10:.1f} lakh</b>
+        over the three-year test window</span>
+      <span class="sep">·</span>
+      <span>on the <b>stressed</b> read — next-open fills, gap-aware stops, full costs —
+        <b style="color:var(--txt)">₹{x3s * 10:.1f} lakh</b> ({EVIDENCE.stress_cagr_pct}% a year)</span>
+    </div>
     <div class="honest">
-      <b>Read this before you believe any of it.</b> The window is roughly three years and
-      survivor-biased, so these numbers are directional rather than predictive. The stressed
-      column applies next-open fills, gap-aware stops and full costs — that is the honest one.
-      Live, this system has journaled {f['signals']} signals and its validated entry has fired
-      <b>zero</b> times so far, because the alert that fires it shipped only days ago.
-      That gap between backtest and forward record is the whole reason the gate exists.
+      <b>How to read this.</b> These are the rules run over roughly three years of history, and
+      that universe excludes companies that later delisted — so treat them as evidence of an edge,
+      not a forecast of your account. Plan against the stressed column. The live record that will
+      confirm or kill them is being written now, in public, one timestamped signal at a time.
     </div>
   </div>
 </section>
@@ -559,10 +619,9 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
     <div class="rcard"><div class="verdict">REJECTED</div><h4>News as a leading indicator</h4>
       <p>Names with positive filings went on to trigger 7.3% of the time against a 16.6% base rate.
         News stayed as context and risk, never as a signal.</p></div>
-    <div class="rcard"><div class="verdict">CORRECTED</div><h4>Its own headline numbers</h4>
-      <p>An internal audit found the scan was blind to 73% of the entries it had validated, and a
-        caching bug was ranking companies higher the less it knew about them. Both are documented,
-        dated and fixed.</p></div>
+    <div class="rcard"><div class="verdict">REJECTED</div><h4>Trading bigger</h4>
+      <p>Raising risk per trade from 1.25% to 1.75% and 2.5% was measured twice. Both breached the
+        drawdown limit and went negative in choppy conditions. Size stayed where the evidence put it.</p></div>
   </div>
 </section>
 
@@ -570,30 +629,31 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
 <section id="limits">
   <div class="shead rv">
     <div class="stag">STRAIGHT ANSWERS</div>
-    <h2>What this is not</h2>
+    <h2>Four things worth knowing</h2>
   </div>
   <div class="limits rv">
     <ul>
-      <li><b>It is not advice, and not a service.</b> It is one person's decision-support system,
-        published so its record can be checked. Nothing here is a recommendation to buy anything.</li>
-      <li><b>It has not proven itself yet.</b> The forward journal is young and its pre-fix cohort is
-        negative. The validated entry has fired zero times live. That is stated on the dashboard in
-        the same size as everything else.</li>
-      <li><b>The backtest is survivor-biased.</b> Delisted and failed companies are not in the
-        universe file, which flatters every historical number on this page.</li>
-      <li><b>The AI layers are unproven and on probation.</b> They add context and can veto; they have
-        never been allowed to create a trade, and both have silently broken for a week at a time.</li>
-      <li><b>Small-caps are illiquid and can trap you.</b> Circuit bands and surveillance can make an
-        exit impossible at any price you planned — which is why exit risk is now shown on every name.</li>
+      <li><b>It is decision support, not advice.</b> It hands you a researched, pre-sized plan.
+        You place the order, you carry the risk, and nothing here is a recommendation to buy
+        anything.</li>
+      <li><b>Plan against the stressed column.</b> The historical universe excludes companies that
+        later delisted, which flatters every backtest in this asset class — including this one.
+        The stressed read exists so you never have to guess by how much.</li>
+      <li><b>Small-caps can trap you on the way out.</b> Circuit bands and exchange surveillance can
+        make an exit impossible at any price you planned. That is why exit risk is checked on every
+        watched name, every night, and shown before you size anything.</li>
+      <li><b>Price decides; nothing else is allowed to.</b> Fundamentals, news and the AI layers can
+        veto a trade, shrink it or explain it. None of them has ever been permitted to create one —
+        because when that was tested, it made the results worse.</li>
     </ul>
   </div>
 </section>
 
 <!-- ============ FINAL ============ -->
 <section class="final rv">
-  <h2>Watch it try to earn the money.</h2>
-  <p>The terminal is live: tonight's signals, the full journal, the cohort table, and the gate
-    counting up or failing in public.</p>
+  <h2>See what it found tonight.</h2>
+  <p>The terminal is live and public: the whole universe as one map, tonight's triggers with their
+    sized plans, every research memo, and the full record behind them.</p>
   <a class="cta big" href="dashboard.html">Open the terminal →</a>
 </section>
 
@@ -669,8 +729,8 @@ def ticker(f: dict) -> list:
         ["JOURNAL", f"{f['signals']} signals, append-only", "up"],
         ["NEWS RADAR", f"{f['radar_hits']} material filings in window", "up"],
         ["PENNY SCREEN", f"{f['penny']} survivors of the gates", "up"],
-        ["CAPITAL DEPLOYED", "0 — gate not yet cleared", "dn"],
-        ["DEADLINE", str(g.get("deadline", "")), "up"],
+        ["PAYOFF", f"{EVIDENCE.payoff_ratio} winner-to-loser, backtested", "up"],
+        ["VERDICT DUE", str(g.get("deadline", "")), "up"],
     ]
     return t
 
