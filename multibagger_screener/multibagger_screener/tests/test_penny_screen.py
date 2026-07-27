@@ -7,6 +7,7 @@ What is asserted is the SHAPE of the judgement, never a ranking outcome:
   - a margin-confirmed turnaround outscores an unconfirmed one
   - tradability rewards the name you can actually exit
   - the liquidity/circuit statistics are computed the way the gates assume
+  - the universe arms re-settle once the market caps land (both directions)
 
 Run:  python tests/test_penny_screen.py
 """
@@ -14,12 +15,17 @@ Run:  python tests/test_penny_screen.py
 from __future__ import annotations
 
 import os
+import shutil
 import sys
+import tempfile
 
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))), "scripts"))
 
+import build_penny_universe as bpu
 from config import PENNY
 from data.nse_all import liquidity_stats
 from scoring.penny_score import (assess_penny, build_vetoes, risk_flags,
@@ -28,13 +34,19 @@ from scoring.penny_score import (assess_penny, build_vetoes, risk_flags,
 
 FAILURES: list[str] = []
 
+# See tests/test_capital_gate.py — script mode aggregates, pytest needs a raise
+# or every test_ function here passes regardless of what it found.
+_UNDER_PYTEST = "PYTEST_CURRENT_TEST" in os.environ
+
 
 def check(name: str, cond: bool, detail: str = "") -> None:
     if cond:
         print(f"  PASS  {name}")
-    else:
-        FAILURES.append(f"{name} — {detail}")
-        print(f"  FAIL  {name}  {detail}")
+        return
+    FAILURES.append(f"{name} — {detail}")
+    print(f"  FAIL  {name}  {detail}")
+    if _UNDER_PYTEST:
+        raise AssertionError(f"{name} — {detail}")
 
 
 # ---------------------------------------------------------------------------
@@ -216,6 +228,121 @@ def test_liquidity_stats() -> None:
           > PENNY.max_circuit_frac)
 
 
+def test_arm_assignment() -> None:
+    print("\n[universe arms — a cheap share is not a small company]")
+    df = pd.DataFrame([
+        # the case that broke the screen: a Rs13 share of a Rs1.42 lakh Cr company
+        {"symbol": "BIGCHEAP", "last_close": 13.1, "market_cap_cr": 142254.0},
+        {"symbol": "NANOCHEAP", "last_close": 30.9, "market_cap_cr": 382.0},
+        # genuinely nano-cap but NOT a cheap share — the mcap arm's whole point
+        {"symbol": "NANODEAR", "last_close": 1708.2, "market_cap_cr": 978.0},
+        {"symbol": "BIGDEAR", "last_close": 2400.0, "market_cap_cr": 64000.0},
+        # cap not read yet: provisional on price, must not be settled as clean
+        {"symbol": "UNKNOWNCHEAP", "last_close": 42.0, "market_cap_cr": None},
+        {"symbol": "UNKNOWNDEAR", "last_close": 640.0, "market_cap_cr": None},
+    ])
+    a = bpu.assign_arms(df).set_index("symbol")
+    check("a cheap share of a huge company is NOT on the price arm",
+          not a.at["BIGCHEAP", "price_arm"] and a.at["BIGCHEAP", "arm"] == "",
+          f"arm={a.at['BIGCHEAP', 'arm']!r}")
+    check("a cheap share of a small company takes both arms",
+          a.at["NANOCHEAP", "arm"] == "price+mcap", a.at["NANOCHEAP", "arm"])
+    check("an expensive share of a nano-cap company is on the mcap arm",
+          a.at["NANODEAR", "arm"] == "mcap", a.at["NANODEAR", "arm"])
+    check("a big expensive company is on neither arm",
+          a.at["BIGDEAR", "arm"] == "", a.at["BIGDEAR", "arm"])
+    check("an unread cap gets the benefit of the doubt on the price arm",
+          a.at["UNKNOWNCHEAP", "arm"] == "price", a.at["UNKNOWNCHEAP", "arm"])
+    check("...but an unread cap can never CREATE mcap-arm membership",
+          not a.at["UNKNOWNCHEAP", "mcap_arm"] and not a.at["UNKNOWNDEAR", "mcap_arm"])
+
+
+def test_cap_recheck_settles_both_directions() -> None:
+    """The 2026-07-26 incident, reproduced end to end.
+
+    The weekly chain builds the universe BEFORE penny_fundamentals fills the
+    cache, so the build sees no market caps. Every cheap share therefore
+    entered the universe (`NaN >= ceiling` is False) and every genuinely
+    nano-cap name that was not cheap sat in the excluded file as "pending".
+    The re-check has to fix BOTH sides once the caps arrive.
+    """
+    print("\n[cap re-check — the universe settles once the caps land]")
+    gates = pd.DataFrame([
+        {"symbol": "BIGCHEAP", "last_close": 13.1, "median_turnover_cr": 90.0,
+         "gate_reason": ""},
+        {"symbol": "NANOCHEAP", "last_close": 30.9, "median_turnover_cr": 4.0,
+         "gate_reason": ""},
+        {"symbol": "NANODEAR", "last_close": 1708.2, "median_turnover_cr": 2.0,
+         "gate_reason": ""},
+        {"symbol": "BIGDEAR", "last_close": 2400.0, "median_turnover_cr": 30.0,
+         "gate_reason": ""},
+        {"symbol": "ILLIQUID", "last_close": 9.0, "median_turnover_cr": 0.01,
+         "gate_reason": "illiquid: Rs1 lakh median daily turnover (floor Rs50 lakh)"},
+    ])
+    for col in bpu.GATE_COLS:
+        if col not in gates.columns:
+            gates[col] = None
+
+    caps = {"BIGCHEAP": 142254.0, "NANOCHEAP": 382.0,
+            "NANODEAR": 978.0, "BIGDEAR": 64000.0, "ILLIQUID": 120.0}
+
+    tmp = tempfile.mkdtemp(prefix="penny_arms_")
+    saved = (bpu.OUT_UNIVERSE, bpu.OUT_EXCLUDED, bpu.OUT_GATES, bpu.OUT_META,
+             bpu._cached_market_caps)
+    try:
+        bpu.OUT_UNIVERSE = os.path.join(tmp, "penny_universe.csv")
+        bpu.OUT_EXCLUDED = os.path.join(tmp, "penny_excluded.csv")
+        bpu.OUT_GATES = os.path.join(tmp, "penny_gates.csv")
+        bpu.OUT_META = os.path.join(tmp, "penny_meta.json")
+
+        # --- the build, against a cold fundamentals cache (no caps at all) ---
+        bpu._cached_market_caps = lambda syms: {}
+        built, meta0 = bpu._finalize(gates.copy(), pd.Timestamp("2026-07-24"), 25)
+        check("cold build admits the cheap share of a huge company",
+              "BIGCHEAP" in set(built["symbol"]),
+              "the provisional arm is what makes an unfilled cache usable")
+        check("cold build cannot see the mcap arm at all", meta0["mcap_arm"] == 0,
+              str(meta0["mcap_arm"]))
+        check("...and says so: every admitted name is arm-provisional",
+              meta0["arm_provisional"] == len(built), str(meta0))
+        check("a hard-gate reject is never marked pending a cap read",
+              not bool(pd.read_csv(bpu.OUT_EXCLUDED).set_index("symbol")
+                       .at["ILLIQUID", "mcap_pending"]))
+
+        # --- penny_fundamentals runs, the caps land, the scan re-checks ---
+        bpu._cached_market_caps = lambda syms: {s: caps[s] for s in syms if s in caps}
+        summary = bpu.recheck_caps(verbose=False)
+        now = set(pd.read_csv(bpu.OUT_UNIVERSE)["symbol"])
+        check("the huge company is demoted out of the universe",
+              summary["demoted"] == ["BIGCHEAP"], str(summary["demoted"]))
+        check("the genuinely nano-cap name is promoted in",
+              summary["promoted"] == ["NANODEAR"], str(summary["promoted"]))
+        check("the settled universe is exactly the two small companies",
+              now == {"NANOCHEAP", "NANODEAR"}, str(sorted(now)))
+
+        ex = pd.read_csv(bpu.OUT_EXCLUDED).set_index("symbol")
+        reason = str(ex.at["BIGCHEAP", "exclude_reason"])
+        check("the demoted name carries a reason, it is not silently dropped",
+              "too big on both arms" in reason, reason[:90])
+        check("the reason names both numbers the reader will argue with",
+              "13" in reason and "142,254" in reason, reason[:120])
+        # the dashboard funnel groups by this prefix (_PENNY_GATES)
+        check("the reason still classifies under the funnel's existing gate",
+              reason.startswith("not penny/nano"), reason[:40])
+        check("a hard-gate reject keeps ITS reason, not an arm reason",
+              "illiquid" in str(ex.at["ILLIQUID", "exclude_reason"]),
+              str(ex.at["ILLIQUID", "exclude_reason"])[:80])
+
+        again = bpu.recheck_caps(verbose=False)
+        check("re-checking twice changes nothing (idempotent)",
+              not again["demoted"] and not again["promoted"],
+              f"{again['demoted']} / {again['promoted']}")
+    finally:
+        (bpu.OUT_UNIVERSE, bpu.OUT_EXCLUDED, bpu.OUT_GATES, bpu.OUT_META,
+         bpu._cached_market_caps) = saved
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def test_weights_sum() -> None:
     print("\n[config sanity]")
     check("penny block weights sum to 100",
@@ -231,6 +358,8 @@ if __name__ == "__main__":
     test_tradability()
     test_risk_flags()
     test_liquidity_stats()
+    test_arm_assignment()
+    test_cap_recheck_settles_both_directions()
     test_weights_sum()
     print("\n" + ("ALL PASS" if not FAILURES else f"{len(FAILURES)} FAILURE(S):"))
     for f in FAILURES:

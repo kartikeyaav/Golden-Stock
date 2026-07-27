@@ -1,0 +1,21 @@
+logged_at,run_date,symbol,rank,score,coverage_pct,vetoed,veto_reasons,archetypes,close,atr,stop_suggested,tag,rs_pctile,median_turnover_cr,market_cap_cr,risk_flags
+2026-07-26 07:35,2026-07-26,UJJIVANSFB,1,80.1,100.0,False,,,70.72000122070312,3.1,62.97,EXTENDED,92.2,96.315,13761.0,"no promoter (0.0%) — widely held, institutions 50%: professionally managed rather than promoter-driven, so there is no controlling owner whose interests you are riding along with"
+2026-07-26 07:35,2026-07-26,PREMIERPOL,2,77.6,100.0,False,,Deleveraging,79.30000305175781,6.24,63.7,EXTENDED,98.7,2.159,831.0,
+2026-07-26 07:35,2026-07-26,ESAFSFB,3,74.9,100.0,False,,Turnaround (margin-confirmed),38.68999862670898,1.88,33.99,EXTENDED,90.8,4.866,1996.0,
+2026-07-26 07:35,2026-07-26,ATALREAL,4,74.2,100.0,False,,Hyper-growth + Momentum,31.440000534057617,1.38,27.99,CONFIRMED,94.1,23.146,387.0,promoter sold 2.7 pts in 4 quarters
+2026-07-26 07:35,2026-07-26,NSLNISP,5,73.3,100.0,False,,Turnaround (margin-confirmed) + Hyper-growth,41.40999984741211,0.92,39.11,WATCH,73.9,13.216,12136.0,
+2026-07-26 07:35,2026-07-26,IDFCFIRSTB,6,71.6,100.0,False,,,80.79000091552734,1.74,76.44,WATCH,74.5,130.309,69616.0,"no promoter (0.0%) — widely held, institutions 60%: professionally managed rather than promoter-driven, so there is no controlling owner whose interests you are riding along with"
+2026-07-26 07:35,2026-07-26,FILATEX,7,71.1,100.0,False,,Deleveraging,73.83000183105469,4.82,61.78,EXTENDED,97.4,22.715,3278.0,
+2026-07-26 07:35,2026-07-26,SHRIRAMPPS,8,68.8,100.0,False,,Hyper-growth,85.0199966430664,3.19,77.04,WATCH,73.2,4.71,1451.0,
+2026-07-26 07:35,2026-07-26,ANDHRSUGAR,9,67.9,100.0,False,,Deleveraging,86.33000183105469,3.26,78.18,WATCH,85.0,2.42,1170.0,
+2026-07-26 07:35,2026-07-26,CCAVENUE,10,67.5,100.0,False,,Hyper-growth,16.34000015258789,0.67,14.67,WATCH,76.8,22.872,5700.0,
+2026-07-26 07:35,2026-07-26,VISAKAIND,11,65.4,100.0,False,,,79.8499984741211,3.65,70.72,WATCH,83.0,1.049,690.0,
+2026-07-26 07:35,2026-07-26,SUZLON,12,65.2,100.0,False,,Hyper-growth + Deleveraging,52.27999877929688,1.13,49.45,WATCH,68.0,311.158,71276.0,"no promoter (11.7%) — widely held, institutions 35%: professionally managed rather than promoter-driven, so there is no controlling owner whose interests you are riding along with"
+2026-07-26 07:35,2026-07-26,TPLPLASTEH,13,65.2,100.0,False,,Deleveraging,76.9000015258789,3.86,67.25,WATCH,81.7,1.096,600.0,
+2026-07-26 07:35,2026-07-26,YESBANK,14,64.8,100.0,False,,,22.950000762939453,0.47,21.78,WATCH,76.8,179.112,72033.0,
+2026-07-26 07:35,2026-07-26,KALAMANDIR,15,64.5,100.0,False,,Hyper-growth,88.43000030517578,3.29,80.21,BROKEN,7.8,8.85,1356.0,
+2026-07-26 07:35,2026-07-26,SINDHUTRAD,16,64.2,100.0,False,,Turnaround (margin-confirmed) + Deleveraging,24.450000762939453,1.23,21.38,WATCH,79.7,2.104,3770.0,
+2026-07-26 07:35,2026-07-26,GATEWAY,17,63.3,100.0,False,,Turnaround (margin-confirmed) + Hyper-growth,56.380001068115234,1.6,52.38,WATCH,65.4,4.431,2817.0,
+2026-07-26 07:35,2026-07-26,LLOYDSENT,18,62.2,100.0,False,,,78.04000091552734,3.71,68.77,WATCH,86.9,28.954,11894.0,
+2026-07-26 07:35,2026-07-26,UYFINCORP,19,61.6,100.0,False,,Hyper-growth,18.56999969482422,0.93,16.24,WATCH,89.5,0.551,353.0,
+2026-07-26 07:35,2026-07-26,MUNJALAU,20,61.4,100.0,False,,,99.7699966430664,4.48,88.57,WATCH,92.8,3.525,998.0,

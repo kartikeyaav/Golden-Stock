@@ -3,7 +3,8 @@
 **Last updated: 2026-07-26** (capital gate PRE-REGISTERED; exit-risk
 surveillance on the main universe; freshness header; stale KPIs corrected;
 dashboard + landing REBUILT as a trading terminal with a 615-stock universe
-map — see §3Q).
+map — see §3Q; the penny universe now settles its own arms once market caps
+land, in both directions — see §3R).
 This is the single "where we are / what's next" doc. For strategy read
 `../../PROJECT_BRIEF.md` (it lives at the git root `files/`, NOT in this
 folder); for the evidence read `VALIDATION_REPORT.md`; for cloud ops read
@@ -1296,13 +1297,8 @@ NTPCGREEN, NHPC, NMDC, YESBANK, SUZLON. UJJIVANSFB (₹13.8k Cr) ranked #1. This
 is most of why the tab "looked off": the top of a nano-cap screen was PSU
 large-caps.
 
-`_build_penny` now re-applies the ceiling at READ time against the cap we know,
-and moves those names into the excluded count. Universe 153 → 113, top cap
-₹4,600 Cr, leaders now PREMIERPOL ₹831 Cr / ESAFSFB ₹2.0k Cr / ATALREAL ₹387
-Cr. **The durable fix belongs upstream** in the arm assignment — see the spawned
-task; `penny_ranked.csv`, `penny_journal.csv` and `state/penny_meta.json` are
-still built from the wrong universe, and the journal rows for those 34 names
-probably need the usual quarantine treatment rather than a silent edit.
+`_build_penny` re-applied the ceiling at READ time as a stopgap (universe
+153 → 113). **The durable fix landed the same evening — see §3R.**
 
 Also on that tab: the exclusion funnel printed its own scrubbing at the reader
 (`illiquid: Rs* lakh median daily turnover (floor Rs* lakh)`, `ASM LT Stage I —
@@ -1342,6 +1338,100 @@ were separated only by 55% opacity; they now get a named divider row.
 - The screenshot tool still times out on `dashboard.html` at every viewport.
   Verify via `read_page` / JS DOM measurement — measuring bounding boxes for
   every child of a tab is what found all three alignment defects above.
+
+---
+
+## 3R. The penny universe now settles its own arms (2026-07-26 evening)
+
+The durable fix for §3Q's ceiling defect, and the measurement that showed the
+defect was **twice as large as reported and ran in both directions**.
+
+**What was actually wrong.** The arm assignment ran once, at build time,
+against whatever market caps happened to be in the fundamentals cache at that
+instant — and the caps arrive from a LATER step. The weekly chain is
+`build_penny_universe -> penny_fundamentals -> penny_scan`, so the builder is
+structurally one step behind its own input, and nothing ever revisited the
+decision. The universe shipped on 2026-07-26 was built by the cloud (commit
+`e43477d`) against a cold cache and resolved **zero** caps:
+
+| | 2026-07-25 (warm, local) | 2026-07-26 (cold, cloud) |
+|---|---|---|
+| qualified | 178 | 153 |
+| price arm | 113 | **153** |
+| mcap arm | 106 | **0** |
+| held "pending a cap read" | 15 | 984 |
+
+- **40 of 153** names (not 34) were above the ₹5,000 Cr ceiling: IDEA ₹1.42
+  lakh Cr, IRFC ₹1.15 lakh Cr, IDBI ₹91k Cr, NTPCGREEN, NHPC, NMDC, YESBANK,
+  SUZLON, with UJJIVANSFB ₹13.8k Cr ranked #1.
+- **65 genuine nano-caps were missing entirely** — the mcap arm, the one the
+  report calls "the one that means genuinely small", did not exist that night.
+  DJML (₹411 Cr), ATALREAL (₹382 Cr) and PREMIERPOL (₹831 Cr) — the names the
+  07-25 session had just promoted to the top of the table — were sitting in
+  `penny_excluded.csv` marked "pending".
+
+A read-time filter can only fix the first half. You cannot filter a name back
+into a universe it was never in.
+
+**The fix.** Arm assignment is now a pure function, `assign_arms(df)`, applied
+by `_finalize()` — which both `build()` and the new `recheck_caps()` call, so a
+build and a re-check cannot drift about what "penny" means. `build()` also
+snapshots its gate verdict for every security to `state/penny_gates.csv` (the
+gate depends on NSE data only — series, band, surveillance, liquidity, listing
+age — never on market cap), which is what lets the arms be recomputed later
+without going back to the exchange. `penny_scan.py` calls `recheck_caps()`
+before it ranks anything: no network, it reads the cache the previous step just
+filled, and it settles the universe **in the same run** instead of a week
+later. It fired on its first live run and promoted 9 more names.
+`--recheck-caps` on the builder and `--no-recheck` on the scan exist for
+running either half alone.
+
+Both directions are handled, and neither is silent: a name that outgrows the
+ceiling is written to `penny_excluded.csv` with a per-name reason that states
+both numbers the reader will argue with — *"not penny/nano — too big on both
+arms: a ₹13 share of a ₹142,254 Cr company (the price arm's ceiling is ₹5,000
+Cr — a cheap share is not a small company)"* — which classifies under the
+funnel's existing `not penny/nano` gate, so the dashboard needed no new label.
+
+**Two smaller things the same bug was hiding.** `mcap_pending` was computed as
+`isna & ~price_arm`, which excluded exactly the cheap names whose cap decides
+their arm — they entered on price and were never queued for a read, so the
+ceiling could never bind. It is now `tradable & cap unknown`, and this costs no
+extra scraping (`penny_fundamentals` already fetches every universe member).
+And the meta file gained `arm_provisional`: how many admitted names are in on
+an unread cap. On a cold build that number equals the whole universe, which is
+the fact the 07-26 run had no way to state.
+
+**The read-time filter stayed, as a tripwire.** It should never fire now. If it
+does, the upstream re-check did not run and the build **prints a loud `!!` line
+naming the offenders** before filtering them, rather than quietly publishing a
+nano-cap screen led by a PSU bank.
+
+**Journal.** All 20 rows of the 2026-07-26 penny run came off the wrong
+universe — 7 names that never belonged and a `rank` column that was wrong for
+every row — so the whole run moved to
+`journal/quarantine_penny_universe_2026-07-26.csv` (append-only journals are
+never edited silently; same handling as 2026-07-09 and 2026-07-25). The scan
+re-journaled 07-26 correctly, and it now continues coherently from 07-25 (same
+names, small score drifts), which is itself the confirmation that 07-25 was the
+sound run and 07-26 the anomaly. The 07-25 rows were checked against today's
+caps and are clean — nothing to quarantine there.
+
+Current universe: **187 names**, price arm 113 / mcap arm 106 (41 on both),
+largest cap ₹4,732 Cr, zero pending. Top of the table: DJML ₹411 Cr,
+PREMIERPOL ₹831 Cr, ESAFSFB, ATALREAL ₹382 Cr, SCPL ₹599 Cr.
+
+**Tests**: `tests/test_penny_screen.py` gained 18 assertions across
+`test_arm_assignment` (each arm case, including the unread cap that must never
+CREATE mcap-arm membership) and `test_cap_recheck_settles_both_directions`,
+which replays the incident end to end on synthetic data — cold build admits the
+huge cheap share, caps land, re-check demotes it and promotes the nano-cap, the
+reason survives, and a second re-check is a no-op.
+
+**Note for the cloud**: `state/penny_gates.csv` (~700 KB) is gitignored like
+the rest of `state/`. It does not need committing — the build and the scan run
+in the same job on the same workspace — and `recheck_caps()` returns `None`
+and leaves the universe untouched when it is absent.
 
 ---
 

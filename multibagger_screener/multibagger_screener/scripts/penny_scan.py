@@ -39,6 +39,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from build_penny_universe import recheck_caps
 from config import PENNY
 from data.cache import load_ohlcv
 from scoring.penny_score import assess_penny
@@ -192,10 +193,27 @@ def journal_append(rows: list[dict]) -> int:
     return len(fresh)
 
 
-def run(no_update: bool = False, top: int = 20) -> pd.DataFrame:
+def run(no_update: bool = False, top: int = 20, recheck: bool = True) -> pd.DataFrame:
     if not os.path.exists(UNIVERSE):
         print("no penny_universe.csv — run scripts/build_penny_universe.py first")
         return pd.DataFrame()
+
+    # SETTLE THE ARMS FIRST. The weekly chain is build_penny_universe ->
+    # penny_fundamentals -> penny_scan, so the universe was assembled before
+    # most market caps existed and a cheap share of a huge company can only be
+    # spotted now, with the caps in hand. Doing it here rather than at the
+    # build keeps the correction in the same run instead of a week later: on
+    # 2026-07-26 the cloud shipped a "penny and nano-cap" universe whose #1
+    # name was a Rs13,761 Cr bank, and it would have stayed that way until the
+    # next weekend. No network — this reads the cache the previous step filled.
+    if recheck:
+        try:
+            if recheck_caps() is None:
+                print("  (no gate snapshot yet — universe used as built; "
+                      "the next full build writes one)", flush=True)
+        except Exception as e:  # noqa: BLE001 — research surface, never fatal
+            print(f"  cap re-check skipped: {str(e)[:90]}", flush=True)
+
     uni = pd.read_csv(UNIVERSE)
     symbols = uni["symbol"].tolist()
     print(f"penny scan: {len(symbols)} names (universe as of "
@@ -392,8 +410,11 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-update", action="store_true")
     ap.add_argument("--top", type=int, default=20)
+    ap.add_argument("--no-recheck", action="store_true",
+                    help="do not re-settle the universe arms against newly "
+                         "cached market caps before ranking")
     args = ap.parse_args()
-    run(no_update=args.no_update, top=args.top)
+    run(no_update=args.no_update, top=args.top, recheck=not args.no_recheck)
 
 
 if __name__ == "__main__":
