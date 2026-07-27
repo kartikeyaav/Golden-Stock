@@ -1,5 +1,5 @@
 {
- "generated": "2026-07-27 16:48",
+ "generated": "2026-07-27 16:58",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 0.0,
@@ -56,7 +56,7 @@
   "expectancy_r": -0.303,
   "median_age_days": 9,
   "age_matched_reference_r": 0.533,
-  "required_expectancy_r": 0.267,
+  "required_expectancy_r": 0.2665,
   "median_r": -0.27,
   "sum_r": -34.8,
   "win_rate_pct": 23.5,

@@ -36,7 +36,13 @@ FAILURES: list[str] = []
 
 # See tests/test_capital_gate.py — script mode aggregates, pytest needs a raise
 # or every test_ function here passes regardless of what it found.
-_UNDER_PYTEST = "PYTEST_CURRENT_TEST" in os.environ
+def _under_pytest() -> bool:
+    """Evaluated at CALL time, not import time. PYTEST_CURRENT_TEST is set by
+    pytest while a test RUNS, not while the module is imported — reading it at
+    import time made this whole guard a no-op, which is how a deliberately
+    false check still reported "11 passed" (caught by the CI canary
+    2026-07-27)."""
+    return "PYTEST_CURRENT_TEST" in os.environ or "pytest" in sys.modules
 
 
 def check(name: str, cond: bool, detail: str = "") -> None:
@@ -45,7 +51,7 @@ def check(name: str, cond: bool, detail: str = "") -> None:
         return
     FAILURES.append(f"{name} — {detail}")
     print(f"  FAIL  {name}  {detail}")
-    if _UNDER_PYTEST:
+    if _under_pytest():
         raise AssertionError(f"{name} — {detail}")
 
 

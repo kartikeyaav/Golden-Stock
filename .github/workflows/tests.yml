@@ -1,0 +1,72 @@
+name: Tests
+
+# Nothing ran the test suite before the cloud executed the code. A broken
+# commit went straight to the nightly runner, and the first sign of it would
+# have been a missing scan — or worse, a scan that completed and journaled
+# something wrong into an append-only file.
+#
+# Runs on every push and PR. Deliberately fast and network-free: these are the
+# logic guards, not an end-to-end run.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    working-directory: multibagger_screener/multibagger_screener
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install "pandas>=2.0" "numpy>=1.24" pytest
+
+      # The collected suite. Note test_capital_gate.py and test_penny_screen.py
+      # were decorative under pytest until 2026-07-27 — their check() helper
+      # printed failures instead of raising, so 16 tests passed unconditionally.
+      # If that regresses, this step goes green while proving nothing; the
+      # canary below is what catches it.
+      - name: pytest
+        run: pytest tests -q
+
+      # Proof that a failing check actually fails. Cheap insurance against the
+      # exact regression described above.
+      - name: Canary — a false check must fail the suite
+        run: |
+          python - <<'PY'
+          import subprocess, sys, pathlib
+          src = pathlib.Path("tests/test_capital_gate.py").read_text()
+          probe = src.replace(
+              "def test_date_floor():",
+              "def test_date_floor():\n    check('CANARY', False, 'deliberate')")
+          pathlib.Path("tests/_canary.py").write_text(probe)
+          r = subprocess.run([sys.executable, "-m", "pytest", "tests/_canary.py", "-q"],
+                             capture_output=True, text=True)
+          pathlib.Path("tests/_canary.py").unlink()
+          if r.returncode == 0:
+              print(r.stdout[-2000:])
+              sys.exit("CANARY PASSED WHEN IT MUST FAIL — check() has stopped "
+                       "raising under pytest; the suite is decorative again.")
+          print("canary failed as required — the suite can detect a failure")
+          PY
+
+      # Four test files are script-style (aggregate, then exit 1). pytest
+      # collects some of them; running them directly exercises their __main__
+      # path too, which is how they are normally used.
+      - name: Script-style test files
+        run: |
+          set -e
+          for f in tests/test_*.py; do
+            echo "--- $f"
+            python "$f"
+          done

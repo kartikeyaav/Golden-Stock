@@ -39,6 +39,8 @@ BENCHMARK_SYMBOLS = ["NIFTY50", GATE.benchmark_symbol]
 # cached history is at the OLD scale — beyond any circuit band, so it can only
 # be a corporate action, not a real move.
 _ADJ_BAND = 0.30
+# above this share of failed symbols the run is a broken feed, not a bad night
+_FAIL_FRACTION_FATAL = 0.20
 
 
 def _adjustment_detected(sym: str, fresh: pd.DataFrame) -> float | None:
@@ -157,7 +159,22 @@ def main() -> None:
     t0 = time.time()
     ok, failures = update_symbols(symbols, pause=args.pause)
     print(f"updated {ok}/{len(symbols)} in {(time.time()-t0)/60:.1f} min"
-          + (f"; failed: {failures}" if failures else ""))
+          + (f"; failed: {len(failures)} -> {failures[:20]}"
+             f"{'...' if len(failures) > 20 else ''}" if failures else ""))
+    # Exit NON-ZERO on a broad failure. weekly_refresh runs this step with
+    # fatal=True, which meant nothing while a run that failed 646 of 835
+    # symbols still exited 0 and let the whole chain proceed on stale prices.
+    # A handful of failures is normal (renamed/suspended names); most of the
+    # universe failing is a broken feed and must stop the run.
+    frac = len(failures) / max(1, len(symbols))
+    if frac > _FAIL_FRACTION_FATAL:
+        print(f"FATAL: {frac:.0%} of symbols failed to update — treating this as a "
+              f"broken price feed rather than refreshing part of the universe "
+              f"and reporting success", flush=True)
+        sys.exit(1)
+    if failures:
+        print(f"note: {frac:.1%} failed — under the {_FAIL_FRACTION_FATAL:.0%} "
+              f"fatal threshold, continuing")
 
 
 if __name__ == "__main__":

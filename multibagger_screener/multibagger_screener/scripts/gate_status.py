@@ -206,7 +206,11 @@ def cohort_stats(df: pd.DataFrame, sized_only: bool = True,
         hit_stop = round(float((q["status"].astype(str) == "stopped").mean()) * 100, 1)
     # what the backtest reads for signals of these same ages — the bar this
     # cohort is actually held to (CAPITAL_GATE.md §4, amended 2026-07-27)
+    # rounded FIRST, then the bar derived from the rounded value, so the two
+    # numbers published side by side in gate.json are exactly consistent —
+    # required must equal reference x fraction on screen, not to 4 decimals
     ref = age_matched_reference(q.loc[r.index].get("days_elapsed", pd.Series(dtype=float)))
+    ref = round(ref, 3) if ref is not None else None
     return {
         "n": total_logged,
         "n_qualifying": int(len(r)),
@@ -215,8 +219,8 @@ def cohort_stats(df: pd.DataFrame, sized_only: bool = True,
         "median_age_days": (int(pd.to_numeric(q.loc[r.index]["days_elapsed"],
                                               errors="coerce").median())
                             if "days_elapsed" in q.columns else None),
-        "age_matched_reference_r": round(ref, 3) if ref is not None else None,
-        "required_expectancy_r": (round(ref * GATE.min_expectancy_fraction, 3)
+        "age_matched_reference_r": ref,
+        "required_expectancy_r": (round(ref * GATE.min_expectancy_fraction, 4)
                                   if ref is not None else None),
         "median_r": round(float(r.median()), 3),
         "sum_r": round(float(r.sum()), 2),
