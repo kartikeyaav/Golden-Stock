@@ -549,15 +549,14 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
             "Stale prices mean every number on this page is stale."),
         row("analyst", "AI analyst", verdicts_age, 4, 9,
             (health_json.get("status") or "?") + " · pooled deep-dives",
-            "Nightly per-alert triage on the laptop's subscription. It was "
-            "silently dead for eight days in July behind a stale regex and "
-            "again in the same month behind a battery setting — which is why "
-            "it now has to say how old it is."),
+            "Deep-dives tonight's buy alerts and files a verdict on each. "
+            "Amber past 4 days, red past 9 — it has twice failed silently for "
+            "over a week, so its age is shown rather than assumed."),
         row("committee", "AI committee", _age_days((ai_picks or {}).get("generated")),
             8, 15, f"{len((ai_picks or {}).get('picks') or [])} picks",
-            "Weekly portfolio committee. One cycle is 7 days, so past 8 this "
-            "is not this week's read — it went dark for a week in July behind "
-            "three nested timeouts in the wrong order."),
+            "Picks 3-5 researched names from the weekly shortlist. One cycle "
+            "is 7 days, so anything past 8 is last week's read, not this "
+            "week's."),
         row("radar", "News radar", _age_days((radar or {}).get("generated")
                                              or (radar or {}).get("window_start")),
             2.5, 5, f"{len((radar or {}).get('hits') or [])} hits in window",
@@ -1235,7 +1234,22 @@ def build_payload() -> dict:
 
 
 def build() -> None:
-    payload = json.dumps(build_payload(), separators=(",", ":"), default=str)
+    # NaN must not reach the page. json.dumps emits a bare NaN literal, which is
+    # invalid JSON but a VALID JavaScript expression, so it survives all the way
+    # to the DOM and renders the string "NaN" in a cell — `r.roce ?? ''` does not
+    # catch it, because NaN is neither null nor undefined. It was showing in the
+    # screener's ROCE and P/E columns (found 2026-07-27).
+    def _denan(o):
+        if isinstance(o, float) and o != o:
+            return None
+        if isinstance(o, dict):
+            return {k: _denan(v) for k, v in o.items()}
+        if isinstance(o, list):
+            return [_denan(v) for v in o]
+        return o
+
+    payload = json.dumps(_denan(build_payload()), separators=(",", ":"),
+                         default=str, allow_nan=False)
     html = TEMPLATE.replace("%%PAYLOAD%%", payload)
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(html)
@@ -1410,6 +1424,13 @@ table{width:100%;border-collapse:collapse;font-size:12.6px}
 th{color:var(--faint);text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;
 letter-spacing:.7px;padding:7px 9px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
 td{padding:8px 9px;border-bottom:1px solid #1c232e}
+/* Numbers must align on their last digit or a column cannot be read down.
+   Parts of the page already did this (.thval/.rval/.sval) but every <table>
+   left-aligned its figures, so ₹ amounts and decimals came out ragged. The
+   .num class is applied by syncNumericColumns() at render time — to the header
+   AND the cells together, so the two can never drift apart. Bar cells
+   (conviction, penny score) and date columns are deliberately excluded. */
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr{cursor:pointer;transition:background .1s}
 tbody tr:hover{background:var(--card2)}
 .sym{font-weight:600;font-size:12.6px;letter-spacing:.1px}
@@ -1518,7 +1539,11 @@ font-family:var(--mono);font-size:12px;color:var(--dim);white-space:nowrap}
 .mlabel{width:230px;font-size:12px}
 .mtrack{flex:1;height:10px;background:var(--card2);border-radius:5px}
 .mfill{height:10px;border-radius:5px}
-.memo{white-space:pre-wrap;font-size:12.6px;line-height:1.7;color:var(--txt)}
+/* Prose, not data: capped at a readable measure. Unbounded it ran the full
+   1134px card width — ~150 characters a line, which is roughly twice what is
+   comfortable to read and is why the committee memo looked like a wall. */
+.memo{white-space:pre-wrap;font-size:12.6px;line-height:1.75;color:var(--txt);max-width:78ch}
+.memo p{margin:0 0 10px}
 .clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .axis{color:var(--faint);font-size:10px;letter-spacing:.3px}
 .legendline{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
@@ -1947,7 +1972,7 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
   <!-- the market on one screen: every watched stock, ranked by relative
        strength, coloured by chart stage -->
   <div class="card" id="heatcard">
-    <h2>Universe map<span class="info" data-tip="Every stock the scan watches tonight, one cell each, ranked left-to-right and top-to-bottom by relative strength — strongest first. Colour is the chart stage. A white ring marks a name that fired a buy-type alert in the last seven days, so you can see instantly whether tonight's signals sit at the strong end of the market or are scattered through the middle. Hover any cell for the name; click to open it.">?</span>
+    <h2>Universe map<span class="info" data-tip="Every stock the scan watches, one cell each, ranked by relative strength — strongest top-left. Colour is the chart stage; a white ring means the name fired a buy alert in the last seven days, so you can see whether tonight's signals sit at the strong end or are scattered. Hover for the name, click to open.">?</span>
       <span class="axis" style="margin-left:auto" id="hmmeta"></span></h2>
     <div class="hmwrap"><div class="hmaxis"><span>◄ strongest relative strength</span><span>weakest ►</span></div>
       <div class="hm" id="heatmap"></div>
@@ -1967,7 +1992,7 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
       <div id="riskbody"></div></div>
     <div class="card" id="verdictcard" style="display:none"><h2>AI analyst<span class="info" data-tip="The nightly analyst web-researches tonight's top buy alerts and answers one question each — take, halve, or skip. Distinct from AI Picks, which is the weekly committee choosing a researched 3-5 name portfolio from the whole shortlist.">?</span></h2><div id="verdicts"></div></div>
   </div></div>
-  <div class="card" id="radarcard" style="display:none"><h2 style="color:var(--vio)">News radar<span class="info" data-tip="First-party NSE filings only, whitelist-classified into order wins, expansions, M&A, approvals, probes, pledges, exits and fund raises. Repeat filings of one event collapse into a single story, so this measures news rather than paperwork. Measured over 16 days of archive, filings did NOT predict the technical trigger — names with positive news alerted at 7.3% against a 16.6% base rate. Nothing here gates, ranks or sizes anything.">?</span>
+  <div class="card" id="radarcard" style="display:none"><h2 style="color:var(--vio)">News radar<span class="info" data-tip="First-party NSE filings, classified into order wins, expansions, M&A, approvals, probes, pledges, exits and fund raises. Repeat filings of one event collapse into a single story, so this counts news rather than paperwork. Measured over 16 days, filings did NOT predict the trigger (7.3% vs a 16.6% base rate). Nothing here gates, ranks or sizes.">?</span>
     <span class="axis" style="margin-left:auto" id="radarage"></span></h2>
     <div id="radarbody"></div></div>
   <div class="kpis" id="kpis"></div>
@@ -1982,15 +2007,13 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
 
 <div class="tab" id="sectors">
   <div class="card" style="border-color:#5eead43a">
-    <h2 style="color:var(--teal)">Sectors &amp; themes<span class="info" data-tip="NSE files every company into one of 22 macro-industries — accounting categories, not investment themes. The things that actually run cut across them: BEL and Data Patterns sit in different industries and are one story; Apar and Hitachi Energy are one grid-capex trade. This is a second classification over the same universe the scan watches. Membership is an explicit list per theme, widened by name patterns so new listings join automatically; a stock can belong to several.">?</span>
+    <h2 style="color:var(--teal)">Sectors &amp; themes<span class="info" data-tip="NSE's 22 macro-industries are accounting categories, not investment themes: BEL and Data Patterns are filed apart but trade as one story, as do Apar and Hitachi Energy. This is a second classification over the same universe. Membership is an explicit list per theme, widened by name patterns so new listings join automatically, and a stock can sit in several.">?</span>
       <span class="pill" style="border-color:var(--teal);color:var(--teal)">RESEARCH ONLY</span></h2>
-    <div class="dim" style="font-size:12.6px;line-height:1.65;max-width:92ch">
-      Where money and news are moving across the <b id="thn">&mdash;</b> names the scan watches, cut by
-      investment theme rather than by NSE's accounting industries. Heat blends 3-month move, chart
-      breadth and news flow, and it is a <b>rank against tonight's other themes</b> &mdash; not a
-      probability of anything. <span style="color:var(--red)">Tested as an entry filter and
-      rejected</span> (+0.22R gated at 40% heat against +1.27R ungated), so nothing on this tab
-      changes an entry, a stop or a size.
+    <div class="dim" style="font-size:12.6px;line-height:1.7;max-width:74ch">
+      Which themes are moving, across the <b id="thn">&mdash;</b> names the scan watches.
+      Heat is a <b>rank against tonight's other themes</b>, not a probability.
+      <span style="color:var(--red)">Rejected as an entry filter</span>
+      (+0.22R gated vs +1.27R ungated) &mdash; nothing here changes an entry, a stop or a size.
     </div>
   </div>
   <div class="card" id="thnarrcard" style="display:none">
@@ -2042,7 +2065,7 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
        611-name qualified table it sits under, which reads as though the
        rejects were the main event. -->
   <div class="card watchcard" id="watchcard">
-    <h2>Watching &mdash; not qualified<span class="info" data-tip="Names the system's own rules currently EXCLUDE, shown for transparency. A name lands here because it was VETOED (hard governance/leverage cap), its conviction is NOT YET SCORABLE (under 60% coverage of the 8 questions), or the news radar flagged a filing while the chart has no trigger. Not recommendations — they graduate into the screener above automatically the moment they qualify.">?</span>
+    <h2>Watching &mdash; not qualified<span class="info" data-tip="Names the system's own rules currently EXCLUDE. A name lands here if it was VETOED (governance or leverage), is NOT YET SCORABLE (under 60% coverage), or the radar flagged a filing while the chart has no trigger. They rejoin the screener automatically once they qualify.">?</span>
       <span class="axis" style="margin-left:auto" id="watchmeta"></span></h2>
     <div id="watchbody" style="max-height:46vh;overflow:auto"></div>
   </div>
@@ -2052,10 +2075,9 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
   <div class="card" style="border-color:#fbbf2440">
     <h2 style="color:var(--amb)">Penny &amp; nano-cap<span class="info" data-tip="A separate surface from the main system, never backtested — the +1.67R evidence says nothing about it. Every name is recorded so that in a few months there is a measured answer rather than an opinion. Nothing here fires an alert, sizes a position or implies capital.">?</span>
       <span class="pill" style="border-color:var(--amb);color:var(--amb)">RESEARCH ONLY</span></h2>
-    <div class="dim" style="font-size:12.6px;line-height:1.65;max-width:86ch">
-      In this class you lose by not being able to <b>get out</b> &mdash; so the screen is exclusions first,
-      and only survivors are scored. At most <b>5% of the book</b> in this class and <b>1% in one name</b>,
-      if you ever act on it at all.
+    <div class="dim" style="font-size:12.6px;line-height:1.7;max-width:74ch">
+      In this class you lose by not being able to <b>get out</b>, so the screen excludes first
+      and scores only the survivors. Cap: <b>5% of the book</b> here, <b>1% in one name</b>.
     </div>
     <div class="funnelline" id="pennymeta" style="margin:11px 0 0"></div>
   </div>
@@ -2075,12 +2097,12 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
       <th data-k="score">Score<span class="info" data-tip="0-100 over five blocks: business inflection 30, momentum 25, ownership 20, tradability 15, valuation sanity 10. Coverage-honest — blocks with no data are dropped and the rest re-weighted, so a low-coverage score is NOT comparable with a full one. A ° marks a partial read. This score has no backtest behind it.">?</span></th>
       <th data-k="tag">Stage</th><th data-k="rs">RS<span class="info" data-tip="Relative strength percentile ranked WITHIN the penny universe — a nano-cap's peer group is other nano-caps, not the Nifty Midcap 150.">?</span></th>
       <th data-k="mcap">Cap</th><th data-k="turn">Turnover<span class="info" data-tip="Median daily traded value over the last 25 sessions — the number that decides whether an exit exists at all.">?</span></th>
-      <th data-k="turn">Max size<span class="info" data-tip="What that turnover actually supports: 10% of median daily traded value, the standard rule of thumb for getting out inside one session without moving the price against yourself. This is the column that should decide whether a name is worth reading, and it is the whole argument of this tab — a 90-scoring stock you can only put ₹40,000 into is not an opportunity.">?</span></th>
+      <th data-k="turn">Max size<span class="info" data-tip="10% of median daily traded value — roughly what you could exit inside one session without moving the price against yourself. Read this column before the score: a 90-scoring name you can only put ₹40,000 into is not an opportunity.">?</span></th>
       <th data-k="run3m">3m<span class="info" data-tip="Price change over the last three months. A name already up 100%+ carries late-stage risk.">?</span></th>
       <th data-k="close">Price</th><th>120d</th><th>Risk</th></tr></thead><tbody></tbody></table></div>
   </div>
   <div class="card watchcard">
-    <h2>What the gates threw out<span class="info" data-tip="Every rejected name and the machine reason, counted. The screen's value is mostly here, not in the ranking above.">?</span></h2>
+    <h2>What the gates excluded<span class="info" data-tip="Every rejected name with the rule that rejected it, counted. In this class the exclusions carry more of the value than the ranking above.">?</span></h2>
     <div id="pennyfunnel"></div>
   </div>
 </div>
@@ -2161,7 +2183,7 @@ const survOf=sym=>(D.surv||{})[sym];
 function survChip(sym,compact){const s=survOf(sym);if(!s)return'';
  const hard=s.flags.some(f=>f.code==='ASM'||f.code==='GSM'||/^(BE|BZ|SM|ST|IL)$/.test(f.code));
  const tip='CAN YOU GET OUT? '+s.flags.map(f=>f.code+' — '+f.why).join(' · ')
-  +' Shown for risk, never used as a filter: surveillance has not been tested as an entry gate here.';
+  +' Shown as risk only — never used as a filter.';
  const txt=compact?s.flags[0].code.split(' ')[0]:s.flags.map(f=>f.code).join(' · ');
  return `<span class="sv${hard?' hard':''}" data-tip="${esc(tip)}">${esc(txt)}</span>`;}
 
@@ -2182,13 +2204,55 @@ document.addEventListener('click',e=>{const el=e.target.closest('.info[data-tip]
   if(tipPin===el)hideTip();else{showTip(el);tipPin=el;}return;}
  if(tipPin)hideTip();},true);
 
+/* ---- numeric column alignment -----------------------------------------
+   A figure column that is left-aligned cannot be compared down its own
+   length: 1708.20 and 79.30 start at the same x and end nowhere near each
+   other. Every table on this page had that problem.
+
+   Rather than hand-tag ~40 columns across six tables (which drifts the first
+   time a column is inserted), the column type is INFERRED from the rendered
+   cell and the class applied to the header and the body cells together.
+   A column counts as numeric when its cells are .mono AND the first non-empty
+   value parses as a number — which excludes the ISO date columns without
+   naming them, and bar cells (conviction, penny score) are not .mono so they
+   stay put. */
+function syncNumericColumns(root){
+ (root||document).querySelectorAll('table').forEach(t=>{
+  const rows=[...t.querySelectorAll('tbody tr')].filter(r=>!r.classList.contains('tierrow'));
+  if(!rows.length)return;
+  const heads=[...t.querySelectorAll('thead th')];
+  const n=Math.max(...rows.map(r=>r.children.length));
+  for(let i=0;i<n;i++){
+   const cells=rows.map(r=>r.children[i]).filter(Boolean);
+   if(!cells.length||!cells.every(c=>c.classList.contains('mono')))continue;
+   /* placeholders for "no value" must not veto the column — a single em dash
+      in ROCE was enough to leave the whole column left-aligned */
+   const vals=cells.map(c=>(c.innerText||'').trim())
+                   .filter(v=>v&&!/^[—–-]$|^n\/?a$|^NaN$/i.test(v));
+   if(!vals.length)continue;
+   /* a bare number, optionally signed / %-suffixed / ₹-prefixed / k-Cr-L */
+   const numeric=vals.every(v=>/^[+-]?[₹]?\s?[\d,]+(\.\d+)?\s?(%|Cr|L|k|k Cr|x|R)?$/.test(v));
+   if(!numeric)continue;
+   cells.forEach(c=>c.classList.add('num'));
+   if(heads[i])heads[i].classList.add('num');
+  }});}
+
+/* Sorting and filtering replace tbody wholesale, which would drop the classes
+   applied above. An observer re-applies them instead of every render site
+   having to remember to call it — the same reason BUY_ALERT_KINDS exists. */
+(function(){const obs=new MutationObserver(ms=>{const seen=new Set();
+  ms.forEach(m=>{const t=m.target.closest&&m.target.closest('table');
+   if(t&&!seen.has(t)){seen.add(t);syncNumericColumns(t.parentElement||t);}});});
+ document.querySelectorAll('table tbody').forEach(b=>obs.observe(b,{childList:true}));})();
+
 /* nav */
 document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('on'));
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
  b.classList.add('on');$('#'+b.dataset.t).classList.add('on');
  if(b.dataset.t==='positions'&&!window._pos)drawPositions();
- if(b.dataset.t==='picks'&&!window._picks)drawPicks();});
+ if(b.dataset.t==='picks'&&!window._picks)drawPicks();
+ syncNumericColumns($('#'+b.dataset.t));});
 
 /* header */
 /* next scheduled cloud scan: Mon-Fri 13:05 UTC (+ GitHub cron delay) */
@@ -2205,9 +2269,17 @@ $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HAL
    This exists because both AI layers have died silently for about a week
    each, and on both occasions the page looked completely normal. */
 (function(){const H=D.health||[];const el=$('#healthstrip');if(!el||!H.length)return;
+ /* compact form for the chip */
  const ago=a=>a==null?'—':a<0.04?'now':a<1?Math.round(a*24)+'h':a<2?'1d':Math.round(a)+'d';
- el.innerHTML=H.map(h=>`<span class="hpip ${h.state}" data-tip="${esc(h.label+' — last ran '+ago(h.age)+' ago. '+(h.detail||'')+'. '+h.tip)}">
-  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(h.age)}</s></span>`).join('');})();
+ /* full sentence for the tooltip. The chip form cannot just have " ago"
+    appended to it: that produced "last ran now ago" and "last ran — ago". */
+ const agoPhrase=a=>a==null?'has never run':a<0.04?'ran just now'
+   :a<1?'ran '+Math.round(a*24)+'h ago':a<2?'ran yesterday':'ran '+Math.round(a)+' days ago';
+ el.innerHTML=H.map(h=>{const detail=(h.detail||'').trim().replace(/\.$/,'');
+  const tip=[h.label+' — '+agoPhrase(h.age)+'.', detail?detail+'.':'', h.tip]
+    .filter(Boolean).join(' ');
+  return `<span class="hpip ${h.state}" data-tip="${esc(tip)}">
+  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(h.age)}</s></span>`}).join('');})();
 
 /* ---- instrument helpers ------------------------------------------------
    One radial-gauge factory for every dial on the page, so the gate and the
@@ -2368,7 +2440,7 @@ const leds=Object.entries(G.conditions||{}).map(([k,v])=>{
  return `<div class="ldrow" data-tip="${esc(v.detail)}"><i class="led ${cls}"></i>
   <em>${CONDN[k]||k}</em><span>${v.ok===true?'PASS':v.ok===false?'FAIL':'PENDING'}</span></div>`;}).join('');
 el.innerHTML=`<h2 style="color:${col}">Capital gate
- <span class="info" data-tip="The pre-registered forward test that decides whether this system gets real money. Every threshold was fixed on ${esc(G.registered||'')}, BEFORE a single qualifying signal existed — which is the only thing that makes it a test rather than a story told afterwards. Cohort: ${esc(G.cohort_definition||'')} A pass authorizes ${req.pass_capital_pct}% of intended capital, not the account. Full document: CAPITAL_GATE.md.">?</span>
+ <span class="info" data-tip="The pre-registered forward test that decides whether this system gets real money. Every threshold was fixed on ${esc(G.registered||'')}, before a single qualifying signal existed — which is what makes it a test rather than a story told afterwards. A pass authorizes ${req.pass_capital_pct}% of intended capital, not the account. Full document: CAPITAL_GATE.md.">?</span>
  <span class="axis" style="margin-left:auto;color:${col}">${V==='ACCRUING'?'OPEN':V}</span></h2>
 <div class="instbody"><div class="instrow">
  <div class="instside">
@@ -2394,20 +2466,23 @@ el.innerHTML=`<h2 style="color:${col}">Capital gate
    The stressed figure rides underneath rather than in a tooltip: it is the
    honest planning number and it was hiding. */
 const K=D.kpi;
-const KNOTE=' '+K.note+' Source: '+K.source+'.';
+/* The shared evidence caveat used to be appended to ALL FOUR tooltips, which
+   pushed every one of them past 440 characters and made three-quarters of each
+   hover identical boilerplate. It is stated once, under the strip. */
 $('#kpis').innerHTML=[
 ['Expectancy / trade',K.exp,'stressed '+K.stress_exp,
- R_GLOSSARY+' This is the ADOPTED configuration: VCP breakouts plus episodic pivots, equity-basis sizing, after costs, over '+K.positions+' positions. VCP-only was '+K.vcp_only+' — the combined book trades more often at slightly lower per-trade R for a better portfolio result.'+KNOTE,'var(--grn)'],
+ R_GLOSSARY+' Measured over '+K.positions+' positions on the adopted configuration — VCP breakouts plus episodic pivots, after costs. VCP-only was '+K.vcp_only+'.','var(--grn)'],
 ['CAGR',K.cagr,'stressed '+K.stress_cagr,
- 'Window CAGR on ideal fills. Survivor-biased, so directional rather than a forecast. STRESSED ('+K.stress_cagr+') applies next-open fills, gap-aware stops and full costs — that is the planning number, and it was measured on the VCP-only config, so treat it as a floor.'+KNOTE,'var(--grn)'],
+ 'Annualised return over the validated window, on ideal fills. STRESSED ('+K.stress_cagr+') adds next-open fills, gap-aware stops and full costs — that is the planning number.','var(--grn)'],
 ['Max drawdown',K.dd,'stressed '+K.stress_dd,
- 'Deepest peak-to-trough in the validated window. The live portfolio circuit breaker pauses everything at -25%.'+KNOTE,'var(--amb)'],
+ 'Deepest peak-to-trough in the validated window. The live circuit breaker pauses everything at -25%.','var(--amb)'],
 ['MAR ratio',K.mar,'win rate '+K.win,
- 'CAGR divided by max drawdown — return per unit of pain, the number that decides between two strategies with the same CAGR. Payoff '+K.payoff+': the edge is a few big winners paying for many small stops, which is why the win rate is meant to be near 30%.'+KNOTE,'']]
+ 'CAGR divided by max drawdown — return per unit of drawdown, for comparing two strategies with the same CAGR. Payoff '+K.payoff+', so a win rate near 30% is expected by design.','']]
 .map(k=>`<div class="kpi"><span>${k[0]}<span class="info" data-tip="${esc(k[3])}">?</span></span><b${k[4]?` style="color:${k[4]}"`:''}>${k[1]}</b><small>${esc(k[2])}</small></div>`).join('');
 /* the strip is history, not a promise — say so once, right under it */
 $('#kpis').insertAdjacentHTML('afterend',
- `<div class="axis" style="margin:-6px 4px 14px;line-height:1.6">Backtested on a survivor-biased ~3-year window &mdash; evidence that the rules had an edge, <b>not</b> a forecast. What the system is actually earning is the gate above.</div>`);
+ `<div class="axis" style="margin:-6px 4px 14px;line-height:1.6;max-width:96ch">Backtested on a survivor-biased ~3-year window &mdash; evidence that the rules had an edge, <b>not</b> a forecast. What the system is actually earning is the gate above.
+  <span class="info" data-tip="${esc(K.note+' Source: '+K.source+'.')}">?</span></div>`);
 
 /* funnel — one-line breadcrumb (context, not a decision surface) */
 $('#funnel').innerHTML=D.funnel.map(f=>`<span title="${esc(f[2])}"><b>${f[1]}</b> ${esc(f[0].toLowerCase())}</span>`).join('<span class="sep">&rsaquo;</span>');
@@ -3481,6 +3556,9 @@ c.timeScale().fitContent();});}
   poll();
  });
 })();
+
+/* every table that rendered during init (the observer covers re-renders) */
+syncNumericColumns(document);
 </script></body></html>"""
 
 

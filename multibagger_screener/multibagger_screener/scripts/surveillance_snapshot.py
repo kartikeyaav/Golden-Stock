@@ -101,24 +101,21 @@ def build(symbols: list[str] | None = None) -> dict:
         flags, band = [], band_by.get(s)
         if s in asm:
             flags.append({"code": "ASM", "detail": asm[s],
-                          "why": ("Additional Surveillance Measure — the exchange is "
-                                  "signalling manipulation or abnormal volatility. "
-                                  "100% margin, no intraday leverage, no pledging.")})
+                          "why": ("exchange flag for manipulation or abnormal "
+                                  "volatility. 100% margin, no intraday leverage.")})
         if s in gsm_by:
             flags.append({"code": "GSM", "detail": f"stage {gsm_by[s]}",
-                          "why": ("Graded Surveillance Measure — price is far out of "
-                                  "line with fundamentals. Trading is restricted and "
-                                  "can become periodic-call-auction only.")})
+                          "why": ("price far out of line with fundamentals. "
+                                  "Trading restricted, can become call-auction only.")})
         if band is not None and band <= TIGHT_BAND_PCT:
             flags.append({"code": f"BAND {band:g}%", "detail": f"{band:g}% circuit band",
-                          "why": ("The day's permitted range is narrower than a normal "
-                                  "ATR stop. A gap to the limit locks the tape and no "
-                                  "stop fills at any price you wrote down.")})
+                          "why": ("the day's range is narrower than a normal ATR "
+                                  "stop, so a gap to the limit fills no stop at all.")})
         ser = series_by.get(s)
         if ser and ser in ABNORMAL_SERIES:
             flags.append({"code": ser, "detail": f"{ser} settlement series",
-                          "why": ("Not normal rolling settlement — trade-to-trade or "
-                                  "SME. Compulsory delivery, no intraday exit.")})
+                          "why": ("trade-to-trade or SME settlement: compulsory "
+                                  "delivery, no intraday exit.")})
         if flags:
             out[s] = {"flags": flags, "band": band, "series": ser,
                       "worst": flags[0]["code"]}
