@@ -1566,6 +1566,15 @@ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hi
 .vmore summary{cursor:pointer;font-size:10.5px;color:var(--mut);list-style-position:outside}
 .vmore summary:hover{color:var(--dim)}
 .vln{font-size:11.5px;color:var(--dim);line-height:1.5;margin-top:5px;padding-left:2px}
+/* collapsed commentary: heading stays legible, the essay stays out of the way */
+#thnarrwrap>summary{cursor:pointer;list-style-position:outside;padding:2px 0;
+ display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+#thnarrwrap>summary>b{font-size:12px;text-transform:uppercase;letter-spacing:.06em;
+ color:var(--dim)}
+#thnarrwrap>summary:hover>b{color:var(--txt)}
+#thnarrwrap[open]>summary>.axis{display:none}
+#thnarrwrap>summary>.axis{font-style:italic}
+#thnarrwrap .memo{margin-top:10px}
 details.actrest{margin-top:8px}
 details.actrest summary{cursor:pointer;color:var(--dim);font-size:12px;padding:6px 0;list-style-position:outside}
 details.actrest summary:hover{color:var(--txt)}
@@ -2007,18 +2016,13 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
 
 <div class="tab" id="sectors">
   <div class="card" style="border-color:#5eead43a">
-    <h2 style="color:var(--teal)">Sectors &amp; themes<span class="info" data-tip="NSE's 22 macro-industries are accounting categories, not investment themes: BEL and Data Patterns are filed apart but trade as one story, as do Apar and Hitachi Energy. This is a second classification over the same universe. Membership is an explicit list per theme, widened by name patterns so new listings join automatically, and a stock can sit in several.">?</span>
+    <h2 style="color:var(--teal)">Sectors &amp; themes<span class="info" data-tip="NSE's 22 macro-industries are accounting categories, not investment themes: BEL and Data Patterns are filed apart but trade as one story, as do Apar and Hitachi Energy. This is a second classification over the same universe, membership is an explicit list per theme widened by name patterns, and a stock can sit in several. Heat blends 3-month move, chart breadth and news flow. Tested as an entry filter and REJECTED (+0.22R gated at 40% heat vs +1.27R ungated), so nothing on this tab changes an entry, a stop or a size.">?</span>
       <span class="pill" style="border-color:var(--teal);color:var(--teal)">RESEARCH ONLY</span></h2>
     <div class="dim" style="font-size:12.6px;line-height:1.7;max-width:74ch">
-      Which themes are moving, across the <b id="thn">&mdash;</b> names the scan watches.
-      Heat is a <b>rank against tonight's other themes</b>, not a probability.
-      <span style="color:var(--red)">Rejected as an entry filter</span>
-      (+0.22R gated vs +1.27R ungated) &mdash; nothing here changes an entry, a stop or a size.
+      Which themes are moving across the <b id="thn">&mdash;</b> names the scan watches.
+      Heat ranks tonight's themes against each other &mdash; it is not a probability, and
+      <span style="color:var(--red)">it changes nothing</span> about an entry, a stop or a size.
     </div>
-  </div>
-  <div class="card" id="thnarrcard" style="display:none">
-    <h2>The committee's read<span class="info" data-tip="Written by the weekly AI committee, which sees this same theme table plus its own web research. Absent until the committee next runs — the mechanical table above does not depend on it.">?</span></h2>
-    <div class="memo" id="thnarr"></div>
   </div>
   <div class="card">
     <div class="fbar2">
@@ -2030,6 +2034,21 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
       <span class="dim" style="font-size:12px;margin-left:auto" id="thcount"></span>
     </div>
     <div id="thgrid"></div>
+  </div>
+  <!-- The committee's narrative is COMMENTARY on the table above, so it sits
+       under it and starts collapsed. It ran ~1,100 characters of prose parked
+       ABOVE the data — a third of the tab's text before you reached a single
+       number, on a tab whose whole point is a ranked list. Same coupling model
+       as everywhere else here: the machine ranks, the AI explains, and the
+       explanation never outranks the ranking. -->
+  <div class="card" id="thnarrcard" style="display:none">
+    <details id="thnarrwrap">
+      <summary><b>The committee's read</b>
+        <span class="axis" id="thnarrlede"></span>
+        <span class="info" data-tip="Written by the weekly AI committee, which sees this same theme table plus its own web research. Commentary only — the table above does not depend on it, and is absent until the committee next runs.">?</span>
+      </summary>
+      <div class="memo" id="thnarr"></div>
+    </details>
   </div>
   <!-- The NSE-industry view used to sit on the Overview, competing with this
        tab for the same question. It belongs here, under the theme table it
@@ -3019,7 +3038,11 @@ return h+'</div>';}
    names — it is a lens over the one the scan watches. */
 (function(){const T=(D.themes||{}).themes||[];if(!T.length)return;
 const read=(D.themes||{}).read||'';
-if(read){$('#thnarrcard').style.display='block';$('#thnarr').textContent=read;}
+if(read){$('#thnarrcard').style.display='block';$('#thnarr').textContent=read;
+ /* collapsed by default: show the first clause as a lede so the panel still
+    says something at a glance, and open it only if you want the essay */
+ const lede=read.split(/(?<=[.;])\s/)[0].replace(/\s+/g,' ').trim();
+ $('#thnarrlede').textContent=lede.length>96?lede.slice(0,95)+'…':lede;}
 $('#thn').textContent=(D.rows||[]).length;
 let thK='heat';
 const heatCol=h=>h>=62?'#34d399':h>=48?'#5eead4':h>=36?'#fbbf24':'#f87171';
