@@ -1,5 +1,5 @@
 {
- "generated": "2026-07-27T15:04:27",
+ "generated": "2026-07-27T15:53:59",
  "themes": [
   {
    "key": "hospital",
@@ -19,7 +19,7 @@
     "KIMS",
     "METROPOLIS"
    ],
-   "heat": 88.3
+   "heat": 87.3
   },
   {
    "key": "cdmo",
@@ -47,8 +47,8 @@
    "breadth": 33.3,
    "rs_med": 84.6,
    "ret3m": 10.2,
-   "news": 0.83,
-   "news_per_name": 0.069,
+   "news": 1.45,
+   "news_per_name": 0.121,
    "thin": false,
    "confirmed": [
     "ARVIND",
@@ -56,7 +56,7 @@
     "PGIL",
     "WELSPUNLIV"
    ],
-   "heat": 73.0
+   "heat": 77.0
   },
   {
    "key": "defelec",
@@ -74,6 +74,24 @@
     "PARAS"
    ],
    "heat": 65.7
+  },
+  {
+   "key": "water",
+   "name": "Water, environment & EPC",
+   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
+   "n": 6,
+   "breadth": 50.0,
+   "rs_med": 96.2,
+   "ret3m": 1.0,
+   "news": 0.79,
+   "news_per_name": 0.132,
+   "thin": false,
+   "confirmed": [
+    "KIRLOSENG",
+    "WABAG",
+    "IONEXCHANG"
+   ],
+   "heat": 64.0
   },
   {
    "key": "finfra",
@@ -94,25 +112,7 @@
     "CDSL",
     "IONEXCHANG"
    ],
-   "heat": 64.7
-  },
-  {
-   "key": "water",
-   "name": "Water, environment & EPC",
-   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
-   "n": 6,
-   "breadth": 50.0,
-   "rs_med": 96.2,
-   "ret3m": 1.0,
-   "news": 0.79,
-   "news_per_name": 0.132,
-   "thin": false,
-   "confirmed": [
-    "KIRLOSENG",
-    "WABAG",
-    "IONEXCHANG"
-   ],
-   "heat": 63.0
+   "heat": 63.7
   },
   {
    "key": "ems",
@@ -129,7 +129,7 @@
     "AVALON",
     "SYRMA"
    ],
-   "heat": 56.7
+   "heat": 55.7
   },
   {
    "key": "defence",
@@ -192,11 +192,11 @@
    "breadth": 0.0,
    "rs_med": 99.5,
    "ret3m": 8.3,
-   "news": 1.06,
-   "news_per_name": 0.133,
+   "news": 1.05,
+   "news_per_name": 0.131,
    "thin": false,
    "confirmed": [],
-   "heat": 45.0
+   "heat": 44.0
   },
   {
    "key": "grid",
@@ -213,7 +213,7 @@
     "SCHNEIDER",
     "RRKABEL"
    ],
-   "heat": 38.3
+   "heat": 37.3
   },
   {
    "key": "renewables",

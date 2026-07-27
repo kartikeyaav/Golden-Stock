@@ -1,5 +1,5 @@
 {
- "generated": "2026-07-27T15:02:16",
+ "generated": "2026-07-27T15:52:48",
  "lookback_days": 90,
  "half_life_days": 21.0,
  "syms": {
@@ -279,7 +279,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-09"
   },
   "NLCINDIA": {
-   "p": 0.342,
+   "p": 0.331,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -643,7 +643,7 @@
    "summary": "2 positive developments over 5d (2x M&A/JV); since 2026-07-12"
   },
   "NBCC": {
-   "p": 1.991,
+   "p": 1.978,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -990,21 +990,26 @@
   },
   "GALLANTT": {
    "p": 0.0,
-   "rp": 0.417,
+   "rp": 1.037,
    "n_pos": 0,
-   "n_neg": 1,
+   "n_neg": 2,
    "n_attn": 0,
    "first": "2026-07-15T19:34:44",
-   "last": "2026-07-15T19:34:44",
+   "last": "2026-07-27T21:22:16",
    "primed": false,
    "events": [
+    [
+     "management exit",
+     "neg",
+     "2026-07-27T21:22:16"
+    ],
     [
      "management exit",
      "neg",
      "2026-07-15T19:34:44"
     ]
    ],
-   "summary": "1 negative filing"
+   "summary": "2 negative filings"
   },
   "EXIDEIND": {
    "p": 0.417,
@@ -1505,7 +1510,7 @@
    "summary": "1 positive development (buyback/bonus); 1 negative filing; on 2026-07-20"
   },
   "ANANTRAJ": {
-   "p": 0.492,
+   "p": 0.476,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -1685,7 +1690,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-21"
   },
   "INDIAMART": {
-   "p": 1.129,
+   "p": 1.092,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -1821,7 +1826,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-22"
   },
   "RUBICON": {
-   "p": 0.526,
+   "p": 0.509,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -2204,7 +2209,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-24"
   },
   "ACC": {
-   "p": 0.562,
+   "p": 0.543,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -2382,6 +2387,24 @@
     ]
    ],
    "summary": "1 positive development (rating upgrade); on 2026-07-27"
+  },
+  "KITEX": {
+   "p": 0.62,
+   "rp": 0.0,
+   "n_pos": 1,
+   "n_neg": 0,
+   "n_attn": 0,
+   "first": "2026-07-27T20:33:11",
+   "last": "2026-07-27T20:33:11",
+   "primed": false,
+   "events": [
+    [
+     "M&A/JV",
+     "pos",
+     "2026-07-27T20:33:11"
+    ]
+   ],
+   "summary": "1 positive development (M&A/JV); on 2026-07-27"
   }
  }
 }
