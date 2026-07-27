@@ -1568,19 +1568,35 @@ all of it.
 Both come out of this session's measurements and both fit the evidence lock.
 Neither may be wired live before passing out of sample against the baseline.
 
-**P5 — queue ranking.** Same-day entries are ranked by **volume** when the
-12-slot cap binds, which it does on 39% of days. That ranking function has never
-been tested. Clenow ranks momentum candidates by *volatility-adjusted* momentum
-(slope × R² of a 90-day log regression). Pre-registered comparison: volume rank
-(control) vs slope×R² rank vs ADR-normalised rank, same entries, same exits.
-Success = beats control expectancy AND CAGR out of sample.
+**RUN AND CLOSED, same day.** Pre-registered in `PREREG_2026-07-27.md` (committed
+before the run, commit `36745eb`), verdicts in `VALIDATION_REPORT.md` §6F.
 
-**P6 — trailing speed.** The trading lot trails the 50-DMA; Qullamaggie trails
-the 10/20-DMA. This session's hold-time data makes it worth testing from the
-other end too: the core lot carries the strategy, so the question is whether the
-trading lot's trail should be *faster* (bank more, earlier) given it contributes
-little. Pre-registered cells: 10-DMA / 20-DMA / 50-DMA (control) on the trading
-lot only, core lot untouched.
+**P5 — queue ranking: NOT RUN, killed by measurement.** Ranking decides an entry
+only when `1 ≤ free slots < same-day candidates`. Measured: 358 breakouts over
+243 days, 68% alone on their day, largest same-day cluster 6 against a 12-slot
+cap — an expected **8.2 decisions in three years**. Against a heavy right tail
+that is indistinguishable from noise. This also corrected a conflation: "the cap
+binds 39% of days" is the portfolio being FULL (30% of days, breakout rejected
+outright), not same-day ordering. Different lever.
+
+**P6 — trailing speed: REJECTED.** Every faster trail is worse (−0.05R at 30,
+−0.34R at 20, −0.32R at 10, against a required +0.10R); the trading lot itself
+degrades 0.538R → 0.309R. Qullamaggie's 10/20-DMA trail does not transfer to this
+position horizon. MAR rose monotonically with trail speed (2.56 → 2.78) — noted,
+NOT adopted, because it was not the registered metric.
+
+**P5b — slot count on equity sizing: REJECTED, 12 confirmed as a real optimum**
+(MAR falls on both sides: 2.51 @8 / **2.56 @12** / 2.50 @16 / 2.48 @20). Worth
+having run: the 2026-07-11 rejection's stated mechanism — a monotonic expectancy
+collapse — was a **cash-sizing artifact and does not reproduce** on equity basis
+(1.681 → 1.564 → 1.661). The conclusion survives on cleaner grounds.
+
+**The single most reusable finding of the day is in §6F's drawdown column:**
+maxDD is constant at −18.44% to −18.47% across 74, 96, 116 and 127 positions.
+**Position count buys no drawdown protection here** — these names sell off
+together. Do not reach for "hold more names" as a risk lever in future work;
+drawdown control comes from exposure (the breadth-regime halving), not breadth of
+holdings.
 
 **Measured and NOT worth pursuing — a day-30 "dead wood" cut.** All 7 eventual
 monsters were already positive at day 30 (p≈0.015 against a 55% base rate),

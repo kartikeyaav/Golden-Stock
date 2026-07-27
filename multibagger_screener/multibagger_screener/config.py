@@ -99,6 +99,10 @@ class TechnicalConfig:
     ma_short: int = 50
     ma_mid: int = 150
     ma_long: int = 200
+    # extra MAs computed by generate_signals purely so the P6 trailing-speed
+    # matrix can name a period. They take part in NO entry test — the trend
+    # template still reads 50/150/200 — so adding them cannot move a signal.
+    extra_trail_ma_periods: tuple = (10, 20, 30)
     ma_long_uptrend_lookback_days: int = 20
     min_pct_above_52w_low: float = 30.0
     max_pct_below_52w_high: float = 25.0

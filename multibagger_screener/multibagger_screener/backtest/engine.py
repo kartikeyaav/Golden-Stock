@@ -55,6 +55,14 @@ def generate_signals(df: pd.DataFrame, fundamental_score) -> pd.DataFrame:
     wk_key = iso["year"].astype(int) * 100 + iso["week"].astype(int)
     df["is_week_end"] = (wk_key != wk_key.shift(-1)).fillna(True)
 
+    # faster trailing MAs for the P6 trailing-speed matrix (pre-registered
+    # 2026-07-27). Computed always so a config only has to name a period; the
+    # baseline reads sma_50 exactly as before, so history reproduces.
+    for _p in TECHNICAL.extra_trail_ma_periods:
+        col = f"sma_{_p}"
+        if col not in df.columns:
+            df[col] = df["close"].rolling(_p, min_periods=max(2, _p // 2)).mean()
+
     df["low_52w"] = df["low"].rolling(252, min_periods=20).min()
     df["high_52w"] = df["high"].rolling(252, min_periods=20).max()
     df["sma200_lookback"] = df[ma_l].shift(TECHNICAL.ma_long_uptrend_lookback_days)
@@ -270,6 +278,11 @@ def run_backtest(
                                          # is a MEASUREMENT hook: raising it
                                          # here never makes such a name
                                          # tradeable, it only makes it visible.
+    trail_ma: Optional[int] = None,      # P6 trailing-speed matrix: trading-lot
+                                         # trailing MA period for this run.
+                                         # Default None = RISK.trailing_ma_period
+                                         # (50), so history reproduces exactly.
+                                         # Core lot is NOT parameterised.
     risk_scale_fn=None,                  # sizing matrix v3 (progressive exposure):
                                          # callable(portfolio, date) -> float, multiplied
                                          # with the risk_scale series. Lets a config size
@@ -288,7 +301,12 @@ def run_backtest(
     starting_cash = starting_cash or RISK.capital
     portfolio = Portfolio(starting_cash)
 
-    trail_col = f"sma_{RISK.trailing_ma_period}"
+    # P6 (pre-registered 2026-07-27): trail_ma overrides the trading lot's
+    # trailing MA for this run only. Default None = the config value, so every
+    # historical config reproduces exactly. The CORE lot is deliberately not
+    # parameterised — F1/F2 both showed that touching core-lot behaviour
+    # destroys the edge, so a trailing-speed test must not be able to reach it.
+    trail_col = f"sma_{trail_ma or RISK.trailing_ma_period}"
     core_col = f"sma_{RISK.core_exit_ma_period}"
 
     indexed = {name: df.set_index("date") for name, df in signals_by_stock.items()}

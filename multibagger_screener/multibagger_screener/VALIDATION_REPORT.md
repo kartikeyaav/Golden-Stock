@@ -206,3 +206,69 @@ ADOPTED as a live capital-bearing alert class: kind=EPISODIC PIVOT (gap
 plan, journaled to signals_journal + entry_signals (entry_status=EP EVENT),
 idempotent via state ep_alerted, analyst dives on it like any buy alert.
 News radar supplies catalyst CONTEXT only — the entry is price/volume.
+
+---
+
+## 6F. P6 trailing speed + P5b slot count (2026-07-27, pre-registered, BOTH REJECTED)
+
+Pre-registration: `PREREG_2026-07-27.md`, committed before the run (commit
+`36745eb`). Full tables and mechanism: `trail_slot_matrix_report.md`.
+Same window/universe/costs as 6C; entries untouched in every cell.
+
+### P6 — trading-lot trailing MA (10 / 20 / 30 vs 50 control)
+
+| trail | pos | exp/R | trading lot | core lot | CAGR(w) | maxDD | MAR |
+|---|---|---|---|---|---|---|---|
+| 50 (control) | 96 | **1.681** | 0.538 | 2.874 | 47.2% | -18.46% | 2.56 |
+| 30 | 100 | 1.627 | 0.548 | 2.717 | 48.0% | -18.55% | 2.59 |
+| 20 | 108 | 1.342 | 0.358 | 2.346 | 47.8% | -18.34% | 2.61 |
+| 10 | 106 | 1.357 | 0.309 | 2.436 | 48.5% | -17.46% | 2.78 |
+
+**REJECTED.** Registered bar was expectancy >= +0.10R over control; every faster
+cell is worse (-0.05 / -0.34 / -0.32R), and the trading lot — the only lot the
+rule touches — degrades 0.538R -> 0.309R. Qullamaggie's 10/20-DMA trail does not
+transfer to this system's position horizon.
+
+Noted and NOT adopted: MAR rises monotonically with trail speed (2.56 -> 2.78)
+because faster exits recycle capital. That was not the registered metric;
+re-reading the result to make MAR the winner is the post-hoc selection §8
+forbids. Needs its own pre-registration and a walk-forward split if pursued.
+
+The registered isolation clause ("core lot R unchanged") was MIS-SPECIFIED and is
+disclosed as author error: in a portfolio backtest any exit change alters slot
+timing and therefore which later positions exist, so core-lot *composition* must
+move even when its *rule* does not. Tested directly instead — a single-position
+replay (no contention, no composition effect) returns byte-identical core-lot R
+across all four trail settings (TARIL 113.782R, NEULANDLAB 3.079R). `trail_ma`
+does not reach the core lot.
+
+### P5b — slot count on EQUITY-basis sizing (8 / 16 / 20 vs 12 control)
+
+| slots | pos | exp/R | CAGR(w) | maxDD | MAR | P2 R |
+|---|---|---|---|---|---|---|
+| 8 | 74 | 1.980 | 46.2% | -18.44% | 2.51 | 0.430 |
+| 12 (control) | 96 | 1.681 | 47.2% | -18.46% | **2.56** | 0.342 |
+| 16 | 116 | 1.564 | 46.1% | -18.46% | 2.50 | 0.304 |
+| 20 | 127 | 1.661 | 45.8% | -18.47% | 2.48 | 0.307 |
+
+**REJECTED — 12 slots stands, now verified as a genuine local optimum** (MAR falls
+on BOTH sides: 2.51 / 2.56 / 2.50 / 2.48). Registered bar was MAR better by >=0.15.
+
+**Correction to the 2026-07-11 verdict's stated MECHANISM.** That matrix ran on
+cash-basis sizing and reported a monotonic expectancy collapse (1.294 -> 1.145 ->
+0.892), read as "extra slots admit progressively weaker breakouts". On equity
+basis the monotonicity **does not reproduce** (1.681 -> 1.564 -> 1.661) — 20 slots
+recovers to roughly the control. Dose-response was the evidence that made that
+rejection credible and it was a sizing artifact. The conclusion survives on a
+cleaner mechanism: CAGR falls monotonically with more slots while drawdown stays
+flat, so more positions spread the same equity thinner and buy nothing.
+
+**The drawdown column is the most useful result in either matrix.** maxDD is
+constant at -18.44% to -18.47% across 74, 96, 116 and 127 positions. **Position
+count buys no drawdown protection in this strategy** — Indian small/mid-cap
+momentum names sell off together, so "diversify by holding more names" is not a
+risk lever here and must not be assumed as one in future work. Drawdown control
+comes from exposure (the adopted breadth-regime halving, 6D), not from breadth of
+holdings. Concentration (8 slots) is the mirror image: expectancy +1.98R and P2
++0.43R — it genuinely picks better trades — but CAGR still falls because capital
+sits idle. The system remains capacity-limited by its signal rate.
