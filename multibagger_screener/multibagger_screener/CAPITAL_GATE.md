@@ -93,17 +93,61 @@ which is why the deadline below is where it is.
 
 | # | condition | threshold |
 |---|---|---|
-| 1 | mean `plan_followed_R` over the cohort | **≥ +0.50R** |
+| 1 | mean `plan_followed_R` over the cohort | **≥ 50% of the age-matched backtest read** |
 | 2 | forward return beats the momentum-quality ETF over the same window | **yes** |
 | 3 | share of cohort that hit its stop | **≤ 55%** |
 | 4 | share of total positive R contributed by the single best trade | **≤ 60%** |
 
-**Why +0.50R.** The stressed backtest read is +1.10R (next-open fills,
-gap-aware stops, full costs — VALIDATION_REPORT 6C). The combined-entry ideal
-is +1.34R. The window is survivor-biased, which inflates both. A live system
-returning under *half* its own stressed expectancy is not the system that was
-validated, and no amount of "small sample" rescues it at n=40. Half of +1.10R,
-rounded down to a round number, is +0.50R.
+**Why 50% of an age-matched read** *(amended 2026-07-27 — see §9)*.
+
+The original threshold was a flat **+0.50R**, derived as half the stressed
+full-hold backtest read of +1.10R. That derivation had a unit error, found
+before the cohort existed and corrected at n=0.
+
+The ruler marks **open** positions to market at whatever age they have reached.
+This strategy earns its expectancy in the right tail — measured on the validated
+baseline, entries held under 90 days collectively lose 45R and every rupee of
+the +1.6R comes from the 32 of 96 entries held longer. So a signal judged at day
+30 has only ~29% of its full-hold R on the clock; at day 90, ~40%. Comparing a
+30-to-150-day live read against half of a *full-hold* number asks the live system
+to do in one month what the backtest needed a year for.
+
+Replaying the backtest's own 91 entries through the same engine, truncated at
+each age (`scripts/gate_reference_curve.py`):
+
+| age | 30d | 60d | 90d | 180d | 365d | full |
+|---|---|---|---|---|---|---|
+| backtest reads | +0.533R | +0.679R | +0.724R | +0.961R | +1.492R | +1.811R |
+
+Bootstrapping 20,000 cohorts of n=40 from that distribution, **a live system
+reproducing the validated strategy exactly passed the flat +0.50R bar only 67%
+of the time**, and one performing at the stressed level 21–44%. A gate that
+rejects a correctly-working system a third to four-fifths of the time is a
+broken instrument, not a conservative one — and the asymmetry argument ("a false
+negative only costs opportunity") does not rescue it, because the entire purpose
+of this document is to produce a *decidable* number.
+
+Condition 1 is therefore now **like-for-like**: each signal is compared against
+what the backtest read at that signal's own age (linear interpolation between
+the points above, flat outside them), and the cohort must reach **50%** of that
+age-matched reference. The fraction is the same 0.50 that motivated the original
+bar. Only the thing it is half *of* changed, from a number on the wrong scale to
+one on the right scale. At a realistic 90-day age mix the bar is **+0.36R**, and
+gate power rises to 77–83%.
+
+The curve is **frozen in `config.GATE.expectancy_curve`**. It is not recomputed
+at evaluation time — a bar that drifts with a re-run is not pre-registered.
+`scripts/gate_reference_curve.py` regenerates it from the trade file and reports
+drift; drift is a §8 re-registration trigger, never a licence to edit the
+constant.
+
+**Known residual (disclosed, not fixed).** Condition 2 as computed
+(`sum(R) × risk_per_trade_pct`) is a *signal-basis* number: it scales with the
+count of signals rather than with capital, so it crosses the benchmark at about
++0.15R and cannot bind once condition 1 passes. It is retained as a visible
+sanity read, not relied on as a fourth independent test. Making it a true
+portfolio comparison requires running the cohort through the engine as a
+portfolio, which is a change to the ruler and would need its own registration.
 
 **Why condition 2.** The Nifty MidSmallcap400 Momentum Quality 100 ETF is
 mid/small-cap, momentum-ranked and quality-screened — the same factor exposure
@@ -189,6 +233,7 @@ the same person.
 | date | change | reason |
 |---|---|---|
 | 2026-07-26 | initial registration | cohort does not yet exist |
+| 2026-07-27 | condition 1 changed from a flat **+0.50R** to **50% of the age-matched backtest read** (`config.GATE.expectancy_curve`, frozen; `min_expectancy_fraction = 0.50`) | Unit error found before any signal existed. The bar was derived from a FULL-HOLD backtest number while the ruler marks open positions to market at 30–150 days, where only ~29–40% of full-hold R has developed. Measured power of the flat bar against a system reproducing the validated strategy exactly: **67%** (and 21–44% at the stressed level) — i.e. it rejected a working system a third to four-fifths of the time. **Cohort n was 0 at the time of amendment**, so no collected data informed the change and the sample does not restart (§8). Evidence: `scripts/gate_reference_curve.py --power`, `gate_reference_report.md`. |
 
 ---
 

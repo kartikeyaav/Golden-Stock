@@ -85,7 +85,8 @@ BUY_TRIGGER_COOLDOWN_DAYS = 10
 
 
 def health_check(today_tags: dict, symbols: list[str],
-                 extra_problems: list[str] | None = None) -> list[str]:
+                 extra_problems: list[str] | None = None,
+                 last_bars: dict | None = None) -> list[str]:
     """Silent staleness is the failure mode of autonomous systems — check the
     data actually moved, the tagger isn't degenerate, the screener parser
     still parses, and the filings feed still answers. Alert LOUDLY if not."""
@@ -100,6 +101,23 @@ def health_check(today_tags: dict, symbols: list[str],
     tagged_frac = len(today_tags) / max(len(symbols) - 1, 1)
     if tagged_frac < 0.80:
         problems.append(f"only {tagged_frac:.0%} of watched names tagged — data gaps?")
+    # UNIVERSE-WIDE staleness. Every check above passes when the whole universe
+    # is uniformly one session behind: the benchmark is one of the ~20% that did
+    # refresh, every name still tags, and no single holding looks odd. That is
+    # exactly the 2026-07-24 failure — 646 names a session stale, reported as a
+    # normal night. Compare each name to the NEWEST bar anywhere in the cache
+    # (self-referential on purpose: no trading calendar needed, and a market
+    # holiday moves every symbol together so it cannot false-positive).
+    lasts = last_bars or {}
+    if lasts:
+        newest = max(lasts.values())
+        behind = [s for s, d in lasts.items() if d < newest]
+        frac = len(behind) / len(lasts)
+        if frac > 0.10:
+            problems.append(
+                f"{len(behind)} of {len(lasts)} names ({frac:.0%}) are behind the "
+                f"newest cached bar ({newest.date()}) — the price refresh did not "
+                f"complete; those tags are computed on stale closes")
     if today_tags:
         counts = pd.Series(list(today_tags.values())).value_counts()
         if counts.index[0] == "WATCH" and counts.iloc[0] > 0.95 * len(today_tags):
@@ -131,6 +149,8 @@ def load_state(path: str) -> dict | None:
 
 def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
                entry_alerted: dict | None = None) -> None:
+    if _skip_write(f"state -> {os.path.basename(path)} (+ history snapshot)"):
+        return
     os.makedirs(os.path.dirname(path), exist_ok=True)
     payload = {"date": datetime.now().strftime("%Y-%m-%d"), "tags": tags}
     cutoff = (datetime.now() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
@@ -156,8 +176,25 @@ def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
         os.remove(os.path.join(hist_dir, old))
 
 
+# Set by --dry-run. Every persistent write in this file checks it, so the whole
+# nightly path can be exercised against real data without touching the
+# append-only record. The 2026-07-09 intraday incident and the 2026-07-07
+# synthetic row both entered the journal through a TEST run that had no way to
+# say "compute everything, write nothing"; this is that way.
+DRY_RUN = False
+
+
+def _skip_write(what: str) -> bool:
+    if DRY_RUN:
+        print(f"  [dry-run] would write {what}", flush=True)
+        return True
+    return False
+
+
 def journal_append(rows: list[dict]) -> None:
     if not rows:
+        return
+    if _skip_write(f"{len(rows)} row(s) -> {os.path.basename(JOURNAL_PATH)}"):
         return
     os.makedirs(os.path.dirname(JOURNAL_PATH), exist_ok=True)
     new_file = not os.path.exists(JOURNAL_PATH)
@@ -204,6 +241,8 @@ def _widen_entry_signals_header() -> None:
 def entry_signals_append(rows: list[dict]) -> None:
     """Append entry-fidelity rows (buy/re-entry alerts only). Additive file."""
     if not rows:
+        return
+    if _skip_write(f"{len(rows)} row(s) -> {os.path.basename(ENTRY_SIGNALS_PATH)}"):
         return
     os.makedirs(os.path.dirname(ENTRY_SIGNALS_PATH), exist_ok=True)
     _widen_entry_signals_header()
@@ -424,6 +463,8 @@ def save_alert_details(new: dict) -> None:
     the weekly shortlist file covers the standing names)."""
     if not new:
         return
+    if _skip_write(f"{len(new)} alert detail(s) -> state/alert_details.json"):
+        return
     path = os.path.join(ROOT, "state", "alert_details.json")
     data = {}
     if os.path.exists(path):
@@ -443,7 +484,19 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--no-update", action="store_true")
     parser.add_argument("--state-file", default=DEFAULT_STATE)
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="compute the whole scan and print it, but write NOTHING — no "
+             "journal, no entry_signals, no state, no alerts file, no news "
+             "archive. Implies --no-update. Use this to test the nightly path.")
     args = parser.parse_args()
+
+    global DRY_RUN
+    DRY_RUN = args.dry_run
+    if DRY_RUN:
+        args.no_update = True
+        print("DRY RUN — no file will be written, prices will not be fetched\n",
+              flush=True)
 
     universe = pd.read_csv(os.path.join(ROOT, "universe.csv"))
     industry_by_sym = dict(zip(universe["symbol"], universe["industry"]))
@@ -462,25 +515,40 @@ def main() -> None:
         holdings |= set(pd.read_csv(positions_path)["symbol"])
 
     symbols = universe_and_holdings_symbols(ROOT)
+    feed_problems: list[str] = []
     if not args.no_update:
         print(f"updating prices for {len(symbols)} symbols...", flush=True)
-        update_symbols(symbols, pause=0.25)
+        # The return value used to be discarded. On 2026-07-24 Yahoo rate-limited
+        # the cloud runner after ~189 of 835 symbols; the other 646 failed, sat a
+        # session stale, and the scan reported a normal night because nothing
+        # read this list. Prices are the ONE input every tag, score and trigger
+        # depends on — a failed refresh has to be as loud as a failed scan.
+        ok, failures = update_symbols(symbols, pause=0.25)
+        if failures:
+            frac = len(failures) / max(1, len(symbols)) * 100
+            head = ", ".join(failures[:5]) + ("..." if len(failures) > 5 else "")
+            feed_problems.append(
+                f"PRICE UPDATE FAILED for {len(failures)}/{len(symbols)} symbols "
+                f"({frac:.0f}%) — tonight's tags are computed on STALE prices "
+                f"for those names [{head}]")
 
     # persist today's NSE filings into our archive (the live feed forgets)
-    feed_problems: list[str] = []
-    try:
-        from data.announcements_fetch import archive_feed
-        n_new = archive_feed()
-        print(f"filings archive: +{n_new} new NSE announcements", flush=True)
-    except Exception as e:  # noqa: BLE001
-        feed_problems.append(f"NSE announcements feed unreachable ({str(e)[:60]})")
+    if DRY_RUN:
+        print("  [dry-run] skipping the NSE filings archive fetch", flush=True)
+    else:
+        try:
+            from data.announcements_fetch import archive_feed
+            n_new = archive_feed()
+            print(f"filings archive: +{n_new} new NSE announcements", flush=True)
+        except Exception as e:  # noqa: BLE001
+            feed_problems.append(f"NSE announcements feed unreachable ({str(e)[:60]})")
 
     # rolling news memory over that archive (2026-07-26). Derived and fully
     # rebuildable — the archive is the source of truth. Feeds card context and
     # the radar's "building" section; gates nothing.
     try:
         from data.news_pressure import scan as scan_news_pressure
-        _np = scan_news_pressure()
+        _np = scan_news_pressure(persist=not DRY_RUN)
         print(f"news memory: {len(_np)} symbols, "
               f"{sum(1 for r in _np.values() if r.primed)} primed", flush=True)
     except Exception as e:  # noqa: BLE001 — context must never kill the scan
@@ -490,6 +558,7 @@ def main() -> None:
     today_tags: dict[str, str] = {}
     tag_results: dict[str, dict] = {}
     ep_hits: dict[str, dict] = {}
+    last_bars: dict[str, pd.Timestamp] = {}
     breadth_above = breadth_total = 0
     for sym in symbols:
         if sym == "NIFTY50":
@@ -497,6 +566,9 @@ def main() -> None:
         df = load_ohlcv(sym)
         if df is None or len(df) < 60:
             continue
+        # recorded here rather than re-read in health_check: this loop already
+        # holds every frame, and the staleness check must not cost 600 re-reads
+        last_bars[sym] = pd.Timestamp(df["date"].iloc[-1]).normalize()
         # EPISODIC PIVOT (adopted 2026-07-19): event check on tonight's bar.
         # Needs only 60 bars — young IPOs that can't form 45-week structures
         # (the IREDA blind spot) are exactly the point of this class.
@@ -523,9 +595,15 @@ def main() -> None:
     # plans size off tonight's breadth (regime.py reads this snapshot).
     # Never fatal — on failure regime.py falls back to the NIFTY/150 rule.
     try:
-        snap = save_breadth_snapshot(breadth_above, breadth_total)
-        print(f"breadth: {snap['breadth_pct_above_200dma']}% of {breadth_total} "
-              f"above their 200-DMA -> risk x{market_risk_scale()}", flush=True)
+        if DRY_RUN:
+            pct = round(breadth_above / breadth_total * 100, 1) if breadth_total else 0
+            print(f"  [dry-run] would write state/regime.json — breadth {pct}% "
+                  f"of {breadth_total}; regime reads the LAST saved snapshot",
+                  flush=True)
+        else:
+            snap = save_breadth_snapshot(breadth_above, breadth_total)
+            print(f"breadth: {snap['breadth_pct_above_200dma']}% of {breadth_total} "
+                  f"above their 200-DMA -> risk x{market_risk_scale()}", flush=True)
     except Exception as e:  # noqa: BLE001
         feed_problems.append(f"breadth snapshot failed ({str(e)[:60]}) — "
                              "regime fell back to NIFTY/150 rule")
@@ -767,7 +845,7 @@ def main() -> None:
     # state. News moves ATTENTION, never entries — trades stay technical.
     try:
         from data.news_radar import radar_md_section, scan_radar
-        radar = scan_radar(today_tags, rs_by_sym, holdings)
+        radar = scan_radar(today_tags, rs_by_sym, holdings, persist=not DRY_RUN)
         lines += radar_md_section(radar)
         if radar.get("hits"):
             print(f"news radar: {len(radar['hits'])} material filing hit(s)",
@@ -811,7 +889,8 @@ def main() -> None:
                                      "— verdicts missing, review cards manually")
         except (ValueError, KeyError):
             pass
-    problems = health_check(today_tags, symbols, extra_problems=feed_problems)
+    problems = health_check(today_tags, symbols, extra_problems=feed_problems,
+                            last_bars=last_bars)
     if problems:
         lines = lines[:2] + problems + [""] + lines[2:]
 
@@ -826,9 +905,16 @@ def main() -> None:
     if cards:
         report += "\n\n## Cards\n\n```\n" + "\n".join(cards) + "\n```\n"
     out_path = os.path.join(ROOT, "daily_alerts.md")
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(report)
+    if not _skip_write(os.path.basename(out_path)):
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(report)
     print(report)
+    if DRY_RUN:
+        print(f"\nDRY RUN complete — nothing written. Would have produced "
+              f"{len(journal_rows)} journal row(s), "
+              f"{len(entry_signal_rows)} entry-signal row(s), "
+              f"{len(cards)} card(s).")
+        return
     print(f"\n-> {out_path}")
     if journal_rows:
         print(f"-> {len(journal_rows)} row(s) appended to {JOURNAL_PATH}")

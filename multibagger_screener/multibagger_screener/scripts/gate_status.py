@@ -43,6 +43,7 @@ import os
 import sys
 from datetime import datetime
 
+import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -152,6 +153,26 @@ def _qualifying(df: pd.DataFrame) -> pd.DataFrame:
     return d[is_closed | (age >= GATE.min_age_days)]
 
 
+def age_matched_reference(ages: pd.Series) -> float | None:
+    """What the VALIDATED backtest reads for signals of these ages.
+
+    The gate compares like with like (CAPITAL_GATE.md §4, amended 2026-07-27).
+    A 35-day-old live signal is measured against what the backtest's own entries
+    were worth 35 days in — not against their full-hold value, which this
+    strategy only reaches in the right tail a year later.
+
+    Linear interpolation between the frozen curve points; flat beyond both ends
+    (below 30d the gate does not count a signal at all, and past 365d the curve
+    is measured on too few entries to extrapolate).
+    """
+    a = pd.to_numeric(ages, errors="coerce").dropna()
+    if a.empty:
+        return None
+    xs = [p[0] for p in GATE.expectancy_curve]
+    ys = [p[1] for p in GATE.expectancy_curve]
+    return float(np.interp(a.clip(lower=xs[0], upper=xs[-1]), xs, ys).mean())
+
+
 def cohort_stats(df: pd.DataFrame, sized_only: bool = True,
                  qualifying_only: bool = True) -> dict:
     """Expectancy and the discipline checks over one cohort.
@@ -183,11 +204,20 @@ def cohort_stats(df: pd.DataFrame, sized_only: bool = True,
     hit_stop = None
     if "status" in q.columns:
         hit_stop = round(float((q["status"].astype(str) == "stopped").mean()) * 100, 1)
+    # what the backtest reads for signals of these same ages — the bar this
+    # cohort is actually held to (CAPITAL_GATE.md §4, amended 2026-07-27)
+    ref = age_matched_reference(q.loc[r.index].get("days_elapsed", pd.Series(dtype=float)))
     return {
         "n": total_logged,
         "n_qualifying": int(len(r)),
         "n_unsized": int(len(unsized)),
         "expectancy_r": round(float(r.mean()), 3),
+        "median_age_days": (int(pd.to_numeric(q.loc[r.index]["days_elapsed"],
+                                              errors="coerce").median())
+                            if "days_elapsed" in q.columns else None),
+        "age_matched_reference_r": round(ref, 3) if ref is not None else None,
+        "required_expectancy_r": (round(ref * GATE.min_expectancy_fraction, 3)
+                                  if ref is not None else None),
         "median_r": round(float(r.median()), 3),
         "sum_r": round(float(r.sum()), 2),
         "win_rate_pct": round(float((r > 0).mean()) * 100, 1),
@@ -245,6 +275,8 @@ def evaluate() -> dict:
         }
 
     exp = gate.get("expectancy_r")
+    ref = gate.get("age_matched_reference_r")
+    req = gate.get("required_expectancy_r")
     sysret = gate.get("signal_basis_return_pct")
     have_n = gate.get("n_qualifying", 0) >= GATE.min_signals
 
@@ -257,9 +289,12 @@ def evaluate() -> dict:
             f"{gate.get('n_qualifying', 0)} of {GATE.min_signals} qualifying signals "
             f"(closed, or aged {GATE.min_age_days}d+)"),
         "expectancy": _cond(
-            None if exp is None else exp >= GATE.min_expectancy_r,
-            f"{exp:+.2f}R vs {GATE.min_expectancy_r:+.2f}R required"
-            if exp is not None else "no qualifying signals yet"),
+            None if (exp is None or req is None) else exp >= req,
+            (f"{exp:+.2f}R vs {req:+.2f}R required — "
+             f"{GATE.min_expectancy_fraction:.0%} of the {ref:+.2f}R the backtest "
+             f"reads at the same ages (median {gate.get('median_age_days')}d)"
+             if exp is not None and req is not None
+             else "no qualifying signals yet")),
         "beats_benchmark": _cond(
             None if (sysret is None or bm.get("ret_pct") is None)
             else sysret > bm["ret_pct"],
@@ -301,7 +336,14 @@ def evaluate() -> dict:
         "required": {
             "min_signals": GATE.min_signals,
             "min_age_days": GATE.min_age_days,
-            "min_expectancy_r": GATE.min_expectancy_r,
+            # age-matched since the 2026-07-27 amendment: the bar moves with the
+            # cohort's age because the ruler does. min_expectancy_r is retained
+            # as the superseded flat bar so the amendment stays auditable.
+            "min_expectancy_fraction": GATE.min_expectancy_fraction,
+            "expectancy_r": req,
+            "age_matched_reference_r": ref,
+            "superseded_flat_min_expectancy_r": GATE.min_expectancy_r,
+            "expectancy_curve": [list(p) for p in GATE.expectancy_curve],
             "max_hit_stop_pct": GATE.max_hit_stop_pct,
             "max_share_from_best_trade_pct": GATE.max_share_from_best_trade_pct,
             "pass_capital_pct": GATE.pass_capital_pct,

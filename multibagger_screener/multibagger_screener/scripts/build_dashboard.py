@@ -409,22 +409,27 @@ def _build_penny() -> dict | None:
             "flags": [s.strip() for s in _s(r.get("risk_flags")).split("|") if s.strip()],
         })
 
-    # ---- re-apply the price arm's market-cap ceiling -------------------
-    # build_penny_universe sets the arm BEFORE most caps are known, and gives
-    # an unknown cap the benefit of the doubt: `cheap & ~(mcap >= ceiling)` is
-    # True whenever mcap is NaN. The cap resolves later, on a penny_fundamentals
-    # run, and the arm is never revisited — so 34 of 153 names in a "penny and
-    # nano-cap" universe were not penny or nano at all. IDEA at Rs1.42 lakh Cr,
-    # IRFC at Rs1.15 lakh Cr, NHPC, NMDC, YESBANK, SUZLON — all sitting there
-    # because a Rs70 share looks cheap, which is the exact confusion the ceiling
-    # was registered on 2026-07-25 to prevent (a cheap SHARE is not a small
-    # COMPANY). Re-checked here against the cap we now know. Nothing is mutated:
-    # they move to the excluded count, where the universe builder would have put
-    # them had it known. The durable fix belongs upstream, in the arm assignment.
+    # ---- invariant: no name on the price arm may exceed its ceiling ----
+    # This was a repair when it was written (2026-07-26): the universe builder
+    # assigned arms before the market caps existed, `cheap & ~(NaN >= ceiling)`
+    # was True for every cheap share, and the arm was never revisited — so 40
+    # of 153 names in a "penny and nano-cap" universe were neither, IDEA at
+    # Rs1.42 lakh Cr and IRFC at Rs1.15 lakh Cr among them. The fix now lives
+    # upstream: `build_penny_universe.recheck_caps()` re-settles the arms once
+    # the caps land, and `penny_scan` calls it before it ranks anything.
+    # What remains here is a TRIPWIRE. It should never fire; if it does, the
+    # upstream re-check did not run (a stale penny_ranked.csv, an old checkout,
+    # a chain that skipped the scan) and the dashboard must not quietly publish
+    # a nano-cap screen led by a PSU bank. It shouts, then filters.
     ceiling = PENNY.price_arm_max_market_cap_cr
     outgrown = [r["sym"] for r in rows
                 if r["arm"] == "price" and r["mcap"] is not None and r["mcap"] >= ceiling]
     if outgrown:
+        print(f"  !! penny invariant: {len(outgrown)} price-arm name(s) above the "
+              f"Rs{ceiling:,.0f} Cr ceiling in penny_ranked.csv — the upstream cap "
+              f"re-check did not run. Filtered here: {', '.join(outgrown[:8])}"
+              f"{f' +{len(outgrown) - 8} more' if len(outgrown) > 8 else ''}. "
+              f"Re-run: python scripts/penny_scan.py --no-update")
         drop = set(outgrown)
         rows = [r for r in rows if r["sym"] not in drop]
 

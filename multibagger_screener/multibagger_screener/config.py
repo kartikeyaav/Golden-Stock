@@ -443,6 +443,43 @@ class CapitalGateConfig:
     # slippage and missed fills take more, and a system delivering under half
     # its stressed expectancy is not the system that was validated.
     min_expectancy_r: float = 0.50
+    #
+    # AMENDMENT 2026-07-27 (re-registered at n=0, before the cohort existed —
+    # see CAPITAL_GATE.md §9). The flat +0.50R above was derived from the
+    # FULL-HOLD backtest read, but the ruler marks OPEN positions to market at
+    # whatever age they have reached. Those are different scales: this strategy
+    # earns its expectancy in the right tail, and at day 30 only ~29% of the
+    # full-hold R has developed (at day 90, ~40%). Measured on the validated
+    # baseline's own 91 entries, replayed through the same engine and truncated
+    # at each age:
+    #
+    #     day  30 -> +0.533R      day 180 -> +0.961R
+    #     day  60 -> +0.679R      day 365 -> +1.492R
+    #     day  90 -> +0.724R      full    -> +1.811R
+    #
+    # Bootstrapping 20,000 cohorts of n=40 from that distribution, a live system
+    # reproducing the validated strategy EXACTLY passed the flat +0.50R bar only
+    # 67% of the time, and one performing at the stressed level 21-44%. A gate
+    # that rejects a correctly-working system a third to four-fifths of the time
+    # is a broken instrument, not a conservative one.
+    #
+    # So the bar is now LIKE-FOR-LIKE: each signal is compared to what the
+    # backtest reads at that signal's own age, and the cohort must reach
+    # `min_expectancy_fraction` of that age-matched reference. The fraction is
+    # the same 0.50 that motivated the original number — only the thing it is
+    # half OF is now measured on the same scale as the live read.
+    #
+    # The curve is FROZEN here on purpose. scripts/gate_reference_curve.py
+    # regenerates it from matrix_trades/ and must reproduce these numbers; it
+    # writes a report, never this config. A gate whose reference could drift
+    # with a re-run is not pre-registered.
+    expectancy_curve: tuple = ((30, 0.533), (60, 0.679), (90, 0.724),
+                               (180, 0.961), (365, 1.492))
+    expectancy_curve_source: str = (
+        "SZ2_B_equity_cap15_r1.25, 91 entries replayed through backtest/engine.py "
+        "with next-open fills, gap-aware stops, equity sizing and costs; "
+        "measured 2026-07-27, frozen at cohort n=0")
+    min_expectancy_fraction: float = 0.50
     # the dumb alternative must lose. If a momentum-quality ETF you could have
     # bought with one click beats the machine, the machine is a hobby.
     must_beat_benchmark: bool = True

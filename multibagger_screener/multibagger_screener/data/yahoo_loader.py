@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timedelta
 
@@ -32,6 +33,34 @@ _CHART_URL = (
 _UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
 
+# Yahoo rate-limits bursts, and hardest from datacenter IPs — which is exactly
+# where the nightly cloud job runs. Without a retry a single 429 partway through
+# the universe turns into hundreds of consecutive failures: on 2026-07-24 only
+# 189 of 835 symbols updated and the remaining 646 sat a session stale while the
+# scan reported normally. Back off and retry before giving up on a symbol.
+_RETRY_STATUS = {429, 500, 502, 503, 504}
+_MAX_ATTEMPTS = 4
+_BACKOFF_S = (2.0, 6.0, 15.0)
+
+
+def _get_json(url: str) -> dict:
+    last_err: Exception | None = None
+    for attempt in range(_MAX_ATTEMPTS):
+        req = urllib.request.Request(url, headers=_UA)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            last_err = e
+            if e.code not in _RETRY_STATUS:
+                raise
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+            last_err = e
+        if attempt < _MAX_ATTEMPTS - 1:
+            time.sleep(_BACKOFF_S[attempt])
+    raise last_err if last_err else RuntimeError("fetch failed")
+
+
 def fetch_yahoo_daily(yahoo_symbol: str, start: str, end: str | None = None) -> pd.DataFrame:
     """Fetch daily OHLCV for one symbol. start/end: 'YYYY-MM-DD'."""
     p1 = int(datetime.strptime(start, "%Y-%m-%d").timestamp())
@@ -39,9 +68,7 @@ def fetch_yahoo_daily(yahoo_symbol: str, start: str, end: str | None = None) -> 
     p2 = int((end_dt + timedelta(days=1)).timestamp())
 
     url = _CHART_URL.format(symbol=urllib.request.quote(yahoo_symbol), p1=p1, p2=p2)
-    req = urllib.request.Request(url, headers=_UA)
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        payload = json.loads(resp.read().decode("utf-8"))
+    payload = _get_json(url)
 
     result = payload.get("chart", {}).get("result")
     if not result:

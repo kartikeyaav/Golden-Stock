@@ -205,9 +205,15 @@ def _window_start(now: datetime) -> datetime:
 
 
 def scan_radar(tags: dict[str, str], rs_by_sym: dict[str, float],
-               holdings: set[str], now: datetime | None = None) -> dict:
+               holdings: set[str], now: datetime | None = None,
+               persist: bool = True) -> dict:
     """Scan filings since the last run; classify, match, cross-reference,
-    rank. Writes state/news_radar.json and returns its payload."""
+    rank. Writes state/news_radar.json and returns its payload.
+
+    `persist=False` for daily_scan --dry-run. This one MUST be honoured: the
+    window starts at the last run's timestamp, so a test run that saved state
+    would silently shorten the real run's window and drop a night of filings.
+    """
     now = now or datetime.now()
     start = _window_start(now)
     uni = load_universe_map()
@@ -263,9 +269,10 @@ def scan_radar(tags: dict[str, str], rs_by_sym: dict[str, float],
     payload = {"generated": now.isoformat(timespec="seconds"),
                "window_start": start.isoformat(timespec="seconds"),
                "hits": hits}
-    os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
-    with open(STATE_PATH, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=1)
+    if persist:
+        os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
+        with open(STATE_PATH, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=1)
     return payload
 
 

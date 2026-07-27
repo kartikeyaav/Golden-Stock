@@ -1,15 +1,40 @@
 {
- "generated": "2026-07-26 07:36",
+ "generated": "2026-07-27 16:48",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 0.0,
  "deadline": "2026-12-31",
- "days_to_deadline": 157,
+ "days_to_deadline": 156,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
   "min_age_days": 30,
-  "min_expectancy_r": 0.5,
+  "min_expectancy_fraction": 0.5,
+  "expectancy_r": null,
+  "age_matched_reference_r": null,
+  "superseded_flat_min_expectancy_r": 0.5,
+  "expectancy_curve": [
+   [
+    30,
+    0.533
+   ],
+   [
+    60,
+    0.679
+   ],
+   [
+    90,
+    0.724
+   ],
+   [
+    180,
+    0.961
+   ],
+   [
+    365,
+    1.492
+   ]
+  ],
   "max_hit_stop_pct": 55.0,
   "max_share_from_best_trade_pct": 60.0,
   "pass_capital_pct": 25.0
@@ -29,6 +54,9 @@
   "n_qualifying": 115,
   "n_unsized": 22,
   "expectancy_r": -0.303,
+  "median_age_days": 9,
+  "age_matched_reference_r": 0.533,
+  "required_expectancy_r": 0.267,
   "median_r": -0.27,
   "sum_r": -34.8,
   "win_rate_pct": 23.5,

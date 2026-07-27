@@ -280,13 +280,14 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
     </div>
     <div class="gmeta">
       <div class="gmrow"><span>Pass mark, fixed in advance</span>
-        <b style="color:var(--txt)">+0.50R avg &amp; beats the ETF</b></div>
+        <b style="color:var(--txt)">50% of the backtest&#39;s own
+        read &amp; beats the ETF</b></div>
       <div class="gmrow"><span>Live read so far</span>
         <b style="color:var(--dim)">first signals pending</b></div>
       <div class="gmrow"><span>Momentum ETF it must beat · 12m</span>
         <b style="color:var(--grn)">+7.6%</b></div>
       <div class="gmrow"><span>Verdict due</span>
-        <b>2026-12-31 · 157d</b></div>
+        <b>2026-12-31 · 156d</b></div>
     </div>
   </div>
   </div>
@@ -307,9 +308,11 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
   <div class="ref rv">
     <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
       <div class="verdict" style="color:var(--cyn)">CONDITION 1 — EXPECTANCY</div>
-      <h4>+0.50R per trade, minimum</h4>
-      <p>About half the stressed backtest read. A system delivering under half its own
-        stress-tested expectancy is not the system that was validated.</p>
+      <h4>Half the backtest&#39;s own read, minimum</h4>
+      <p>Measured like for like: a live signal 60 days old is held against what the
+        backtest returned 60 days in, not against the full-hold number it only reaches
+        a year later. A system delivering under half that is not the system that was
+        validated.</p>
     </div>
     <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
       <div class="verdict" style="color:var(--cyn)">CONDITION 2 — THE DUMB ALTERNATIVE</div>
@@ -509,7 +512,7 @@ footer a{color:var(--dim)} footer a:hover{color:var(--txt)}
 </section>
 
 <footer>
-  <div>© Golden Stock · decision support, not investment advice · data as of 26 Jul 2026</div>
+  <div>© Golden Stock · decision support, not investment advice · data as of 27 Jul 2026</div>
   <div><a href="dashboard.html">Terminal</a> &nbsp;·&nbsp; <a href="#gate">The gate</a>
     &nbsp;·&nbsp; <a href="#limits">Limitations</a></div>
 </footer>
@@ -555,7 +558,7 @@ document.getElementById('map').innerHTML=CELLS.map(function(c,i){
 }).join('');
 
 /* ticker — real reads from tonight's state, duplicated for a seamless loop */
-var TK=[["UNIVERSE", "615 watched nightly", "up"], ["CONFIRMED UPTREND", "85 names", "up"], ["GATE", "0/40 signals banked", "dn"], ["REGIME", "breadth 53.2% \u2014 full size", "up"], ["EXIT RISK", "65 names flagged ASM/GSM/band", "dn"], ["JOURNAL", "221 signals, append-only", "up"], ["NEWS RADAR", "17 material filings in window", "up"], ["PENNY SCREEN", "153 survivors of the gates", "up"], ["PAYOFF", "9.6:1 winner-to-loser, backtested", "up"], ["VERDICT DUE", "2026-12-31", "up"]];
+var TK=[["UNIVERSE", "615 watched nightly", "up"], ["CONFIRMED UPTREND", "85 names", "up"], ["GATE", "0/40 signals banked", "dn"], ["REGIME", "breadth 53.2% \u2014 full size", "up"], ["EXIT RISK", "65 names flagged ASM/GSM/band", "dn"], ["JOURNAL", "221 signals, append-only", "up"], ["NEWS RADAR", "17 material filings in window", "up"], ["PENNY SCREEN", "187 survivors of the gates", "up"], ["PAYOFF", "9.6:1 winner-to-loser, backtested", "up"], ["VERDICT DUE", "2026-12-31", "up"]];
 document.getElementById('tick').innerHTML=TK.concat(TK).map(function(t){
  return '<span class="tk"><b>'+t[0]+'</b><span class="'+t[2]+'">'+t[1]+'</span></span>';}).join('');
 </script>

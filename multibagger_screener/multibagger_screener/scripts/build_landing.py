@@ -429,7 +429,8 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
     </div>
     <div class="gmeta">
       <div class="gmrow"><span>Pass mark, fixed in advance</span>
-        <b style="color:var(--txt)">+{GATE.min_expectancy_r:.2f}R avg &amp; beats the ETF</b></div>
+        <b style="color:var(--txt)">{GATE.min_expectancy_fraction:.0%} of the backtest&#39;s own
+        read &amp; beats the ETF</b></div>
       <div class="gmrow"><span>Live read so far</span>
         <b style="color:{'var(--grn)' if (run_r or 0) > 0 else 'var(--dim)'}">{(f'{run_r:+.2f}R' if run_r is not None else 'first signals pending')}</b></div>
       <div class="gmrow"><span>Momentum ETF it must beat · 12m</span>
@@ -456,9 +457,11 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
   <div class="ref rv">
     <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
       <div class="verdict" style="color:var(--cyn)">CONDITION 1 — EXPECTANCY</div>
-      <h4>+{GATE.min_expectancy_r:.2f}R per trade, minimum</h4>
-      <p>About half the stressed backtest read. A system delivering under half its own
-        stress-tested expectancy is not the system that was validated.</p>
+      <h4>Half the backtest&#39;s own read, minimum</h4>
+      <p>Measured like for like: a live signal 60 days old is held against what the
+        backtest returned 60 days in, not against the full-hold number it only reaches
+        a year later. A system delivering under half that is not the system that was
+        validated.</p>
     </div>
     <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
       <div class="verdict" style="color:var(--cyn)">CONDITION 2 — THE DUMB ALTERNATIVE</div>

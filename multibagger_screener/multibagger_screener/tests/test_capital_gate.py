@@ -30,13 +30,21 @@ from config import GATE
 
 FAILS: list[str] = []
 
+# Script mode collects every failure and reports them together at the end;
+# pytest needs each check to RAISE or the test function passes no matter what
+# it found. Without this the file was decorative under pytest — a deliberately
+# false check still reported "7 passed" (found 2026-07-27).
+_UNDER_PYTEST = "PYTEST_CURRENT_TEST" in os.environ
+
 
 def check(name: str, cond: bool, detail: str = "") -> None:
     if cond:
         print(f"  ok   {name}")
-    else:
-        FAILS.append(f"{name} — {detail}")
-        print(f"  FAIL {name} — {detail}")
+        return
+    FAILS.append(f"{name} — {detail}")
+    print(f"  FAIL {name} — {detail}")
+    if _UNDER_PYTEST:
+        raise AssertionError(f"{name} — {detail}")
 
 
 def _row(sym, kind, days, r, status="open", sized=True, when="2026-08-01"):
@@ -46,7 +54,7 @@ def _row(sym, kind, days, r, status="open", sized=True, when="2026-08-01"):
             "plan_sized": sized}
 
 
-def test_cohort_split(monkey_status):
+def test_cohort_split():
     df = pd.DataFrame([
         _row("AAA", "BUY TRIGGER", 40, 1.0),
         _row("BBB", "EPISODIC PIVOT", 40, 2.0),
@@ -117,6 +125,62 @@ def test_concentration_and_stops():
           str(stats["hit_stop_pct"]))
 
 
+def test_age_matched_bar_scales_with_cohort_age():
+    """The 2026-07-27 amendment. The bar must RISE as the cohort ages, because
+    the ruler's reading rises with age too — that equivalence is the whole
+    point of the change, and a flat bar is what it replaced."""
+    young = gate_status.age_matched_reference(pd.Series([30] * 40))
+    mid = gate_status.age_matched_reference(pd.Series([90] * 40))
+    old = gate_status.age_matched_reference(pd.Series([365] * 40))
+    check("the reference rises with cohort age", young < mid < old,
+          f"{young} {mid} {old}")
+    check("the frozen curve anchors the 30-day point",
+          abs(young - GATE.expectancy_curve[0][1]) < 1e-9, str(young))
+    check("beyond the last curve point the bar stops extrapolating",
+          abs(gate_status.age_matched_reference(pd.Series([3650] * 5)) - old) < 1e-9, "")
+
+
+def test_amended_bar_admits_what_the_flat_bar_wrongly_rejected():
+    """A cohort at +0.40R and 60 days old is running ABOVE half the backtest's
+    own 60-day read (+0.679R). The flat +0.50R bar failed it; that was the
+    defect."""
+    df = pd.DataFrame([_row(f"S{i}", "BUY TRIGGER", 60, 0.40) for i in range(40)])
+    s = gate_status.cohort_stats(df)
+    check("required bar is half the age-matched reference",
+          abs(s["required_expectancy_r"]
+              - s["age_matched_reference_r"] * GATE.min_expectancy_fraction) < 1e-6,
+          str(s["required_expectancy_r"]))
+    check("a cohort beating the age-matched bar passes condition 1",
+          s["expectancy_r"] >= s["required_expectancy_r"],
+          f"{s['expectancy_r']} vs {s['required_expectancy_r']}")
+    check("...and the superseded flat bar would have failed it",
+          s["expectancy_r"] < GATE.min_expectancy_r, str(s["expectancy_r"]))
+
+
+def test_amended_bar_still_fails_a_weak_cohort():
+    """The amendment must not become a way to pass anything. Below half the
+    age-matched read is still a fail."""
+    df = pd.DataFrame([_row(f"S{i}", "BUY TRIGGER", 60, 0.20) for i in range(40)])
+    s = gate_status.cohort_stats(df)
+    check("a cohort under the age-matched bar fails",
+          s["expectancy_r"] < s["required_expectancy_r"],
+          f"{s['expectancy_r']} vs {s['required_expectancy_r']}")
+
+
+def test_frozen_curve_is_not_recomputed_at_evaluation_time():
+    """A bar that could drift with a re-run is not pre-registered. The curve
+    must come from config, not from whatever the trade files say today."""
+    check("curve lives in config", len(GATE.expectancy_curve) >= 4, "")
+    check("curve is ordered by age",
+          all(GATE.expectancy_curve[i][0] < GATE.expectancy_curve[i + 1][0]
+              for i in range(len(GATE.expectancy_curve) - 1)), "")
+    check("curve is monotone in R (a later read is never worth less)",
+          all(GATE.expectancy_curve[i][1] <= GATE.expectancy_curve[i + 1][1]
+              for i in range(len(GATE.expectancy_curve) - 1)), "")
+    check("the superseded flat bar is retained for audit",
+          GATE.min_expectancy_r == 0.50, str(GATE.min_expectancy_r))
+
+
 def test_benchmark_window():
     """The benchmark must read a real cached series and respect its window."""
     b = gate_status.benchmark_return(GATE.benchmark_symbol,
@@ -144,18 +208,26 @@ def test_live_evaluate():
         check("the sample condition reports itself as unmet",
               g["conditions"]["sample"]["ok"] is False, "")
     check("the pre-registered thresholds are carried in the payload",
-          g["required"]["min_expectancy_r"] == GATE.min_expectancy_r, "")
+          g["required"]["min_expectancy_fraction"] == GATE.min_expectancy_fraction, "")
+    check("the superseded flat bar stays in the payload for audit",
+          g["required"]["superseded_flat_min_expectancy_r"] == GATE.min_expectancy_r, "")
+    check("the frozen reference curve is carried in the payload",
+          len(g["required"]["expectancy_curve"]) == len(GATE.expectancy_curve), "")
     check("legacy cohort is reported separately from the gate",
           "legacy" in g and "cohort" in g, "")
 
 
 if __name__ == "__main__":
     print("capital gate")
-    test_cohort_split(None)
+    test_cohort_split()
     test_date_floor()
     test_qualifying_rule()
     test_unsized_excluded()
     test_concentration_and_stops()
+    test_age_matched_bar_scales_with_cohort_age()
+    test_amended_bar_admits_what_the_flat_bar_wrongly_rejected()
+    test_amended_bar_still_fails_a_weak_cohort()
+    test_frozen_curve_is_not_recomputed_at_evaluation_time()
     test_benchmark_window()
     test_live_evaluate()
     print()

@@ -236,9 +236,12 @@ def compute(stories: list[Story], now: datetime | None = None) -> dict[str, Pres
 # ---------------------------------------------------------------------------
 
 def scan(now: datetime | None = None,
-         uni: dict[str, str] | None = None) -> dict[str, PressureRead]:
+         uni: dict[str, str] | None = None,
+         persist: bool = True) -> dict[str, PressureRead]:
     """Rebuild the read from the archive and persist it. Called nightly, after
-    announcements_fetch has appended the day's filings."""
+    announcements_fetch has appended the day's filings.
+
+    `persist=False` computes without writing (daily_scan --dry-run)."""
     now = now or datetime.now()
     reads = compute(build_stories(now, uni), now)
     payload = {
@@ -251,9 +254,10 @@ def scan(now: datetime | None = None,
                          "events": r.events[:12], "summary": r.summary()}
                  for r in reads.values()},
     }
-    os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
-    with open(STATE_PATH, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=1)
+    if persist:
+        os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
+        with open(STATE_PATH, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=1)
     return reads
 
 
