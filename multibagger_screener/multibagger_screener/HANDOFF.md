@@ -11,6 +11,10 @@ folder); for the evidence read `VALIDATION_REPORT.md`; for cloud ops read
 `CLOUD.md`. Sections 3-3N below are a chronological work-log (kept for
 context) — sections 0/1/2/4/5/6/7 are the CURRENT state, kept fresh.
 
+> **2026-07-27: the gate's pass condition was RE-REGISTERED at n=0 — the flat
+> +0.50R was on a different scale from the ruler that measures it. Read
+> `CAPITAL_GATE.md` §4 and §9, then §3S, before quoting any gate number.**
+
 > **If you are a fresh session: read `CAPITAL_GATE.md`, then §3Q, then §5.**
 > The gate is registered and OPEN at 0/40 — it is the number this project
 > exists to produce, and §6 says do not add features until it has a sample.
@@ -1432,6 +1436,159 @@ reason survives, and a second re-check is a no-op.
 the rest of `state/`. It does not need committing — the build and the scan run
 in the same job on the same workspace — and `recheck_caps()` returns `None`
 and leaves the universe untouched when it is absent.
+
+---
+
+## 3S. Verification pass: the gate's bar was on the wrong scale, and the test suite could not fail (2026-07-27)
+
+A full verify-every-flow pass on the morning the gate cohort was due to open.
+Four defects, each found by testing something that had been assumed. Ordered by
+how much they mattered.
+
+### 1. The test suite could not fail
+
+`test_capital_gate.py` and `test_penny_screen.py` define pytest-visible `test_`
+functions, but their `check()` helper appended to a list and printed — it never
+raised. **Under pytest all 16 of those tests passed unconditionally**: injecting
+a deliberately false check still reported `7 passed`. The two files guarding the
+capital decision and the penny universe were decorative. (`test_capital_gate`
+additionally had a leftover `monkey_status` fixture arg erroring at collection —
+that one at least was visible.)
+
+The fix took two attempts, and the second only happened because CI caught the
+first. `_UNDER_PYTEST = "PYTEST_CURRENT_TEST" in os.environ` evaluated at
+**import** time is always False — pytest sets that variable while a test *runs*,
+not while the module is imported. So the first fix changed nothing, and the
+three failures observed right after it were genuine exceptions (bad signature,
+missing key), not check failures. Detection is now a call-time function testing
+the env var **or** `pytest in sys.modules`.
+
+**`.github/workflows/tests.yml` now runs on every push, with a CANARY step that
+injects a false check and requires the suite to fail.** Nothing ran the tests
+anywhere before this — a broken commit went straight to the nightly runner.
+Keep the canary. It has already paid for itself once.
+
+### 2. The gate's bar was on the wrong scale — RE-REGISTERED at n=0
+
+The gate is the number this project exists to produce, so this is the important
+one. `CAPITAL_GATE.md` §9 carries the dated amendment; the short version:
+
+The flat **+0.50R** came from halving the *full-hold* stressed backtest read.
+But the ruler marks **open** positions to market at whatever age they have
+reached, and this strategy earns its expectancy in the right tail. Measured on
+the validated baseline's own trades:
+
+| trades held | n | mean R | sum R |
+|---|---|---|---|
+| 0–90 days | 64 | negative throughout | **−45R** |
+| 90+ days | 32 | +0.57 → +25.7 | **+200R** |
+
+Five entries held over a year produced 83% of all gross positive R. So at day 30
+only ~29% of full-hold R has developed; at day 90, ~40%. Judging a 30-to-150-day
+live read against half of a full-hold number asks the live system to do in a
+month what the backtest needed a year for.
+
+Bootstrapping 20,000 cohorts of n=40 from the strategy's own entries: **a live
+system reproducing the validated strategy EXACTLY passed the flat bar 67% of the
+time, and 21–44% at the stressed level.** A gate that rejects a working system a
+third to four-fifths of the time is a broken instrument, not a conservative one.
+
+Condition 1 is now like-for-like: each signal is measured against what the
+backtest read **at that signal's own age**, and the cohort must reach 50% of it.
+Same fraction, correct scale; power rises to 77–83%. At a realistic 90-day age
+mix the bar is **+0.36R**.
+
+The curve is **FROZEN** in `config.GATE.expectancy_curve` — a bar that drifts
+with a re-run is not pre-registered. `scripts/gate_reference_curve.py`
+regenerates it and reports drift; **drift is a §8 re-registration trigger, never
+a licence to edit the constant.** It reproduces exactly today.
+
+Amended at cohort **n=0**, hours before the first scan that could produce a
+qualifying signal, so no collected data informed the change and the sample does
+not restart. That timing was luck. It would not have been available a week later.
+
+**Also disclosed, NOT fixed:** condition 2 (`sum(R) × risk_per_trade_pct`) is a
+*signal-basis* number — it scales with the COUNT of signals rather than with
+capital, so it crosses the benchmark at about +0.15R and **cannot bind once
+condition 1 passes**. It is a visible sanity read, not a fourth independent
+test. Making it a real portfolio comparison means running the cohort through the
+engine as a portfolio, which is a ruler change and needs its own registration.
+
+### 3. Silent price-staleness
+
+`update_symbols` returns `(ok, failures)`; `daily_scan` called it for the side
+effect and **dropped the list**. Prices are the one input every tag, score and
+trigger depends on, and a failed refresh was invisible: the benchmark is among
+the first symbols fetched so it refreshes, every name still tags, no single
+holding looks odd, and the report reads like a normal night.
+
+Three links fixed: `fetch_yahoo_daily` retries with backoff on 429/5xx (one
+rate-limit reply used to turn into hundreds of consecutive failures);
+`daily_scan` raises a health problem carrying the failed count; and a new
+**universe-wide staleness check** compares every name to the newest bar anywhere
+in the cache. A market holiday moves every symbol together, so it cannot
+false-positive. `update_prices` also now exits non-zero above 20% failures —
+`weekly_refresh` runs that step with `fatal=True`, which meant nothing while a
+run failing most of the universe still exited 0.
+
+**Note on the local cache**: the local copy IS badly stale (643 of 652 names
+behind, MOSCHIP 11 days) — but that is expected and NOT a production defect. The
+laptop scan jobs have been disabled since 2026-07-18 and the cloud keeps its own
+cache in `actions/cache`. Production was verified healthy the hard way: eight
+closes journaled by the 07-24 cloud run match the real 07-24 bars to the paisa.
+**Do not diagnose production from the local cache.** Run
+`python scripts/update_prices.py --all` if you want the local dashboard current.
+
+### 4. There was no way to test the nightly path
+
+Every prior test run wrote to an append-only journal — the 2026-07-09 intraday
+rows and the 2026-07-07 synthetic row both entered that way and could only be
+quarantined afterwards. **`daily_scan.py --dry-run`** computes everything and
+writes nothing (implies `--no-update`).
+
+Building it immediately found a live side effect: `news_radar.scan_radar`
+windows from its own last-run stamp, so a test run **silently shortened the real
+run's window and dropped a night of filings**. `scan_radar` and
+`news_pressure.scan` now take `persist=`. `tests/test_scan_integrity.py` locks
+all of it.
+
+### Verified working (no defect found)
+
+- `BUY TRIGGER` wiring is sound. A dry run over the real universe produced 0
+  triggers, and a direct count confirmed that is correct, not broken: 0 names
+  had `validated_entry` tonight, 49 have a VCP base awaiting a trigger, 565 have
+  no base. At ~1.7/week across 611 names a zero night is the *most likely*
+  single outcome (~71% under Poisson). A transition-night validated entry is
+  also correctly picked up by the gate via `status_ok`, not just `kind_ok`.
+- 42 pytest + 10 script-style test files green; all 28 modules import clean;
+  `compileall` clean.
+
+### Pre-registered experiment queue (NOT implemented — register before running)
+
+Both come out of this session's measurements and both fit the evidence lock.
+Neither may be wired live before passing out of sample against the baseline.
+
+**P5 — queue ranking.** Same-day entries are ranked by **volume** when the
+12-slot cap binds, which it does on 39% of days. That ranking function has never
+been tested. Clenow ranks momentum candidates by *volatility-adjusted* momentum
+(slope × R² of a 90-day log regression). Pre-registered comparison: volume rank
+(control) vs slope×R² rank vs ADR-normalised rank, same entries, same exits.
+Success = beats control expectancy AND CAGR out of sample.
+
+**P6 — trailing speed.** The trading lot trails the 50-DMA; Qullamaggie trails
+the 10/20-DMA. This session's hold-time data makes it worth testing from the
+other end too: the core lot carries the strategy, so the question is whether the
+trading lot's trail should be *faster* (bank more, earlier) given it contributes
+little. Pre-registered cells: 10-DMA / 20-DMA / 50-DMA (control) on the trading
+lot only, core lot untouched.
+
+**Measured and NOT worth pursuing — a day-30 "dead wood" cut.** All 7 eventual
+monsters were already positive at day 30 (p≈0.015 against a 55% base rate),
+which looked like a slot-freeing opportunity. It is not: of the 61 entries still
+open at day 30, only 11 are non-positive, they average −0.38R, and cutting them
+frees ~12% of slots, not the ~48% a first pass suggested (that number wrongly
+counted already-closed trades, which occupy no slot). Recorded here so it is not
+rediscovered and overrated a third time.
 
 ---
 
