@@ -1,5 +1,84 @@
 {
- "generated": "2026-07-28T10:55:53",
- "window_start": "2026-07-28T10:44:08",
- "hits": []
+ "generated": "2026-07-28T15:32:03",
+ "window_start": "2026-07-28T10:55:53",
+ "hits": [
+  {
+   "sym": "BIOCON",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "Mylan Inc. has Submitted to the Exchange a copy of Disclosure under Regulation 29(2) of the Securities and Exchange Board of India (Substantial Acquisition of S",
+   "date": "2026-07-28T12:31:55",
+   "n": 1,
+   "tag": "CONFIRMED",
+   "rs": 66.6,
+   "held": false,
+   "confluence": true,
+   "urgent": false
+  },
+  {
+   "sym": "360ONE",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "Capital Income Builder has Submitted to the Exchange a copy of Disclosure under Regulation 29 (2) of the Securities and Exchange Board of India (Substantial Acq",
+   "date": "2026-07-28T12:36:08",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 43.0,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "APLLTD",
+   "cls": "pos",
+   "event": "approval",
+   "subject": "Alembic Pharmaceuticals Limited has informed the Exchange regarding a press release dated July 28, 2026, titled \"Alembic Pharmaceuticals Limited receives USFDA ",
+   "date": "2026-07-28T13:26:20",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 39.7,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "UPL",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "UPL Limited has informed the Exchange about Acquisition of Sustainable Tech Inc, USA. |SUBJECT: Acquisition",
+   "date": "2026-07-28T12:24:29",
+   "n": 2,
+   "tag": "BROKEN",
+   "rs": 20.0,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "CRIZAC",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "Crizac Limited has informed the Exchange regarding a press release dated July 28, 2026, titled \"Please find attached a copy of Press Release, being issued by th",
+   "date": "2026-07-28T15:11:23",
+   "n": 1,
+   "tag": "BROKEN",
+   "rs": 5.3,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "TRANSRAILL",
+   "cls": "attn",
+   "event": "fund raise",
+   "subject": "TRANSRAIL LIGHTING LIMITED has informed the Exchange regarding Issuance of securities |SUBJECT: Alteration Of Capital and Fund Raising-XBRL",
+   "date": "2026-07-28T12:29:45",
+   "n": 2,
+   "tag": "BROKEN",
+   "rs": 21.6,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  }
+ ]
 }
