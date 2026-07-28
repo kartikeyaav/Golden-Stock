@@ -76,7 +76,14 @@ ENTRY_SIGNALS_PATH = os.path.join(ROOT, "journal", "entry_signals.csv")
 ENTRY_SIGNALS_FIELDS = ["logged_at", "symbol", "kind", "entry_status",
                         "validated_entry", "close", "pivot_price",
                         "breakout_today", "breakout_volume_ratio", "vcp_valid",
-                        "news_primed", "news_pressure", "news_stories"]
+                        "news_primed", "news_pressure", "news_stories",
+                        # the 2026-07-28 reading layer, frozen the same way and
+                        # for the same reason: "did alerts carrying a real,
+                        # sized catalyst outperform ones that did not?" is only
+                        # answerable if the read is recorded at alert time. The
+                        # engine will keep improving; a cohort recomputed by a
+                        # later engine measures the engine, not the signal.
+                        "news_catalyst", "news_lead_event", "news_scoreable"]
 
 # A name that keeps closing over its pivot on volume would otherwise alert
 # several nights running. One BUY TRIGGER per name per this many days; matches
@@ -276,6 +283,12 @@ def news_pressure_for(sym: str):
     return _NEWS_READS.get(sym)
 
 
+# What the reading layer said about each name enriched tonight, so the single
+# stamping point below can freeze it without re-fetching. Populated by
+# build_candidate; empty for names that were never enriched.
+_NEWS_READ: dict[str, dict] = {}
+
+
 def stamp_news_pressure(rows: list[dict]) -> None:
     """Freeze each alert's news read into the forward record, in place.
 
@@ -283,10 +296,15 @@ def stamp_news_pressure(rows: list[dict]) -> None:
     cannot quietly ship without its news label the way EPISODIC PIVOT once
     shipped without paper-trader support."""
     for r in rows:
-        p = news_pressure_for(r.get("symbol", ""))
+        sym = r.get("symbol", "")
+        p = news_pressure_for(sym)
         r["news_primed"] = bool(p.primed) if p else False
         r["news_pressure"] = round(p.pressure, 3) if p else 0.0
         r["news_stories"] = p.n_pos if p else 0
+        read = _NEWS_READ.get(sym) or {}
+        r["news_catalyst"] = read.get("catalyst", "")
+        r["news_lead_event"] = read.get("lead_event", "")
+        r["news_scoreable"] = read.get("scoreable", "")
 
 
 # live screener.in fetch politeness (see build_candidate): matches the batch
@@ -346,7 +364,12 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     fund_row = flatten(sym, raw) if raw else None
     dims = build_dimensions(tag_result, rs_pctile, fund_row, industry)
 
-    news = enrich(sym, company_name or sym)
+    news = enrich(sym, company_name or sym, industry or "")
+    if news.get("ok"):
+        _top = news.get("top_story") or {}
+        _NEWS_READ[sym] = {"catalyst": news.get("catalyst_score", 0.0),
+                           "lead_event": _top.get("event", ""),
+                           "scoreable": news.get("scoreable_count", 0)}
     by_key = {d.key: d for d in dims}
     for d in enrichment_dimensions(news):
         by_key[d.key] = d
@@ -387,11 +410,19 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
             "red_flags": news["red_flags"],
             "filings": [{"d": str(f.get("date", ""))[:10], "t": f["subject"][:110]}
                         for f in news.get("filings", [])[:3]],
-            "headlines": [{"d": h["date"].strftime("%d %b"), "t": h["text"][:110],
-                           "s": h["source"], "tr": h.get("trusted", False),
-                           "ru": h.get("roundup", False),
-                           "sn": h.get("sentiment", 0)}
-                          for h in news.get("headlines", [])[:5]],
+            # phase_c already returns card-shaped headlines (old keys kept,
+            # new judgements alongside) — pass them through rather than
+            # rebuilding the shape in a second place and letting it drift
+            "headlines": [{k: v for k, v in h.items()
+                           if k in ("d", "t", "s", "tr", "ru", "sn", "rel",
+                                    "kind", "tier", "ev", "nov", "amt")}
+                          for h in news.get("headlines", [])[:8]],
+            # the 2026-07-28 reading layer
+            "scoreable": news.get("scoreable_count", 0),
+            "stories": news.get("stories", 0),
+            "top_story": news.get("top_story"),
+            "dropped": news.get("dropped", {}),
+            "theme_note": news.get("theme_note", ""),
         }
     detail = {
         "alerted_at": datetime.now().strftime("%Y-%m-%d"),
@@ -542,6 +573,23 @@ def main() -> None:
             print(f"filings archive: +{n_new} new NSE announcements", flush=True)
         except Exception as e:  # noqa: BLE001
             feed_problems.append(f"NSE announcements feed unreachable ({str(e)[:60]})")
+
+    # Tier-1 journalism sweep (2026-07-28). Ten market-section RSS feeds
+    # fetched ONCE and archived, then matched per company — the same shape as
+    # the filings archive above, and the reason is the same: 651 per-company
+    # queries would be absurd, one firehose is not. This is what stopped the
+    # news mix being half auto-generated aggregator pages; coverage is
+    # cumulative, so a fresh clone starts thin and fills in nightly.
+    if DRY_RUN:
+        print("  [dry-run] skipping the market news sweep", flush=True)
+    else:
+        try:
+            from data.news_sources import sweep_market_feeds
+            _n_news, _n_failed = sweep_market_feeds()
+            if _n_failed:
+                feed_problems.append(f"{_n_failed} market news feed(s) unreachable")
+        except Exception as e:  # noqa: BLE001 — context must never kill the scan
+            feed_problems.append(f"market news sweep failed ({str(e)[:60]})")
 
     # rolling news memory over that archive (2026-07-26). Derived and fully
     # rebuildable — the archive is the source of truth. Feeds card context and

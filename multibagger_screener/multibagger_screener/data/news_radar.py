@@ -83,6 +83,23 @@ NEGATIVE = {
     "regulatory action": [
         r"\bsebi (order|probe|penalty|investigation|show cause)",
         r"\bshow cause notice", r"\bpenalt(y|ies)\b", r"\bprosecution\b",
+        # a tax/court "order" is a demand, not an order book (found 2026-07-28
+        # when "Graphite India receives tax order of Rs75.1 lakh" classified
+        # as an ORDER WIN — same word, opposite sign)
+        r"\b(tax|gst|assessment|demand|adjudication|court|tribunal) order\b",
+        r"\border\b.{0,30}\b(state tax|income tax|gst|commissioner)\b",
+        # a real SEBI action is the regulator DOING something. The old list
+        # only caught order/probe/penalty/investigation/show-cause, so
+        # "SEBI issues administrative warning to Nuvama" and "SEBI warns
+        # Viyash Scientific" — both genuine — classified as nothing at all,
+        # while the bare word "sebi" in LODR boilerplate was raising 35 false
+        # red flags on the card side. Both halves of that are wrong.
+        r"\bsebi\b.{0,40}\b(warn|warns|warning|caution|debar|ban|bans|banned|"
+        r"restrain|restrict|impound|attach|direction)",
+        r"\b(warns?|warned|cautions?|debars?|bans?)\b.{0,30}\bsebi\b",
+        r"\badministrative warning\b",
+        r"\b(rbi|nse|bse|mca|roc|cci|nclat)\b.{0,35}"
+        r"\b(penalt|fine[sd]?\b|show cause|warning|restrict|strictures?)\b",
         r"\bsearch (and|&) seizure",
         r"\b(gst|income tax|cbi|enforcement directorate|ed) (raid|search|notice|summons)",
         r"\braid(s|ed)?\b"],

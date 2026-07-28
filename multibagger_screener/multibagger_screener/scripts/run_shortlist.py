@@ -66,7 +66,7 @@ def main() -> None:
         # scored those dims as "no data": inconsistent, fixed 2026-07-07)
         news_e = None
         if not args.no_news:
-            news_e = enrich(sym, company_by_sym.get(sym, sym))
+            news_e = enrich(sym, company_by_sym.get(sym, sym), industry or "")
             time.sleep(0.3)
             if news_e.get("ok"):
                 by_key = {d.key: d for d in dims}

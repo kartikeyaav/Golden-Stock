@@ -3019,17 +3019,38 @@ function newsMemorySection(sym){
 function newsSection(sym){const dt=D.details[sym];if(!dt||!dt.news)return'';const n=dt.news;
 const sc=n.sentiment>0.15?'#34d399':n.sentiment<-0.15?'#f87171':'#94a0b0';
 const sl=n.sentiment>0.15?'positive':n.sentiment<-0.15?'negative':'neutral';
-let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)</h3>
-<div style="font-size:12px;margin-bottom:8px" class="dim">
-<b style="color:var(--txt)">${n.trusted}</b> trusted-source headlines (of ${n.count} found) ·
+/* Reads the 2026-07-28 article-level judgements. Every headline carries a
+   relevance score, a kind and a novelty, so the panel can say WHY something
+   was excluded instead of silently dropping it — "3 headlines" should be
+   legible as a filtering decision, not a failed fetch. */
+const KINDLBL={listicle:'multi-stock roundup',procedural:'procedural notice',
+ price_move:'price move only',datapage:'auto-generated page',fluff:'non-market content',
+ unrelated:'different company'};
+let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)</h3>`;
+const ts=n.top_story;
+if(ts){const tc=ts.sentiment>0?'#34d399':ts.sentiment<0?'#f87171':'#94a0b0';
+ h+=`<div style="border-left:2px solid ${tc};padding:5px 0 5px 9px;margin-bottom:9px">
+ <div class="axis" style="margin-bottom:2px">LEAD STORY${ts.event?' &middot; '+esc(ts.event):''}${ts.amount_cr?' &middot; Rs'+ts.amount_cr.toLocaleString('en-IN')+' Cr':''}</div>
+ <div style="font-size:12.5px;color:var(--txt)">${esc(ts.text)}</div>
+ <div class="axis">${esc(ts.source||'')} &middot; ${esc(ts.date||'')}</div></div>`;}
+h+=`<div style="font-size:12px;margin-bottom:8px" class="dim">
+<b style="color:var(--txt)">${n.scoreable!=null?n.scoreable:n.trusted}</b> scoreable of ${n.count} read${n.stories?', '+n.stories+' distinct '+(n.stories==1?'story':'stories'):''} ·
 sentiment <b style="color:${sc}">${sl}</b> (${n.sent_pos}+ / ${n.sent_neg}-)
-${n.themes.length?' · themes: <b style="color:#34d399">'+esc(n.themes.join(', '))+'</b>':''}
-${n.events.length?' · events: <b style="color:#5aa2ff">'+esc(n.events.join(', '))+'</b>':''}
-<div class="axis" style="margin-top:3px">only trusted sources feed the score; others shown but excluded</div></div>`;
+${n.events.length?' · events: <b style="color:#5aa2ff">'+esc(n.events.join(', '))+'</b>':''}`;
+const dr=n.dropped||{};const dk=Object.keys(dr);
+if(dk.length)h+=`<div class="axis" style="margin-top:3px">filtered: ${dk.map(k=>dr[k]+' '+(KINDLBL[k]||k)).join(', ')}</div>`;
+h+=`<div class="axis" style="margin-top:3px">repeat tellings of one story count once; low-tier sources are weighted down, not hidden</div></div>`;
 (n.red_flags||[]).forEach(f=>h+=`<div style="color:#f87171;font-size:12px;margin:4px 0">!! ${esc(f)}</div>`);
 (n.filings||[]).forEach(f=>h+=`<div style="font-size:12px;margin:4px 0"><span class="pill" style="border-color:#a78bfa;color:#a78bfa">NSE</span> <span class="dim">${f.d}</span> ${esc(f.t)}</div>`);
-(n.headlines||[]).forEach(x=>{const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
-h+=`<div style="font-size:12px;margin:4px 0${x.ru?';opacity:.55':''}">${dot} <span class="dim">${x.d}</span> ${esc(x.t)} <span class="axis">(${esc(x.s)}${x.tr?'':' — unverified'}${x.ru?' — market roundup, excluded from score':''})</span></div>`;});
+(n.headlines||[]).forEach(x=>{
+ const off=(x.kind&&x.kind!='corporate')||x.rel<45;
+ const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
+ let meta=esc(x.s||'');
+ if(x.tier==3)meta+=' — aggregator, weighted down';
+ else if(x.tier==2)meta+=' — trade press';
+ if(x.kind&&KINDLBL[x.kind])meta+=' — '+KINDLBL[x.kind]+', excluded';
+ if(x.nov!=null&&x.nov<1&&!off)meta+=' — retelling';
+ h+=`<div style="font-size:12px;margin:4px 0${off?';opacity:.5':''}">${dot} <span class="dim">${x.d||''}</span> ${esc(x.t)} <span class="axis">(${meta})</span></div>`;});
 return h+'</div>';}
 /* ---- Sectors & themes tab -------------------------------------------------
    The bridge between "what is going on in the market" and "what my machine

@@ -258,6 +258,121 @@ class CatalystConfig:
 
 
 # ---------------------------------------------------------------------------
+# NEWS QUALITY (2026-07-28) — the article-level reading in scoring/news_nlp.py.
+#
+# Replaces the flat keyword bag above, which measured 65.3% exact accuracy /
+# 35% positive recall / 33% negative recall on a 216-headline hand-labelled
+# corpus drawn from this system's own stored alerts (tests/fixtures/).
+#
+# The lexicons here are LEMMAS. news_nlp.inflect() generates the real English
+# forms, including the consonant doubling that "bag" -> "bagged" needs. The
+# old config listed inflected forms and then suffixed THOSE, which produced
+# "bagsed" and could not reach the word it was trying to match.
+#
+# NOTE the event vocabulary is NOT here: it lives in data/news_radar.py and is
+# imported. Two copies of one taxonomy drift.
+# ---------------------------------------------------------------------------
+@dataclass
+class NewsQualityConfig:
+    # --- source tiers -------------------------------------------------------
+    # Measured: 50% of everything feeding the old score came from scanx.trade
+    # and TradingView. Both restate filings or render metric pages, so they
+    # corroborate a story rather than break one.
+    tier1_sources: List[str] = field(default_factory=lambda: [
+        "reuters", "bloomberg", "economic times", "economictimes", "et markets",
+        "et now", "moneycontrol", "business standard", "livemint", "mint",
+        "cnbc", "ndtv profit", "business today", "businessline", "hindu businessline",
+        "financial express", "zee business", "the hindu", "forbes india",
+        "outlook business", "fortune india", "bloomberg quint", "the ken",
+    ])
+    tier3_sources: List[str] = field(default_factory=lambda: [
+        "scanx", "tradingview", "marketscreener", "marketsmojo", "simplywall",
+        "equitymaster", "tipranks", "whalesbook", "quartr", "sahi", "goodreturns",
+        "equitypandit", "investment guru", "mshale", "inshorts", "investywise",
+        "stockedge", "trendlyne", "munafasutra", "topstockresearch", "msn",
+        "indiainfoline", "india infoline", "ascendants", "biginfo",
+    ])
+    tier_weight: Dict[int, float] = field(default_factory=lambda: {1: 1.0, 2: 0.7, 3: 0.35})
+
+    # a headline below this is shown on the card but never moves a number
+    min_relevance_to_score: int = 45
+
+    # Words that are somebody's ENTIRE distinctive name once boilerplate is
+    # stripped, and are far too common to identify them. "TD Power Systems"
+    # reduces to "power" and matched "Diamond Power Infra"; "JM Financial"
+    # reduces to "financial" and matched "Jio Financial Services". A name
+    # made only of these needs the full phrase, never a single word.
+    weak_solo_tokens: List[str] = field(default_factory=lambda: [
+        "power", "energy", "steel", "cement", "bank", "finance", "financial",
+        "motors", "auto", "chemicals", "chemical", "pharma", "textiles",
+        "paper", "sugar", "gold", "silver", "capital", "housing", "infra",
+        "port", "ports", "shipping", "airlines", "hotels", "foods", "food",
+        "agro", "seeds", "info", "digital", "media", "retail", "mills",
+        "engineering", "electric", "electricals", "metals", "mining", "labs",
+    ])
+
+    # --- sentiment lexicon (LEMMAS - see inflect()) --------------------------
+    positive_lemmas: List[str] = field(default_factory=lambda: [
+        # corporate wins
+        "bag", "win", "secure", "clinch", "bags order", "order win", "contract win",
+        "acquire", "acquisition", "merge", "commission", "commence", "inaugurate",
+        "launch", "expand", "expansion", "approve", "approval", "clear", "grant",
+        "upgrade", "raise", "beat", "exceed", "outperform", "rerate", "re-rate",
+        "turnaround", "revive", "double", "triple", "quadruple",
+        # results language
+        "profit rise", "profit jump", "profit surge", "profit up", "record profit",
+        "record revenue", "margin expansion", "strong", "robust", "highest",
+        "milestone", "multi-year high", "all-time high",
+        # analyst / flow
+        "initiate", "bullish", "buy rating", "target raise", "overweight",
+        "stake buy", "order inflow", "first-to-file", "exclusivity",
+        "refund", "investment grade", "maiden profit", "debt free",
+    ])
+    negative_lemmas: List[str] = field(default_factory=lambda: [
+        "fraud", "scam", "embezzle", "siphon", "default", "insolvency",
+        "liquidation", "probe", "investigate", "raid", "penalty", "penalise",
+        "penalize", "fine", "show cause", "warn", "warning", "downgrade",
+        "delist", "suspend", "recall", "shut", "halt", "impair", "write-off",
+        "writedown", "loss widen", "post loss", "profit fall", "profit drop",
+        "profit decline", "revenue fall", "margin compress", "margin contract",
+        "weak", "sluggish", "miss", "shortfall", "underperform", "bearish",
+        "sell rating", "target cut", "stake sell", "trim stake", "reduce stake",
+        "pledge invoke", "lower circuit", "adverse", "liable", "breach", "lapse",
+    ])
+
+    generic_name_words: List[str] = field(default_factory=lambda: [
+        "limited", "ltd", "india", "indian", "industries", "industry",
+        "corporation", "company", "enterprises", "international", "projects",
+        "products", "solutions", "systems", "services", "technologies",
+        "technology", "tech", "and", "the", "of", "group", "holdings",
+    ])
+
+    # --- materiality by event class ----------------------------------------
+    # keys are the event names in data/news_radar.py - one taxonomy
+    event_materiality: Dict[str, float] = field(default_factory=lambda: {
+        "order win": 0.5, "expansion": 0.45, "approval": 0.45,
+        "M&A/JV": 0.4, "rating upgrade": 0.3, "buyback/bonus": 0.3,
+        "fund raise": 0.35,
+        "distress": 0.6, "regulatory action": 0.55, "pledge": 0.5,
+        "management exit": 0.35, "rating downgrade": 0.4, "regulatory letter": 0.35,
+    })
+    default_materiality: float = 0.2      # real news, unclassified event
+
+    # --- story clustering / novelty ----------------------------------------
+    story_similarity: float = 0.55            # token overlap alone
+    story_similarity_same_event: float = 0.3  # lower bar when the event matches
+    novelty_decay: float = 0.45               # each retelling is worth this much less
+    # a company has one Q1: results write-ups inside this window are one story
+    topic_window_days: float = 8.0
+
+    # --- catalyst assembly --------------------------------------------------
+    catalyst_half_life_days: float = 14.0
+    # abnormal coverage: a name suddenly in the news more than it usually is.
+    # Capped small - this is an attention proxy, not a direction.
+    volume_z_cap: float = 0.15
+
+
+# ---------------------------------------------------------------------------
 # COMPOSITE (v1 compat — used by scoring/composite.py until conviction.py
 # fully replaces it at Phase B; keep both importable)
 # ---------------------------------------------------------------------------
@@ -595,6 +710,7 @@ TECHNICAL = TechnicalConfig()
 CONVICTION = ConvictionConfig()
 FUNDAMENTAL = FundamentalConfig()
 CATALYST = CatalystConfig()
+NEWSQ = NewsQualityConfig()
 COMPOSITE = CompositeConfig()
 EPISODIC = EpisodicConfig()
 PENNY = PennyConfig()

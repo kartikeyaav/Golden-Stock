@@ -1959,6 +1959,26 @@ scoring/themes.py             18 cross-industry themes + relative heat rank (Sec
 state/themes.json             theme table for the weekly committee's THEME READ block
 tests/test_news_pressure.py   story dedupe + decay + primed threshold (8 pytest checks)
 tests/test_themes.py          membership traps + heat spread (9 pytest checks)
+scoring/news_nlp.py           THE reading layer (2026-07-28). Judges each article on four axes —
+                              relevance 0-100 (co-mention aware, off universe.csv), kind
+                              (corporate/procedural/price-move/listicle/datapage/fluff), direction
+                              (event taxonomy first, lemma lexicon second, contrast+negation+
+                              homographs handled), materiality (event class x rupee size / market
+                              cap). Groups retellings into stories and decays repeats. Imports the
+                              event vocabulary from data/news_radar — never restates it
+data/news_sources.py          where headlines come from: nightly sweep of 10 tier-1 market-section
+                              RSS feeds -> news_archive.csv (matched per company, same shape as the
+                              filings archive) + per-company Google News. GDELT implemented but OFF
+                              (429s every attempt); BSE API dropped (returns no records)
+news_archive.csv              the tier-1 sweep archive, append-only, deduped by link
+state/company_aliases.json    press names that differ from universe.csv's registered name
+                              (SHRIPISTON trades as SPR Auto) — without these the name goes dark
+news_engine_report.md         the measurements, the before/after table, and what was tested and
+                              rejected. Read this before touching the news layer
+tests/fixtures/news_corpus.json  216 hand-labelled headlines, 45 symbols, labelled BEFORE the new
+                              engine existed. Carries a label revision log
+tests/eval_news_nlp.py        the ruler: old vs new precision/recall/F1 (--errors lists misses)
+tests/test_news_nlp.py        45 trap tests, every one a real headline this system got wrong
 analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders (incl. second-order ecosystem research task)
 analyst/PICKS_PROTOCOL.md     committee standing orders (incl. second-order research + analyst-verdict cross-check)
 scripts/build_dashboard.py    ALSO holds the whole UI (CSS + HTML + JS in TEMPLATE). The v6 "terminal"
