@@ -90,6 +90,12 @@ ENTRY_SIGNALS_FIELDS = ["logged_at", "symbol", "kind", "entry_status",
 # the state-retention window in save_state.
 BUY_TRIGGER_COOLDOWN_DAYS = 10
 
+# Analyst heartbeat thresholds. A quiet stretch with no buy alerts is a
+# legitimate idle, so these sit above normal quiet — but well under the week
+# that both the 07-21 analyst outage and the committee outage went unnoticed.
+ANALYST_SILENT_DAYS = 3       # the job has not run at all
+ANALYST_NO_SUCCESS_DAYS = 7   # it runs, but has produced nothing
+
 
 def health_check(today_tags: dict, symbols: list[str],
                  extra_problems: list[str] | None = None,
@@ -129,9 +135,23 @@ def health_check(today_tags: dict, symbols: list[str],
         counts = pd.Series(list(today_tags.values())).value_counts()
         if counts.index[0] == "WATCH" and counts.iloc[0] > 0.95 * len(today_tags):
             problems.append("tagger degenerate: >95% WATCH — indicator inputs look broken")
-    # screener parser health (written by the weekly fundamentals job)
+    # Screener parser health, written by the weekly fundamentals job.
+    #
+    # This block used to be `if os.path.exists(...)` with no else, and
+    # state/parser_health.json is gitignored and was committed by no workflow
+    # and cached by nothing — so in the cloud the file never existed, and BOTH
+    # alarms below (parser degraded, weekly job dead) were unreachable in the
+    # only environment that runs unattended. A health check that cannot fire
+    # is indistinguishable from a healthy system, which is the failure mode
+    # this whole function exists to prevent. The file is now committed by
+    # weekly.yml, and its ABSENCE is itself reported.
     ph_path = os.path.join(ROOT, "state", "parser_health.json")
-    if os.path.exists(ph_path):
+    if not os.path.exists(ph_path):
+        problems.append(
+            "no state/parser_health.json — the weekly fundamentals job has "
+            "never reported in, so the parser-degraded and stale-fundamentals "
+            "alarms are both blind")
+    else:
         try:
             ph = json.load(open(ph_path, encoding="utf-8"))
             if not ph.get("ok", True):
@@ -142,8 +162,10 @@ def health_check(today_tags: dict, symbols: list[str],
             age_d = (datetime.now() - datetime.fromisoformat(ph["checked_at"])).days
             if age_d > 14:
                 problems.append(f"fundamentals last refreshed {age_d}d ago — weekly job may be dead")
-        except (ValueError, KeyError):
-            pass
+        except (ValueError, KeyError) as e:
+            # a corrupt file is a failure too, not a reason to fall silent
+            problems.append(f"state/parser_health.json unreadable ({type(e).__name__}) "
+                            "— parser health is unknown, not good")
     return [f"!! HEALTH: {p}" for p in problems]
 
 
@@ -958,6 +980,15 @@ def main() -> None:
                                      "check the Yahoo ticker")
     # AI analyst heartbeat: a persistent auth/session failure silently starves
     # the verdicts + paper book; surface the last run's status loudly
+    #
+    # write_health() records last_success_at *specifically* so that "a run of
+    # failures is visible as a growing gap, not just a single flag" — and this
+    # reader only ever looked at status. A heartbeat that says ok and is three
+    # weeks old read as healthy, which is exactly how the analyst went dead
+    # 07-21 -> 07-25 and the committee went dead for a week, both noticed by
+    # accident. Two different failures, so two different checks:
+    #   checked_at stale      -> the job is not running at all
+    #   last_success_at stale -> it runs and never succeeds
     ah_path = os.path.join(ROOT, "state", "analyst_health.json")
     if os.path.exists(ah_path):
         try:
@@ -965,8 +996,22 @@ def main() -> None:
             if ah.get("status") == "failed":
                 feed_problems.append(f"AI analyst last run FAILED ({ah.get('note', '')[:70]}) "
                                      "— verdicts missing, review cards manually")
-        except (ValueError, KeyError):
-            pass
+            for field, limit, msg in (
+                    ("checked_at", ANALYST_SILENT_DAYS,
+                     "AI analyst has not reported in for {n}d — the job itself "
+                     "looks dead (scheduled task / workflow), not just its dives"),
+                    ("last_success_at", ANALYST_NO_SUCCESS_DAYS,
+                     "AI analyst has not produced a verdict in {n}d — it is "
+                     "running but never succeeding")):
+                stamp = ah.get(field)
+                if not stamp:
+                    continue
+                age = (datetime.now() - datetime.strptime(stamp, "%Y-%m-%d %H:%M")).days
+                if age > limit:
+                    feed_problems.append(msg.format(n=age))
+        except (ValueError, KeyError, TypeError):
+            feed_problems.append("state/analyst_health.json unreadable — analyst "
+                                 "status unknown, not good")
     problems = health_check(today_tags, symbols, extra_problems=feed_problems,
                             last_bars=last_bars)
     if problems:

@@ -77,7 +77,8 @@ def _market_cap_cr(symbol: str) -> float | None:
 # themes
 # ---------------------------------------------------------------------------
 
-def _theme_read(symbol: str, company: str, industry: str) -> tuple[float, list[str], str]:
+def _theme_read(symbol: str, company: str, industry: str
+                ) -> tuple[float | None, list[str], str]:
     """(score 0-1, theme names, note) from the nightly theme table.
 
     Heat is a RANK ACROSS THEMES, not an absolute — that decision is in
@@ -86,7 +87,10 @@ def _theme_read(symbol: str, company: str, industry: str) -> tuple[float, list[s
     try:
         from scoring.themes import THEMES
     except Exception:                              # noqa: BLE001
-        return 0.3, [], "theme map unavailable"
+        # NOT 0.3. "the theme map failed to load" is missing data, and giving
+        # it the same number as "this name is in no theme" would state a fact
+        # we do not have. None keeps the dimension out of coverage entirely.
+        return None, [], "theme map unavailable"
 
     mine = [t for t in THEMES if t.matches(symbol, company, industry)]
     if not mine:
@@ -105,7 +109,10 @@ def _theme_read(symbol: str, company: str, industry: str) -> tuple[float, list[s
 
     names = [t.name for t in mine]
     if not heat:
-        return 0.45, names, f"in {', '.join(names)}; heat table not built yet"
+        # membership is known, heat is not. Scoring 0.45 invented a middle
+        # value out of a missing file; report membership and stay out of
+        # the composite until the nightly theme table exists.
+        return None, names, f"in {', '.join(names)}; heat table not built yet"
 
     best = max((heat.get(t.key, 0.0), t) for t in mine)
     hv, ht = best
@@ -380,8 +387,10 @@ def enrichment_dimensions(e: dict) -> list[Dimension]:
                  f"events: {', '.join(e['events']) if e['events'] else 'none'}; "
                  f"sentiment {slabel} ({e.get('sent_pos', 0)}+/{e.get('sent_neg', 0)}-)"
                  f"{drop_note}")
-    return [
-        Dimension("catalyst", e["catalyst_score"], cat_notes + " (news-based v0)"),
-        Dimension("theme_tailwind", e["theme_score"],
-                  e.get("theme_note", "") + " (theme map, price-derived)"),
-    ]
+    dims = [Dimension("catalyst", e["catalyst_score"], cat_notes + " (news-based v0)")]
+    # theme_score is None when the map or the heat table is unavailable.
+    # Emitting a Dimension with score None would still be correct (assess()
+    # treats None as not-live), but being explicit keeps the intent legible.
+    dims.append(Dimension("theme_tailwind", e.get("theme_score"),
+                          e.get("theme_note", "") + " (theme map, price-derived)"))
+    return dims

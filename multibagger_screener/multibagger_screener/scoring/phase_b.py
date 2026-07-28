@@ -217,9 +217,26 @@ def score_governance(row: dict) -> tuple[float | None, str]:
     p_then = _num(row, "promoter_pct_4q_ago")
 
     notes = []
-    if pledge is None or pledge == 0:
+    if pledge == 0:
+        # Verified clean. Note that as of 2026-07-28 this branch never fires:
+        # screener.in publishes pledge ONLY in the pros/cons box and ONLY when
+        # material, so a genuine zero is never stated on the free page.
         score = 0.85
-        notes.append("no pledge disclosed")
+        notes.append("pledge confirmed 0%")
+    elif pledge is None:
+        # NOT the same fact, and it used to score the same and read the same
+        # ("no pledge disclosed", which sounds established). Measured on the
+        # live cache: 127 of 132 names land here and 0 land above, so this
+        # single branch was handing an 8-weight governance bonus to 96% of the
+        # universe on the strength of absent data — the shape that caused the
+        # fundamentals cache-poisoning incident.
+        #
+        # It is still WEAK POSITIVE evidence: the source does flag material
+        # pledges, and it did not flag this one. So it scores above a known
+        # small pledge and below a verified zero, and the note says which.
+        score = 0.70
+        notes.append("no pledge flagged by the source (not a verified zero — "
+                     "screener.in only reports pledge when material)")
     elif pledge <= 5:
         score = 0.5
         notes.append(f"pledge {pledge}%")

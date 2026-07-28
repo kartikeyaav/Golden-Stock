@@ -241,3 +241,80 @@ it, and now — while it costs nothing — is the cheapest moment to decide.
 - The tier-1 archive starts thin on a fresh clone and fills in nightly, exactly like the filings archive did.
 - 7 of 216 labelled headlines are still read wrong. They are listed by `python tests/eval_news_nlp.py --errors`.
 - `announcements_archive.csv` retention is still unbounded — see §8, flagged not changed.
+
+---
+
+## 10. Audit spillover — workflows and the conviction score (2026-07-28)
+
+Asked to check the other workflows and the scoring mechanism for the same
+*classes* of defect. Three found, all measured, all of the same family: a
+number or an alarm that looked like evidence and was not.
+
+### 10a. The pledge veto was blind for 96% of the universe
+
+`score_governance` collapsed two different facts into one branch:
+
+```python
+if pledge is None or pledge == 0:      # <- these are not the same thing
+    score = 0.85
+    notes.append("no pledge disclosed") # <- and this reads as established
+```
+
+Measured on the live cache: **127 of 132 names have `pledge is None`, and
+zero have a verified `0`.** So a single branch was handing an 8-weight
+governance bonus to 96% of the universe on the strength of absent data — the
+same shape as the fundamentals cache-poisoning incident, in the dimension
+that feeds the system's primary ruin-avoidance veto.
+
+Checked whether this was a parser regression: **it is not.** Fetching live
+pages shows screener.in publishes pledge *only* in the pros/cons box and
+*only when material* — HFCL's page contains the word "pledge" zero times,
+THYROCARE's says "Promoters have pledged 100%". There is no pledge row in the
+free shareholding table to parse. `None` therefore means "the source did not
+flag a pledge", which is genuinely weak positive evidence, not a verified
+zero.
+
+Fix: the two cases are separated and scored differently (0.70 unflagged vs
+0.85 confirmed-zero), and the note now says which it is. Impact measured
+before shipping: 127 names move by exactly 0.15 on an 8-weight dimension =
+**1.2 points out of 100**, uniform, so nothing reorders. Veto logic is
+untouched and still fires on the same 5 names.
+
+### 10b. Two health alarms could never fire in the cloud
+
+`state/parser_health.json` is gitignored, cached by nothing, and committed by
+no workflow — so **in the cloud that file never exists**, and the health check
+read it inside `if os.path.exists(...)` with no `else`. Both alarms behind it
+— "screener parser degraded" and "fundamentals last refreshed Nd ago, weekly
+job may be dead" — were unreachable in the only environment that runs
+unattended. This is the third instance today of *works locally, silently
+degrades in the cloud*.
+
+Fixed: added to `weekly.yml`'s commit list, its absence is now itself
+reported, and a corrupt file reports rather than falling through.
+
+### 10c. The analyst heartbeat ignored the field written for it
+
+`write_health()` records `last_success_at` with the docstring "so a run of
+failures is visible as a growing gap, not just a single flag". The reader only
+ever tested `status`. A heartbeat saying `ok` from three weeks ago read as
+healthy — which is exactly how the analyst went dead 07-21 → 07-25 and the
+committee went dead for a week, both noticed by accident.
+
+Fixed as two distinct checks, because they are two distinct failures:
+`checked_at` stale (>3d) means the job is not running at all; `last_success_at`
+stale (>7d) means it runs and never succeeds.
+
+### Verification
+
+`tests/test_health_guards.py` — 8 checks that the alarms actually sound, and
+the suite was canaried: reverting the parser-health guard to its old silent
+form turns the tests red, so they are not decorative. **115 pytest green**,
+5 script-style green, dry-run scan clean, news eval unchanged at 96.8%.
+
+### Still open
+
+- `announcements_archive.csv` retention (§8) — your call.
+- Governance remains partial by data availability, not by choice: auditor,
+  related-party and SEBI-action checks are still "pending (Phase C)" on every
+  card, and no free source publishes a pledge series.
