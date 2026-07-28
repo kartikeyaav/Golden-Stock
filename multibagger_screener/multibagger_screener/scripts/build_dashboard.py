@@ -1230,6 +1230,12 @@ def build_payload() -> dict:
         # cross-industry themes (scoring/themes.py) — research surface only;
         # sector heat was tested as a gate and rejected (matrix v2 config E)
         "themes": _build_themes(screener_rows, closes, news_mem, details, ai_picks),
+        # The committee's picks. This was read from disk, used to compute the
+        # health row, the pick_syms set and the theme read — and then never
+        # put on the page, so drawPicks() always saw D.ai_picks undefined and
+        # the whole AI Picks tab rendered as "No picks yet" (in practice a
+        # blank pane) while ai_picks.json sat there with four researched names.
+        "ai_picks": ai_picks,
     }
 
 
@@ -1964,6 +1970,42 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
 .mini{border-radius:5px;background:#0b1018}
 .drawer{background:#070b11f8}
 .gate{border-color:#00ff9d2e}
+/* --- capital gate: a status strip, not a hero (2026-07-28) --------------
+   It needs 40 closed-or-aged signals and the cohort opened 2026-07-26, so
+   the old dial showed 0/40 with five PENDING lamps every night on the first
+   screen the user sees. Now one line that leads with the running record,
+   opening to the full checklist. */
+/* AI Picks research block. This was an INLINE two-column grid, and an inline
+   style cannot be overridden by a media query without !important — so on a
+   390px phone the two columns needed ~480px, blew past the 370px pane and were
+   CLIPPED (not scrollable): half of every thesis, catalyst and risk note was
+   simply unreachable. A class can be made responsive; an inline style cannot. */
+.pk2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:820px){.pk2col{grid-template-columns:1fr}}
+/* Long unbroken tokens (tickers, URLs, rupee figures) must not set the min
+   width, AND the research prose must be allowed to wrap at all: it inherits
+   the terminal white-space:nowrap used for the stat rows, so its min-content
+   width was a full unwrapped line (483px) and it overflowed a 341px column
+   and got clipped. min-width:0 alone cannot fix unwrappable text. */
+#picks p,#picks div{min-width:0;overflow-wrap:anywhere}
+#picks details div,#picks details p,#picks details li{white-space:normal}
+
+.gatestrip{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0 0 14px}
+.gatedet>summary{display:flex;align-items:center;gap:9px;padding:9px 13px;cursor:pointer;
+ list-style:none;flex-wrap:wrap;font-size:12px}
+.gatedet>summary::-webkit-details-marker{display:none}
+.gatedet>summary:hover{background:var(--card2);border-radius:10px}
+.gpill{border:1px solid;border-radius:5px;padding:2px 7px;font:600 10px Inter;letter-spacing:.06em}
+.gbar{flex:0 0 92px;height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.gbar>i{display:block;height:100%;border-radius:3px;min-width:2px}
+.gnum{font-variant-numeric:tabular-nums}
+.gspacer{flex:1 1 auto}
+.gchev{color:var(--mut);font-size:10px;transition:transform .18s var(--ease)}
+.gatedet[open] .gchev{transform:rotate(180deg)}
+.gatebody{padding:4px 13px 13px;border-top:1px solid var(--line)}
+@media(max-width:820px){.gsep,.gdead,.gsep2{display:none}.gspacer{flex-basis:100%}}
+.hero2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+
 @media(max-width:1100px){.hero3{grid-template-columns:1fr 1fr}
  .hero3>.inst:first-child{grid-column:1/-1}}
 @media(max-width:700px){.hero3{grid-template-columns:1fr}
@@ -1995,12 +2037,21 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
 <div class="tape"><div class="tapein" id="tapein"></div></div>
 
 <div class="tab on" id="overview">
-  <!-- INSTRUMENT ROW. The gate is the number the whole system exists to
-       produce; breadth is the rule that sizes every trade tonight; the third
-       panel is what the scan actually found. Three gauges instead of three
-       paragraphs. -->
-  <div class="hero3">
-    <div class="card inst gate" id="gatecard" style="display:none"></div>
+  <!-- ACTION FIRST (2026-07-28). This panel's own tooltip calls it "the only
+       panel you act from" and it used to sit third, below a gauge that cannot
+       change for months. The capital gate needs 40 closed-or-aged signals and
+       the cohort opened 2026-07-26, so its dial reads 0/40 with five PENDING
+       lamps every single night — a static hero on the view you land on. It is
+       still the number that decides real money, so it keeps a permanent slim
+       strip below, carrying the part that DOES move (the running record) and
+       expanding to the full checklist on demand. -->
+  <div class="card actcard"><h2 style="color:var(--grn)">Actionable now<span class="info" data-tip="The only panel you act from, covering the last 7 days of buy signals. BUY NOW = the backtested trigger fired (pivot break on ≥1.5× volume). MOMENTUM BUY = an episodic-pivot gap (≥8% on ≥3× volume). Both are real buys — open the drawer for the sized plan. WATCH = base ready, no breakout yet. WEAK = uptrend, no proven trigger. Resolved rows need nothing.">?</span>
+    <span class="actkey" id="actkey"></span></h2>
+    <div id="actionable"></div></div>
+  <div class="gatestrip" id="gatecard" style="display:none"></div>
+  <!-- INSTRUMENT ROW: breadth is the rule that sizes every trade tonight;
+       the second panel is what the scan actually found. -->
+  <div class="hero3 hero2">
     <div class="card inst" id="marketinst"></div>
     <div class="card inst" id="tonightinst"></div>
   </div>
@@ -2014,9 +2065,6 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
       <div class="dist" id="hmdist" style="margin:13px 0 0"></div>
       <div class="hmlegend" id="hmlegend"></div></div>
   </div>
-  <div class="card actcard"><h2 style="color:var(--grn)">Actionable now<span class="info" data-tip="The only panel you act from, covering the last 7 days of buy signals. BUY NOW = the backtested trigger fired (pivot break on ≥1.5× volume). MOMENTUM BUY = an episodic-pivot gap (≥8% on ≥3× volume). Both are real buys — open the drawer for the sized plan. WATCH = base ready, no breakout yet. WEAK = uptrend, no proven trigger. Resolved rows need nothing.">?</span>
-    <span class="actkey" id="actkey"></span></h2>
-    <div id="actionable"></div></div>
   <!-- Left = what the machine did tonight. Right = what needs a human's eye.
        They were stacked in one column before, which left the second column
        850px empty and pushed the analyst's memos below the fold. -->
@@ -2325,9 +2373,14 @@ window.addEventListener('hashchange',()=>{const t=hashTab();
    scrollTo(0,0) is REQUIRED, not cosmetic: the pane ids double as anchor
    targets, so the browser natively jumps to them and every deep link landed
    mid-page with the header and the first table row clipped. */
-(function(){const t=hashTab();
+/* Deferred to DOMContentLoaded ON PURPOSE. showTab() lazily calls drawPicks()
+   and drawPositions(), which read `const` tables declared ~1300 lines further
+   down this script. Running it inline meant a direct #tab-picks link hit those
+   consts in their temporal dead zone and threw
+   "Cannot access 'CONVC' before initialization", leaving a blank pane. */
+document.addEventListener('DOMContentLoaded',()=>{const t=hashTab();
  if(t&&!showTab(t,false))showTab('overview',false);
- if(t)window.scrollTo(0,0);})();
+ if(t)window.scrollTo(0,0);});
 
 /* header */
 /* next scheduled cloud scan: Mon-Fri 13:05 UTC (+ GitHub cron delay) */
@@ -2505,34 +2558,50 @@ function gauge(pct,color,big,small,size){size=size||124;
 el.style.display='';
 const V=G.verdict;
 const col=V==='PASSED'?'var(--grn)':V==='FAILED'?'var(--red)':'var(--cyan)';
-el.classList.add(V==='PASSED'?'g-pass':V==='FAILED'?'g-fail':'g-accruing');
 const c=G.cohort||{},run=G.cohort_running||{},leg=G.legacy||{},req=G.required||{};
 const need=req.min_signals||40,have=c.n_qualifying||0;
+const pct=Math.max(0,Math.min(100,have/need*100));
 const CONDN={sample:'Sample',expectancy:'Expectancy',beats_benchmark:'Beats ETF',
  hit_stop:'Stop-outs',concentration:'Concentration'};
 const leds=Object.entries(G.conditions||{}).map(([k,v])=>{
  const cls=v.ok===true?'on':v.ok===false?'no':'off';
  return `<div class="ldrow" data-tip="${esc(v.detail)}"><i class="led ${cls}"></i>
   <em>${CONDN[k]||k}</em><span>${v.ok===true?'PASS':v.ok===false?'FAIL':'PENDING'}</span></div>`;}).join('');
-el.innerHTML=`<h2 style="color:${col}">Capital gate
- <span class="info" data-tip="The pre-registered forward test that decides whether this system gets real money. Every threshold was fixed on ${esc(G.registered||'')}, before a single qualifying signal existed — which is what makes it a test rather than a story told afterwards. A pass authorizes ${req.pass_capital_pct}% of intended capital, not the account. Full document: CAPITAL_GATE.md.">?</span>
- <span class="axis" style="margin-left:auto;color:${col}">${V==='ACCRUING'?'OPEN':V}</span></h2>
-<div class="instbody"><div class="instrow">
- <div class="instside">
-  ${gauge(have/need*100,col,have+'<span style="color:var(--mut);font-size:16px">/'+need+'</span>','banked',124)}
-  <div class="axis" style="text-align:center;line-height:1.5">
-   ${G.days_to_deadline>0?G.days_to_deadline+'d to '+esc(G.deadline):'deadline passed'}</div>
- </div>
- <div class="instcol">
+const rr=run.expectancy_r, lr=leg.expectancy_r;
+const rcol=rr==null?'var(--dim)':rr>0?'var(--grn)':'var(--red)';
+const lcol=lr==null?'var(--dim)':lr>0?'var(--grn)':'var(--red)';
+/* Lead with the number that MOVES. The dial reads 0/40 until forty signals
+   close or age past 30 days, so it was a static hero; the running record
+   changes every night and was a footnote inside it. */
+el.innerHTML=`<details class="gatedet">
+ <summary>
+  <span class="gpill" style="color:${col};border-color:${col}55">CAPITAL GATE ${V==='ACCRUING'?'OPEN':V}</span>
+  <span class="gbar" title="${have} of ${need} qualifying signals"><i style="width:${pct}%;background:${col}"></i></span>
+  <b class="gnum">${have}<span class="dim">/${need}</span></b>
+  <span class="axis gsep">banked</span>
+  <span class="axis gdead">${G.days_to_deadline>0?G.days_to_deadline+'d left':'deadline passed'}</span>
+  <span class="gspacer"></span>
+  <span class="axis">forward record</span>
+  <b style="color:${rcol}">${rr!=null?(rr>0?'+':'')+rr+'R':'—'}</b><span class="dim">&nbsp;n=${run.n||0}</span>
+  <span class="axis gsep2">· pre-fix</span>
+  <b style="color:${lcol}">${lr!=null?(lr>0?'+':'')+lr+'R':'—'}</b><span class="dim">&nbsp;n=${leg.n||0}</span>
+  <span class="gchev">▾</span>
+ </summary>
+ <div class="gatebody">
+  <div class="axis" style="margin-bottom:9px;line-height:1.6">Every threshold was fixed on
+   <b>${esc(G.registered||'')}</b>, before a single qualifying signal existed — which is what makes
+   this a test rather than a story told afterwards. A pass authorizes <b>${req.pass_capital_pct}%</b>
+   of intended capital, not the account. Full document: CAPITAL_GATE.md.</div>
   <div class="leds">${leds}</div>
-  <div class="axis" style="line-height:1.6;border-top:1px solid var(--line);padding-top:8px">
-   RUNNING <b style="color:${(run.expectancy_r||0)>0?'var(--grn)':'var(--dim)'}">${run.expectancy_r!=null?(run.expectancy_r>0?'+':'')+run.expectancy_r+'R':'—'}</b> <span class="dim">n=${run.n||0}</span>
-   <span class="info" data-tip="The same cohort marked to today rather than to the gate's closed-or-aged rule. Useful to watch week to week; it decides nothing. Applying the gate rule to a journal this young would report only its stop-outs.">?</span>
-   &nbsp;·&nbsp; LEGACY <b class="dim">${leg.expectancy_r!=null?(leg.expectancy_r>0?'+':'')+leg.expectancy_r+'R':'—'}</b> <span class="dim">n=${leg.n||0}</span>
-   <span class="info" data-tip="The transition-day alerts the scan fired before the validated trigger became alertable on 2026-07-25 — zero of them were the backtested entry (audit F1). A real record of what the scan used to do, kept visible and reported apart. Never folded into the gate.">?</span>
+  <div class="axis" style="line-height:1.6;border-top:1px solid var(--line);padding-top:8px;margin-top:9px">
+   <b>Forward record</b> is the qualifying cohort marked to today rather than to the gate's
+   closed-or-aged rule — watch it week to week; it decides nothing.
+   <b>Pre-fix</b> is the ${leg.n||0} transition-day alerts the scan fired before the validated
+   trigger became alertable on 2026-07-25; none were the backtested entry (audit F1). Kept
+   visible, reported apart, never folded into the gate.
+   ${leg.win_rate_pct!=null?`<br>Pre-fix detail: win rate ${leg.win_rate_pct}%, stop-outs ${leg.hit_stop_pct}%, best trade ${leg.best_trade_share_pct}% of total R.`:''}
   </div>
- </div>
-</div></div>`;})();
+ </div></details>`;})();
 
 /* KPIs — the BACKTEST, clearly labelled as such. These numbers were
    hardcoded to sizing-matrix v2 and stayed there through two adoptions, so
@@ -3598,7 +3667,7 @@ else h+=`<div class="mini" style="border-color:#f8717144;margin-top:10px"><span 
 h+=`<details class="actrest"><summary>Full research — thesis, catalyst, management, risks</summary>
 <div style="display:grid;grid-template-columns:1fr;gap:10px;font-size:12.8px;line-height:1.65;padding:8px 0 4px">
 <div><span class="axis">THESIS</span><br>${esc(p.thesis)}</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div class="pk2col">
 <div><span class="axis" style="color:#34d399">CATALYST</span><br>${esc(p.catalyst)}</div>
 <div><span class="axis" style="color:#a78bfa">MANAGEMENT & QUALITY</span><br>${esc(p.management)}</div></div>
 <div><span class="axis" style="color:#f87171">KEY RISKS</span><br>${esc(p.risks)}</div>

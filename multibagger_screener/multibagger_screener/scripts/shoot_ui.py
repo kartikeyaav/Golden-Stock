@@ -23,6 +23,20 @@ hash-routed, so each flow is a real address that can be opened cold.
 
 Output: <out>/<viewport>-<flow>.png plus a contact sheet listing byte sizes,
 which is the cheapest way to spot a blank render (a near-empty PNG is tiny).
+
+TWO THINGS THE IMAGES WILL LIE ABOUT
+------------------------------------
+1. RENDER BUDGET. At 6000ms the position charts had not drawn yet and the
+   cards captured as tall empty boxes with only the TradingView logo — which
+   looks exactly like a broken chart. 9000ms is the default for that reason;
+   raise it further if a chart-heavy view looks empty.
+2. THE LANDING PAGE AT MOBILE WIDTH. mobile-landing.png shows the hero
+   paragraph and both CTAs clipped at the right edge. That is a CAPTURE
+   ARTEFACT, not a layout bug: headless paints that page before the
+   --window-size resize settles, so the PNG is a 390px crop of a wider
+   layout. Verified in a real browser at 390x844 -- documentElement.scrollWidth
+   is 390, every button ends at <=371px, every paragraph at 371px. Check
+   layout complaints against a live browser before changing landing.html.
 """
 
 from __future__ import annotations
@@ -71,7 +85,7 @@ def server_up(base: str) -> bool:
 
 
 def shoot(chrome: str, url: str, out_path: str, w: int, h: int,
-          budget_ms: int = 6000, timeout_s: int = 90) -> tuple[bool, int]:
+          budget_ms: int = 9000, timeout_s: int = 90) -> tuple[bool, int]:
     cmd = [
         chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
         "--force-device-scale-factor=1", "--no-first-run", "--no-default-browser-check",
@@ -95,7 +109,7 @@ def main() -> None:
     ap.add_argument("--out", default=DEFAULT_OUT)
     ap.add_argument("--only", default="", help="comma-separated flow names")
     ap.add_argument("--viewports", default="desktop,mobile")
-    ap.add_argument("--budget", type=int, default=6000,
+    ap.add_argument("--budget", type=int, default=9000,
                     help="virtual time budget in ms; raise if charts render late")
     args = ap.parse_args()
 
