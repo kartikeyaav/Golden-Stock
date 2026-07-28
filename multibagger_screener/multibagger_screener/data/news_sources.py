@@ -39,10 +39,11 @@ from __future__ import annotations
 import csv
 import os
 import re
+import time
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from email.utils import parsedate_to_datetime
 
 from config import NEWSQ
@@ -70,6 +71,11 @@ MARKET_FEEDS: list[tuple[str, str]] = [
     ("NDTV Profit", "https://feeds.feedburner.com/ndtvprofit-latest"),
     ("BusinessLine", "https://www.thehindubusinessline.com/markets/feeder/default.rss"),
 ]
+
+# A hanging publisher must not stall the nightly scan. Ten feeds at a 20s
+# socket timeout is 200s worst case; this caps the whole sweep well under that
+# and reports which feeds were skipped rather than dropping them silently.
+SWEEP_BUDGET_S = 90.0
 
 GDELT_ENABLED = False       # see docstring: 429s on every probe
 _GDELT = ("https://api.gdeltproject.org/api/v2/doc/doc?query={q}"
@@ -116,29 +122,69 @@ def _fetch_rss(url: str, timeout: int = 20) -> list[dict]:
 # the nightly sweep
 # ---------------------------------------------------------------------------
 
-def sweep_market_feeds(verbose: bool = True) -> tuple[int, int]:
-    """Fetch every market feed and append new items to news_archive.csv.
-    Returns (new rows, feeds that failed). Called once per nightly scan.
+def _dedup_key(link: str, title: str) -> str:
+    """Identity of an article across re-publication.
 
-    Deduped on link, like the filings archive. A feed that 403s or times out
-    costs its own coverage and nothing else."""
+    Raw links carry tracking parameters (?utm_source=, #comments, session
+    ids), so the same story re-archives every night under a new URL and the
+    file grows without gaining anything. Strip the query and fragment; fall
+    back to a normalised title when there is no link at all."""
+    if link:
+        base = link.split("#")[0].split("?")[0].rstrip("/")
+        if base:
+            return base.lower()
+    return re.sub(r"[^a-z0-9]", "", (title or "").lower())[:80]
+
+
+def _prune(rows: list[dict], retention_days: int) -> tuple[list[dict], int]:
+    cutoff = datetime.now() - timedelta(days=retention_days)
+    kept = []
+    for r in rows:
+        try:
+            d = datetime.fromisoformat(r["date"])
+        except (ValueError, KeyError):
+            kept.append(r)          # undated: keep, never silently discard
+            continue
+        if d.tzinfo:
+            d = d.replace(tzinfo=None)
+        if d >= cutoff:
+            kept.append(r)
+    return kept, len(rows) - len(kept)
+
+
+def sweep_market_feeds(verbose: bool = True) -> dict:
+    """Fetch every market feed, append new items, prune old ones.
+
+    Returns a health dict rather than a bare count, because "0 new headlines"
+    means one thing when every feed answered and something entirely different
+    when none did — and the caller cannot tell those apart from a number.
+
+    A feed that 403s or times out costs its own coverage and nothing else.
+    The whole sweep is bounded by SWEEP_BUDGET_S so a hanging publisher
+    cannot stall the nightly scan."""
+    existing: list[dict] = []
     seen: set[str] = set()
     if os.path.exists(ARCHIVE_PATH):
         with open(ARCHIVE_PATH, encoding="utf-8", newline="") as f:
             for row in csv.DictReader(f):
-                seen.add(row.get("link") or row.get("title", ""))
+                existing.append(row)
+                seen.add(_dedup_key(row.get("link", ""), row.get("title", "")))
 
-    rows, failed = [], 0
+    started = time.monotonic()
+    rows, failed, skipped = [], [], []
     for source, url in MARKET_FEEDS:
+        if time.monotonic() - started > SWEEP_BUDGET_S:
+            skipped.append(source)
+            continue
         try:
             items = _fetch_rss(url)
         except Exception as e:                    # noqa: BLE001 — per-feed isolation
-            failed += 1
+            failed.append(f"{source}: {type(e).__name__}")
             if verbose:
                 print(f"  news feed failed ({source}): {type(e).__name__} {str(e)[:60]}")
             continue
         for it in items:
-            key = it["link"] or it["title"]
+            key = _dedup_key(it["link"], it["title"])
             if key in seen:
                 continue
             seen.add(key)
@@ -146,17 +192,28 @@ def sweep_market_feeds(verbose: bool = True) -> tuple[int, int]:
                          "title": it["title"], "source": it["source"] or source,
                          "link": it["link"]})
 
-    if rows:
-        write_header = not os.path.exists(ARCHIVE_PATH)
-        with open(ARCHIVE_PATH, "a", encoding="utf-8", newline="") as f:
+    # Rewrite rather than append so the file stays bounded. This archive is
+    # committed on every cloud run, and git stores a whole new blob each time
+    # a file changes, so an unbounded CSV is an unbounded repository.
+    merged, dropped = _prune(existing + rows, NEWSQ.archive_retention_days)
+    if rows or dropped:
+        with open(ARCHIVE_PATH, "w", encoding="utf-8", newline="") as f:
             w = csv.DictWriter(f, fieldnames=ARCHIVE_FIELDS)
-            if write_header:
-                w.writeheader()
-            w.writerows(rows)
+            w.writeheader()
+            w.writerows(merged)
+    _invalidate_cache()
+
+    ok = len(MARKET_FEEDS) - len(failed) - len(skipped)
+    health = {"new": len(rows), "kept": len(merged), "pruned": dropped,
+              "feeds_ok": ok, "feeds_total": len(MARKET_FEEDS),
+              "failed": failed, "skipped": skipped,
+              "all_failed": ok == 0}
     if verbose:
-        print(f"  news archive: +{len(rows)} headlines from "
-              f"{len(MARKET_FEEDS) - failed}/{len(MARKET_FEEDS)} feeds")
-    return len(rows), failed
+        print(f"  news archive: +{health['new']} headlines from "
+              f"{ok}/{len(MARKET_FEEDS)} feeds"
+              + (f", pruned {dropped} past {NEWSQ.archive_retention_days}d" if dropped else "")
+              + (f", {len(skipped)} skipped on time budget" if skipped else ""))
+    return health
 
 
 def archived_headlines(days: int = 30) -> list[dict]:
@@ -182,6 +239,16 @@ def archived_headlines(days: int = 30) -> list[dict]:
 
 
 _ARCHIVE_CACHE: list[dict] | None = None
+
+
+def _invalidate_cache() -> None:
+    """The archive is read once per process and reused across the several
+    names a scan enriches. The sweep runs before enrichment today, but that
+    ordering is not enforced anywhere — if it ever flips, a stale cache would
+    hide the night's own headlines from the night's own cards. Cheap to be
+    correct regardless of call order."""
+    global _ARCHIVE_CACHE
+    _ARCHIVE_CACHE = None
 
 
 def archived_for(tokens: list[str], days: int = 30, limit: int = 12) -> list[dict]:
@@ -265,22 +332,45 @@ def gdelt(company_name: str, days: int = 30, limit: int = 20) -> list[dict]:
     return [o for o in out if o["text"]]
 
 
-def collect(company_name: str, tokens: list[str], days: int = 30) -> list[dict]:
+def collect(company_name: str, tokens: list[str], days: int = 30,
+            health: dict | None = None) -> list[dict]:
     """Every source, merged and de-duplicated by link then by title.
 
     Each source is independently non-fatal: the whole point of having three
-    is that a dead one degrades coverage rather than the scan."""
+    is that a dead one degrades coverage rather than the scan.
+
+    But swallowing every exception made a TOTAL outage indistinguishable from
+    a quiet news day — both produced an empty list and a card reading "no
+    news", which is a confident statement the system had no right to make.
+    Pass a dict as `health` to receive what actually happened per source; the
+    caller decides whether "nothing found" is a fact or a failure."""
     items: list[dict] = []
-    for fn, label in ((lambda: google_news(company_name, days), "google"),
-                      (lambda: archived_for(tokens, days), "archive"),
-                      (lambda: gdelt(company_name, days), "gdelt")):
+    errors: dict[str, str] = {}
+    counts: dict[str, int] = {}
+    sources = [("google", lambda: google_news(company_name, days)),
+               ("archive", lambda: archived_for(tokens, days))]
+    if GDELT_ENABLED:
+        sources.append(("gdelt", lambda: gdelt(company_name, days)))
+
+    for label, fn in sources:
         try:
             got = fn()
-        except Exception:                          # noqa: BLE001
+        except Exception as e:                     # noqa: BLE001
+            errors[label] = f"{type(e).__name__}: {str(e)[:60]}"
             continue
+        counts[label] = len(got)
         for it in got:
             it.setdefault("via", label)
         items.extend(got)
+
+    if health is not None:
+        health.update({
+            "counts": counts, "errors": errors,
+            "sources_tried": len(sources), "sources_ok": len(counts),
+            # every live source raised: we know nothing, rather than knowing
+            # there is nothing
+            "blind": len(counts) == 0,
+        })
 
     seen_link: set[str] = set()
     seen_title: set[str] = set()

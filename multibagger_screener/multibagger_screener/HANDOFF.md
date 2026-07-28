@@ -1978,7 +1978,9 @@ news_engine_report.md         the measurements, the before/after table, and what
 tests/fixtures/news_corpus.json  216 hand-labelled headlines, 45 symbols, labelled BEFORE the new
                               engine existed. Carries a label revision log
 tests/eval_news_nlp.py        the ruler: old vs new precision/recall/F1 (--errors lists misses)
-tests/test_news_nlp.py        45 trap tests, every one a real headline this system got wrong
+tests/test_news_sources.py    16 robustness checks on the fetch layer: link dedup, archive
+                              retention, sweep health, blind-outage detection. Network-free
+tests/test_news_nlp.py        trap tests, every one a real headline this system got wrong
 analyst/DEEP_DIVE_PROTOCOL.md analyst standing orders (incl. second-order ecosystem research task)
 analyst/PICKS_PROTOCOL.md     committee standing orders (incl. second-order research + analyst-verdict cross-check)
 scripts/build_dashboard.py    ALSO holds the whole UI (CSS + HTML + JS in TEMPLATE). The v6 "terminal"

@@ -48,20 +48,25 @@ stated schema. That correction is logged in the file and moves four rows of
 
 ## 3. Results
 
+Final figures, after the second pass in §8 (`python tests/eval_news_nlp.py`):
+
 ```
                               OLD              NEW
-sentiment, exact accuracy    67.1%            93.1%
-  positive  precision/recall 53.5 / 36.5      96.3 / 82.5      F1 43.4 -> 88.9
+sentiment, exact accuracy    67.1%            96.8%
+  positive  precision/recall 53.5 / 36.5     100.0 / 92.1      F1 43.4 -> 95.9
   negative  precision/recall 71.4 / 35.7     100.0 / 85.7      F1 47.6 -> 92.3
+  sign flips (pos <-> neg)   0                 0
 
 admitted to the score (target = about the company AND material)
-  precision                  43.3%            76.3%
-  recall                     57.8%           100.0%            F1 49.5 -> 86.5
+  precision                  43.3%            75.0%
+  recall                     57.8%           100.0%            F1 49.5 -> 85.7
 
 junk reaching the score
-  wrong entity / not news    10                2
-  non-material filler        66               26
+  wrong entity / not news    10                1
+  non-material filler        66               27
 ```
+
+Not one headline is now scored with the wrong sign, in either direction.
 
 Every real piece of news now reaches the score (recall 100%) while what
 reaches it is nearly twice as likely to deserve to be there.
@@ -156,15 +161,83 @@ company_aliases.json           press names that differ from the registered name
 tests/fixtures/news_corpus.json  216 hand-labelled headlines
 tests/make_news_fixture.py     rebuilds the fixture; carries the label revision log
 tests/eval_news_nlp.py         the ruler: old vs new, precision/recall/F1
-tests/test_news_nlp.py         45 trap tests, every one a real headline this
-                               system got wrong
+tests/test_news_nlp.py         trap tests, every one a real headline this system
+                               got wrong
+tests/test_news_sources.py     16 robustness checks: dedup, retention, sweep
+                               health, blind detection, weak-token matching
 news_archive.csv               the tier-1 sweep archive (append-only, dedup by link)
 ```
 
-## 8. Known gaps, stated plainly
+## 8. Second pass — accuracy and robustness (same day)
+
+### Accuracy: 93.1% → 96.8%
+
+Re-running `--errors` showed three of the first pass's fixes had **never been
+applied at all**. They were made by a patch script whose `.replace()` targets
+did not match, so they silently no-op'd — the same class of failure as the
+backspace corruption, and invisible for the same reason. `tariff` was missing
+from the fact list, the outreach and scraped-video filters did not exist.
+Lesson recorded: after a scripted edit, assert the intended text is *present*,
+not merely that nothing is corrupt.
+
+Genuine judgement gaps closed after that:
+
+| Rule | Why |
+|---|---|
+| Forward guidance | "Entero Healthcare Targets 23% Growth in FY26-27" — management guiding, no past-tense metric, no event class. |
+| Project financing | "REC funds ACME Solar 450 MW project" — money flowing to the company, with no positive word in the sentence. |
+| Short broker list | "Stocks to buy: analyst picks Astra Microwave, Jay Bharat, Welspun Corp" recommends all three. Co-mentions here are co-recommendations, not dilution, so they carry a reduced penalty. |
+| Rhetorical questions | "Buy, Hold, or Sell to Book Profits?" was reading as a **downgrade** on a 52-week-high story about a held name. |
+| Declared baskets | A test caught an inversion: "InCred picks 6 stocks with up to 54% upside" scored *higher* relevance than the named three, because naming nobody looks focused to a co-mention counter. A declared basket size is now direct evidence of inventory. |
+
+Final: sentiment **96.8%** exact, **100% precision on both directions**,
+positive recall 92.1%, negative 85.7%. Admitted-to-score precision 75.0% at
+100% recall. Wrong-entity junk 10 → 1.
+
+That basket fix *cost* 0.4pp of sentiment accuracy (97.2 → 96.8) because the
+labelled corpus marks that row +1. It was taken anyway: an unnamed six-stock
+basket should not drive a card, and precision and filler both improved. Worth
+being explicit that the metric was not the thing being optimised.
+
+### Robustness
+
+| Defect | Fix |
+|---|---|
+| **The cloud would never have accumulated a news archive.** `news_archive.csv` was in neither the Actions cache paths nor the nightly commit list, so every cloud run would rebuild it empty, sweep ~300 headlines, use them and throw them away. Cumulative coverage — the entire premise of the sweep — worked locally and silently failed in production. | Added to the `daily.yml` commit list. **Second instance of this exact shape today**, after the alias file in gitignored `state/`. |
+| A total source outage was indistinguishable from a quiet news day: `collect()` swallowed every exception and returned `[]`, and the card said "no news" — a claim the system had no right to make. | `collect(health=...)` reports per-source counts and errors; `blind` when every source raised. `enrich` returns `ok=False, blind=True`; the scan prints a loud `!!` line naming the affected symbols. |
+| A blind read would have frozen `news_catalyst=0.0` into the forward record, entering the cohort as "had no catalyst" and biasing the very question those columns exist to answer. | Blind names freeze **blank, not zero**. |
+| `news_archive.csv` grew without bound while being rewritten and committed nightly — git stores a whole new blob per change, so an unbounded CSV is an unbounded repository. | Pruned to `NEWSQ.archive_retention_days` (120), asserted wider than every consumer window (90). |
+| Tracking parameters (`?utm_source=`, `#comments`) made the same article re-archive nightly under a new URL. | Dedup key strips query and fragment. |
+| The archive read cache was process-global and never invalidated; the sweep happens to run before enrichment today, but nothing enforces that ordering. | Sweep invalidates the cache. |
+| Ten feeds at a 20s socket timeout is 200s worst case — a hanging publisher could stall the nightly scan. | `SWEEP_BUDGET_S = 90`; feeds past the budget are reported as skipped, not dropped silently. |
+| Per-company Google queries fired back-to-back on a busy night. | 0.6s pacing between enrichments. |
+| `1 corporate` appeared in the card's "filtered" counts — a corporate read below the relevance bar was reported by its kind, which told the reader nothing. | Reported as `low relevance`. |
+
+`tests/test_news_sources.py` adds 16 checks over these failure modes, all
+network-free. **107 pytest green**, 5 script-style green, dry-run scan clean.
+
+### NOT done, deliberately: `announcements_archive.csv`
+
+It is **6.7 MB after three weeks**, rewritten and committed on every cloud
+run, and 33 revisions of it already exist. It is the single largest thing in
+the repository and it grows every night.
+
+The same 120-day retention would bound it and would discard **nothing today**
+(the archive is 23 days old, and every consumer reads ≤90 days). But this file
+predates this work, `data/news_pressure.py` documents it as the append-only
+source of truth, and truncating someone else's record of account is exactly
+what this project's own discipline forbids doing quietly. So it is flagged
+here rather than changed: applying `_prune(..., NEWSQ.archive_retention_days)`
+in `announcements_fetch.archive_feed()` is a two-line change whenever you want
+it, and now — while it costs nothing — is the cheapest moment to decide.
+
+---
+
+## 9. Known gaps, stated plainly
 
 - Theme coverage is 26% of the universe; banks, insurers and jewellers have no theme by construction.
 - Feature/opinion pieces ("Wockhardt is showing the way in antibiotics") still read neutral. They are genuinely low-signal and forcing them positive would cost precision.
 - Broker-pick listicles naming 3 stocks are treated as low-relevance and score nothing. Defensible, but it is a choice, not a certainty.
 - The tier-1 archive starts thin on a fresh clone and fills in nightly, exactly like the filings archive did.
-- 15 of 216 labelled headlines are still read wrong. They are listed by `python tests/eval_news_nlp.py --errors`.
+- 7 of 216 labelled headlines are still read wrong. They are listed by `python tests/eval_news_nlp.py --errors`.
+- `announcements_archive.csv` retention is still unbounded — see §8, flagged not changed.

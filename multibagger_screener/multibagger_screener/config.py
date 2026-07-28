@@ -366,6 +366,12 @@ class NewsQualityConfig:
     topic_window_days: float = 8.0
 
     # --- catalyst assembly --------------------------------------------------
+    # The archive is rewritten and COMMITTED on every cloud run, and git
+    # stores a whole new blob each time a file changes, so an unbounded CSV
+    # is an unbounded repository. Comfortably wider than the 90-day window
+    # any consumer actually reads.
+    archive_retention_days: int = 120
+
     catalyst_half_life_days: float = 14.0
     # abnormal coverage: a name suddenly in the news more than it usually is.
     # Capped small - this is an attention proxy, not a direction.

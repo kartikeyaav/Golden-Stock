@@ -350,6 +350,53 @@ def test_one_story_from_five_outlets_is_one_story():
     assert all(r.novelty < 1.0 for r in reads[1:])
 
 
+def test_a_short_broker_list_outranks_an_unnamed_basket():
+    """"Stocks to buy: analyst picks Astra Microwave, Jay Bharat, Welspun
+    Corp" names its three and recommends each; "InCred picks 6 stocks with up
+    to 54% upside" never names them. Both are directionally positive — the
+    labelled corpus marks both +1 — so the distinction the engine has to make
+    is one of RELEVANCE, not direction. Capping the named list at 25 put it
+    under the scoring floor and lost a real broker opinion.
+    """
+    named = read("Stocks to buy: Tech analyst picks Astra Microwave, Jay Bharat, "
+                 "Welspun Corp", "Astra Microwave Products Ltd.", "ASTRAMICRO",
+                 source="Business Standard")
+    basket = read("Diamond Power Infrastructure - Midcap bets! InCred picks 6 stocks "
+                  "with up to 54% upside potential", "Diamond Power Infrastructure Ltd.",
+                  "DIACABS", source="The Economic Times")
+    assert named.scoreable and named.sentiment == 1
+    assert named.relevance > basket.relevance, "a named recommendation is the stronger read"
+    assert basket.materiality < 0.25, "an unnamed basket must stay near-weightless"
+
+
+def test_a_headline_asking_buy_hold_or_sell_is_not_a_downgrade():
+    """The word "sell" inside a question read as a broker downgrade — on a
+    52-week-high story about a held name."""
+    r = read("80% Return In 3 Months: Multibagger Diamond Power Hits 52-Week "
+             "High; Buy, Hold, or Sell to Book Profits?",
+             "Diamond Power Infrastructure Ltd.", "DIACABS", source="Goodreturns")
+    assert r.sentiment == 0
+
+
+def test_forward_guidance_and_project_financing_read_positive():
+    guide = read("Entero Healthcare Targets 23% Growth in FY26-27",
+                 "Entero Healthcare Solutions Ltd.", "ENTERO", source="Moneylife")
+    financed = read("REC funds ACME Solar 450 MW assured peak power project",
+                    "ACME Solar Holdings Ltd.", "ACMESOLAR", source="Power Peak Digest")
+    assert guide.sentiment == 1
+    assert financed.sentiment == 1
+
+
+def test_scraped_video_titles_are_not_news():
+    """Google News appends ' - Source', so the trailing YouTube id is not at
+    the end of the string — the first version of this pattern anchored on $
+    and matched nothing."""
+    r = read("Wockhardt's Rs 9 Billion Opportunity | Why Analysts Are Turning "
+             "Bullish Kristen Bell (Nbk80bIVXy) - Mshale", "Wockhardt Ltd.",
+             "WOCKPHARMA", source="Mshale")
+    assert not r.scoreable
+
+
 def test_relief_from_a_penalty_is_not_a_red_flag():
     """Caught in the 2026-07-28 dry run: an appellate tribunal REDUCING a
     penalty was rendered as a fresh red flag on the card."""

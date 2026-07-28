@@ -131,10 +131,21 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
     """Fetch + read recent news for one company. Never raises — a network
     failure returns {'ok': False} and the card just says 'news unavailable'."""
     tokens = N.name_tokens(company_name)
+    src_health: dict = {}
     try:
-        raw = collect(company_name, tokens, days=int(CATALYST.news_recency_days))
+        raw = collect(company_name, tokens, days=int(CATALYST.news_recency_days),
+                      health=src_health)
     except Exception as e:                         # noqa: BLE001 — enrichment must never kill a scan
         return {"ok": False, "error": str(e)[:100]}
+
+    # Every source raised. "No news" would be a claim we cannot support, and
+    # a card that says it looks exactly like a genuinely quiet name. Report
+    # the outage instead and let the caller's health check shout.
+    if src_health.get("blind"):
+        return {"ok": False, "blind": True,
+                "error": "all news sources unreachable: "
+                         + "; ".join(f"{k} {v}" for k, v in
+                                     (src_health.get("errors") or {}).items())[:160]}
 
     now = datetime.now(timezone.utc)
     mcap = _market_cap_cr(symbol)
@@ -263,6 +274,12 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
         "top_story": _top_story(scoreable),
         "market_cap_cr": mcap,
         "dropped": _dropped_summary(reads),
+        # partial-outage record: which sources answered, which raised. A card
+        # built off one surviving source is a weaker read than one built off
+        # three, and that should be visible rather than inferred.
+        "sources_ok": src_health.get("sources_ok", 0),
+        "sources_tried": src_health.get("sources_tried", 0),
+        "source_errors": src_health.get("errors", {}),
     }
 
 
@@ -324,12 +341,17 @@ def _top_story(reads: list[N.Read]) -> dict | None:
 
 def _dropped_summary(reads: list[N.Read]) -> dict:
     """What was filtered out and under which heading. Shown on the card so
-    "only 3 headlines" is legible as a judgement rather than a fetch
-    failure."""
+    "only 3 headlines" is legible as a judgement rather than a fetch failure.
+
+    A corporate-kind read that still failed the bar was dropped for RELEVANCE,
+    not for its kind — reporting it as "1 corporate" told the reader nothing
+    and looked like a bug."""
     out: dict[str, int] = {}
     for r in reads:
-        if not r.scoreable:
-            out[r.kind] = out.get(r.kind, 0) + 1
+        if r.scoreable:
+            continue
+        reason = "low relevance" if r.kind == N.KIND_CORPORATE else r.kind
+        out[reason] = out.get(reason, 0) + 1
     return out
 
 

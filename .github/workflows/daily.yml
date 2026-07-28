@@ -111,7 +111,8 @@ jobs:
                    state/news_pressure.json state/themes.json \
                    state/surveillance.json state/gate.json \
                    daily_alerts.md \
-                   announcements_archive.csv positions.csv paper_positions.csv; do
+                   announcements_archive.csv news_archive.csv \
+                   positions.csv paper_positions.csv; do
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
           done
           if git diff --cached --quiet; then

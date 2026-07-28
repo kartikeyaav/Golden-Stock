@@ -227,6 +227,16 @@ _FLUFF = [re.compile(p) for p in (
     r"\bjoins?\b.{0,30}\bas (senior )?(vice president|chro|general manager)\b",
     r"\bcase study\b", r"\bhelped\b.{0,30}\bcreate\b",
     r"\bvideo (game|gam)", r"\|\|",           # scraped YouTube titles
+    # A trailing parenthesised id is the signature of a scraped video title:
+    # "Wockhardt's Rs9 Billion Opportunity | ... (Nbk80bIVXy)". Matched
+    # lower-cased (read_article folds case before classifying), so the tell is
+    # the shape rather than the mixed case: 9-12 word characters, no spaces,
+    # containing at least one digit, at the end -- allowing for the
+    # " - Source" suffix Google News appends to every title.
+    r"\((?=[^)]*\d)[a-z0-9_-]{9,12}\)(\s*[-–]\s*[\w.& ]{1,30})?\s*$",
+    # community/CSR outreach programmes: real activity, no market content
+    r"\boutreach\b", r"\bpreventive health", r"\bseva kendra",
+    r"\bhealth (camp|checkup|check-up)\b", r"\bawareness (drive|campaign)\b",
 )]
 
 # multi-company roundups. The strongest evidence is the co-mention COUNT
@@ -447,13 +457,25 @@ def _relevance_one(text: str, company_name: str, symbol: str,
             return 0, [f"'{full}' is a common English phrase used in another sense"]
 
     others = count_other_companies(t, symbol, universe)
+    # A SHORT broker recommendation is the one case where co-mentions do not
+    # dilute: "Stocks to buy: analyst picks Astra Microwave, Jay Bharat,
+    # Welspun Corp" recommends all three equally, so each is a subject rather
+    # than a crowd. Charging the full co-mention penalty AND the listicle cap
+    # landed these at relevance 44 against a floor of 45 -- the right answer
+    # for the wrong reason, and one point from flipping either way.
+    short_broker = _is_broker_call(t) and others <= 2
     if others:
-        score -= min(18 * others, 55)
-        why.append(f"{others} other listed compan{'y' if others == 1 else 'ies'} named")
+        score -= min((8 if short_broker else 18) * others, 55)
+        why.append(f"{others} other listed compan{'y' if others == 1 else 'ies'} named"
+                   + (" (co-recommended, not diluting)" if short_broker else ""))
 
     if _any(_LISTICLE, t):
-        score = min(score, 25)
-        why.append("multi-stock listicle shape")
+        if short_broker:
+            score = min(score, 70)
+            why.append("short broker recommendation")
+        else:
+            score = min(score, 25)
+            why.append("multi-stock listicle shape")
 
     # "Company Name - <headline about a basket>" is Google News prefixing the
     # query onto a story that never mentions it
@@ -568,6 +590,26 @@ _CONTRAST = re.compile(r"\b(but|despite|however|though|although|even as|"
 _NEGATORS = re.compile(r"\b(no|not|never|without|fails?|failed|denies|denied|"
                        r"rules? out|ruled out|unlikely)\b")
 
+
+# A headline that DECLARES a basket size is inventory however few companies it
+# names: "InCred picks 6 stocks with up to 54% upside" names none of the six,
+# so the co-mention counter sees zero rivals and reads it as focused. Counting
+# rivals cannot catch this; the declaration itself is the evidence.
+_BASKET = re.compile(
+    r"\b(\d{1,2}|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+"
+    r"(?:\w+\s+){0,3}(stocks|shares|shares?\s+to|picks|names|bets|counters)\b"
+    r"|\bup ?to\s+\d+(?:\.\d+)?\s*%|\bmultibaggers\b"
+    r"|\bcheck (the )?full list\b|\bamong (the )?\d+\b|\btop picks?\b")
+
+
+def _is_broker_call(t: str) -> bool:
+    """A broker taking a position on NAMED stocks — not a headline asking
+    whether to buy, and not a basket whose members go unnamed."""
+    if _ANALYST_QUESTION.search(t) or _BASKET.search(t):
+        return False
+    return bool(_ANALYST_POS.search(t) or _ANALYST_NEG.search(t))
+
+
 # KMP whose departure moves a stock, vs everyone else's
 _KMP = re.compile(r"\b(ceo|cfo|managing director|\bmd\b|chairman|chairperson|"
                   r"whole[- ]time director|auditor|company secretary|"
@@ -608,6 +650,28 @@ _METRIC_DOWN = re.compile(
     rf"\b{_METRIC}\b[^.;|]{{0,28}}\b{_DOWN}\b"
     rf"|\b{_DOWN}\b[^.;|]{{0,20}}\bin\b[^.;|]{{0,12}}\b{_METRIC}\b")
 
+# Forward-looking company statements. "Entero Healthcare Targets 23% Growth in
+# FY26-27" has no past-tense metric and no event class, but management guiding
+# to growth is exactly the kind of thing a card should carry.
+_GUIDANCE_UP = re.compile(
+    r"\b(targets?|guides?|guidance|expects?|sees|aims? for|projects?|"
+    r"anticipates?|eyes)\b[^.;|]{0,40}"
+    r"\b(\d{1,3}\s?%|growth|expansion|higher|double|record|crore|revenue)\b"
+    r"|\bon track\b|\braises? (fy\s?\d+ )?(guidance|outlook|target)\b")
+_GUIDANCE_DOWN = re.compile(
+    r"\b(cuts?|lowers?|trims?|slashes?)\b[^.;|]{0,25}"
+    r"\b(guidance|outlook|target|forecast|estimates?)\b"
+    r"|\bwarns? (of|that)\b|\bflags? (a )?(risk|slowdown|pressure)\b")
+
+# Project/deal FINANCING, where the money flows toward the company. "REC funds
+# ACME Solar 450 MW project" has no positive word in it at all.
+_FINANCED = re.compile(
+    r"\b(funds?|funded|funding|finances?|financed|financing|sanctions?|"
+    r"sanctioned|disburses?|disbursed|lends?|lent|backs?|backed)\b"
+    r"[^.;|]{0,45}\b(project|plant|capex|expansion|unit|facility|mw\b|gw\b)\b"
+    r"|\b(secures?|secured|raises?|raised|ties? up|tied up)\b[^.;|]{0,30}"
+    r"\b(project finance|term loan|long[- ]term finance|debt funding)\b")
+
 # an M&A event word with the deal being UNWOUND is not a positive event
 _DEAL_OFF = re.compile(r"\b(withdraw\w*|scrap\w*|call(s|ed)? off|terminat\w*|"
                        r"lapse[sd]?|abandon\w*|drops? plans?|exit\w*)\b")
@@ -637,6 +701,13 @@ _ANALYST_NEG = re.compile(
     r"\b(sell|underperform|underweight|reduce)\b\s*[,;:]?\s*(rating|call)?"
     r"|\bdowngrade[sd]?\b.{0,25}\b(to )?(sell|reduce|underperform|hold)\b"
     r"|\btarget (price )?cut\b|\bcuts? target\b")
+# "Buy, Hold, or Sell to Book Profits?" is the headline ASKING, not a broker
+# answering. Without this, the word "sell" in a listicle question read as a
+# downgrade -- which it did, on a 52-week-high story about a held name.
+_ANALYST_QUESTION = re.compile(
+    r"\bbuy,?\s*(hold,?\s*)?(or|and)\s*sell\b|\bsell,?\s*(or|and)\s*(buy|hold)\b"
+    r"|\bshould (you|investors|i)\b|\bworth (a )?(buy|holding)\b"
+    r"|\btime to (buy|sell|book)\b|\bbook profits?\?|\bhold or exit\b")
 
 
 def _clause_score(clause: str) -> int:
@@ -690,9 +761,20 @@ def sentiment(text: str, event_polarity: str | None = None) -> tuple[int, list[s
         elif _METRIC_UP.search(stripped):
             score = 1
             why.append("reported metric up")
+        elif _GUIDANCE_DOWN.search(stripped):
+            score = -1
+            why.append("guidance cut")
+        elif _GUIDANCE_UP.search(stripped):
+            score = 1
+            why.append("forward guidance")
+        elif _FINANCED.search(stripped):
+            score = 1
+            why.append("project financing secured")
 
     # broker actions: a direction the general lexicon cannot see
-    if _ANALYST_NEG.search(t):
+    if _ANALYST_QUESTION.search(t):
+        why.append('headline asks the question rather than answering it')
+    elif _ANALYST_NEG.search(t):
         score = -1
         why.append("broker downgrade / sell")
     elif _ANALYST_POS.search(t):
@@ -787,7 +869,8 @@ _HAS_FACT = re.compile(
     r"\b(profit|revenue|sales|ebitda|margin|pat\b|net loss|order|contract|"
     r"approval|acquisition|acquires?|merger|stake|dividend|guidance|award|"
     r"licence|license|patent|expansion|commission|q[1-4]\s?(fy)?\d*\s?results?|"
-    r"results?|earnings|payout|refund|fine|penalty|probe|fraud|resign)\b")
+    r"results?|earnings|payout|refunds?|tariffs?|dut(y|ies)|lev(y|ies)|"
+    r"bans?|recalls?|fine|penalty|probe|fraud|resign)\b")
 
 
 def _kind(t: str, rel: int, others: int, has_event: bool) -> tuple[str, list[str]]:
@@ -797,6 +880,14 @@ def _kind(t: str, rel: int, others: int, has_event: bool) -> tuple[str, list[str
         return KIND_FLUFF, ["PR / non-market content"]
     if _any(_PROCEDURAL, t):
         return KIND_PROCEDURAL, ["procedural filing or calendar item"]
+    # A SHORT broker list is a recommendation, not a roundup. "Stocks to buy:
+    # analyst picks Astra Microwave, Jay Bharat, Welspun Corp" carries a real
+    # directional opinion about each of three names; "InCred picks 6 stocks
+    # with up to 54% upside" is a page-filler. The line is drawn on how many
+    # OTHER names share the headline, because that is what separates advice
+    # from inventory.
+    if _is_broker_call(t) and others <= 2:
+        return KIND_CORPORATE, [f"broker call naming {others + 1} stocks"]
     # three or more OTHER listed names is a basket by any reading; two is a
     # merger, a supply deal or a sector pair
     if _any(_LISTICLE, t) or others >= 3:

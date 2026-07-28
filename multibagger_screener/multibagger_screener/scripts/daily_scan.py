@@ -287,6 +287,13 @@ def news_pressure_for(sym: str):
 # stamping point below can freeze it without re-fetching. Populated by
 # build_candidate; empty for names that were never enriched.
 _NEWS_READ: dict[str, dict] = {}
+# Names whose enrichment found EVERY source down. Blank columns get frozen for
+# these rather than a zero, because "we could not look" and "we looked and
+# found nothing" must not become the same row in the forward record.
+_NEWS_BLIND: list[str] = []
+# politeness between per-company Google News queries (matches the screener
+# fetcher's pacing in spirit; a busy night enriches ~10 names)
+_NEWS_FETCH_PAUSE_S = 0.6
 
 
 def stamp_news_pressure(rows: list[dict]) -> None:
@@ -305,6 +312,11 @@ def stamp_news_pressure(rows: list[dict]) -> None:
         r["news_catalyst"] = read.get("catalyst", "")
         r["news_lead_event"] = read.get("lead_event", "")
         r["news_scoreable"] = read.get("scoreable", "")
+        # blank, not 0.0 — see _NEWS_BLIND. A zero here would enter the cohort
+        # as "no catalyst" and quietly bias the very question the columns exist
+        # to answer.
+        if sym in _NEWS_BLIND:
+            r["news_catalyst"] = r["news_lead_event"] = r["news_scoreable"] = ""
 
 
 # live screener.in fetch politeness (see build_candidate): matches the batch
@@ -370,6 +382,15 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
         _NEWS_READ[sym] = {"catalyst": news.get("catalyst_score", 0.0),
                            "lead_event": _top.get("event", ""),
                            "scoreable": news.get("scoreable_count", 0)}
+    elif news.get("blind"):
+        # a news OUTAGE, not a quiet name — record it so the frozen cohort
+        # never counts this alert as "had no catalyst"
+        _NEWS_BLIND.append(sym)
+        _NEWS_READ[sym] = {"catalyst": "", "lead_event": "", "scoreable": ""}
+    # Google News is one host answering one query per alerted name. A busy
+    # night can enrich a dozen; space them the way the fundamentals fetcher
+    # does rather than burst.
+    time.sleep(_NEWS_FETCH_PAUSE_S)
     by_key = {d.key: d for d in dims}
     for d in enrichment_dimensions(news):
         by_key[d.key] = d
@@ -585,9 +606,18 @@ def main() -> None:
     else:
         try:
             from data.news_sources import sweep_market_feeds
-            _n_news, _n_failed = sweep_market_feeds()
-            if _n_failed:
-                feed_problems.append(f"{_n_failed} market news feed(s) unreachable")
+            _sweep = sweep_market_feeds()
+            if _sweep["all_failed"]:
+                # not "fewer headlines tonight" — the tier-1 channel is DOWN,
+                # and every card built after this is running on Google alone
+                feed_problems.append(
+                    "ALL market news feeds unreachable — tier-1 coverage is "
+                    f"dark tonight ({'; '.join(_sweep['failed'][:3])})")
+            elif _sweep["failed"] or _sweep["skipped"]:
+                feed_problems.append(
+                    f"{len(_sweep['failed'])} market news feed(s) unreachable, "
+                    f"{len(_sweep['skipped'])} skipped on time budget "
+                    f"({_sweep['feeds_ok']}/{_sweep['feeds_total']} answered)")
         except Exception as e:  # noqa: BLE001 — context must never kill the scan
             feed_problems.append(f"market news sweep failed ({str(e)[:60]})")
 
@@ -945,6 +975,13 @@ def main() -> None:
     save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
                entry_alerted=entry_alerted)
     journal_append(journal_rows)
+    if _NEWS_BLIND:
+        # loud, because every card for these names says "news unavailable" and
+        # a reader could otherwise take that for "nothing was happening"
+        print(f"  !! news sources were unreachable for {len(_NEWS_BLIND)} alerted "
+              f"name(s): {', '.join(_NEWS_BLIND[:6])}"
+              f"{' +more' if len(_NEWS_BLIND) > 6 else ''} — their catalyst "
+              f"columns are blank, not zero", flush=True)
     stamp_news_pressure(entry_signal_rows)
     entry_signals_append(entry_signal_rows)
     save_alert_details(alert_details)
