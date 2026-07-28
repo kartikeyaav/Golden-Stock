@@ -30,13 +30,35 @@ TWO THINGS THE IMAGES WILL LIE ABOUT
    cards captured as tall empty boxes with only the TradingView logo — which
    looks exactly like a broken chart. 9000ms is the default for that reason;
    raise it further if a chart-heavy view looks empty.
-2. THE LANDING PAGE AT MOBILE WIDTH. mobile-landing.png shows the hero
-   paragraph and both CTAs clipped at the right edge. That is a CAPTURE
-   ARTEFACT, not a layout bug: headless paints that page before the
-   --window-size resize settles, so the PNG is a 390px crop of a wider
-   layout. Verified in a real browser at 390x844 -- documentElement.scrollWidth
-   is 390, every button ends at <=371px, every paragraph at 371px. Check
-   layout complaints against a live browser before changing landing.html.
+2. EVERY MOBILE CAPTURE. Headless paints before the --window-size resize
+   settles, so mobile-*.png is a 390px CROP of a wider layout: text appears
+   cut mid-word, cards look truncated, strips look clipped. Three separate
+   cases were chased and all three were the image lying, not the page:
+     * mobile-landing  -> live at 390: scrollWidth 390, every button ends
+                          <=371px, every paragraph at 371px.
+     * mobile-journal  -> the KPI tiles that looked cut are already a
+                          2x2 grid measuring 370px wide.
+     * mobile-picks    -> looked identical to a real bug that WAS there,
+                          which is exactly why the images cannot be trusted
+                          on their own.
+   USE MOBILE CAPTURES FOR VIBE ONLY. For layout, measure in a live browser
+   at 390x844 and count elements whose right edge exceeds the viewport while
+   NOT inside an overflow-x:auto ancestor — wide tables are wide by design.
+   scripts/check_mobile_layout.js in the docstring below is that check.
+
+   Live check, paste into the browser console at 390px:
+     ['overview','picks','sectors','screener','positions','journal']
+       .forEach(id=>{showTab(id,false);const p=document.getElementById(id);
+        p.querySelectorAll('details').forEach(d=>d.open=true);
+        const bad=[...p.querySelectorAll('*')].filter(e=>{
+          if(e.getBoundingClientRect().right<=innerWidth+2)return false;
+          let q=e.parentElement;while(q&&q!==p){const o=getComputedStyle(q).overflowX;
+            if(o==='auto'||o==='scroll')return false;q=q.parentElement;}return true;});
+        console.log(id,bad.length);});
+
+   NOTE ALSO: hash-only navigation does NOT reload the page, so re-measuring
+   after a rebuild against the same #tab- URL silently reads the OLD DOM.
+   Append a cache-buster (?v=Date.now()) when re-checking a fix.
 """
 
 from __future__ import annotations

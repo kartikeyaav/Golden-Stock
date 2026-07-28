@@ -1987,8 +1987,20 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
    the terminal white-space:nowrap used for the stat rows, so its min-content
    width was a full unwrapped line (483px) and it overflowed a 341px column
    and got clipped. min-width:0 alone cannot fix unwrappable text. */
-#picks p,#picks div{min-width:0;overflow-wrap:anywhere}
-#picks details div,#picks details p,#picks details li{white-space:normal}
+#picks p,#picks div{overflow-wrap:anywhere}
+#picks details p,#picks details li{white-space:normal}
+/* THE ACTUAL CAUSE, found by testing candidate fixes in the live page rather
+   than reasoning about them. The research wrapper is a GRID with no explicit
+   columns, so its single implicit track is sized to MAX-CONTENT — 482.7px of
+   unwrapped prose inside a 341px card. A grid item also defaults to
+   min-width:auto, which floors the track at the item's min-content and stops
+   it shrinking. Both have to go: pin the track to minmax(0,1fr) and let the
+   item shrink. min-width:0 on its own did nothing here because the TRACK, not
+   the item, was doing the overflowing. Verified live: 4 overflowing elements
+   -> 0. */
+.pkresearch{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;
+ font-size:12.8px;line-height:1.65;padding:8px 0 4px}
+.pkresearch>*{min-width:0}
 
 .gatestrip{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0 0 14px}
 .gatedet>summary{display:flex;align-items:center;gap:9px;padding:9px 13px;cursor:pointer;
@@ -3665,7 +3677,7 @@ if(pl&&pl.shares_total)h+=`<div class="mini" style="border-color:#34d39933;margi
 <span style="font-size:13px">Buy <b>${pl.shares_total} sh</b> ≈ ₹${fmtNum(pl.position_value)} · entry ~${pl.entry_price} · stop <span style="color:#f87171">${pl.stop_loss_price}</span> · partial <span style="color:#34d399">${pl.partial_price}</span>${pl.risk_scale<1?' · <span style="color:#fbbf24">HALF SIZE (defensive regime)</span>':''}</span></div>`;
 else h+=`<div class="mini" style="border-color:#f8717144;margin-top:10px"><span class="axis" style="color:#f87171">NO MECHANICAL ENTRY PLAN</span> <span class="info" data-tip="The risk engine skips this name: its ATR-based stop would exceed the 12% hard cap — too volatile to size cleanly (Design Law #7). Watch only, not a buy.">?</span></div>`;
 h+=`<details class="actrest"><summary>Full research — thesis, catalyst, management, risks</summary>
-<div style="display:grid;grid-template-columns:1fr;gap:10px;font-size:12.8px;line-height:1.65;padding:8px 0 4px">
+<div class="pkresearch">
 <div><span class="axis">THESIS</span><br>${esc(p.thesis)}</div>
 <div class="pk2col">
 <div><span class="axis" style="color:#34d399">CATALYST</span><br>${esc(p.catalyst)}</div>
