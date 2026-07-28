@@ -188,9 +188,30 @@ def test_frozen_curve_is_not_recomputed_at_evaluation_time():
 
 
 def test_benchmark_window():
-    """The benchmark must read a real cached series and respect its window."""
+    """The benchmark must read a real cached series and respect its window.
+
+    The price cache is gitignored (75MB, regenerable), so on a fresh clone —
+    which is exactly what CI checks out — there is no MOMENTUM100 series to
+    read. Asserting on it there was failing every CI run since the workflow
+    was added, and because `pytest` is the first step, the CANARY step below
+    it never ran: the check that proves this suite can detect a failure was
+    itself skipped on every push. A permanently red signal is the same as no
+    signal.
+
+    So a MISSING cache skips (environment), while a cache that is present and
+    reads wrong still fails (real bug). Those are different facts and only
+    one of them is about the code.
+    """
     b = gate_status.benchmark_return(GATE.benchmark_symbol,
                                      pd.Timestamp("2025-07-01"))
+    if b.get("ret_pct") is None and "no cached series" in str(b.get("why", "")):
+        msg = (f"{GATE.benchmark_symbol} not in the local price cache — "
+               f"window assertions need a real series; run scripts/fetch_data.py")
+        print(f"  skip {msg}")
+        if _under_pytest():
+            import pytest
+            pytest.skip(msg)
+        return
     check("momentum benchmark series is cached and readable",
           b.get("ret_pct") is not None, str(b))
     if b.get("ret_pct") is not None:
