@@ -1736,7 +1736,33 @@ main{margin:0;padding:14px;max-width:100%;min-width:0;overflow-x:hidden}
 .card{overflow-x:auto;min-width:0}
 .badge{white-space:nowrap}
 .top{align-items:flex-start}}
+/* --- phone layout fixes, found by capturing the real thing (2026-07-28) ---
+   Measured at 390px: #actionable and #radarbody hold 483px-wide tables with
+   overflow-x:visible, so they stretched <main> to 426px and the page itself
+   scrolled sideways. A wide table must scroll INSIDE its own box; the page
+   body never should. The nav and the health strip already scrolled, but
+   nothing on screen said so — hence the edge fade. */
+@media(max-width:1000px){
+ #actionable,#radarbody{overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .card :is(div,section):has(>table){overflow-x:auto;-webkit-overflow-scrolling:touch}
+ main{overflow-x:hidden}
+ nav,.health{
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 20px),transparent);
+          mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 20px),transparent)}
+ nav::-webkit-scrollbar,.health::-webkit-scrollbar,
+ #actionable::-webkit-scrollbar,#radarbody::-webkit-scrollbar{height:3px}
+ nav::-webkit-scrollbar-thumb,.health::-webkit-scrollbar-thumb,
+ #actionable::-webkit-scrollbar-thumb,#radarbody::-webkit-scrollbar-thumb{
+  background:#2a3444;border-radius:2px}
+}
 @media(max-width:640px){
+/* The capital-gate checklist is a dial beside a column of criteria. Side by
+   side at 390px the criteria column is only 173px, and .ldrow is a grid with
+   overflow:hidden + nowrap — so every status silently CLIPPED to nothing and
+   the card read as five unlabelled bullets. Stack them and the labels fit. */
+.instrow{flex-direction:column;align-items:stretch;gap:14px}
+.instcol{width:100%}
+.leds,.ldrow{width:100%}
 main{padding:10px}
 .card{padding:12px 12px;border-radius:10px}
 table{font-size:11.5px}
@@ -2264,14 +2290,44 @@ function syncNumericColumns(root){
    if(t&&!seen.has(t)){seen.add(t);syncNumericColumns(t.parentElement||t);}});});
  document.querySelectorAll('table tbody').forEach(b=>obs.observe(b,{childList:true}));})();
 
-/* nav */
-document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{
+/* nav — hash-routed, so a tab is a real address.
+   Before this, every tab lived at the same URL: you could not bookmark the
+   Screener, the back button did nothing, and reloading always dumped you on
+   Overview. It also means each flow can be opened directly (#screener), which
+   is what makes headless capture of every view possible. */
+/* The panes' ids double as anchor targets, so a bare '#screener' made the
+   browser jump down the page and every deep link landed with the header and
+   first row clipped. Prefixing the hash means it matches no element id, so
+   there is no native jump to undo — fixing the cause instead of racing it
+   with scrollTo, which lost the race on narrow viewports. */
+const HASHPFX='#tab-';
+function hashTab(){const h=location.hash;
+ if(h.startsWith(HASHPFX))return h.slice(HASHPFX.length);
+ return h.replace('#','');}   /* still accept an old bare #screener link */
+function showTab(t,push){
+ const btn=document.querySelector('.navbtn[data-t="'+t+'"]');
+ if(!btn||btn.offsetParent===null&&btn.style.display==='none')return false;
  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('on'));
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
- b.classList.add('on');$('#'+b.dataset.t).classList.add('on');
- if(b.dataset.t==='positions'&&!window._pos)drawPositions();
- if(b.dataset.t==='picks'&&!window._picks)drawPicks();
- syncNumericColumns($('#'+b.dataset.t));});
+ btn.classList.add('on');
+ const pane=$('#'+t); if(pane)pane.classList.add('on');
+ if(t==='positions'&&!window._pos)drawPositions();
+ if(t==='picks'&&!window._picks)drawPicks();
+ syncNumericColumns(pane);
+ if(push&&location.hash!==HASHPFX+t){history.replaceState(null,'',HASHPFX+t);}
+ return true;
+}
+document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{showTab(b.dataset.t,true);window.scrollTo(0,0);});
+window.addEventListener('hashchange',()=>{const t=hashTab();
+ if(t){showTab(t,false);window.scrollTo(0,0);}});
+/* Honour a hash on first load, but never leave the user on a blank pane if the
+   tab is hidden (Penny stays hidden until the screen has been run).
+   scrollTo(0,0) is REQUIRED, not cosmetic: the pane ids double as anchor
+   targets, so the browser natively jumps to them and every deep link landed
+   mid-page with the header and the first table row clipped. */
+(function(){const t=hashTab();
+ if(t&&!showTab(t,false))showTab('overview',false);
+ if(t)window.scrollTo(0,0);})();
 
 /* header */
 /* next scheduled cloud scan: Mon-Fri 13:05 UTC (+ GitHub cron delay) */

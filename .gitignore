@@ -29,3 +29,6 @@ multibagger_screener/multibagger_screener/test_alert.md
 # committed once historically and then never updated by the cloud = stale)
 multibagger_screener/multibagger_screener/dashboard.html
 multibagger_screener/multibagger_screener/_site/
+
+# UI captures are regenerable from scripts/shoot_ui.py
+multibagger_screener/multibagger_screener/ui_shots/

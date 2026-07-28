@@ -185,8 +185,16 @@ class Handler(BaseHTTPRequestHandler):
         self._json({"started": job})
 
     def log_message(self, fmt: str, *args) -> None:  # quiet the console
-        if "/api/status" not in (args[0] if args else ""):
-            sys.stderr.write(f"{self.address_string()} {fmt % args}\n")
+        # args[0] is the request line for normal logs, but send_error() calls
+        # log_error("code %d, message %s", code, message) where args[0] is an
+        # INT — so `"..." not in args[0]` raised TypeError and killed the
+        # handler thread on every 404. Coerce before testing.
+        first = str(args[0]) if args else ""
+        if "/api/status" not in first:
+            try:
+                sys.stderr.write(f"{self.address_string()} {fmt % args}\n")
+            except (TypeError, ValueError):
+                sys.stderr.write(f"{self.address_string()} {fmt} {args}\n")
 
 
 def main() -> None:
