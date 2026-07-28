@@ -1,5 +1,5 @@
 {
- "generated": "2026-07-28T10:45:22",
+ "generated": "2026-07-28T10:56:56",
  "themes": [
   {
    "key": "hospital",
@@ -29,8 +29,8 @@
    "breadth": 27.3,
    "rs_med": 82.8,
    "ret3m": 12.6,
-   "news": 2.68,
-   "news_per_name": 0.244,
+   "news": 2.66,
+   "news_per_name": 0.242,
    "thin": false,
    "confirmed": [
     "SHILPAMED",
