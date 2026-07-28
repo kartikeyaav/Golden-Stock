@@ -318,3 +318,54 @@ form turns the tests red, so they are not decorative. **115 pytest green**,
 - Governance remains partial by data availability, not by choice: auditor,
   related-party and SEBI-action checks are still "pending (Phase C)" on every
   card, and no free source publishes a pledge series.
+
+---
+
+## 11. What the first cloud run taught (2026-07-28, Daily scan #28)
+
+Dispatched the daily workflow and read the result rather than assuming it.
+**SUCCESS in 6 minutes, every step green.** Three things were confirmed and
+one new defect was found — which is the point of running it.
+
+**Confirmed working:**
+
+- `news_archive.csv` **landed in the cloud commit** (799 lines). The
+  persistence fix holds; the archive will now accumulate in production.
+- The publisher feeds **do** answer a GitHub datacenter IP — 302 headlines
+  added by the runner. That was the top risk flagged before the run and it
+  did not materialise.
+- `entry_signals.csv` carried the new columns with genuinely continuous
+  values (0.04, 0.095, 0.15, 0.327, 0.475) across 6 alerts.
+- The parser-health alarm **fired in the cloud, exactly as designed**:
+  `no state/parser_health.json — the weekly fundamentals job has never
+  reported in, so the parser-degraded and stale-fundamentals alarms are both
+  blind`. It will clear after the next weekly run now that `weekly.yml`
+  commits the file.
+
+**New defect, found only by inspecting the archive the run produced:**
+
+The archive held **four** sources, not seven. **Moneycontrol's three feeds
+are abandoned.** They answer HTTP 200, parse cleanly, and serve items dated
+**April 2024** — so they were fetched, added, and immediately pruned every
+night, while `feeds_ok` counted them as healthy coverage. Every other
+Moneycontrol RSS endpoint tried (`results`, `latestnews`, `MCtopnews`,
+`buzzingstocks`) is stale by 825+ days; the publisher has stopped maintaining
+RSS.
+
+This is the same lesson as §8's blind-outage fix, one level up: the health
+check asked *did the fetch succeed*, not *did the feed deliver anything
+current*. A success check cannot see an abandoned source.
+
+Fixed two ways:
+
+1. The three dead feeds are replaced by three verified-live ones (Livemint
+   economy, BusinessLine companies, BusinessLine economy). All ten feeds in
+   `MARKET_FEEDS` were confirmed on 2026-07-28 to carry a same-day item.
+2. `sweep_market_feeds` now measures each feed's newest item against
+   `NEWSQ.feed_stale_days` (7). A stale feed is reported as **ABANDONED**,
+   is excluded from `feeds_ok`, and — if every feed is stale — trips
+   `all_failed`. So the next publisher to quietly give up gets caught on the
+   first night rather than by archive archaeology.
+
+`tests/test_news_sources.py` gains three checks including a replay of the
+Moneycontrol case on synthetic dates. **118 pytest green.**

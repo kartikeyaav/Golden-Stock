@@ -635,11 +635,20 @@ def main() -> None:
                 feed_problems.append(
                     "ALL market news feeds unreachable — tier-1 coverage is "
                     f"dark tonight ({'; '.join(_sweep['failed'][:3])})")
-            elif _sweep["failed"] or _sweep["skipped"]:
+            elif _sweep["failed"] or _sweep["skipped"] or _sweep.get("stale"):
+                bits = []
+                if _sweep["failed"]:
+                    bits.append(f"{len(_sweep['failed'])} unreachable")
+                if _sweep["skipped"]:
+                    bits.append(f"{len(_sweep['skipped'])} skipped on time budget")
+                if _sweep.get("stale"):
+                    # answering, parsing, and serving nothing current — the
+                    # Moneycontrol failure mode, invisible to a success check
+                    bits.append(f"{len(_sweep['stale'])} ABANDONED "
+                                f"({'; '.join(_sweep['stale'][:3])})")
                 feed_problems.append(
-                    f"{len(_sweep['failed'])} market news feed(s) unreachable, "
-                    f"{len(_sweep['skipped'])} skipped on time budget "
-                    f"({_sweep['feeds_ok']}/{_sweep['feeds_total']} answered)")
+                    f"market news feeds: {', '.join(bits)} "
+                    f"({_sweep['feeds_ok']}/{_sweep['feeds_total']} live)")
         except Exception as e:  # noqa: BLE001 — context must never kill the scan
             feed_problems.append(f"market news sweep failed ({str(e)[:60]})")
 

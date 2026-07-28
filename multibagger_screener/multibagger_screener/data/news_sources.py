@@ -56,20 +56,29 @@ ARCHIVE_FIELDS = ["date", "title", "source", "link"]
 
 _UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
-# Market/company sections of outlets that employ reporters. Every one of
-# these was fetched successfully on 2026-07-28; the ones that failed are
-# named in the module docstring rather than left here to fail nightly.
+# Market/company sections of outlets that employ reporters. Every one of these
+# was verified LIVE on 2026-07-28 — fetched, parsed, and carrying an item from
+# that same day.
+#
+# Moneycontrol was dropped after the first cloud run. Its three feeds answered
+# HTTP 200 and parsed cleanly, so the health check called them healthy, but
+# every item they carried was dated April 2024: the feeds are abandoned, and
+# their content was being added and then immediately pruned every night. Every
+# other Moneycontrol RSS endpoint tried (results, latestnews, MCtopnews,
+# buzzingstocks) is stale by 825+ days. That is why sweep_market_feeds now
+# checks how fresh a feed's newest item is, not merely whether it answered:
+# "the fetch succeeded" and "the feed is alive" are different facts.
 MARKET_FEEDS: list[tuple[str, str]] = [
     ("The Economic Times", "https://economictimes.indiatimes.com/markets/stocks/rssfeeds/2146842.cms"),
     ("The Economic Times", "https://economictimes.indiatimes.com/industry/rssfeeds/13352306.cms"),
     ("The Economic Times", "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms"),
-    ("Moneycontrol", "https://www.moneycontrol.com/rss/business.xml"),
-    ("Moneycontrol", "https://www.moneycontrol.com/rss/results.xml"),
-    ("Moneycontrol", "https://www.moneycontrol.com/rss/marketreports.xml"),
     ("Livemint", "https://www.livemint.com/rss/markets"),
     ("Livemint", "https://www.livemint.com/rss/companies"),
+    ("Livemint", "https://www.livemint.com/rss/economy"),
     ("NDTV Profit", "https://feeds.feedburner.com/ndtvprofit-latest"),
     ("BusinessLine", "https://www.thehindubusinessline.com/markets/feeder/default.rss"),
+    ("BusinessLine", "https://www.thehindubusinessline.com/companies/feeder/default.rss"),
+    ("BusinessLine", "https://www.thehindubusinessline.com/economy/feeder/default.rss"),
 ]
 
 # A hanging publisher must not stall the nightly scan. Ten feeds at a 20s
@@ -171,7 +180,7 @@ def sweep_market_feeds(verbose: bool = True) -> dict:
                 seen.add(_dedup_key(row.get("link", ""), row.get("title", "")))
 
     started = time.monotonic()
-    rows, failed, skipped = [], [], []
+    rows, failed, skipped, stale = [], [], [], []
     for source, url in MARKET_FEEDS:
         if time.monotonic() - started > SWEEP_BUDGET_S:
             skipped.append(source)
@@ -183,6 +192,16 @@ def sweep_market_feeds(verbose: bool = True) -> dict:
             if verbose:
                 print(f"  news feed failed ({source}): {type(e).__name__} {str(e)[:60]}")
             continue
+        # A 200 that parses is not the same as a feed that is alive. The three
+        # Moneycontrol feeds answered perfectly while serving 2024 content.
+        dates = [it["date"] for it in items if it["date"]]
+        if dates:
+            age = (datetime.now() - max(dates)).days
+            if age > NEWSQ.feed_stale_days:
+                stale.append(f"{source} ({age}d)")
+                if verbose:
+                    print(f"  news feed STALE ({source}): newest item is {age}d old "
+                          f"— answering, but abandoned")
         for it in items:
             key = _dedup_key(it["link"], it["title"])
             if key in seen:
@@ -203,16 +222,19 @@ def sweep_market_feeds(verbose: bool = True) -> dict:
             w.writerows(merged)
     _invalidate_cache()
 
-    ok = len(MARKET_FEEDS) - len(failed) - len(skipped)
+    # a stale feed is not an OK feed: it contributes nothing and would
+    # otherwise inflate feeds_ok into looking like coverage
+    ok = len(MARKET_FEEDS) - len(failed) - len(skipped) - len(stale)
     health = {"new": len(rows), "kept": len(merged), "pruned": dropped,
               "feeds_ok": ok, "feeds_total": len(MARKET_FEEDS),
-              "failed": failed, "skipped": skipped,
+              "failed": failed, "skipped": skipped, "stale": stale,
               "all_failed": ok == 0}
     if verbose:
         print(f"  news archive: +{health['new']} headlines from "
               f"{ok}/{len(MARKET_FEEDS)} feeds"
               + (f", pruned {dropped} past {NEWSQ.archive_retention_days}d" if dropped else "")
-              + (f", {len(skipped)} skipped on time budget" if skipped else ""))
+              + (f", {len(skipped)} skipped on time budget" if skipped else "")
+              + (f", {len(stale)} STALE" if stale else ""))
     return health
 
 

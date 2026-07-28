@@ -370,6 +370,10 @@ class NewsQualityConfig:
     # stores a whole new blob each time a file changes, so an unbounded CSV
     # is an unbounded repository. Comfortably wider than the 90-day window
     # any consumer actually reads.
+    # A feed answering 200 with two-year-old items is abandoned, not healthy.
+    # Moneycontrol's three feeds were serving April 2024 content while the
+    # sweep counted them as OK.
+    feed_stale_days: int = 7
     archive_retention_days: int = 120
 
     catalyst_half_life_days: float = 14.0

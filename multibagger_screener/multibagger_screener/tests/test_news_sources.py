@@ -113,6 +113,37 @@ def test_sweep_partial_failure_is_not_total_failure(tmp_path, monkeypatch):
     assert h["new"] > 0
 
 
+def test_an_abandoned_feed_is_not_a_healthy_feed(tmp_path, monkeypatch):
+    """The Moneycontrol failure, found only by inspecting the first cloud
+    run's archive: three feeds answered HTTP 200, parsed cleanly, and served
+    April 2024 content. "The fetch succeeded" and "the feed is alive" are
+    different facts, and only the second one is coverage."""
+    monkeypatch.setattr(S, "ARCHIVE_PATH", str(tmp_path / "news.csv"))
+    old = datetime.now() - timedelta(days=825)
+    monkeypatch.setattr(S, "_fetch_rss", _fake_feed([
+        {"title": "Two-year-old story", "date": old,
+         "link": "https://x/old", "source": "MC"}]))
+    h = S.sweep_market_feeds(verbose=False)
+    assert len(h["stale"]) == len(S.MARKET_FEEDS)
+    assert h["feeds_ok"] == 0, "a stale feed must not count as live coverage"
+    assert h["all_failed"] is True
+
+
+def test_a_current_feed_is_not_flagged_stale(tmp_path, monkeypatch):
+    monkeypatch.setattr(S, "ARCHIVE_PATH", str(tmp_path / "news.csv"))
+    monkeypatch.setattr(S, "_fetch_rss", _fake_feed([
+        {"title": "Today's story", "date": datetime.now(),
+         "link": "https://x/new", "source": "ET"}]))
+    h = S.sweep_market_feeds(verbose=False)
+    assert h["stale"] == []
+    assert h["feeds_ok"] == len(S.MARKET_FEEDS)
+
+
+def test_every_configured_feed_is_a_distinct_url():
+    urls = [u for _, u in S.MARKET_FEEDS]
+    assert len(urls) == len(set(urls))
+
+
 def test_sweep_prunes_and_rewrites_rather_than_growing_forever(tmp_path, monkeypatch):
     path = tmp_path / "news.csv"
     old = (datetime.now() - timedelta(days=400)).isoformat(timespec="seconds")
