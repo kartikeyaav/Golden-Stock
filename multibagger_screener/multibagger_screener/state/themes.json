@@ -1,5 +1,5 @@
 {
- "generated": "2026-07-27T20:51:13",
+ "generated": "2026-07-28T10:45:22",
  "themes": [
   {
    "key": "hospital",
@@ -8,9 +8,9 @@
    "n": 12,
    "breadth": 41.7,
    "rs_med": 78.2,
-   "ret3m": 17.7,
-   "news": 0.86,
-   "news_per_name": 0.072,
+   "ret3m": 20.0,
+   "news": 0.85,
+   "news_per_name": 0.071,
    "thin": false,
    "confirmed": [
     "VIJAYA",
@@ -19,24 +19,7 @@
     "KIMS",
     "METROPOLIS"
    ],
-   "heat": 85.3
-  },
-  {
-   "key": "ems",
-   "name": "Electronics manufacturing (EMS)",
-   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
-   "n": 9,
-   "breadth": 22.2,
-   "rs_med": 75.2,
-   "ret3m": 22.9,
-   "news": 0.76,
-   "news_per_name": 0.084,
-   "thin": false,
-   "confirmed": [
-    "AVALON",
-    "SYRMA"
-   ],
-   "heat": 71.7
+   "heat": 84.7
   },
   {
    "key": "cdmo",
@@ -45,89 +28,16 @@
    "n": 11,
    "breadth": 27.3,
    "rs_med": 82.8,
-   "ret3m": 14.1,
-   "news": 2.75,
-   "news_per_name": 0.25,
+   "ret3m": 12.6,
+   "news": 2.68,
+   "news_per_name": 0.244,
    "thin": false,
    "confirmed": [
     "SHILPAMED",
     "GRANULES",
     "EMCURE"
    ],
-   "heat": 71.3
-  },
-  {
-   "key": "textiles",
-   "name": "Textiles & apparel PLI",
-   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
-   "n": 12,
-   "breadth": 33.3,
-   "rs_med": 84.6,
-   "ret3m": 8.3,
-   "news": 0.83,
-   "news_per_name": 0.069,
-   "thin": false,
-   "confirmed": [
-    "ARVIND",
-    "ICIL",
-    "PGIL",
-    "WELSPUNLIV"
-   ],
-   "heat": 67.0
-  },
-  {
-   "key": "defelec",
-   "name": "Defence electronics & space",
-   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
-   "n": 7,
-   "breadth": 28.6,
-   "rs_med": 96.3,
-   "ret3m": 16.1,
-   "news": 0.0,
-   "news_per_name": 0.0,
-   "thin": false,
-   "confirmed": [
-    "DATAPATTNS",
-    "PARAS"
-   ],
-   "heat": 65.7
-  },
-  {
-   "key": "defence",
-   "name": "Defence & aerospace",
-   "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
-   "n": 13,
-   "breadth": 30.8,
-   "rs_med": 95.4,
-   "ret3m": 4.9,
-   "news": 1.59,
-   "news_per_name": 0.123,
-   "thin": false,
-   "confirmed": [
-    "DATAPATTNS",
-    "PARAS",
-    "AZAD",
-    "DYNAMATECH"
-   ],
-   "heat": 63.3
-  },
-  {
-   "key": "water",
-   "name": "Water, environment & EPC",
-   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
-   "n": 6,
-   "breadth": 50.0,
-   "rs_med": 96.2,
-   "ret3m": -2.8,
-   "news": 0.79,
-   "news_per_name": 0.132,
-   "thin": false,
-   "confirmed": [
-    "KIRLOSENG",
-    "WABAG",
-    "IONEXCHANG"
-   ],
-   "heat": 60.0
+   "heat": 80.0
   },
   {
    "key": "finfra",
@@ -136,68 +46,124 @@
    "n": 16,
    "breadth": 37.5,
    "rs_med": 84.5,
-   "ret3m": 1.4,
-   "news": 1.46,
-   "news_per_name": 0.091,
+   "ret3m": 7.5,
+   "news": 2.05,
+   "news_per_name": 0.128,
    "thin": false,
    "confirmed": [
     "ANANDRATHI",
     "NUVAMA",
     "NAM-INDIA",
     "PRUDENT",
-    "CDSL",
+    "KFINTECH",
     "IONEXCHANG"
    ],
-   "heat": 55.7
+   "heat": 72.0
   },
   {
-   "key": "ev",
-   "name": "EV & auto electrification",
-   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
-   "n": 10,
-   "breadth": 10.0,
-   "rs_med": 75.2,
-   "ret3m": 6.2,
-   "news": 1.8,
-   "news_per_name": 0.18,
+   "key": "textiles",
+   "name": "Textiles & apparel PLI",
+   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
+   "n": 12,
+   "breadth": 25.0,
+   "rs_med": 84.6,
+   "ret3m": 10.5,
+   "news": 1.4,
+   "news_per_name": 0.117,
    "thin": false,
    "confirmed": [
-    "BELRISE"
+    "ICIL",
+    "PGIL",
+    "WELSPUNLIV"
    ],
-   "heat": 50.7
+   "heat": 68.3
+  },
+  {
+   "key": "defelec",
+   "name": "Defence electronics & space",
+   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
+   "n": 7,
+   "breadth": 42.9,
+   "rs_med": 96.3,
+   "ret3m": 7.3,
+   "news": 0.0,
+   "news_per_name": 0.0,
+   "thin": false,
+   "confirmed": [
+    "ASTRAMICRO",
+    "DATAPATTNS",
+    "PARAS"
+   ],
+   "heat": 64.3
+  },
+  {
+   "key": "water",
+   "name": "Water, environment & EPC",
+   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
+   "n": 6,
+   "breadth": 50.0,
+   "rs_med": 96.2,
+   "ret3m": 0.9,
+   "news": 0.77,
+   "news_per_name": 0.128,
+   "thin": false,
+   "confirmed": [
+    "KIRLOSENG",
+    "WABAG",
+    "IONEXCHANG"
+   ],
+   "heat": 62.0
   },
   {
    "key": "datacentre",
    "name": "Data centres & digital infrastructure",
    "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
    "n": 8,
-   "breadth": 0.0,
+   "breadth": 12.5,
    "rs_med": 99.5,
-   "ret3m": 11.3,
-   "news": 1.06,
-   "news_per_name": 0.133,
-   "thin": false,
-   "confirmed": [],
-   "heat": 45.0
-  },
-  {
-   "key": "capex",
-   "name": "Industrial capex & machinery",
-   "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
-   "n": 21,
-   "breadth": 19.0,
-   "rs_med": 77.9,
-   "ret3m": 3.6,
-   "news": 1.41,
-   "news_per_name": 0.067,
+   "ret3m": 9.9,
+   "news": 1.03,
+   "news_per_name": 0.129,
    "thin": false,
    "confirmed": [
-    "AZAD",
-    "LLOYDSENGG",
-    "AIAENG",
-    "KSB"
+    "BHARTIHEXA"
    ],
-   "heat": 41.0
+   "heat": 61.3
+  },
+  {
+   "key": "ems",
+   "name": "Electronics manufacturing (EMS)",
+   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
+   "n": 9,
+   "breadth": 11.1,
+   "rs_med": 75.2,
+   "ret3m": 9.6,
+   "news": 0.74,
+   "news_per_name": 0.082,
+   "thin": false,
+   "confirmed": [
+    "SYRMA"
+   ],
+   "heat": 50.7
+  },
+  {
+   "key": "defence",
+   "name": "Defence & aerospace",
+   "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
+   "n": 13,
+   "breadth": 30.8,
+   "rs_med": 95.4,
+   "ret3m": 0.5,
+   "news": 1.59,
+   "news_per_name": 0.123,
+   "thin": false,
+   "confirmed": [
+    "ASTRAMICRO",
+    "DATAPATTNS",
+    "PARAS",
+    "AZAD"
+   ],
+   "heat": 47.3
   },
   {
    "key": "grid",
@@ -206,15 +172,15 @@
    "n": 14,
    "breadth": 14.3,
    "rs_med": 88.8,
-   "ret3m": 3.4,
-   "news": 1.11,
-   "news_per_name": 0.08,
+   "ret3m": 1.9,
+   "news": 1.1,
+   "news_per_name": 0.078,
    "thin": false,
    "confirmed": [
     "SCHNEIDER",
     "RRKABEL"
    ],
-   "heat": 38.3
+   "heat": 43.0
   },
   {
    "key": "chemicals",
@@ -223,7 +189,7 @@
    "n": 11,
    "breadth": 27.3,
    "rs_med": 82.5,
-   "ret3m": 1.4,
+   "ret3m": 1.8,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": false,
@@ -232,7 +198,40 @@
     "AARTIIND",
     "EPL"
    ],
-   "heat": 33.3
+   "heat": 42.0
+  },
+  {
+   "key": "capex",
+   "name": "Industrial capex & machinery",
+   "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
+   "n": 21,
+   "breadth": 19.0,
+   "rs_med": 77.9,
+   "ret3m": 1.2,
+   "news": 1.38,
+   "news_per_name": 0.066,
+   "thin": false,
+   "confirmed": [
+    "AZAD",
+    "LLOYDSENGG",
+    "AIAENG",
+    "GRINDWELL"
+   ],
+   "heat": 37.7
+  },
+  {
+   "key": "ev",
+   "name": "EV & auto electrification",
+   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
+   "n": 10,
+   "breadth": 0.0,
+   "rs_med": 75.2,
+   "ret3m": 6.5,
+   "news": 1.74,
+   "news_per_name": 0.174,
+   "thin": false,
+   "confirmed": [],
+   "heat": 37.0
   },
   {
    "key": "renewables",
@@ -241,28 +240,14 @@
    "n": 14,
    "breadth": 7.1,
    "rs_med": 71.3,
-   "ret3m": -9.3,
-   "news": 5.85,
-   "news_per_name": 0.418,
+   "ret3m": -9.7,
+   "news": 5.68,
+   "news_per_name": 0.406,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
    ],
-   "heat": 26.0
-  },
-  {
-   "key": "shipbuilding",
-   "name": "Shipbuilding & marine",
-   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
-   "n": 5,
-   "breadth": 0.0,
-   "rs_med": 85.3,
-   "ret3m": -7.5,
-   "news": 0.0,
-   "news_per_name": 0.0,
-   "thin": false,
-   "confirmed": [],
-   "heat": 6.0
+   "heat": 29.0
   },
   {
    "key": "railways",
@@ -271,12 +256,26 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": 16.7,
-   "ret3m": -10.3,
+   "ret3m": -10.7,
    "news": 0.52,
    "news_per_name": 0.052,
    "thin": false,
    "confirmed": [],
-   "heat": 3.0
+   "heat": 6.0
+  },
+  {
+   "key": "shipbuilding",
+   "name": "Shipbuilding & marine",
+   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
+   "n": 5,
+   "breadth": 0.0,
+   "rs_med": 85.3,
+   "ret3m": -10.9,
+   "news": 0.0,
+   "news_per_name": 0.0,
+   "thin": false,
+   "confirmed": [],
+   "heat": 0.0
   },
   {
    "key": "semis",
@@ -285,7 +284,7 @@
    "n": 3,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -19.1,
+   "ret3m": -13.3,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -299,7 +298,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 80.7,
-   "ret3m": 10.5,
+   "ret3m": -2.0,
    "news": 1.59,
    "news_per_name": 0.797,
    "thin": true,

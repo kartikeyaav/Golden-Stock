@@ -1,8 +1,8 @@
 {
- "generated": "2026-07-27 15:53",
+ "generated": "2026-07-28 10:45",
  "n_checked": 652,
- "n_flagged": 65,
- "asm_total": 185,
+ "n_flagged": 66,
+ "asm_total": 189,
  "syms": {
   "ACMESOLAR": {
    "flags": [
@@ -442,6 +442,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "BLUESTONE": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "CRIZAC": {
    "flags": [
     {
@@ -469,6 +481,11 @@
   "DIACABS": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -476,7 +493,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
   },
   "ELLEN": {
    "flags": [
@@ -742,6 +759,11 @@
   "LOTUSDEV": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -749,7 +771,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
   },
   "STLTECH": {
    "flags": [

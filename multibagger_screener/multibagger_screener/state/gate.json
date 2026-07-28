@@ -1,10 +1,10 @@
 {
- "generated": "2026-07-27 15:53",
+ "generated": "2026-07-28 10:45",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 0.0,
  "deadline": "2026-12-31",
- "days_to_deadline": 156,
+ "days_to_deadline": 155,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -50,23 +50,23 @@
   "expectancy_r": null
  },
  "legacy": {
-  "n": 167,
-  "n_qualifying": 121,
-  "n_unsized": 25,
-  "expectancy_r": -0.17,
+  "n": 173,
+  "n_qualifying": 136,
+  "n_unsized": 27,
+  "expectancy_r": -0.232,
   "median_age_days": 12,
   "age_matched_reference_r": 0.533,
   "required_expectancy_r": 0.2665,
-  "median_r": -0.114,
-  "sum_r": -20.62,
-  "win_rate_pct": 35.5,
-  "hit_stop_pct": 12.0,
-  "best_trade_share_pct": 9.8,
-  "best_r": 2.22,
+  "median_r": -0.167,
+  "sum_r": -31.57,
+  "win_rate_pct": 24.3,
+  "hit_stop_pct": 13.7,
+  "best_trade_share_pct": 12.0,
+  "best_r": 2.62,
   "worst_r": -3.85,
-  "signal_basis_return_pct": -25.78,
+  "signal_basis_return_pct": -39.47,
   "first": "2026-07-07",
-  "last": "2026-07-27"
+  "last": "2026-07-28"
  },
  "extended": {
   "n": 0,
@@ -97,56 +97,64 @@
  },
  "benchmark": {
   "sym": "MOMENTUM100",
-  "ret_pct": null,
-  "why": "window too short",
+  "ret_pct": 0.1,
+  "first": 67.27,
+  "last": 67.34,
+  "from": "2026-07-27",
+  "to": "2026-07-28",
+  "sessions": 2,
   "label": "Momentum-quality ETF (MidSmall 400)",
   "note": "Nifty MidSmallcap400 Momentum Quality 100 ETF \u2014 the investable alternative to running this system."
  },
  "benchmark2": {
   "sym": "NIFTY50",
-  "ret_pct": null,
-  "why": "window too short",
+  "ret_pct": -0.04,
+  "first": 23995.95,
+  "last": 23985.35,
+  "from": "2026-07-27",
+  "to": "2026-07-28",
+  "sessions": 2,
   "label": "NIFTY 50"
  },
  "benchmark_context": {
   "3m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": 3.76,
-    "first": 64.83,
-    "last": 67.27,
-    "from": "2026-04-27",
-    "to": "2026-07-27",
+    "ret_pct": 3.62,
+    "first": 64.99,
+    "last": 67.34,
+    "from": "2026-04-28",
+    "to": "2026-07-28",
     "sessions": 66
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -0.4,
-    "first": 24092.7,
-    "last": 23995.95,
-    "from": "2026-04-27",
-    "to": "2026-07-27",
+    "ret_pct": -0.04,
+    "first": 23995.7,
+    "last": 23985.35,
+    "from": "2026-04-28",
+    "to": "2026-07-28",
     "sessions": 63
    }
   },
   "12m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": 8.75,
+    "ret_pct": 8.86,
     "first": 61.86,
-    "last": 67.27,
+    "last": 67.34,
     "from": "2025-07-28",
-    "to": "2026-07-27",
-    "sessions": 248
+    "to": "2026-07-28",
+    "sessions": 249
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -2.78,
+    "ret_pct": -2.82,
     "first": 24680.9,
-    "last": 23995.95,
+    "last": 23985.35,
     "from": "2025-07-28",
-    "to": "2026-07-27",
-    "sessions": 245
+    "to": "2026-07-28",
+    "sessions": 246
    }
   }
  },
