@@ -1,0 +1,8 @@
+{
+  "_comment": "Press/trading names that differ from the registered name in universe.csv. Without an entry the relevance test scores that company's news 0 and the name goes dark on its card. Only names EVIDENCED in real fetched headlines are listed - a guessed alias creates false matches, which is the failure this whole layer exists to stop. Keys beginning with _ are ignored. Add a symbol when a card reads 'no news' for a company you know is in the papers.",
+  "SHRIPISTON": ["SPR Auto Technologies"],
+  "ASTERDM": ["Aster DM Quality Care"],
+  "IKS": ["Inventurus Knowledge Solutions"],
+  "DIACABS": ["Diamond Power Infra", "Diamond Power Infrastructure"],
+  "NAM_INDIA": ["Nippon Life India Asset Management"]
+}

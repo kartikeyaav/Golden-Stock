@@ -1971,7 +1971,7 @@ data/news_sources.py          where headlines come from: nightly sweep of 10 tie
                               filings archive) + per-company Google News. GDELT implemented but OFF
                               (429s every attempt); BSE API dropped (returns no records)
 news_archive.csv              the tier-1 sweep archive, append-only, deduped by link
-state/company_aliases.json    press names that differ from universe.csv's registered name
+company_aliases.json          press names that differ from universe.csv's registered name
                               (SHRIPISTON trades as SPR Auto) — without these the name goes dark
 news_engine_report.md         the measurements, the before/after table, and what was tested and
                               rejected. Read this before touching the news layer

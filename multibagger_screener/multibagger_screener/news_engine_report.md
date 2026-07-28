@@ -152,7 +152,7 @@ data/news_radar.py             taxonomy fixes that benefit BOTH paths: tax/court
                                actions now classify (they did not before)
 config.py  NewsQualityConfig   source tiers, lemma lexicons, event materiality,
                                story-clustering knobs, weak-solo tokens
-state/company_aliases.json     press names that differ from the registered name
+company_aliases.json           press names that differ from the registered name
 tests/fixtures/news_corpus.json  216 hand-labelled headlines
 tests/make_news_fixture.py     rebuilds the fixture; carries the label revision log
 tests/eval_news_nlp.py         the ruler: old vs new, precision/recall/F1

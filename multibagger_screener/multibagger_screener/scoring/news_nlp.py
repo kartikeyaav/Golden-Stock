@@ -358,7 +358,10 @@ _COMMON_ENGLISH = {
 }
 
 
-_ALIAS_PATH = os.path.join(ROOT, "state", "company_aliases.json")
+# Reference data, NOT derived state: it sits beside universe.csv at the
+# project root because state/ is gitignored, and an alias file the cloud
+# runner never receives is an alias file that does not exist.
+_ALIAS_PATH = os.path.join(ROOT, "company_aliases.json")
 _ALIASES: dict[str, list[str]] | None = None
 
 
