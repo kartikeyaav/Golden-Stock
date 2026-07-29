@@ -30,6 +30,82 @@ Minor shifts: AMBER BROKEN->WATCH, DEVYANI BROKEN->WATCH, LALPATHLAB WATCH->EXTE
 
 _News moves attention, never entries — trades stay technical._
 
+## AI analyst verdicts
+
+### THANGAMAYL
+VERDICT: SKIP
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Card's own entry plan already vetoes this trade (14% ATR stop > 12% hard cap) — no valid mechanical entry exists regardless of story quality.
+- Q1 PAT +85% YoY headline is real, but QoQ tells the opposite story: gross margin fell 11.39%→9.81%, PAT down 40% sequentially — market's 10% lower-circuit reaction is pricing the trend, not the headline.
+- Governance is clean: promoters confirmed no new FY26 share encumbrances, no SEBI action found, no pledge — this is a demand-shock story, not a fraud/leverage story.
+
+RISKS (max 2 bullets):
+- Structural, not one-off headwind: import duty jumped 6%→15% plus INR depreciation is causing customers to actively postpone gold purchases expecting further USD-gold declines — this directly compresses Q2 volumes too, it isn't a base-effect blip.
+- West Asia conflict is suppressing NRI/expat remittance-driven gold buying, a second-order demand channel specific to this business that the keyword scan wouldn't catch — adds to near-term uncertainty on when volumes normalize.
+
+CHECKED: tradebrains.in and businesstoday.in Q1 result breakdowns, scanx.trade/BSE promoter-encumbrance disclosures, SEBI compliance filings.
+CHANGES MY MIND: Q2 results showing gross margin recovering toward ~11%+ and sequential volume growth resuming, confirming the duty-hike/postponement effect was transitory rather than a multi-quarter demand air-pocket.
+
+Sources:
+- [Thangamayil Jewellery Plummets 10% Despite Q1 PAT Surges 85% YoY Due to Margin Pressure](https://tradebrains.in/thangamayil-jewellery-stocks-plummets-10-despite-q1-pat-surges-85-yoy-to-85-cr-due-to-margin-pressure/)
+- [Why Thangamayil Jewellery shares plunged 10% after Q1 results](https://www.businesstoday.in/markets/stocks/story/why-thangamayil-jewellery-shares-plunged-10-after-q1-results-545898-2026-07-29)
+- [Thangamayil Jewellery promoters confirm no fresh share encumbrances in FY26](https://scanx.trade/stock-market-news/companies/thangamayil-jewellery-promoters-confirm-no-fresh-share-encumbrances-in-fy26/46120628)
+
+### BELRISE
+VERDICT: WAIT
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- No fresh pledge/SEBI/auditor red flags found beyond what the card already shows — governance is clean-ish, and the promoter stake drop (66.46%→61.14%) lines up with mechanical dilution from the just-closed QIP, not a stealth exit.
+- Real sector tailwind confirmed: June 2026 2W industry volumes +21-22% YoY, EV 2W retail +75% YoY, with Belrise's actual customers (Bajaj, Hero, TVS) all posting double-digit growth — Belrise supplies steering columns/metal parts into exactly this demand, so the earnings inflection has a genuine driver, not a one-off.
+- But the QIP (₹1,700 Cr, 77.27M new shares at ₹220, allotted 2026-07-17) is only 12 days old and priced at a 4.68% discount to its own ₹230.79 floor — the plan's entry (~230.47) sits right at that freshly-issued institutional cost basis, creating overhang risk exactly where the machine itself flags no volume-breakout trigger and no VCP base.
+
+RISKS (max 2 bullets):
+- Fresh 77M-share QIP supply can cap upside near-term if any allottees flip; combined with "no VCP, no trigger" this is a trend-follow entry with weak edge confirmation.
+- Full-price valuation (PEG 2.62) plus 2126% 3-yr equity capital growth means this is a serial-dilution story — deleveraging is real but partly funded by issuing shares, not pure organic cash generation.
+
+CHECKED: Web search across business-standard/tradebrains/scanx/sharekhan for QIP details, pledge/SEBI news, promoter structure, and Rushlane/Autopunditz FADA June 2026 2W sales data.
+CHANGES MY MIND: A volume-confirmed breakout above 252 (52w high) with tight VCP forming post-QIP-digestion, or Q1 FY27 results (due imminently) showing margin expansion tied to EV 2W content-per-vehicle gains — either would upgrade this to BUY.
+
+### GOKULAGRO
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Governance clean: promoter (Kanubhai J. Thakkar) filed a formal "no encumbrance" declaration for FY26 (Reg 31(4) SEBI SAST, filed 3-Apr-2026); no pledge/SEBI action/auditor issue found anywhere in search.
+- Real driver, not a one-off: Q1 FY27 profit +72% YoY on only +7.4% revenue growth = margin expansion. This lines up with a genuine policy tailwind — govt keeps refined edible-oil import duty at 35.75% vs ~5.5% on crude, protecting the spread for domestic refiners/processors like Gokul; tariff values on CPO/RBD were hiked again in June 2026, reinforcing the gap.
+- Second-order tailwind confirmed: Gokul is also India's largest castor-oil exporter (India = ~84% of global castor exports, ~40% to China) — a diversified, structurally protected franchise, not a single-commodity bet.
+
+RISKS (max 2 bullets):
+- Duty-differential policy is a govt lever, not a permanent moat — a future cut to the refined-oil duty (as happened in 2024-25 relief cycles) would compress margins fast; this business has shown extreme quarter-to-quarter profit swings historically (+482%, then -74% in other years).
+- Card flags RS "improving: False" despite high percentile — momentum may already be decelerating; also not on this week's committee shortlist (not a veto, just a note of disagreement upstream).
+
+CHECKED: Screener.in/SEBI filing summaries, business-standard/scanx quarterly results history, gokulagro.com business mix, edible-oil tariff policy news (June 2026), castor oil export data.
+CHANGES MY MIND: Any reversal/cut of the refined-vs-crude edible oil duty differential, or a pledge/SEBI disclosure surfacing after this FY26 "no encumbrance" filing.
+
+### AVALON
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Story checks out independently: Q4 FY26 (reported May-26) PAT +69.5% YoY on record order book ₹2,196 Cr (+24.7% YoY), driven by a real aerospace/rail diversification pivot plus US business +59% YoY — not a one-off, this is the inflection the card flagged.
+- Second-order tailwind confirmed with a specific channel: the Feb-2026 US-India trade deal cut the reciprocal tariff from 25%→18% and scrapped the extra 25% punitive tariff on Indian electronics exports — direct margin/demand tailwind for Avalon given US = 62% of revenue.
+- No pledge/SEBI/auditor red flags found in searches beyond what the card already shows (governance score not a veto), but this wasn't independently confirmed against NSE filings tonight — treat as "no adverse news," not a clean bill.
+
+RISKS (max 2 bullets):
+- The 04-Aug board meeting is Q1 FY27 results (routine, not surprise) — but it lands 6 days out, before any breakout is even triggered. Entering a live-but-unconfirmed VCP right ahead of a binary print on a stock trading at P/E 99 is asking for a gap-risk entry the mechanical stop can't protect against pre-open.
+- Negative operating cash flow persists despite the deleveraging story (debt 342→213 Cr) — worth watching in the Aug-4 print, not yet a red flag but a discrepancy against the "turnaround" narrative.
+
+CHECKED: Web search — screener/company Q4 FY26 result coverage, EMS sector reports (KPMG/Motilal Oswal/HDFC Sec), US-India tariff news; no direct NSE filing or pledge-disclosure pull tonight.
+CHANGES MY MIND: A clean volume breakout through 1767.9 confirmed AFTER the 04-Aug print (i.e., earnings don't derail the base) would upgrade this to BUY at the mechanical (or halved) plan.
+
+
 ## Cards
 
 ```
