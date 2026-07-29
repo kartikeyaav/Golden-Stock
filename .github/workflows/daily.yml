@@ -110,6 +110,7 @@ jobs:
                    state/analyst_health.json state/news_radar.json state/regime.json \
                    state/news_pressure.json state/themes.json \
                    state/surveillance.json state/gate.json \
+                   state/telegram_sent.json \
                    daily_alerts.md \
                    announcements_archive.csv news_archive.csv \
                    positions.csv paper_positions.csv; do

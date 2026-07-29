@@ -31,6 +31,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 import time
 from datetime import datetime, timedelta
@@ -174,6 +175,55 @@ def load_state(path: str) -> dict | None:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     return None
+
+
+# Alert bullets look like "- **BUY CANDIDATE** [VALIDATED]: SYM  (WATCH -> ...)"
+# or "- **WATCH CLOSELY**: SYM ...". The news-radar bullets start "- + **SYM**",
+# which this deliberately does not match — news is not an alert.
+_ALERT_LINE_RX = re.compile(r"^- \*\*[A-Z][A-Z -]*\*\*", re.M)
+_RERUN_NOTE_PREFIX = "_Re-run at "
+
+
+def merge_with_todays_alerts(out_path: str, report: str) -> str:
+    """A same-day re-run that finds nothing must not erase the day's alerts.
+
+    daily_alerts.md is rebuilt from scratch every run, and the FIRST run of a
+    day consumes the state diff — so every LATER run legitimately finds zero
+    transitions, and used to overwrite the day's real output with "No
+    transitions among N watched names".
+
+    Seen live on 2026-07-28: the 10:43 run fired 12 alerts (four of which the
+    analyst turned into BUY verdicts) and two later runs replaced the file with
+    a no-op report. The journal kept the truth; the file a human reads — and
+    the one send_telegram.py pushes — did not.
+
+    Rule: if THIS report carries no alert lines but the file on disk is from
+    today and does, keep the file and stamp a re-run footnote on it. Any earlier
+    footnote is dropped first, so repeated re-runs cannot stack them.
+
+    The later run's news-radar and health sections are discarded along with its
+    empty alert list. That is the deliberate trade: those are regenerated from
+    scratch every run, the day's alerts and cards are not.
+
+    Returns `report` itself (identity, which the caller tests) when the normal
+    overwrite should happen.
+    """
+    if _ALERT_LINE_RX.search(report):
+        return report                       # this run has real content — it wins
+    try:
+        with open(out_path, "r", encoding="utf-8") as f:
+            prior = f.read()
+    except OSError:
+        return report                       # no file yet, or unreadable
+    if not prior.startswith(f"# Daily scan — {datetime.now():%Y-%m-%d}"):
+        return report                       # yesterday's file: a new day overwrites
+    if not _ALERT_LINE_RX.search(prior):
+        return report                       # quiet day followed by a quiet re-run
+    kept = [ln for ln in prior.rstrip().splitlines()
+            if not ln.startswith(_RERUN_NOTE_PREFIX)]
+    kept += ["", f"{_RERUN_NOTE_PREFIX}{datetime.now():%H:%M} found no new "
+                 f"transitions — the alerts above are today's and stand._"]
+    return "\n".join(kept) + "\n"
 
 
 def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
@@ -1044,10 +1094,16 @@ def main() -> None:
     if cards:
         report += "\n\n## Cards\n\n```\n" + "\n".join(cards) + "\n```\n"
     out_path = os.path.join(ROOT, "daily_alerts.md")
+    preserved = False
     if not _skip_write(os.path.basename(out_path)):
+        to_write = merge_with_todays_alerts(out_path, report)
+        preserved = to_write is not report
         with open(out_path, "w", encoding="utf-8") as f:
-            f.write(report)
+            f.write(to_write)
     print(report)
+    if preserved:
+        print("\n-> daily_alerts.md KEPT today's earlier alerts (this re-run "
+              "found no new transitions); footnote stamped instead")
     if DRY_RUN:
         print(f"\nDRY RUN complete — nothing written. Would have produced "
               f"{len(journal_rows)} journal row(s), "

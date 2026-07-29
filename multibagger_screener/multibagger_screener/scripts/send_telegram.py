@@ -16,16 +16,43 @@ never fails just because delivery isn't set up yet.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
 import urllib.parse
 import urllib.request
+from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_PATH = os.path.join(ROOT, "telegram_config.json")
 ALERTS_PATH = os.path.join(ROOT, "daily_alerts.md")
+# Remembers the last digest actually delivered. daily_scan now PRESERVES the
+# day's alerts when a later run finds nothing (rather than overwriting them with
+# "No transitions"), so without this marker every same-day re-run would push the
+# same alerts to the phone again — three times on 2026-07-28, had delivery been
+# configured. Committed by daily.yml: a marker the cloud cannot persist is a
+# marker that does not exist.
+SENT_PATH = os.path.join(ROOT, "state", "telegram_sent.json")
 MAX_LEN = 3800  # under Telegram's 4096 limit with margin
+
+
+def already_sent(digest_hash: str) -> bool:
+    try:
+        with open(SENT_PATH, "r", encoding="utf-8") as f:
+            return json.load(f).get("hash") == digest_hash
+    except (OSError, ValueError):
+        return False          # unreadable marker: send rather than go silent
+
+
+def record_sent(digest_hash: str) -> None:
+    try:
+        os.makedirs(os.path.dirname(SENT_PATH), exist_ok=True)
+        with open(SENT_PATH, "w", encoding="utf-8") as f:
+            json.dump({"hash": digest_hash,
+                       "sent_at": f"{datetime.now():%Y-%m-%d %H:%M}"}, f, indent=1)
+    except OSError as e:  # noqa: BLE001 — never fail delivery over bookkeeping
+        print(f"could not write {SENT_PATH} ({e}) — a re-run may resend")
 
 
 def load_config() -> tuple[str, str] | None:
@@ -231,9 +258,15 @@ def main() -> None:
         print(f"digest build failed ({e}) — falling back to full report")
         text = raw.replace("**", "").replace("```", "").replace("# ", "")
 
+    digest_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+    if already_sent(digest_hash):
+        print("identical digest already delivered — skipping (same-day re-run)")
+        return
+
     parts = chunk(text)[:2]  # digest fits one message; hard-cap at two
     for part in parts:
         send_message(token, chat_id, part)
+    record_sent(digest_hash)
     print(f"sent {len(parts)} message(s) to telegram")
 
 
