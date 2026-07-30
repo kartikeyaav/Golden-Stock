@@ -1,7 +1,7 @@
 {
- "generated": "2026-07-29 15:38",
+ "generated": "2026-07-30 15:24",
  "n_checked": 652,
- "n_flagged": 66,
+ "n_flagged": 67,
  "asm_total": 191,
  "syms": {
   "ACMESOLAR": {
@@ -482,7 +482,7 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "ST Stage I",
+     "detail": "LT Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     },
     {
@@ -547,6 +547,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "INOXGREEN": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
   },
   "JAIBALAJI": {
    "flags": [

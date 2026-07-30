@@ -1,5 +1,5 @@
 {
- "generated": "2026-07-29T15:38:54",
+ "generated": "2026-07-30T15:24:55",
  "themes": [
   {
    "key": "hospital",
@@ -8,9 +8,9 @@
    "n": 12,
    "breadth": 41.7,
    "rs_med": 78.2,
-   "ret3m": 20.6,
-   "news": 0.81,
-   "news_per_name": 0.067,
+   "ret3m": 18.5,
+   "news": 0.78,
+   "news_per_name": 0.065,
    "thin": false,
    "confirmed": [
     "VIJAYA",
@@ -19,62 +19,62 @@
     "KIMS",
     "METROPOLIS"
    ],
-   "heat": 84.7
+   "heat": 84.3
   },
   {
-   "key": "textiles",
-   "name": "Textiles & apparel PLI",
-   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
-   "n": 12,
-   "breadth": 33.3,
-   "rs_med": 84.6,
-   "ret3m": 11.4,
-   "news": 1.36,
-   "news_per_name": 0.113,
+   "key": "defelec",
+   "name": "Defence electronics & space",
+   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
+   "n": 7,
+   "breadth": 42.9,
+   "rs_med": 96.3,
+   "ret3m": 9.0,
+   "news": 0.62,
+   "news_per_name": 0.089,
    "thin": false,
    "confirmed": [
-    "ICIL",
-    "VTL",
-    "PGIL",
-    "WELSPUNLIV"
+    "ASTRAMICRO",
+    "DATAPATTNS",
+    "PARAS"
    ],
-   "heat": 76.0
+   "heat": 77.0
   },
   {
-   "key": "cdmo",
-   "name": "Pharma CDMO & API",
-   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
-   "n": 11,
-   "breadth": 27.3,
-   "rs_med": 82.8,
-   "ret3m": 13.3,
-   "news": 2.58,
-   "news_per_name": 0.234,
+   "key": "finfra",
+   "name": "Financial market infrastructure",
+   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
+   "n": 16,
+   "breadth": 37.5,
+   "rs_med": 84.5,
+   "ret3m": 7.5,
+   "news": 3.09,
+   "news_per_name": 0.193,
    "thin": false,
    "confirmed": [
-    "SHILPAMED",
-    "GRANULES",
-    "EMCURE"
-   ],
-   "heat": 74.3
-  },
-  {
-   "key": "water",
-   "name": "Water, environment & EPC",
-   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
-   "n": 6,
-   "breadth": 50.0,
-   "rs_med": 96.2,
-   "ret3m": 1.7,
-   "news": 1.36,
-   "news_per_name": 0.227,
-   "thin": false,
-   "confirmed": [
-    "KIRLOSENG",
-    "WABAG",
+    "ANANDRATHI",
+    "NUVAMA",
+    "NAM-INDIA",
+    "PRUDENT",
+    "KFINTECH",
     "IONEXCHANG"
    ],
-   "heat": 68.0
+   "heat": 71.7
+  },
+  {
+   "key": "datacentre",
+   "name": "Data centres & digital infrastructure",
+   "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
+   "n": 8,
+   "breadth": 12.5,
+   "rs_med": 99.5,
+   "ret3m": 11.7,
+   "news": 1.95,
+   "news_per_name": 0.243,
+   "thin": false,
+   "confirmed": [
+    "BHARTIHEXA"
+   ],
+   "heat": 66.3
   },
   {
    "key": "ems",
@@ -84,68 +84,50 @@
    "breadth": 22.2,
    "rs_med": 75.2,
    "ret3m": 14.7,
-   "news": 0.71,
-   "news_per_name": 0.079,
+   "news": 0.69,
+   "news_per_name": 0.076,
    "thin": false,
    "confirmed": [
     "AVALON",
     "SYRMA"
    ],
-   "heat": 67.7
+   "heat": 63.7
   },
   {
-   "key": "defelec",
-   "name": "Defence electronics & space",
-   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
-   "n": 7,
-   "breadth": 42.9,
-   "rs_med": 96.3,
-   "ret3m": 8.7,
-   "news": 0.0,
-   "news_per_name": 0.0,
+   "key": "textiles",
+   "name": "Textiles & apparel PLI",
+   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
+   "n": 12,
+   "breadth": 25.0,
+   "rs_med": 84.6,
+   "ret3m": 9.6,
+   "news": 1.31,
+   "news_per_name": 0.109,
    "thin": false,
    "confirmed": [
-    "ASTRAMICRO",
-    "DATAPATTNS",
-    "PARAS"
+    "ICIL",
+    "PGIL",
+    "WELSPUNLIV"
    ],
-   "heat": 67.3
+   "heat": 63.3
   },
   {
-   "key": "finfra",
-   "name": "Financial market infrastructure",
-   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
-   "n": 16,
-   "breadth": 31.2,
-   "rs_med": 84.5,
-   "ret3m": 7.1,
-   "news": 2.55,
-   "news_per_name": 0.159,
+   "key": "cdmo",
+   "name": "Pharma CDMO & API",
+   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
+   "n": 11,
+   "breadth": 27.3,
+   "rs_med": 82.8,
+   "ret3m": 6.6,
+   "news": 2.49,
+   "news_per_name": 0.227,
    "thin": false,
    "confirmed": [
-    "ANANDRATHI",
-    "NUVAMA",
-    "NAM-INDIA",
-    "PRUDENT",
-    "IONEXCHANG"
+    "SHILPAMED",
+    "GRANULES",
+    "EMCURE"
    ],
-   "heat": 64.3
-  },
-  {
-   "key": "datacentre",
-   "name": "Data centres & digital infrastructure",
-   "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
-   "n": 8,
-   "breadth": 12.5,
-   "rs_med": 99.5,
-   "ret3m": 10.9,
-   "news": 0.98,
-   "news_per_name": 0.122,
-   "thin": false,
-   "confirmed": [
-    "BHARTIHEXA"
-   ],
-   "heat": 56.3
+   "heat": 61.0
   },
   {
    "key": "defence",
@@ -154,9 +136,9 @@
    "n": 13,
    "breadth": 30.8,
    "rs_med": 95.4,
-   "ret3m": 1.9,
-   "news": 1.49,
-   "news_per_name": 0.115,
+   "ret3m": 4.5,
+   "news": 2.06,
+   "news_per_name": 0.159,
    "thin": false,
    "confirmed": [
     "ASTRAMICRO",
@@ -164,7 +146,24 @@
     "PARAS",
     "AZAD"
    ],
-   "heat": 53.7
+   "heat": 59.3
+  },
+  {
+   "key": "water",
+   "name": "Water, environment & EPC",
+   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
+   "n": 6,
+   "breadth": 33.3,
+   "rs_med": 96.2,
+   "ret3m": -1.5,
+   "news": 1.32,
+   "news_per_name": 0.22,
+   "thin": false,
+   "confirmed": [
+    "WABAG",
+    "IONEXCHANG"
+   ],
+   "heat": 55.0
   },
   {
    "key": "ev",
@@ -173,14 +172,32 @@
    "n": 10,
    "breadth": 10.0,
    "rs_med": 75.2,
-   "ret3m": 7.8,
-   "news": 1.68,
-   "news_per_name": 0.168,
+   "ret3m": 7.9,
+   "news": 2.25,
+   "news_per_name": 0.225,
    "thin": false,
    "confirmed": [
     "BELRISE"
    ],
-   "heat": 49.7
+   "heat": 52.7
+  },
+  {
+   "key": "capex",
+   "name": "Industrial capex & machinery",
+   "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
+   "n": 21,
+   "breadth": 14.3,
+   "rs_med": 77.9,
+   "ret3m": 1.7,
+   "news": 1.9,
+   "news_per_name": 0.09,
+   "thin": false,
+   "confirmed": [
+    "AZAD",
+    "LLOYDSENGG",
+    "GRINDWELL"
+   ],
+   "heat": 39.0
   },
   {
    "key": "chemicals",
@@ -189,35 +206,16 @@
    "n": 11,
    "breadth": 27.3,
    "rs_med": 82.5,
-   "ret3m": 3.4,
+   "ret3m": 1.6,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": false,
    "confirmed": [
-    "NAVINFLUOR",
+    "FLUOROCHEM",
     "AARTIIND",
     "EPL"
    ],
-   "heat": 42.3
-  },
-  {
-   "key": "capex",
-   "name": "Industrial capex & machinery",
-   "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
-   "n": 21,
-   "breadth": 19.0,
-   "rs_med": 77.9,
-   "ret3m": 1.4,
-   "news": 1.32,
-   "news_per_name": 0.063,
-   "thin": false,
-   "confirmed": [
-    "AZAD",
-    "LLOYDSENGG",
-    "AIAENG",
-    "GRINDWELL"
-   ],
-   "heat": 29.0
+   "heat": 39.0
   },
   {
    "key": "grid",
@@ -226,14 +224,14 @@
    "n": 14,
    "breadth": 7.1,
    "rs_med": 88.8,
-   "ret3m": 1.5,
-   "news": 1.04,
-   "news_per_name": 0.075,
+   "ret3m": -2.4,
+   "news": 2.01,
+   "news_per_name": 0.143,
    "thin": false,
    "confirmed": [
     "RRKABEL"
    ],
-   "heat": 23.3
+   "heat": 21.3
   },
   {
    "key": "renewables",
@@ -242,9 +240,9 @@
    "n": 14,
    "breadth": 7.1,
    "rs_med": 71.3,
-   "ret3m": -10.4,
-   "news": 8.54,
-   "news_per_name": 0.61,
+   "ret3m": -11.1,
+   "news": 8.26,
+   "news_per_name": 0.59,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
@@ -258,12 +256,12 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": 16.7,
-   "ret3m": -8.3,
-   "news": 0.48,
-   "news_per_name": 0.048,
+   "ret3m": -10.5,
+   "news": 1.47,
+   "news_per_name": 0.147,
    "thin": false,
    "confirmed": [],
-   "heat": 9.0
+   "heat": 14.0
   },
   {
    "key": "shipbuilding",
@@ -272,12 +270,12 @@
    "n": 5,
    "breadth": 0.0,
    "rs_med": 85.3,
-   "ret3m": -10.4,
+   "ret3m": -10.8,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": false,
    "confirmed": [],
-   "heat": 0.0
+   "heat": 3.0
   },
   {
    "key": "semis",
@@ -286,7 +284,7 @@
    "n": 3,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -10.0,
+   "ret3m": -11.6,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -300,9 +298,9 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 80.7,
-   "ret3m": -3.9,
-   "news": 1.49,
-   "news_per_name": 0.747,
+   "ret3m": -1.3,
+   "news": 1.45,
+   "news_per_name": 0.723,
    "thin": true,
    "confirmed": [],
    "heat": 0.0

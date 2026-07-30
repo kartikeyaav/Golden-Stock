@@ -17,3 +17,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-07-29,HSCL,BUY,entry,71,753.0,,[HSCL@2026-07-28 21:32] analyst BUY/MEDIUM/HALF PLAN
 2026-07-29,GRINDWELL,SKIP,entry,0,,,[GRINDWELL@2026-07-28 21:33] alert had no mechanical stop (risk engine skipped the plan)
 2026-07-29,TMB,BUY,entry,146,879.7,,[TMB@2026-07-28 21:34] analyst BUY/MEDIUM/FULL PLAN
+2026-07-30,GOKULAGRO,BUY,entry,585,225.4,,[GOKULAGRO@2026-07-29 21:34] analyst BUY/MEDIUM/FULL PLAN
