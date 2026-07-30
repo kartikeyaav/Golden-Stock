@@ -30,6 +30,7 @@ Minor shifts: AMBER BROKEN->WATCH, DEVYANI BROKEN->WATCH, LALPATHLAB WATCH->EXTE
 
 _News moves attention, never entries — trades stay technical._
 
+
 ## AI analyst verdicts
 
 ### THANGAMAYL
@@ -104,6 +105,75 @@ RISKS (max 2 bullets):
 
 CHECKED: Web search — screener/company Q4 FY26 result coverage, EMS sector reports (KPMG/Motilal Oswal/HDFC Sec), US-India tariff news; no direct NSE filing or pledge-disclosure pull tonight.
 CHANGES MY MIND: A clean volume breakout through 1767.9 confirmed AFTER the 04-Aug print (i.e., earnings don't derail the base) would upgrade this to BUY at the mechanical (or halved) plan.
+
+### SKYGOLD
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story is real, not a one-off: Q1FY26 PAT +105% YoY, revenue +56%, driven by genuine new B2B client wins (Reliance Retail, CaratLane, Aditya Birla, Pothys, PMJ) as large retailers outsource manufacturing — matches the earnings inflection, not accounting noise.
+- Equity capital +1309%/3yr is explained: legitimate ₹270 Cr QIP + promoter secondary sale to broaden institutional holding, not distress dilution. Debt/negative OCF is working-capital drag typical of hyper-growth gold manufacturers; company guides to positive FCF (₹180-225 Cr) in FY27. Pledge confirmed clean as of Apr 2026 — no veto triggers.
+- No fresh SEBI/auditor/promoter red flags beyond the known deepfake fraud (~₹11 Cr, subsidiary-level, "operations unaffected," immaterial vs ₹6,295 Cr FY26 revenue).
+
+RISKS (max 2 bullets):
+- Card itself flags no VCP base / no volume-breakout trigger — this is a trend-following entry with the mechanical edge not statistically established; weekly committee also excluded SKYGOLD from its picks.
+- Record-high gold prices are suppressing jewellery volumes nationally (-19% YoY) even as value rises, and the subsidiary fraud reveals a real (if small) internal-controls gap worth monitoring for recurrence.
+
+CHECKED: screener.in, scanx.trade/BSE-NSE disclosures, Business Standard, EquityBulls, World Gold Council India Q1 2026 report, GJEPC export data.
+CHANGES MY MIND: A second fraud/control lapse, any promoter pledge disclosure, or a client (Reliance/CaratLane/Aditya Birla) pulling back orders would flip this to SKIP.
+
+### WOCKPHARMA
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- No governance red flags: promoters declared zero new pledge/encumbrance for FY26, FY26 results cleared with a clean audit (MSKC & Associates), no SEBI action found.
+- Earnings inflection has a real driver, not a one-off: Q4 FY26 revenue +30% YoY, EBITDA margin 20.3% vs 10.7% a year ago, and Wockhardt just became the first Indian pharma company to get US FDA approval for a self-developed NCE (Zaynich, gram-negative antibiotic, up to $7bn peak opportunity, US launch targeted late 2026/early 2027) — commercial upside is still ahead, not yet in the base.
+- Sector tailwind: generics (Wockhardt's core export book) are exempted from Trump's 100% patented-drug tariff, with a confirmed zero-tariff window from Aug 1, 2026 for two years — near-term US-tariff overhang is off the table for now.
+
+RISKS (max 2 bullets):
+- Card's own trigger hasn't fired — this is a live VCP base awaiting a volume breakout above 1950, not a confirmed entry yet.
+- Card missed: 27th AGM on Aug 10, 2026 seeks approval for a ₹3,000 cr capital raise (QIP/other) — a dilution overhang landing right in the middle of the entry window; DII stake already trimmed 11.0%→9.24%, consistent with pre-positioning for this.
+
+CHECKED: WebSearch — screener.in/scanx/business-standard for pledge & auditor status, Wockhardt Q4FY26/FY26 results, FDA Zaynich approval coverage, AGM/QIP filing, US pharma tariff policy.
+
+CHANGES MY MIND: A confirmed volume breakout through 1950 with the QIP priced/sized modestly (not a large overhang) flips this to BUY at full plan; a QIP priced at a steep discount or sized near the full ₹3,000 cr cap would cut size to half plan regardless of the breakout.
+
+### GAEL
+VERDICT: WAIT
+CONVICTION: LOW
+SIZE: NONE
+
+WHY:
+- Real driver exists: GAEL commissioned a new maize-fermentation/ethanol plant (Dec 2025), riding India's E20 ethanol-blending push that's pulling maize supply toward distilleries — a genuine capacity + policy tailwind, not a pure one-off.
+- But the Q4 FY26 PAT surge (+324% YoY) was margin-driven, and independent analyst coverage flags operating margin swinging 4.92%→13.29% across five quarters as commodity-cycle volatility, not confirmed structural improvement — FY25 full-year profit was actually down 28% on falling sales.
+- Governance is clean: 0% promoter pledge confirmed, no SEBI action/auditor issue/litigation found beyond decades-old unrelated cases. The "equity +100%/3y" flag is just a 1:1 bonus (Mar 2024), not dilution.
+
+RISKS:
+- Board meets Aug 1 (2 days out) for Q1 FY27 results — binary event risk with zero volume-breakout confirmation; machine itself flags no VCP base and says the trade edge isn't established for this entry.
+- Independent analyst fair-value estimate (₹145-155) sits below the current ~₹164 entry, and ROCE has compressed from a 21% average to 8.5%, suggesting the good news may already be priced in.
+
+CHECKED: web search for pledge/SEBI/auditor/litigation news, MarketsMojo Q4 FY26 result analysis, bonus/split corporate-action history, India maize/ethanol-policy coverage.
+CHANGES MY MIND: Q1 FY27 results (Aug 1) holding >10% operating margin (not reverting toward FY25's 8.7%) plus a post-results volume breakout would upgrade this to BUY.
+
+### VTL
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Q1 FY27 results board meeting is today (2026-07-30) with concall tomorrow (7/31) — the card's earnings-inflection score (-21% YoY, decelerating) is last quarter's stale print; a live earnings surprise lands before any breakout could even trigger, so buying now means holding through a binary event on a not-yet-confirmed base.
+- Sector tailwind is real, not generic: cotton yarn spreads have widened from ~Rs95-100/kg to Rs120-125/kg, the cotton import duty exemption runs through Oct 31 2026, and ICRA sees spinner margins +150-200bps in FY27 — genuine input-cost/pricing driver, not a one-off.
+- Governance clean for VTL itself: promoters confirmed zero encumbrance for FY26 (filed April 2026). Note a pledge headline exists for "Vardhman Polytex" — a separate, related-family listed entity, not VTL — so it does not veto this card.
+
+RISKS (max 2 bullets):
+- Price hasn't triggered — still watching the 635.5 pivot per the card; no backtested entry exists yet, so there's nothing to size into regardless of thesis.
+- New US Textile TRQs let Bangladesh/Cambodia/Indonesia/Malaysia ship duty-free using US-grown cotton — a competitive channel that could cap realizations even if India's own tariff (~19% combined) held roughly steady.
+
+CHECKED: Web search — screener/scanx SEBI disclosures, sahi.com/scanx earnings calendar, ICRA/textilesresources spinning-margin outlook, tariffstool US tariff tracker.
+CHANGES MY MIND: A clean Q1 FY27 beat (margin expansion visible) plus a confirmed volume breakout above 635.5 post-results would flip this to BUY at full plan.
 
 
 ## Cards
