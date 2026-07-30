@@ -92,6 +92,57 @@ MAX_TURNS = 15          # cap the agentic research loop per dive: unbounded
 TIMEOUT_S = 600
 
 
+# Research-queue tiering (2026-07-30). The queue had TWO rankers, both sorting
+# on conviction alone, and conviction describes the COMPANY while the trigger
+# describes whether the entry this system's +1.61R was measured on actually
+# fired. On 2026-07-29 that cost the queue its most important name: GOKULAGRO,
+# the first VALIDATED entry in the system's history, ranked THIRD of four slots
+# at 67.3 behind two NO-VCP-BASE names at 67.8 and 67.5 — both of which the
+# analyst then rejected (SKIP and WAIT). Half a point of company score outranked
+# the only alert carrying the backtested trigger, and at 66 instead of 67.3 it
+# would have gone unresearched entirely.
+#
+# Trigger is now the primary key and conviction ranks WITHIN a tier. This is a
+# queue-only ordering, exactly like POOL_AGE_PENALTY_PER_DAY: it moves no
+# threshold, gates nothing, and never touches a journaled score.
+TRIGGER_RANK = {"VALIDATED": 0, "VALIDATED (EXTENDED)": 0,
+                "AWAITING TRIGGER": 1, "NO VCP BASE": 2}
+# An unlabelled alert shows no evidence of a base, so it sits with NO VCP BASE
+# and lets conviction break the tie — rather than below the measured-worst
+# cohort, which would be a claim the label's absence does not support.
+UNKNOWN_TRIGGER_RANK = 2
+
+
+def trigger_rank_of(sym: str) -> int:
+    """Trigger tier for a symbol, from its LATEST journal/entry_signals.csv row.
+
+    Latest rather than best: a name that validated three weeks ago and re-alerts
+    tonight with no base should queue on tonight's read, not its best-ever one.
+    """
+    return _entry_ranks().get(sym, UNKNOWN_TRIGGER_RANK)
+
+
+def _entry_ranks() -> dict[str, int]:
+    path = os.path.join(ROOT, "journal", "entry_signals.csv")
+    if not os.path.exists(path):
+        return {}
+    latest: dict[str, tuple[str, int]] = {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                sym, at = r.get("symbol"), r.get("logged_at") or ""
+                if not sym:
+                    continue
+                rank = TRIGGER_RANK.get((r.get("entry_status") or "").strip(),
+                                        UNKNOWN_TRIGGER_RANK)
+                cur = latest.get(sym)
+                if cur is None or at >= cur[0]:
+                    latest[sym] = (at, rank)
+    except OSError:
+        return {}
+    return {s: rank for s, (_, rank) in latest.items()}
+
+
 def _conviction_of(report: str, sym: str) -> float:
     """Pull the mechanical conviction score from a symbol's card, so the
     limited daily dives go to the STRONGEST names, not the alphabetically
@@ -116,7 +167,8 @@ def extract_candidates(report: str) -> list[str]:
         if s not in seen:
             seen.add(s)
             uniq.append(s)
-    uniq.sort(key=lambda s: _conviction_of(report, s), reverse=True)
+    # trigger tier first, conviction within it (see TRIGGER_RANK above)
+    uniq.sort(key=lambda s: (trigger_rank_of(s), -_conviction_of(report, s)))
     return uniq[:MAX_DIVES_PER_DAY]
 
 
@@ -173,11 +225,13 @@ def pending_pool(days: int = 5) -> list[str]:
                 if cur is None or t > cur:
                     verdict_at[r["symbol"]] = t
     now = datetime.now()
-    pend = [(conv - POOL_AGE_PENALTY_PER_DAY * max((now - t).days, 0), sym)
+    # trigger tier first (ascending), then age-discounted conviction within it
+    pend = [(trigger_rank_of(sym),
+             -(conv - POOL_AGE_PENALTY_PER_DAY * max((now - t).days, 0)), sym)
             for sym, (t, conv) in latest.items()
             if verdict_at.get(sym) is None or verdict_at[sym] < t]
-    pend.sort(reverse=True)
-    return [sym for _, sym in pend]
+    pend.sort()
+    return [sym for _, _, sym in pend]
 
 
 def card_from_details(symbol: str) -> str:

@@ -581,6 +581,34 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     }
 
 
+def save_trigger_state(tag_results: dict) -> None:
+    """Persist tonight's entry-fidelity read for EVERY watched name.
+
+    tag_stock already computes the backtested trigger for all ~611 names each
+    night (that was AUDIT_2026-07-25 F1's point) and, outside the handful that
+    alert, it was thrown away again — so the Screener tab had no trigger to sort
+    on and defaulted to ranking 611 names by conviction score. A human working
+    down that list is hand-executing fundamental-ranked entry selection, which
+    measured +0.38R against +1.27R ungated. The machine honoured the evidence
+    lock; the interface handed the reader a way around it.
+
+    Derived, not record: rebuilt from scratch every scan, and the auditable
+    per-alert copy still lives in journal/entry_signals.csv. Committed by
+    daily.yml all the same — a file the cloud cannot persist does not exist.
+    """
+    if _skip_write(f"{len(tag_results)} trigger state(s) -> state/trigger_state.json"):
+        return
+    path = os.path.join(ROOT, "state", "trigger_state.json")
+    triggers = {sym: {"status": entry_status_of(t),
+                      "pivot": t.get("pivot_price"),
+                      "vol_ratio": t.get("breakout_volume_ratio")}
+                for sym, t in tag_results.items()}
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"date": f"{datetime.now():%Y-%m-%d}", "triggers": triggers},
+                  f, default=str)
+
+
 def save_alert_details(new: dict) -> None:
     """Merge alert-time drawer details into state/alert_details.json.
     Entries expire after 30 days (the drawer only needs recent alerts;
@@ -1089,6 +1117,7 @@ def main() -> None:
     stamp_news_pressure(entry_signal_rows)
     entry_signals_append(entry_signal_rows)
     save_alert_details(alert_details)
+    save_trigger_state(tag_results)
 
     report = "\n".join(lines)
     if cards:

@@ -615,6 +615,19 @@ def build_payload() -> dict:
                     details[sym] = merged
         except ValueError:
             pass
+    # Tonight's entry-fidelity read for every watched name (state/trigger_state.json,
+    # written by daily_scan). Absent until the next scan runs, in which case every
+    # row reads "—" and the table falls back to a pure score sort — the behaviour
+    # this change replaces. Self-healing, no migration needed.
+    trig_by_sym = {}
+    tpath = os.path.join(ROOT, "state", "trigger_state.json")
+    if os.path.exists(tpath):
+        try:
+            trig_by_sym = {s: (d or {}).get("status") for s, d in
+                           json.load(open(tpath, encoding="utf-8")).get("triggers", {}).items()}
+        except ValueError:
+            trig_by_sym = {}
+
     ai_picks = {}
     ppath = os.path.join(ROOT, "ai_picks.json")
     if os.path.exists(ppath):
@@ -849,6 +862,12 @@ def build_payload() -> dict:
             "pgttm": f.get("profit_growth_ttm"),
             "focus": False,
         })
+
+    # Stamp the trigger on every screener row in ONE pass rather than in both
+    # loops above: this file has twice been bitten by parallel copies of the same
+    # field drifting apart, so there is exactly one place that sets it.
+    for r in screener_rows:
+        r["trig"] = trig_by_sym.get(r["sym"])
 
     # detail data: OHLC + fundamentals for shortlist + positions + paper book
     # + every recently-alerted name (details now includes alert_details.json)
@@ -2158,6 +2177,7 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
     <div style="max-height:66vh;overflow:auto">
     <table id="tbl"><thead><tr>
       <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹12,000 Cr) · Mid (&lt;₹50,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. UPTREND = healthy confirmed uptrend (act only on a fresh trigger). BASING = base forming, watch only. EXTENDED = ran too far, don't chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></th>
+      <th data-k="trig">Trigger<span class="info" data-tip="Whether the entry this system's +1.61R was measured on has actually fired. BUY TRIGGER FIRED = VCP pivot cleared on volume, the backtested entry. BASE READY = a valid base is live, pivot not yet cleared. NO BASE = trend-following read only, the weakest live cohort (-0.225R). This is the PRIMARY sort whatever column you click — conviction ranks companies within a trigger class, never across one, because fundamental-ranked entry selection measured +0.38R against +1.27R ungated.">?</span></th>
       <th data-k="rs">RS%<span class="info" data-tip="Relative Strength percentile (0-100): how this stock's 6-and-12-month return ranks vs the whole universe. 90 = stronger than 90% of stocks. High + rising is what breakouts need.">?</span></th><th data-k="score">Conviction<span class="info" data-tip="0-100 score from the 8 weighted questions (momentum, earnings, theme, smart money, financial strength, catalyst, governance, valuation), scored at the WEEKLY refresh. ° = technical-only read (fundamentals were unavailable, coverage below 60%). A stock's drawer shows its freshest, most-informed read, which can differ from this weekly number.">?</span></th><th data-k="arch">Archetype<span class="info" data-tip="The kind of multibagger story: Turnaround (loss→profit), Quality (steady compounder), Hyper-growth (fast revenue), Super-cycle (sector tailwind). A tag for context, not a gate.">?</span></th>
       <th data-k="roce">ROCE<span class="info" data-tip="Return on Capital Employed (%): profit the business earns per rupee of capital. Higher = more efficient. Above ~15% is generally healthy.">?</span></th><th data-k="pe">P/E<span class="info" data-tip="Price-to-Earnings: how many years of current profit you pay for the stock. High P/E = pricey OR fast-growing; on a fresh turnaround it can be meaningless (tiny recovering profit).">?</span></th><th data-k="pgttm">PAT TTM%<span class="info" data-tip="Profit-After-Tax growth over the trailing twelve months vs the prior year. The company's bottom-line momentum.">?</span></th>
       <th data-k="close">Price</th><th>120d<span class="info" data-tip="Price sparkline — the last 120 trading days at a glance.">?</span></th></tr></thead><tbody></tbody></table></div>
@@ -2986,9 +3006,25 @@ function fmtCr(v){if(v==null)return'';return v>=1000?'₹'+(v/1000).toFixed(1)+'
 /* rupees in Indian units: 1e5 = lakh, 1e7 = crore */
 function fmtINR(v){if(v==null)return'';const a=Math.abs(v);
  return a>=1e7?'₹'+(v/1e7).toFixed(v%1e7?1:0)+' Cr':a>=1e5?'₹'+(v/1e5).toFixed(v%1e5?1:0)+'L':'₹'+Math.round(v).toLocaleString('en-IN');}
+/* TRIGGER IS THE PRIMARY SORT, whatever column you click — same argument as the
+   Penny tab's tier sort. A conviction score describes the COMPANY; the trigger
+   describes whether the entry this system's +1.61R was measured on has actually
+   fired. Ranking 611 names by score alone invited the reader to work down the
+   list and hand-execute fundamental-ranked entry selection, which measured
+   +0.38R against +1.27R ungated (matrix v1, config D). So score now ranks WITHIN
+   a trigger class and never across one: a validated breakout at 55 sits above a
+   no-base name at 85, because that is the ordering the evidence supports.
+   Click any header to re-rank inside each class. */
+const TRIGT={'VALIDATED':0,'VALIDATED (EXTENDED)':0,'AWAITING TRIGGER':1,'NO VCP BASE':2};
+const strig=r=>r.trig==null?3:(TRIGT[r.trig]??3);
+const TRIGLBL={0:['BUY TRIGGER FIRED','var(--grn)','the backtested entry: VCP pivot cleared on volume'],
+ 1:['BASE READY, NO TRIGGER','#eab308','a valid VCP base is live but the pivot has not cleared on volume'],
+ 2:['NO BASE','#94a3b8','trend-following read only — no VCP base, the weakest live cohort (-0.225R)'],
+ 3:['NOT READ','#64748b','no trigger read yet — arrives with tonight’s scan']};
 function render(){const q=$('#q').value.toUpperCase(),ind=$('#find').value;
 let out=rows.filter(r=>activeTags.has(r.tag)&&activeTiers.has(r.tier)&&(!focusOnly||r.focus)&&(!ind||r.ind===ind)&&(r.sym.includes(q)||r.company.toUpperCase().includes(q)));
-out.sort((a,b)=>{let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;
+out.sort((a,b)=>{const t=strig(a)-strig(b);if(t)return t;
+let x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;
 if(typeof x==='string')return sortA?x.localeCompare(y):y.localeCompare(x);return sortA?x-y:y-x;});
 $('#count').textContent=out.length+' stocks';
 $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
@@ -2996,6 +3032,7 @@ $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td><span class="pill" style="border-color:${TIERC[r.tier]||'#475569'};color:${TIERC[r.tier]||'#94a3b8'}" title="${fmtCr(r.mcap)}">${r.tier||'—'}</span></td>
 <td class="dim">${esc(r.ind)}</td>
 <td><span class="pill" data-tip="${esc(tlt(r.tag))}" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${esc(tl(r.tag))}</span></td>
+<td><span class="pill" data-tip="${esc(TRIGLBL[strig(r)][2])}" style="border-color:${TRIGLBL[strig(r)][1]};color:${TRIGLBL[strig(r)][1]}">${TRIGLBL[strig(r)][0]}</span></td>
 <td class="mono">${r.rs??''}</td>
 <td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono"${r.cov!=null&&r.cov<60?` data-tip="Technical read — only ${r.cov}% of the 8 scored questions had data at the weekly refresh. Not comparable with full-coverage conviction scores."`:''}>${r.score}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</b></span>`:'<span class="dim">—</span>'}</td>
 <td class="dim wrap">${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
