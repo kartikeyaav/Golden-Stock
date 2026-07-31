@@ -35,7 +35,8 @@ import numpy as np
 import pandas as pd
 
 from config import RISK, TECHNICAL
-from scoring.technical_score import add_moving_averages, compute_atr, evaluate_vcp
+from scoring.technical_score import (add_moving_averages, compute_atr,
+                                     detect_contractions, evaluate_vcp)
 
 
 # ---------------------------------------------------------------------------
@@ -115,6 +116,72 @@ def generate_signals(df: pd.DataFrame, fundamental_score) -> pd.DataFrame:
     return df
 
 
+def generate_ipo_signals(df: pd.DataFrame, fundamental_score,
+                         min_bars: int = 60, base_window: int = 50,
+                         vol_multiple: float = TECHNICAL.breakout_volume_multiple,
+                         ) -> pd.DataFrame:
+    """PREREG_2026-07-30 A2 — the IPO-base entry class for names too young for
+    the trend template.
+
+    The 8-point template needs a 200-DMA plus a 20-day lookback on it and a
+    52-week range: ~260 bars. Names below that can NEVER qualify, which is the
+    measured IREDA / WAAREERTL blind spot, and the only path currently open to
+    them is the EPISODIC PIVOT class. Young listings are ~2x over-represented
+    among top movers (scoping table in the pre-registration).
+
+    So the trend gate is replaced — not removed — by a since-listing equivalent
+    of the same four ideas the template expresses: above the 50-DMA, the 50-DMA
+    rising, well off the base low, and near the highs. The base itself uses a
+    10-week window instead of 90 days. Everything downstream (ATR stop, the 12%
+    width cap, two-lot management, weekly core exit) is untouched, so an IPO
+    entry is managed exactly like any other.
+
+    Returns the same column contract as generate_signals, so run_backtest
+    consumes it without knowing the difference.
+    """
+    df = generate_signals(df, fundamental_score)
+    ma_s = f"sma_{TECHNICAL.ma_short}"
+
+    # since-listing extremes (expanding, not rolling — a 3-month-old stock has
+    # no 52-week range and pretending otherwise is how look-ahead creeps in)
+    low_all = df["low"].expanding(min_periods=20).min()
+    high_all = df["high"].expanding(min_periods=20).max()
+    ma50_rising = df[ma_s] > df[ma_s].shift(10)
+
+    trend_ok = (
+        (df["close"] > df[ma_s])
+        & ma50_rising
+        & (df["close"] >= low_all * (1 + TECHNICAL.min_pct_above_52w_low / 100))
+        & (df["close"] >= high_all * (1 - TECHNICAL.max_pct_below_52w_high / 100))
+    )
+    bar_no = pd.Series(range(len(df)), index=df.index)
+    trend_ok &= bar_no >= min_bars
+    df["trend_template_passed"] = trend_ok.fillna(False)
+
+    df["vcp_valid"] = False
+    df["pivot_price"] = np.nan
+    df["breakout_today"] = False
+    for i in df.index[df["trend_template_passed"]].tolist():
+        window_df = df.iloc[max(0, i + 1 - base_window): i + 1]
+        if len(window_df) < 20:
+            continue
+        cons = detect_contractions(window_df, lookback_days=base_window)
+        if len(cons) < TECHNICAL.vcp_min_contractions:
+            continue
+        depths = [c["depth_pct"] for c in cons[-TECHNICAL.vcp_min_contractions:]]
+        if not all(depths[j] > depths[j + 1] for j in range(len(depths) - 1)):
+            continue
+        if depths[0] > TECHNICAL.vcp_max_contraction_depth_pct:
+            continue
+        pivot = cons[-1]["peak_price"]
+        df.at[i, "vcp_valid"] = True
+        df.at[i, "pivot_price"] = pivot
+        av = df.at[i, "avg_vol_50"]
+        vol_ok = bool(av and df.at[i, "volume"] >= av * vol_multiple)
+        df.at[i, "breakout_today"] = bool(df.at[i, "close"] > pivot and vol_ok)
+    return df
+
+
 # ---------------------------------------------------------------------------
 # Trade & portfolio bookkeeping — two lots per trade
 # ---------------------------------------------------------------------------
@@ -144,6 +211,10 @@ class Trade:
     initial_stop: float
     lots: list[Lot]
     breakeven_moved: bool = False
+    # PREREG_2026-07-30 A1: which entry class opened this trade. Defaults to
+    # "breakout" so every pre-existing config reproduces byte-identically and
+    # the column is simply constant in historical runs.
+    entry_class: str = "breakout"
 
     @property
     def risk_per_share(self) -> float:
@@ -169,10 +240,16 @@ class Portfolio:
         self.closed_trades: list[Trade] = []
         self.equity_curve: list[dict] = []
 
+    def count_class(self, entry_class: str) -> int:
+        """Open trades opened by one entry class (PREREG_2026-07-30 A1)."""
+        return sum(1 for t in self.open_trades.values()
+                   if t.entry_class == entry_class)
+
     def open_position(self, name: str, date, entry_price: float, stop_price: float,
                       trading_fraction: Optional[float] = None,
                       risk_scale: float = 1.0,
-                      sizing_base: Optional[float] = None) -> Optional[Trade]:
+                      sizing_base: Optional[float] = None,
+                      entry_class: str = "breakout") -> Optional[Trade]:
         """Risk-normalized sizing: shares = risk budget / stop distance, then
         capped by max position value and available cash. Splits into lots.
         trading_fraction overrides the fixed config split (matrix v2 config F2);
@@ -211,7 +288,7 @@ class Portfolio:
 
         self.cash -= cost
         trade = Trade(name=name, entry_date=date, entry_price=entry_price,
-                      initial_stop=stop_price, lots=lots)
+                      initial_stop=stop_price, lots=lots, entry_class=entry_class)
         self.open_trades[name] = trade
         return trade
 
@@ -283,6 +360,28 @@ def run_backtest(
                                          # Default None = RISK.trailing_ma_period
                                          # (50), so history reproduces exactly.
                                          # Core lot is NOT parameterised.
+    anticipation_col: Optional[str] = None,  # PREREG_2026-07-30 A1: column marking
+                                         # pre-breakout anticipation entries. None
+                                         # (default) = single-class portfolio,
+                                         # byte-identical to every prior config.
+                                         # V3a measured this class in ISOLATION by
+                                         # overwriting breakout_today, which could
+                                         # not answer whether the sleeve cannibalises
+                                         # breakout slots — this hook exists to.
+    anticipation_risk_mult: float = 1.0,  # risk multiplier for sleeve entries only
+    anticipation_class_name: str = "anticipation",  # label for the second class;
+                                         # A2 reuses this hook with "ipo"
+    anticipation_priority: bool = True,  # True = breakouts fill slots first (A1:
+                                         # a +0.41R sleeve must never outrank a
+                                         # +1.67R breakout). False = both classes
+                                         # compete on the same volume ranking,
+                                         # which is correct for A2 where an IPO
+                                         # base IS a breakout, just on a shorter
+                                         # base than the template can measure.
+    anticipation_max_slots: Optional[int] = None,  # sleeve's OWN slot pool, in
+                                         # addition to RISK.max_open_positions.
+                                         # None = share the main pool (config A1_b,
+                                         # the cannibalisation case).
     risk_scale_fn=None,                  # sizing matrix v3 (progressive exposure):
                                          # callable(portfolio, date) -> float, multiplied
                                          # with the risk_scale series. Lets a config size
@@ -380,13 +479,36 @@ def run_backtest(
                         clot.weekly_breaks = 0
 
         # --- new entries: collect the day's candidates, strongest breakout first ---
-        if len(portfolio.open_trades) < RISK.max_open_positions:
+        # PREREG_2026-07-30 A1: the anticipation sleeve may hold its OWN slots
+        # (anticipation_max_slots) in addition to the breakout cap, so the loop
+        # can no longer gate on one global count. With anticipation_col=None
+        # (every historical config) breakout_room is exactly the old condition.
+        anti_slots = 0 if anticipation_col is None else (anticipation_max_slots or 0)
+        breakout_room = portfolio.count_class("breakout") < RISK.max_open_positions
+        anti_room = (anticipation_col is not None
+                     and (portfolio.count_class(anticipation_class_name) < anti_slots
+                          if anticipation_max_slots is not None
+                          else len(portfolio.open_trades) < RISK.max_open_positions))
+        if breakout_room or anti_room:
             candidates = []
             for name, d in indexed.items():
                 if name in portfolio.open_trades or date not in d.index:
                     continue
                 row = d.loc[date]
-                if not row["breakout_today"]:
+                is_breakout = bool(row["breakout_today"])
+                is_anti = bool(anticipation_col is not None
+                               and row.get(anticipation_col, False))
+                # a name qualifying on both is a breakout: the class with the
+                # measured +1.67R wins, and it must not consume a sleeve slot
+                if is_breakout:
+                    entry_class = "breakout"
+                elif is_anti:
+                    entry_class = anticipation_class_name
+                else:
+                    continue
+                if entry_class == "breakout" and not breakout_room:
+                    continue
+                if entry_class == "anticipation" and not anti_room:
                     continue
                 if row["fundamental_score"] < min_fundamental_score:
                     continue
@@ -420,7 +542,8 @@ def run_backtest(
                         trading_fraction = 0.4   # strong business -> core-heavy
                     elif pd.isna(fs) or fs < 0.45:
                         trading_fraction = 0.7   # weak/unknown -> trading-heavy
-                candidates.append((sort_key, name, entry_price, stop_distance, trading_fraction))
+                candidates.append((sort_key, name, entry_price, stop_distance,
+                                   trading_fraction, entry_class))
 
             scale = 1.0
             if risk_scale is not None:
@@ -430,17 +553,28 @@ def run_backtest(
             if risk_scale_fn is not None:
                 scale *= float(risk_scale_fn(portfolio, date))
 
-            candidates.sort(key=lambda c: c[0], reverse=True)
-            for _, name, entry_price, stop_distance, trading_fraction in candidates:
-                if len(portfolio.open_trades) >= RISK.max_open_positions:
-                    break
+            # breakouts first, then anticipation: a sleeve entry must never take
+            # a slot ahead of the entry class that carries the measured edge.
+            # Within a class the existing volume/fundamental ranking is unchanged.
+            candidates.sort(key=lambda c: ((c[5] != "breakout") if anticipation_priority else 0,
+                                           -c[0]))
+            for _, name, entry_price, stop_distance, trading_fraction, entry_class in candidates:
+                if entry_class == "breakout":
+                    if portfolio.count_class("breakout") >= RISK.max_open_positions:
+                        continue
+                elif anticipation_max_slots is not None:
+                    if portfolio.count_class(anticipation_class_name) >= anti_slots:
+                        continue
+                elif len(portfolio.open_trades) >= RISK.max_open_positions:
+                    continue        # A1_b: sleeve shares the main pool
                 sizing_base = (portfolio.total_equity(last_prices)
                                if size_on == "equity" else None)
-                trade = portfolio.open_position(name, date, entry_price,
-                                                entry_price - stop_distance,
-                                                trading_fraction=trading_fraction,
-                                                risk_scale=scale,
-                                                sizing_base=sizing_base)
+                trade = portfolio.open_position(
+                    name, date, entry_price, entry_price - stop_distance,
+                    trading_fraction=trading_fraction,
+                    risk_scale=(scale * anticipation_risk_mult
+                                if entry_class == anticipation_class_name else scale),
+                    sizing_base=sizing_base, entry_class=entry_class)
                 if trade is not None:
                     last_prices[name] = entry_price
 
@@ -465,6 +599,7 @@ def run_backtest(
             denom = lot.shares * t.risk_per_share
             rows.append({
                 "name": t.name, "lot": lot.lot_type,
+                "entry_class": t.entry_class,
                 "entry_date": t.entry_date, "entry_price": t.entry_price,
                 "exit_date": lot.exit_date, "exit_price": lot.exit_price,
                 "exit_reason": lot.exit_reason,

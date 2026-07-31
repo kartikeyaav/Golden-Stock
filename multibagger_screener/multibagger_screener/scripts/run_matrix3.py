@@ -46,7 +46,8 @@ TRADES_DIR = os.path.join(ROOT, "matrix_trades")
 
 
 def anticipation_mask(df: pd.DataFrame, bench: pd.DataFrame,
-                      fund: pd.Series | None) -> pd.Series:
+                      fund: pd.Series | None,
+                      fund_min: float = ANTICIPATION_FUND_MIN) -> pd.Series:
     """Vectorized weekly anticipation trigger mapped onto daily rows.
     True only on the week-end row where all conditions first hold."""
     d = df.set_index("date")
@@ -77,7 +78,7 @@ def anticipation_mask(df: pd.DataFrame, bench: pd.DataFrame,
         f = fund.copy()
         f.index = pd.to_datetime(f.index)
         fund_wk = f.reindex(wk_close.index, method="ffill")
-        trigger = trigger & (fund_wk >= ANTICIPATION_FUND_MIN)
+        trigger = trigger & (fund_wk >= fund_min)
 
     # weekly trigger -> the matching daily week-end row
     daily = pd.Series(False, index=d.index)
