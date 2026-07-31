@@ -1,8 +1,8 @@
 {
- "generated": "2026-07-30 15:24",
+ "generated": "2026-07-31 15:31",
  "n_checked": 652,
  "n_flagged": 67,
- "asm_total": 191,
+ "asm_total": 186,
  "syms": {
   "ACMESOLAR": {
    "flags": [
@@ -482,7 +482,7 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "LT Stage I",
+     "detail": "LT Stage IV",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     },
     {
@@ -554,10 +554,15 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "EQ",
+   "series": "BE",
    "worst": "BAND 5%"
   },
   "JAIBALAJI": {
@@ -662,18 +667,6 @@
    "series": "BE",
    "worst": "ASM"
   },
-  "BECTORFOOD": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "OSWALPUMPS": {
    "flags": [
     {
@@ -743,6 +736,18 @@
    "band": 5.0,
    "series": "BE",
    "worst": "BAND 5%"
+  },
+  "SMLMAH": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
   },
   "SAATVIKGL": {
    "flags": [
@@ -863,14 +868,14 @@
   "THANGAMAYL": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "TRIVENI": {
    "flags": [
