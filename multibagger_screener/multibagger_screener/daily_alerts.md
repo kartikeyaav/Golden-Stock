@@ -34,6 +34,131 @@ Minor shifts: CANFINHOME ANTICIPATION->WATCH, CREDITACC EXTENDED->WATCH, DATAPAT
 
 _News moves attention, never entries — trades stay technical._
 
+
+## AI analyst verdicts
+
+**BHEL** — analyst unavailable (timed out after 600s) — review the card manually before acting
+### KIRLOSENG
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story checks out: 192MW HyperNext hyperscale data-centre order (Jun 2026, KOEL's first entry into that segment) plus Rs 1,400cr Kagal HHP capacity expansion are real drivers behind the earnings inflection — powergen segment +32% YoY, not a one-off.
+- Governance clean and better than the card assumed: promoters (Atul/Rahul Kirloskar) confirm zero pledge for FY26; no SEBI action or auditor issue found. The long-running Kirloskar family trademark suit was resolved in KOEL's favor (SC, Jan 2026) and is not a going-concern risk.
+- Debt rise is capex-funded (net debt ₹4,063cr vs ₹3,768cr, financing Rs 1,400cr+700cr expansion), not distress — consistent with the card's already-discounted financial_strength_trend score.
+
+RISKS (max 2 bullets):
+- Q1 FY27 results land Aug 6, 2026 — right in the window where the VCP pivot (2298) could resolve, adding binary earnings-gap risk to a breakout entry.
+- KOEL is a new entrant challenging Cummins India's ~80% share of the data-centre genset segment; one order proves the door is open, not that KOEL can scale share there.
+
+CHECKED: WebSearch across screener/business-standard/whalesbook/tijorifinance for pledge/SEBI/auditor status, HyperNext order details, capex/debt trend, Cummins competitive position, and Kirloskar trademark litigation status.
+CHANGES MY MIND: A Q1 FY27 miss or guidance cut on the HHP/data-centre ramp on Aug 6 would kill the thesis before the trigger even prints — wait for that print if entry hasn't triggered by then.
+
+### WOCKPHARMA
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Card is explicitly pre-trigger ("awaiting trigger," pivot 1950 not yet cleared) — no valid entry exists yet regardless of story quality.
+- Story checks out as real, not a one-off: Zaynich (cefepime/zidebactam) got US FDA approval in May 2026, first India-origin novel molecule so approved, targeting US launch late 2026/early 2027 with $1.5bn peak-sales potential — this is the actual driver behind the OPM 9%→23% expansion (mix-shift to high-margin novel antibiotics), not accounting noise.
+- Governance clean on the surface: no new promoter pledge in FY26, clean/unmodified FY26 audit opinion, no active SEBI enforcement found; historical USFDA warning letters (Ankleshwar/Waluj/Morton Grove) are all 2016–2017 vintage, no fresh 2025–26 FDA action surfaced.
+
+RISKS (max 2 bullets):
+- Missed by the card: board has cleared a ₹3,000 cr capital-raise enabling resolution (equity/convertibles/QIP) going to shareholder vote at the AGM on Aug 10, 2026 — real dilution risk landing just days after this alert, right as the base is resolving.
+- US generic-drug tariffs are 0% through July 2028 (no near-term headwind), but this removes a tailwind narrative too — Zaynich thesis rests on branded/patented approval economics, not generics, so tariff news is a non-factor either way; don't let it inflate conviction.
+
+CHECKED: Web search — business-standard, screener.in-linked coverage, scanx.trade, prnewswire/FDA approval release, americanbazaaronline, businesstoday, tipranks, theprint (tariffs).
+CHANGES MY MIND: A confirmed volume breakout above 1950–1960 with the Aug 10 capital-raise vote resolved cleanly (no surprise pricing/quantum) would upgrade this to full-plan BUY.
+
+### ALIVUS
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE (no trigger yet — resume mechanical plan only if 1163.3 breaks on volume)
+
+WHY (max 3 bullets):
+- Story checks out as structural, not a one-off beat: Q1 FY27 revenue was flat-to-up YoY (+6.4%) with GPL (legacy captive Glenmark business) down QoQ on normal seasonality, while non-GPL/CDMO grew 26.5% YoY and gross margin expanded 510bps — consistent with the post-Nirma pivot away from captive GPL volume toward higher-margin CDMO, backed by real capacity expansion (1424→2650 KL by FY28).
+- Sector tailwind is real and the card's theme map missed it: India API/CDMO names are benefiting from an active China+1 reshoring wave, which is the specific transmission channel for this name's non-GPL growth, not generic sector chatter.
+- Governance clean: promoter Nirma Ltd confirmed zero share encumbrance for FY26 (no pledge); FY26 statutory audit (Walker Chandiok & Co) carries an unmodified opinion. No SEBI action or auditor flag found.
+
+RISKS (max 2 bullets):
+- GPL-linked revenue (legacy related-party book) is still shrinking (-4.9% FY26) and remains a large chunk of the base — diversification is real but not yet complete, so headline growth stays lumpy quarter to quarter.
+- Earnings event (30-Jul) already fired and stock popped 7.3% on the news — the binary risk the card flagged has passed, but that also means the current price already embeds good news; wait for the VCP pivot (1163.3) to confirm demand before committing capital.
+
+CHECKED: WebSearch on Q1 FY27 results (Investing.com, IndianPharmaPost, MarketsMojo), promoter pledge filing (ScanX/Nirma), auditor status (BSE/NSE AGM filings), and India API/CDMO sector outlook (multiple industry sources).
+CHANGES MY MIND: A volume-confirmed close above 1163.3 pivot flips this to BUY at the mechanical plan size; a fresh GPL-related-party dispute or pledge disclosure would flip to SKIP.
+
+### BHEL
+VERDICT: WAIT
+CONVICTION: HIGH
+SIZE: NONE (no trigger yet)
+
+WHY:
+- Order book is real and record: ₹2.6L cr (+27% YoY), driven by confirmed EPC wins (NTPC Meja ₹21,000cr, DVC Durgapur, MUNPL) — genuine capex-driven turnaround, not accounting one-offs. Q1FY27 PAT ₹382-400cr vs Q1FY26 loss of ₹460cr confirms operating leverage, not a base-effect fluke.
+- Second-order tailwind confirmed, not generic: NTPC (BHEL's largest customer) posted highest-ever group capex (₹55,986cr FY26) and is tendering ~15GW more thermal capacity through FY27 — direct capex-cycle transmission, not sector fluff.
+- Promoter-stake drop (63.17→58.17%) is the Feb-2026 Government OFS divestment at ₹254 floor, already public/priced in — not a new governance flag. No SEBI action, auditor qualification, or pledge issue found anywhere in filings.
+
+RISKS:
+- Debt +50% over 3yr as order book scales 4x historical size — working-capital strain is a real risk if execution slips on Meja/Durgapur.
+- Card itself flags this as "awaiting trigger" — price is still below the 422.4 VCP pivot; no volume breakout yet, so the entry plan is unvalidated at current levels.
+
+CHECKED: BHEL NSE/BSE announcements, investor Q1FY27 release, Business Standard/Bajaj Broking order-book coverage, NTPC capex/PIB thermal-capacity disclosures, OFS coverage on promoter stake.
+
+CHANGES MY MIND: A confirmed volume breakout above 422.4 flips this to BUY (half or full plan per fixed stop); any NTPC capex pullback or Meja/Durgapur execution delay kills the thesis.
+
+### IFCI
+VERDICT: WAIT
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- No fresh SEBI action, auditor flag, or pledge found — promoter (Govt of India) holding stable at 72.57%, pledge not applicable to a sovereign owner, consistent with the card's unverified-zero governance score.
+- Setup itself is not live: card states "AWAITING TRIGGER" at pivot 74.1 — no confirmed volume breakout yet, so there is no valid mechanical entry to act on tonight regardless of conviction.
+- Board meets 2026-08-11 to approve Q1 FY27 results — a binary print lands just days after any near-term breakout, on top of an already-reported -87% YoY PAT decline and P/E of 112. That combination (earnings deceleration + froth + imminent print) makes this a bad moment to be sized in even if the pivot triggers first.
+
+RISKS (max 2 bullets):
+- Earnings inflection story is unverified — no order book/pricing/capacity driver found for a recovery; the "inflection" the machine scored is trailing and weak (TTM 8% vs 3yr 42%), and the next data point (Aug 11) could confirm further deceleration.
+- IFCI carries a chronic, headline-driven privatization/strategic-sale overhang (SHCIL/NSE stake sales in past cycles) that can whipsaw the stock independent of fundamentals; no active deal found now, but the risk is structural to the name.
+
+CHECKED: Web search across business-standard, screener.in, trendlyne, DIPAM, univest for SEBI/pledge/promoter news, Q1 FY27 status, and disinvestment status (no site-specific fetch needed — no primary filing had new material info).
+CHANGES MY MIND: A confirmed volume breakout through 74.1 that holds after the Aug 11 results print, with the print itself showing a real sequential/YoY earnings recovery rather than a continued PAT decline.
+
+### WELCORP
+VERDICT: BUY
+CONVICTION: HIGH
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Order book confirmed by independent sources (Business Standard, EquityBulls, DSIJ): record ₹25,750cr as of 27 Jul 2026, split between a ₹960cr coated-pipe order from the Little Rock, Arkansas mill and ~₹1,400cr of India-origin export orders booked earlier in July — matches the committee thesis exactly.
+- Zero promoter pledge confirmed (not just "unflagged") and promoter holding stable at 49.73%; Q1 FY27 results independently corroborate the card's earnings inflection: revenue +15% YoY, PAT +199% YoY to ₹1,048cr — real, order-execution-driven, not a one-off.
+- Second-order nuance the committee missed: the newest ₹960cr order is sourced from the US-based Little Rock mill (backed by a $150m LSAW expansion, on top of an earlier $100m HFIW expansion there) — US-manufactured pipe is not exposed to Section 232 import duties, so the tariff risk is concentrated only in the India-origin ~₹1,400cr slice, not the whole book. This is a mitigant, slightly favorable vs. the committee's blanket tariff risk framing.
+
+RISKS (max 2 bullets):
+- Section 232 (50% duty) still bites the India-origin export orders specifically; HRC/steel input-price swings remain a live margin risk on contract execution (unhedged pass-through timing).
+- Earnings growth is decelerating (TTM 42% vs 3yr avg 119%) — order book derisks revenue visibility through FY27-28 but doesn't guarantee margin trajectory.
+
+CHECKED: WebSearch across Business Standard, EquityBulls, DSIJ, TipRanks, TradingView, Trendlyne, MarketsMojo, Arkansas EDC/local news — order book, pledge status, Q1 FY27 results, Little Rock expansion, no SEBI/litigation/auditor hits found.
+CHANGES MY MIND: Any promoter pledge filing, a SEBI/auditor action, or evidence the India-origin order slice gets re-routed/cancelled due to Section 232 cost pass-through failing with customers.
+
+### CGCL
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection is genuine and broad-based, not a one-off: consolidated PAT +102% YoY, NII +79%, AUM +62% to ₹40,112 Cr, cost-to-income improved to 44.2% from 49.4% QoQ — driven by scale, not accounting items.
+- Asset quality is improving across every segment that matters: GNPA 1.02%/NNPA 0.56%; MSME GNPA down to 3.1% from 4.3%; housing GNPA down to 1.2%; gold loan GNPA down to 0.3%. Only construction finance ticked up slightly (0.5%→0.7%), immaterial.
+- Second-order tailwind is real and specific: national gold-loan AUM up ~105% YoY (NBFC gold loans +70% YoY) on high gold prices and formalization — directly benefits CGCL's aggressive gold-loan branch build-out (targeting 1,000 branches). No pledge on promoter shares (0.00%), no SEBI action, no auditor flag found.
+
+RISKS (max 2 bullets):
+- Machine's own read flags no VCP/volume-breakout trigger — this is a trend-following entry only, +1.27R edge not established; technical quality is weaker than a standard setup.
+- Sector-wide stress is building in unsecured MSME/small-ticket LAP (industry-level, not CGCL-specific yet) — worth watching if it migrates into CGCL's book next quarter.
+
+CHECKED: Screener.in/Trendlyne shareholding (pledge), NSE filings, Investing.com Q1FY27 concall transcript, Business Standard/ScanX earnings coverage, industry gold-loan/NBFC sector data.
+CHANGES MY MIND: Any signs unsecured-MSME stress migrating into CGCL's book, or a volume-confirmed base forming that upgrades the technical trigger.
+
+
 ## Cards
 
 ```
