@@ -353,6 +353,13 @@ class NewsQualityConfig:
         "order win": 0.5, "expansion": 0.45, "approval": 0.45,
         "M&A/JV": 0.4, "rating upgrade": 0.3, "buyback/bonus": 0.3,
         "fund raise": 0.35,
+        # added 2026-08-02. A committed spend is real but it is money going
+        # OUT, so it sits below an order win; deleveraging is the Suzlon
+        # signature; a partnership is the lowest positive class in the table
+        # on purpose — an MoU is a statement of intent, not revenue, and
+        # scoring it like a contract is how a press-release pipeline gets
+        # mistaken for a business.
+        "capex/investment": 0.4, "deleveraging": 0.35, "partnership": 0.2,
         "distress": 0.6, "regulatory action": 0.55, "pledge": 0.5,
         "management exit": 0.35, "rating downgrade": 0.4, "regulatory letter": 0.35,
     })
@@ -376,6 +383,20 @@ class NewsQualityConfig:
     feed_stale_days: int = 7
     archive_retention_days: int = 120
 
+    # How many articles per company survive the FETCH. This was 20, applied
+    # by RECENCY before anything judged importance — so on exactly the
+    # heavily-covered names where real news is most likely, two thirds of
+    # what the feed had already returned was discarded unread. Measured
+    # 2026-08-02 across five live names: 42 whole stories were being dropped
+    # past the cut, including "HFCL to Invest Rs 950 Crore in Optical Fibre
+    # Cable Production", "Welspun Corp Bags Pipeline Orders" and "Granules
+    # secures sole First-to-File status".
+    #
+    # Nothing downstream inflates on volume — retellings collapse into one
+    # story and the catalyst saturates — so the only cost was CPU, and the
+    # co-mention prefilter in news_nlp.count_other_companies took a read from
+    # 66 ms to 1.2 ms. Reading all 60 costs less than reading 20 used to.
+    fetch_articles_per_company: int = 60
     catalyst_half_life_days: float = 14.0
     # abnormal coverage: a name suddenly in the news more than it usually is.
     # Capped small - this is an attention proxy, not a direction.

@@ -77,15 +77,33 @@ def fetch_announcements(force: bool = False) -> list[dict]:
     return items
 
 
+# A prefix test against a short or empty name matches things it should not.
+# Every string starts with "", so ONE archive row whose RSS <title> was empty
+# ("Ekalavya Foundation has informed the Exchange regarding 'Resignation of
+# Chief Compliance Officer'") attached itself to all 651 companies and took a
+# filing slot on every card in the system — found 2026-08-02 when the same
+# unrelated filing showed up under both Shilpa Medicare and Syrma SGS. The
+# same floor the radar's match_symbol already uses.
+_MIN_PREFIX = 6
+
+
+def _same_company(norm: str, target: str) -> bool:
+    if not norm or not target:
+        return False
+    if norm == target:
+        return True
+    if len(norm) < _MIN_PREFIX or len(target) < _MIN_PREFIX:
+        return False
+    return norm.startswith(target) or target.startswith(norm)
+
+
 def announcements_for(company_name: str) -> list[dict]:
     """Filings in the current feed matching one company (normalized name)."""
     target = _normalize_company(company_name)
     if not target:
         return []
     return [a for a in fetch_announcements()
-            if a["company_norm"] == target
-            or a["company_norm"].startswith(target)
-            or target.startswith(a["company_norm"])]
+            if _same_company(a["company_norm"], target)]
 
 
 # ---------------------------------------------------------------------------
@@ -133,8 +151,7 @@ def archived_for(company_name: str, days: int = 7) -> list[dict]:
     out = []
     with open(_ARCHIVE_PATH, "r", encoding="utf-8", newline="") as f:
         for row in csv.DictReader(f):
-            norm = row.get("company_norm", "")
-            if not (norm == target or norm.startswith(target) or target.startswith(norm)):
+            if not _same_company(row.get("company_norm", ""), target):
                 continue
             try:
                 d = datetime.fromisoformat(row["date"])

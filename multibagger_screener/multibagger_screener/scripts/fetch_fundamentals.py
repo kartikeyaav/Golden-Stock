@@ -52,6 +52,26 @@ def _yoy_quarter(row: list | None):
     return row[-1], row[-5]
 
 
+def _yoy_streak(row: list | None) -> int | None:
+    """How many consecutive quarters, counting back from the newest, beat the
+    same quarter a year earlier.
+
+    YoY rather than sequential, because Indian quarterly results are strongly
+    seasonal and a Q1-vs-Q4 comparison mostly measures the calendar. None
+    means the series is too short to answer — which must stay distinguishable
+    from a streak of 0, since absent data has repeatedly been scored in this
+    codebase as if it were good news."""
+    if not row or len(row) < 5:
+        return None
+    n = 0
+    for i in range(len(row) - 1, 3, -1):
+        a, b = row[i], row[i - 4]
+        if a is None or b is None or not a > b:
+            break
+        n += 1
+    return n
+
+
 def flatten(symbol: str, d: dict) -> dict:
     tr = d.get("top_ratios", {})
     growth = d.get("growth", {})
@@ -64,6 +84,8 @@ def flatten(symbol: str, d: dict) -> dict:
     opm_row = q.get("OPM %") or q.get("Financing Margin %")
     np_latest, np_yoy = _yoy_quarter(np_row)
     opm_latest, opm_yoy = _yoy_quarter(opm_row)
+    np_streak = _yoy_streak(np_row)
+    opm_streak = _yoy_streak(opm_row)
 
     borrowings = bs.get("Borrowings") or []
     equity_cap = bs.get("Equity Capital") or []
@@ -99,6 +121,16 @@ def flatten(symbol: str, d: dict) -> dict:
                            and np_yoy < 0 <= np_latest),
         "opm_latest_q": opm_latest,
         "opm_yoy_q": opm_yoy,
+        # HOW MANY consecutive quarters have beaten their year-ago quarter.
+        # The screener page carries 13 quarters and the scoring only ever
+        # looked at the newest one, so a name improving every quarter for two
+        # years and a name with a single bounce answered the 20-weight
+        # earnings question identically. Measured across 291 names: 62 have a
+        # streak of 0, 46 have exactly 1, and 49 have 9 or more — a large
+        # spread the score was blind to. It is also the guard Design Law #5
+        # asks for by name ("2+ consecutive improving quarters").
+        "np_yoy_streak": np_streak,
+        "opm_yoy_streak": opm_streak,
         "debt_cr": debt_now,
         "debt_3y_ago_cr": borrowings[-4] if len(borrowings) >= 4 else None,
         "debt_to_equity": round(debt_now / net_worth, 2) if debt_now is not None and net_worth > 0 else None,
@@ -218,10 +250,46 @@ def main() -> None:
     with open(os.path.join(root, "state", "parser_health.json"), "w", encoding="utf-8") as fh:
         _json.dump(health, fh, indent=1)
 
+    # ------------------------------------------------------------------
+    # FLATTEN WIDER THAN WE FETCH.
+    #
+    # This file is rewritten from scratch every run, and it used to carry
+    # only the names this run fetched — the current CONFIRMED/ANTICIPATION
+    # shortlist plus recent alerts. Everything else in the focus list was
+    # dropped from it and therefore scored fundamentals-blind, even though
+    # its screener page was sitting in fundamentals_cache/ already parsed.
+    # Measured 2026-08-02: all 280 focus names had real cached data and only
+    # 152 reached the CSV, so 128 names were being scored as if nothing were
+    # known about them. That is the shape this codebase keeps rediscovering —
+    # absent data does not score low here, it silently drops a name out of
+    # the scored set.
+    #
+    # Fetching stays scoped (that is the network cost and the politeness
+    # budget). Flattening is a local read of a file we already have, so it
+    # covers the whole focus list. Each row carries its own fetched_at, so a
+    # 3-week-old read is visible as one rather than passing for tonight's.
+    have = {r["symbol"] for r in rows}
+    from_cache = 0
+    try:
+        focus_syms = pd.read_csv(os.path.join(root, "focus_list.csv"))["symbol"].tolist()
+    except (OSError, KeyError):
+        focus_syms = []
+    for sym in focus_syms:
+        if sym in have:
+            continue
+        cached = load_company(sym)
+        if cached is None or not has_real_data(cached):
+            continue
+        rows.append(flatten(sym, cached))
+        have.add(sym)
+        from_cache += 1
+
     df = pd.DataFrame(rows)
     out = os.path.join(root, "fundamentals_flat.csv")
     df.to_csv(out, index=False)
     print(f"\n{len(df)} companies -> {out}  ({len(failures)} failed: {failures})")
+    print(f"  {len(df) - from_cache} fetched/refreshed this run, "
+          f"{from_cache} more flattened from cache to keep the focus list scorable")
 
     print("\n=== VETO REPORT ===")
     any_veto = False

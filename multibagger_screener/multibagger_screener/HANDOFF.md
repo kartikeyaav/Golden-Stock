@@ -1608,6 +1608,147 @@ rediscovered and overrated a third time.
 
 ---
 
+## 3T. Six user-reported defects, and what each one turned out to be (2026-08-02)
+
+The user reported six things. Every one had a real mechanism behind it, and two
+of them were bugs of the same family this project keeps rediscovering: a fix
+that never reached the stored record, and a filter that discarded data before
+anything judged it.
+
+**(1) "the news and filings are showing same news multiple times."** Two
+separate causes. NSE publishes most filings TWICE — once under the company's
+free-text description and once under its own XBRL category, with different links
+— and one earnings call arrives under five labels across four days ("Schedule of
+meet", "Audio Recording/Video Recording", "Link of Recording", "Transcript",
+"Transcripts - earnings or quarterly calls"). `phase_c` deduped on
+`subject[:80]`, which only ever caught byte-identical repeats. Now deduped by
+EVENT: a normalized gist with the preamble and XBRL tail stripped, token overlap
+≥0.7, same event class on the same day, or a shared filing TOPIC inside 6 days
+(`_FILING_TOPICS`: concall, results, board notice, credit rating, management
+change). A declared topic beats a token-overlap guess, so "Board Meeting to be
+held on the 5th to consider results" no longer merges with "Outcome of Board
+Meeting - results". Live: WELCORP 7 filings → 3 events, SHILPAMED 5 → 2.
+**On the headline side the user found the sharper case** (HONASA, four outlets
+on one CEO appointment): the story clustering was ALREADY correct — all four in
+one story with novelty decayed 1.00/0.45/0.20/0.09, which is why the score never
+double-counted them — and only the DISPLAY ignored it. No ML layer was needed or
+added; the panel now shows one line per story with "— 6 outlets: ET BrandEquity,
+ET Retail, …", because corroboration is evidence rather than noise. Two
+clustering fixes fell out of it: Google News appends " - Publisher" to every
+title and those tokens were diluting the overlap between retellings, and one
+appointment gets a dozen barely-overlapping write-ups so "management change"
+joined results and broker-call as a repeatable topic (requiring a ROLE, not just
+the verb — "exit" is what a fund does to a position, and on the verb alone a
+Helios Flexicap reshuffle merged into the CEO story).
+
+**(2) "it is missing important news, so the fetch has to be improved."**
+Correct, and the mechanism was precise: `google_news` truncated to the 20 most
+recent articles **by recency, before anything judged importance**, while the
+feed was returning up to 72. Measured across five live names, **42 whole stories
+were being discarded past the cut** — including "HFCL to Invest Rs 950 Crore in
+Optical Fibre Cable Production", "Welspun Corp Bags Pipeline Orders" and
+"Granules secures sole First-to-File status". The cap is now
+`NEWSQ.fetch_articles_per_company = 60` and it is a safety ceiling, not an
+editorial decision. This was affordable because `count_other_companies` was
+prefiltered (a candidate whose first token is nowhere in the headline cannot
+match, so 652 regex searches became a handful): **read_article went 66 ms →
+1.2 ms**, verified identical on 1,200 real headlines. Reading 60 articles now
+costs a third of what reading 20 used to. The card also ranks what it shows by
+weight instead of fetch order — the Rs 960 Cr Welspun order used to sit fourth
+behind two auto-generated metric pages and a multibagger listicle.
+
+**(3) "HFCL showed scores until yesterday and today some are empty."** The
+weekly `shortlist_details.json` was built ONLY for names tagged CONFIRMED or
+ANTICIPATION. HFCL was CONFIRMED last week and is not this week, so it left the
+file — **27 names did** — and the dashboard, finding no weekly read, fell back
+to its alert blob of 2026-07-17 whose five fundamental dimensions are null.
+HFCL's complete fundamentals were in `fundamentals_flat.csv` the whole time. A
+tag is a statement about the CHART; it was never a reason to stop knowing what a
+company earns. Two fixes: `run_shortlist` now scores every focus name that has a
+fundamentals row (news enrichment stays on the ranked shortlist — that is the
+network cost), and `fetch_fundamentals` **flattens wider than it fetches** —
+all 280 focus names had real cached screener data and only 152 were reaching the
+CSV, so 128 names were being scored as if nothing were known about them, for
+zero network. Scored names went 99 → 280, median coverage 75%, six names below
+60%. HFCL now reads 84.9 at 75% coverage.
+
+**(4) "!! [NSE FILING] 'sebi': Pursuant to Regulation 32(6)…"** The 2026-07-28
+fix was real and the code was correct — but `state/alert_details.json` is a
+RECORD, frozen the night each name alerted and kept 30 days, and it still held
+34 of those false positives. **A fix that does not reach the stored record is
+not visible to the person reading the record.** `scripts/heal_alert_details.py`
+re-judges stored blobs with today's classifier using the text they already carry
+(no network): 49 red flags → 7, all genuine, survivors relabelled under current
+event names, filings re-deduped and re-ordered, every blob stamped
+`news.v = phase_c.NEWS_SCHEMA`. Two false positives that SURVIVED re-judging
+were then fixed properly in the engine: "Federal Bank of India Combats Card and
+Merchant Fraud" (the company is fighting the harm, not causing it) and "Penalty
+over minimum bank balance not consideration: Karnataka high court" (a state
+institution absorbing a company's name token — Karnataka Bank, Gujarat Gas,
+Punjab & Sind Bank all collide this way).
+
+**(5) "the positive negative sentiment parameter also has to be improved."**
+Four measured defects. **A decimal point inside a rupee figure ended the metric
+window**: `[^.;|]{0,28}` between the financial noun and its direction word was
+terminated by the "." in "Rs 1,476.77 crore", so *every* Moneycontrol quarterly
+print read as neutral in BOTH directions — 11 of the 2,669 headlines on disk,
+all tier-1, all in the most decision-relevant class. Three event classes were
+missing entirely and are now in the shared taxonomy: **capex/investment**
+(Paras Defence's Rs 6,200 crore semiconductor plan carried the largest figure on
+its card and classified as nothing), **deleveraging** ("Granules India turns
+debt-free"), and **partnership** (deliberately the lowest-materiality positive
+class — an MoU is intent, not revenue; the pattern demands an action verb so the
+exchange's bare "Agreements,Contracts,Arrangements,MOU-XBRL" category label, 44
+of them in the archive, stays unclassified). Also: **"Bagging/Receiving of
+orders/contracts" is NSE's own label for an order win** and neither `\bbags?\b`
+nor `\breceives?\b` reaches the gerund, so every first-party order filing
+classified as nothing; and pharma First-to-File / exclusivity now classifies as
+an approval. The frozen 216-headline corpus stayed at 96.8% exact with zero sign
+flips throughout — it contains none of these classes, which is why they were
+missed. 12 new trap tests plus `tests/test_filings_card.py` (18 checks).
+
+**(6) "the episodic buy trigger fired for a stock which rose more than 10% —
+does it still have momentum?"** Answered from this project's own evidence rather
+than changed. The live case is SMLMAH on 2026-07-30: gap **+10.0%** on **19.5x**
+average volume, closing above its open. `ep_matrix_report.md` tested exactly
+this: EP_A (gap≥8%, vol≥3x) 83 positions +1.377R, and the STRICTER **EP_C
+(gap≥10%, vol≥4x) scored HIGHER per trade at +1.868R with P2 +1.033R** — the
+dose-response runs opposite to the intuition, bigger gaps did better. Combined
+with the VCP class, MAR went 2.70 → 3.58 with LOWER drawdown. The risk is
+bounded structurally, not by a percentage: the stop is the gap-day LOW (SMLMAH
+8.4%, inside the 12% Design Law #7 cap, which skips the ones that are too far
+gone). This is also the third time extension has been tested here —
+`PREREG_2026-07-29.md` X1 found distance above the 30-week MA, prior 6-month
+return and 52-week position all correlate **positively** with forward R
+(+0.214/+0.158/+0.223), and the mildest usable filter destroyed 56–66% of all
+profit. Honest caveat: exactly ONE EP has fired live so far, so the claim rests
+on the 83-position backtest, not the forward record.
+
+**(7) The scoring audit** (`SCORING_AUDIT_2026-08-02.md`) covers all 8
+dimensions against O'Neil/Minervini/Qullamaggie/QGLP. Two corrections shipped —
+earnings_inflection gained a persistence term and the Design Law #5 "2+
+consecutive improving quarters" guard it had only half-implemented (the screener
+page carries 13 quarters; the score read one, so a name improving every quarter
+for two years and a name with a single bounce answered the heaviest question
+identically), and valuation_sanity's turnaround exemption now guards the PEG
+branch too (HFCL: P/E 52.6 against 1% three-year growth scored "full price, PEG
+52.60" while its TTM growth was 1591%). Combined effect on the live shortlist:
+mean **0.86 points**, 8 of 99 names moving >2, one top-10 change. **No weight
+was changed** — the audit's loudest finding is that theme_tailwind carries
+weight 15 while its nearest tested analogue (matrix v2 config E, sector gating)
+was REJECTED at +0.22R against +1.27R, and moving a weight on an argument rather
+than a pre-registered test is the failure the evidence lock exists to prevent.
+Ranked queue for next pass is in the report's last section.
+
+**Also found and fixed while checking filings:** one archive row whose RSS
+`<title>` was empty gave `announcements_for`/`archived_for` a blank
+`company_norm`, and every string starts with `""` — so that single filing
+("Ekalavya Foundation … Resignation of Chief Compliance Officer") attached
+itself to **all 651 companies** and took a slot on every card in the system.
+Prefix matching now needs 6 characters on both sides.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri

@@ -64,15 +64,36 @@ def score_earnings_inflection(row: dict) -> tuple[float | None, str]:
     if np_latest is None or np_yoy is None:
         return None, "quarterly profit data missing"
 
+    streak = _num(row, "np_yoy_streak")
     notes = []
 
     # quarterly YoY momentum (winsorized)
     if np_yoy < 0 <= np_latest:
         margin_confirms = opm_now is not None and opm_yoy is not None and opm_now > opm_yoy
-        if margin_confirms:
+        # DESIGN LAW #5, which asks for "2+ consecutive improving quarters"
+        # and until 2026-08-02 was only half-implemented: the margin check was
+        # here, the persistence check was not, so a single quarter that
+        # happened to cross zero with a better margin scored the full 1.0 on
+        # the heaviest dimension. Measured across the 15 loss->profit names in
+        # the current file, 3 turn on exactly one quarter.
+        persistent = streak is not None and streak >= 2
+        if margin_confirms and persistent:
             qtr_component = 1.0
             notes.append("loss->profit swing CONFIRMED by margin expansion "
-                         f"(OPM {opm_yoy}->{opm_now}%)")
+                         f"(OPM {opm_yoy}->{opm_now}%) and {streak:.0f} "
+                         "consecutive improving quarters")
+        elif margin_confirms and streak is None:
+            # quarterly history unavailable. NOT the same as confirmed, and
+            # scoring it as confirmed is the shape that keeps biting here.
+            qtr_component = 0.7
+            notes.append("loss->profit swing margin-confirmed "
+                         f"(OPM {opm_yoy}->{opm_now}%) but the quarterly "
+                         "history needed to check persistence is missing")
+        elif margin_confirms:
+            qtr_component = 0.7
+            notes.append("loss->profit swing margin-confirmed "
+                         f"(OPM {opm_yoy}->{opm_now}%) but only {streak:.0f} "
+                         "quarter(s) of YoY improvement — one print, not a trend")
         else:
             qtr_component = 0.4
             notes.append("loss->profit swing NOT confirmed by margins — "
@@ -98,7 +119,28 @@ def score_earnings_inflection(row: dict) -> tuple[float | None, str]:
         accel_component, level_component = 0.5, 0.5
         notes.append("growth horizons incomplete")
 
-    score = 0.45 * qtr_component + 0.30 * accel_component + 0.25 * level_component
+    # PERSISTENCE (added 2026-08-02). O'Neil's C and A are two different
+    # questions — the current quarter, and whether the last several have been
+    # improving too — and this dimension only ever asked the first. The
+    # screener page carries 13 quarters; the score used one. Four consecutive
+    # improving quarters saturates it, because beyond a year the annual
+    # growth terms already say it.
+    #
+    # Missing history does not score neutral-and-included: it drops out and
+    # the other three components are renormalized, so a name with no
+    # quarterly series is neither flattered nor punished for it.
+    parts = [(0.45, qtr_component), (0.30, accel_component),
+             (0.25, level_component)]
+    if streak is not None:
+        persistence = _clip01(streak / 4.0)
+        parts = [(0.40, qtr_component), (0.25, accel_component),
+                 (0.20, level_component), (0.15, persistence)]
+        notes.append(f"{streak:.0f} consecutive quarter(s) above their "
+                     "year-ago level" if streak else
+                     "latest quarter did not beat its year-ago quarter")
+
+    total_w = sum(w for w, _ in parts)
+    score = sum(w * v for w, v in parts) / total_w
     return round(score, 3), "; ".join(notes)
 
 
@@ -204,6 +246,18 @@ def score_valuation_sanity(row: dict) -> tuple[float | None, str]:
             return 0.95, f"P/E {pe:.0f} cheaper than growth (PEG {peg:.2f})"
         if peg < 2.0:
             return 0.7, f"reasonable for growth (PEG {peg:.2f})"
+        # The froth exemption above P/E 60 was never extended to the PEG
+        # branch, and PEG uses the THREE-YEAR growth rate — which for a
+        # turnaround spans the loss years and comes out near zero, making the
+        # ratio explode. HFCL: P/E 52.6 against 3-year profit growth of 1%
+        # scored "full price, PEG 52.60" while its TTM growth was 1591% and
+        # its margin had gone -5% -> 22% over five quarters. That is the exact
+        # archetype this system hunts, penalised by a denominator drawn from
+        # the period it was recovering from (found 2026-08-02).
+        if inflection:
+            return 0.5, (f"PEG {peg:.2f} is drawn on 3-year growth that spans "
+                         "the loss period — not meaningful for a turnaround; "
+                         f"P/E {pe:.0f} on recovering earnings")
         return 0.45, f"full price (PEG {peg:.2f})"
     return 0.55, f"P/E {pe:.0f}, growth context missing"
 

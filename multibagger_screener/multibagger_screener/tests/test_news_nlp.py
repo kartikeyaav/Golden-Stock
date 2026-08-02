@@ -116,6 +116,77 @@ def test_reported_metric_up_is_news_but_share_price_up_is_not():
     assert tape.sentiment == 0 and not tape.scoreable
 
 
+@pytest.mark.parametrize("text,want", [
+    ("Granules India Consolidated June 2026 Net Sales at Rs 1,476.77 crore, "
+     "up 22.04% Y-o-Y", 1),
+    ("Granules India Standalone June 2026 Net Sales at Rs 801.88 crore, "
+     "down 1.03% Y-o-Y", -1),
+])
+def test_a_decimal_point_does_not_end_the_metric_window(text, want):
+    """THE 2026-08-02 miss. The metric windows scan [^.;|] between the
+    financial noun and its direction word so they cannot read a direction out
+    of the next sentence — and a rupee figure ended the window at its own
+    decimal point. That is the exact shape Moneycontrol publishes for every
+    company every quarter, from a tier-1 source, and it failed in BOTH
+    directions: 11 of the 2,669 headlines on disk read neutral for this
+    reason alone."""
+    r = read(text, "Granules India Ltd.", "GRANULES", source="Moneycontrol.com")
+    assert r.sentiment == want, r.why
+
+
+# ---------------------------------------------------------------------------
+# event classes added 2026-08-02, each from a live card that read as nothing
+# ---------------------------------------------------------------------------
+
+def test_a_committed_capex_is_an_event_not_a_shrug():
+    """"Paras Defence enters semiconductor packaging with Rs 6,200 crore plan"
+    carried the largest rupee figure on the whole card, matched no event
+    class, and so was scored at the unclassified default materiality."""
+    r = read("Paras Defence enters semiconductor packaging with Rs 6,200 crore "
+             "plan in MP", "Paras Defence and Space Technologies Limited",
+             "PARAS", mcap=12000)
+    assert r.event == "capex/investment"
+    assert r.sentiment == 1
+    assert r.amount_cr == 6200.0
+
+
+def test_turning_debt_free_is_positive_news():
+    r = read("Granules India turns debt-free in Q1FY27, sets peptide CDMO targets",
+             "Granules India Ltd.", "GRANULES", source="scanx.trade")
+    assert r.event == "deleveraging"
+    assert r.sentiment == 1
+
+
+def test_a_partnership_is_positive_but_the_lowest_positive_class():
+    """An MoU is a statement of intent, not revenue. It should read positive
+    and weigh less than an order of the same size, or a press-release
+    pipeline starts outranking a business."""
+    mou = read("Ashok Leyland partners with UCO Bank for vehicle finance",
+               "Ashok Leyland Limited", "ASHOKLEY", mcap=10000)
+    order = read("Ashok Leyland secures order worth Rs 500 crore",
+                 "Ashok Leyland Limited", "ASHOKLEY", mcap=10000)
+    assert mou.event == "partnership" and mou.sentiment == 1
+    assert mou.materiality < order.materiality
+
+
+def test_the_exchange_xbrl_category_label_is_not_a_partnership():
+    """"|SUBJECT: Agreements,Contracts,Arrangements,MOU-XBRL" is the FORM a
+    company filed, not something that happened. All 44 of them in the archive
+    must stay unclassified — matching them ranks companies by paperwork, the
+    same error that counted nine PDFs of one acquisition as nine events."""
+    pol, ev = classify_event(
+        "JAY JALARAM TECHNOLOGIES LIMITED has informed the Exchange regarding "
+        "|SUBJECT: Agreements,Contracts,Arrangements,MOU-XBRL")
+    assert ev is None, ev
+
+
+def test_a_term_loan_agreement_is_not_a_partnership():
+    pol, ev = classify_event(
+        "Company has executed a loan agreement with Tata Capital Limited "
+        "(lender) for Term Loan facility of Rs 100 Crore")
+    assert ev != "partnership"
+
+
 # ---------------------------------------------------------------------------
 # entity resolution
 # ---------------------------------------------------------------------------

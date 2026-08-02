@@ -42,11 +42,12 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 from datetime import datetime, timezone
 
 from config import CATALYST, NEWSQ
 from data.announcements_fetch import announcements_for, archived_for
-from data.news_radar import classify as classify_event
+from data.news_radar import NOISE_SKIP, classify as classify_event
 from data.news_sources import collect
 from scoring import news_nlp as N
 from scoring.conviction import Dimension
@@ -182,13 +183,7 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
         old = archived_for(company_name, days=7)
     except Exception:                              # noqa: BLE001
         old = []
-    seen_subjects: set[str] = set()
-    filings = []
-    for f in live + old:
-        key = f["subject"][:80]
-        if key not in seen_subjects:
-            seen_subjects.add(key)
-            filings.append(f)
+    filings = _dedupe_filings(live + old)
 
     # ---- red flags: the SHARED classifier, never substrings ---------------
     # One flag per STORY: the Sky Gold deepfake fraud was one event reported
@@ -207,9 +202,10 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
         red_flags.append(f"'{r.event or 'negative'}'{tag}: {r.text[:85]}")
     results_notices: list[dict] = []
     for f in filings:
-        pol, ev = classify_event(f["subject"])
-        if pol == "neg":
-            red_flags.append(f"[NSE FILING] '{ev}': {f['subject'][:90]}")
+        # the classification computed during dedupe — re-deriving it here is
+        # exactly how two implementations of one decision drift apart
+        if f["_polarity"] == "neg":
+            red_flags.append(f"[NSE FILING] '{f['_event']}': {f['subject'][:90]}")
         if _results_notice(f["subject"]):
             results_notices.append({"date": f.get("date"), "subject": f["subject"][:110]})
 
@@ -234,14 +230,15 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
             pos_flow += w
         elif r.sentiment < 0:
             neg_flow += w
-    # first-party filings count as a full-relevance tier-1 story
+    # first-party filings count as a full-relevance tier-1 story. Deduped by
+    # EVENT above, so NSE filing the same order win under both its free-text
+    # description and its XBRL category no longer counts the order twice.
     for f in filings:
-        pol, ev = classify_event(f["subject"])
-        if pol != "pos":
+        if f["_polarity"] != "pos":
             continue
         d = f.get("date")
         age = (datetime.now() - d).days if isinstance(d, datetime) else 3.0
-        pos_flow += (NEWSQ.event_materiality.get(ev, NEWSQ.default_materiality)
+        pos_flow += (NEWSQ.event_materiality.get(f["_event"], NEWSQ.default_materiality)
                      * _decay(age, NEWSQ.catalyst_half_life_days))
 
     # saturating: the tenth story about one company is worth less than the
@@ -264,8 +261,14 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
         "headline_count": len(reads),
         "trusted_count": sum(1 for r in scoreable if r.tier == 1),
         "scoreable_count": len(scoreable),
-        "headlines": [_as_card_headline(r) for r in reads[:8]],
-        "filings": filings[:5],
+        # RANKED, not fetch-ordered. The reading layer already computes how
+        # consequential each article is; the card was throwing that away and
+        # showing whatever arrived first, so a Rs 960 crore order sat fourth
+        # behind two auto-generated metric pages and a multibagger listicle,
+        # and anything past the eighth item was truncated away unseen.
+        "headlines": [_as_card_headline(r, others)
+                      for r, others in _display_stories(reads)[:8]],
+        "filings": [_as_card_filing(f) for f in filings[:5]],
         "themes": theme_names,
         "events": events,
         "red_flags": red_flags[:5],
@@ -287,7 +290,146 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
         "sources_ok": src_health.get("sources_ok", 0),
         "sources_tried": src_health.get("sources_tried", 0),
         "source_errors": src_health.get("errors", {}),
+        # the raw evidence behind catalyst_score, kept so the saturation
+        # constant can be recalibrated against real data instead of guessed
+        "pos_flow": round(pos_flow, 4), "neg_flow": round(neg_flow, 4),
     }
+
+
+# ---------------------------------------------------------------------------
+# filings: one EVENT per line, material ones first
+# ---------------------------------------------------------------------------
+
+# NSE publishes most filings TWICE — once under the company's own free-text
+# description and once under the exchange's structured XBRL category — with
+# different links, so nothing dedupes them by identity. On real cards that
+# rendered as:
+#
+#   "... about Transcript |SUBJECT: Analysts/Institutional Investor Meet"
+#   "... about Transcripts - earnings or quarterly calls |SUBJECT: ... A-XBRL"
+#   "... about Bagging/Receiving of orders/contracts  (Sub-para 4-Para B)"
+#   "... about Bagging/Receiving of orders/contracts"
+#
+# — one concall and one order win, shown as four lines. The old key was
+# subject[:80], which only ever caught byte-identical repeats.
+_PREAMBLE = re.compile(
+    r"^.{0,80}?\bhas (informed|submitted|intimated)\b.{0,40}?"
+    r"\b(?:about|regarding|to)\b\s*(?:the\s+)?", re.I)
+_XBRL_TAIL = re.compile(r"\|\s*subject\s*:.*$", re.I)
+_PARA_REF = re.compile(r"\(?\bsub-?para[^)]*\)?|\bpara [ab]\b|-\s*xbrl\b", re.I)
+
+
+def _filing_gist(subject: str) -> str:
+    """The filing stripped down to what actually happened: no "X Ltd has
+    informed the Exchange about", no XBRL category tail, no sub-para
+    references, no case or punctuation."""
+    t = _XBRL_TAIL.sub(" ", subject)
+    t = _PREAMBLE.sub("", t)
+    t = _PARA_REF.sub(" ", t)
+    t = re.sub(r"[^a-z0-9 ]+", " ", t.lower())
+    return " ".join(t.split())
+
+
+# The classes NSE files under many different labels for ONE underlying event.
+# A single earnings call arrives as "Schedule of meet", "Audio Recording/Video
+# Recording", "Link of Recording", "Transcript" and "Transcripts - earnings or
+# quarterly calls" across four days — five lines, one call, and no text
+# measure will ever join them because they share almost no words. A company
+# has one Q1 call, so they are one event by construction. The board-meeting
+# NOTICE is deliberately its OWN topic: "results are coming on the 5th" is a
+# different fact from "here are the results", and the first one is the
+# earnings-date discipline the cards are meant to carry.
+_FILING_TOPICS: list[tuple[str, "re.Pattern"]] = [
+    ("board notice", re.compile(r"\bboard meeting to be held\b|\bintimation of board meeting\b")),
+    ("concall", re.compile(r"\btranscripts?\b|\b(audio|video) recording\b|"
+                           r"\blink of recording\b|\bschedule of (meet|analysts)\b|"
+                           r"\b(analysts?|institutional investors?)[/ ]|\bcon\.? call\b|"
+                           r"\bearnings call\b|\binvestor meet\b")),
+    ("results", re.compile(r"\b(un)?audited (standalone and consolidated )?financial results\b|"
+                           r"\boutcome of board meeting\b|\bpress release for\b|"
+                           r"\binvestor presentation\b|\bnewspaper advertisement\b")),
+    ("credit rating", re.compile(r"\bcredit rating\b|\brating (action|rationale)\b")),
+    # One director leaving is filed as the event AND as the exchange's
+    # "Change in Directors/KMP/SMP/Auditor/RTA" category on the same day:
+    #   "... about Retirement of Mr. Sandeep Agrawal"
+    #   "... about Change in Directors/KMP/SMP/Auditor/RTA"
+    ("management change",
+     re.compile(r"\bchange in directors?\b|\bkmp\b|\bsmp\b|"
+                r"\b(resignation|retirement|appointment|cessation)\b"
+                r"[^|]{0,40}\b(director|kmp|auditor|officer|ceo|cfo|"
+                r"managing director|company secretary|chairman)\b|"
+                r"\b(director|auditor|ceo|cfo|company secretary)\b"
+                r"[^|]{0,40}\b(resign|retire|cease|appoint)")),
+]
+# how far apart two filings of one topic can sit and still be one event
+_TOPIC_WINDOW_DAYS = 6
+
+
+def _filing_topic(gist: str) -> str | None:
+    for name, rx in _FILING_TOPICS:
+        if rx.search(gist):
+            return name
+    return None
+
+
+def _filing_rank(f: dict) -> tuple:
+    """Material first, then newest. A card shows a handful of filings, and
+    letting the feed's own order decide which ones survive the cut is how
+    three concall notices pushed a Rs 960 crore order off the card."""
+    pol = f.get("_polarity")
+    band = 0 if pol in ("neg", "pos") else 1 if pol == "attn" else 2
+    d = f.get("date")
+    return (band, -(d.timestamp() if isinstance(d, datetime) else 0.0))
+
+
+def _dedupe_filings(raw: list[dict]) -> list[dict]:
+    """One line per EVENT, material events first.
+
+    Three ways to be the same event, in order of strength: the same gist, a
+    high token overlap on the gist, or the same event class on the same day
+    (which is what joins "Link of Recording" to "Audio Recording/Video
+    Recording"). Procedural boilerplate is not dropped — the radar's own
+    NOISE_SKIP marks it and it sorts last, so a quiet company still shows
+    something rather than looking like a failed fetch."""
+    out: list[dict] = []
+    for f in raw:
+        subject = f.get("subject") or ""
+        gist = _filing_gist(subject)
+        if not gist:
+            continue
+        pol, ev = classify_event(subject)
+        toks = {w for w in gist.split() if len(w) > 2}
+        day = f.get("date").date() if isinstance(f.get("date"), datetime) else None
+        top = _filing_topic(gist)
+
+        dup = False
+        for seen in out:
+            # An explicit topic beats a token-overlap guess. "Board Meeting to
+            # be held on 05-Aug to consider the Unaudited Financial Results"
+            # and "Outcome of Board Meeting - unaudited financial results"
+            # share almost every word and are two different facts.
+            if top and seen["_topic"] and top != seen["_topic"]:
+                continue
+            if gist == seen["_gist"]:
+                dup = True
+            elif toks and seen["_toks"] and (
+                    len(toks & seen["_toks"]) / min(len(toks), len(seen["_toks"])) >= 0.7):
+                dup = True
+            elif ev and ev == seen["_event"] and day and day == seen["_day"]:
+                dup = True
+            elif (top and top == seen["_topic"]
+                  and (day is None or seen["_day"] is None
+                       or abs((day - seen["_day"]).days) <= _TOPIC_WINDOW_DAYS)):
+                dup = True
+            if dup:
+                break
+        if dup:
+            continue
+        out.append({**f, "_gist": gist, "_toks": toks, "_event": ev,
+                    "_polarity": pol, "_day": day, "_topic": top,
+                    "_procedural": any(rx.search(gist) for rx in NOISE_SKIP)})
+    out.sort(key=_filing_rank)
+    return out
 
 
 def _results_notice(subject: str) -> bool:
@@ -305,7 +447,100 @@ def _abnormal_coverage(n_scoreable: int) -> float:
     return min(NEWSQ.volume_z_cap, 0.03 * (n_scoreable - 3))
 
 
-def _as_card_headline(r: N.Read) -> dict:
+# Bumped whenever a stored blob's MEANING changes, so a reader can tell a
+# current record from a legacy one. v3 = the 2026-08-02 pass: filings deduped
+# by event, headlines ranked by materiality, red flags from the shared
+# classifier only.
+NEWS_SCHEMA = 3
+
+
+def card_news_blob(e: dict) -> dict | None:
+    """The stored/displayed shape of an enrich() result.
+
+    ONE writer. This used to be built twice — once in daily_scan for alert
+    blobs and once in run_shortlist for the weekly read — and the two drifted:
+    the weekly copy predated the 2026-07-28 reading layer and silently dropped
+    relevance, kind, tier, novelty, the lead story and the filtered tally,
+    so the same stock rendered two different ways depending on which job wrote
+    its blob last. Same lesson as assign_arms and the SEBI classifier: two
+    implementations of one decision drift apart."""
+    if not e.get("ok"):
+        return None
+    return {
+        "v": NEWS_SCHEMA,
+        "count": e.get("headline_count", 0), "trusted": e.get("trusted_count", 0),
+        "scoreable": e.get("scoreable_count", 0), "stories": e.get("stories", 0),
+        "sentiment": e.get("sentiment", 0.0),
+        "sent_pos": e.get("sent_pos", 0), "sent_neg": e.get("sent_neg", 0),
+        "themes": e.get("themes", []), "events": e.get("events", []),
+        "red_flags": e.get("red_flags", []),
+        "top_story": e.get("top_story"), "dropped": e.get("dropped", {}),
+        "theme_note": e.get("theme_note", ""),
+        "filings": [{"d": f.get("d", ""), "t": f.get("t", ""),
+                     "event": f.get("event", ""), "pol": f.get("pol", ""),
+                     "procedural": f.get("procedural", False)}
+                    for f in e.get("filings", [])[:5]],
+        "headlines": [{k: v for k, v in h.items()
+                       if k in ("d", "t", "s", "tr", "ru", "sn", "rel",
+                                "kind", "tier", "ev", "nov", "amt", "why",
+                                "dupes", "also")}
+                      for h in e.get("headlines", [])[:8]],
+    }
+
+
+def _display_stories(reads: list[N.Read]) -> list[tuple[N.Read, list[N.Read]]]:
+    """ONE LINE PER STORY, best telling first.
+
+    The card used to print every headline it fetched, so four outlets
+    reporting one appointment rendered as four near-identical lines:
+
+        Honasa Consumer Elevates Shivang Jain As CEO Of BTM Ventures
+        Honasa Consumer Names Shivang Jain CEO of BTM Ventures
+        Honasa Consumer Appoints Shivang Jain as CEO of BTM Ventures to ...
+        Honasa Consumer appoints Shivang Jain CEO of BTM Ventures
+
+    The clustering that joins those was already right — assign_stories puts
+    all four in one story and decays their novelty 1.00 / 0.45 / 0.20 / 0.09,
+    which is why the SCORE never double-counted them. Only the display
+    ignored it. So this needs no new matching layer and no model: it needs
+    the panel to read the number the engine already computed.
+
+    Within a story the best telling wins (scoreable first, then weight, then
+    novelty — the earliest, most material, most credible version). The others
+    are not thrown away; they become the corroboration count, which is real
+    information: one outlet saying something is weaker evidence than four.
+
+    Ordering across stories: scoreable ahead of filtered, then weight, then
+    recency. Filtered stories keep their place at the bottom rather than
+    vanishing, so "3 headlines" stays legible as a judgement rather than
+    looking like a failed fetch."""
+    grouped: dict[str, list[N.Read]] = {}
+    for i, r in enumerate(reads):
+        grouped.setdefault(r.story or f"_solo{i}", []).append(r)
+
+    out: list[tuple[N.Read, list[N.Read]]] = []
+    for members in grouped.values():
+        best = max(members, key=lambda r: (r.scoreable, r.weight, r.novelty))
+        out.append((best, [m for m in members if m is not best]))
+
+    out.sort(key=lambda g: (0 if g[0].scoreable else 1,
+                            -g[0].weight,
+                            -(g[0].date.timestamp() if g[0].date else 0.0)))
+    return out
+
+
+def _as_card_filing(f: dict) -> dict:
+    """One filing in the shape its consumers expect, with the dedupe layer's
+    working keys dropped (they carry a set, which no JSON store can hold) and
+    its judgement kept — the card can now say WHY a line is on it."""
+    return {"date": f.get("date"), "subject": f.get("subject", ""),
+            "link": f.get("link", ""),
+            "d": str(f.get("date") or "")[:10], "t": f.get("subject", "")[:110],
+            "event": f.get("_event") or "", "pol": f.get("_polarity") or "",
+            "procedural": bool(f.get("_procedural"))}
+
+
+def _as_card_headline(r: N.Read, others: list[N.Read] | None = None) -> dict:
     """One headline in every shape its consumers expect.
 
     Three of them read this: reports/watchlist_card.py wants the long keys
@@ -330,6 +565,11 @@ def _as_card_headline(r: N.Read) -> dict:
         "amt": round(r.amount_cr, 1) if r.amount_cr else None,
         "why": "; ".join(r.why[:3]),
         "link": r.link,
+        # the retellings this line stands in for. Corroboration is evidence,
+        # so it is counted and named rather than silently discarded.
+        "dupes": len(others or []),
+        "also": sorted({(o.source or "").strip() for o in (others or [])
+                        if (o.source or "").strip()})[:4],
     }
 
 

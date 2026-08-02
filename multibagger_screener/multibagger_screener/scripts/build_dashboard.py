@@ -582,6 +582,11 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
 
 
 def build_payload() -> dict:
+    def _newer(a: str | None, b: str | None) -> bool:
+        """Is date-string a at least as recent as b? Missing dates compare as
+        oldest, so an undated blob never wins on freshness it cannot show."""
+        return (a or "") >= (b or "")
+
     universe = _read_csv("universe.csv")
     focus = _read_csv("focus_list.csv")
     ranked = _read_csv("shortlist_ranked.csv")
@@ -609,9 +614,31 @@ def build_payload() -> dict:
                     details[sym] = ad
                 else:
                     merged = dict(wd)
-                    for k in ("news", "plan", "alerted_at"):
+                    # The alert's plan and alert date always ride along — they
+                    # describe the alert, and the weekly read has neither.
+                    for k in ("plan", "alerted_at"):
                         if ad.get(k):
                             merged[k] = ad[k]
+                    # NEWS ONLY IF IT IS ACTUALLY FRESHER. This used to ride
+                    # along unconditionally on the assumption that an alert is
+                    # tonight's read, which stops being true the moment the
+                    # alert ages: HFCL alerted 2026-07-17 and was still being
+                    # shown that night's headlines on 2026-08-02, seventeen
+                    # days and one whole news-engine rewrite later, beside
+                    # dimension scores from the current weekly run.
+                    # Not hidden when it is old — LABELLED. An off-shortlist
+                    # name has no weekly news at all, and showing nothing
+                    # looks exactly like a genuinely quiet company.
+                    if ad.get("news") and (not wd.get("news")
+                                           or _newer(ad.get("alerted_at"),
+                                                     wd.get("scored_at"))):
+                        merged["news"] = ad["news"]
+                        merged["news_as_of"] = ad.get("alerted_at")
+                    elif wd.get("news"):
+                        merged["news_as_of"] = wd.get("scored_at")
+                    # which read the DIMENSIONS came from, so the header stops
+                    # dating a fresh weekly score to an old alert night
+                    merged["dims_as_of"] = wd.get("scored_at")
                     details[sym] = merged
         except ValueError:
             pass
@@ -3100,7 +3127,7 @@ return `<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
 <div class="axis" style="margin-left:88px">${esc((labels&&labels[0])||'')} → ${esc((labels&&labels[labels.length-1])||'')}</div>`;}
 function whySection(sym){const dt=D.details[sym];
 if(!dt)return'<div class="mini" style="margin-top:14px"><h3>Why no score breakdown?</h3><div style="font-size:12.5px" class="dim">Full 8-question scoring runs on the actionable shortlist (UPTREND + BASING names). This stock is currently outside it — it re-enters scoring the moment its tag turns actionable.</div></div>';
-let h=`<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions <span class="info" data-tip="Each row is one scoring question. The number after the name (w20) is its weight out of 100; the bar and the 0-100 number are how well this stock answered it; the small text is the evidence. Abbreviations: RS = relative-strength percentile · TT = trend template (8 uptrend checks) · VCP = the base pattern a breakout clears · PAT = profit after tax · TTM = trailing twelve months · YoY = vs a year ago. Coverage = how many questions had data (below 60% = technical-only read).">?</span> <span class="axis" style="font-weight:400">read of ${esc(dt.alerted_at||dt.scored_at||'?')} · ${dt.label==='Technical Read'?`coverage ${dt.coverage??'?'}% — technical read`:`coverage ${dt.coverage??100}%`}</span></h3>`;
+let h=`<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions <span class="info" data-tip="Each row is one scoring question. The number after the name (w20) is its weight out of 100; the bar and the 0-100 number are how well this stock answered it; the small text is the evidence. Abbreviations: RS = relative-strength percentile · TT = trend template (8 uptrend checks) · VCP = the base pattern a breakout clears · PAT = profit after tax · TTM = trailing twelve months · YoY = vs a year ago. Coverage = how many questions had data (below 60% = technical-only read).">?</span> <span class="axis" style="font-weight:400">read of ${esc(dt.dims_as_of||dt.scored_at||dt.alerted_at||'?')} · ${dt.label==='Technical Read'?`coverage ${dt.coverage??'?'}% — technical read`:`coverage ${dt.coverage??100}%`}</span></h3>`;
 (dt.dims||[]).slice().sort((a,b)=>b.w-a.w).forEach(m=>{
 const pct=m.s!=null?Math.round(m.s*100):0;
 const col=m.s==null?'#334155':m.s>=.7?'#34d399':m.s>=.4?'#fbbf24':'#f87171';
@@ -3200,7 +3227,15 @@ const sl=n.sentiment>0.15?'positive':n.sentiment<-0.15?'negative':'neutral';
 const KINDLBL={listicle:'multi-stock roundup',procedural:'procedural notice',
  price_move:'price move only',datapage:'auto-generated page',fluff:'non-market content',
  unrelated:'different company'};
-let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)</h3>`;
+/* The panel states WHEN it was read. A news block carries a date the rest of
+   the drawer does not: dimension scores come from the weekly run, and the
+   headlines can come from an alert night weeks earlier. Saying so is the
+   difference between "quiet name" and "nobody has looked since the 17th". */
+const _nasof=dt.news_as_of||dt.alerted_at||dt.scored_at||'';
+const _nage=_nasof?Math.round((Date.now()-Date.parse(_nasof))/864e5):null;
+let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)`
+ +(_nasof?` <span class="axis" style="font-weight:400">read of ${esc(_nasof)}${_nage>=7?` — ${_nage}d ago, not tonight`:''}</span>`:'')
+ +`</h3>`;
 const ts=n.top_story;
 if(ts){const tc=ts.sentiment>0?'#34d399':ts.sentiment<0?'#f87171':'#94a0b0';
  h+=`<div style="border-left:2px solid ${tc};padding:5px 0 5px 9px;margin-bottom:9px">
@@ -3215,7 +3250,16 @@ const dr=n.dropped||{};const dk=Object.keys(dr);
 if(dk.length)h+=`<div class="axis" style="margin-top:3px">filtered: ${dk.map(k=>dr[k]+' '+(KINDLBL[k]||k)).join(', ')}</div>`;
 h+=`<div class="axis" style="margin-top:3px">repeat tellings of one story count once; low-tier sources are weighted down, not hidden</div></div>`;
 (n.red_flags||[]).forEach(f=>h+=`<div style="color:#f87171;font-size:12px;margin:4px 0">!! ${esc(f)}</div>`);
-(n.filings||[]).forEach(f=>h+=`<div style="font-size:12px;margin:4px 0"><span class="pill" style="border-color:#a78bfa;color:#a78bfa">NSE</span> <span class="dim">${f.d}</span> ${esc(f.t)}</div>`);
+/* Filings are deduped by EVENT upstream (NSE publishes most of them twice,
+   once free-text and once as an XBRL category, and one earnings call arrives
+   under five labels). Material events sort first; the boilerplate preamble
+   every line shares is stripped so the width goes to what happened. */
+const FPRE=/^.{0,80}?has (informed|submitted|intimated)\b.{0,40}?\b(about|regarding|to)\b\s*(the\s+)?/i;
+(n.filings||[]).forEach(f=>{
+ const body=String(f.t||'').replace(FPRE,'').replace(/\|\s*SUBJECT\s*:.*$/i,'').trim()||f.t;
+ const col=f.pol=='neg'?'#f87171':f.pol=='pos'?'#34d399':f.pol=='attn'?'#fbbf24':'#a78bfa';
+ const proc=f.procedural||(!f.pol&&!f.event);
+ h+=`<div style="font-size:12px;margin:4px 0${proc?';opacity:.55':''}"><span class="pill" style="border-color:${col};color:${col}">NSE</span> <span class="dim">${f.d||''}</span> ${esc(body)}${f.event?` <span class="axis">(${esc(f.event)})</span>`:''}</div>`;});
 (n.headlines||[]).forEach(x=>{
  const off=(x.kind&&x.kind!='corporate')||x.rel<45;
  const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
@@ -3224,6 +3268,11 @@ h+=`<div class="axis" style="margin-top:3px">repeat tellings of one story count 
  else if(x.tier==2)meta+=' — trade press';
  if(x.kind&&KINDLBL[x.kind])meta+=' — '+KINDLBL[x.kind]+', excluded';
  if(x.nov!=null&&x.nov<1&&!off)meta+=' — retelling';
+ /* One line per STORY. Four outlets reporting one CEO appointment used to be
+    four near-identical lines; the clustering that joins them already existed
+    and only the panel ignored it. The other tellings become corroboration,
+    which is real evidence — one outlet is weaker than four. */
+ if(x.dupes>0)meta+=' — '+(x.dupes+1)+' outlets'+(x.also&&x.also.length?': '+esc(x.also.join(', ')):'');
  h+=`<div style="font-size:12px;margin:4px 0${off?';opacity:.5':''}">${dot} <span class="dim">${x.d||''}</span> ${esc(x.t)} <span class="axis">(${meta})</span></div>`;});
 return h+'</div>';}
 /* ---- Sectors & themes tab -------------------------------------------------
@@ -3457,7 +3506,7 @@ d.innerHTML=`<button class="dclose" onclick="closeDrawer()">✕ esc</button>
  if(dt&&dt.score!=null){const tr=dt.label==='Technical Read';
   const _a=(D.actionable||[]).find(x=>x.sym===sym);
   const _was=(_a&&_a.conv!=null&&Math.abs(dt.score-_a.conv)>=1.0)?` <span class="axis" data-tip="This name's current read differs from the conviction frozen when it alerted.">(was ${_a.conv} at alert)</span>`:'';
-  return `conviction <span${tr?` data-tip="Technical read — only ${dt.coverage}% of the 8 scored questions had data for this read. Not comparable with full-coverage conviction scores."`:''}>${dt.score}${tr?'<span style="color:#fbbf24">°</span>':''}</span> <span class="axis">(read of ${esc(dt.alerted_at||dt.scored_at||'?')}, coverage ${dt.coverage??'?'}%)</span>${_was}`;}
+  return `conviction <span${tr?` data-tip="Technical read — only ${dt.coverage}% of the 8 scored questions had data for this read. Not comparable with full-coverage conviction scores."`:''}>${dt.score}${tr?'<span style="color:#fbbf24">°</span>':''}</span> <span class="axis">(read of ${esc(dt.dims_as_of||dt.scored_at||dt.alerted_at||'?')}, coverage ${dt.coverage??'?'}%)</span>${_was}`;}
  return 'conviction '+(r.score??'—')+' <span class="axis">(weekly ranking)</span>';})()}${r.arch?' · '+esc(r.arch):''}</div>
 ${convergenceSection(sym,r)}
 ${survSection(sym)}

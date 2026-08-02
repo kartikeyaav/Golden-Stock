@@ -45,7 +45,7 @@ from data.cache import load_ohlcv
 from data.screener_fetch import fetch_company, load_company, save_company
 from scoring.conviction import assess
 from scoring.phase_b import build_dimensions, build_vetoes, tag_archetypes
-from scoring.phase_c import enrich, enrichment_dimensions
+from scoring.phase_c import card_news_blob, enrich, enrichment_dimensions
 from scoring.stage_tagger import tag_stock
 from scoring.technical_score import (compute_atr, compute_entry_plan,
                                      detect_episodic_pivot)
@@ -493,30 +493,9 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
         plan_trim = {k: plan[k] for k in keys if k in plan}
         plan_trim["breakeven_trigger"] = plan.get("breakeven_move_trigger_price")
         plan_trim["partial_price"] = plan.get("partial_profit_price")
-    news_blob = None
-    if news.get("ok"):
-        news_blob = {
-            "count": news["headline_count"], "trusted": news.get("trusted_count", 0),
-            "sentiment": news.get("sentiment", 0.0),
-            "sent_pos": news.get("sent_pos", 0), "sent_neg": news.get("sent_neg", 0),
-            "themes": news["themes"], "events": news["events"],
-            "red_flags": news["red_flags"],
-            "filings": [{"d": str(f.get("date", ""))[:10], "t": f["subject"][:110]}
-                        for f in news.get("filings", [])[:3]],
-            # phase_c already returns card-shaped headlines (old keys kept,
-            # new judgements alongside) — pass them through rather than
-            # rebuilding the shape in a second place and letting it drift
-            "headlines": [{k: v for k, v in h.items()
-                           if k in ("d", "t", "s", "tr", "ru", "sn", "rel",
-                                    "kind", "tier", "ev", "nov", "amt")}
-                          for h in news.get("headlines", [])[:8]],
-            # the 2026-07-28 reading layer
-            "scoreable": news.get("scoreable_count", 0),
-            "stories": news.get("stories", 0),
-            "top_story": news.get("top_story"),
-            "dropped": news.get("dropped", {}),
-            "theme_note": news.get("theme_note", ""),
-        }
+    # built by phase_c itself — see card_news_blob for why this is not
+    # assembled here any more
+    news_blob = card_news_blob(news)
     detail = {
         "alerted_at": datetime.now().strftime("%Y-%m-%d"),
         "ep": ({"gap_pct": ep["gap_pct"], "vol_mult": ep["vol_mult"]}

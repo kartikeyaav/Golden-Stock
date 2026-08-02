@@ -126,6 +126,13 @@ NEGATIVE = {
 POSITIVE = {
     "order win": [
         r"\border win", r"\bbags?\b.{0,40}\border", r"\breceives?\b.{0,30}\border",
+        # NSE's OWN category label for an order win, and the single most
+        # common way a first-party order announcement is titled:
+        # "has informed the Exchange about Bagging/Receiving of orders/
+        # contracts (Sub-para 4-Para B)". The gerunds match neither \bbags?\b
+        # nor \breceives?\b, so every one of these classified as nothing —
+        # found 2026-08-02 on a Welspun Corp card carrying a Rs 960 Cr order.
+        r"\bbagging\b", r"\breceiving of (orders?|contracts?)\b",
         r"\border(s)? (worth|valued|aggregating)\b", r"\bpurchase order\b",
         r"\bwork order", r"\bexport order", r"\bletter of (intent|award)\b",
         r"\bwins?\b.{0,30}\b(contract|project|bid)", r"\bcontract (from|worth|of|valued)\b",
@@ -134,6 +141,28 @@ POSITIVE = {
         r"\bcapacity expansion", r"\bnew (plant|facility|manufacturing unit)\b",
         r"\bcommission(ed|ing)\b", r"\bcommercial (production|operations?)\b",
         r"\bgreenfield\b", r"\bbrownfield\b"],
+    # A COMMITTED spend. Distinct from "expansion", which describes capacity
+    # already arriving; this is the announcement that money is being put to
+    # work. Found 2026-08-02 on a live card: "Paras Defence enters
+    # semiconductor packaging with Rs 6,200 crore plan" carried the largest
+    # rupee figure on the whole card and classified as nothing at all, so it
+    # scored neutral with default materiality. Measured against the 27,115
+    # filings in the archive, these patterns newly classify 6 — all genuine.
+    "capex/investment": [
+        r"\bto invest\b", r"\binvestment of\b", r"\bcapex of\b",
+        r"\bcapital expenditure of\b",
+        r"\b(?:rs\.?|inr|₹)[\s\-]*\d[\d,]*(?:\.\d+)?[\s\-]*(?:crore|cr\b|billion|bn\b)"
+        r"[^.;|]{0,40}\b(invest\w*|capex|plan|project|facility|plant|expansion)\b",
+        r"\bplans? to (set ?up|build|invest)\b"],
+    # Balance-sheet repair — the Suzlon signature, and a fact the fundamentals
+    # layer already scores but the news layer read as nothing ("Granules India
+    # turns debt-free in Q1FY27"). NCD/debenture redemption is routine
+    # scheduled repayment, not deleveraging, so it is excluded.
+    "deleveraging": [
+        r"\bdebt[- ]free\b",
+        r"\b(prepay\w*|repay\w*|pares?|paring|reduc\w+)\b[^.;|]{0,25}\bdebt\b"
+        r"(?!.{0,40}(debenture|ncd))",
+        r"\bdebt reduction\b", r"\bdeleverag\w+"],
     "M&A/JV": [
         r"\bacquisition\b", r"\bacquires?\b", r"\bamalgamation\b", r"\bmerger\b",
         r"\bjoint venture\b", r"\bstake (purchase|acquisition|buy)\b",
@@ -143,9 +172,33 @@ POSITIVE = {
         r"\bwho[- ]gmp\b", r"\bgmp certificat", r"\bdcgi\b", r"\bcdsco\b",
         r"\bpatent (grant|received|approv)", r"\bmarketing authori[sz]ation",
         r"\bapproval (from|received|granted)\b", r"\breceives? approval\b",
-        r"\btentative approval\b", r"\banda\b"],
+        r"\btentative approval\b", r"\banda\b",
+        # First-to-File carries 180 days of US generic exclusivity — one of
+        # the most material things that can happen to an Indian pharma name,
+        # and "Granules secures sole First-to-File status" was classifying as
+        # nothing and scoring at the unclassified default (2026-08-02)
+        r"\bfirst[- ]to[- ]file\b", r"\bftf\b", r"\bexclusivit(y|ies)\b",
+        r"\borphan drug\b", r"\bbreakthrough therapy\b"],
     "buyback/bonus": [r"\bbuy[- ]?back\b", r"\bbonus (issue|share)"],
     "rating upgrade": [r"\brating.{0,40}\bupgrad", r"\bupgrad.{0,40}\brating"],
+    # Checked LAST of the positives, because a supply agreement that is really
+    # an order win should be filed as an order win. An MoU is a statement of
+    # intent, not revenue, so its materiality in config is deliberately the
+    # lowest of any positive class.
+    #
+    # The pattern demands an ACTION VERB. The exchange's own XBRL category
+    # label — "|SUBJECT: Agreements,Contracts,Arrangements,MOU-XBRL" — appears
+    # on 44 filings in the archive and describes the FORM a company filed, not
+    # anything that happened; matching it would rank companies by paperwork,
+    # the same error the filings layer made counting nine PDFs of one
+    # acquisition as nine events. All 44 are excluded; 30 genuine partnership
+    # announcements are newly classified.
+    "partnership": [
+        r"\b(signs?|signed|inks?|inked|enters? into|executes?|executed)\b"
+        r"[^.;|]{0,40}\b(mou\b|memorandum of understanding|pact|alliance|partnership"
+        r"|(?<!loan )(?<!facility )agreement)\b",
+        r"\b(partners?|partnered|ties? up|tied up|tie[- ]up)\s+with\b",
+        r"\bstrategic (alliance|partnership) with\b"],
 }
 
 # ATTENTION (amber): material but direction-ambiguous — dilution vs growth

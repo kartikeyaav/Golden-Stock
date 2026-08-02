@@ -310,11 +310,19 @@ def archived_for(tokens: list[str], days: int = 30, limit: int = 12) -> list[dic
 # per-company sources
 # ---------------------------------------------------------------------------
 
-def google_news(company_name: str, days: int = 30, limit: int = 20) -> list[dict]:
+def google_news(company_name: str, days: int = 30,
+                limit: int | None = None) -> list[dict]:
     """The original source, unchanged in spirit: a name-keyed Google News
     query. Kept because it reaches trade press and regional outlets no market
     feed carries — its weakness was never coverage, it was that nothing
     downstream judged what came back."""
+    # The cap is a SAFETY CEILING on one feed's response, not an editorial
+    # decision. It used to be 20 and it was doing the editing: the feed
+    # returns up to ~72 items for a busy name, so the two thirds that were
+    # older than the twentieth headline never reached the reader that decides
+    # what matters. See NEWSQ.fetch_articles_per_company for the measurement.
+    if limit is None:
+        limit = NEWSQ.fetch_articles_per_company
     name = company_name
     for suffix in (" Ltd.", " Ltd", " Limited", " LIMITED"):
         if name.endswith(suffix):

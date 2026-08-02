@@ -166,6 +166,29 @@ def _strip_homographs(t: str) -> str:
     return t
 
 
+_DECIMAL = re.compile(r"(?<=\d)\.(?=\d)")
+
+
+def _numeric_safe(t: str) -> str:
+    """A period inside a number is a decimal point, not the end of a clause.
+
+    The metric and guidance windows below scan `[^.;|]{0,28}` between the
+    financial noun and its direction word, to avoid reading a direction out of
+    the NEXT sentence. A rupee figure sitting in that gap ends the window at
+    its own decimal point:
+
+        "Net Sales at Rs 1,476.77 crore, up 22.04% Y-o-Y"   -> read as neutral
+        "Net Sales at Rs 801.88 crore, down 1.03% Y-o-Y"    -> read as neutral
+
+    which is the exact shape Moneycontrol publishes for every company every
+    quarter, from a tier-1 source, in BOTH directions. Measured across the
+    2,669 distinct headlines this system has stored, 11 flip once the decimal
+    stops terminating the window, and none flips the wrong way. Swapping the
+    decimal for a middot preserves the character count, so the window widths
+    keep meaning what they meant."""
+    return _DECIMAL.sub("·", t)
+
+
 # ---------------------------------------------------------------------------
 # article kind
 # ---------------------------------------------------------------------------
@@ -346,12 +369,36 @@ def _mentions_other(t: str, toks: list[str]) -> bool:
     return re.search(phrase, t) is not None
 
 
+_WORD_RX = re.compile(r"[a-z0-9]+")
+
+
 def count_other_companies(t: str, self_symbol: str,
                           universe: list[tuple[str, list[str]]] | None = None) -> int:
+    """How many OTHER listed companies this headline names.
+
+    PREFILTERED. Every branch of _mentions_other requires the company's FIRST
+    distinctive token to appear as a word-prefix in the text, so a candidate
+    whose first token is nowhere in the headline cannot possibly match and
+    does not need the regex. That turns 652 regex searches per headline into
+    a handful — read_article went from 66 ms to ~1 ms, which is what makes it
+    affordable to read every article the feed returns instead of only the 20
+    most recent. Same answer, and test_relevance covers that it stays the
+    same."""
     uni = universe if universe is not None else load_universe_names()
+    words = set(_WORD_RX.findall(t))
+    if not words:
+        return 0
+    # bucket by first letter so the prefix test scans a fraction of the words
+    by_initial: dict[str, list[str]] = {}
+    for w in words:
+        by_initial.setdefault(w[0], []).append(w)
+
     n = 0
     for sym, toks in uni:
-        if sym == self_symbol:
+        if sym == self_symbol or not toks:
+            continue
+        head = toks[0]
+        if not any(w.startswith(head) for w in by_initial.get(head[0], ())):
             continue
         if _mentions_other(t, toks):
             n += 1
@@ -371,6 +418,19 @@ _COMMON_ENGLISH = {
 # Reference data, NOT derived state: it sits beside universe.csv at the
 # project root because state/ is gitignored, and an alias file the cloud
 # runner never receives is an alias file that does not exist.
+# Words that swallow a company's name token into a STATE INSTITUTION. Indian
+# company names collide with place names constantly — Karnataka Bank, Gujarat
+# Gas, Kerala Ayurveda, Punjab & Sind Bank, Tamilnad Mercantile — so "Karnataka
+# high court", "Gujarat government" and "Punjab police" all look like company
+# mentions to a token counter. Found 2026-08-02: "Penalty over minimum bank
+# balance not consideration: Karnataka high court" was carrying a REGULATORY
+# ACTION red flag on Karnataka Bank, from a ruling about banks in general.
+_INSTITUTION_AFTER = re.compile(
+    r"\s+(high court|supreme court|district court|sessions court|"
+    r"police|government|govt|assembly|legislature|cabinet|ministry|"
+    r"university|municipal|corporation of|chief minister|governor|"
+    r"state (government|govt|cabinet)|hc\b)")
+
 _ALIAS_PATH = os.path.join(ROOT, "company_aliases.json")
 _ALIASES: dict[str, list[str]] | None = None
 
@@ -395,6 +455,19 @@ def load_aliases() -> dict[str, list[str]]:
         except (OSError, ValueError, AttributeError):
             _ALIASES = {}
     return _ALIASES
+
+
+def _all_absorbed(t: str, token: str) -> bool:
+    """True when EVERY occurrence of this token is immediately followed by a
+    state-institution word. One free-standing occurrence anywhere is enough to
+    call it a real mention, so "Karnataka Bank told the Karnataka high court"
+    still counts."""
+    found = False
+    for m in re.finditer(rf"\b{re.escape(token)}\w*", t):
+        found = True
+        if not _INSTITUTION_AFTER.match(t[m.end():]):
+            return False
+    return found
 
 
 def relevance(text: str, company_name: str, symbol: str,
@@ -432,6 +505,12 @@ def _relevance_one(text: str, company_name: str, symbol: str,
         score, how = 80, "full name"
     else:
         hits = [tk for tk in toks if re.search(rf"\b{re.escape(tk)}\w*", t)]
+        # a token every occurrence of which is swallowed by a state
+        # institution is not a mention of the company
+        absorbed = [tk for tk in hits if _all_absorbed(t, tk)]
+        if absorbed and len(hits) - len(absorbed) < 2:
+            return 0, [f"'{absorbed[0]}' here names a state institution, "
+                       f"not {symbol}"]
         if len(toks) >= 2 and len(hits) >= 2:
             score, how = 62, f"{len(hits)} name tokens"
         elif len(toks) == 1 and hits:
@@ -681,6 +760,16 @@ _ADMIN_SUB = re.compile(r"\b(wholly[- ]owned|step[- ]down)\s+subsidiar")
 # the company is the VICTIM of the wrongdoing, not its subject
 _VICTIM = re.compile(r"\b(fake|counterfeit|spurious|duplicate|cloned?)\b"
                      r"[^.]{0,45}\b(bearing|labels?|branded|name|packaging|using)\b")
+# the company is FIGHTING the bad thing, which is the opposite of doing it.
+# "Federal Bank of India Combats Card and Merchant Fraud with ACI Worldwide"
+# is a vendor announcement and it survived the 2026-08-02 red-flag re-judging
+# as a distress event — the word "fraud" was doing all the work.
+_FIGHTS_HARM = re.compile(
+    r"\b(combats?|combat(ing|ted)|tackles?|tackling|fights?|fighting|curbs?|"
+    r"curbing|prevents?|preventing|prevention|detects?|detecting|detection|"
+    r"deters?|guards? against|cracks? down on|protects? against|"
+    r"strengthens?|counters?)\b[^.;|]{0,45}"
+    r"\b(fraud|scam|phishing|money laundering|cyber ?crime|default|breach|risk)\b")
 # The bad thing already happened and is being UNDONE. "Tamilnad Mercantile
 # Bank penalty reduced to Rs.3.40 Cr by Appellate Tribunal" is relief, and
 # reading it as a fresh penalty puts a red flag on good news.
@@ -689,6 +778,12 @@ _RELIEF = re.compile(r"\b(reduce[sd]?|quash\w*|set aside|dismiss\w*|waiv\w*|"
                      r"in favou?r of|relief|acquit\w*|clean chit|clears?)\b")
 _APPOINT = re.compile(r"\b(appoints?|appointed|appointment|names?\b.{0,20}\bas\b|"
                       r"elevates?|joins?\b.{0,25}\bas\b|takes? over as)\b")
+# any named office, wider than _KMP (which is only the roles whose departure
+# moves a price). Used to tell a PERSON moving from a position being sold.
+_ROLE = re.compile(r"\b(ceo|cfo|coo|cto|cio|chro|managing director|\bmd\b|"
+                   r"chairman|chairperson|director|whole[- ]time|auditor|"
+                   r"company secretary|chief \w+|president|vice[- ]president|"
+                   r"head of|country head|business head)\b")
 
 # Broker actions carry a direction that no general lexicon can read:
 # "Buy Balaji Amines; target of Rs 3327" has no positive word in it at all.
@@ -754,7 +849,7 @@ def sentiment(text: str, event_polarity: str | None = None) -> tuple[int, list[s
     # results language outranks the general lexicon: it is a fact about the
     # business, where "shares rise 5%" is a fact about the tape
     if score == 0 or event_polarity is None:
-        stripped = _strip_homographs(main)
+        stripped = _numeric_safe(_strip_homographs(main))
         if _METRIC_DOWN.search(stripped):
             score = -1
             why.append("reported metric down")
@@ -802,6 +897,9 @@ def sentiment(text: str, event_polarity: str | None = None) -> tuple[int, list[s
     elif _VICTIM.search(t):
         score = 0
         why.append("company is the victim here, not the subject")
+    elif _FIGHTS_HARM.search(t):
+        score = 0
+        why.append("company is fighting the harm, not causing it")
     elif event_polarity == "neg" and _RELIEF.search(t):
         score = 0
         why.append("the penalty or action is being undone, not imposed")
@@ -961,8 +1059,20 @@ _STOP = {"the", "a", "an", "of", "in", "on", "for", "to", "and", "as", "at", "by
          "after", "over", "up", "down", "amid", "crore", "cr", "rs", "inr"}
 
 
+# Google News appends " - Publisher" to every title it returns. Those tokens
+# are the OUTLET, not the story, and leaving them in cuts both ways: they
+# dilute the overlap between two retellings of one event (which is how four
+# write-ups of one CEO appointment stayed four separate stories) and they
+# invent overlap between two unrelated stories from the same outlet.
+_SOURCE_SUFFIX = re.compile(r"\s[-–—]\s[\w.&' ]{2,32}$")
+
+
+def strip_source_suffix(text: str) -> str:
+    return _SOURCE_SUFFIX.sub("", text).strip()
+
+
 def _shingle(text: str) -> set[str]:
-    words = [w for w in re.findall(r"[a-z0-9]+", text.lower())
+    words = [w for w in re.findall(r"[a-z0-9]+", strip_source_suffix(text).lower())
              if w not in _STOP and len(w) > 2]
     return set(words)
 
@@ -1000,7 +1110,7 @@ _TOPIC_RESULTS_PERIOD = re.compile(r"\b(q[1-4]|quarter\w*|h[12]\s?fy|fy\s?\d{2})
 _TOPIC_RESULTS_SUBJECT = re.compile(
     r"\b(results?|profits?|pat\b|earnings|revenue|topline|margins?|nim\b|"
     r"asset quality|numbers)\b")
-_REPEATABLE = {"results", "broker call"}
+_REPEATABLE = {"results", "broker call", "management change"}
 
 
 def topic(text: str) -> str | None:
@@ -1009,6 +1119,19 @@ def topic(text: str) -> str | None:
         return "results"
     if _ANALYST_POS.search(t) or _ANALYST_NEG.search(t):
         return "broker call"
+    # A company appoints one CEO, and the trade press writes it up a dozen
+    # ways that barely overlap in wording: "elevates internal strategist to
+    # lead Reginald", "names Shivang Jain CEO of BTM Ventures", "appoints
+    # Shivang Jain as CEO ... to Lead Reginald Men's Next Growth Phase". No
+    # text measure joins those, and the same argument that made results one
+    # story by construction applies here.
+    #
+    # A ROLE is required, not just the verb: "exit" is what a fund does to a
+    # position ("Helios Flexicap Fund adds Titan, Coal India, Honasa
+    # Consumer; exits ...") and on the verb alone that merged a portfolio
+    # reshuffle into a CEO appointment.
+    if (_APPOINT.search(t) or _EXIT.search(t)) and _ROLE.search(t):
+        return "management change"
     return None
 
 

@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from data.cache import load_ohlcv
 from scoring.conviction import assess
 from scoring.phase_b import build_dimensions, build_vetoes, tag_archetypes
-from scoring.phase_c import enrich, enrichment_dimensions
+from scoring.phase_c import card_news_blob, enrich, enrichment_dimensions
 from scoring.stage_tagger import tag_stock
 from scoring.technical_score import compute_atr, compute_entry_plan
 from reports.watchlist_card import render_card
@@ -134,22 +134,7 @@ def main() -> None:
 
         news_blob = None
         if not args.no_news:
-            e = r.get("_news") or {}
-            if e.get("ok"):
-                news_blob = {
-                    "count": e["headline_count"], "trusted": e.get("trusted_count", 0),
-                    "sentiment": e.get("sentiment", 0.0),
-                    "sent_pos": e.get("sent_pos", 0), "sent_neg": e.get("sent_neg", 0),
-                    "themes": e["themes"], "events": e["events"],
-                    "red_flags": e["red_flags"],
-                    "filings": [{"d": str(f.get("date", ""))[:10], "t": f["subject"][:110]}
-                                for f in e.get("filings", [])[:3]],
-                    "headlines": [{"d": h["date"].strftime("%d %b"), "t": h["text"][:110],
-                                   "s": h["source"], "tr": h.get("trusted", False),
-                                   "ru": h.get("roundup", False),
-                                   "sn": h.get("sentiment", 0)}
-                                  for h in e.get("headlines", [])[:5]],
-                }
+            news_blob = card_news_blob(r.get("_news") or {})
 
         plan = {}
         if r["tag"] == "CONFIRMED" and not r["vetoed"]:
@@ -187,6 +172,60 @@ def main() -> None:
         }
         if i % 20 == 0:
             print(f"  details {i}/{len(out)}", flush=True)
+
+    # ------------------------------------------------------------------
+    # EVERY OTHER focus name that has fundamentals on disk gets a scored
+    # detail too.
+    #
+    # The bug this closes (user-reported 2026-08-02, "HFCL showed scores
+    # until yesterday and today some of the scores are empty"): details were
+    # built ONLY for names tagged CONFIRMED or ANTICIPATION this week. HFCL
+    # was CONFIRMED last week and is not this week, so it left the file — and
+    # the dashboard, finding no weekly read, fell back to its alert blob of
+    # 2026-07-17, whose five fundamental dimensions are null because the name
+    # was not in the shortlist when that alert fired. The score panel went
+    # blank for a stock whose complete fundamentals were sitting in
+    # fundamentals_flat.csv the whole time. 27 names left the shortlist in
+    # this week's refresh alone, so this was never about one stock.
+    #
+    # A tag is a statement about the CHART. It was never a reason to stop
+    # knowing what a company earns. News enrichment stays on the ranked
+    # shortlist — that is the network cost, and these dimensions are read
+    # from a local CSV.
+    scored_syms = set(details)
+    extra = 0
+    for _, f in focus.iterrows():
+        sym = f["symbol"]
+        if sym in scored_syms:
+            continue
+        fund_row = funds_by_sym.get(sym)
+        if not fund_row:
+            continue                       # no fundamentals = nothing to add
+        df = load_ohlcv(sym)
+        if df is None:
+            continue
+        tag = tag_stock(df, bench)
+        industry = f.get("industry")
+        conv = assess(build_dimensions(tag, f.get("rs_pctile"), fund_row, industry),
+                      build_vetoes(fund_row))
+        details[sym] = {
+            "score": conv.score, "coverage": conv.coverage_pct,
+            "label": conv.label,
+            "scored_at": datetime.now().strftime("%Y-%m-%d"),
+            "reasons": tag.get("reasons", []),
+            "stage_name": tag.get("stage", {}).get("stage_name", ""),
+            "tt_checks": tag.get("trend_template_checks_passed", 0),
+            "vcp": tag.get("vcp_valid", False),
+            "pivot_price": tag.get("pivot_price"),
+            "dims": [{"k": d["key"], "w": d["weight"], "s": d["score"],
+                      "live": d["live"], "n": d["notes"][:220]}
+                     for d in conv.per_dimension],
+            "veto_reasons": conv.veto_reasons,
+            "plan": {},                    # not CONFIRMED — no mechanical plan
+            "news": None,                  # enrichment stays on the shortlist
+        }
+        extra += 1
+    print(f"  + {extra} off-shortlist focus names scored from fundamentals")
 
     with open(os.path.join(root, "shortlist_details.json"), "w", encoding="utf-8") as fh:
         json.dump(details, fh, default=str)
