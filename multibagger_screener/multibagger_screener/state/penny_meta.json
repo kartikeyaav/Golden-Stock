@@ -1,15 +1,15 @@
 {
- "as_of": "2026-07-24",
- "built_at": "2026-07-26 19:17",
+ "as_of": "2026-07-31",
+ "built_at": "2026-08-02 07:26",
  "arms_settled": "re-checked",
  "sessions": 25,
- "eq_securities": 2479,
+ "eq_securities": 2486,
  "passed_gates": 1251,
- "qualified": 187,
- "price_arm": 113,
- "mcap_arm": 115,
- "mcap_pending": 0,
+ "qualified": 113,
+ "price_arm": 112,
+ "mcap_arm": 44,
+ "mcap_pending": 814,
  "arm_provisional": 0,
- "in_index_universe": 8,
- "excluded": 2292
+ "in_index_universe": 7,
+ "excluded": 2373
 }
