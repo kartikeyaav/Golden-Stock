@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-02 07:28",
+ "generated": "2026-08-03 13:44",
  "n_checked": 653,
  "n_flagged": 67,
- "asm_total": 186,
+ "asm_total": 176,
  "syms": {
   "ACMESOLAR": {
    "flags": [
@@ -399,11 +399,6 @@
   "ATLANTAELE": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -411,7 +406,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "BALAMINES": {
    "flags": [
@@ -740,6 +735,11 @@
   "SMLMAH": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -747,7 +747,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "ASM"
   },
   "SAATVIKGL": {
    "flags": [

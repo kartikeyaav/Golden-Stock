@@ -1,6 +1,25 @@
 {
- "generated": "2026-08-03T11:21:39",
+ "generated": "2026-08-03T13:44:35",
  "themes": [
+  {
+   "key": "datacentre",
+   "name": "Data centres & digital infrastructure",
+   "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
+   "n": 8,
+   "breadth": 50.0,
+   "rs_med": 95.9,
+   "ret3m": 10.3,
+   "news": 2.89,
+   "news_per_name": 0.361,
+   "thin": false,
+   "confirmed": [
+    "STLTECH",
+    "HFCL",
+    "NETWEB",
+    "BHARTIHEXA"
+   ],
+   "heat": 84.3
+  },
   {
    "key": "hospital",
    "name": "Hospitals & diagnostics",
@@ -8,9 +27,9 @@
    "n": 12,
    "breadth": 41.7,
    "rs_med": 75.6,
-   "ret3m": 17.7,
-   "news": 1.38,
-   "news_per_name": 0.115,
+   "ret3m": 17.5,
+   "news": 1.01,
+   "news_per_name": 0.084,
    "thin": false,
    "confirmed": [
     "ASTERDM",
@@ -19,25 +38,25 @@
     "KIMS",
     "METROPOLIS"
    ],
-   "heat": 84.3
+   "heat": 76.3
   },
   {
-   "key": "ems",
-   "name": "Electronics manufacturing (EMS)",
-   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
-   "n": 9,
-   "breadth": 33.3,
-   "rs_med": 91.8,
-   "ret3m": 22.9,
-   "news": 0.67,
-   "news_per_name": 0.074,
+   "key": "defelec",
+   "name": "Defence electronics & space",
+   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
+   "n": 7,
+   "breadth": 42.9,
+   "rs_med": 96.6,
+   "ret3m": 6.2,
+   "news": 4.87,
+   "news_per_name": 0.695,
    "thin": false,
    "confirmed": [
-    "AVALON",
-    "SYRMA",
-    "NETWEB"
+    "ASTRAMICRO",
+    "PARAS",
+    "DATAPATTNS"
    ],
-   "heat": 79.0
+   "heat": 73.0
   },
   {
    "key": "cdmo",
@@ -46,61 +65,27 @@
    "n": 11,
    "breadth": 27.3,
    "rs_med": 88.9,
-   "ret3m": 14.1,
-   "news": 2.41,
-   "news_per_name": 0.219,
+   "ret3m": 14.6,
+   "news": 2.18,
+   "news_per_name": 0.199,
    "thin": false,
    "confirmed": [
     "SHILPAMED",
     "GRANULES",
     "EMCURE"
    ],
-   "heat": 72.0
-  },
-  {
-   "key": "defelec",
-   "name": "Defence electronics & space",
-   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
-   "n": 7,
-   "breadth": 28.6,
-   "rs_med": 96.6,
-   "ret3m": 16.1,
-   "news": 0.6,
-   "news_per_name": 0.086,
-   "thin": false,
-   "confirmed": [
-    "ASTRAMICRO",
-    "PARAS"
-   ],
-   "heat": 71.3
-  },
-  {
-   "key": "datacentre",
-   "name": "Data centres & digital infrastructure",
-   "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
-   "n": 8,
-   "breadth": 25.0,
-   "rs_med": 95.9,
-   "ret3m": 11.3,
-   "news": 1.89,
-   "news_per_name": 0.236,
-   "thin": false,
-   "confirmed": [
-    "NETWEB",
-    "BHARTIHEXA"
-   ],
-   "heat": 68.3
+   "heat": 66.0
   },
   {
    "key": "finfra",
    "name": "Financial market infrastructure",
    "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
    "n": 16,
-   "breadth": 37.5,
+   "breadth": 43.8,
    "rs_med": 80.3,
-   "ret3m": 1.4,
-   "news": 3.6,
-   "news_per_name": 0.225,
+   "ret3m": 3.2,
+   "news": 3.88,
+   "news_per_name": 0.243,
    "thin": false,
    "confirmed": [
     "ANANDRATHI",
@@ -108,9 +93,48 @@
     "PRUDENT",
     "NUVAMA",
     "KFINTECH",
+    "CDSL",
     "IONEXCHANG"
    ],
-   "heat": 59.7
+   "heat": 65.7
+  },
+  {
+   "key": "defence",
+   "name": "Defence & aerospace",
+   "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
+   "n": 13,
+   "breadth": 38.5,
+   "rs_med": 95.8,
+   "ret3m": 4.4,
+   "news": 5.51,
+   "news_per_name": 0.424,
+   "thin": false,
+   "confirmed": [
+    "ASTRAMICRO",
+    "PARAS",
+    "DATAPATTNS",
+    "AZAD",
+    "DYNAMATECH"
+   ],
+   "heat": 62.7
+  },
+  {
+   "key": "ems",
+   "name": "Electronics manufacturing (EMS)",
+   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
+   "n": 9,
+   "breadth": 33.3,
+   "rs_med": 91.8,
+   "ret3m": 13.5,
+   "news": 0.6,
+   "news_per_name": 0.067,
+   "thin": false,
+   "confirmed": [
+    "AVALON",
+    "SYRMA",
+    "NETWEB"
+   ],
+   "heat": 61.3
   },
   {
    "key": "water",
@@ -119,51 +143,54 @@
    "n": 6,
    "breadth": 50.0,
    "rs_med": 95.2,
-   "ret3m": -2.8,
-   "news": 1.28,
-   "news_per_name": 0.213,
+   "ret3m": -0.8,
+   "news": 1.16,
+   "news_per_name": 0.193,
    "thin": false,
    "confirmed": [
     "KIRLOSENG",
     "WABAG",
     "IONEXCHANG"
    ],
-   "heat": 59.0
-  },
-  {
-   "key": "defence",
-   "name": "Defence & aerospace",
-   "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
-   "n": 13,
-   "breadth": 23.1,
-   "rs_med": 95.8,
-   "ret3m": 4.9,
-   "news": 2.0,
-   "news_per_name": 0.154,
-   "thin": false,
-   "confirmed": [
-    "ASTRAMICRO",
-    "PARAS",
-    "AZAD"
-   ],
-   "heat": 51.7
+   "heat": 56.3
   },
   {
    "key": "textiles",
    "name": "Textiles & apparel PLI",
    "blurb": "Technical textiles, garmenting and the incentive-led export push.",
    "n": 12,
-   "breadth": 16.7,
+   "breadth": 25.0,
    "rs_med": 85.6,
-   "ret3m": 8.3,
-   "news": 1.27,
-   "news_per_name": 0.106,
+   "ret3m": 9.2,
+   "news": 1.15,
+   "news_per_name": 0.096,
    "thin": false,
    "confirmed": [
+    "ARVIND",
     "ICIL",
     "PGIL"
    ],
-   "heat": 47.3
+   "heat": 49.3
+  },
+  {
+   "key": "grid",
+   "name": "Power transmission & grid capex",
+   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
+   "n": 14,
+   "breadth": 35.7,
+   "rs_med": 95.6,
+   "ret3m": 2.6,
+   "news": 1.76,
+   "news_per_name": 0.126,
+   "thin": false,
+   "confirmed": [
+    "HFCL",
+    "SCHNEIDER",
+    "RRKABEL",
+    "APARINDS",
+    "VOLTAMP"
+   ],
+   "heat": 46.0
   },
   {
    "key": "ev",
@@ -172,50 +199,50 @@
    "n": 10,
    "breadth": 10.0,
    "rs_med": 73.8,
-   "ret3m": 6.2,
-   "news": 2.18,
-   "news_per_name": 0.218,
+   "ret3m": 8.1,
+   "news": 2.32,
+   "news_per_name": 0.232,
    "thin": false,
    "confirmed": [
     "BELRISE"
    ],
-   "heat": 46.0
-  },
-  {
-   "key": "grid",
-   "name": "Power transmission & grid capex",
-   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
-   "n": 14,
-   "breadth": 21.4,
-   "rs_med": 95.6,
-   "ret3m": 3.4,
-   "news": 1.94,
-   "news_per_name": 0.139,
-   "thin": false,
-   "confirmed": [
-    "SCHNEIDER",
-    "RRKABEL",
-    "VOLTAMP"
-   ],
-   "heat": 41.0
+   "heat": 44.3
   },
   {
    "key": "capex",
    "name": "Industrial capex & machinery",
    "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
    "n": 21,
-   "breadth": 14.3,
+   "breadth": 19.0,
    "rs_med": 77.7,
-   "ret3m": 3.6,
-   "news": 2.43,
-   "news_per_name": 0.116,
+   "ret3m": 1.1,
+   "news": 3.74,
+   "news_per_name": 0.178,
    "thin": false,
    "confirmed": [
     "LLOYDSENGG",
     "AZAD",
-    "GRINDWELL"
+    "GRINDWELL",
+    "AIAENG"
    ],
-   "heat": 37.7
+   "heat": 30.7
+  },
+  {
+   "key": "renewables",
+   "name": "Renewables, solar & storage",
+   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
+   "n": 14,
+   "breadth": 14.3,
+   "rs_med": 78.2,
+   "ret3m": -10.8,
+   "news": 11.3,
+   "news_per_name": 0.807,
+   "thin": false,
+   "confirmed": [
+    "ACMESOLAR",
+    "JSWENERGY"
+   ],
+   "heat": 26.0
   },
   {
    "key": "chemicals",
@@ -224,7 +251,7 @@
    "n": 11,
    "breadth": 27.3,
    "rs_med": 81.5,
-   "ret3m": 1.4,
+   "ret3m": -2.2,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": false,
@@ -233,23 +260,7 @@
     "FLUOROCHEM",
     "AARTIIND"
    ],
-   "heat": 36.0
-  },
-  {
-   "key": "renewables",
-   "name": "Renewables, solar & storage",
-   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
-   "n": 14,
-   "breadth": 7.1,
-   "rs_med": 78.2,
-   "ret3m": -9.3,
-   "news": 7.99,
-   "news_per_name": 0.571,
-   "thin": false,
-   "confirmed": [
-    "ACMESOLAR"
-   ],
-   "heat": 23.3
+   "heat": 25.0
   },
   {
    "key": "railways",
@@ -258,12 +269,12 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": 17.2,
-   "ret3m": -10.3,
-   "news": 1.42,
-   "news_per_name": 0.142,
+   "ret3m": -10.8,
+   "news": 5.17,
+   "news_per_name": 0.516,
    "thin": false,
    "confirmed": [],
-   "heat": 8.0
+   "heat": 16.0
   },
   {
    "key": "shipbuilding",
@@ -272,9 +283,9 @@
    "n": 5,
    "breadth": 0.0,
    "rs_med": 82.0,
-   "ret3m": -7.5,
-   "news": 0.0,
-   "news_per_name": 0.0,
+   "ret3m": -11.2,
+   "news": 0.91,
+   "news_per_name": 0.181,
    "thin": false,
    "confirmed": [],
    "heat": 6.0
@@ -286,7 +297,7 @@
    "n": 3,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -19.1,
+   "ret3m": -11.6,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -300,9 +311,9 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 99.7,
-   "ret3m": 10.5,
-   "news": 1.4,
-   "news_per_name": 0.699,
+   "ret3m": 0.0,
+   "news": 2.14,
+   "news_per_name": 1.071,
    "thin": true,
    "confirmed": [],
    "heat": 0.0
