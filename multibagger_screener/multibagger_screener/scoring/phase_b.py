@@ -141,16 +141,114 @@ def score_earnings_inflection(row: dict) -> tuple[float | None, str]:
 
     total_w = sum(w for w, _ in parts)
     score = sum(w * v for w, v in parts) / total_w
-    return round(score, 3), "; ".join(notes)
+
+    # SALES CONFIRMATION (added 2026-08-03). O'Neil's C wants same-quarter
+    # sales growth above 25%, OR clearly accelerating sales over three
+    # quarters, and says why: earnings can be lifted by cost cuts, one-offs or
+    # accounting, and sales are what confirm the growth is real. Minervini
+    # wants the same three things moving together — sales, margins, earnings.
+    #
+    # A MULTIPLIER, never a component. Both systems treat sales as
+    # confirmation of an earnings signal, not as something that can rescue a
+    # weak one, so this can only discount. Missing sales (banks carry Revenue,
+    # not Sales) leaves the score untouched — absent data must not penalise.
+    mult, snote = _sales_confirmation(row)
+    if snote:
+        notes.append(snote)
+    return round(score * mult, 3), "; ".join(notes)
+
+
+def _sales_confirmation(row: dict) -> tuple[float, str]:
+    pct = _num(row, "sales_yoy_pct")
+    streak = _num(row, "sales_yoy_streak")
+    if pct is None:
+        return 1.0, ""
+    accelerating = streak is not None and streak >= 3
+    if pct >= 25 or accelerating:
+        return 1.0, (f"sales {pct:+.0f}% YoY"
+                     + (f", {streak:.0f} quarters rising" if accelerating else "")
+                     + " — earnings confirmed by the top line")
+    if pct >= 10:
+        return 0.92, f"sales {pct:+.0f}% YoY — growing, below the 25% bar"
+    if pct >= -5:
+        return 0.80, (f"sales {pct:+.0f}% YoY — earnings improving on roughly "
+                      "flat sales, so the gain is margin-led")
+    return 0.65, (f"sales {pct:+.0f}% YoY while profit rose — MARGIN-LED, "
+                  "check whether this is cost cutting rather than growth")
 
 
 # ---------------------------------------------------------------------------
 # Dimension 5 — financial strength trend (weight 10)
 # ---------------------------------------------------------------------------
+def score_financial_strength_bank(row: dict) -> tuple[float | None, str]:
+    """A bank read from what the free source actually publishes.
+
+    THE LIMITATION FIRST, because it is the important part: screener.in's free
+    page carries no GNPA/NNPA, no provision coverage, no CASA, no capital
+    adequacy and no cost-to-income for banks. Asset quality — the single
+    strongest negative determinant of a bank's valuation in the literature —
+    is NOT in this score and cannot be. The note says so on every card, because
+    a bank score that silently omits asset quality is more dangerous than the
+    flat 0.5 it replaces: 0.5 at least looks like an abstention.
+
+    What IS available, and what the research says still matters: the financing
+    margin and its trend (the closest available proxy for NIM, which is a
+    strong positive determinant of valuation), ROE, book-value compounding,
+    and equity dilution — banks raise equity constantly and it is the most
+    under-appreciated drag on per-share returns.
+
+    flatten() already maps "Financing Margin %" onto the opm_* columns, so the
+    margin trend and its streak arrive here without a second parser."""
+    m_now, m_then = _num(row, "opm_latest_q"), _num(row, "opm_yoy_q")
+    m_streak = _num(row, "opm_yoy_streak")
+    roe = _num(row, "roe_pct")
+    res_now, res_3y = _num(row, "reserves_now"), _num(row, "reserves_3y_ago")
+    eq_now, eq_3y = _num(row, "equity_cap_now"), _num(row, "equity_cap_3y_ago")
+
+    parts: list[tuple[float, float]] = []
+    notes: list[str] = []
+
+    if m_now is not None and m_then is not None:
+        delta = m_now - m_then
+        margin = _clip01(0.5 + delta / 8.0)      # +-4pp saturates
+        if m_streak is not None and m_streak >= 3:
+            margin = min(1.0, margin + 0.1)
+        parts.append((0.35, margin))
+        notes.append(f"financing margin {m_then}->{m_now}%"
+                     + (f", up {m_streak:.0f} quarters running" if m_streak and m_streak >= 3 else ""))
+
+    if roe is not None:
+        parts.append((0.25, _clip01(roe / 18.0)))
+        notes.append(f"ROE {roe}%")
+
+    if res_now is not None and res_3y is not None and res_3y > 0:
+        growth = res_now / res_3y - 1.0
+        parts.append((0.25, _clip01(growth / 0.60)))   # ~17% CAGR saturates
+        notes.append(f"book value +{growth * 100:.0f}% over 3y")
+
+    if eq_now is not None and eq_3y is not None and eq_3y > 0:
+        dilution = eq_now / eq_3y - 1.0
+        parts.append((0.15, _clip01(1.0 - dilution / 0.40)))
+        if dilution > 0.10:
+            notes.append(f"share capital +{dilution * 100:.0f}% over 3y — dilution")
+
+    if not parts:
+        return None, "bank fundamentals unavailable"
+
+    total = sum(w for w, _ in parts)
+    score = sum(w * v for w, v in parts) / total
+    notes.append("asset quality (GNPA, provisions, CASA) is NOT published on "
+                 "the free source and is NOT in this score")
+    return round(score, 3), "; ".join(notes)
+
+
 def score_financial_strength(row: dict, industry: str | None = None) -> tuple[float | None, str]:
     if _is_financial(industry):
-        return 0.5, ("financial company — borrowings are raw material, leverage "
-                     "metrics not meaningful; bank-specific ratios are Phase C")
+        # was a flat 0.5 with "bank-specific ratios are Phase C" — which stayed
+        # true for a month while 10 of the 100 points sat inert for ~20% of the
+        # universe. See score_financial_strength_bank for what is and is not
+        # in the replacement.
+        return score_financial_strength_bank(row)
 
     debt_now = _num(row, "debt_cr")
     debt_3y = _num(row, "debt_3y_ago_cr")
@@ -307,9 +405,10 @@ def score_governance(row: dict) -> tuple[float | None, str]:
             score = max(0.0, score - 0.3)
             notes.append(f"promoter stake {p_then}->{p_now}% (check WHY: lockup "
                          "expiry / PSU divestment / genuine exit)")
-        elif drop < -1.0:
-            score = min(1.0, score + 0.1)
-            notes.append("promoter buying")
+        # promoter BUYING is no longer scored here. It is an insider signal,
+        # not a governance hygiene check, and splitting one fact across two
+        # dimensions meant neither of them told the whole story. It now sits
+        # in score_smart_money alongside the FII and DII legs.
 
     notes.append("auditor/SEBI/related-party checks pending (Phase C)")
     return round(score, 3), "; ".join(notes)
@@ -318,23 +417,84 @@ def score_governance(row: dict) -> tuple[float | None, str]:
 # ---------------------------------------------------------------------------
 # Dimension 4 — smart money (weight 12, PARTIAL: FII/DII trend)
 # ---------------------------------------------------------------------------
+_FLOW_SATURATION_PP = 3.0     # a 3pp move in one leg saturates that leg
+_MEANINGFUL_PP = 0.2          # smaller than this is drift, not a decision
+
+
 def score_smart_money(row: dict) -> tuple[float | None, str]:
+    """FII and DII scored SEPARATELY, then combined on agreement.
+
+    The old version summed the two changes into one number. Measured across
+    the 290 scored names with all four values: 59 have both legs buying, 20
+    have both selling, and **152 have them moving in opposite directions** —
+    so on 52% of the universe the sum was reporting the residue of a
+    disagreement as if it were a consensus. AAVAS (FII 13.0 out, DII 10.6 in)
+    netted to -2.4 and scored as mild selling, when what actually happened was
+    a complete change in who owns the company.
+
+    Two asymmetries, both deliberate:
+
+    * AGREEMENT is worth more than either leg alone. Two independent pools of
+      capital moving the same way is the closest this data gets to O'Neil's
+      "increasing number of institutional sponsors".
+    * On DIVERGENCE the domestic leg carries more weight. FII flows are driven
+      substantially by global risk conditions — dollar, US rates, EM
+      allocation — and say less about the company than DII flows, which are
+      structural and SIP-fed. This is the one judgement call in the design and
+      the note names it so a reader can disagree.
+
+    Promoter BUYING is also read here rather than in governance: a promoter
+    adding to their own stake is an insider signal, not a hygiene check."""
     fii_now, fii_then = _num(row, "fii_pct"), _num(row, "fii_pct_4q_ago")
     dii_now, dii_then = _num(row, "dii_pct"), _num(row, "dii_pct_4q_ago")
+    p_now, p_then = _num(row, "promoter_pct"), _num(row, "promoter_pct_4q_ago")
 
-    if fii_now is None and dii_now is None:
+    fii_d = (fii_now - fii_then) if None not in (fii_now, fii_then) else None
+    dii_d = (dii_now - dii_then) if None not in (dii_now, dii_then) else None
+    if fii_d is None and dii_d is None:
         return None, "institutional holding data missing"
 
-    change = 0.0
-    parts = []
-    if fii_now is not None and fii_then is not None:
-        change += fii_now - fii_then
-        parts.append(f"FII {fii_then}->{fii_now}%")
-    if dii_now is not None and dii_then is not None:
-        change += dii_now - dii_then
-        parts.append(f"DII {dii_then}->{dii_now}%")
+    def leg(delta: float | None) -> float | None:
+        if delta is None:
+            return None
+        return _clip01(0.5 + delta / (2 * _FLOW_SATURATION_PP))
 
-    score = _clip01(0.5 + change / 6.0)  # +-3pp combined swing saturates
+    f, d = leg(fii_d), leg(dii_d)
+    parts, verdict = [], ""
+
+    if f is not None and d is not None:
+        big_f = abs(fii_d) > _MEANINGFUL_PP
+        big_d = abs(dii_d) > _MEANINGFUL_PP
+        if big_f and big_d and (fii_d > 0) == (dii_d > 0):
+            # both pools agree — push away from the middle, not just average
+            base = (f + d) / 2.0
+            score = _clip01(0.5 + 1.15 * (base - 0.5))
+            verdict = ("both FII and DII accumulating" if fii_d > 0
+                       else "both FII and DII distributing")
+        elif big_f and big_d:
+            # they disagree: weight the domestic read higher, and say so
+            score = _clip01(0.5 + 0.35 * (d - 0.5) + 0.25 * (f - 0.5))
+            verdict = (f"{'foreign' if fii_d > 0 else 'domestic'} accumulation into "
+                       f"{'domestic' if fii_d > 0 else 'foreign'} distribution "
+                       "(legs disagree — domestic weighted higher)")
+        else:
+            score = (f + d) / 2.0
+            verdict = "little institutional movement either way"
+    else:
+        score = f if f is not None else d
+        verdict = "only one institutional leg reported"
+
+    if fii_d is not None:
+        parts.append(f"FII {fii_then}->{fii_now}% ({fii_d:+.2f}pp)")
+    if dii_d is not None:
+        parts.append(f"DII {dii_then}->{dii_now}% ({dii_d:+.2f}pp)")
+    parts.append(verdict)
+
+    # promoter buying — the highest-conviction insider signal available here
+    if p_now is not None and p_then is not None and (p_now - p_then) > 1.0:
+        score = _clip01(score + 0.12)
+        parts.append(f"promoter stake {p_then}->{p_now}% — insider buying")
+
     parts.append("delivery %/bulk deals pending (Phase C)")
     return round(score, 3), "; ".join(parts)
 

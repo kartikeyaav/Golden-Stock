@@ -138,6 +138,48 @@ def test_a_decimal_point_does_not_end_the_metric_window(text, want):
 # event classes added 2026-08-02, each from a live card that read as nothing
 # ---------------------------------------------------------------------------
 
+def test_a_company_named_only_by_its_ticker_is_still_the_subject():
+    """THE 2026-08-03 miss, user-reported. "SCI floats global tender to build
+    6 cellular container ships of 8,000 TEU capacity" scored relevance 0 —
+    "company not named in the headline" — because Shipping Corporation of
+    India reduces to the single weak token "shipping" once Corporation/India/
+    Ltd are stripped, and "ships" is not a prefix of it. 91 of the 651
+    universe names reduce to one short or generic token like this, and the
+    Indian press refers to exactly those by ticker."""
+    r = read("SCI floats global tender to build 6 cellular container ships of "
+             "8,000 TEU capacity", "Shipping Corporation of India Ltd.", "SCI",
+             source="ET Infra")
+    assert r.relevance >= N.NEWSQ.min_relevance_to_score, r.why
+    assert r.scoreable
+    assert r.event == "capex/investment"
+    assert r.sentiment == 1
+
+
+@pytest.mark.parametrize("text,name,sym", [
+    # lowercase "sci-fi" is not the ticker — the match is case-sensitive, and
+    # capitalisation is the cheapest disambiguator available
+    ("Scientists at IIT develop new sci-fi inspired material",
+     "Shipping Corporation of India Ltd.", "SCI"),
+    ("The shipment sailed on Tuesday carrying scientific equipment",
+     "Shipping Corporation of India Ltd.", "SCI"),
+    # blocklisted: an ordinary capitalised word that happens to be a ticker
+    ("Analysts say the RBI decision will lift lenders across the board",
+     "Max Healthcare Institute Ltd.", "MAX"),
+    ("Exports to the USA fell 12% after the new tariff",
+     "Max Healthcare Institute Ltd.", "MAX"),
+])
+def test_a_bare_uppercase_word_is_not_automatically_a_ticker(text, name, sym):
+    assert read(text, name, sym).relevance == 0, read(text, name, sym).why
+
+
+def test_a_ticker_hit_does_not_override_an_explicit_different_security():
+    """_relevance_one returns 0 WITH A REASON when the headline is tagged for
+    another scrip; a bare ticker match must not resurrect it."""
+    r = read("Usha Martin Education shares NSE:UMESLTD gain 4%",
+             "Usha Martin Ltd.", "USHAMART")
+    assert r.relevance == 0
+
+
 def test_a_committed_capex_is_an_event_not_a_shrug():
     """"Paras Defence enters semiconductor packaging with Rs 6,200 crore plan"
     carried the largest rupee figure on the whole card, matched no event

@@ -1,0 +1,174 @@
+"""test_scoring_dimensions.py — the four dimension changes of 2026-08-03.
+
+Each is a correction to a measured defect, and each test is written so that
+reverting the change turns it red (canaried when written).
+
+Run:  python -m pytest tests/test_scoring_dimensions.py -q
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+
+import pytest
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+
+from scoring.phase_b import (_sales_confirmation,  # noqa: E402
+                             score_earnings_inflection,
+                             score_financial_strength, score_governance,
+                             score_smart_money)
+
+
+# ---------------------------------------------------------------------------
+# 1. FII and DII must not cancel each other
+# ---------------------------------------------------------------------------
+
+def flows(fii_now, fii_then, dii_now, dii_then, **extra):
+    return {"fii_pct": fii_now, "fii_pct_4q_ago": fii_then,
+            "dii_pct": dii_now, "dii_pct_4q_ago": dii_then, **extra}
+
+
+def test_a_large_ownership_rotation_is_not_read_as_no_news():
+    """AAVAS, live: FII 13.0pp out against DII 10.6pp in. The old sum netted
+    to -2.4 and scored it as mild distribution — a complete change in who owns
+    the company, reported as roughly flat. 152 of 290 names have the two legs
+    moving in opposite directions."""
+    s, note = score_smart_money(flows(17.0, 30.0, 25.0, 14.4))
+    assert 0.35 <= s <= 0.65, (s, note)
+    assert "disagree" in note
+    assert "FII" in note and "DII" in note
+
+
+def test_agreement_outscores_a_single_leg_of_the_same_size():
+    agree, _ = score_smart_money(flows(12.0, 10.0, 12.0, 10.0))
+    one_leg, _ = score_smart_money(flows(14.0, 10.0, 10.0, 10.0))
+    assert agree > one_leg
+
+
+def test_both_selling_scores_worse_than_both_buying():
+    up, _ = score_smart_money(flows(12.0, 10.0, 12.0, 10.0))
+    down, _ = score_smart_money(flows(10.0, 12.0, 10.0, 12.0))
+    assert down < 0.5 < up
+
+
+def test_on_divergence_the_domestic_leg_carries_more_weight():
+    """The one judgement call in the design: FII flows track global risk
+    conditions, DII flows are structural. Stated in the note so it can be
+    disagreed with."""
+    dii_buying, _ = score_smart_money(flows(8.0, 14.0, 16.0, 10.0))
+    fii_buying, _ = score_smart_money(flows(16.0, 10.0, 8.0, 14.0))
+    assert dii_buying > fii_buying
+
+
+def test_promoter_buying_moved_out_of_governance_and_into_smart_money():
+    """One fact split across two dimensions meant neither told the story."""
+    base, _ = score_smart_money(flows(12.0, 10.0, 12.0, 10.0))
+    with_promoter, note = score_smart_money(
+        flows(12.0, 10.0, 12.0, 10.0, promoter_pct=56.0, promoter_pct_4q_ago=52.0))
+    assert with_promoter > base
+    assert "insider buying" in note
+    # and governance no longer double-counts it
+    _, gnote = score_governance({"promoter_pct": 56.0, "promoter_pct_4q_ago": 52.0})
+    assert "promoter buying" not in gnote
+
+
+def test_missing_institutional_data_is_not_a_score():
+    assert score_smart_money({})[0] is None
+
+
+# ---------------------------------------------------------------------------
+# 2. sales confirms earnings; it can never rescue them
+# ---------------------------------------------------------------------------
+
+def earnings(np_latest, np_yoy, **extra):
+    base = {"np_latest_q": np_latest, "np_yoy_q": np_yoy,
+            "opm_latest_q": 15.0, "opm_yoy_q": 10.0,
+            "profit_growth_ttm": 40.0, "profit_growth_3y": 20.0,
+            "np_yoy_streak": 4}
+    base.update(extra)
+    return base
+
+
+def test_profit_up_on_falling_sales_is_discounted_as_margin_led():
+    """NAZARA, live: sales -23.5% YoY with TTM profit growth +1271%. The exact
+    case O'Neil's sales rule exists to catch."""
+    strong = score_earnings_inflection(earnings(100, 50, sales_yoy_pct=30.0))[0]
+    cutting, note = score_earnings_inflection(earnings(100, 50, sales_yoy_pct=-23.5))
+    assert cutting < strong
+    assert "MARGIN-LED" in note or "margin-led" in note
+
+
+def test_sales_can_only_discount_never_inflate():
+    """Both O'Neil and Minervini treat sales as CONFIRMATION of an earnings
+    signal, not as something that can rescue a weak one."""
+    for pct in (-40.0, 0.0, 12.0, 30.0, 500.0):
+        with_sales = score_earnings_inflection(earnings(100, 50, sales_yoy_pct=pct))[0]
+        without = score_earnings_inflection(earnings(100, 50))[0]
+        assert with_sales <= without + 1e-9, pct
+
+
+def test_missing_sales_does_not_penalise():
+    """Banks carry Revenue, not Sales. Absent data must not cost a name."""
+    assert _sales_confirmation({}) == (1.0, "")
+    assert _sales_confirmation({"sales_yoy_pct": None})[0] == 1.0
+
+
+@pytest.mark.parametrize("pct,streak,want", [
+    (30.0, 1, 1.0),     # O'Neil's 25% bar
+    (12.0, 1, 0.92),
+    (2.0, 1, 0.80),
+    (-20.0, 1, 0.65),
+    (5.0, 4, 1.0),      # below the bar but accelerating three-plus quarters
+])
+def test_the_sales_ladder(pct, streak, want):
+    assert _sales_confirmation(
+        {"sales_yoy_pct": pct, "sales_yoy_streak": streak})[0] == want
+
+
+# ---------------------------------------------------------------------------
+# 3/4. banks get a real read, and it states what it cannot see
+# ---------------------------------------------------------------------------
+
+BANK = {"opm_latest_q": 18.0, "opm_yoy_q": 12.0, "opm_yoy_streak": 4,
+        "roe_pct": 17.0, "reserves_now": 3000.0, "reserves_3y_ago": 1800.0,
+        "equity_cap_now": 100.0, "equity_cap_3y_ago": 95.0}
+
+
+def test_a_bank_is_no_longer_a_flat_half():
+    """48 financial-sector names all scored exactly 0.5 with the note
+    'bank-specific ratios are Phase C', for a month."""
+    good, _ = score_financial_strength(BANK, industry="Financial Services")
+    weak, _ = score_financial_strength(
+        {**BANK, "opm_latest_q": 4.0, "roe_pct": 3.0,
+         "reserves_now": 1700.0, "equity_cap_now": 190.0},
+        industry="Financial Services")
+    assert good > 0.5 > weak
+    assert good != 0.5 and weak != 0.5
+
+
+def test_the_bank_score_says_what_it_cannot_see():
+    """A bank score that silently omits asset quality is more dangerous than
+    the flat 0.5 it replaces — 0.5 at least looks like an abstention."""
+    _, note = score_financial_strength(BANK, industry="Banks")
+    assert "asset quality" in note
+    assert "NOT in this score" in note
+
+
+def test_dilution_costs_a_bank():
+    clean, _ = score_financial_strength(BANK, industry="Banks")
+    diluted, note = score_financial_strength(
+        {**BANK, "equity_cap_now": 160.0}, industry="Banks")
+    assert diluted < clean
+    assert "dilution" in note
+
+
+def test_a_manufacturer_still_takes_the_manufacturer_path():
+    s, note = score_financial_strength(
+        {"debt_cr": 500.0, "debt_3y_ago_cr": 1000.0, "debt_to_equity": 0.2,
+         "cfo_last_cr": 200.0}, industry="Capital Goods")
+    assert "deleveraging" in note
+    assert "asset quality" not in note
+    assert s > 0.5

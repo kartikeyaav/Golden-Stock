@@ -1749,6 +1749,114 @@ Prefix matching now needs 6 characters on both sides.
 
 ---
 
+## 3U. The four deferred scoring items, built — and the ticker the reader could not see (2026-08-03)
+
+Designs are in `SCORING_PROPOSALS_2026-08-03.md`, written after checking what
+the data actually contains. **That check overturned two of the five
+recommendations `SCORING_AUDIT_2026-08-02.md` had made the day before**, which
+is the entry worth remembering: an audit that recommends without measuring is
+a hypothesis, not a finding.
+
+**THE USER-REPORTED MISS, and the largest single fix here.** "SCI has an
+important news yesterday, that it floated a global tender for 8000 ships — why
+did we miss it?" It was **fetched** and then thrown away by the READER:
+`relevance` scored it 0, "company not named in the headline". Shipping
+Corporation of India reduces to the single token `["shipping"]` once
+Corporation/India/Ltd are stripped, `shipping` is a weak-solo token, and
+"ships" is not a prefix of it — so a headline that says **SCI** matched
+nothing. **91 of the 651 universe names reduce to one short or generic token
+like this** (BEML, CESC, EIH, CCL, BLS, DOMS, HFCL…), and the Indian press
+refers to exactly those by ticker. `_symbol_match` now matches the exchange
+ticker, CASE-SENSITIVE against the original text — capitalisation is the
+cheapest available disambiguator between SAIL the steel company and the verb —
+with a blocklist for tickers that are ordinary capitalised words (MAX, ONE,
+IDEA, GST, RBI…), a 3-character floor, and a rule that a bare ticker hit never
+overrides an explicit "this headline is tagged NSE:UMESLTD" finding. Also added
+`capex/investment` patterns for a tender the company FLOATS (procurement, i.e.
+spending — a tender it WINS is still an order win, checked first). Live result:
+the SCI story is now the card's LEAD STORY at catalyst 0.742.
+
+**(1) FII and DII no longer cancel each other.** `score_smart_money` summed the
+two changes into one number. Measured across the 290 names with all four
+values: 59 have both legs buying, 20 both selling, and **152 have them moving
+in opposite directions** — so on 52% of the universe the sum reported the
+residue of a disagreement as a consensus. AAVAS (FII 13.0pp out, DII 10.6pp in)
+netted to −2.4 and read as mild distribution. Now scored as two legs: agreement
+is pushed away from the middle (the closest this data gets to O'Neil's
+"increasing number of sponsors"), divergence weights the DOMESTIC leg higher
+because FII flows track global risk conditions rather than company
+fundamentals, and the note names both legs and the verdict. Promoter BUYING
+moved here from governance — it is an insider signal, not a hygiene check, and
+splitting one fact across two dimensions meant neither told the story.
+Effect: 108 of 290 names move >0.15 on the dimension. HFCL 1.00 → 0.47,
+ENTERO 0.00 → 0.55.
+
+**(2) Sales confirms earnings.** O'Neil's C wants same-quarter sales >25% OR
+acceleration over three quarters, and says why: earnings can be lifted by cost
+cuts, one-offs or accounting. Minervini wants sales, margins and earnings
+moving together. The dimension had no sales term at all. Added as a
+MULTIPLIER, never a component — both systems treat sales as confirmation of an
+earnings signal, not as something that can rescue a weak one, so it can only
+discount (×1.0 / 0.92 / 0.80 / 0.65). Distribution across 291 names: 250
+unaffected, 12 at ×0.65. NAZARA is the showcase — **sales −23.5% YoY against
+TTM profit growth +1271%** — and the card now says "MARGIN-LED, check whether
+this is cost cutting rather than growth", which is the most useful sentence
+this dimension could carry and previously could not.
+
+**(3) Governance flags from the filings archive — CORRECTED to a flag, not a
+score.** The audit called this "a real measurement". Measured across 27,115
+filings: auditor resignation hits **1** universe name, modified opinion 2,
+pledge events 1, rating downgrades 0, and 33 of the 42 negative-classified
+filings are routine director changes. About 8–11 governance-relevant events
+across 651 names per three weeks. A scoring component on that leaves 640+
+names unmoved and measures nothing; sparse-but-real is a ruin-avoidance
+profile. `phase_c.governance_flags()` reads 180 days of first-party filings for
+auditor exit / modified opinion / pledge CREATED-or-INVOKED / regulatory action
+(hard) and KMP exit (soft). **10 of 652 names flagged**, incl. GALLANTT's
+genuine auditor resignation. A pledge RELEASE was caught red on the first run
+and excluded — it is promoters de-risking, and direction is the whole point for
+a flag even though news_radar's own pledge class lumps all three together.
+I wrote it as a ninth Dimension first; that was wrong twice — `CONVICTION.weights`
+must sum to 100 so a new key has no defined weight, and the density does not
+support one. It is display-only, and its firing rate gets counted before
+anyone argues for a veto.
+
+**(4) Banks get a real read — but NOT the one the audit recommended.** The
+audit said "NIM trend, GNPA trend, CASA". **None of those exist on the free
+screener.in page.** A bank page carries Revenue, Financing Profit, Financing
+Margin %, Net Profit, EPS, Equity Capital and Reserves — no NPAs, no CASA, no
+capital adequacy, no cost-to-income, not even Borrowings. `flatten` already
+maps "Financing Margin %" onto the `opm_*` columns, so the margin trend and its
+streak arrive free. `score_financial_strength_bank` = margin trend 0.35 + ROE
+0.25 + book-value compounding 0.25 + dilution 0.15, replacing a flat 0.5 that
+had sat on **48 financial-sector names** for a month. The note states the
+limitation on every card, because a bank score that silently omits asset
+quality is more dangerous than a flat 0.5 — 0.5 at least looks like an
+abstention. Range: MCX 1.00 (margin 55→75%, ROE 56%) to SAMMAANCAP 0.04
+(margin →−263%, ROE −3.18%, share capital +154%).
+
+**(5) NOT built, by design.** The theme_tailwind weight test is specified in
+the proposals doc and deliberately not run: 157 outcome rows exist but only 33
+carry a frozen `news_catalyst`, and 0 of 199 have hit a stop. Also corrected my
+own framing — matrix v2 config E tested sector heat as an entry GATE, and this
+dimension gates nothing, so it never actually answered the question. The
+answerable version is a leave-one-out rank correlation over ALL EIGHT
+dimensions at once. Build the harness so the decision rule is fixed before any
+number is visible; run it when the frozen-news cohort reaches ~100.
+
+COMBINED effect of 1–4 on the live shortlist: mean **2.19 points**, 24 of 99
+names moving >3, and a genuine top-10 reshuffle (JAMNAAUTO and CHENNPETRO out —
+both had been scoring 1.00 on the cancelled FII/DII sum; DCBBANK and SANSERA
+in). 194 pytest green, canaried.
+
+**Also fixed:** the dashboard's coverage-aware merge used `>=`, so on equal
+coverage the OLDER read won the drawer — meaning every scoring improvement
+stayed invisible on any name carrying an equal-coverage alert until it aged
+out. Now strictly-better coverage, or equal coverage and fresher. Same
+frozen-record family as §3T(4), this time in the merge rather than the store.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri

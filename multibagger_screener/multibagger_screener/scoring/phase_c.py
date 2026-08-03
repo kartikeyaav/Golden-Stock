@@ -290,6 +290,12 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
         "sources_ok": src_health.get("sources_ok", 0),
         "sources_tried": src_health.get("sources_tried", 0),
         "source_errors": src_health.get("errors", {}),
+        # governance read from this company's OWN filings over 180 days. The
+        # governance dimension has said "auditor/SEBI/related-party checks
+        # pending (Phase C)" on every card since Phase C shipped; this is the
+        # part of that promise the free data can actually keep.
+        "gov_flags": governance_flags(company_name),
+        "gov_window_days": GOV_WINDOW_DAYS,
         # the raw evidence behind catalyst_score, kept so the saturation
         # constant can be recalibrated against real data instead of guessed
         "pos_flow": round(pos_flow, 4), "neg_flow": round(neg_flow, 4),
@@ -432,6 +438,76 @@ def _dedupe_filings(raw: list[dict]) -> list[dict]:
     return out
 
 
+# ---------------------------------------------------------------------------
+# governance, read from the first-party filings archive
+# ---------------------------------------------------------------------------
+
+# Ordered hardest-first. Each pattern earned its place against the 27,115
+# filings in the archive, and the DENSITY is why this is a flag rather than a
+# scoring component: across the whole 651-name universe and three weeks of
+# filings, auditor resignation hits 1 name, a qualified opinion 2, pledge
+# events 1 and rating downgrades 0 — roughly 8 governance-relevant events in
+# total. A score built on that would leave 643 names unmoved and measure
+# nothing. Sparse-but-real is the profile of a ruin-avoidance signal, which
+# this project already treats separately from expectancy.
+_GOV_PATTERNS: list[tuple[str, str, "re.Pattern"]] = [
+    ("hard", "auditor resignation",
+     re.compile(r"\bresignation\b[^|]{0,60}\bauditor\b|"
+                r"\bauditor\b[^|]{0,60}\bresign", re.I)),
+    ("hard", "modified audit opinion",
+     re.compile(r"\b(qualified|adverse|modified|disclaimer of) opinion\b|"
+                r"\bemphasis of matter\b", re.I)),
+    # CREATION or INVOCATION only. A RELEASE of pledge is promoters
+    # de-risking — the opposite of an adverse event — and flagging it red was
+    # caught on the first live run (EMBDL, "Release of Pledge on Equity Shares
+    # held by Promoter Group"). news_radar's own pledge class lumps all three
+    # together because for the radar any pledge movement is worth attention;
+    # for a governance flag the direction is the whole point.
+    ("hard", "pledge created or invoked",
+     re.compile(r"\b(creation|invocation) of pledge\b|"
+                r"\bpledge[sd]?\b[^|]{0,30}\b(creat|invok|encumb)", re.I)),
+    ("hard", "regulatory action",
+     re.compile(r"\b(show cause|penalt(y|ies)|debar|adjudication order|"
+                r"prosecution|search and seizure)\b", re.I)),
+    ("soft", "KMP exit",
+     re.compile(r"\bresignation of\b[^|]{0,45}\b(cfo|ceo|managing director|"
+                r"chief financial|chief executive|whole[- ]time director|"
+                r"company secretary)\b", re.I)),
+]
+
+GOV_WINDOW_DAYS = 180
+
+
+def governance_flags(company_name: str, days: int = GOV_WINDOW_DAYS) -> list[dict]:
+    """Adverse governance events in this company's own filings.
+
+    First-party only — a filing cannot mis-attribute a story to the wrong
+    company the way a scraped headline can. Returns [] both when the archive
+    is clean AND when it is unreadable, so callers must not read an empty list
+    as "clean" without checking `governance_checked`."""
+    try:
+        rows = archived_for(company_name, days=days)
+    except Exception:                              # noqa: BLE001
+        return []
+    out: list[dict] = []
+    seen: set[str] = set()
+    for f in rows:
+        subject = f.get("subject") or ""
+        for severity, label, rx in _GOV_PATTERNS:
+            if not rx.search(subject):
+                continue
+            key = f"{label}:{str(f.get('date'))[:10]}"
+            if key in seen:
+                break
+            seen.add(key)
+            out.append({"severity": severity, "kind": label,
+                        "date": str(f.get("date") or "")[:10],
+                        "subject": subject[:120]})
+            break
+    out.sort(key=lambda x: (x["severity"] != "hard", x["date"]), reverse=False)
+    return out
+
+
 def _results_notice(subject: str) -> bool:
     t = subject.lower()
     return any(k.lower() in t for k in CATALYST.results_event_keywords)
@@ -476,6 +552,8 @@ def card_news_blob(e: dict) -> dict | None:
         "red_flags": e.get("red_flags", []),
         "top_story": e.get("top_story"), "dropped": e.get("dropped", {}),
         "theme_note": e.get("theme_note", ""),
+        "gov_flags": e.get("gov_flags", []),
+        "gov_window_days": e.get("gov_window_days"),
         "filings": [{"d": f.get("d", ""), "t": f.get("t", ""),
                      "event": f.get("event", ""), "pol": f.get("pol", ""),
                      "procedural": f.get("procedural", False)}
@@ -628,6 +706,19 @@ def enrichment_dimensions(e: dict) -> list[Dimension]:
                  f"sentiment {slabel} ({e.get('sent_pos', 0)}+/{e.get('sent_neg', 0)}-)"
                  f"{drop_note}")
     dims = [Dimension("catalyst", e["catalyst_score"], cat_notes + " (news-based v0)")]
+
+    # GOVERNANCE FILINGS ARE DELIBERATELY NOT A DIMENSION.
+    #
+    # Emitting one here was the first thing I wrote and it was wrong twice
+    # over. CONVICTION.weights must sum to 100 and a key outside it has no
+    # defined weight, so a ninth dimension is a change to the score's
+    # STRUCTURE — and the density does not support one anyway: about 8
+    # governance-relevant events across 651 names per three weeks would leave
+    # 643 names unmoved. They travel on the card as flags (see
+    # phase_c.governance_flags and the enrich payload's gov_flags), where a
+    # human can act on them, and their firing rate gets counted before anyone
+    # argues for a veto. Same discipline as every other untested overlay.
+    return dims
     # theme_score is None when the map or the heat table is unavailable.
     # Emitting a Dimension with score None would still be correct (assess()
     # treats None as not-live), but being explicit keeps the intent legible.

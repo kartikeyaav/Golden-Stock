@@ -153,7 +153,16 @@ POSITIVE = {
         r"\bcapital expenditure of\b",
         r"\b(?:rs\.?|inr|₹)[\s\-]*\d[\d,]*(?:\.\d+)?[\s\-]*(?:crore|cr\b|billion|bn\b)"
         r"[^.;|]{0,40}\b(invest\w*|capex|plan|project|facility|plant|expansion)\b",
-        r"\bplans? to (set ?up|build|invest)\b"],
+        r"\bplans? to (set ?up|build|invest)\b",
+        # A tender the company FLOATS is procurement — it is spending, and it
+        # is fleet/capacity expansion. (A tender the company WINS is an order
+        # win, and "order win" is checked first, so that case still lands
+        # there.) 2026-08-03: "SCI floats global tender to build 6 cellular
+        # container ships of 8,000 TEU capacity" classified as nothing.
+        r"\b(floats?|floated|invites?|issues?)\b[^.;|]{0,25}\btenders?\b",
+        r"\btenders?\b[^.;|]{0,30}\bto (build|construct|procure|acquire)\b",
+        r"\bto (build|construct|acquire|induct)\b[^.;|]{0,30}"
+        r"\b(ships?|vessels?|aircraft|plants?|units?|rigs?|rakes?)\b"],
     # Balance-sheet repair — the Suzlon signature, and a fact the fundamentals
     # layer already scores but the news layer read as nothing ("Granules India
     # turns debt-free in Q1FY27"). NCD/debenture redemption is routine

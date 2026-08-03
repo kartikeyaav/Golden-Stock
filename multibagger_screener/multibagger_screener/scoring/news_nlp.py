@@ -470,9 +470,44 @@ def _all_absorbed(t: str, token: str) -> bool:
     return found
 
 
+# Tickers that are ordinary capitalised English or a common abbreviation. A
+# bare uppercase match on these is not evidence that the company is meant.
+_TICKER_BLOCKLIST = {
+    "ALL", "AND", "ANY", "ARE", "BEST", "BIG", "CAN", "CARE", "CITY", "DAY",
+    "END", "FACT", "FIRST", "FOR", "GOOD", "HIGH", "HOME", "IDEA", "INDIA",
+    "JOB", "LIVE", "MAP", "MAX", "NEW", "NEXT", "NOW", "ONE", "OPEN", "OUR",
+    "PLAY", "POST", "SAFE", "SHIP", "STAR", "SUN", "TOP", "USA", "WAY",
+    "AI", "CEO", "CFO", "GDP", "GST", "IPO", "NSE", "BSE", "RBI", "SEBI",
+    "USD", "INR", "EPS", "NAV", "ESG", "FII", "DII", "PSU", "SME", "MSME",
+    "UAE", "USA", "UK", "EU", "US", "AGM", "EGM", "NCLT", "CCI", "FDI",
+}
+
+
+def _symbol_match(text: str, symbol: str) -> bool:
+    """Does the headline name the company by its EXCHANGE TICKER?
+
+    91 of the 651 universe names reduce to a single short or generic token
+    once "Limited/India/Industries/Corporation" is stripped — Shipping
+    Corporation of India becomes ["shipping"], BEML becomes ["beml"], EIH
+    becomes ["eih"] — and the Indian press routinely refers to exactly those
+    companies by ticker. The 2026-08-03 case: "SCI floats global tender to
+    build 6 cellular container ships of 8,000 TEU capacity" scored relevance
+    0, "company not named in the headline", because "shipping" is a weak-solo
+    token and "ships" is not a prefix of it.
+
+    CASE-SENSITIVE on purpose, against the ORIGINAL text. Capitalisation is
+    the strongest available disambiguator between SAIL the steel company and
+    the verb, or CUB the bank and the animal — and it costs nothing."""
+    s = (symbol or "").strip().upper()
+    if len(s) < 3 or s in _TICKER_BLOCKLIST or not s.isalnum():
+        return False
+    return re.search(rf"(?<![A-Za-z0-9]){re.escape(s)}(?![A-Za-z0-9])", text) is not None
+
+
 def relevance(text: str, company_name: str, symbol: str,
               universe: list[tuple[str, list[str]]] | None = None) -> tuple[int, list[str]]:
-    """Best score across the registered name and any known aliases."""
+    """Best score across the registered name, any known aliases, and the
+    exchange ticker."""
     best = _relevance_one(text, company_name, symbol, universe)
     for alt in load_aliases().get(symbol, []):
         if best[0] >= 95:
@@ -480,6 +515,20 @@ def relevance(text: str, company_name: str, symbol: str,
         cand = _relevance_one(text, alt, symbol, universe)
         if cand[0] > best[0]:
             best = (cand[0], cand[1] + [f"matched alias '{alt}'"])
+    # The ticker is a last resort, and it never overrides a NEGATIVE finding:
+    # _relevance_one returns 0 with a reason when the headline is explicitly
+    # tagged as a different security or the name is a common English phrase in
+    # another sense, and a bare ticker hit must not resurrect those.
+    if best[0] < 62 and _symbol_match(text, symbol):
+        blocked = any(k in " ".join(best[1]) for k in ("is tagged", "another sense"))
+        if not blocked:
+            others = count_other_companies(text.lower(), symbol, universe)
+            score = 80 - min(18 * others, 55)
+            if _any(_LISTICLE, text.lower()):
+                score = min(score, 25)
+            if score > best[0]:
+                best = (max(0, score), [f"named by ticker {symbol.upper()}"]
+                        + ([f"{others} other listed companies named"] if others else []))
     return best
 
 

@@ -610,7 +610,17 @@ def build_payload() -> dict:
         try:
             for sym, ad in json.load(open(adpath, encoding="utf-8")).items():
                 wd = details.get(sym)
-                if wd is None or (ad.get("coverage") or 0) >= (wd.get("coverage") or 0):
+                # STRICTLY better coverage, not "at least as good". On a tie
+                # the old rule handed the drawer to whichever read was older,
+                # which is backwards on its own terms: two reads that know the
+                # same amount are separated by which one knows it more
+                # recently. It also means every scoring improvement stays
+                # invisible on any name carrying an equal-coverage alert until
+                # that alert ages out — the frozen-record problem again, this
+                # time in the merge rather than the store.
+                if wd is None or (ad.get("coverage") or 0) > (wd.get("coverage") or 0) \
+                        or ((ad.get("coverage") or 0) == (wd.get("coverage") or 0)
+                            and _newer(ad.get("alerted_at"), wd.get("scored_at"))):
                     details[sym] = ad
                 else:
                     merged = dict(wd)
@@ -3250,6 +3260,17 @@ const dr=n.dropped||{};const dk=Object.keys(dr);
 if(dk.length)h+=`<div class="axis" style="margin-top:3px">filtered: ${dk.map(k=>dr[k]+' '+(KINDLBL[k]||k)).join(', ')}</div>`;
 h+=`<div class="axis" style="margin-top:3px">repeat tellings of one story count once; low-tier sources are weighted down, not hidden</div></div>`;
 (n.red_flags||[]).forEach(f=>h+=`<div style="color:#f87171;font-size:12px;margin:4px 0">!! ${esc(f)}</div>`);
+/* Governance read from the company's OWN filings over 180 days. Deliberately
+   NOT a scoring dimension — about 8 such events fire across 651 names in three
+   weeks, which is a flag's density, not a score's. Absence is stated as
+   "nothing found", never as "clean". */
+if(n.gov_flags&&n.gov_flags.length){
+ h+=`<div style="margin:8px 0 4px"><span class="axis">GOVERNANCE FILINGS (${n.gov_window_days||180}d)</span></div>`;
+ n.gov_flags.forEach(g=>{const hard=g.severity=='hard';
+  h+=`<div style="font-size:12px;margin:3px 0;color:${hard?'#f87171':'#fbbf24'}">${hard?'!!':'·'} <b>${esc(g.kind)}</b> <span class="dim">${esc(g.date)}</span> ${esc(g.subject)}</div>`;});
+ h+=`<div class="axis" style="margin:2px 0 6px">Flags only — never a gate or a veto. Firing rate is being counted before anything is built on them.</div>`;
+}else if(n.gov_window_days){
+ h+=`<div class="axis" style="margin:6px 0">No adverse governance filing found in ${n.gov_window_days}d (auditor exit, modified opinion, pledge event, regulatory action). Absence of a filing is not an audit.</div>`;}
 /* Filings are deduped by EVENT upstream (NSE publishes most of them twice,
    once free-text and once as an XBRL category, and one earnings call arrives
    under five labels). Material events sort first; the boilerplate preamble

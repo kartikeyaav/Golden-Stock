@@ -86,6 +86,13 @@ def flatten(symbol: str, d: dict) -> dict:
     opm_latest, opm_yoy = _yoy_quarter(opm_row)
     np_streak = _yoy_streak(np_row)
     opm_streak = _yoy_streak(opm_row)
+    # Sales, the third of Minervini's three things and O'Neil's confirmation
+    # that earnings growth is real rather than cost-cutting. Banks carry
+    # "Revenue" instead and are deliberately NOT mapped onto this — interest
+    # income is not comparable, and score_financial_strength_bank reads them.
+    sales_row = q.get("Sales")
+    sales_latest, sales_yoy = _yoy_quarter(sales_row)
+    sales_streak = _yoy_streak(sales_row)
 
     borrowings = bs.get("Borrowings") or []
     equity_cap = bs.get("Equity Capital") or []
@@ -131,12 +138,23 @@ def flatten(symbol: str, d: dict) -> dict:
         # asks for by name ("2+ consecutive improving quarters").
         "np_yoy_streak": np_streak,
         "opm_yoy_streak": opm_streak,
+        "sales_latest_q": sales_latest,
+        "sales_yoy_q": sales_yoy,
+        "sales_yoy_pct": (round((sales_latest - sales_yoy) / abs(sales_yoy) * 100, 1)
+                          if sales_latest is not None and sales_yoy not in (None, 0)
+                          else None),
+        "sales_yoy_streak": sales_streak,
         "debt_cr": debt_now,
         "debt_3y_ago_cr": borrowings[-4] if len(borrowings) >= 4 else None,
         "debt_to_equity": round(debt_now / net_worth, 2) if debt_now is not None and net_worth > 0 else None,
         "cfo_last_cr": _last(cf.get("Cash from Operating Activity")),
         "equity_cap_now": _last(equity_cap),
         "equity_cap_3y_ago": equity_cap[-4] if len(equity_cap) >= 4 else None,
+        # book-value compounding. The only asset-side quality signal available
+        # for a bank on the free page — screener.in publishes no GNPA, no
+        # provisions, no CASA and no capital adequacy for them.
+        "reserves_now": _last(reserves),
+        "reserves_3y_ago": reserves[-4] if len(reserves) >= 4 else None,
         "shares_out_cr": round(_last(equity_cap) / face_value, 2) if _last(equity_cap) and face_value else None,
         "promoter_pct": _last(promoters),
         "promoter_pct_4q_ago": promoters[-4] if len(promoters) >= 4 else None,
