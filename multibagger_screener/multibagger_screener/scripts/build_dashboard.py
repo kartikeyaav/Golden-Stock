@@ -3262,6 +3262,11 @@ const FPRE=/^.{0,80}?has (informed|submitted|intimated)\b.{0,40}?\b(about|regard
  h+=`<div style="font-size:12px;margin:4px 0${proc?';opacity:.55':''}"><span class="pill" style="border-color:${col};color:${col}">NSE</span> <span class="dim">${f.d||''}</span> ${esc(body)}${f.event?` <span class="axis">(${esc(f.event)})</span>`:''}</div>`;});
 (n.headlines||[]).forEach(x=>{
  const off=(x.kind&&x.kind!='corporate')||x.rel<45;
+ /* Google News appends " - Publisher" to every title, and the meta below
+    already names the source. Printing it inside the headline too put the same
+    word on the line three times. Stripped only when it IS the source. */
+ let _t=String(x.t||'');
+ if(x.s&&_t.toLowerCase().endsWith((' - '+x.s).toLowerCase()))_t=_t.slice(0,-(x.s.length+3)).trim();
  const dot=x.sn>0?'<span style="color:#34d399">▲</span>':x.sn<0?'<span style="color:#f87171">▼</span>':'<span class="dim">•</span>';
  let meta=esc(x.s||'');
  if(x.tier==3)meta+=' — aggregator, weighted down';
@@ -3273,7 +3278,7 @@ const FPRE=/^.{0,80}?has (informed|submitted|intimated)\b.{0,40}?\b(about|regard
     and only the panel ignored it. The other tellings become corroboration,
     which is real evidence — one outlet is weaker than four. */
  if(x.dupes>0)meta+=' — '+(x.dupes+1)+' outlets'+(x.also&&x.also.length?': '+esc(x.also.join(', ')):'');
- h+=`<div style="font-size:12px;margin:4px 0${off?';opacity:.5':''}">${dot} <span class="dim">${x.d||''}</span> ${esc(x.t)} <span class="axis">(${meta})</span></div>`;});
+ h+=`<div style="font-size:12px;margin:4px 0${off?';opacity:.5':''}">${dot} <span class="dim">${x.d||''}</span> ${esc(_t)} <span class="axis">(${meta})</span></div>`;});
 return h+'</div>';}
 /* ---- Sectors & themes tab -------------------------------------------------
    The bridge between "what is going on in the market" and "what my machine

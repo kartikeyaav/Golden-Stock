@@ -57,7 +57,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from data.news_radar import classify as classify_event
 from scoring import news_nlp as N
-from scoring.phase_c import NEWS_SCHEMA, _dedupe_filings
+from scoring.phase_c import NEWS_SCHEMA, _dedupe_filings, _display_stories
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STORES = [os.path.join(ROOT, "state", "alert_details.json"),
@@ -146,6 +146,50 @@ def heal_blob(sym: str, blob: dict, company: str) -> tuple[dict, dict]:
             else:
                 changed["filings_reordered"] = 1
             news["filings"] = rebuilt
+
+    # ---- headlines: one line per STORY ---------------------------------
+    #
+    # THIS WAS MISSING in the first version of this script, which healed red
+    # flags and filings, stamped the blob v3, and left the headline list
+    # exactly as the old code had written it — so HONASA still rendered four
+    # separate lines about one CEO appointment and the version stamp, the one
+    # thing meant to tell a healed record from a legacy one, was a claim the
+    # heal had not earned. Stamp only what you have actually done.
+    heads = news.get("headlines") or []
+    if len(heads) > 1:
+        uni = N.load_universe_names()
+        reads, keep = [], []
+        for h in heads:
+            text = h.get("t") or h.get("text") or ""
+            if not text:
+                continue
+            try:
+                r = N.read_article(text, company, sym, source=h.get("s", ""),
+                                   universe=uni)
+            except Exception:                     # noqa: BLE001
+                continue
+            reads.append(r)
+            keep.append(h)
+        if reads:
+            N.assign_stories(reads)
+            index = {id(r): h for r, h in zip(reads, keep)}
+            rebuilt = []
+            for best, others in _display_stories(reads):
+                row = dict(index[id(best)])
+                row["dupes"] = len(others)
+                row["also"] = sorted({(index[id(o)].get("s") or "").strip()
+                                      for o in others
+                                      if (index[id(o)].get("s") or "").strip()})[:4]
+                row.setdefault("nov", best.novelty)
+                rebuilt.append(row)
+            if len(rebuilt) != len(heads):
+                changed["headlines_collapsed"] = len(heads) - len(rebuilt)
+            elif rebuilt != heads:
+                changed["headlines_reordered"] = 1
+            news["headlines"] = rebuilt
+            # legacy blobs predate the story count, and without it the panel
+            # says "15 read" beside one line with no way to see why
+            news.setdefault("stories", len(rebuilt))
 
     if news.get("v") != NEWS_SCHEMA:
         news["v"] = NEWS_SCHEMA

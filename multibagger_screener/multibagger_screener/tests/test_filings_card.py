@@ -212,6 +212,36 @@ def test_the_publisher_suffix_is_not_part_of_the_story():
         "Honasa Consumer appoints Shivang Jain CEO - ET BrandEquity")
 
 
+def test_the_healer_collapses_stored_headlines_before_it_stamps_the_version():
+    """The first version of heal_alert_details healed red flags and filings,
+    stamped the blob v3, and left the HEADLINE list exactly as the old code
+    wrote it — so HONASA still rendered four lines about one appointment while
+    the version stamp, the one thing meant to distinguish a healed record from
+    a legacy one, claimed otherwise. Stamp only what you have actually done."""
+    import importlib
+    heal = importlib.import_module("scripts.heal_alert_details")
+    blob = {"news": {"headlines": [{"t": t, "s": s} for t, s, _ in HONASA]}}
+    _, changed = heal.heal_blob("HONASA", blob, "Honasa Consumer Limited")
+    heads = blob["news"]["headlines"]
+    assert len(heads) == 1, [h["t"] for h in heads]
+    assert heads[0]["dupes"] == 3
+    assert changed.get("headlines_collapsed") == 3
+    assert blob["news"]["v"] == heal.NEWS_SCHEMA
+
+
+def test_the_healer_relabels_survivors_rather_than_only_counting_them():
+    """Comparing LENGTH rather than content threw away every relabel: a
+    genuine SEBI warning kept its pre-fix title 'sebi' after the heal reported
+    success."""
+    import importlib
+    heal = importlib.import_module("scripts.heal_alert_details")
+    out = heal.rejudge_flags(
+        ["'sebi': SEBI warns Viyash Scientific over SDD maintenance gaps"],
+        "Viyash Scientific Ltd", "VIYASH")
+    assert len(out) == 1
+    assert out[0].startswith("'regulatory action'"), out
+
+
 def test_the_best_telling_leads_and_filtered_stories_sink():
     uni = N.load_universe_names()
     real = N.read_article("Welspun Corp secures Rs 960 crore pipeline order",
