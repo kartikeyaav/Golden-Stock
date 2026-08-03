@@ -706,6 +706,11 @@ def enrichment_dimensions(e: dict) -> list[Dimension]:
                  f"sentiment {slabel} ({e.get('sent_pos', 0)}+/{e.get('sent_neg', 0)}-)"
                  f"{drop_note}")
     dims = [Dimension("catalyst", e["catalyst_score"], cat_notes + " (news-based v0)")]
+    # theme_score is None when the map or the heat table is unavailable.
+    # Emitting a Dimension with score None would still be correct (assess()
+    # treats None as not-live), but being explicit keeps the intent legible.
+    dims.append(Dimension("theme_tailwind", e.get("theme_score"),
+                          e.get("theme_note", "") + " (theme map, price-derived)"))
 
     # GOVERNANCE FILINGS ARE DELIBERATELY NOT A DIMENSION.
     #
@@ -718,10 +723,4 @@ def enrichment_dimensions(e: dict) -> list[Dimension]:
     # phase_c.governance_flags and the enrich payload's gov_flags), where a
     # human can act on them, and their firing rate gets counted before anyone
     # argues for a veto. Same discipline as every other untested overlay.
-    return dims
-    # theme_score is None when the map or the heat table is unavailable.
-    # Emitting a Dimension with score None would still be correct (assess()
-    # treats None as not-live), but being explicit keeps the intent legible.
-    dims.append(Dimension("theme_tailwind", e.get("theme_score"),
-                          e.get("theme_note", "") + " (theme map, price-derived)"))
     return dims

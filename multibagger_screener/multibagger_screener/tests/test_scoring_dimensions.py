@@ -165,6 +165,46 @@ def test_dilution_costs_a_bank():
     assert "dilution" in note
 
 
+# ---------------------------------------------------------------------------
+# the enrichment must emit every dimension it owns
+# ---------------------------------------------------------------------------
+
+def test_enrichment_emits_both_of_its_dimensions():
+    """A `return dims` was once inserted ABOVE the theme_tailwind append while
+    rearranging a comment block, leaving that line unreachable. Nothing failed
+    — the dimension simply went dark on all 99 enriched names, coverage fell
+    100% -> 85%, and it only surfaced because a live rebuild produced the
+    wrong number. Weight 15 disappearing silently is exactly the failure this
+    codebase keeps meeting: absent data does not error, it just stops being
+    counted."""
+    from config import CONVICTION
+    from scoring.phase_c import enrichment_dimensions
+    payload = {"ok": True, "catalyst_score": 0.4, "theme_score": 0.6,
+               "theme_note": "Defence ranks 80/100", "events": [],
+               "scoreable_count": 3, "headline_count": 5, "stories": 2,
+               "sentiment": 0.5, "sent_pos": 2, "sent_neg": 0}
+    keys = {d.key for d in enrichment_dimensions(payload)}
+    assert keys == {"catalyst", "theme_tailwind"}, keys
+    # and every key it emits must be a real weighted dimension
+    assert keys <= set(CONVICTION.weights), keys - set(CONVICTION.weights)
+
+
+def test_enrichment_never_invents_an_unweighted_dimension():
+    """CONVICTION.weights must sum to 100, so a key outside it has no defined
+    weight. The governance-filings work was written as a ninth Dimension
+    first; it is display-only for this reason."""
+    from config import CONVICTION
+    from scoring.phase_c import enrichment_dimensions
+    payload = {"ok": True, "catalyst_score": 0.4, "theme_score": None,
+               "events": [], "scoreable_count": 0, "headline_count": 0,
+               "stories": 0, "sentiment": 0.0, "sent_pos": 0, "sent_neg": 0,
+               "gov_flags": [{"severity": "hard", "kind": "auditor resignation",
+                              "date": "2026-07-27", "subject": "x"}],
+               "gov_window_days": 180}
+    for d in enrichment_dimensions(payload):
+        assert d.key in CONVICTION.weights, d.key
+
+
 def test_a_manufacturer_still_takes_the_manufacturer_path():
     s, note = score_financial_strength(
         {"debt_cr": 500.0, "debt_3y_ago_cr": 1000.0, "debt_to_equity": 0.2,
