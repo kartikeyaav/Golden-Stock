@@ -678,3 +678,5 @@ VIYASH  [CONFIRMED]   as of 2026-08-03
 - PAPER BUY KIRLOSENG: 25 sh @ 2190.00 (stop 1947.18, HALF PLAN)
 - PAPER BUY WELCORP: 79 sh @ 1672.00 (stop 1514.61, FULL PLAN)
 - PAPER BUY CGCL: 239 sh @ 232.38 (stop 206.33, HALF PLAN)
+
+_Re-run at 15:53 found no new transitions — the alerts above are today's and stand._

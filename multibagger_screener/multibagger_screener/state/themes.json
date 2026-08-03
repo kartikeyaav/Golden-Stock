@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-03T13:44:35",
+ "generated": "2026-08-03T15:55:22",
  "themes": [
   {
    "key": "datacentre",
@@ -9,8 +9,8 @@
    "breadth": 50.0,
    "rs_med": 95.9,
    "ret3m": 10.3,
-   "news": 2.89,
-   "news_per_name": 0.361,
+   "news": 2.88,
+   "news_per_name": 0.36,
    "thin": false,
    "confirmed": [
     "STLTECH",
@@ -28,8 +28,8 @@
    "breadth": 41.7,
    "rs_med": 75.6,
    "ret3m": 17.5,
-   "news": 1.01,
-   "news_per_name": 0.084,
+   "news": 0.99,
+   "news_per_name": 0.083,
    "thin": false,
    "confirmed": [
     "ASTERDM",
@@ -48,8 +48,8 @@
    "breadth": 42.9,
    "rs_med": 96.6,
    "ret3m": 6.2,
-   "news": 4.87,
-   "news_per_name": 0.695,
+   "news": 4.85,
+   "news_per_name": 0.692,
    "thin": false,
    "confirmed": [
     "ASTRAMICRO",
@@ -84,8 +84,8 @@
    "breadth": 43.8,
    "rs_med": 80.3,
    "ret3m": 3.2,
-   "news": 3.88,
-   "news_per_name": 0.243,
+   "news": 4.9,
+   "news_per_name": 0.306,
    "thin": false,
    "confirmed": [
     "ANANDRATHI",
@@ -106,8 +106,8 @@
    "breadth": 38.5,
    "rs_med": 95.8,
    "ret3m": 4.4,
-   "news": 5.51,
-   "news_per_name": 0.424,
+   "news": 5.45,
+   "news_per_name": 0.42,
    "thin": false,
    "confirmed": [
     "ASTRAMICRO",
@@ -200,8 +200,8 @@
    "breadth": 10.0,
    "rs_med": 73.8,
    "ret3m": 8.1,
-   "news": 2.32,
-   "news_per_name": 0.232,
+   "news": 2.94,
+   "news_per_name": 0.294,
    "thin": false,
    "confirmed": [
     "BELRISE"
@@ -225,7 +225,7 @@
     "GRINDWELL",
     "AIAENG"
    ],
-   "heat": 30.7
+   "heat": 31.7
   },
   {
    "key": "renewables",
@@ -235,8 +235,8 @@
    "breadth": 14.3,
    "rs_med": 78.2,
    "ret3m": -10.8,
-   "news": 11.3,
-   "news_per_name": 0.807,
+   "news": 11.28,
+   "news_per_name": 0.806,
    "thin": false,
    "confirmed": [
     "ACMESOLAR",
@@ -270,8 +270,8 @@
    "breadth": 0.0,
    "rs_med": 17.2,
    "ret3m": -10.8,
-   "news": 5.17,
-   "news_per_name": 0.516,
+   "news": 5.12,
+   "news_per_name": 0.512,
    "thin": false,
    "confirmed": [],
    "heat": 16.0
@@ -284,11 +284,11 @@
    "breadth": 0.0,
    "rs_med": 82.0,
    "ret3m": -11.2,
-   "news": 0.91,
-   "news_per_name": 0.181,
+   "news": 0.88,
+   "news_per_name": 0.175,
    "thin": false,
    "confirmed": [],
-   "heat": 6.0
+   "heat": 5.0
   },
   {
    "key": "semis",
