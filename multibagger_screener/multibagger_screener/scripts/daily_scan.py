@@ -167,6 +167,32 @@ def health_check(today_tags: dict, symbols: list[str],
             # a corrupt file is a failure too, not a reason to fall silent
             problems.append(f"state/parser_health.json unreadable ({type(e).__name__}) "
                             "— parser health is unknown, not good")
+
+    # THE THEME TABLE, for exactly the same reason (added 2026-08-03).
+    # scoring/phase_c._theme_read wraps its read in
+    # `except (OSError, ValueError, KeyError): heat = {}` and then returns None
+    # — which is the honest answer for one name, and silently zeroes a
+    # WEIGHT-15 dimension across the whole universe when the file itself is
+    # broken. Found when a git merge left conflict markers in
+    # state/themes.json: 89 names scored with theme_tailwind dark and nothing
+    # anywhere said why. Absent is a warning; unparseable is louder, because
+    # the file existing is what makes the failure look like normal operation.
+    th_path = os.path.join(ROOT, "state", "themes.json")
+    if not os.path.exists(th_path):
+        problems.append("no state/themes.json — the theme dimension (weight 15) "
+                        "is dark for every name until the next scan writes it")
+    else:
+        try:
+            th = json.load(open(th_path, encoding="utf-8"))
+            n_themes = len(th.get("themes") or [])
+            if n_themes == 0:
+                problems.append("state/themes.json has no themes — the theme "
+                                "dimension (weight 15) is dark for every name")
+        except ValueError as e:
+            problems.append(
+                f"state/themes.json UNPARSEABLE ({type(e).__name__}) — the theme "
+                "dimension (weight 15) is silently dark on every card; check for "
+                "merge conflict markers or a truncated write")
     return [f"!! HEALTH: {p}" for p in problems]
 
 

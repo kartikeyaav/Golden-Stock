@@ -116,3 +116,46 @@ def test_universe_wide_staleness_fires(isolated):
     last = {f"S{i}": (newest if i < 5 else pd.Timestamp("2026-07-24")) for i in range(100)}
     problems = DS.health_check(_tags(), list(_tags()) + ["NIFTY50"], last_bars=last)
     assert any("behind the newest cached bar" in p for p in problems), problems
+
+
+# ---------------------------------------------------------------------------
+# the theme table (added 2026-08-03)
+# ---------------------------------------------------------------------------
+
+def test_an_unparseable_theme_table_is_reported(tmp_path, monkeypatch):
+    """scoring/phase_c._theme_read catches the read error and returns None,
+    which is right for one name and silently zeroes a WEIGHT-15 dimension
+    across the universe when the FILE is broken. A git merge left conflict
+    markers in state/themes.json and 89 names scored with theme dark while
+    nothing anywhere said why."""
+    import scripts.daily_scan as ds
+    state = tmp_path / "state"
+    state.mkdir()
+    (state / "themes.json").write_text(
+        '{\n<<<<<<< Updated upstream\n "generated": "a",\n=======\n'
+        ' "generated": "b",\n>>>>>>> Stashed changes\n "themes": []\n}',
+        encoding="utf-8")
+    monkeypatch.setattr(ds, "ROOT", str(tmp_path))
+    out = " ".join(ds.health_check({"X": "WATCH"}, ["X", "Y"]))
+    assert "themes.json" in out and "UNPARSEABLE" in out, out
+
+
+def test_a_missing_theme_table_is_reported(tmp_path, monkeypatch):
+    import scripts.daily_scan as ds
+    (tmp_path / "state").mkdir()
+    monkeypatch.setattr(ds, "ROOT", str(tmp_path))
+    out = " ".join(ds.health_check({"X": "WATCH"}, ["X", "Y"]))
+    assert "no state/themes.json" in out, out
+
+
+def test_a_healthy_theme_table_is_silent(tmp_path, monkeypatch):
+    import json as _json
+    import scripts.daily_scan as ds
+    state = tmp_path / "state"
+    state.mkdir()
+    (state / "themes.json").write_text(
+        _json.dumps({"generated": "2026-08-03", "themes": [{"key": "k", "heat": 50}]}),
+        encoding="utf-8")
+    monkeypatch.setattr(ds, "ROOT", str(tmp_path))
+    out = " ".join(ds.health_check({"X": "WATCH"}, ["X", "Y"]))
+    assert "themes.json" not in out, out

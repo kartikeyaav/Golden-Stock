@@ -45,6 +45,87 @@ Minor shifts: AEGISLOG CONFIRMED->EXTENDED, AEGISVOPAK WATCH->EXTENDED, BALRAMCH
 
 _News moves attention, never entries — trades stay technical._
 
+## AI analyst verdicts
+
+### STLTECH
+VERDICT: SKIP
+CONVICTION: HIGH
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Card's own entry plan is SKIP — ATR stop 14.2% breaches the 12% hard cap; no tradeable structure exists regardless of thesis quality (mechanical gate, not overridable).
+- Earnings inflection is real, not a one-off: Q1FY27 revenue +87% YoY on a landmark $1.1B multiyear hyperscaler deal, record ₹18,618Cr order book, EBITDA guidance raised to 23%, net debt-free post-QIP.
+- Sector tailwind confirmed independently: global optical fiber is in a supply-constrained price spike (Chinese fiber prices +400-650% since late 2025) driven directly by AI data-center buildouts — direct transmission channel to STL's core market, not generic sector chatter.
+
+RISKS (max 2 bullets):
+- Missed by card: US subsidiary (STI) faces a $96.5M jury verdict (Prysmian trade-secrets case), affirmed Aug 2025, currently on appeal as of Jul 2026 — a ~₹800Cr contingent liability not reflected in the catalyst score's positive-only news scan.
+- Promoter stake fell 44.45%→42.29%, but this is QIP-driven dilution (25.7M new shares issued to institutions incl. Nomura, HSBC), not promoter selling — benign, but worth flagging as the "check WHY" item the card left open.
+
+CHECKED: WebSearch across screener/business-standard/moneycontrol-adjacent sources, STL Q1FY27 earnings coverage, QIP filings, optical fiber market data, and Prysmian litigation docket status.
+
+CHANGES MY MIND: A confirmed volume breakout above 534.8 pivot with a tighter ATR (stop back under 12%) would reopen this for entry — the fundamental case already clears the bar.
+
+### ARVIND
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Story checks out: Arvind's textile/denim division has a genuine order-book-driven inflection — record Q4FY26 quarterly profit, margin expansion, Motilal Oswal initiated Buy, stock +66% YTD on global brands diversifying sourcing away from China ("China+1"). Not a one-off.
+- Card's "board meeting 07-Aug" event risk is a false positive from name collision — that filing belongs to Arvind SmartSpaces (separate listed real-estate entity), not Arvind Limited (the textile company this alert is about). No board-meeting risk found for Arvind Ltd near the pivot.
+- Governance is not clean-zero as the card assumed: promoters hold 39.5% with ~7.24% of that stake pledged (screener/IIFL data) — small, well below veto territory, but the card's "no pledge flagged" should read "minor pledge exists," not "none."
+
+RISKS (max 2 bullets):
+- US Section 122 tariff (10%, cotton textiles ~19% all-in) is set to sunset ~24-Jul-2026 but renewal/extension is unresolved — a real headwind on Arvind's export/AMD segment even as China+1 flows help. Direct transmission channel, not generic sector noise.
+- Found an Arvind Limited postal ballot approving "equity/eligible securities issuance" (2-Aug-2026) — could not verify size or intent (routine enabling resolution vs. real capital raise). Flag, don't ignore.
+
+CHECKED: screener.in/IIFL shareholding data, Business Standard/MarketsMojo/Whalesbook rally coverage, Fibre2Fashion/Business Standard on US tariffs & cotton duty waiver, BSE filing indices.
+CHANGES MY MIND: A confirmed volume breakout above 538.9 with no adverse detail on the 2-Aug postal ballot flips this to BUY at full plan; a large dilutive issuance or pledge increase flips to SKIP.
+
+### VIYASH
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- SEBI "red flag" is a minor administrative warning about Structured Digital Database (insider-trading log) completeness gaps from Jun–Oct 2024, disclosed 08-Jul; not fraud/manipulation, no pledge, promoters (Carlyle-backed) hold 61.3% with 0% pledged — governance risk is overstated by the keyword scan.
+- Growth story is real but merger-distorted: Sequent Scientific's merger with promoter entity Viyash Life Sciences is driving the promoter-stake jump (52%→61%, not simple insider buying) and likely inflates the YoY PAT comps; underlying Q1 print showed a cleaner +13% revenue / +94% PAT growth with margin expansion — solid, not spectacular like the card's headline 200%+ figure suggests.
+- Ecosystem catalyst: subsidiary Alivira Animal Health signed a €16.98M SPA (21-Jul) to acquire Italy's BioForLife, a real inorganic growth driver expanding into a top-5 EU companion-animal market — genuine expansion, not a one-off.
+
+RISKS (max 2 bullets):
+- Board meeting/41st AGM on 11-Aug (results likely) sits right after a live VCP pivot — binary event risk before the trading lot's 2.5R partial can even be reached; BioForLife deal also still needs Italian Golden Power/FDI clearance.
+- Both FII and DII are net distributing even as price breaks out — institutional flow doesn't yet confirm the retail-driven move.
+
+CHECKED: TipRanks/BSE SEBI disclosure, scanx.trade news items, Business Standard/Tradebrains/Whalesbook on BioForLife SPA, screener.in promoter/pledge data, Quartr Q1 earnings summary.
+CHANGES MY MIND: A weak or merger-noise-driven Aug-11 print, or FDI rejection on BioForLife, would flip this to SKIP; sustained FII/DII accumulation post-results would upgrade to FULL PLAN.
+
+### KRN
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: FULL PLAN (on trigger)
+
+WHY (max 3 bullets):
+- No governance red flags found: FY26 disclosure confirms zero pledge/encumbrance; the 70.79%→65.69% promoter drop was a pre-cleared OFS of 10L shares tied to QIP timing ("personal/financial reasons"), not a stealth exit — still a high 65.69% base.
+- Earnings inflection is capacity-led, not a one-off: Q1 FY27 PAT +69.2%, revenue +53.5%, fresh ₹50.87cr coil order at the subsidiary right after a ₹235cr QIP-funded capex infusion; 6x Neemrana expansion (20%→50%→80% utilization FY26-29) with backward integration and export ramp (16%→50% target) is a real multi-year driver.
+- Sector tailwind: Blue Star (₹200cr capex) and Daikin (₹1,000cr India R&D center) are both expanding, with AC price hikes coming — OEM component demand backdrop is supportive, not headwind.
+
+RISKS (max 2 bullets):
+- Copper/aluminum are near multi-year highs (LME copper >$11,400/t, aluminum ~$2,900/t) — margin risk for non-integrated processors; KRN's backward-integration push is the mitigant but isn't proven yet. Also note a disputed ₹5.5cr GST/ITC demand (immaterial vs ₹690cr revenue) and the already-flagged negative operating cash flow from rapid capex/working-capital growth.
+- Valuation is priced for perfection (P/E 104) against a still-negative-OCF balance sheet — any capacity ramp slip gets punished hard.
+
+CHECKED: Screener.in/scanx/tradingview/business-standard/whalesbook coverage of KRN filings, promoter shareholding disclosures, GST order, Q1 FY27 results, plus sector searches on AC OEM capex and copper/aluminum pricing.
+CHANGES MY MIND: A confirmed volume breakout through the 1239 pivot with no fresh negative filing flips this to BUY at full plan; a second promoter sale or margin miss tied to input costs flips it to SKIP.
+
+Sources:
+- [KRN promoters hold 70.79% stake, confirm no encumbrance in FY26](https://scanx.trade/stock-market-news/companies/krn-promoters-hold-70-79-stake-confirm-no-encumbrance-in-fy26/42271153)
+- [Promoters & Mukul Agrawal Trim Stakes In High-PE Multibagger Thermal Solutions Stock](https://insights.dsij.in/dsijarticledetail/promoters-mukul-agrawal-trim-stakes-in-high-pe-multibagger-thermal-solutions-stock-check-details-id021-57738)
+- [KRN HVAC Products Secures ₹50.87 Crore Domestic Order](https://scanx.trade/stock-market-news/companies/krn-heat-exchanger-subsidiary-secures-50-87-crore-domestic-order/46374764)
+- [KRN Heat Exchanger and Refrigeration Limited: Expansion Update](https://www.equitybulls.com/category.php?id=368601)
+- [KRN Heat Exchanger receives ₹5.55 crore GST demand; disputes order](https://www.whalesbook.com/corporate-news/English/sebiexchange/KRN-Heat-Exchanger-receives-indian-rupee555-crore-GST-demand-disputes-order/6a36754bb6609c8f9dd4af4c)
+- [Blue Star / Daikin AC price hikes and capex](https://www.whalesbook.com/news/English/consumer-products/AC-Price-Hikes-Loom-Demand-Surge-Meets-Cost-Squeeze/69aaab818576092f732639a4)
+- [Aluminium and copper: A rally fuelled by structural strains](https://www.lseg.com/en/insights/data-analytics/aluminium-copper-rally-fuelled-by-structural-strains-political-uncertainty)
+
+
 ## Cards
 
 ```

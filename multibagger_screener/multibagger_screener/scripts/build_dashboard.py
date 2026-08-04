@@ -3227,7 +3227,18 @@ function newsMemorySection(sym){
  <div class="axis" style="margin-top:5px;line-height:1.5">Repeat filings of one event count once.
  Context only &mdash; measured in the Journal tab, never an entry signal.</div></div>`;}
 
-function newsSection(sym){const dt=D.details[sym];if(!dt||!dt.news)return'';const n=dt.news;
+function newsSection(sym){const dt=D.details[sym];
+/* A drawer that shows headlines beside a catalyst dimension reading "no data"
+   is contradicting itself — the news panel and the score came from two
+   different reads. Say so rather than letting the reader reconcile it.
+   (User-reported 2026-08-03 on FEDERALBNK.) */
+if(!dt)return'';
+if(!dt.news){
+ const scored=(dt.dims||[]).some(d=>d.k=='catalyst'&&d.live);
+ return scored?'':`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)</h3>
+ <div class="axis">No news read for this name in the last refresh, so the catalyst and theme questions scored no data and the conviction number above is a ${dt.coverage??'partial'}%-coverage read. Not a claim that nothing was published.</div></div>`;}
+const n=dt.news;
+const _catLive=(dt.dims||[]).some(d=>d.k=='catalyst'&&d.live);
 const sc=n.sentiment>0.15?'#34d399':n.sentiment<-0.15?'#f87171':'#94a0b0';
 const sl=n.sentiment>0.15?'positive':n.sentiment<-0.15?'negative':'neutral';
 /* Reads the 2026-07-28 article-level judgements. Every headline carries a
@@ -3246,6 +3257,7 @@ const _nage=_nasof?Math.round((Date.now()-Date.parse(_nasof))/864e5):null;
 let h=`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)`
  +(_nasof?` <span class="axis" style="font-weight:400">read of ${esc(_nasof)}${_nage>=7?` — ${_nage}d ago, not tonight`:''}</span>`:'')
  +`</h3>`;
+if(!_catLive)h+=`<div class="axis" style="color:#fbbf24;margin-bottom:7px">These headlines come from an earlier alert read. The score above was computed without them, which is why the catalyst question says "no data" — the two panels are different vintages.</div>`;
 const ts=n.top_story;
 if(ts){const tc=ts.sentiment>0?'#34d399':ts.sentiment<0?'#f87171':'#94a0b0';
  h+=`<div style="border-left:2px solid ${tc};padding:5px 0 5px 9px;margin-bottom:9px">

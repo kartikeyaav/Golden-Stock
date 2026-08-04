@@ -206,8 +206,33 @@ def main() -> None:
             continue
         tag = tag_stock(df, bench)
         industry = f.get("industry")
-        conv = assess(build_dimensions(tag, f.get("rs_pctile"), fund_row, industry),
-                      build_vetoes(fund_row))
+        dims = build_dimensions(tag, f.get("rs_pctile"), fund_row, industry)
+
+        # NEWS FOR THESE NAMES TOO (2026-08-03, user-reported).
+        #
+        # The first version of this pass scored them from fundamentals and set
+        # news=None, on the reasoning that enrichment is the network cost. That
+        # left a seam the user found immediately: GESHIP and POWERINDIA carry
+        # conviction scores of 83.8 and 82.7 with no News & filings panel at
+        # all, and FEDERALBNK shows a news panel (riding along from an older
+        # alert blob) beside a catalyst dimension reading "no data" — a card
+        # contradicting itself.
+        #
+        # Scoring 280 names while reading news for 99 is not a coverage
+        # trade-off, it is two different systems sharing a drawer. The extra
+        # ~180 fetches cost roughly 20 minutes on a WEEKLY job with a 180-minute
+        # budget, and they buy coherence plus 100% coverage on every scored name.
+        news_e = None
+        if not args.no_news:
+            news_e = enrich(sym, company_by_sym.get(sym, sym), industry or "")
+            time.sleep(0.3)
+            if news_e.get("ok"):
+                by_key = {d.key: d for d in dims}
+                for d2 in enrichment_dimensions(news_e):
+                    by_key[d2.key] = d2
+                dims = list(by_key.values())
+
+        conv = assess(dims, build_vetoes(fund_row))
         details[sym] = {
             "score": conv.score, "coverage": conv.coverage_pct,
             "label": conv.label,
@@ -222,10 +247,13 @@ def main() -> None:
                      for d in conv.per_dimension],
             "veto_reasons": conv.veto_reasons,
             "plan": {},                    # not CONFIRMED — no mechanical plan
-            "news": None,                  # enrichment stays on the shortlist
+            "news": card_news_blob(news_e or {}),
         }
         extra += 1
-    print(f"  + {extra} off-shortlist focus names scored from fundamentals")
+        if extra % 25 == 0:
+            print(f"  off-shortlist {extra} scored", flush=True)
+    print(f"  + {extra} off-shortlist focus names scored"
+          f"{'' if args.no_news else ' (with news)'}")
 
     with open(os.path.join(root, "shortlist_details.json"), "w", encoding="utf-8") as fh:
         json.dump(details, fh, default=str)
