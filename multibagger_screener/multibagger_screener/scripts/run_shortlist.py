@@ -194,8 +194,22 @@ def main() -> None:
     # from a local CSV.
     scored_syms = set(details)
     extra = 0
-    for _, f in focus.iterrows():
-        sym = f["symbol"]
+    # The focus list, PLUS every name the nightly scan tags. The screener
+    # renders a row per tagged name; scoring stopping at the focus list left
+    # 328 of 618 rows with a dash in the conviction column while 327 of them
+    # had real cached fundamentals sitting on disk (measured 2026-08-03).
+    #
+    # News is the one thing that stays scoped to the focus list: it is the
+    # network cost, and taking it universe-wide would add ~35 minutes to the
+    # weekly job. Names scored without it carry an explicit note saying the
+    # conviction number is a partial-coverage read — see newsSection() — so a
+    # 75%-coverage score is never presented as if it were a full one.
+    focus_rows = {r["symbol"]: r for _, r in focus.iterrows()}
+    industry_by_sym = dict(zip(universe["symbol"], universe.get("industry", universe["symbol"])))
+    wider = list(dict.fromkeys(list(focus_rows) + sorted(funds_by_sym)))
+    for sym in wider:
+        f = focus_rows.get(sym, {"symbol": sym, "rs_pctile": None,
+                                 "industry": industry_by_sym.get(sym)})
         if sym in scored_syms:
             continue
         fund_row = funds_by_sym.get(sym)
@@ -222,15 +236,29 @@ def main() -> None:
         # trade-off, it is two different systems sharing a drawer. The extra
         # ~180 fetches cost roughly 20 minutes on a WEEKLY job with a 180-minute
         # budget, and they buy coherence plus 100% coverage on every scored name.
+        # WHY a name has no news is a different fact from the fact that it
+        # has none, and the card has to be able to say which. Three distinct
+        # cases, recorded rather than inferred:
         news_e = None
-        if not args.no_news:
+        if args.no_news:
+            news_status = "skipped: this run was built without news"
+        elif sym not in focus_rows:
+            news_status = ("not fetched: outside this week's focus list, and "
+                           "news is read only for focus names to bound the "
+                           "weekly job")
+        else:
             news_e = enrich(sym, company_by_sym.get(sym, sym), industry or "")
             time.sleep(0.3)
             if news_e.get("ok"):
+                news_status = "read"
                 by_key = {d.key: d for d in dims}
                 for d2 in enrichment_dimensions(news_e):
                     by_key[d2.key] = d2
                 dims = list(by_key.values())
+            elif news_e.get("blind"):
+                news_status = "unavailable: every news source was unreachable"
+            else:
+                news_status = f"unavailable: {str(news_e.get('error') or '')[:70]}"
 
         conv = assess(dims, build_vetoes(fund_row))
         details[sym] = {
@@ -248,6 +276,8 @@ def main() -> None:
             "veto_reasons": conv.veto_reasons,
             "plan": {},                    # not CONFIRMED — no mechanical plan
             "news": card_news_blob(news_e or {}),
+            "news_status": news_status,
+            "in_focus": sym in focus_rows,
         }
         extra += 1
         if extra % 25 == 0:

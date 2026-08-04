@@ -212,3 +212,46 @@ def test_a_manufacturer_still_takes_the_manufacturer_path():
     assert "deleveraging" in note
     assert "asset quality" not in note
     assert s > 0.5
+
+
+# ---------------------------------------------------------------------------
+# every scorable row must be survivable — one bad row killed a whole run
+# ---------------------------------------------------------------------------
+
+def test_a_breakeven_year_ago_quarter_does_not_divide_by_zero():
+    """SUDARSCHEM: year-ago quarter exactly 0.0 against Rs 82 Cr now. The YoY
+    line divided by abs(np_yoy) and raised ZeroDivisionError, killing the
+    entire scoring run. Latent since the dimension was written — the 280-name
+    set simply never contained one, and widening to 618 finally hit it."""
+    s, note = score_earnings_inflection(earnings(82.0, 0.0))
+    assert s is not None and 0.0 <= s <= 1.0
+    assert "breakeven" in note.lower()
+
+
+@pytest.mark.parametrize("np_latest,np_yoy", [
+    (82.0, 0.0), (0.0, 0.0), (-5.0, 0.0), (0.0, 50.0), (0.0, -50.0),
+    (1e9, 0.001), (-1e9, -0.001),
+])
+def test_no_quarterly_pair_can_raise(np_latest, np_yoy):
+    """The scorer runs over every tagged name; a single unhandled row takes
+    the whole shortlist down, so the arithmetic has to survive the edges."""
+    s, _ = score_earnings_inflection(earnings(np_latest, np_yoy))
+    assert s is None or 0.0 <= s <= 1.0
+
+
+def test_the_whole_live_fundamentals_file_scores_without_raising():
+    """The real guard: replay every row the system actually has. This is what
+    turns 'it worked on the shortlist' into 'it works on the universe'."""
+    import csv
+    import os
+    path = os.path.join(ROOT, "fundamentals_flat.csv")
+    if not os.path.exists(path):
+        pytest.skip("fundamentals_flat.csv not built in this environment")
+    with open(path, encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    assert rows, "empty fundamentals file"
+    for r in rows:
+        for fn in (score_earnings_inflection, score_smart_money,
+                   score_governance):
+            fn(r)
+        score_financial_strength(r, r.get("industry"))

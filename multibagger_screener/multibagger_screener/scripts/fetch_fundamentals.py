@@ -292,7 +292,20 @@ def main() -> None:
         focus_syms = pd.read_csv(os.path.join(root, "focus_list.csv"))["symbol"].tolist()
     except (OSError, KeyError):
         focus_syms = []
-    for sym in focus_syms:
+    # ...and every name the nightly scan actually TAGS, which is the whole
+    # watched universe, not the weekly focus snapshot. The screener renders a
+    # row per tagged name (618) while scoring reached only the focus list
+    # (280), so 328 rows showed a dash in the conviction column — including 8
+    # tagged ANTICIPATION. Measured 2026-08-03: 327 of those 328 already had
+    # real cached screener data. The scores were unavailable because of where
+    # the flatten loop stopped, not because anything was unknown.
+    try:
+        with open(os.path.join(root, "state", "tags_state.json"), encoding="utf-8") as f:
+            st = json.load(f)
+        tagged = list((st.get("tags") or st).keys())
+    except (OSError, ValueError, AttributeError):
+        tagged = []
+    for sym in dict.fromkeys(list(focus_syms) + tagged):
         if sym in have:
             continue
         cached = load_company(sym)
@@ -307,7 +320,7 @@ def main() -> None:
     df.to_csv(out, index=False)
     print(f"\n{len(df)} companies -> {out}  ({len(failures)} failed: {failures})")
     print(f"  {len(df) - from_cache} fetched/refreshed this run, "
-          f"{from_cache} more flattened from cache to keep the focus list scorable")
+          f"{from_cache} more flattened from cache so every tagged name is scorable")
 
     print("\n=== VETO REPORT ===")
     any_veto = False

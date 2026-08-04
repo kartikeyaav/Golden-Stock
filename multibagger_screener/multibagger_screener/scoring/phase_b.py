@@ -101,6 +101,21 @@ def score_earnings_inflection(row: dict) -> tuple[float | None, str]:
     elif np_yoy <= 0 and np_latest < 0:
         qtr_component = 0.3 if np_latest > np_yoy else 0.0
         notes.append("still loss-making")
+    elif np_yoy == 0:
+        # BREAKEVEN a year ago. abs(0) is 0 and this line used to divide by
+        # it, so a single such company raised ZeroDivisionError and killed the
+        # whole scoring run — SUDARSCHEM, year-ago quarter exactly 0.0 against
+        # Rs 82 Cr now, found 2026-08-03 when the scored set widened from 280
+        # to 618 names and finally contained one. Latent since the dimension
+        # was written; the narrower set simply never hit it.
+        #
+        # Growth from zero is undefined, not infinite. Treat it as the
+        # inflection it is and let the margin and persistence terms carry the
+        # judgement, rather than inventing a percentage.
+        qtr_component = 0.85 if np_latest > 0 else 0.4
+        notes.append("breakeven a year ago -> "
+                     + (f"Rs {np_latest:,.0f} Cr" if np_latest > 0 else "still flat")
+                     + " (growth from zero is undefined, not infinite)")
     else:
         yoy_growth = (np_latest - np_yoy) / abs(np_yoy)
         yoy_growth = max(-1.0, min(2.0, yoy_growth))  # winsorize

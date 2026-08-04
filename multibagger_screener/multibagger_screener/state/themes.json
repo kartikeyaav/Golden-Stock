@@ -1,6 +1,24 @@
 {
- "generated": "2026-08-03T15:55:22",
+ "generated": "2026-08-04T09:37:11",
  "themes": [
+  {
+   "key": "defelec",
+   "name": "Defence electronics & space",
+   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
+   "n": 7,
+   "breadth": 42.9,
+   "rs_med": 96.6,
+   "ret3m": 16.1,
+   "news": 4.85,
+   "news_per_name": 0.692,
+   "thin": false,
+   "confirmed": [
+    "ASTRAMICRO",
+    "PARAS",
+    "DATAPATTNS"
+   ],
+   "heat": 85.0
+  },
   {
    "key": "datacentre",
    "name": "Data centres & digital infrastructure",
@@ -8,7 +26,7 @@
    "n": 8,
    "breadth": 50.0,
    "rs_med": 95.9,
-   "ret3m": 10.3,
+   "ret3m": 11.3,
    "news": 2.88,
    "news_per_name": 0.36,
    "thin": false,
@@ -18,7 +36,7 @@
     "NETWEB",
     "BHARTIHEXA"
    ],
-   "heat": 84.3
+   "heat": 81.3
   },
   {
    "key": "hospital",
@@ -27,7 +45,7 @@
    "n": 12,
    "breadth": 41.7,
    "rs_med": 75.6,
-   "ret3m": 17.5,
+   "ret3m": 17.7,
    "news": 0.99,
    "news_per_name": 0.083,
    "thin": false,
@@ -38,65 +56,25 @@
     "KIMS",
     "METROPOLIS"
    ],
-   "heat": 76.3
+   "heat": 73.3
   },
   {
-   "key": "defelec",
-   "name": "Defence electronics & space",
-   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
-   "n": 7,
-   "breadth": 42.9,
-   "rs_med": 96.6,
-   "ret3m": 6.2,
-   "news": 4.85,
-   "news_per_name": 0.692,
+   "key": "ems",
+   "name": "Electronics manufacturing (EMS)",
+   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
+   "n": 9,
+   "breadth": 33.3,
+   "rs_med": 91.8,
+   "ret3m": 22.9,
+   "news": 0.6,
+   "news_per_name": 0.067,
    "thin": false,
    "confirmed": [
-    "ASTRAMICRO",
-    "PARAS",
-    "DATAPATTNS"
+    "AVALON",
+    "SYRMA",
+    "NETWEB"
    ],
-   "heat": 73.0
-  },
-  {
-   "key": "cdmo",
-   "name": "Pharma CDMO & API",
-   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
-   "n": 11,
-   "breadth": 27.3,
-   "rs_med": 88.9,
-   "ret3m": 14.6,
-   "news": 2.18,
-   "news_per_name": 0.199,
-   "thin": false,
-   "confirmed": [
-    "SHILPAMED",
-    "GRANULES",
-    "EMCURE"
-   ],
-   "heat": 66.0
-  },
-  {
-   "key": "finfra",
-   "name": "Financial market infrastructure",
-   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
-   "n": 16,
-   "breadth": 43.8,
-   "rs_med": 80.3,
-   "ret3m": 3.2,
-   "news": 4.9,
-   "news_per_name": 0.306,
-   "thin": false,
-   "confirmed": [
-    "ANANDRATHI",
-    "NAM-INDIA",
-    "PRUDENT",
-    "NUVAMA",
-    "KFINTECH",
-    "CDSL",
-    "IONEXCHANG"
-   ],
-   "heat": 65.7
+   "heat": 67.3
   },
   {
    "key": "defence",
@@ -105,7 +83,7 @@
    "n": 13,
    "breadth": 38.5,
    "rs_med": 95.8,
-   "ret3m": 4.4,
+   "ret3m": 4.9,
    "news": 5.45,
    "news_per_name": 0.42,
    "thin": false,
@@ -119,22 +97,44 @@
    "heat": 62.7
   },
   {
-   "key": "ems",
-   "name": "Electronics manufacturing (EMS)",
-   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
-   "n": 9,
-   "breadth": 33.3,
-   "rs_med": 91.8,
-   "ret3m": 13.5,
-   "news": 0.6,
-   "news_per_name": 0.067,
+   "key": "cdmo",
+   "name": "Pharma CDMO & API",
+   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
+   "n": 11,
+   "breadth": 27.3,
+   "rs_med": 88.9,
+   "ret3m": 14.1,
+   "news": 2.18,
+   "news_per_name": 0.199,
    "thin": false,
    "confirmed": [
-    "AVALON",
-    "SYRMA",
-    "NETWEB"
+    "SHILPAMED",
+    "GRANULES",
+    "EMCURE"
    ],
-   "heat": 61.3
+   "heat": 60.0
+  },
+  {
+   "key": "finfra",
+   "name": "Financial market infrastructure",
+   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
+   "n": 16,
+   "breadth": 43.8,
+   "rs_med": 80.3,
+   "ret3m": 1.4,
+   "news": 4.9,
+   "news_per_name": 0.306,
+   "thin": false,
+   "confirmed": [
+    "ANANDRATHI",
+    "NAM-INDIA",
+    "PRUDENT",
+    "NUVAMA",
+    "KFINTECH",
+    "CDSL",
+    "IONEXCHANG"
+   ],
+   "heat": 56.7
   },
   {
    "key": "water",
@@ -143,7 +143,7 @@
    "n": 6,
    "breadth": 50.0,
    "rs_med": 95.2,
-   "ret3m": -0.8,
+   "ret3m": -2.8,
    "news": 1.16,
    "news_per_name": 0.193,
    "thin": false,
@@ -152,7 +152,7 @@
     "WABAG",
     "IONEXCHANG"
    ],
-   "heat": 56.3
+   "heat": 53.3
   },
   {
    "key": "textiles",
@@ -161,7 +161,7 @@
    "n": 12,
    "breadth": 25.0,
    "rs_med": 85.6,
-   "ret3m": 9.2,
+   "ret3m": 8.3,
    "news": 1.15,
    "news_per_name": 0.096,
    "thin": false,
@@ -170,7 +170,7 @@
     "ICIL",
     "PGIL"
    ],
-   "heat": 49.3
+   "heat": 46.3
   },
   {
    "key": "grid",
@@ -179,7 +179,7 @@
    "n": 14,
    "breadth": 35.7,
    "rs_med": 95.6,
-   "ret3m": 2.6,
+   "ret3m": 3.4,
    "news": 1.76,
    "news_per_name": 0.126,
    "thin": false,
@@ -199,14 +199,14 @@
    "n": 10,
    "breadth": 10.0,
    "rs_med": 73.8,
-   "ret3m": 8.1,
+   "ret3m": 6.2,
    "news": 2.94,
    "news_per_name": 0.294,
    "thin": false,
    "confirmed": [
     "BELRISE"
    ],
-   "heat": 44.3
+   "heat": 41.3
   },
   {
    "key": "capex",
@@ -215,7 +215,7 @@
    "n": 21,
    "breadth": 19.0,
    "rs_med": 77.7,
-   "ret3m": 1.1,
+   "ret3m": 3.6,
    "news": 3.74,
    "news_per_name": 0.178,
    "thin": false,
@@ -225,7 +225,25 @@
     "GRINDWELL",
     "AIAENG"
    ],
-   "heat": 31.7
+   "heat": 37.7
+  },
+  {
+   "key": "chemicals",
+   "name": "Specialty chemicals & China+1",
+   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
+   "n": 11,
+   "breadth": 27.3,
+   "rs_med": 81.5,
+   "ret3m": 1.4,
+   "news": 0.0,
+   "news_per_name": 0.0,
+   "thin": false,
+   "confirmed": [
+    "NAVINFLUOR",
+    "FLUOROCHEM",
+    "AARTIIND"
+   ],
+   "heat": 28.0
   },
   {
    "key": "renewables",
@@ -234,7 +252,7 @@
    "n": 14,
    "breadth": 14.3,
    "rs_med": 78.2,
-   "ret3m": -10.8,
+   "ret3m": -9.3,
    "news": 11.28,
    "news_per_name": 0.806,
    "thin": false,
@@ -245,36 +263,18 @@
    "heat": 26.0
   },
   {
-   "key": "chemicals",
-   "name": "Specialty chemicals & China+1",
-   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
-   "n": 11,
-   "breadth": 27.3,
-   "rs_med": 81.5,
-   "ret3m": -2.2,
-   "news": 0.0,
-   "news_per_name": 0.0,
-   "thin": false,
-   "confirmed": [
-    "NAVINFLUOR",
-    "FLUOROCHEM",
-    "AARTIIND"
-   ],
-   "heat": 25.0
-  },
-  {
    "key": "railways",
    "name": "Railways & metro",
    "blurb": "Rolling stock, wagons, signalling and station/metro civil work.",
    "n": 10,
    "breadth": 0.0,
    "rs_med": 17.2,
-   "ret3m": -10.8,
+   "ret3m": -10.3,
    "news": 5.12,
    "news_per_name": 0.512,
    "thin": false,
    "confirmed": [],
-   "heat": 16.0
+   "heat": 13.0
   },
   {
    "key": "shipbuilding",
@@ -283,12 +283,12 @@
    "n": 5,
    "breadth": 0.0,
    "rs_med": 82.0,
-   "ret3m": -11.2,
+   "ret3m": -7.5,
    "news": 0.88,
    "news_per_name": 0.175,
    "thin": false,
    "confirmed": [],
-   "heat": 5.0
+   "heat": 11.0
   },
   {
    "key": "semis",
@@ -297,7 +297,7 @@
    "n": 3,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -11.6,
+   "ret3m": -19.1,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -311,7 +311,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 99.7,
-   "ret3m": 0.0,
+   "ret3m": 10.5,
    "news": 2.14,
    "news_per_name": 1.071,
    "thin": true,

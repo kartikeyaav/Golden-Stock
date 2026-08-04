@@ -3138,6 +3138,11 @@ return `<div style="display:flex;align-items:center;gap:10px;margin:4px 0">
 function whySection(sym){const dt=D.details[sym];
 if(!dt)return'<div class="mini" style="margin-top:14px"><h3>Why no score breakdown?</h3><div style="font-size:12.5px" class="dim">Full 8-question scoring runs on the actionable shortlist (UPTREND + BASING names). This stock is currently outside it — it re-enters scoring the moment its tag turns actionable.</div></div>';
 let h=`<div class="mini" style="margin-top:14px"><h3>Why this score — 8 weighted questions <span class="info" data-tip="Each row is one scoring question. The number after the name (w20) is its weight out of 100; the bar and the 0-100 number are how well this stock answered it; the small text is the evidence. Abbreviations: RS = relative-strength percentile · TT = trend template (8 uptrend checks) · VCP = the base pattern a breakout clears · PAT = profit after tax · TTM = trailing twelve months · YoY = vs a year ago. Coverage = how many questions had data (below 60% = technical-only read).">?</span> <span class="axis" style="font-weight:400">read of ${esc(dt.dims_as_of||dt.scored_at||dt.alerted_at||'?')} · ${dt.label==='Technical Read'?`coverage ${dt.coverage??'?'}% — technical read`:`coverage ${dt.coverage??100}%`}</span></h3>`;
+/* Say WHY the coverage is short, right where the number is. A reader who sees
+   "coverage 85%" should not have to scroll to the news panel to learn which
+   questions went unanswered or what would answer them. */
+{const _dark=(dt.dims||[]).filter(d=>!d.live);
+ if(_dark.length)h+=`<div class="axis" style="margin:-4px 0 8px;color:#fbbf24">Not scored on ${_dark.map(d=>esc(QLBL[d.k]||d.k)).join(' and ')} (${_dark.reduce((a,d)=>a+(d.w||0),0)} of 100 points). ${esc(_dark.every(d=>d.k=='theme_tailwind'||d.k=='catalyst')?newsReason(dt):'Those inputs were missing for this name in the last refresh.')} Weights were renormalised over the rest, so this number is not comparable with a full-coverage score.</div>`;}
 (dt.dims||[]).slice().sort((a,b)=>b.w-a.w).forEach(m=>{
 const pct=m.s!=null?Math.round(m.s*100):0;
 const col=m.s==null?'#334155':m.s>=.7?'#34d399':m.s>=.4?'#fbbf24':'#f87171';
@@ -3227,6 +3232,27 @@ function newsMemorySection(sym){
  <div class="axis" style="margin-top:5px;line-height:1.5">Repeat filings of one event count once.
  Context only &mdash; measured in the Journal tab, never an entry signal.</div></div>`;}
 
+/* Human labels for the eight scoring questions, so a "no data" explanation can
+   name them the way the score panel does rather than in code keys. */
+const QLBL={earnings_inflection:'earnings inflection',rs_and_stage:'technicals',
+ theme_tailwind:'theme tailwind',smart_money:'smart money',
+ financial_strength_trend:'balance-sheet strength',catalyst:'catalysts',
+ governance:'governance',valuation_sanity:'valuation sanity'};
+
+/* WHY this name has no news. Recorded by run_shortlist as news_status; older
+   blobs predate the field, so fall back to the reason that is true for almost
+   all of them rather than saying nothing. */
+function newsReason(dt){
+ const s=dt.news_status||'';
+ if(s.startsWith('not fetched'))
+  return 'News was not read for this stock. It is outside this week’s focus list, and news is fetched only for focus names so the weekly refresh stays inside its time budget.';
+ if(s.startsWith('unavailable'))
+  return 'A news read was attempted and failed — '+s.replace(/^unavailable:\s*/,'')+'. That is a fetch failure, not a quiet news month.';
+ if(s.startsWith('skipped'))
+  return 'This refresh was built without the news layer, so the catalyst and theme questions had nothing to score.';
+ return 'News was not read for this stock in the last refresh. News is fetched for focus-list names and for any name that alerted; everything else is scored from fundamentals and price alone.';
+}
+
 function newsSection(sym){const dt=D.details[sym];
 /* A drawer that shows headlines beside a catalyst dimension reading "no data"
    is contradicting itself — the news panel and the score came from two
@@ -3235,8 +3261,13 @@ function newsSection(sym){const dt=D.details[sym];
 if(!dt)return'';
 if(!dt.news){
  const scored=(dt.dims||[]).some(d=>d.k=='catalyst'&&d.live);
- return scored?'':`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)</h3>
- <div class="axis">No news read for this name in the last refresh, so the catalyst and theme questions scored no data and the conviction number above is a ${dt.coverage??'partial'}%-coverage read. Not a claim that nothing was published.</div></div>`;}
+ if(scored)return'';
+ const dark=(dt.dims||[]).filter(d=>!d.live);
+ const darkW=dark.reduce((a,d)=>a+(d.w||0),0);
+ return `<div class="mini" style="margin-top:14px;border-color:#fbbf2433"><h3>News &amp; filings (30d) <span class="axis" style="font-weight:400">not read for this name</span></h3>
+ <div style="font-size:12.5px;color:var(--txt)">${esc(newsReason(dt))}</div>
+ <div class="axis" style="margin-top:6px">Because of that, ${dark.length} of the 8 questions scored no data (${dark.map(d=>esc(QLBL[d.k]||d.k)).join(', ')}), worth ${darkW} of the 100 points. The ${dt.score??'—'} above is a ${dt.coverage??'partial'}% read: the weights were renormalised over the questions that did have data, so it is <b>not</b> comparable with a full-coverage score and is, if anything, flattered by the gap.</div>
+ <div class="axis" style="margin-top:5px">This is not a claim that nothing was published about the company.</div></div>`;}
 const n=dt.news;
 const _catLive=(dt.dims||[]).some(d=>d.k=='catalyst'&&d.live);
 const sc=n.sentiment>0.15?'#34d399':n.sentiment<-0.15?'#f87171':'#94a0b0';
