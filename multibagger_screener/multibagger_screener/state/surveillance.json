@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-03 15:55",
+ "generated": "2026-08-04 15:38",
  "n_checked": 653,
  "n_flagged": 67,
- "asm_total": 176,
+ "asm_total": 179,
  "syms": {
   "ACMESOLAR": {
    "flags": [
@@ -484,10 +484,15 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "EQ",
+   "series": "BE",
    "worst": "ASM"
   },
   "ELLEN": {
@@ -880,19 +885,14 @@
   "TRIVENI": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
      "code": "BE",
      "detail": "BE settlement series",
      "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 5.0,
+   "band": 20.0,
    "series": "BE",
-   "worst": "BAND 5%"
+   "worst": "BE"
   },
   "DBREALTY": {
    "flags": [
