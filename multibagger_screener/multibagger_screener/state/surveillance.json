@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-04 15:38",
+ "generated": "2026-08-05 15:29",
  "n_checked": 653,
- "n_flagged": 67,
- "asm_total": 179,
+ "n_flagged": 65,
+ "asm_total": 178,
  "syms": {
   "ACMESOLAR": {
    "flags": [
@@ -437,18 +437,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "BLUESTONE": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "CRIZAC": {
    "flags": [
     {
@@ -781,11 +769,6 @@
   "LOTUSDEV": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -793,7 +776,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "STLTECH": {
    "flags": [
@@ -873,6 +856,11 @@
   "THANGAMAYL": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -880,19 +868,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
-  },
-  "TRIVENI": {
-   "flags": [
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 20.0,
-   "series": "BE",
-   "worst": "BE"
+   "worst": "ASM"
   },
   "DBREALTY": {
    "flags": [
