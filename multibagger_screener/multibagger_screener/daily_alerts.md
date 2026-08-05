@@ -36,6 +36,134 @@ Minor shifts: ACE WATCH->EXTENDED, AEGISLOG CONFIRMED->EXTENDED, AEGISVOPAK EXTE
 
 _News moves attention, never entries — trades stay technical._
 
+
+## AI analyst verdicts
+
+**STLTECH** — analyst unavailable (timed out after 600s) — review the card manually before acting
+### SCI
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY:
+- Governance clean: SEBI Reg 31 filing (Apr 2026) confirms zero promoter pledge/encumbrance for FY25-26, audited FY26 results carried an unmodified opinion — no hidden red flags beyond what the card already scored.
+- Story is real, not a one-off: $720m tender for 6 new container/LNG boxships (03-Aug) plus government "structured onboard training" push signal genuine capacity expansion, not accounting noise, and lines up with the PAT acceleration.
+- Second-order tailwind: Red Sea/Houthi disruption is expected by shippers to persist into 2027, keeping Cape-of-Good-Hope rerouting the default — that inflates tonne-mile demand for vessel operators like SCI even as spot container rates broadly soften 30-35% elsewhere. Direct transmission channel, not generic sector chatter.
+
+RISKS:
+- SCI's own Q1 FY27 board meeting is confirmed for 06-Aug-2026 — one day after this alert, a binary EPS event sits directly on top of a 2-day-old breakout with no room for the mechanical stop to protect against a gap.
+- Theme heat is weak (shipbuilding/marine 11/100, RS blend "improving: False") — this is a story stock inside an unloved theme, not a momentum leader; if the print merely meets consensus rather than beats, the breakout could fail on "sell the news."
+
+CHECKED: screener.in-style SEBI Reg 31 filing search, business-standard/psuwatch on SCILAL demerger/disinvestment status, ET Infra/Splash247 tender coverage, freight-rate and Red Sea routing outlook for 2026.
+
+CHANGES MY MIND: A weak Q1 FY27 print or guidance walk-back on 06-Aug flips this to SKIP; a beat with commentary confirming the container-ship order book converts this to full conviction on any post-earnings pullback to the pivot.
+
+### ARVIND
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Technical setup is real: confirmed breakout on 1.94x volume, RS 96%ile, 8/8 trend template, live VCP — not a marginal trigger.
+- Earnings inflection has a verifiable driver, not a one-off: post-Feb-2026 US tariff rollback plus India's ~7-8pt tariff edge over China is pulling sourcing back to Indian exporters, and external reporting specifically names Arvind as a beneficiary of this China+1 shift — corroborates the 7-quarter sales acceleration.
+- The card's "management exit" red flag is a false positive: Anurag Pandey and the other KMP/Director resignation are at Arvind Fashions Limited (ARVINDFASN) — a separate listed company, not Arvind Limited (ARVIND, the textile entity in this alert). Promoter pledge is low (7.24%) and non-material.
+
+RISKS (max 2 bullets):
+- Confirmed and material, missed by the card's framing: Arvind Ltd opened a ₹500-600cr QIP on 3-Aug-2026 at a floor price of ₹518.58 (~4.5% discount), i.e., new supply is being priced below the breakout entry — real overhang risk into a fresh trigger.
+- Board meets 12-Aug-2026 (7 trading days out) — binary results event before the trading lot has room to work; textile PLI theme itself is only mid-tier heat (46/100), and US buyer reshoring is described as partial (~40% recovered so far), not a clean re-rating story yet.
+
+CHECKED: WebSearch — NSE/BSE-sourced QIP and shareholding reports, Arvind Fashions Q1 FY27 press coverage, India textile/tariff sector reporting (indmoney, business-standard, deccanherald).
+CHANGES MY MIND: QIP pricing/allotment coming in weak (heavy discount or under-subscription) or Q1 results on 12-Aug missing on margins would flip this to SKIP.
+
+### AEGISLOG
+VERDICT: SKIP
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Card's own entry plan already vetoes this trade — ATR stop would be 13% wide, beyond the 12% hard cap (Design Law #7: skip, don't clamp). No override authority on that.
+- Board meets tomorrow (06-Aug) for Q1 FY27 results — binary event risk sitting right on top of an unconfirmed VCP pivot, exactly when you'd want to NOT be sizing in.
+- Story checks out on the surface: FY26 PAT +40.5% on record volumes, LPG/liquid terminal capacity coming online (Pipavav cryogenic terminal, JNPT expansion, Haldia stake), and the "+116% debt" flag looks stale — company prepaid the majority of term loans in 9MFY26 after the AVTL IPO, so leverage trend is likely improving, not worsening.
+
+RISKS (max 2 bullets):
+- Elevated/volatile global LPG import prices in 2026 (freight + Middle East supply-risk premium) could pressure realizations on the trading/sourcing side even as volumes grow.
+- Results tomorrow could move price sharply either direction before any valid trigger — chasing post-print momentum would be trading a different setup than the one that alerted.
+
+CHECKED: WebSearch — promoter pledge disclosure (Huron Holdings, none), BSE/NSE board-meeting notice, CARE Ratings/company debt commentary, AVTL IPO debt paydown coverage, LPG/propane price trend 2026.
+CHANGES MY MIND: A clean post-results print with no ammonia/JNPT capex surprise, followed by a fresh volume breakout above 1400 with a stop that fits inside the 12% cap — that's a new, tradeable setup, not this one.
+
+### STLTECH
+VERDICT: BUY
+CONVICTION: HIGH
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection verified as real, not a base-effect fluke: Q1 FY27 revenue ₹1,910cr (record), PAT ₹197cr (+1870% YoY), EBITDA margin 20.8% (highest in ~20 quarters), FY guidance raised 20%→23%. Driver is genuine AI/data-center fiber demand, not one-offs.
+- Governance flag on the card resolved positively: Twin Star Overseas (promoter) explicitly confirmed zero pledge/encumbrance for FY26; promoter also subscribed to ₹498cr convertible warrants (Feb 2026) — skin in the game, not exiting.
+- Second-order confirmation: competitor HFCL independently sanctioned ₹400cr+ capacity expansion citing the same hyperscaler/AI-datacenter/FTTH demand surge — corroborates the theme is sector-wide and real, not company-specific spin. STL used its ₹1,500cr QIP to go net debt-free, deleveraging thesis confirmed.
+
+RISKS (max 2 bullets):
+- Valuation is genuinely stretched post-rally (P/E 127, RS at 100th percentile) — entry is late in the move; size discipline matters more than usual.
+- One source flagged unspecified "persisting US litigation risk" tied to the demerged Global Services book (STL Networks) — couldn't pin down specifics or confirm it's ring-fenced from STLTECH; treat as an unresolved tail risk, not a veto.
+
+CHECKED: WebSearch across investing.com/angelone/kalkine (Q1FY27 results & transcript), trendlyne/scanx/BSE filings (shareholding & pledge confirmation), communicationstoday/telecompaper (HFCL capex as sector cross-check), scanx (litigation/demerger updates). No screener.in/moneycontrol direct access this session.
+
+CHANGES MY MIND: Any evidence the "US litigation risk" is material and NOT contained within demerged STL Networks, or a pledge/encumbrance re-appearing in the next shareholding filing.
+
+### EPL
+VERDICT: WAIT
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- EPL is mid-merger: signed definitive agreement (Mar 2026) to combine with Indorama Ventures' Indovida (rigid PET) in a $2B tie-up valuing EPL at ₹339/share (70% premium at signing); CCI approval already secured (27-May-2026 filing). Stock trades ~₹230 today — a ~32% gap to that reference value signals the market is pricing real completion/timeline risk (NCLT scheme, swap-ratio uncertainty), not a pure technical setup.
+- The card's technical read (VCP, Stage 2, trend template) can't be trusted at face value on a name undergoing a share-swap merger — price action here is plausibly arb-driven, not organic demand/supply.
+- Earnings story is unchanged from the card: Q4 FY26 PAT still down ~10% YoY on 17.6% sales growth — top-line led, bottom-line still lagging; no new fundamental catalyst found.
+
+RISKS (max 2 bullets):
+- 11-Aug board meeting (results) sits right at the pivot zone — plus this is a company with a live merger scheme, so any update on swap ratio/timeline could gap the stock either direction, independent of the breakout.
+- No pledge/SEBI/auditor red flags found (Apr-2026 disclosure confirms no pledging beyond prior), so no mechanical veto — but the merger overhang itself isn't scored by the card at all.
+
+CHECKED: Web search — merger filings/press (stblaw.com, Forbes, packaginginsights.com, ippstar.org), screener.in/business-standard for Q4 FY26 results and pledge disclosure; no China+1/customer-specific news found.
+
+CHANGES MY MIND: Clarity on merger timeline/swap ratio and confirmation that 11-Aug results show no merger-related surprises — then re-evaluate the technical trigger fresh.
+
+### KRN
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: HALF PLAN (if triggered)
+
+WHY (max 3 bullets):
+- Governance clean: no pledge, no SEBI/auditor flags found; June 2026 promoter stake drop (70.8%→65.7%) is explained by a mix of a disclosed 1.52% open-market sale by both promoters plus mechanical dilution from the ₹350cr QIP (equity base +5%, 6.22cr→6.55cr shares) — not a stealth exit.
+- Story is real, not one-off: FY26 revenue +57%, PAT +42%; Neemrana capacity ramp (20%→50%→80% utilization FY26-29) funded by that QIP, rolling order additions (recent ₹50.9cr HVAC coil order), data-center and RAC-component pipeline (~₹450cr/3yr).
+- Sector tailwind is genuine: RAC industry guiding 15%+ volume growth for 2026 summer, GST cut to 18% (Sep-2025) lowering AC retail prices ~6-8% and boosting demand — a direct transmission channel to KRN's order book, not generic sector noise.
+
+RISKS (max 2 bullets):
+- Card itself says "AWAITING TRIGGER, not yet a backtested entry" — the pivot (1239) hasn't broken, and the Aug-12 board meeting/results sits right in that window, raising gap risk before a clean breakout confirms.
+- Valuation is demanding (P/E ~104) with negative operating cash flow (capex-heavy expansion phase) and copper input-cost inflation pressuring OEM/customer margins — a soft print could puncture the multiple.
+
+CHECKED: Web search across scanx.trade, Business Standard, Value Research, screener.in, SEBI filings, InvestyWise/DSIJ for pledge, promoter-sale, QIP, board-meeting agenda, and RAC-sector demand/copper-cost news.
+CHANGES MY MIND: A clean volume breakout above 1239 after the Aug-12 results (with results confirming order/margin trajectory) flips this to BUY at half plan; a soft print or fresh promoter selling flips to SKIP.
+
+### ENGINERSIN
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- No red flags: audit opinion unmodified, no SEBI action/litigation found, and pledge risk is structurally moot — EIL's promoter is Government of India (Petroleum Ministry), which doesn't pledge shares. Governance concern on the card is a non-issue for a PSU.
+- Story checks out but isn't clean growth: Q4 FY26 PAT -30%/sales -8% YoY was margin compression from rising turnkey execution costs (construction materials/equipment +53% YoY), not demand weakness — full FY26 was a record (revenue +27% to ₹3,849cr, PAT +19% to ₹692cr, order book at all-time high ₹15,109cr).
+- Second-order tailwind the keyword scan missed: IOCL announced ₹1 trillion petrochemical capex over 5 years just 2 days ago (3-Aug-2026), and HPCL's ₹79,459cr Barmer refinery-petrochem complex was inaugurated in July 2026 — EIL is the default domestic EPC consultant for PSU oil & gas capex, a direct transmission channel into its order pipeline.
+
+RISKS (max 2 bullets):
+- Board meeting 13-Aug (Q1 FY27 results) sits 8 days out, right on top of the live VCP pivot at 246.66 — a binary gap risk before any breakout confirms. Given the Q4 margin wobble, an earnings miss here is plausible.
+- Turnkey/LSTK cost overruns are a real, recurring margin risk for this business model — needs to be watched into Q1 results, not just assumed as one-off.
+
+CHECKED: Business Standard/GuruFocus/Investing.com on Q4 FY26 & FY26 results, EIL press materials on order book, Business Standard on IOCL/HPCL/BPCL capex plans, BSE filing (audit opinion), general SEBI/litigation search — no material hits beyond what's cited.
+
+CHANGES MY MIND: A pre-results red flag (profit warning, auditor note) before 13-Aug, or a weak Q1 print confirming margin compression is structural rather than one quarter — either flips this to SKIP/WAIT regardless of technical trigger.
+
+
 ## Cards
 
 ```
