@@ -255,3 +255,51 @@ def test_the_whole_live_fundamentals_file_scores_without_raising():
                    score_governance):
             fn(r)
         score_financial_strength(r, r.get("industry"))
+
+
+# ---------------------------------------------------------------------------
+# delivery percentage (wired 2026-08-06)
+# ---------------------------------------------------------------------------
+
+def test_delivery_confirms_but_cannot_carry_the_dimension():
+    """Delivery % is not directional on its own — someone taking delivery
+    implies someone else delivering — so it corroborates a move it cannot
+    originate. Capped so it can never decide the dimension."""
+    # deliberately mild flows: +-4pp on both legs saturates the leg score and
+    # a clamp at 0 or 1 would hide the modifier rather than test it
+    buying = flows(11.5, 10.0, 11.5, 10.0)
+    plain, _ = score_smart_money(buying)
+    confirmed, note = score_smart_money(
+        {**buying, "deliv_med": 62.0, "deliv_trend_pp": 12.0})
+    denied, dnote = score_smart_money(
+        {**buying, "deliv_med": 30.0, "deliv_trend_pp": -12.0})
+    assert confirmed > plain >= denied
+    assert abs(confirmed - plain) <= 0.09 and abs(plain - denied) <= 0.07
+    assert "confirms the ownership read" in note
+    assert "does NOT confirm" in dnote
+
+
+def test_a_flat_delivery_trend_changes_nothing():
+    buying = flows(14.0, 10.0, 14.0, 10.0)
+    plain, _ = score_smart_money(buying)
+    flat, note = score_smart_money(
+        {**buying, "deliv_med": 55.0, "deliv_trend_pp": 0.4})
+    assert flat == plain
+    assert "delivery 55%" in note
+
+
+def test_missing_delivery_says_so_rather_than_scoring_zero():
+    s, note = score_smart_money(flows(14.0, 10.0, 14.0, 10.0))
+    assert s is not None
+    assert "delivery % unavailable" in note
+
+
+def test_delivery_falling_against_selling_is_also_non_confirming():
+    """Symmetry check: the modifier keys off agreement with the ownership
+    read, not off the sign of the delivery trend alone."""
+    selling = flows(10.0, 11.5, 10.0, 11.5)
+    plain, _ = score_smart_money(selling)
+    agreeing, note = score_smart_money(
+        {**selling, "deliv_med": 40.0, "deliv_trend_pp": -10.0})
+    assert agreeing < plain
+    assert "confirms the ownership read" in note

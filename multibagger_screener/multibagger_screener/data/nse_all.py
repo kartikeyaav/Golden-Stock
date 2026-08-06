@@ -178,6 +178,99 @@ def recent_bhavcopies(sessions: int = 25, end: date | None = None) -> pd.DataFra
 
 
 # ---------------------------------------------------------------------------
+# 2b. delivery percentage
+#
+# NOT in the UDiFF bhavcopy above — that carries volume, turnover and trade
+# count but no delivery figures at all (checked 2026-08-06, after I claimed
+# otherwise). Delivery lives in a separate daily file,
+# sec_bhavdata_full_DDMMYYYY.csv, which carries DELIV_QTY and DELIV_PER per
+# symbol and is reachable unauthenticated like the rest of this module.
+#
+# WHY IT IS WORTH HAVING: every other input to the smart_money dimension is
+# QUARTERLY shareholding, so the freshest institutional read the score can
+# make is up to three months stale. Delivery percentage is daily, and it
+# measures something the ownership tables cannot — what share of the volume
+# was actually taken delivery of rather than churned intraday. It is a
+# conviction proxy for the marginal buyer, not a headcount of institutions.
+# ---------------------------------------------------------------------------
+
+DELIV_URL = ("https://nsearchives.nseindia.com/products/content/"
+             "sec_bhavdata_full_{d:%d%m%Y}.csv")
+
+
+def delivery_day(d: date) -> pd.DataFrame | None:
+    """One session of per-symbol delivery data, or None if NSE has no file."""
+    name = f"deliv_{d:%Y%m%d}.csv"
+    _ensure_dir()
+    path = CACHE_DIR / name
+    if path.exists():
+        txt = path.read_text(encoding="utf-8", errors="replace")
+    else:
+        try:
+            txt = _fetch(DELIV_URL.format(d=d), retries=1).decode("utf-8", "replace")
+        except RuntimeError:
+            return None
+        if "DELIV_PER" not in txt[:400]:
+            return None
+        path.write_text(txt, encoding="utf-8")
+        time.sleep(PAUSE_S)
+    df = pd.read_csv(io.StringIO(txt))
+    df.columns = [c.strip() for c in df.columns]
+    if "DELIV_PER" not in df.columns:
+        return None
+    out = pd.DataFrame({
+        "symbol": df["SYMBOL"].astype(str).str.strip(),
+        "series": df["SERIES"].astype(str).str.strip(),
+        "date": pd.to_datetime(df["DATE1"], errors="coerce", dayfirst=True),
+        # non-EQ rows and suspended scrips carry '-' here; coerce, never guess
+        "deliv_pct": pd.to_numeric(df["DELIV_PER"], errors="coerce"),
+    })
+    return out[out["series"] == "EQ"]
+
+
+def delivery_stats(sessions: int = 25, end: date | None = None) -> pd.DataFrame:
+    """Per-symbol delivery level and trend over the recent window.
+
+    Two numbers, because they answer different questions: the MEDIAN over the
+    window is the stock's normal delivery behaviour, and the recent-5-session
+    median against the earlier part of the window is whether that behaviour is
+    changing. A stock that always delivers 70% is a different fact from one
+    that just went from 35% to 60%.
+
+    Median, not mean: one delivery-heavy block deal should not redefine a
+    stock's baseline."""
+    end = end or date.today()
+    frames, d, misses = [], end, 0
+    while len(frames) < sessions and misses < 20:
+        df = delivery_day(d)
+        if df is None or df.empty:
+            misses += 1
+        else:
+            frames.append(df)
+            misses = 0
+        d -= timedelta(days=1)
+    if not frames:
+        raise RuntimeError("no delivery file could be fetched from NSE")
+    all_df = pd.concat(frames, ignore_index=True).dropna(subset=["deliv_pct", "date"])
+    all_df = all_df.sort_values("date")
+
+    rows = []
+    for sym, g in all_df.groupby("symbol"):
+        if len(g) < 5:
+            continue                     # too thin to say anything
+        recent = g.tail(5)["deliv_pct"]
+        base = g.head(max(len(g) - 5, 1))["deliv_pct"]
+        rows.append({
+            "symbol": sym,
+            "deliv_med": round(float(g["deliv_pct"].median()), 2),
+            "deliv_recent": round(float(recent.median()), 2),
+            "deliv_trend_pp": round(float(recent.median() - base.median()), 2),
+            "deliv_sessions": len(g),
+        })
+    return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
 # 3. price bands + GSM  ·  4. ASM
 # ---------------------------------------------------------------------------
 def bands_and_gsm(max_age_hours: float = 24.0) -> pd.DataFrame:

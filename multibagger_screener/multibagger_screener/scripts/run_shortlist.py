@@ -44,6 +44,17 @@ def main() -> None:
     shortlist = focus[focus["tag"].isin(["CONFIRMED", "ANTICIPATION"])]
     funds = pd.read_csv(os.path.join(root, "fundamentals_flat.csv"))
     funds_by_sym = {r["symbol"]: r.to_dict() for _, r in funds.iterrows()}
+    # Daily delivery percentage, merged onto the quarterly fundamentals row so
+    # score_smart_money sees one dict and phase_b's contract stays unchanged.
+    # Absent file = the dimension simply says so; it is never fabricated.
+    dpath = os.path.join(root, "delivery_stats.csv")
+    if os.path.exists(dpath):
+        for _, dr in pd.read_csv(dpath).iterrows():
+            row = funds_by_sym.get(dr["symbol"])
+            if row is not None:
+                row.update({k: dr[k] for k in
+                            ("deliv_med", "deliv_recent", "deliv_trend_pp")
+                            if k in dr})
     universe = pd.read_csv(os.path.join(root, "universe.csv"))
     company_by_sym = dict(zip(universe["symbol"], universe["company"]))
     bench = load_ohlcv("NIFTY50")

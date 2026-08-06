@@ -519,14 +519,54 @@ def score_smart_money(row: dict) -> tuple[float | None, str]:
         score = _clip01(score + 0.12)
         parts.append(f"promoter stake {p_then}->{p_now}% — insider buying")
 
-    # Was "delivery %/bulk deals pending (Phase C)". Both are in fact
-    # reachable — the NSE bhavcopy this project ALREADY downloads for the
-    # penny screen carries delivery percentage, and bulk/block deals are a
-    # separate daily NSE file. Neither is wired into this dimension yet, which
-    # is a real and cheap enhancement rather than a blocked one, and the note
-    # should not imply otherwise.
-    parts.append("quarterly shareholding only — delivery % and bulk/block "
-                 "deals are published by NSE but not yet wired in")
+    # DELIVERY PERCENTAGE (wired 2026-08-06). Every other input here is
+    # QUARTERLY shareholding, so the freshest institutional read this
+    # dimension could make was up to three months stale. Delivery % is daily
+    # and measures a different thing: what share of the volume was actually
+    # taken delivery of rather than churned intraday — the conviction of the
+    # marginal buyer, not a headcount of institutions.
+    #
+    # It MODULATES rather than adds, and is capped, for two reasons. It is
+    # unvalidated against the forward record like every other factor here, and
+    # it is not directional on its own — someone taking delivery implies
+    # someone else delivering, so a high number corroborates a move it cannot
+    # originate. Rising delivery alongside institutional buying is
+    # confirmation; institutional buying that never shows up in delivery is
+    # worth a second look.
+    d_med, d_trend = _num(row, "deliv_med"), _num(row, "deliv_trend_pp")
+    if d_med is not None:
+        adj = 0.0
+        # `confirms` is tracked separately from the sign of `adj`, because once
+        # adj carries DIRECTION the two stop coinciding: a bearish read that
+        # delivery confirms produces a NEGATIVE adjustment and must still read
+        # as confirmation. Keying the note off adj's sign labelled exactly that
+        # case "does NOT confirm".
+        confirms = None
+        if d_trend is not None and abs(d_trend) >= 3.0:
+            direction = 1 if score > 0.5 else -1 if score < 0.5 else 0
+            agrees = (d_trend > 0) == (direction > 0)
+            if direction:
+                confirms = agrees
+            # The adjustment must carry the DIRECTION of the ownership read,
+            # not a fixed sign. The first version added a positive nudge
+            # whenever delivery agreed — so a name being distributed by both
+            # FII and DII, with delivery falling to confirm it, scored HIGHER.
+            # Confirmation amplifies whichever way the read points;
+            # non-confirmation pulls it back toward the middle.
+            if direction and agrees:
+                adj = direction * min(0.08, abs(d_trend) / 250.0)
+            elif direction:
+                adj = -direction * min(0.06, abs(d_trend) / 300.0)
+        score = _clip01(score + adj)
+        parts.append(
+            f"delivery {d_med:.0f}% of volume"
+            + (f", {d_trend:+.0f}pp vs the prior sessions" if d_trend is not None else "")
+            + (" — confirms the ownership read" if confirms
+               else " — does NOT confirm the ownership read"
+               if confirms is False else ""))
+    else:
+        parts.append("delivery % unavailable for this symbol")
+    parts.append("bulk/block deals not yet wired in")
     return round(score, 3), "; ".join(parts)
 
 
