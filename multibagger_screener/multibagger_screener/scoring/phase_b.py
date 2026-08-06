@@ -425,7 +425,16 @@ def score_governance(row: dict) -> tuple[float | None, str]:
         # dimensions meant neither of them told the whole story. It now sits
         # in score_smart_money alongside the FII and DII legs.
 
-    notes.append("auditor/SEBI/related-party checks pending (Phase C)")
+    # "auditor/SEBI/related-party checks pending (Phase C)" sat here for a
+    # month and stopped being true on 2026-08-03, when governance_flags began
+    # reading the company's own filings for auditor exits, modified audit
+    # opinions, pledge creation and regulatory action over 180 days. "Pending"
+    # reads like scheduled work; two of those three are now done and the third
+    # is not obtainable at all, and a card should say which is which.
+    notes.append("adverse-filing check (auditor exit, modified opinion, pledge, "
+                 "regulatory action) shown separately on this card; "
+                 "related-party exposure is NOT checked — no free source "
+                 "publishes it as structured data")
     return round(score, 3), "; ".join(notes)
 
 
@@ -510,7 +519,14 @@ def score_smart_money(row: dict) -> tuple[float | None, str]:
         score = _clip01(score + 0.12)
         parts.append(f"promoter stake {p_then}->{p_now}% — insider buying")
 
-    parts.append("delivery %/bulk deals pending (Phase C)")
+    # Was "delivery %/bulk deals pending (Phase C)". Both are in fact
+    # reachable — the NSE bhavcopy this project ALREADY downloads for the
+    # penny screen carries delivery percentage, and bulk/block deals are a
+    # separate daily NSE file. Neither is wired into this dimension yet, which
+    # is a real and cheap enhancement rather than a blocked one, and the note
+    # should not imply otherwise.
+    parts.append("quarterly shareholding only — delivery % and bulk/block "
+                 "deals are published by NSE but not yet wired in")
     return round(score, 3), "; ".join(parts)
 
 
@@ -561,8 +577,11 @@ def tag_archetypes(row: dict, industry: str | None = None) -> list[str]:
     if g_ttm_s is not None and g_3y_s is not None and g_ttm_s >= 30 and g_3y_s >= 25:
         tags.append("Hyper-growth")
 
-    # Super-cycle/theme needs sector heat data — Phase C
-    return tags or ["(untagged — theme data Phase C)"]
+    # Super-cycle needs a theme read. scoring/themes.py has computed 18
+    # cross-industry themes nightly since 2026-07-26, so this is no longer
+    # blocked on data — it is simply not wired to the archetype tagger yet.
+    # Saying "Phase C" implied the former.
+    return tags or ["(no archetype — see the Sectors tab for its theme)"]
 
 
 # ---------------------------------------------------------------------------

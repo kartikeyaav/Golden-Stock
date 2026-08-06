@@ -32,3 +32,11 @@ multibagger_screener/multibagger_screener/_site/
 
 # UI captures are regenerable from scripts/shoot_ui.py
 multibagger_screener/multibagger_screener/ui_shots/
+
+# personal financial data — the user's real book. Removed from the repo
+# 2026-08-04 at their request (audit finding F5, open since 2026-07-25).
+# Kept on disk so position_manager still works locally; never committed, so
+# the public repo and the published Pages site stop carrying them.
+# NOTE: prior commits still contain them — see HANDOFF §5 item 7.
+multibagger_screener/multibagger_screener/positions.csv
+multibagger_screener/multibagger_screener/holdings.csv

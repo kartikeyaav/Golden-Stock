@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-05T15:29:13",
+ "generated": "2026-08-06T13:32:14",
  "themes": [
   {
    "key": "hospital",
@@ -8,7 +8,7 @@
    "n": 12,
    "breadth": 58.3,
    "rs_med": 75.6,
-   "ret3m": 12.6,
+   "ret3m": 17.7,
    "news": 2.15,
    "news_per_name": 0.179,
    "thin": false,
@@ -30,7 +30,7 @@
    "n": 7,
    "breadth": 42.9,
    "rs_med": 96.6,
-   "ret3m": 8.4,
+   "ret3m": 16.1,
    "news": 4.54,
    "news_per_name": 0.648,
    "thin": false,
@@ -39,7 +39,7 @@
     "PARAS",
     "DATAPATTNS"
    ],
-   "heat": 76.0
+   "heat": 85.0
   },
   {
    "key": "datacentre",
@@ -48,7 +48,7 @@
    "n": 8,
    "breadth": 37.5,
    "rs_med": 95.9,
-   "ret3m": 10.2,
+   "ret3m": 11.3,
    "news": 3.73,
    "news_per_name": 0.466,
    "thin": false,
@@ -57,7 +57,7 @@
     "HFCL",
     "NETWEB"
    ],
-   "heat": 74.7
+   "heat": 71.7
   },
   {
    "key": "ems",
@@ -66,7 +66,7 @@
    "n": 9,
    "breadth": 33.3,
    "rs_med": 91.8,
-   "ret3m": 13.7,
+   "ret3m": 22.9,
    "news": 0.56,
    "news_per_name": 0.063,
    "thin": false,
@@ -84,7 +84,7 @@
    "n": 13,
    "breadth": 38.5,
    "rs_med": 95.8,
-   "ret3m": 3.1,
+   "ret3m": 4.9,
    "news": 5.13,
    "news_per_name": 0.395,
    "thin": false,
@@ -95,7 +95,24 @@
     "AZAD",
     "DYNAMATECH"
    ],
-   "heat": 61.3
+   "heat": 64.3
+  },
+  {
+   "key": "cdmo",
+   "name": "Pharma CDMO & API",
+   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
+   "n": 11,
+   "breadth": 18.2,
+   "rs_med": 88.9,
+   "ret3m": 14.1,
+   "news": 2.97,
+   "news_per_name": 0.27,
+   "thin": false,
+   "confirmed": [
+    "GRANULES",
+    "EMCURE"
+   ],
+   "heat": 54.7
   },
   {
    "key": "water",
@@ -104,7 +121,7 @@
    "n": 6,
    "breadth": 50.0,
    "rs_med": 95.2,
-   "ret3m": -3.1,
+   "ret3m": -2.8,
    "news": 1.08,
    "news_per_name": 0.18,
    "thin": false,
@@ -113,7 +130,7 @@
     "WABAG",
     "IONEXCHANG"
    ],
-   "heat": 59.3
+   "heat": 53.3
   },
   {
    "key": "grid",
@@ -122,7 +139,7 @@
    "n": 14,
    "breadth": 42.9,
    "rs_med": 95.6,
-   "ret3m": 3.3,
+   "ret3m": 3.4,
    "news": 1.65,
    "news_per_name": 0.118,
    "thin": false,
@@ -134,24 +151,7 @@
     "VOLTAMP",
     "KEI"
    ],
-   "heat": 59.0
-  },
-  {
-   "key": "cdmo",
-   "name": "Pharma CDMO & API",
-   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
-   "n": 11,
-   "breadth": 18.2,
-   "rs_med": 88.9,
-   "ret3m": 12.2,
-   "news": 2.97,
-   "news_per_name": 0.27,
-   "thin": false,
-   "confirmed": [
-    "GRANULES",
-    "EMCURE"
-   ],
-   "heat": 57.7
+   "heat": 53.0
   },
   {
    "key": "textiles",
@@ -160,7 +160,7 @@
    "n": 12,
    "breadth": 33.3,
    "rs_med": 85.6,
-   "ret3m": 9.0,
+   "ret3m": 8.3,
    "news": 1.08,
    "news_per_name": 0.09,
    "thin": false,
@@ -170,7 +170,23 @@
     "PGIL",
     "WELSPUNLIV"
    ],
-   "heat": 53.7
+   "heat": 50.7
+  },
+  {
+   "key": "ev",
+   "name": "EV & auto electrification",
+   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
+   "n": 10,
+   "breadth": 10.0,
+   "rs_med": 73.8,
+   "ret3m": 6.2,
+   "news": 2.75,
+   "news_per_name": 0.275,
+   "thin": false,
+   "confirmed": [
+    "BELRISE"
+   ],
+   "heat": 38.7
   },
   {
    "key": "finfra",
@@ -179,7 +195,7 @@
    "n": 16,
    "breadth": 31.2,
    "rs_med": 80.3,
-   "ret3m": 1.3,
+   "ret3m": 1.4,
    "news": 5.31,
    "news_per_name": 0.332,
    "thin": false,
@@ -190,23 +206,7 @@
     "KFINTECH",
     "IONEXCHANG"
    ],
-   "heat": 44.0
-  },
-  {
-   "key": "ev",
-   "name": "EV & auto electrification",
-   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
-   "n": 10,
-   "breadth": 10.0,
-   "rs_med": 73.8,
-   "ret3m": 7.3,
-   "news": 2.75,
-   "news_per_name": 0.275,
-   "thin": false,
-   "confirmed": [
-    "BELRISE"
-   ],
-   "heat": 38.7
+   "heat": 38.0
   },
   {
    "key": "chemicals",
@@ -215,7 +215,7 @@
    "n": 11,
    "breadth": 36.4,
    "rs_med": 81.5,
-   "ret3m": -3.7,
+   "ret3m": 1.4,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": false,
@@ -228,46 +228,13 @@
    "heat": 36.0
   },
   {
-   "key": "renewables",
-   "name": "Renewables, solar & storage",
-   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
-   "n": 14,
-   "breadth": 14.3,
-   "rs_med": 78.2,
-   "ret3m": -11.1,
-   "news": 11.16,
-   "news_per_name": 0.797,
-   "thin": false,
-   "confirmed": [
-    "ACMESOLAR",
-    "JSWENERGY"
-   ],
-   "heat": 26.3
-  },
-  {
-   "key": "shipbuilding",
-   "name": "Shipbuilding & marine",
-   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
-   "n": 5,
-   "breadth": 20.0,
-   "rs_med": 82.0,
-   "ret3m": -11.6,
-   "news": 0.85,
-   "news_per_name": 0.17,
-   "thin": false,
-   "confirmed": [
-    "SCI"
-   ],
-   "heat": 21.3
-  },
-  {
    "key": "capex",
    "name": "Industrial capex & machinery",
    "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
    "n": 21,
    "breadth": 14.3,
    "rs_med": 77.7,
-   "ret3m": -4.1,
+   "ret3m": 3.6,
    "news": 3.5,
    "news_per_name": 0.167,
    "thin": false,
@@ -276,7 +243,40 @@
     "AZAD",
     "GRINDWELL"
    ],
-   "heat": 18.3
+   "heat": 30.3
+  },
+  {
+   "key": "shipbuilding",
+   "name": "Shipbuilding & marine",
+   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
+   "n": 5,
+   "breadth": 20.0,
+   "rs_med": 82.0,
+   "ret3m": -7.5,
+   "news": 0.85,
+   "news_per_name": 0.17,
+   "thin": false,
+   "confirmed": [
+    "SCI"
+   ],
+   "heat": 24.3
+  },
+  {
+   "key": "renewables",
+   "name": "Renewables, solar & storage",
+   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
+   "n": 14,
+   "breadth": 14.3,
+   "rs_med": 78.2,
+   "ret3m": -9.3,
+   "news": 11.16,
+   "news_per_name": 0.797,
+   "thin": false,
+   "confirmed": [
+    "ACMESOLAR",
+    "JSWENERGY"
+   ],
+   "heat": 23.3
   },
   {
    "key": "railways",
@@ -285,7 +285,7 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": 17.2,
-   "ret3m": -13.3,
+   "ret3m": -10.3,
    "news": 4.8,
    "news_per_name": 0.48,
    "thin": false,
@@ -299,7 +299,7 @@
    "n": 3,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -13.2,
+   "ret3m": -19.1,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -313,7 +313,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 99.7,
-   "ret3m": 5.1,
+   "ret3m": 10.5,
    "news": 2.0,
    "news_per_name": 1.002,
    "thin": true,

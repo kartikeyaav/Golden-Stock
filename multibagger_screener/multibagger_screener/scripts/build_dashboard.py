@@ -513,21 +513,45 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
     expected cadence, so "3 days old" reads as fine for a weekly job and
     alarming for a nightly one.
     """
-    def row(key, label, age, warn, fail, detail, tip):
+    def row(key, label, age, warn, fail, detail, tip, stamp=None):
+        """`age` is computed HERE, at build time, and baked into a static page
+        — which is exactly wrong for the one widget whose job is to say how
+        old things are. A dashboard built at 13:44 kept reporting "now" when
+        opened the following morning, so the staleness indicator was itself
+        stale (user-reported 2026-08-04).
+
+        The fix is to ship the raw timestamp and let the browser subtract at
+        VIEW time. `age` stays for the server-side state classification and as
+        a fallback for a row whose stamp cannot be resolved."""
         st = "unknown" if age is None else (
             "fail" if age >= fail else "warn" if age >= warn else "ok")
+        iso = None
+        if stamp is not None:
+            try:
+                t = pd.to_datetime(stamp, errors="coerce")
+                iso = None if pd.isna(t) else t.to_pydatetime().isoformat()
+            except (ValueError, TypeError):
+                iso = None
         return {"k": key, "label": label, "age": age, "state": st,
-                "detail": detail, "tip": tip}
+                "detail": detail, "tip": tip,
+                # thresholds travel with the row so the browser can re-classify
+                # against the age it computes rather than the one we computed
+                "at": iso, "warn": warn, "fail": fail}
 
     verdicts_age = None
+    verdicts_stamp = None
     vp = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
     if os.path.exists(vp):
         try:
             _v = pd.read_csv(vp)
-            verdicts_age = _age_days(pd.to_datetime(
-                _v["logged_at"], errors="coerce").max())
+            verdicts_stamp = pd.to_datetime(_v["logged_at"], errors="coerce").max()
+            verdicts_age = _age_days(verdicts_stamp)
         except (ValueError, KeyError, OSError):
             pass
+    # the price cache's own last bar, so the browser can age it at view time
+    _bench = load_ohlcv("NIFTY50")
+    bench_stamp = (_bench["date"].iloc[-1] if _bench is not None and len(_bench)
+                   else None)
     health_json = {}
     hp = os.path.join(ROOT, "state", "analyst_health.json")
     if os.path.exists(hp):
@@ -543,41 +567,46 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
             f"{len(tags)} names tagged",
             "The mechanical core: tags the whole universe, diffs against last "
             "night, fires alerts. Runs Mon-Fri in the cloud, so a weekend read "
-            "is normally one to two days old."),
+            "is normally one to two days old.", stamp=scan_date),
         row("prices", "Price cache", bench_age if bench_age != 99 else None, 3, 5,
             "Yahoo daily OHLCV", "Every tag, stop and chart reads this cache. "
-            "Stale prices mean every number on this page is stale."),
+            "Stale prices mean every number on this page is stale.",
+            stamp=bench_stamp),
         row("analyst", "AI analyst", verdicts_age, 4, 9,
             (health_json.get("status") or "?") + " · pooled deep-dives",
             "Deep-dives tonight's buy alerts and files a verdict on each. "
             "Amber past 4 days, red past 9 — it has twice failed silently for "
-            "over a week, so its age is shown rather than assumed."),
+            "over a week, so its age is shown rather than assumed.",
+            stamp=verdicts_stamp),
         row("committee", "AI committee", _age_days((ai_picks or {}).get("generated")),
             8, 15, f"{len((ai_picks or {}).get('picks') or [])} picks",
             "Picks 3-5 researched names from the weekly shortlist. One cycle "
             "is 7 days, so anything past 8 is last week's read, not this "
-            "week's."),
+            "week's.", stamp=(ai_picks or {}).get("generated")),
         row("radar", "News radar", _age_days((radar or {}).get("generated")
                                              or (radar or {}).get("window_start")),
             2.5, 5, f"{len((radar or {}).get('hits') or [])} hits in window",
             "NSE filings classified since the last scan, plus the 90-day story "
-            "memory behind it. Written by the same nightly job as the scan."),
+            "memory behind it. Written by the same nightly job as the scan.",
+            stamp=(radar or {}).get("generated") or (radar or {}).get("window_start")),
         row("surveillance", "Surveillance", _age_days((surv or {}).get("generated")),
             3, 8,
             f"{(surv or {}).get('n_flagged', 0)} of "
             f"{(surv or {}).get('n_checked', 0)} flagged",
             "ASM / GSM / circuit band / settlement series from NSE. A missing "
-            "snapshot means UNKNOWN, never clean."),
+            "snapshot means UNKNOWN, never clean.", stamp=(surv or {}).get("generated")),
         row("gate", "Capital gate", _age_days((gate or {}).get("generated")), 3, 8,
             (gate or {}).get("verdict", "?"),
             "The pre-registered forward test that decides real capital. "
-            "Recomputed on every dashboard build from the append-only journal."),
+            "Recomputed on every dashboard build from the append-only journal.",
+            stamp=(gate or {}).get("generated")),
     ]
     if penny:
         rows.append(row("penny", "Penny screen", _age_days(penny.get("as_of")),
                         9, 21, f"{len(penny.get('rows') or [])} names",
                         "Research-only nano-cap surface, refreshed with the "
-                        "weekly job. No backtest stands behind it."))
+                        "weekly job. No backtest stands behind it.",
+                        stamp=penny.get("as_of")))
     return rows
 
 
@@ -2466,17 +2495,35 @@ $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HAL
    This exists because both AI layers have died silently for about a week
    each, and on both occasions the page looked completely normal. */
 (function(){const H=D.health||[];const el=$('#healthstrip');if(!el||!H.length)return;
+ /* AGE IS COMPUTED HERE, AT VIEW TIME — not in Python at build time.
+    The page is static: a dashboard generated at 13:44 baked in "now" and was
+    still saying "now" the next morning, so the one widget whose entire job is
+    to report staleness was itself stale (user-reported 2026-08-04). Each row
+    ships its raw timestamp; we subtract against the reader's clock and
+    re-classify against the row's own thresholds. Falls back to the
+    build-time age only for a row whose stamp could not be resolved. */
+ const liveAge=h=>{if(!h.at)return h.age;
+   const t=Date.parse(h.at); if(isNaN(t))return h.age;
+   return (Date.now()-t)/864e5;};
+ const liveState=(h,a)=>{if(a==null)return h.state||'unknown';
+   if(h.fail!=null&&a>=h.fail)return 'fail';
+   if(h.warn!=null&&a>=h.warn)return 'warn';
+   return 'ok';};
  /* compact form for the chip */
  const ago=a=>a==null?'—':a<0.04?'now':a<1?Math.round(a*24)+'h':a<2?'1d':Math.round(a)+'d';
  /* full sentence for the tooltip. The chip form cannot just have " ago"
     appended to it: that produced "last ran now ago" and "last ran — ago". */
  const agoPhrase=a=>a==null?'has never run':a<0.04?'ran just now'
    :a<1?'ran '+Math.round(a*24)+'h ago':a<2?'ran yesterday':'ran '+Math.round(a)+' days ago';
- el.innerHTML=H.map(h=>{const detail=(h.detail||'').trim().replace(/\.$/,'');
-  const tip=[h.label+' — '+agoPhrase(h.age)+'.', detail?detail+'.':'', h.tip]
+ const paint=()=>{el.innerHTML=H.map(h=>{const a=liveAge(h),st=liveState(h,a);
+  const detail=(h.detail||'').trim().replace(/\.$/,'');
+  const tip=[h.label+' — '+agoPhrase(a)+'.', detail?detail+'.':'', h.tip]
     .filter(Boolean).join(' ');
-  return `<span class="hpip ${h.state}" data-tip="${esc(tip)}">
-  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(h.age)}</s></span>`}).join('');})();
+  return `<span class="hpip ${st}" data-tip="${esc(tip)}">
+  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(a)}</s></span>`}).join('');};
+ paint();
+ /* a tab left open overnight must not keep claiming "now" */
+ setInterval(paint,60000);})();
 
 /* ---- instrument helpers ------------------------------------------------
    One radial-gauge factory for every dial on the page, so the gate and the

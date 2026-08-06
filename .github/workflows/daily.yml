@@ -113,7 +113,13 @@ jobs:
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \
                    announcements_archive.csv news_archive.csv \
-                   positions.csv paper_positions.csv; do
+                   paper_positions.csv; do
+            # positions.csv and holdings.csv are NOT in this list. They are the
+            # user's real book — removed from the repo 2026-08-04 at their
+            # request (audit F5). `git add -f` overrides .gitignore, so leaving
+            # them here would have re-committed them every night and silently
+            # undone the removal. paper_positions.csv stays: it is notional and
+            # it IS the forward test.
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
           done
           if git diff --cached --quiet; then
