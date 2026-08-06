@@ -1882,7 +1882,7 @@ frozen-record family as §3T(4), this time in the merge rather than the store.
   EMCURE/MAHABANK across 5 sectors; externally benchmarked against
   independent analysts and corroborated (STLTECH froth-caution matched).
 - **Holdings synced from Zerodha** (2026-07-12): user holds MOSCHIP (200 @
-  [redacted]) and DIACABS (100 @ [redacted] — a stock the system itself alerted
+  [redacted]) and DIACABS ([redacted] — a stock the system itself alerted
   2026-07-10; seeded stop 195.37, 2.5xATR). Both in `holdings.csv` +
   `positions.csv` with reconstructed stops (flagged as such). Kite sessions
   expire DAILY (SEBI reg) — re-sync needs a fresh login each time, OR use
