@@ -40,3 +40,7 @@ multibagger_screener/multibagger_screener/ui_shots/
 # NOTE: prior commits still contain them — see HANDOFF §5 item 7.
 multibagger_screener/multibagger_screener/positions.csv
 multibagger_screener/multibagger_screener/holdings.csv
+theme_samples.html
+
+# debug artifact that once carried a positions table
+multibagger_screener/multibagger_screener/theme_samples.html
