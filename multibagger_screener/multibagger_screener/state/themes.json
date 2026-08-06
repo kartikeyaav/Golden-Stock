@@ -1,46 +1,6 @@
 {
- "generated": "2026-08-06T13:32:14",
+ "generated": "2026-08-06T15:09:06",
  "themes": [
-  {
-   "key": "hospital",
-   "name": "Hospitals & diagnostics",
-   "blurb": "Bed additions and the shift of diagnostics into organised chains.",
-   "n": 12,
-   "breadth": 58.3,
-   "rs_med": 75.6,
-   "ret3m": 17.7,
-   "news": 2.15,
-   "news_per_name": 0.179,
-   "thin": false,
-   "confirmed": [
-    "ASTERDM",
-    "YATHARTH",
-    "THYROCARE",
-    "VIJAYA",
-    "LALPATHLAB",
-    "KIMS",
-    "METROPOLIS"
-   ],
-   "heat": 88.0
-  },
-  {
-   "key": "defelec",
-   "name": "Defence electronics & space",
-   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
-   "n": 7,
-   "breadth": 42.9,
-   "rs_med": 96.6,
-   "ret3m": 16.1,
-   "news": 4.54,
-   "news_per_name": 0.648,
-   "thin": false,
-   "confirmed": [
-    "ASTRAMICRO",
-    "PARAS",
-    "DATAPATTNS"
-   ],
-   "heat": 85.0
-  },
   {
    "key": "datacentre",
    "name": "Data centres & digital infrastructure",
@@ -49,88 +9,111 @@
    "breadth": 37.5,
    "rs_med": 95.9,
    "ret3m": 11.3,
-   "news": 3.73,
-   "news_per_name": 0.466,
+   "news": 4.64,
+   "news_per_name": 0.58,
    "thin": false,
    "confirmed": [
     "STLTECH",
     "HFCL",
     "NETWEB"
    ],
-   "heat": 71.7
+   "heat": 81.7
+  },
+  {
+   "key": "hospital",
+   "name": "Hospitals & diagnostics",
+   "blurb": "Bed additions and the shift of diagnostics into organised chains.",
+   "n": 12,
+   "breadth": 50.0,
+   "rs_med": 75.6,
+   "ret3m": 9.0,
+   "news": 2.08,
+   "news_per_name": 0.173,
+   "thin": false,
+   "confirmed": [
+    "ASTERDM",
+    "YATHARTH",
+    "THYROCARE",
+    "VIJAYA",
+    "KIMS",
+    "METROPOLIS"
+   ],
+   "heat": 75.0
   },
   {
    "key": "ems",
    "name": "Electronics manufacturing (EMS)",
    "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
-   "n": 9,
-   "breadth": 33.3,
+   "n": 8,
+   "breadth": 37.5,
    "rs_med": 91.8,
-   "ret3m": 22.9,
-   "news": 0.56,
-   "news_per_name": 0.063,
+   "ret3m": 23.5,
+   "news": 0.55,
+   "news_per_name": 0.068,
    "thin": false,
    "confirmed": [
     "AVALON",
     "SYRMA",
     "NETWEB"
    ],
-   "heat": 64.7
+   "heat": 72.7
   },
   {
    "key": "defence",
    "name": "Defence & aerospace",
    "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
    "n": 13,
-   "breadth": 38.5,
+   "breadth": 46.2,
    "rs_med": 95.8,
-   "ret3m": 4.9,
-   "news": 5.13,
-   "news_per_name": 0.395,
+   "ret3m": 6.7,
+   "news": 5.47,
+   "news_per_name": 0.421,
    "thin": false,
    "confirmed": [
+    "MTARTECH",
     "ASTRAMICRO",
     "PARAS",
-    "DATAPATTNS",
     "AZAD",
-    "DYNAMATECH"
+    "DYNAMATECH",
+    "MIDHANI"
    ],
-   "heat": 64.3
+   "heat": 72.3
   },
   {
-   "key": "cdmo",
-   "name": "Pharma CDMO & API",
-   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
-   "n": 11,
-   "breadth": 18.2,
-   "rs_med": 88.9,
-   "ret3m": 14.1,
-   "news": 2.97,
-   "news_per_name": 0.27,
+   "key": "defelec",
+   "name": "Defence electronics & space",
+   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
+   "n": 7,
+   "breadth": 42.9,
+   "rs_med": 96.6,
+   "ret3m": 6.7,
+   "news": 4.39,
+   "news_per_name": 0.627,
    "thin": false,
    "confirmed": [
-    "GRANULES",
-    "EMCURE"
+    "MTARTECH",
+    "ASTRAMICRO",
+    "PARAS"
    ],
-   "heat": 54.7
+   "heat": 70.0
   },
   {
-   "key": "water",
-   "name": "Water, environment & EPC",
-   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
-   "n": 6,
-   "breadth": 50.0,
-   "rs_med": 95.2,
-   "ret3m": -2.8,
-   "news": 1.08,
-   "news_per_name": 0.18,
+   "key": "textiles",
+   "name": "Textiles & apparel PLI",
+   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
+   "n": 12,
+   "breadth": 25.0,
+   "rs_med": 85.6,
+   "ret3m": 11.1,
+   "news": 1.04,
+   "news_per_name": 0.087,
    "thin": false,
    "confirmed": [
-    "KIRLOSENG",
-    "WABAG",
-    "IONEXCHANG"
+    "ARVIND",
+    "ICIL",
+    "WELSPUNLIV"
    ],
-   "heat": 53.3
+   "heat": 59.7
   },
   {
    "key": "grid",
@@ -139,9 +122,9 @@
    "n": 14,
    "breadth": 42.9,
    "rs_med": 95.6,
-   "ret3m": 3.4,
-   "news": 1.65,
-   "news_per_name": 0.118,
+   "ret3m": 4.7,
+   "news": 1.59,
+   "news_per_name": 0.114,
    "thin": false,
    "confirmed": [
     "HFCL",
@@ -151,26 +134,24 @@
     "VOLTAMP",
     "KEI"
    ],
-   "heat": 53.0
+   "heat": 56.0
   },
   {
-   "key": "textiles",
-   "name": "Textiles & apparel PLI",
-   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
-   "n": 12,
-   "breadth": 33.3,
-   "rs_med": 85.6,
-   "ret3m": 8.3,
-   "news": 1.08,
-   "news_per_name": 0.09,
+   "key": "cdmo",
+   "name": "Pharma CDMO & API",
+   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
+   "n": 11,
+   "breadth": 18.2,
+   "rs_med": 88.9,
+   "ret3m": 11.0,
+   "news": 2.88,
+   "news_per_name": 0.262,
    "thin": false,
    "confirmed": [
-    "ARVIND",
-    "ICIL",
-    "PGIL",
-    "WELSPUNLIV"
+    "GRANULES",
+    "EMCURE"
    ],
-   "heat": 50.7
+   "heat": 52.0
   },
   {
    "key": "ev",
@@ -179,71 +160,85 @@
    "n": 10,
    "breadth": 10.0,
    "rs_med": 73.8,
-   "ret3m": 6.2,
-   "news": 2.75,
-   "news_per_name": 0.275,
+   "ret3m": 9.2,
+   "news": 2.66,
+   "news_per_name": 0.266,
    "thin": false,
    "confirmed": [
     "BELRISE"
    ],
-   "heat": 38.7
+   "heat": 47.3
   },
   {
    "key": "finfra",
    "name": "Financial market infrastructure",
    "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
    "n": 16,
-   "breadth": 31.2,
+   "breadth": 25.0,
    "rs_med": 80.3,
-   "ret3m": 1.4,
-   "news": 5.31,
-   "news_per_name": 0.332,
+   "ret3m": 2.6,
+   "news": 5.14,
+   "news_per_name": 0.321,
    "thin": false,
    "confirmed": [
     "ANANDRATHI",
     "NAM-INDIA",
     "PRUDENT",
-    "KFINTECH",
-    "IONEXCHANG"
+    "KFINTECH"
    ],
-   "heat": 38.0
+   "heat": 46.7
   },
   {
-   "key": "chemicals",
-   "name": "Specialty chemicals & China+1",
-   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
-   "n": 11,
-   "breadth": 36.4,
-   "rs_med": 81.5,
-   "ret3m": 1.4,
-   "news": 0.0,
-   "news_per_name": 0.0,
+   "key": "water",
+   "name": "Water, environment & EPC",
+   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
+   "n": 6,
+   "breadth": 33.3,
+   "rs_med": 95.2,
+   "ret3m": -2.9,
+   "news": 1.05,
+   "news_per_name": 0.174,
    "thin": false,
    "confirmed": [
-    "NAVINFLUOR",
-    "FLUOROCHEM",
-    "AARTIIND",
-    "EPL"
+    "KIRLOSENG",
+    "WABAG"
    ],
-   "heat": 36.0
+   "heat": 45.0
   },
   {
    "key": "capex",
    "name": "Industrial capex & machinery",
    "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
    "n": 21,
-   "breadth": 14.3,
+   "breadth": 19.0,
    "rs_med": 77.7,
-   "ret3m": 3.6,
-   "news": 3.5,
-   "news_per_name": 0.167,
+   "ret3m": -3.6,
+   "news": 4.0,
+   "news_per_name": 0.191,
    "thin": false,
    "confirmed": [
     "LLOYDSENGG",
     "AZAD",
-    "GRINDWELL"
+    "GRINDWELL",
+    "AIAENG"
    ],
-   "heat": 30.3
+   "heat": 29.3
+  },
+  {
+   "key": "renewables",
+   "name": "Renewables, solar & storage",
+   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
+   "n": 14,
+   "breadth": 7.1,
+   "rs_med": 78.2,
+   "ret3m": -8.6,
+   "news": 10.79,
+   "news_per_name": 0.771,
+   "thin": false,
+   "confirmed": [
+    "ACMESOLAR"
+   ],
+   "heat": 23.7
   },
   {
    "key": "shipbuilding",
@@ -252,31 +247,31 @@
    "n": 5,
    "breadth": 20.0,
    "rs_med": 82.0,
-   "ret3m": -7.5,
-   "news": 0.85,
-   "news_per_name": 0.17,
+   "ret3m": -11.6,
+   "news": 0.82,
+   "news_per_name": 0.164,
    "thin": false,
    "confirmed": [
     "SCI"
    ],
-   "heat": 24.3
+   "heat": 20.0
   },
   {
-   "key": "renewables",
-   "name": "Renewables, solar & storage",
-   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
-   "n": 14,
-   "breadth": 14.3,
-   "rs_med": 78.2,
-   "ret3m": -9.3,
-   "news": 11.16,
-   "news_per_name": 0.797,
+   "key": "chemicals",
+   "name": "Specialty chemicals & China+1",
+   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
+   "n": 11,
+   "breadth": 18.2,
+   "rs_med": 81.5,
+   "ret3m": -3.3,
+   "news": 0.0,
+   "news_per_name": 0.0,
    "thin": false,
    "confirmed": [
-    "ACMESOLAR",
-    "JSWENERGY"
+    "FLUOROCHEM",
+    "AARTIIND"
    ],
-   "heat": 23.3
+   "heat": 20.0
   },
   {
    "key": "railways",
@@ -285,21 +280,21 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": 17.2,
-   "ret3m": -10.3,
-   "news": 4.8,
-   "news_per_name": 0.48,
+   "ret3m": -9.7,
+   "news": 5.68,
+   "news_per_name": 0.568,
    "thin": false,
    "confirmed": [],
-   "heat": 13.0
+   "heat": 15.0
   },
   {
    "key": "semis",
    "name": "Semiconductors & OSAT",
    "blurb": "Fabs, assembly-test-packaging, design services and the materials around them \u2014 the newest and least proven of the capex themes.",
-   "n": 3,
+   "n": 2,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -19.1,
+   "ret3m": -12.4,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -311,13 +306,15 @@
    "name": "Nuclear & new energy",
    "blurb": "Small modular reactors, nuclear-grade fabrication and the hydrogen chain \u2014 earliest-stage and most speculative of the energy themes.",
    "n": 2,
-   "breadth": 0.0,
+   "breadth": 50.0,
    "rs_med": 99.7,
-   "ret3m": 10.5,
-   "news": 2.0,
-   "news_per_name": 1.002,
+   "ret3m": 6.8,
+   "news": 2.44,
+   "news_per_name": 1.22,
    "thin": true,
-   "confirmed": [],
+   "confirmed": [
+    "MTARTECH"
+   ],
    "heat": 0.0
   }
  ]
