@@ -1,21 +1,9 @@
 {
- "generated": "2026-08-06 15:32",
+ "generated": "2026-08-07 14:22",
  "n_checked": 652,
- "n_flagged": 66,
- "asm_total": 190,
+ "n_flagged": 60,
+ "asm_total": 192,
  "syms": {
-  "ACMESOLAR": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
   "ACUTAAS": {
    "flags": [
     {
@@ -86,18 +74,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "BLUEJET": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
   "CEMPRO": {
    "flags": [
     {
@@ -154,14 +130,14 @@
   "GALLANTT": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 5.0,
+   "band": 10.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "BAND 10%"
   },
   "HFCL": {
    "flags": [
@@ -228,18 +204,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "SCHNEIDER": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
   "TRAVELFOOD": {
    "flags": [
     {
@@ -300,18 +264,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "JSWINFRA": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
   "KALYANKJIL": {
    "flags": [
     {
@@ -339,14 +291,14 @@
   "AXISCADES": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 5.0,
+   "band": 10.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "BAND 10%"
   },
   "AEQUS": {
    "flags": [
@@ -399,14 +351,14 @@
   "ATLANTAELE": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 5.0,
+   "band": 10.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "BAND 10%"
   },
   "BALAMINES": {
    "flags": [
@@ -523,18 +475,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "ASM"
-  },
-  "GRWRHITECH": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
   },
   "INOXGREEN": {
    "flags": [
@@ -731,9 +671,14 @@
      "code": "ASM",
      "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 20.0,
+   "band": 10.0,
    "series": "EQ",
    "worst": "ASM"
   },
@@ -852,18 +797,6 @@
    "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
-  },
-  "TVSSCS": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
   },
   "THANGAMAYL": {
    "flags": [
