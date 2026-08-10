@@ -28,3 +28,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-08-06,STLTECH,SKIP,entry,0,,,[STLTECH@2026-08-05 21:31] alert had no mechanical stop (risk engine skipped the plan)
 2026-08-06,ENGINERSIN,BUY,entry,434,240.27,,[ENGINERSIN@2026-08-05 21:35] analyst BUY/MEDIUM/HALF PLAN
 2026-08-06,SHILPAMED,SELL,partial,7,757.95,1112.65,partial at 2.5R
+2026-08-10,LUPIN,SELL,all,43,2265.2,-6192.0,stop hit
+2026-08-10,SKYGOLD,SELL,partial,18,778.8,2534.4,partial at 2.5R
