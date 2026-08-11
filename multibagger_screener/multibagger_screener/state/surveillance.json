@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-10 14:30",
+ "generated": "2026-08-11 14:29",
  "n_checked": 652,
- "n_flagged": 60,
- "asm_total": 183,
+ "n_flagged": 61,
+ "asm_total": 188,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -435,6 +435,18 @@
    "series": "BE",
    "worst": "ASM"
   },
+  "EMIL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "ELLEN": {
    "flags": [
     {
@@ -499,15 +511,10 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "BE",
+   "series": "EQ",
    "worst": "BAND 5%"
   },
   "JUSTDIAL": {
@@ -533,15 +540,10 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "BE",
+   "series": "EQ",
    "worst": "BAND 5%"
   },
   "LLOYDSENGG": {
@@ -654,15 +656,10 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "BE",
+   "series": "EQ",
    "worst": "BAND 5%"
   },
   "RBA": {
@@ -685,11 +682,6 @@
   "SMLMAH": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -697,7 +689,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "SAATVIKGL": {
    "flags": [
@@ -729,10 +721,15 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "EQ",
+   "series": "BE",
    "worst": "BAND 5%"
   },
   "STLTECH": {
@@ -760,14 +757,14 @@
   "SUDEEPPHRM": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "SPARC": {
    "flags": [
@@ -821,15 +818,10 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "BE",
+   "series": "EQ",
    "worst": "BAND 5%"
   },
   "WEBELSOLAR": {

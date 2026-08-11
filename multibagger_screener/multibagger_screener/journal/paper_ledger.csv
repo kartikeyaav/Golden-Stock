@@ -30,3 +30,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-08-06,SHILPAMED,SELL,partial,7,757.95,1112.65,partial at 2.5R
 2026-08-10,LUPIN,SELL,all,43,2265.2,-6192.0,stop hit
 2026-08-10,SKYGOLD,SELL,partial,18,778.8,2534.4,partial at 2.5R
+2026-08-11,CHENNPETRO,SELL,partial,10,1362.58,2318.75,partial at 2.5R
