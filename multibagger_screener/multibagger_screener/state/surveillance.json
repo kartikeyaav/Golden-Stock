@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-11 14:29",
+ "generated": "2026-08-12 14:30",
  "n_checked": 652,
- "n_flagged": 61,
- "asm_total": 188,
+ "n_flagged": 63,
+ "asm_total": 197,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -715,6 +715,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "SHILPAMED": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "LOTUSDEV": {
    "flags": [
     {
@@ -823,6 +835,18 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
+  },
+  "MANYAVAR": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "WEBELSOLAR": {
    "flags": [
