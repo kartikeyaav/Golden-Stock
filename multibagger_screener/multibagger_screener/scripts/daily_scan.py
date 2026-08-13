@@ -826,6 +826,28 @@ def main() -> None:
         lines.append(f"Tag counts: {counts}")
     else:
         prev_tags = prev.get("tags", {})
+        # THE RADAR RUNS FIRST NOW (2026-08-13, user request: "the news radar
+        # and conviction score should be embedded into buy signals somehow").
+        # It used to be computed AFTER the alert list was written, in its own
+        # section further down the file — so a buy signal and a material
+        # filing on the same name appeared in two places with nothing joining
+        # them, and the reader had to do the cross-reference by eye.
+        #
+        # It still gates NOTHING. The measured finding stands: names carrying
+        # a positive filing produced a later buy alert 7.3% of the time
+        # against a 16.6% base rate, so news does not lead the trigger and is
+        # not allowed to fire one. This only puts the fact on the line where
+        # the decision is read.
+        radar_pos: dict[str, str] = {}
+        try:
+            from data.news_radar import scan_radar as _scan_radar
+            radar_early = _scan_radar(today_tags, rs_by_sym, holdings,
+                                      persist=False)
+            for h in radar_early.get("hits", []):
+                if h.get("cls") == "pos":
+                    radar_pos[h["sym"]] = h.get("event", "filing")
+        except Exception:                      # noqa: BLE001 — never kill the scan
+            radar_early = None
         alerts, infos = [], []
         for sym, new in today_tags.items():
             old = prev_tags.get(sym)
@@ -855,7 +877,6 @@ def main() -> None:
                        "rs_pctile": rs_by_sym.get(sym, "")}
                 if kind in ("BUY CANDIDATE", "RE-ENTRY WINDOW"):
                     status = entry_status_of(tr)
-                    lines.append(f"- **{kind}** [{status}]: {sym}  ({old} -> {new})")
                     entry_signal_rows.append({
                         "logged_at": now, "symbol": sym, "kind": kind,
                         "entry_status": status,
@@ -870,8 +891,27 @@ def main() -> None:
                                            company_name=company_by_sym.get(sym, sym))
                     cards.append(cand.pop("card"))
                     card_idx[sym] = len(cards) - 1
-                    alert_details[sym] = cand.pop("detail")
+                    detail = cand.pop("detail")
+                    alert_details[sym] = detail
                     row.update(cand)
+                    # The line is composed AFTER the card, because the card is
+                    # what computes conviction and coverage. Both are stated
+                    # here, with coverage shown whenever it is short of full —
+                    # a 74 at 75% coverage and a 74 at 100% are not the same
+                    # claim, and the summary line was making them look alike.
+                    conv, cov = detail.get("score"), detail.get("coverage")
+                    bits = []
+                    if conv is not None:
+                        bits.append(f"conv {conv:.0f}"
+                                    + (f" @{cov:.0f}% cov" if cov is not None and cov < 100
+                                       else ""))
+                    if detail.get("veto_reasons"):
+                        bits.append("VETOED")
+                    if sym in radar_pos:
+                        bits.append(f"news: {radar_pos[sym]}")
+                    tail = f"  · {' · '.join(bits)}" if bits else ""
+                    lines.append(
+                        f"- **{kind}** [{status}]: {sym}  ({old} -> {new}){tail}")
                 else:
                     lines.append(f"- **{kind}**: {sym}  ({old} -> {new})")
                     row["close"] = tr["last_close"]

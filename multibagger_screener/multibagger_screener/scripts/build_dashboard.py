@@ -3712,9 +3712,17 @@ pal.onclick=e=>{if(e.target===pal)close();};
 
 /* positions */
 function drawPositions(){window._pos=1;const w=$('#poswrap');
+/* The real book is no longer published: positions.csv was removed from the
+   repo 2026-08-04, so the cloud build has no such file and this list is
+   always empty here. An empty "Real positions / YOUR ACTUAL MONEY" card was
+   just a heading for something that is deliberately absent, which reads as a
+   broken panel rather than a decision. Render nothing at all, and let the
+   paper book below be the only position surface.
+   Kept behind the length check rather than deleted, so a LOCAL build - which
+   does still read positions.csv - continues to show the real book. */
 const hdr='<div class="card" style="padding:12px 20px"><h2 style="margin:0">Real positions'
- +'<span class="axis" style="margin-left:auto">YOUR ACTUAL MONEY &middot; positions.csv</span></h2></div>';
-if(!D.positions.length){w.innerHTML=hdr+'<div class="card quiet">No real positions tracked.</div>';return;}
+ +'<span class="axis" style="margin-left:auto">LOCAL ONLY &middot; not published</span></h2></div>';
+if(!D.positions.length){w.innerHTML='';return;}
 w.innerHTML=hdr+D.positions.map(p=>{const prog=Math.max(0,Math.min(1,(p.last-p.stop)/(p.partial-p.stop)))*100;
 return `<div class="card"><div class="posrow"><b style="font-size:16px" class="sym">${p.sym}${survChip(p.sym)}</b>
 <span style="color:${p.pnl>=0?'#34d399':'#f87171'};font-weight:800;font-family:var(--mono)">${p.pnl>0?'+':''}${p.pnl}%</span></div>
