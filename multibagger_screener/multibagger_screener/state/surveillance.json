@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-12 14:30",
+ "generated": "2026-08-13 14:32",
  "n_checked": 652,
- "n_flagged": 63,
- "asm_total": 197,
+ "n_flagged": 65,
+ "asm_total": 210,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -300,6 +300,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "AARTIPHARM": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "AEQUS": {
    "flags": [
     {
@@ -491,19 +503,14 @@
   "INOXGREEN": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
      "code": "BE",
      "detail": "BE settlement series",
      "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 5.0,
+   "band": 20.0,
    "series": "BE",
-   "worst": "BAND 5%"
+   "worst": "BE"
   },
   "JAIBALAJI": {
    "flags": [
@@ -520,11 +527,6 @@
   "JUSTDIAL": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -532,7 +534,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "KRN": {
    "flags": [
@@ -551,6 +553,18 @@
     {
      "code": "ASM",
      "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "LUMAXTECH": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],
@@ -769,6 +783,11 @@
   "SUDEEPPHRM": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -776,7 +795,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
   },
   "SPARC": {
    "flags": [
@@ -810,11 +829,6 @@
   "THANGAMAYL": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -822,7 +836,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "DBREALTY": {
    "flags": [
