@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-13 14:32",
+ "generated": "2026-08-14 14:26",
  "n_checked": 652,
- "n_flagged": 65,
- "asm_total": 210,
+ "n_flagged": 64,
+ "asm_total": 209,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -115,6 +115,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "FINCABLES": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "GALLANTT": {
    "flags": [
     {
@@ -216,18 +228,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "ECLERX": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "BAJAJHFL": {
    "flags": [
     {
@@ -251,18 +251,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "KALYANKJIL": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": null,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "LGEINDIA": {
    "flags": [
@@ -401,6 +389,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "BLUESTONE": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "CRIZAC": {
    "flags": [
     {
@@ -499,18 +499,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "ASM"
-  },
-  "INOXGREEN": {
-   "flags": [
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 20.0,
-   "series": "BE",
-   "worst": "BE"
   },
   "JAIBALAJI": {
    "flags": [

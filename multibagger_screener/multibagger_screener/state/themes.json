@@ -1,19 +1,20 @@
 {
- "generated": "2026-08-13T14:32:09",
+ "generated": "2026-08-14T14:26:53",
  "themes": [
   {
    "key": "defelec",
    "name": "Defence electronics & space",
    "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
    "n": 7,
-   "breadth": 57.1,
+   "breadth": 71.4,
    "rs_med": 96.4,
-   "ret3m": 20.7,
-   "news": 4.95,
-   "news_per_name": 0.707,
+   "ret3m": 18.7,
+   "news": 4.79,
+   "news_per_name": 0.684,
    "thin": false,
    "confirmed": [
     "MTARTECH",
+    "ASTRAMICRO",
     "PARAS",
     "DATAPATTNS",
     "ZENTEC"
@@ -27,9 +28,9 @@
    "n": 8,
    "breadth": 50.0,
    "rs_med": 99.4,
-   "ret3m": 18.5,
-   "news": 3.69,
-   "news_per_name": 0.462,
+   "ret3m": 17.5,
+   "news": 3.57,
+   "news_per_name": 0.447,
    "thin": false,
    "confirmed": [
     "STLTECH",
@@ -37,7 +38,7 @@
     "NETWEB",
     "BHARTIHEXA"
    ],
-   "heat": 81.7
+   "heat": 82.0
   },
   {
    "key": "defence",
@@ -46,19 +47,19 @@
    "n": 13,
    "breadth": 46.2,
    "rs_med": 93.6,
-   "ret3m": 17.6,
-   "news": 6.7,
-   "news_per_name": 0.515,
+   "ret3m": 15.5,
+   "news": 6.48,
+   "news_per_name": 0.499,
    "thin": false,
    "confirmed": [
     "MTARTECH",
+    "ASTRAMICRO",
     "PARAS",
     "DATAPATTNS",
     "DYNAMATECH",
-    "ZENTEC",
-    "MIDHANI"
+    "ZENTEC"
    ],
-   "heat": 77.0
+   "heat": 74.3
   },
   {
    "key": "ems",
@@ -67,32 +68,39 @@
    "n": 8,
    "breadth": 37.5,
    "rs_med": 96.1,
-   "ret3m": 33.6,
-   "news": 1.03,
-   "news_per_name": 0.129,
+   "ret3m": 31.3,
+   "news": 1.0,
+   "news_per_name": 0.125,
    "thin": false,
    "confirmed": [
     "AVALON",
     "NETWEB",
     "SYRMA"
    ],
-   "heat": 73.7
+   "heat": 72.7
   },
   {
-   "key": "ev",
-   "name": "EV & auto electrification",
-   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
-   "n": 10,
-   "breadth": 10.0,
-   "rs_med": 84.6,
-   "ret3m": 19.9,
-   "news": 2.11,
-   "news_per_name": 0.211,
+   "key": "grid",
+   "name": "Power transmission & grid capex",
+   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
+   "n": 14,
+   "breadth": 57.1,
+   "rs_med": 93.4,
+   "ret3m": 12.4,
+   "news": 2.22,
+   "news_per_name": 0.159,
    "thin": false,
    "confirmed": [
-    "BELRISE"
+    "HFCL",
+    "TDPOWERSYS",
+    "APARINDS",
+    "SCHNEIDER",
+    "POWERINDIA",
+    "KEI",
+    "FINCABLES",
+    "VOLTAMP"
    ],
-   "heat": 64.0
+   "heat": 72.3
   },
   {
    "key": "hospital",
@@ -101,40 +109,19 @@
    "n": 12,
    "breadth": 50.0,
    "rs_med": 76.6,
-   "ret3m": 11.4,
-   "news": 1.65,
-   "news_per_name": 0.138,
+   "ret3m": 9.5,
+   "news": 2.82,
+   "news_per_name": 0.235,
    "thin": false,
    "confirmed": [
     "ASTERDM",
     "THYROCARE",
     "YATHARTH",
+    "LALPATHLAB",
     "VIJAYA",
-    "KIMS",
-    "METROPOLIS"
+    "KIMS"
    ],
-   "heat": 59.7
-  },
-  {
-   "key": "grid",
-   "name": "Power transmission & grid capex",
-   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
-   "n": 14,
-   "breadth": 42.9,
-   "rs_med": 93.4,
-   "ret3m": 14.3,
-   "news": 1.27,
-   "news_per_name": 0.09,
-   "thin": false,
-   "confirmed": [
-    "HFCL",
-    "TDPOWERSYS",
-    "APARINDS",
-    "SCHNEIDER",
-    "POWERINDIA",
-    "VOLTAMP"
-   ],
-   "heat": 57.3
+   "heat": 63.0
   },
   {
    "key": "cdmo",
@@ -143,15 +130,31 @@
    "n": 11,
    "breadth": 18.2,
    "rs_med": 93.3,
-   "ret3m": 17.2,
-   "news": 2.28,
-   "news_per_name": 0.208,
+   "ret3m": 12.0,
+   "news": 3.14,
+   "news_per_name": 0.285,
    "thin": false,
    "confirmed": [
     "GRANULES",
     "EMCURE"
    ],
-   "heat": 56.7
+   "heat": 52.0
+  },
+  {
+   "key": "ev",
+   "name": "EV & auto electrification",
+   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
+   "n": 10,
+   "breadth": 10.0,
+   "rs_med": 84.6,
+   "ret3m": 16.1,
+   "news": 2.66,
+   "news_per_name": 0.266,
+   "thin": false,
+   "confirmed": [
+    "BELRISE"
+   ],
+   "heat": 52.0
   },
   {
    "key": "finfra",
@@ -160,9 +163,9 @@
    "n": 16,
    "breadth": 31.2,
    "rs_med": 77.1,
-   "ret3m": 7.3,
-   "news": 4.66,
-   "news_per_name": 0.291,
+   "ret3m": 6.8,
+   "news": 5.14,
+   "news_per_name": 0.321,
    "thin": false,
    "confirmed": [
     "NAM-INDIA",
@@ -171,58 +174,77 @@
     "KFINTECH",
     "CDSL"
    ],
-   "heat": 49.0
+   "heat": 49.3
   },
   {
    "key": "chemicals",
    "name": "Specialty chemicals & China+1",
    "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
    "n": 11,
-   "breadth": 27.3,
+   "breadth": 36.4,
    "rs_med": 84.9,
-   "ret3m": 11.8,
-   "news": 0.58,
-   "news_per_name": 0.053,
+   "ret3m": 7.6,
+   "news": 0.56,
+   "news_per_name": 0.051,
    "thin": false,
    "confirmed": [
     "NAVINFLUOR",
     "FLUOROCHEM",
+    "AARTIIND",
     "EPL"
    ],
-   "heat": 45.3
+   "heat": 45.0
   },
   {
    "key": "textiles",
    "name": "Textiles & apparel PLI",
    "blurb": "Technical textiles, garmenting and the incentive-led export push.",
    "n": 12,
-   "breadth": 8.3,
+   "breadth": 16.7,
    "rs_med": 85.0,
-   "ret3m": 8.3,
-   "news": 1.73,
-   "news_per_name": 0.144,
+   "ret3m": 6.5,
+   "news": 1.68,
+   "news_per_name": 0.14,
    "thin": false,
    "confirmed": [
-    "ARVIND"
+    "ARVIND",
+    "WELSPUNLIV"
    ],
-   "heat": 34.7
+   "heat": 32.3
+  },
+  {
+   "key": "shipbuilding",
+   "name": "Shipbuilding & marine",
+   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
+   "n": 5,
+   "breadth": 20.0,
+   "rs_med": 77.9,
+   "ret3m": -1.5,
+   "news": 0.63,
+   "news_per_name": 0.126,
+   "thin": false,
+   "confirmed": [
+    "GPPL"
+   ],
+   "heat": 29.7
   },
   {
    "key": "capex",
    "name": "Industrial capex & machinery",
    "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
    "n": 21,
-   "breadth": 9.5,
+   "breadth": 14.3,
    "rs_med": 74.2,
-   "ret3m": -1.3,
-   "news": 4.15,
-   "news_per_name": 0.197,
+   "ret3m": -4.3,
+   "news": 4.01,
+   "news_per_name": 0.191,
    "thin": false,
    "confirmed": [
     "LLOYDSENGG",
-    "GRINDWELL"
+    "GRINDWELL",
+    "ELGIEQUIP"
    ],
-   "heat": 26.3
+   "heat": 22.7
   },
   {
    "key": "renewables",
@@ -231,14 +253,14 @@
    "n": 14,
    "breadth": 7.1,
    "rs_med": 73.6,
-   "ret3m": -6.0,
-   "news": 10.6,
-   "news_per_name": 0.757,
+   "ret3m": -7.1,
+   "news": 10.25,
+   "news_per_name": 0.732,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
    ],
-   "heat": 23.0
+   "heat": 20.3
   },
   {
    "key": "railways",
@@ -247,9 +269,9 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": 14.3,
-   "ret3m": -5.0,
-   "news": 6.47,
-   "news_per_name": 0.647,
+   "ret3m": -5.7,
+   "news": 6.26,
+   "news_per_name": 0.626,
    "thin": false,
    "confirmed": [],
    "heat": 16.0
@@ -261,26 +283,12 @@
    "n": 6,
    "breadth": 0.0,
    "rs_med": 94.4,
-   "ret3m": 1.4,
-   "news": 0.83,
-   "news_per_name": 0.138,
+   "ret3m": 5.3,
+   "news": 0.8,
+   "news_per_name": 0.134,
    "thin": false,
    "confirmed": [],
-   "heat": 16.0
-  },
-  {
-   "key": "shipbuilding",
-   "name": "Shipbuilding & marine",
-   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
-   "n": 5,
-   "breadth": 0.0,
-   "rs_med": 77.9,
-   "ret3m": -0.7,
-   "news": 0.65,
-   "news_per_name": 0.13,
-   "thin": false,
-   "confirmed": [],
-   "heat": 12.0
+   "heat": 15.0
   },
   {
    "key": "semis",
@@ -289,7 +297,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": 5.8,
+   "ret3m": 4.3,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -303,9 +311,9 @@
    "n": 2,
    "breadth": 50.0,
    "rs_med": 81.3,
-   "ret3m": 9.8,
-   "news": 1.94,
-   "news_per_name": 0.968,
+   "ret3m": 10.5,
+   "news": 1.88,
+   "news_per_name": 0.938,
    "thin": true,
    "confirmed": [
     "MTARTECH"
