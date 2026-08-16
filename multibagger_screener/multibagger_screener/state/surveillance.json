@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-14 14:26",
+ "generated": "2026-08-16 05:21",
  "n_checked": 652,
  "n_flagged": 64,
  "asm_total": 209,
@@ -693,6 +693,23 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "LOTUSDEV": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
   "SAATVIKGL": {
    "flags": [
     {
@@ -728,23 +745,6 @@
    "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
-  },
-  "LOTUSDEV": {
-   "flags": [
-    {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 5.0,
-   "series": "BE",
-   "worst": "BAND 5%"
   },
   "STLTECH": {
    "flags": [
