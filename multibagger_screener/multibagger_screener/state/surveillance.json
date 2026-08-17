@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-16 05:21",
+ "generated": "2026-08-17 13:53",
  "n_checked": 652,
  "n_flagged": 64,
- "asm_total": 209,
+ "asm_total": 199,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -681,6 +681,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "SKYGOLD": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "SMLMAH": {
    "flags": [
     {
@@ -799,18 +811,6 @@
     }
    ],
    "band": 10.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "TDPOWERSYS": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },
