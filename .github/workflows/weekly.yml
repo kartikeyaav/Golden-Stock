@@ -54,8 +54,13 @@ jobs:
 
       # --no-ai ALWAYS: the committee runs on the user's laptop (subscription
       # auth) and its ai_picks.json arrives via git push — see header comment.
-      - name: Weekly refresh (no AI committee — runs locally)
-        run: python scripts/weekly_refresh.py --no-ai
+      # --skip-penny since 2026-08-16: the penny screen moved to its own
+      # 3-day workflow (.github/workflows/penny.yml). Leaving it here too
+      # would have it rebuilt twice on a Sunday, and both jobs commit the same
+      # files — the concurrency group serialises them, but the second run
+      # would still overwrite the first for no gain.
+      - name: Weekly refresh (no AI committee — runs locally; penny is its own job)
+        run: python scripts/weekly_refresh.py --no-ai --skip-penny
 
       - name: Commit refreshed record
         run: |

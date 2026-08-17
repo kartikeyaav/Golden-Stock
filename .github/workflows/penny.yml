@@ -1,0 +1,94 @@
+name: Penny screen (cloud)
+
+# The penny/nano-cap research screen on its OWN cadence — every 3 days rather
+# than riding the Sunday weekly refresh (user request 2026-08-16).
+#
+# WHY IT CAN BE SPLIT OUT: the penny chain shares nothing with the weekly
+# refresh's long pole. It builds its own universe from the NSE bhavcopy stack
+# (whole cash market, ~2,500 EQ securities), scrapes its own fundamentals for
+# names the main screener never touches, and writes its own journal. The
+# weekly's expensive step — the screener.in scrape of the main shortlist — is
+# irrelevant to it. weekly_refresh.py already ran the three steps with
+# fatal=False, i.e. as an independent tail.
+#
+# WHY 3 DAYS AND NOT DAILY: the gates are computed over a 25-SESSION liquidity
+# window and fundamentals are quarterly. Running it nightly would re-derive
+# almost the same universe from almost the same data and add ~2,500 NSE
+# requests a day for a screen that carries ZERO capital and has no backtest
+# behind it. Three days moves the window enough to matter.
+#
+# GitHub cron has no "every 3 days" — `*/3` on day-of-month fires on the 1st,
+# 4th, 7th ... 31st, so the turn of a month can give a 1- or 2-day gap. That
+# is acceptable for a research surface and is noted rather than worked around.
+on:
+  schedule:
+    - cron: "0 5 */3 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# Shares the pipeline lock with daily/weekly: two jobs committing the forward
+# record at once is how a rebase conflict gets written into a state file.
+concurrency:
+  group: golden-stock-pipeline
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: multibagger_screener/multibagger_screener
+
+jobs:
+  penny:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "pandas>=2.0" "numpy>=1.24"
+
+      - name: Restore data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            multibagger_screener/multibagger_screener/data_cache
+            multibagger_screener/multibagger_screener/fundamentals_cache
+            multibagger_screener/multibagger_screener/nse_cache
+          key: golden-data-${{ github.run_id }}
+          restore-keys: golden-data-
+
+      # Each step is independently non-fatal in the weekly chain; keep that
+      # here so a single NSE endpoint being down does not lose the whole run.
+      - name: Penny universe (whole NSE + tradability gates)
+        run: python scripts/build_penny_universe.py
+        continue-on-error: true
+
+      - name: Penny fundamentals (capped, cache-aware)
+        run: python scripts/penny_fundamentals.py --limit 150
+        continue-on-error: true
+
+      - name: Penny screen (rank + journal)
+        run: python scripts/penny_scan.py
+
+      - name: Commit the penny record
+        run: |
+          git config user.name "golden-stock-bot"
+          git config user.email "actions@users.noreply.github.com"
+          for p in penny_universe.csv penny_ranked.csv penny_report.md \
+                   penny_excluded.csv state/penny_details.json \
+                   state/penny_meta.json journal/penny_journal.csv; do
+            git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
+          done
+          if git diff --cached --quiet; then
+            echo "no penny changes to commit"
+          else
+            git commit -m "cloud: penny screen $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash origin master || true
+            git push origin HEAD:master
+          fi
