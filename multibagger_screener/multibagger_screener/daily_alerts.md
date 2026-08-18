@@ -37,6 +37,7 @@ Minor shifts: ACE WATCH->EXTENDED, MAPMYINDIA BROKEN->WATCH, CHALET ANTICIPATION
 
 _News moves attention, never entries — trades stay technical._
 
+
 ## AI analyst verdicts
 
 ### WABAG
@@ -109,6 +110,58 @@ CHECKED: Q1 FY27 earnings/concall coverage (Investywise, Yahoo Finance, Investin
 
 CHANGES MY MIND: A formal IT Dept order/demand notice with a quantified liability, or Adani pricing aggressively into KEI's industrial/EHV segment — either flips this to SKIP.
 
+### SCI
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- No red flags beyond a trivial Rs 5.43L BSE/NSE fine for board-composition non-compliance (govt has sole director-nomination power — administrative, not fraud/pledge); promoter (Govt of India) SAST filing confirms zero encumbrance through FY26.
+- Earnings inflection is real, not one-off: Q1 FY27 PAT +75% YoY / revenue +40% YoY driven ~70% by the tanker segment, riding a genuine macro tailwind — Western sanctions have pulled ~900+ tankers out of compliant service, pushing VLCC rates to ~$130k/day; dry bulk also improving (Baltic Dry 2,000→2,520). Second-order channel: sanctions constraining shadow-fleet supply directly lifts rates for mainstream carriers like SCI.
+- Sector in favor short-term (tanker/dry bulk freight cycle strong into 2026), though the card's "Shipbuilding & marine" theme tag (29/100 heat) misclassifies SCI — it's an operator, not a yard.
+
+RISKS (max 2 bullets):
+- Card explicitly flags no volume-confirmed VCP base — this is a trend-follow entry only, the +1.27R statistical edge isn't established; deep 29% base, price still 20% below the 52w high.
+- Rate tailwind is reversal-prone: a Suez/Red Sea reopening or de-escalation of Russia sanctions could cut tanker/container rates 20-30% quickly; India's reliance on discounted Russian crude also carries geopolitical tail risk to trade volumes.
+
+CHECKED: WebSearch — screener/SEBI SAST filing, BSE/NSE fine notices, Q1 FY27 results coverage, tanker/dry bulk rate outlook, Russia-sanctions shadow-fleet reporting.
+CHANGES MY MIND: A confirmed volume breakout above the base high, or any sign tanker rates are rolling over (Suez reopening/sanctions easing), would flip this to WAIT/SKIP.
+
+### PGIL
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story checks out: Q1FY27 revenue +24.5% YoY on real volume growth (20.8mn pieces vs 17.2mn), margin to 10.7% via mix/operating leverage — not a one-off; debt +69%/3yr is capex-funded (net debt/EBITDA still 0.11x, D/E 0.10), not distress.
+- Genuine second-order tailwind: Feb-2026 India-US deal cut effective tariff to ~18%, now cheaper than Vietnam/Bangladesh (~19-20%) and far below China (~34%) — PGIL's India+Bangladesh+Vietnam+Indonesia+Guatemala footprint is positioned to gain share from this exact relative shift, and Aug-14 news of a new Bangladesh RMG debt facility signals active capacity build into it.
+- No governance red flags found: promoters filed zero-encumbrance declaration for FY26, clean AGM, no adverse SEBI/auditor action in searches.
+
+RISKS (max 2 bullets):
+- Tariff regime is now the "permanent" Section 301 layer (replaced expiring Section 122 on 24-Jul) — durable but still policy-dependent; a renegotiation could move India's relative edge either way.
+- Machine flags no volume-breakout trigger (VCP none) — the +1.27R statistical edge isn't established for this specific entry, and qtr earnings growth is decelerating (TTM 24% < 3yr 25%).
+
+CHECKED: WebSearch — screener/SEBI-takeover filings for pledge status, Q1FY27 result releases (Investing.com/Fibre2Fashion/Sahi), India-US Feb-2026 trade deal coverage (White House, Drishti IAS, GlobalTextileTimes), Section 122→301 tariff transition analysis (Tariffstool, Fennemore), debt/leverage detail (Marketsmojo).
+CHANGES MY MIND: A rollback/renegotiation that pushes India's US apparel tariff back toward parity with or above Vietnam/Bangladesh, or any pledge/auditor disclosure in the next filing cycle.
+
+### USHAMART
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Story confirms and exceeds the card: Q1 FY27 revenue crossed ₹1,000cr for the first time (+16.4% YoY), PAT +40.9% YoY to ₹142cr, EBITDA margin +380bps to 20.1%, broad-based across wire/strand (+31.7%) and wire rope (+18%) — not a one-off, and FY27 guidance (10-12% volume, 20-21% margin) was reiterated on the July 28 call.
+- Governance clean: promoter group formally confirmed zero share encumbrance for FY26 (Apr 2026 filing) and SEBI demat-process compliance was routine, not adverse — no pledge/SEBI red flag missed by the scan.
+- Second-order tailwind is real: global top-20 miners' capex rising (~+3.8% in 2026, copper capex >$33bn) and the crane market is expanding ~5.2% CAGR — direct demand channel into Usha Martin's mining/crane rope lines; steel wire rod input costs are stable-to-mixed, no cost-side squeeze.
+
+RISKS (max 2 bullets):
+- Middle East volumes fell ~28% on stalled/delayed projects — one regional engine has genuinely cooled even as Americas/Europe/India offset it; worth watching next quarter.
+- Valuation is already full (PEG 3.09) and the stock isn't among this week's committee picks, so the market may have priced much of this in — leaves less margin for a miss.
+
+CHECKED: WebSearch — investing.com/tradebrains Q1FY27 results & concall coverage, scanx.trade promoter encumbrance/SEBI filings, mining-technology.com & S&P Global capex outlooks, steel wire rod price trend reports.
+CHANGES MY MIND: A Q2 print showing Middle East weakness spreading to Americas/India, or any promoter pledge/encumbrance filing reversing the FY26 zero-encumbrance confirmation.
+
+**MIDHANI** — analyst unavailable (timed out after 600s) — review the card manually before acting
 
 ## Cards
 
