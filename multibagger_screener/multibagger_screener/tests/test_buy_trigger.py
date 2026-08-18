@@ -163,10 +163,17 @@ def main() -> None:
     assert got[0][0].strip() == "BUY TRIGGER" and got[0][2] == "TARIL", got[0]
     assert "EXTENDED" in got[1][1] and got[1][2] == "NEULANDLAB", got[1]
     digest = build_digest(f"# Daily scan — 2026-07-25 18:35\n\n{line}\n{ext}\n")
-    assert "1 BUY TRIGGER —" in digest and "TARIL" in digest, digest
+    # wording changed 2026-08-18 when the digest was restructured decision-first
+    # ("1 BUY TRIGGER —" -> "ACT TODAY — 1 trigger"); the three things this
+    # check exists to prove are unchanged
+    assert "ACT TODAY — 1 trigger" in digest and "TARIL" in digest, digest
     assert "NEULANDLAB" in digest and "not recommended" in digest, digest
     # the whole point: the EXTENDED one must not be counted as actionable
-    assert "2 BUY TRIGGER" not in digest, digest
+    assert "2 trigger" not in digest, digest
+    # and it stays owner-only — the friends' feed must not carry it at all
+    pub = build_digest(f"# Daily scan — 2026-07-25 18:35\n\n{line}\n{ext}\n",
+                       public=True)
+    assert "TARIL" in pub and "NEULANDLAB" not in pub, pub
     print("6. alert lines parse; digest separates VALIDATED from EXTENDED")
 
     print("\nALL BUY-TRIGGER CHECKS PASSED.")
