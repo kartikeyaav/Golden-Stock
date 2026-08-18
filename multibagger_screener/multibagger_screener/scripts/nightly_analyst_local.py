@@ -77,6 +77,34 @@ def git_pull_retry(cwd: str, attempts: int = 4, delay: int = 20) -> bool:
     return False
 
 
+def push_health_only(reason: str) -> None:
+    """Commit + push analyst_health.json ALONE when a run produced no verdicts.
+
+    Without this the health file is systematically biased towards "ok" in the
+    cloud: ai_analyst writes {"status": "failed", "note": "AUTH: run `claude`
+    then `/login`"} on every failed dive, but every failure path returns before
+    the push block below, so the laptop's diagnosis never leaves the laptop.
+    Origin sat on a stale "ok" from 2026-08-05 for thirteen days while the job
+    was dead, and daily_scan's `status == "failed"` branch could never fire.
+
+    The outage was still caught — daily_scan also ages `checked_at` /
+    `last_success_at`, and a FROZEN stamp reads as "the job is not running at
+    all", which is what alarmed. But the Telegram could only say the job looked
+    dead; it could not say WHY, and the actionable one-line cause was sitting on
+    disk the whole time. This closes that gap."""
+    gr = git_root()
+    run(["git", "add", "-f", "--", f"{PKG}/state/analyst_health.json"], cwd=gr)
+    c = run(["git", "commit", "-m",
+             f"local analyst: health only — {reason} "
+             f"{datetime.now():%Y-%m-%d %H:%M}"], cwd=gr)
+    if c.returncode != 0:
+        return  # nothing changed since the last push; the cloud is already current
+    run(["git", "pull", "--rebase", "--autostash"], cwd=gr)
+    pp = run(["git", "push", "origin", "master"], cwd=gr)
+    log("health pushed (no verdicts)" if pp.returncode == 0
+        else f"health push FAILED: {(pp.stderr or '')[:120]}")
+
+
 def _verdict_rows() -> list[str]:
     p = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
     if not os.path.exists(p):
@@ -119,14 +147,16 @@ def main() -> int:
                         "--pool"], timeout=3300, env=env)
         except subprocess.TimeoutExpired:
             log("ai_analyst.py --pool timed out (3300s) — retried next boot")
+            push_health_only("run timed out")
             return 1
     tail = "\n".join((proc.stdout or "").strip().splitlines()[-4:])
     log(f"ai_analyst exit {proc.returncode}: {tail[:400]}")
     new_rows = [r for r in _verdict_rows() if r not in set(before)]
-    if proc.returncode != 0 and not new_rows:
-        return 1
     if not new_rows:
-        log("no new verdicts logged (all dives failed?) — nothing to push")
+        # no verdicts, but the WHY is now on disk — get it to the cloud so the
+        # nightly Telegram can name the cause instead of guessing
+        log("no new verdicts logged (all dives failed?) — pushing health only")
+        push_health_only(f"dives produced nothing (exit {proc.returncode})")
         return 1
 
     # 4. push the forward record — Pages republishes the dashboard from it
