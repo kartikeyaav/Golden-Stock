@@ -1,22 +1,26 @@
-"""test_archetype_cell.py — the screener's Archetype cell must never wrap.
+"""test_archetype_cell.py — the screener's Archetype cell must stay on one line.
 
-The bug this locks down was a SILENT RENAME, not a layout mistake. phase_b's
-"this stock has no archetype" sentinel used to read "(untagged — theme data
-Phase C)", and build_dashboard suppressed it with `"untagged" in arch`. When
-the sentinel was reworded to "(no archetype — see the Sectors tab for its
-theme)" that substring test stopped matching, nothing raised, and the
-placeholder flowed into the cell truncated to `arch[:26]`:
+Two separate defects produced the same visible symptom (a row knocked out of
+alignment with its neighbours), and the second only surfaced after the first
+was fixed and the page was actually measured in a browser.
 
-    "(no archetype — see the Se"
+1. A SILENT RENAME. phase_b's "no archetype" sentinel used to read
+   "(untagged — theme data Phase C)" and build_dashboard suppressed it with
+   `"untagged" in arch`. When the sentinel was reworded to "(no archetype —
+   see the Sectors tab for its theme)" that substring test stopped matching,
+   nothing raised, and the placeholder reached the cell cut to
+   "(no archetype — see the Se" on 65 of 117 rows.
 
-The cell is `<td class="dim wrap">`, so on 65 of 117 rows that string wrapped
-onto a second line and knocked the whole table out of alignment. Nothing in
-the pipeline could notice: the value was a legal string of a legal length.
+2. A CHARACTER BUDGET FOR A PIXEL PROBLEM. The first fix capped the text at 26
+   characters. The column renders 84px — roughly 12 characters — so real
+   two-tag values ("Quality + Hyper-growth", 22 chars) still wrapped, and 8
+   rows still misaligned. Fitting text to a width is the stylesheet's job:
+   `td.ell` ellipsises on one line and the full value rides in the tooltip.
 
-Two guards, because either alone would have missed it:
-  - the sentinel is matched by CONSTANT, so a rename updates both sides, and
-  - anything starting with "(" is treated as a placeholder, because real
-    archetypes are proper nouns and never do. That is the rename-proof half.
+So the Python contract is now ONLY "suppress the placeholder, pass everything
+else through intact" — if it truncated, the tooltip would carry an
+already-shortened string. The single-line guarantee is asserted against the
+CSS and the cell markup instead.
 
 Run:  python -m pytest tests/test_archetype_cell.py -q
 """
@@ -32,72 +36,77 @@ sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
 from scoring.phase_b import NO_ARCHETYPE  # noqa: E402
 
-ARCH_MAX = 26
+DASH = os.path.join(ROOT, "scripts", "build_dashboard.py")
 
 
 def _arch(raw) -> str:
     """Mirror of build_dashboard's cell formatter.
 
-    Duplicated rather than imported because build_dashboard defines it inside
-    build() and importing that module pulls the whole dashboard build. The
-    contract is asserted here; test_dashboard_uses_the_helper below checks the
-    real module still routes through a helper rather than re-inlining a
-    substring test."""
+    Duplicated rather than imported because it is defined inside build() and
+    importing that module pulls the whole dashboard build. The behavioural
+    contract is asserted here; the tests at the bottom check the real module
+    still routes through it and still ships the CSS that keeps it one line."""
     a = str(raw or "").strip()
     if not a or a == NO_ARCHETYPE or a.startswith("("):
         return ""
-    if len(a) <= ARCH_MAX:
-        return a
-    budget = ARCH_MAX - 1          # the ellipsis needs a character too
-    cut = a[:budget].rsplit(" + ", 1)[0]
-    if cut == a[:budget]:
-        cut = a[:budget].rstrip()
-    return cut + "…"
+    return a
 
+
+# --- the placeholder must never reach the cell ----------------------------
 
 def test_the_current_sentinel_renders_as_empty():
     assert _arch(NO_ARCHETYPE) == ""
 
 
 def test_the_previous_sentinel_also_renders_as_empty():
-    """The exact string that used to be there. A future rename must not be
-    able to resurrect the bug, so the leading-paren rule covers both."""
+    """The exact string that used to be there, plus an arbitrary future one.
+    The leading-paren rule is what makes the next rename survivable."""
     assert _arch("(untagged — theme data Phase C)") == ""
     assert _arch("(anything a future author writes)") == ""
 
 
-def test_no_value_ever_exceeds_the_cell_budget():
-    """The wrap is the actual defect: length, not wording."""
-    for v in (NO_ARCHETYPE,
-              "(untagged — theme data Phase C)",
-              "Turnaround + Quality + Hyper-growth",     # 35, a 3-tag combo
-              "Turnaround (margin-confirmed) + Deleveraging",  # 44, penny-style
-              "Quality",
-              "", None):
-        assert len(_arch(v)) <= ARCH_MAX, (v, _arch(v))
+def test_blank_input_is_blank_output():
+    for v in ("", "   ", None):
+        assert _arch(v) == ""
 
 
-def test_real_archetypes_survive_intact():
+# --- real values must arrive intact, for the tooltip ----------------------
+
+def test_real_archetypes_pass_through_unshortened():
     for v in ("Quality", "Turnaround", "Hyper-growth",
               "Quality + Hyper-growth",
-              "Turnaround + Hyper-growth"):        # 25 = the longest real value
-        assert _arch(v) == v
+              "Turnaround + Hyper-growth",
+              "Turnaround + Quality + Hyper-growth",          # 35
+              "Turnaround (margin-confirmed) + Deleveraging"):  # 44, penny-style
+        assert _arch(v) == v, v
 
 
-def test_overlong_values_break_on_a_separator_not_mid_word():
-    got = _arch("Turnaround + Quality + Hyper-growth")
-    assert got == "Turnaround + Quality…", got
-    assert not got.rstrip("…").endswith(" ")
+# --- the single-line guarantee lives in the stylesheet --------------------
+
+def test_cell_is_single_line_with_an_ellipsis():
+    """`wrap` on this cell is the bug. Every other screener cell inherits
+    `td{white-space:nowrap}`; this one opted out and was the only one that
+    could push a row to two lines."""
+    src = open(DASH, encoding="utf-8").read()
+    assert "td.ell{" in src, "the ellipsis rule is gone"
+    for prop in ("white-space:nowrap", "overflow:hidden", "text-overflow:ellipsis"):
+        assert prop in src.split("td.ell{", 1)[1].split("}", 1)[0], prop
+    assert 'class="dim ell"' in src, "the archetype cell no longer uses td.ell"
+    assert 'class="dim wrap">${esc(r.arch)}' not in src, "the wrapping cell is back"
+
+
+def test_full_value_is_available_on_hover():
+    src = open(DASH, encoding="utf-8").read()
+    assert 'data-tip="${esc(r.arch)}"' in src, "ellipsised text with no tooltip loses information"
 
 
 def test_dashboard_routes_the_cell_through_the_helper():
     """Guards the regression path itself: if someone re-inlines a substring
     test on the placeholder's prose, this goes red."""
-    src = open(os.path.join(ROOT, "scripts", "build_dashboard.py"),
-               encoding="utf-8").read()
+    src = open(DASH, encoding="utf-8").read()
     assert '"arch": _arch(arch)' in src, "screener cell no longer uses _arch()"
     assert "NO_ARCHETYPE" in src, "dashboard no longer matches the constant"
-    # Look for the buggy ASSIGNMENT, not the phrase: the helper's docstring
-    # quotes the old line to explain it, and matching the prose would make
-    # this test fail on its own documentation (it did, when first written).
+    # Match the buggy ASSIGNMENT, not the phrase: the helper's docstring quotes
+    # the old line to explain it, and matching prose would fail on the
+    # documentation itself (it did, when this was first written).
     assert '"arch": "" if "untagged"' not in src, "the stale substring test is back"

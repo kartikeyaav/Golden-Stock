@@ -49,9 +49,6 @@ def _market_cap(sym: str):
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "dashboard.html")
-# Screener "Archetype" cell budget. The cell is `<td class="dim wrap">`, so
-# anything longer than this wraps to a second line and breaks row alignment.
-_ARCH_MAX = 26
 
 
 def _read_csv(name: str) -> pd.DataFrame:
@@ -870,35 +867,30 @@ def build_payload() -> dict:
     def _arch(raw) -> str:
         """Archetype text for the screener cell, or "" when there is none.
 
-        Two bugs lived on the line this replaces,
-        `"" if "untagged" in arch else arch[:26]`:
+        The line this replaces, `"" if "untagged" in arch else arch[:26]`, was
+        wrong in both halves.
 
-        1. The sentinel was renamed. That test matched the OLD placeholder
-           ("(untagged — theme data Phase C)"); when phase_b changed it to
-           "(no archetype — see the Sectors tab for its theme)" the guard
-           stopped matching and the placeholder flowed through, truncated to
-           "(no archetype — see the Se" on 65 of 117 rows. The cell is
-           `<td class="dim wrap">`, so every one of those wrapped onto a
-           second line and broke the row alignment the user reported.
-        2. `[:26]` cuts mid-word. Harmless today (the longest real value,
-           "Turnaround + Hyper-growth", is 25) but a three-tag combo is 35 and
-           would render "Turnaround + Quality + Hyp".
+        THE SENTINEL WAS RENAMED. That test matched the OLD placeholder
+        ("(untagged — theme data Phase C)"); when phase_b reworded it to
+        "(no archetype — see the Sectors tab for its theme)" the guard silently
+        stopped matching, and the placeholder flowed into the cell cut to
+        "(no archetype — see the Se" on 65 of 117 rows. Now matched against the
+        exported constant AND the structural rule that a placeholder starts
+        with "(" — real archetypes are proper nouns and never do — so the next
+        rename cannot bring it back.
 
-        Now matched against the exported constant AND the structural rule that
-        a placeholder starts with "(" — real archetypes are proper nouns — so
-        the next rename cannot reintroduce this."""
+        TRUNCATION IS NOT THIS FUNCTION'S JOB. `[:26]` was a CHARACTER budget
+        for a column that renders 84px, i.e. about 12 characters — so even a
+        legitimate two-tag value ("Quality + Hyper-growth", 22) still took two
+        lines and still misaligned its row. Fitting text to a pixel width is
+        the stylesheet's problem, so `td.ell` now ellipsises on one line and
+        the full value rides along in the tooltip. Truncating here as well
+        would double-truncate and put an already-shortened string in that
+        tooltip, so the whole value is passed through deliberately."""
         a = str(raw or "").strip()
         if not a or a == NO_ARCHETYPE or a.startswith("("):
             return ""
-        if len(a) <= _ARCH_MAX:
-            return a
-        # reserve a character for the ellipsis, or the "fix" emits 27 and
-        # wraps exactly like the bug it replaces
-        budget = _ARCH_MAX - 1
-        cut = a[:budget].rsplit(" + ", 1)[0]
-        if cut == a[:budget]:
-            cut = a[:budget].rstrip()
-        return cut + "…"
+        return a
 
     screener_rows, closes = [], {}
     for _, r in focus.iterrows():
@@ -1571,6 +1563,14 @@ border:1px solid var(--line2);color:var(--faint);font:600 9.5px var(--mono)}
 .scorebar div{height:5px;border-radius:3px;background:var(--grn)}
 td{white-space:nowrap}
 td.wrap{white-space:normal}
+/* Short-label cell in a NARROW column (2026-08-19). The Archetype cell was
+   `wrap`, alone among the screener's cells — every other one inherits the
+   nowrap above. The column renders 84px, so any two-tag value
+   ("Quality + Hyper-growth") took two lines and knocked that row out of
+   alignment with its neighbours. A character budget cannot fix this: 84px
+   fits ~12 characters, and the shortest honest two-tag value is 20. So the
+   cell goes back to one line and ellipsises, with the full value on hover. */
+td.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:96px}
 input,select{background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--txt);
 padding:7px 12px;font:500 12.5px Inter;outline:0}
 input:focus{border-color:var(--dim)}
@@ -3156,7 +3156,7 @@ $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td><span class="pill" data-tip="${esc(TRIGLBL[strig(r)][2])}" style="border-color:${TRIGLBL[strig(r)][1]};color:${TRIGLBL[strig(r)][1]}">${TRIGLBL[strig(r)][0]}</span></td>
 <td class="mono">${r.rs??''}</td>
 <td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono"${r.cov!=null&&r.cov<60?` data-tip="Technical read — only ${r.cov}% of the 8 scored questions had data at the weekly refresh. Not comparable with full-coverage conviction scores."`:''}>${r.score}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</b></span>`:'<span class="dim">—</span>'}</td>
-<td class="dim wrap">${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
+<td class="dim ell"${r.arch?` data-tip="${esc(r.arch)}"`:''}>${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
 <td class="mono" style="color:${r.pgttm>0?'#34d399':r.pgttm<0?'#f87171':''}">${r.pgttm??''}</td>
 <td class="mono">${r.close??''}</td><td>${spark(D.closes[r.sym])}</td></tr>`).join('');}
 render();
