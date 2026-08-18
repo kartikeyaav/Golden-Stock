@@ -37,6 +37,79 @@ Minor shifts: ACE WATCH->EXTENDED, MAPMYINDIA BROKEN->WATCH, CHALET ANTICIPATION
 
 _News moves attention, never entries — trades stay technical._
 
+## AI analyst verdicts
+
+### WABAG
+VERDICT: BUY
+CONVICTION: HIGH
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Governance clean: promoter S Varadarajan filed zero-encumbrance SAST disclosure for FY25-26; auditor is Walker Chandiok & Co with no modified opinion or exit found — no veto triggers on fresh checks.
+- Earnings inflection is real, not one-off: Q1 FY27 order book hit ₹19,400cr (+92% off the 52-wk low), Q1 inflow alone ₹3,400cr (77% international incl. a new Vienna drinking-water contract), management retained 15-20% FY27 revenue guidance, and net cash positive for the 14th straight quarter.
+- Second-order tailwind the card's keyword scan wouldn't catch: Jal Jeevan Mission (₹3.6L cr rural water program) is the structural demand engine behind domestic order flow, plus industrial diversification via the BPCL Bina refinery water order — broadens the revenue base beyond municipal EPC alone.
+
+RISKS (max 2 bullets):
+- Card's theme_tailwind score is weak (0.348, ranks 14/100 by price-derived heat) — the sector isn't hot on momentum even though the fundamental order-book story is strong; a rare fundamentals-vs-price-action divergence.
+- Earnings growth is decelerating (TTM 30% vs 3yr avg 93%) and EPC contractors carry chronic arbitration/blacklisting-dispute background risk (old Delhi Jal Board, TTPL cases) — not new, but structural to the business model.
+
+CHECKED: NSE/SEBI SAST filings, screener.in-adjacent news via Business Standard, BusinessToday, Business Standard/Axis Direct order-book coverage, Wabag investor communications, casemine/Indian Chemical News litigation history.
+CHANGES MY MIND: Any fresh 2026 arbitration loss, promoter pledge disclosure, or a Q2 order-inflow reversal that breaks the 92% order-book recovery trend.
+
+### ACUTAAS
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE (until breakout trigger; FULL PLAN if/when 3399.8 breaks on volume)
+
+WHY (max 3 bullets):
+- Story checks out as real, not one-off: Q1 revenue +59% YoY, EBITDA margin +~1000bps to 34.3%, PAT tripled — driven by product mix shift into advanced intermediates/CDMO, not accounting noise. Rising debt (+800% 3y) traces to a disclosed ₹1,000cr+ FY23-30 growth capex plan (electrolyte additives, Korea semiconductor JV), not distress.
+- Second-order tailwind confirmed and specific: Aug 17 MeitY/ECMS approval of ₹119.12cr eligible capex (~₹30cr subsidy) makes Acutaas a first-mover non-Chinese producer of EV battery electrolyte additives — a real import-substitution policy channel, not generic sector talk.
+- No pledge, SEBI action, auditor, or litigation red flags found in searches — governance reads clean, consistent with card.
+
+RISKS (max 2 bullets):
+- Stock already sold off 6-8% on the Q1 print itself: management guided FY27 growth down to ~25% (deceleration from Q1's 59%) and flagged flat-to-lower margins (~32-33%) as mix shifts toward lower-margin battery/early semiconductor work — market has partly priced this caution already.
+- P/E 72 leaves little room for the guided deceleration to disappoint further; base is live but pivot (3399.8) hasn't triggered yet per the card itself.
+
+CHECKED: WebSearch — screener/BSE/NSE filings, investing.com/business-standard Q1 concall coverage, ECMS/MeitY approval news, promoter pledge/SAST disclosures.
+CHANGES MY MIND: A volume breakout through 3399.8 with the FY27 margin-guidance concern absorbed (or a beat that reverses the guide-down) flips this to BUY at full plan.
+
+### AVL
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story confirmed with a real driver, not a one-off: 210 showrooms now vs. steady expansion pace, plus a genuine sector tailwind — GST on ACs/TVs/fridges cut 28%→18% in 2025 is still flowing through as lower shelf prices → higher volumes for a durables retailer, a direct transmission channel, not generic sector chatter.
+- No red flags found: promoter filing (Apr 2026) confirms zero pledge/encumbrance for FY26; no SEBI action, auditor issue, or litigation surfaced. Governance score on the card looks conservative given this.
+- Q1 FY27 print (Aug 2026) independently confirms the inflection: standalone PAT ₹772M vs ₹552M YoY (+40%), matching the card's earnings_inflection read.
+
+RISKS (max 2 bullets):
+- Extreme single-state concentration: ~75% of revenue from Bihar; any state-level demand shock (weather, elections disrupting footfall, local competitor entry) hits disproportionately — this is a real structural risk the card's coverage doesn't price separately.
+- Valuation is stretched (PEG 2.5–6 depending on source, P/E ~70x) — priced for flawless execution; any deceleration toward mid-teens growth invites multiple compression, and the weekly committee didn't pick this name.
+
+CHECKED: WebSearch across screener/tickertape/BSE filings, promoter shareholding disclosure (Apr 2026), Q1 FY27 concall coverage, GST durables rate-cut news, valuation commentary (simplywall.st/marketsmojo).
+
+CHANGES MY MIND: A same-store-sales slowdown in Bihar or new pledge/encumbrance disclosure would flip this to SKIP.
+
+### KEI
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story checks out via primary sources: Q1 FY27 consol. PAT +40% YoY (₹274cr) and revenue +23% (₹3,185cr) driven by real demand — domestic W&C +29%, EHV cables +48%, order book ₹4,292cr, Sanand capex ramping toward ₹6,000-7,000cr revenue potential, data-center cabling named explicitly as a demand driver on the Q1 call — not a one-off.
+- Governance check clean: promoters filed zero-encumbrance/no-pledge disclosure for FY26; no SEBI enforcement, no auditor exit found.
+- Second-order: Adani's 2026 entry into cables/wires is a live competitive threat (hit KEI/Polycab shares on the news) but Havells/Polycab pricing data shows no price war yet — premiumization (FR/ZHFR mix) still protecting margins industry-wide.
+
+RISKS (max 2 bullets):
+- Unresolved overhang: Income Tax Dept ran search-and-seizure across HQ, plants and promoter/executive residences May 7-12, 2026; company says financial impact "cannot yet be quantified" and no findings have been disclosed as of today — three months of silence, not cleared.
+- Mechanical setup is weak by the card's own admission (no VCP, no volume breakout, price already 2.95 ATR above 50-DMA) — chasing an extended trend-follow entry, not a confirmed base breakout; plus debt +56% over 3yr and rich valuation (PEG 2.28).
+
+CHECKED: Q1 FY27 earnings/concall coverage (Investywise, Yahoo Finance, Investing.com), IT search filings (TipRanks, Whalesbook), promoter pledge disclosure (TipRanks), Adani/cable-sector competition (Business Standard, Tradebrains).
+
+CHANGES MY MIND: A formal IT Dept order/demand notice with a quantified liability, or Adani pricing aggressively into KEI's industrial/EHV segment — either flips this to SKIP.
+
+
 ## Cards
 
 ```
