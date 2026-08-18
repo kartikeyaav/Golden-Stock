@@ -34,3 +34,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-08-14,JAMNAAUTO,SELL,core,428,123.12,-4541.08,core exit: weekly close < 30-week MA
 2026-08-14,DCBBANK,SELL,core,343,182.04,-3159.03,core exit: weekly close < 30-week MA
 2026-08-17,MARKSANS,SELL,partial,33,338.85,2479.95,partial at 2.5R
+2026-08-18,ASTRAMICRO,SKIP,entry,0,,,[ASTRAMICRO@2026-08-18 14:13] already open in paper book

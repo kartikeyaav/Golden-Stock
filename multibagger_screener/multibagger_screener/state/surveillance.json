@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-17 13:53",
- "n_checked": 652,
+ "generated": "2026-08-18 13:57",
+ "n_checked": 650,
  "n_flagged": 64,
- "asm_total": 199,
+ "asm_total": 201,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -263,18 +263,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "ASKAUTOLTD": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "AXISCADES": {
    "flags": [
@@ -733,6 +721,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "SANSERA": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "STYL": {
    "flags": [
