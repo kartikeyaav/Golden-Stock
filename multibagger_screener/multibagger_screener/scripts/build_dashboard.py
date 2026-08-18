@@ -1542,7 +1542,15 @@ border:1px solid var(--line);border-radius:99px;padding:2px 9px;align-self:cente
 .quiet{color:var(--dim);font-size:12.8px;padding:6px 0}
 table{width:100%;border-collapse:collapse;font-size:12.6px}
 th{color:var(--faint);text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;
-letter-spacing:.7px;padding:7px 9px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
+letter-spacing:.7px;padding:7px 9px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card);
+/* z-index is REQUIRED here, not decoration (2026-08-19). A sticky element
+   with z-index:auto stays in normal paint order, and tbody cells come later
+   in the DOM — so scrolling the screener painted every data row straight
+   over its own header. Verified with elementFromPoint at the header's
+   rectangle: 6 of 6 sample points returned a TD before this, 6 of 6 return
+   the TH after. Deliberately small: it must stay UNDER .top (30), nav (40)
+   and the tooltip layer (100), which it would otherwise cover. */
+z-index:3}
 td{padding:8px 9px;border-bottom:1px solid #1c232e}
 /* Numbers must align on their last digit or a column cannot be read down.
    Parts of the page already did this (.thval/.rval/.sval) but every <table>
