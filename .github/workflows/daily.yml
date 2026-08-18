@@ -34,6 +34,11 @@ jobs:
       # laptop's subscription via scripts/nightly_analyst_local.py (pooled).
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      # Optional friends' channel (2026-08-18). Unset -> send_telegram simply
+      # skips the public message. It MUST be surfaced here: an unsurfaced
+      # secret is indistinguishable from "no channel configured", so the
+      # public feed would silently never fire in the only place that runs.
+      TELEGRAM_PUBLIC_CHAT_ID: ${{ secrets.TELEGRAM_PUBLIC_CHAT_ID }}
       PYTHONUNBUFFERED: "1"
     steps:
       - uses: actions/checkout@v4

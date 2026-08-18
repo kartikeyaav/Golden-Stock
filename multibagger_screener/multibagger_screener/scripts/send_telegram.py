@@ -10,6 +10,31 @@ Setup (one-time, ~2 minutes):
        {"bot_token": "123456:ABC...", "chat_id": "123456789"}
      (env vars TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID override the file)
 
+THREE MESSAGES, THREE AUDIENCES (2026-08-18):
+  - private digest  -> chat_id         you: setups + your exits + extended log
+  - ops alert       -> chat_id         you, ONLY when a health line fired
+  - public digest   -> public_chat_id  friends: setups only
+
+Sharing with friends — add a CHANNEL, never extra chat_ids:
+  1. Telegram -> New Channel -> public or private, your choice
+  2. Add your bot to the channel as an ADMIN (it needs "post messages")
+  3. Post anything in the channel, then re-open
+     https://api.telegram.org/bot<TOKEN>/getUpdates and copy the channel's id
+     (channels are NEGATIVE, e.g. -1001234567890)
+  4. Add it to telegram_config.json:  {"public_chat_id": "-1001234567890"}
+     (or set TELEGRAM_PUBLIC_CHAT_ID; in the cloud, add it as a repo secret and
+     surface it in daily.yml's env block next to the other two)
+  5. Share the channel invite link. Friends join/leave on their own and you
+     never touch this file again — which is why a channel beats a list of
+     chat_ids, where every new friend is a code change.
+
+WHAT THE PUBLIC FEED DELIBERATELY OMITS: rupee position sizes (they encode the
+user's capital — audit F5 removed the real book from the repo for the same
+reason), exit warnings and position lines (they disclose which names are
+held), and health diagnostics. tests/test_telegram_digest.py asserts all
+three, and asserts they are PRESENT privately so the check cannot pass on an
+empty digest. Unset public_chat_id -> no public message, no error.
+
 Not configured -> prints instructions and exits 0, so the scheduled chain
 never fails just because delivery isn't set up yet.
 """
@@ -68,6 +93,24 @@ def load_config() -> tuple[str, str] | None:
     return None
 
 
+def public_chat_id() -> str | None:
+    """Optional second destination: the friends' channel.
+
+    Deliberately NOT folded into load_config()'s return — that tuple is
+    unpacked as `send_message(*cfg, text)` in nightly_analyst_local.py, so
+    widening it would silently shift the message into the chat_id slot."""
+    cid = os.environ.get("TELEGRAM_PUBLIC_CHAT_ID")
+    if cid:
+        return cid
+    if os.path.exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                return str(json.load(f).get("public_chat_id") or "") or None
+        except (OSError, ValueError):
+            return None
+    return None
+
+
 def send_message(token: str, chat_id: str, text: str) -> None:
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     data = urllib.parse.urlencode({"chat_id": chat_id, "text": text}).encode()
@@ -120,19 +163,94 @@ def _regime_line() -> str:
     return ""
 
 
-def build_digest(raw: str) -> str:
-    m = re.search(r"Daily scan — (.+)", raw)
-    when = m.group(1).strip() if m else ""
+def _plan(raw: str, sym: str) -> dict:
+    """Pull the entry/stop numbers off a symbol's card.
+
+    The phone used to carry a bare ticker and "sized plan on the dashboard",
+    which meant the one message that says ACT TODAY could not be acted on
+    without opening a laptop. entry/stop/risk% are the whole decision, so they
+    travel with the alert. The rupee SIZE deliberately stays behind: it is
+    derived from the user's capital (audit F5 removed the real book from the
+    repo for the same reason) and must never reach the public feed."""
+    # A card is:  SYM [TAG] as of DATE / "=====" / <body> / "=====".
+    # The header's OWN closing rule sits immediately under the symbol line, so
+    # a naive non-greedy match to the next "====" captures nothing at all —
+    # consume that rule explicitly, then take the body up to the next one.
+    card = re.search(rf"^{re.escape(sym)}\s+\[[^\n]*\n=+\n(.*?)(?=\n=+\n|\Z)",
+                     raw, re.S | re.M)
+    if not card:
+        return {}
+    body = card.group(1)
+    if re.search(r"Entry plan\s*:\s*SKIP", body):
+        m = re.search(r"Entry plan\s*:\s*SKIP\s*—\s*([^\n]{0,80})", body)
+        return {"skip": (m.group(1).strip() if m else "not tradeable")}
+    out = {}
+    m = re.search(r"entry ~([\d.]+)\s+stop ([\d.]+)", body)
+    if m:
+        entry, stop = float(m.group(1)), float(m.group(2))
+        out = {"entry": entry, "stop": stop,
+               "risk_pct": ((entry - stop) / entry * 100) if entry else None}
+    pm = re.search(r"watch the pivot ([\d.]+)", body)
+    if pm:
+        out["pivot"] = float(pm.group(1))
+    return out
+
+
+def _num(x: float) -> str:
+    return f"{x:,.0f}" if x >= 100 else f"{x:,.2f}"
+
+
+def _verdicts(raw: str) -> dict:
+    """symbol -> plain-English decision, e.g. 'BUY (high conviction)'."""
+    out = {}
+    vm = re.search(r"## AI analyst verdicts\n(.*?)(?=\n## |\Z)", raw, re.S)
+    if not vm:
+        return out
+    for s in re.finditer(r"### (\w[\w&-]*)\n(.*?)(?=\n### |\Z)", vm.group(1), re.S):
+        v = re.search(r"VERDICT:\s*([A-Z]+)", s.group(2))
+        c = re.search(r"CONVICTION:\s*([A-Z]+)", s.group(2))
+        if v:
+            out[s.group(1)] = v.group(1) + (
+                f" ({c.group(1).lower()} conviction)" if c else "")
+    return out
+
+
+def build_ops_alert(raw: str) -> str:
+    """Engineering health — OWNER ONLY, and only when something is wrong.
+
+    These lines were printed straight onto the phone ABOVE the trading
+    decision: three lines of internal diagnostics naming things like
+    DUMMYINXGN, which pushed "is there anything to do today?" into fifth
+    place. They are real and must not be dropped, so they get their own
+    message rather than contaminating the one people read to decide."""
     health = [ln.strip() for ln in raw.splitlines()[:15] if ln.strip().startswith("!!")]
+    if not health:
+        return ""
+    L = ["GOLDEN STOCK — system health", ""]
+    for h in health[:5]:
+        L.append("- " + h.lstrip("! ").strip())
+    return "\n".join(L)
+
+
+def build_digest(raw: str, public: bool = False) -> str:
+    """The nightly decision digest.
+
+    Structured so the first line under the header answers the only question
+    that matters — is there anything to do today — and every actionable name
+    carries the numbers needed to act on it.
+
+    `public=True` is the friends' feed: setups only. It drops the rupee sizing
+    (derived from the user's capital), and the exit warnings and position
+    lines, which together disclose the book. Health never appears in either.
+    """
+    m = re.search(r"Daily scan — (.+)", raw)
+    when = (m.group(1).strip() if m else "")[:16]
 
     act, watch, weak, forming, exits, eps = [], [], [], [], [], []
     trig, trig_ext = [], []
     for kind, status, sym, extra in ALERT_RX.findall(raw):
         kind = kind.strip()
         if kind == "BUY TRIGGER":
-            # the backtested entry, fired as an event (AUDIT_2026-07-25 F1).
-            # The EXTENDED variant is a labelled deviation, not a green light —
-            # it gets its own line so the phone never blurs the two.
             (trig_ext if "EXTENDED" in status else trig).append((sym, extra))
         elif kind == "EPISODIC PIVOT":
             eps.append((sym, extra))
@@ -140,9 +258,7 @@ def build_digest(raw: str) -> str:
             if status == "VALIDATED":
                 act.append(sym)
             elif status == "AWAITING TRIGGER":
-                pm = re.search(rf"^{re.escape(sym)}\s+\[.*?watch the pivot ([\d.]+)",
-                               raw, re.S | re.M)
-                watch.append((sym, pm.group(1) if pm else None))
+                watch.append(sym)
             else:
                 weak.append(sym)
         elif kind == "WATCH CLOSELY":
@@ -150,91 +266,110 @@ def build_digest(raw: str) -> str:
         elif kind == "EXIT WARNING":
             exits.append(sym)
 
-    L = [f"GOLDEN STOCK — {when}"]
+    verds = _verdicts(raw)
+    L = [f"GOLDEN STOCK · {when}"]
     rg = _regime_line()
     if rg:
-        L.append(rg)
-    for h in health[:3]:
-        L.append(h)
-    L.append("")
+        L.append(rg.replace("Regime: ", "Market: "))
 
-    n_act = len(act) + len(eps) + len(trig)
-    if n_act:
-        L.append(f"● {n_act} BUY TRIGGER{'S' if n_act > 1 else ''} — act today")
-        for sym, extra in trig:
-            L.append(f"  ▲ {sym} — validated breakout ({extra or 'pivot cleared on volume'})")
-        for sym in act:
-            L.append(f"  ▲ {sym} — validated breakout, sized plan on the dashboard")
-        for sym, extra in eps:
-            L.append(f"  ▲ {sym} — episodic pivot ({extra or 'gap + volume event'})")
+    # 1. the only question that matters, first and always present
+    buys = [(s, e) for s, e in trig] + [(s, "") for s in act] + [(s, e) for s, e in eps]
+    L.append("")
+    # Resolve plans BEFORE writing the header: a name the risk engine refuses
+    # is not something to act on, and counting it as one overstates the night.
+    planned = [(sym, extra, _plan(raw, sym)) for sym, extra in buys]
+    tradeable = [t for t in planned if not t[2].get("skip")]
+    skipped = [t for t in planned if t[2].get("skip")]
+
+    if tradeable:
+        n = len(tradeable)
+        L.append(f"ACT TODAY — {n} trigger{'s' if n > 1 else ''}")
+        for sym, extra, p in tradeable:
+            bits = []
+            if p.get("entry"):
+                bits.append(f"buy ~{_num(p['entry'])}")
+            if p.get("stop"):
+                bits.append(f"stop {_num(p['stop'])}")
+            if p.get("risk_pct"):
+                bits.append(f"risk {p['risk_pct']:.1f}%")
+            if bits:
+                L.append(f"  {sym} — " + " · ".join(bits))
+            else:
+                # episodic pivots carry no two-lot plan (the card is the stage
+                # card, and EP names are often already EXTENDED). Say what
+                # fired rather than emitting a bare ticker with no decision.
+                L.append(f"  {sym} — {extra or 'see dashboard for the plan'}")
+            if verds.get(sym):
+                L.append(f"      AI: {verds[sym]}")
+    elif planned:
+        L.append("ACT TODAY — nothing tradeable. "
+                 f"{len(planned)} fired but the risk engine refused {'them' if len(planned) > 1 else 'it'}.")
     else:
-        L.append("○ No buy triggers tonight — nothing requires action.")
-    if trig_ext:
+        L.append("ACT TODAY — nothing. No triggers fired.")
+
+    if skipped:
         L.append("")
-        L.append(f"◐ {len(trig_ext)} breakout(s) on EXTENDED names — logged, not recommended")
-        for sym, _extra in trig_ext:
-            L.append(f"  · {sym} — backtest took these, live skips them (being measured)")
-    if exits:
-        for sym in exits:
-            L.append(f"  ▼ EXIT WARNING: {sym} — held name broke down, check the plan")
+        L.append("Fired but NOT tradeable")
+        for sym, _extra, p in skipped:
+            # the card's reason is a full sentence; the phone needs the clause
+            why = p["skip"].split("—")[0].split(";")[0].strip().rstrip(",.")
+            L.append(f"  {sym} — {why}")
+
+    # 2. what to have ready for tomorrow
     if watch:
         L.append("")
-        L.append(f"Watch — base ready, buy ONLY on a volume breakout:")
-        for sym, pivot in watch[:6]:
-            L.append(f"  ◆ {sym}" + (f" — pivot {pivot}" if pivot else ""))
+        L.append(f"WATCH — {len(watch)}, buy ONLY on a volume breakout")
+        for sym in watch[:6]:
+            p = _plan(raw, sym)
+            L.append(f"  {sym} — above {_num(p['pivot'])}" if p.get("pivot")
+                     else f"  {sym}")
         if len(watch) > 6:
-            L.append(f"  …and {len(watch) - 6} more")
-    if weak:
-        L.append("")
-        L.append(f"Weak-trend alerts (uptrend tag, no proven trigger — not buys): "
-                 + ", ".join(weak[:10]) + ("…" if len(weak) > 10 else ""))
-    if forming:
-        L.append(f"Forming (anticipation, watchlist only): " + ", ".join(forming[:8])
-                 + ("…" if len(forming) > 8 else ""))
+            L.append(f"  +{len(watch) - 6} more")
 
-    # analyst verdicts — the decision line only, memos stay on the dashboard
-    vm = re.search(r"## AI analyst verdicts\n(.*?)(?=\n## |\Z)", raw, re.S)
-    if vm:
-        vl = []
-        for s in re.finditer(r"### (\w[\w&-]*)\n(.*?)(?=\n### |\Z)", vm.group(1), re.S):
-            v = re.search(r"VERDICT:\s*([A-Z]+)", s.group(2))
-            c = re.search(r"CONVICTION:\s*([A-Z]+)", s.group(2))
-            z = re.search(r"SIZE:\s*([A-Z ]+?)\s*$", s.group(2), re.M)
-            vl.append(f"  {s.group(1)}: {v.group(1) if v else '?'}"
-                      + (f"/{c.group(1)}" if c else "")
-                      + (f"/{z.group(1).strip()}" if z else ""))
-        if vl:
+    # 3. owner-only: anything that reveals or manages the book
+    if not public:
+        if exits:
             L.append("")
-            L.append("AI analyst says:")
-            L += vl
+            L.append("EXIT WARNING")
+            for sym in exits:
+                L.append(f"  {sym} — broke down, review your stop")
+        if trig_ext:
+            L.append("")
+            L.append(f"Logged, not recommended: "
+                     f"{', '.join(s for s, _ in trig_ext)} (already extended)")
 
-    # news radar — up to 3 hits, one line each
+    # 4. AI verdicts on names not already carrying one above
+    shown = {s for s, _ in buys} | set(watch)
+    rest = {s: v for s, v in verds.items() if s not in shown}
+    if rest:
+        L.append("")
+        L.append("AI analyst")
+        for sym, v in list(rest.items())[:4]:
+            L.append(f"  {sym}: {v}")
+
+    # 5. news radar — kept at the user's request (2026-08-18), even for names
+    # outside the buy/watch lists
     nm = re.search(r"## News radar[^\n]*\n(.*?)(?=\n## |\Z)", raw, re.S)
     if nm:
         hits = re.findall(r"^- ([+!~]) \*\*(\w[\w&-]*)\*\*[^(]*\(([^,)]+)[^)]*\)",
                           nm.group(1), re.M)
         if hits:
             L.append("")
-            L.append("News radar:")
-            for mark, sym, event in hits[:3]:
-                arrow = {"+": "▲", "!": "▼", "~": "◆"}.get(mark, "•")
-                L.append(f"  {arrow} {sym} — {event.strip()}")
+            L.append("News radar")
+            for _mark, sym, event in hits[:3]:
+                L.append(f"  {sym} — {event.strip()}")
 
-    # position management + paper fills (already one-liners in the report)
-    pos_lines = re.findall(r"^- ((?:STOP|PARTIAL|BREAKEVEN|TRAIL|CORE|PAPER)[^\n]{0,110})",
-                           raw, re.M)
-    if pos_lines:
+    # DROPPED from the phone entirely (2026-08-18): the weak-trend list, the
+    # "forming" list, and the paper-book PENDING/SKIP lines. None of the three
+    # can be acted on and together they were most of the message. The
+    # dashboard keeps all of it; one count line preserves that they exist.
+    quiet = len(weak) + len(forming)
+    if quiet:
         L.append("")
-        L.append("Positions:")
-        L += [f"  {p}" for p in pos_lines[:6]]
-
-    if not any((act, eps, watch, weak, forming, exits)) and "No transitions" in raw:
-        nt = re.search(r"No transitions among (\d+)", raw)
-        L.append(f"({nt.group(1) if nt else 'all'} names scanned — quiet tape, "
-                 "silence is the system working)")
+        L.append(f"({quiet} more forming/weak — see dashboard)")
 
     L.append("")
-    L.append(f"Full cards & plans → {DASH_URL}")
+    L.append(f"→ {DASH_URL}")
     return "\n".join(L)
 
 
@@ -253,7 +388,7 @@ def main() -> None:
         raw = f.read()
 
     try:
-        text = build_digest(raw)
+        text = build_digest(raw, public=False)
     except Exception as e:  # noqa: BLE001 — a digest bug must never kill delivery
         print(f"digest build failed ({e}) — falling back to full report")
         text = raw.replace("**", "").replace("```", "").replace("# ", "")
@@ -263,11 +398,33 @@ def main() -> None:
         print("identical digest already delivered — skipping (same-day re-run)")
         return
 
-    parts = chunk(text)[:2]  # digest fits one message; hard-cap at two
-    for part in parts:
+    for part in chunk(text)[:2]:
         send_message(token, chat_id, part)
+    sent = 1
+
+    # OWNER ONLY, and only when something is actually wrong. Kept out of the
+    # decision digest on purpose (see build_ops_alert).
+    try:
+        ops = build_ops_alert(raw)
+        if ops:
+            send_message(token, chat_id, ops)
+            sent += 1
+    except Exception as e:  # noqa: BLE001 — health delivery is never fatal
+        print(f"ops alert skipped ({e})")
+
+    # the friends' feed: setups only, no book, no sizing, no health
+    pub = public_chat_id()
+    if pub:
+        try:
+            for part in chunk(build_digest(raw, public=True))[:2]:
+                send_message(token, pub, part)
+            sent += 1
+            print(f"public digest sent to {pub}")
+        except Exception as e:  # noqa: BLE001 — the private send already landed
+            print(f"public digest FAILED ({e}) — private delivery unaffected")
+
     record_sent(digest_hash)
-    print(f"sent {len(parts)} message(s) to telegram")
+    print(f"sent {sent} message(s) to telegram")
 
 
 if __name__ == "__main__":
