@@ -45,6 +45,16 @@ jobs:
       - name: Install deps
         run: pip install "pandas>=2.0" "numpy>=1.24"
 
+      # NSE_CACHE IS IN THIS LIST DELIBERATELY (added 2026-08-18). All three
+      # workflows share one key lineage (`golden-data-` + restore-keys), so
+      # whatever a job SAVES is what the next job RESTORES. This job does not
+      # build nse_cache, but it does READ it (surveillance_snapshot.py ->
+      # data/nse_all.py), and omitting it here meant every nightly run saved a
+      # cache with the directory stripped out — 20.5 MB where weekly/penny save
+      # 31 MB. The next penny/weekly run then refetched the whole NSE bhavcopy
+      # stack from scratch, and surveillance re-hit the ASM/GSM endpoints every
+      # single night. Keep the three path lists identical across daily.yml,
+      # weekly.yml and penny.yml.
       # persist the price + fundamentals caches between runs. Unique key each
       # run always saves a fresh copy; restore-keys pulls the most recent prior
       # one (the standard mutable-cache pattern). A cache miss (first run / rare
@@ -55,6 +65,7 @@ jobs:
           path: |
             multibagger_screener/multibagger_screener/data_cache
             multibagger_screener/multibagger_screener/fundamentals_cache
+            multibagger_screener/multibagger_screener/nse_cache
           key: golden-data-${{ github.run_id }}
           restore-keys: golden-data-
 

@@ -26,6 +26,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import time
 from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -53,6 +54,29 @@ def git_root() -> str:
     return os.path.dirname(os.path.dirname(ROOT))
 
 
+def git_pull_retry(cwd: str, attempts: int = 4, delay: int = 20) -> bool:
+    """Pull, retrying while the network comes up. The logon trigger fires ~3
+    min after boot, routinely before DNS is ready: 2026-08-14 and 2026-08-18
+    both failed with "Could not resolve host: github.com" and then pooled
+    against a STALE checkout. That is not a harmless miss — the pool is derived
+    from the CLOUD's journal, so a stale tree can read "pool empty" and exit 0,
+    i.e. a dead job reporting success (exactly the 2026-08-13 root cause).
+    Returns True if the tree is actually in sync."""
+    last = ""
+    for i in range(attempts):
+        p = run(["git", "pull", "--rebase", "--autostash"], cwd=cwd)
+        if p.returncode == 0:
+            if i:
+                log(f"git pull ok on attempt {i + 1}")
+            return True
+        last = (p.stderr or p.stdout or "").strip()
+        if i < attempts - 1:
+            time.sleep(delay)
+    log(f"git pull FAILED after {attempts} attempts — CONTINUING ON STALE "
+        f"LOCAL STATE, any 'pool empty' below is untrustworthy: {last[:160]}")
+    return False
+
+
 def _verdict_rows() -> list[str]:
     p = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
     if not os.path.exists(p):
@@ -66,16 +90,16 @@ def main() -> int:
     log("nightly analyst wrapper start" + (" (--force)" if force else ""))
 
     # 1. sync — tonight's cloud alerts/journal must be local before pooling
-    p = run(["git", "pull", "--rebase", "--autostash"], cwd=git_root())
-    if p.returncode != 0:
-        log(f"git pull failed (continuing on local state): {(p.stderr or '')[:120]}")
+    synced = git_pull_retry(git_root())
 
     # 2. pool guard — every-logon trigger stays a cheap no-op when clear
     from ai_analyst import pending_pool
     pool = pending_pool()
     if not pool and not force:
+        # an empty pool only MEANS anything if the tree is current — see
+        # git_pull_retry's docstring for the week this cost
         log("pool empty — no pending dives; exit")
-        return 0
+        return 0 if synced else 1
     log(f"pool: {len(pool)} pending -> diving up to the per-run cap: {pool[:5]}")
 
     # 3. the dives — subscription auth ONLY (strip any stray API key so the
@@ -84,12 +108,18 @@ def main() -> int:
     before = _verdict_rows()
     env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
     env["PYTHONIOENCODING"] = "utf-8"
-    try:
-        proc = run([sys.executable, os.path.join(ROOT, "scripts", "ai_analyst.py"),
-                    "--pool"], timeout=2400, env=env)
-    except subprocess.TimeoutExpired:
-        log("ai_analyst.py --pool timed out (2400s) — retried next boot")
-        return 1
+    # BUDGET: ai_analyst dives up to MAX_DIVES_PER_DAY (4) names at TIMEOUT_S
+    # (600s) each = 2400s of dives, and this wrapper used to kill at exactly
+    # 2400s — zero margin for the news-radar/context work either side, so a
+    # healthy-but-slow night looked like a hang. Headroom added 2026-08-18.
+    from _stay_awake import stay_awake
+    with stay_awake(log):
+        try:
+            proc = run([sys.executable, os.path.join(ROOT, "scripts", "ai_analyst.py"),
+                        "--pool"], timeout=3300, env=env)
+        except subprocess.TimeoutExpired:
+            log("ai_analyst.py --pool timed out (3300s) — retried next boot")
+            return 1
     tail = "\n".join((proc.stdout or "").strip().splitlines()[-4:])
     log(f"ai_analyst exit {proc.returncode}: {tail[:400]}")
     new_rows = [r for r in _verdict_rows() if r not in set(before)]

@@ -93,6 +93,21 @@ def main() -> None:
     universe = pd.concat(frames, ignore_index=True)
     universe = universe.drop_duplicates(subset="symbol").reset_index(drop=True)
 
+    # DROP NSE PLACEHOLDER SHELLS (2026-08-18). NSE publishes DUMMY-prefixed
+    # rows in the constituent files as corporate-action placeholders (demerger
+    # /scheme shells, e.g. DUMMYINXGN, DUMMYTRVN). They are not securities:
+    # they never trade, so Yahoo has no series for them and update_prices
+    # counts them as failures forever. That printed a permanent
+    # "PRICE UPDATE FAILED for 2/654 symbols" health line into every night's
+    # Telegram — an alarm that could never clear, which is how a real feed
+    # outage gets ignored. Filtered here, at the source, rather than in
+    # universe.csv (the weekly refresh rewrites that file).
+    placeholders = universe["symbol"].str.upper().str.startswith("DUMMY")
+    if placeholders.any():
+        print(f"dropped {int(placeholders.sum())} NSE placeholder(s): "
+              f"{universe.loc[placeholders, 'symbol'].tolist()}")
+        universe = universe.loc[~placeholders].reset_index(drop=True)
+
     out_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                             "universe.csv")
     universe.to_csv(out_path, index=False)

@@ -27,6 +27,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,6 +60,28 @@ def git_root() -> str:
     return os.path.dirname(os.path.dirname(ROOT))
 
 
+def git_pull_retry(cwd: str, attempts: int = 4, delay: int = 20) -> bool:
+    """Pull, retrying while the network comes up — the logon trigger can fire
+    before DNS is ready ("Could not resolve host: github.com", 2026-08-14 and
+    2026-08-18). Matters more here than it looks: the freshness guard compares
+    local picks against the CLOUD's shortlist commit, so a stale tree makes the
+    committee no-op with "already cover the latest shortlist" and call it
+    success."""
+    last = ""
+    for i in range(attempts):
+        p = run(["git", "pull", "--rebase", "--autostash"], cwd=cwd, timeout=180)
+        if p.returncode == 0:
+            if i:
+                log(f"git pull ok on attempt {i + 1}")
+            return True
+        last = (p.stderr or p.stdout or "").strip()
+        if i < attempts - 1:
+            time.sleep(delay)
+    log(f"git pull FAILED after {attempts} attempts — the freshness guard below "
+        f"is judging against a STALE shortlist: {last[:160]}")
+    return False
+
+
 def picks_generated_at() -> datetime | None:
     try:
         with open(PICKS_PATH, encoding="utf-8") as f:
@@ -80,9 +103,7 @@ def main() -> int:
     log("committee wrapper start" + (" (--force)" if force else ""))
 
     # 1. sync: the guard must judge against the CLOUD's latest shortlist
-    p = run(["git", "pull", "--rebase", "--autostash"], cwd=git_root(), timeout=180)
-    if p.returncode != 0:
-        log(f"git pull failed (continuing on local state): {(p.stderr or '')[:120]}")
+    git_pull_retry(git_root())
 
     # 2. freshness guard — the reason an every-logon trigger is safe
     picks_at = picks_generated_at()
@@ -115,14 +136,20 @@ def main() -> int:
     # key so a leftover env var can never silently burn credits
     env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
     env["PYTHONIOENCODING"] = "utf-8"
-    try:
-        proc = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "ai_picks.py")],
-                              capture_output=True, text=True, encoding="utf-8",
-                              errors="replace", timeout=COMMITTEE_TIMEOUT_S,
-                              cwd=ROOT, env=env)
-    except subprocess.TimeoutExpired:
-        log(f"ai_picks.py timed out after {COMMITTEE_TIMEOUT_S}s — will retry next boot")
-        return 1
+    # SLEEP GUARD (2026-08-18): a 3h20m budget on a laptop is precisely the
+    # run a suspend eats. 2026-08-12 died with exit 0xC000013A
+    # (STATUS_CONTROL_C_EXIT) 40s in — not a crash, the OS tearing the process
+    # down on sleep. Task Scheduler's "wake to run" only covers the start.
+    from _stay_awake import stay_awake
+    with stay_awake(log):
+        try:
+            proc = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "ai_picks.py")],
+                                  capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", timeout=COMMITTEE_TIMEOUT_S,
+                                  cwd=ROOT, env=env)
+        except subprocess.TimeoutExpired:
+            log(f"ai_picks.py timed out after {COMMITTEE_TIMEOUT_S}s — will retry next boot")
+            return 1
     tail = "\n".join((proc.stdout or "").strip().splitlines()[-3:])
     log(f"ai_picks.py exit {proc.returncode}: {tail[:300]}")
     if proc.returncode != 0:

@@ -33,6 +33,79 @@ Minor shifts: ACMESOLAR CONFIRMED->WATCH, BELRISE CONFIRMED->WATCH, CHOLAHLDNG W
 
 _News moves attention, never entries — trades stay technical._
 
+## AI analyst verdicts
+
+### MSTCLTD
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: FULL PLAN (once triggered)
+
+WHY (max 3 bullets):
+- No governance red flags found: MSTC is a GoI PSU (64.75% held by Centre), filed an explicit SEBI disclosure confirming **zero promoter equity encumbrance for FY26** — pledge veto does not apply, and I found no SEBI action, auditor exit, or modified opinion.
+- Story checks out as broad-based, not one-off: Q1FY27 standalone PAT +31% YoY to ₹58.1cr on 26% revenue growth, EBITDA +32% to ₹81.5cr (69% margin) — this is a commission/fee platform scaling with e-auction *volume* growth (scrap, coal, minerals), not a one-time gain.
+- Card's own read is "AWAITING TRIGGER" — VCP base is live but price hasn't cleared the 628.8 pivot on volume yet. No fundamental reason to jump the gun.
+
+RISKS (max 2 bullets):
+- Second-order, minor: a local body (HITO, Meghalaya) is publicly contesting mandatory use of MSTC's platform for one state utility's scrap tender — immaterial to consolidated volumes but a reminder MSTC's monopoly-adjacent model draws periodic local/political pushback.
+- Negative operating cash flow flagged by the card is plausible working-capital/EMD-trustee timing typical of an auction-escrow business model, not confirmed as a red flag — could not fully verify via concall transcript.
+
+CHECKED: WebSearch across screener/scanx/investywise/BSE filings for SEBI/pledge/auditor news, Q1FY27 results detail, HITO/MePDCL story, disinvestment status, cash-flow discussion.
+
+CHANGES MY MIND: A confirmed volume breakout closing above 628.8 flips this to BUY at the mechanical plan; a SEBI/auditor flag or a fresh pledge disclosure would flip it to SKIP.
+
+### METROPOLIS
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY:
+- Earnings inflection is real, not one-off: Q1 FY27 PAT +26% YoY on genuine volume/mix/realization gains, with Tier-II/III center expansion (400-500 new centers planned) and TruHealth Wellness/Specialty segments as fastest-growing lines — a durable execution story, not base-effect noise.
+- Equity capital +310pp flag resolved clean: it's a 3:1 bonus issue (Mar 2026), funded from reserves, not dilution — governance non-issue.
+- No SEBI action, auditor flag, or pledge escalation found; only encumbrance is trivial (~0.2% of promoter holding, unchanged in FY26).
+
+RISKS:
+- Valuation is genuinely stretched (PEG 5.06) and theme heat is only middling (63/100) — diagnostics sector pricing growth is capped at 1-2%/yr per industry data, with unaccredited standalone labs undercutting on price, a real margin ceiling even as volumes grow.
+- Metropolis is absent from this week's committee shortlist (EMCURE/WELCORP/JAMNAAUTO/PARAS/KARURVYSYA), and FII holding is trimming (-1.49pp) while DII buys — mixed institutional conviction, not a clean smart-money tailwind.
+
+CHECKED: WebSearch across NSE filing archive, screener.in, Business Standard, ScanX, Medical Buyer, MarketScreener for Q1 FY27 results, promoter pledge/SEBI filings, CFO change history, bonus issue mechanics, and diagnostics sector pricing trends.
+
+CHANGES MY MIND: A second consecutive quarter of PAT deceleration below TTM trend, or evidence the Tier-II/III center rollout is pressuring realizations rather than growing volume, would flip this to SKIP.
+
+### ASTRAMICRO
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Order story verified and larger than the card shows: the ₹2,205cr HAL order (Uttam Radar AAAU/interface frames, awarded 2026-07-31) pushed consolidated order book to a record ₹4,300cr from ₹2,849cr at Jun-30 — genuine backlog, not vapor.
+- Sector tailwind confirmed via second-order channel, not just theme heat: BEL (largest peer/bellwether, shares customers like HAL/DRDO) guided >₹55,000cr FY27 order inflows and posted 25% Q1 revenue growth — the defence-electronics order cycle is broad, not company-specific hype.
+- No pledge/SEBI/auditor red flags found; MD S. Gurunatha Reddy's exit (effective 30-Sep-26) is a pre-disclosed (since April 2026), benign succession tied to leading the Space/Meteorology demerger, not distress — company confirmed no other material reason.
+
+RISKS (max 2 bullets):
+- Q1 FY27 print (10-Aug) actually missed: revenue -11.5% YoY, PAT -24% YoY, margins compressed — order book strength hasn't yet translated to execution, and P/E 87 leaves little room for further disappointment.
+- Leadership transition (new MD from 1-Oct) plus a live demerger overlap with the delivery window on a record order book — execution-risk stacking; also notably absent from this week's committee picks despite full visibility into the order win.
+
+CHECKED: Business Standard/BusinessToday/EquityPandit on HAL order, Business Standard/Upstox/EquityBulls/GuruFocus on Q1 results & MD transition, Whalesbook/ScanX on SEBI compliance & succession, Business Standard/Zeebiz on BEL FY27 order guidance.
+CHANGES MY MIND: Q2 FY27 results showing continued revenue/margin deceleration despite the larger order book would flip this to SKIP — it would suggest execution capacity, not demand, is the real constraint.
+
+### LALPATHLAB
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Q1 FY27 (Jun-26) confirmed the inflection is real, not a base-effect blip: revenue +19% YoY, PAT +27% to ₹170.5 Cr, EBITDA margin expanded to 31% — driven by patient volume +8.2% and sample volume +10.7%, called "strongest growth in 4 years." Margin expansion alongside volume growth argues against a one-off and against a price war eroding realizations.
+- No red flags found: 0% promoter pledge confirmed by multiple sources, no SEBI action, only routine/immaterial consumer-court cases (small penalties, common across the diagnostics industry), and the company just won a ₹32.66 Cr ESOP tax appeal — a modestly positive, not negative, surprise.
+- Sector tailwind is real but moderate: organized diagnostics market growing 12-14% to 2030, LALPATHLAB is the largest chain with sector-best margins; no evidence of a price war among the big three (LAL/Metropolis/SRL) — margin expansion argues the opposite.
+
+RISKS (max 2 bullets):
+- FII stake fell 21.86%→17.35% even as DII rose — likely rotation given price/volume strength (RS 79, Stage 2, VCP live), but I could not verify the specific FII seller or reason, so treat as an unresolved data point rather than confirmed benign.
+- Valuation is described externally as "premium" despite PEG 1.91 looking reasonable; theme_tailwind (60/100) and catalyst (0.189) are both middling on the card itself — this is a good-not-great setup, consistent with only medium conviction.
+
+CHECKED: Web search — SEBI/pledge status, Q1 FY27 results coverage (Univest, MarketsMojo, EquityBulls, Investing.com), diagnostics sector competitive landscape, litigation/tax-appeal news.
+CHANGES MY MIND: Confirmation that the FII selldown is a single large block sale tied to a negative view (not passive rotation), or any pricing-war news from Metropolis/SRL that would explain the margin story differently.
+
+
 ## Cards
 
 ```
