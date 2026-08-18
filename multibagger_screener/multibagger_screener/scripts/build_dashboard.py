@@ -1569,6 +1569,20 @@ border:1px solid var(--line2);color:var(--faint);font:600 9.5px var(--mono)}
 .convcell{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .scorebar{display:inline-block;width:46px;height:5px;background:var(--card2);border-radius:3px;flex:0 0 auto}
 .scorebar div{height:5px;border-radius:3px;background:var(--grn)}
+/* THE SCREENER SCROLLS ON TWO AXES, SO IT NEEDS TWO ELEMENTS (2026-08-19).
+   It was one `<div style="max-height:66vh;overflow:auto">` doing both, and on
+   a phone horizontal scrolling simply never happened. Touch browsers axis-LOCK
+   a swipe to the dominant direction, and this container's vertical range is
+   ~22,000px against ~260px horizontal — 85:1 — so essentially every swipe was
+   captured by the vertical axis. The header and the mechanism both looked
+   fine; the two axes were just fighting over the same node.
+   Outer scrolls X only. Inner scrolls Y only, and `width:max-content` is what
+   keeps it Y-only: CSS promotes a `visible` axis to `auto` as soon as the
+   other axis scrolls, so the inner has to genuinely never overflow sideways
+   rather than merely be told not to. Sticky headers keep working because the
+   inner is still their scrollport. */
+.tblx{overflow-x:auto}
+.tbly{max-height:66vh;overflow-y:auto;width:max-content;min-width:100%}
 td{white-space:nowrap}
 td.wrap{white-space:normal}
 /* Short-label cell in a NARROW column (2026-08-19). The Archetype cell was
@@ -1909,6 +1923,17 @@ td,th{padding:5px 6px}
 .acthead{font-size:12px}
 .dochip{font-size:9px;padding:2px 6px}
 .drawer{padding:16px 14px}
+/* THE TRADE PLAN WAS CUT OFF ON A PHONE (2026-08-19). The drawer is 375px and
+   the plan table rendered 547px, with its value cells at 452px, because
+   `td{white-space:nowrap}` applies to them and the values are prose:
+   "1166.63 (risk Rs12.4k = 1.25% of capital)", "1614.19 - sell 1/3 of trading
+   lot". These are label/value rows, not a columnar grid — nothing about them
+   needs a single line, and the drawer is the surface that is supposed to
+   carry the FULL detail the table columns drop. table-layout:fixed stops one
+   long value from setting the width for every row. */
+.drawer .mini td{white-space:normal}
+.drawer table{width:100%;table-layout:fixed}
+.drawer .mini td:first-child{width:38%}
 .funnelline{font-size:10.5px;line-height:1.8}
 /* phones: drop low-value columns so the decision columns fit without
    sideways scrolling — the drawer always carries the full detail */
@@ -1930,13 +1955,26 @@ td,th{padding:5px 6px}
 .ledgertbl th:nth-child(4),.ledgertbl td:nth-child(4),
 .ledgertbl th:nth-child(5),.ledgertbl td:nth-child(5),
 .ledgertbl th:nth-child(8),.ledgertbl td:nth-child(8){display:none}            /* Lot · Shares · Reason */
+/* OFF BY ONE, AND IT COST THE TWO COLUMNS THAT MATTER (fixed 2026-08-19).
+   The comment below has always described the right intent; the selectors did
+   not match it. They hid 7 (Conviction) and 12 (Price) — the two decision
+   columns — while leaving 11 (PAT TTM%) and 13 (the 104px sparkline) on
+   screen. So a phone showed a sparkline and hid the conviction score.
+   Column order, counted off the live DOM: 1 Symbol, 2 Cap, 3 Industry,
+   4 Stage, 5 Trigger, 6 RS%, 7 Conviction, 8 Archetype, 9 ROCE, 10 P/E,
+   11 PAT TTM%, 12 Price, 13 120d spark. */
 #tbl th:nth-child(2),#tbl td:nth-child(2),
 #tbl th:nth-child(3),#tbl td:nth-child(3),
-#tbl th:nth-child(7),#tbl td:nth-child(7),
 #tbl th:nth-child(8),#tbl td:nth-child(8),
 #tbl th:nth-child(9),#tbl td:nth-child(9),
 #tbl th:nth-child(10),#tbl td:nth-child(10),
-#tbl th:nth-child(12),#tbl td:nth-child(12){display:none}                      /* Cap (a filter chip above) · Industry · Archetype · ROCE · P/E · PAT · spark */
+#tbl th:nth-child(11),#tbl td:nth-child(11),
+#tbl th:nth-child(13),#tbl td:nth-child(13){display:none}                      /* Cap (a filter chip above) · Industry · Archetype · ROCE · P/E · PAT · spark */
+/* Trigger is the widest cell on a phone by a distance (162px); its pill text
+   is the long part and the drawer carries the full wording. */
+#tbl th:nth-child(5),#tbl td:nth-child(5){max-width:92px}
+#tbl td:nth-child(5) .pill{max-width:88px;overflow:hidden;text-overflow:ellipsis;
+ display:inline-block;vertical-align:middle}
 #tbl .scorebar{display:none}                                                   /* conviction: number only on phones */
 .pill{padding:1px 6px;font-size:8.5px}
 #scoretbl th:nth-child(1),#scoretbl td:nth-child(1),
@@ -2285,13 +2323,13 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
       <span class="info" data-tip="Cap tiers: Micro < ₹2k Cr (highest multibagger runway, highest risk) · Small ₹2–12k Cr · Mid ₹12–50k Cr · Large > ₹50k Cr. Filter Micro + UPTREND for the potential-multibagger view.">?</span>
       <span class="dim" style="font-size:12px;margin-left:auto" id="count"></span>
     </div>
-    <div style="max-height:66vh;overflow:auto">
+    <div class="tblx"><div class="tbly">
     <table id="tbl"><thead><tr>
       <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹12,000 Cr) · Mid (&lt;₹50,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. UPTREND = healthy confirmed uptrend (act only on a fresh trigger). BASING = base forming, watch only. EXTENDED = ran too far, don't chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></th>
       <th data-k="trig">Trigger<span class="info" data-tip="Whether the entry this system's +1.61R was measured on has actually fired. BUY TRIGGER FIRED = VCP pivot cleared on volume, the backtested entry. BASE READY = a valid base is live, pivot not yet cleared. NO BASE = trend-following read only, the weakest live cohort (-0.225R). This is the PRIMARY sort whatever column you click — conviction ranks companies within a trigger class, never across one, because fundamental-ranked entry selection measured +0.38R against +1.27R ungated.">?</span></th>
       <th data-k="rs">RS%<span class="info" data-tip="Relative Strength percentile (0-100): how this stock's 6-and-12-month return ranks vs the whole universe. 90 = stronger than 90% of stocks. High + rising is what breakouts need.">?</span></th><th data-k="score">Conviction<span class="info" data-tip="0-100 score from the 8 weighted questions (momentum, earnings, theme, smart money, financial strength, catalyst, governance, valuation), scored at the WEEKLY refresh. ° = technical-only read (fundamentals were unavailable, coverage below 60%). A stock's drawer shows its freshest, most-informed read, which can differ from this weekly number.">?</span></th><th data-k="arch">Archetype<span class="info" data-tip="The kind of multibagger story: Turnaround (loss→profit), Quality (steady compounder), Hyper-growth (fast revenue), Super-cycle (sector tailwind). A tag for context, not a gate.">?</span></th>
       <th data-k="roce">ROCE<span class="info" data-tip="Return on Capital Employed (%): profit the business earns per rupee of capital. Higher = more efficient. Above ~15% is generally healthy.">?</span></th><th data-k="pe">P/E<span class="info" data-tip="Price-to-Earnings: how many years of current profit you pay for the stock. High P/E = pricey OR fast-growing; on a fresh turnaround it can be meaningless (tiny recovering profit).">?</span></th><th data-k="pgttm">PAT TTM%<span class="info" data-tip="Profit-After-Tax growth over the trailing twelve months vs the prior year. The company's bottom-line momentum.">?</span></th>
-      <th data-k="close">Price</th><th>120d<span class="info" data-tip="Price sparkline — the last 120 trading days at a glance.">?</span></th></tr></thead><tbody></tbody></table></div>
+      <th data-k="close">Price</th><th>120d<span class="info" data-tip="Price sparkline — the last 120 trading days at a glance.">?</span></th></tr></thead><tbody></tbody></table></div></div>
   </div>
   <!-- Watching — not qualified: funnel transparency, DISPLAY ONLY. These are
        names the system's OWN rules exclude (vetoed / not-yet-scorable / news
