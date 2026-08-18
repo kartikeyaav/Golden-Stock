@@ -311,6 +311,56 @@ def journal_append(rows: list[dict]) -> None:
             w.writerow({k: r.get(k, "") for k in JOURNAL_FIELDS})
 
 
+DIMENSIONS_PATH = os.path.join(ROOT, "journal", "alert_dimensions.csv")
+DIMENSIONS_FIELDS = ["logged_at", "symbol", "kind", "dimension",
+                     "weight", "score", "live"]
+
+
+def dimensions_append(rows: list[dict], details: dict) -> None:
+    """Freeze the PER-DIMENSION conviction breakdown into an append-only file.
+
+    WHY THIS EXISTS (2026-08-18). The eight dimension scores lived ONLY in
+    `state/alert_details.json`, which daily_scan prunes to a rolling 30 days.
+    `scripts/weight_loo.py` joins that store to the append-only outcomes
+    journal — so a trade's dimensions were DELETED at day 30 while the median
+    trade takes far longer to resolve (only ~21% of the record is closed).
+    The consequence is not "a small sample": the closed fraction of that join
+    can never rise, because the snapshot always expires before the trade does.
+    The weight question was structurally unanswerable, and waiting could not
+    fix it. Measured on 2026-08-18: n fell 143 -> 125 while the record GREW.
+
+    LONG format (one row per dimension) on purpose. The wide alternative needs
+    a new column whenever a dimension is added or renamed, which is exactly the
+    silent-column-shift hazard `_widen_entry_signals_header` below exists to
+    catch. A long file only ever gains rows.
+
+    Aggregate `conviction_score`/`coverage_pct` are NOT duplicated here — they
+    already freeze into signals_journal.csv, which is why the conviction-FILTER
+    question (PREREG_2026-08-13) is answerable while this one was not."""
+    if not rows or not details:
+        return
+    out = []
+    for r in rows:
+        sym = r.get("symbol")
+        blob = details.get(sym) or {}
+        for d in (blob.get("dims") or []):
+            out.append({"logged_at": r.get("logged_at", ""), "symbol": sym,
+                        "kind": r.get("kind", ""), "dimension": d.get("k", ""),
+                        "weight": d.get("w", ""), "score": d.get("s", ""),
+                        "live": d.get("live", "")})
+    if not out:
+        return
+    if _skip_write(f"{len(out)} row(s) -> {os.path.basename(DIMENSIONS_PATH)}"):
+        return
+    os.makedirs(os.path.dirname(DIMENSIONS_PATH), exist_ok=True)
+    new_file = not os.path.exists(DIMENSIONS_PATH)
+    with open(DIMENSIONS_PATH, "a", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=DIMENSIONS_FIELDS)
+        if new_file:
+            w.writeheader()
+        w.writerows(out)
+
+
 def _widen_entry_signals_header() -> None:
     """One-time, value-preserving widening when new columns are added.
 
@@ -1152,6 +1202,8 @@ def main() -> None:
     save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
                entry_alerted=entry_alerted)
     journal_append(journal_rows)
+    # freeze the dimension breakdown BEFORE alert_details is pruned to 30 days
+    dimensions_append(journal_rows, alert_details)
     if _NEWS_BLIND:
         # loud, because every card for these names says "news unavailable" and
         # a reader could otherwise take that for "nothing was happening"

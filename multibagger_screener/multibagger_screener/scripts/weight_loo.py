@@ -92,14 +92,38 @@ def composite(dims: dict[str, float], drop: str | None = None) -> float | None:
 
 
 def load() -> list[dict]:
-    """Join frozen alert-time dimensions to the forward outcome of that alert."""
+    """Join frozen alert-time dimensions to the forward outcome of that alert.
+
+    SOURCE ORDER MATTERS (2026-08-18). This used to read ONLY
+    `state/alert_details.json`, which is pruned to a rolling 30 days — so a
+    trade's dimensions were deleted before the trade closed, and the closed
+    fraction of this join could never rise no matter how long anyone waited
+    (measured: n fell 143 -> 125 while the record grew). The append-only
+    `journal/alert_dimensions.csv` is now the primary source; the rolling blob
+    is a fallback for the current night before the journal is written."""
+    by_sym_date: dict[tuple, dict] = {}
+
+    dim_csv = os.path.join(ROOT, "journal", "alert_dimensions.csv")
+    if os.path.exists(dim_csv):
+        with open(dim_csv, encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                if str(r.get("live", "")).strip().lower() not in ("true", "1"):
+                    continue
+                s = _f(r.get("score"))
+                if s is None:
+                    continue
+                key = (r["symbol"], (r.get("logged_at") or "")[:10])
+                by_sym_date.setdefault(key, {})[r["dimension"]] = s
+
+    # fallback / top-up from the rolling store (tonight's alerts, or any night
+    # that predates the journal). Never overwrites a journaled row.
     with open(os.path.join(ROOT, "state", "alert_details.json"), encoding="utf-8") as f:
         blobs = json.load(f)
-    by_sym_date: dict[tuple, dict] = {}
     for sym, b in blobs.items():
         dims = {d["k"]: d["s"] for d in (b.get("dims") or []) if d.get("live")}
-        if dims:
-            by_sym_date[(sym, (b.get("alerted_at") or "")[:10])] = dims
+        key = (sym, (b.get("alerted_at") or "")[:10])
+        if dims and key not in by_sym_date:
+            by_sym_date[key] = dims
 
     out = []
     with open(os.path.join(ROOT, "journal", "journal_outcomes.csv"), encoding="utf-8") as f:
