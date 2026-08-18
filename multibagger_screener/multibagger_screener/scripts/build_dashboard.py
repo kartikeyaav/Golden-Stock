@@ -28,6 +28,7 @@ from data.cache import load_ohlcv
 from data.screener_fetch import load_company
 from paper_trader import summarize as paper_summary
 from reports import vocab
+from scoring.phase_b import NO_ARCHETYPE
 
 import gate_status
 import surveillance_snapshot
@@ -48,6 +49,9 @@ def _market_cap(sym: str):
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "dashboard.html")
+# Screener "Archetype" cell budget. The cell is `<td class="dim wrap">`, so
+# anything longer than this wraps to a second line and breaks row alignment.
+_ARCH_MAX = 26
 
 
 def _read_csv(name: str) -> pd.DataFrame:
@@ -863,6 +867,39 @@ def build_payload() -> dict:
             return "Micro" if m < 2000 else "Small" if m < 12000 else "Mid" if m < 50000 else "Large"
         return TIER.get(str(idx_src), "")
 
+    def _arch(raw) -> str:
+        """Archetype text for the screener cell, or "" when there is none.
+
+        Two bugs lived on the line this replaces,
+        `"" if "untagged" in arch else arch[:26]`:
+
+        1. The sentinel was renamed. That test matched the OLD placeholder
+           ("(untagged — theme data Phase C)"); when phase_b changed it to
+           "(no archetype — see the Sectors tab for its theme)" the guard
+           stopped matching and the placeholder flowed through, truncated to
+           "(no archetype — see the Se" on 65 of 117 rows. The cell is
+           `<td class="dim wrap">`, so every one of those wrapped onto a
+           second line and broke the row alignment the user reported.
+        2. `[:26]` cuts mid-word. Harmless today (the longest real value,
+           "Turnaround + Hyper-growth", is 25) but a three-tag combo is 35 and
+           would render "Turnaround + Quality + Hyp".
+
+        Now matched against the exported constant AND the structural rule that
+        a placeholder starts with "(" — real archetypes are proper nouns — so
+        the next rename cannot reintroduce this."""
+        a = str(raw or "").strip()
+        if not a or a == NO_ARCHETYPE or a.startswith("("):
+            return ""
+        if len(a) <= _ARCH_MAX:
+            return a
+        # reserve a character for the ellipsis, or the "fix" emits 27 and
+        # wraps exactly like the bug it replaces
+        budget = _ARCH_MAX - 1
+        cut = a[:budget].rsplit(" + ", 1)[0]
+        if cut == a[:budget]:
+            cut = a[:budget].rstrip()
+        return cut + "…"
+
     screener_rows, closes = [], {}
     for _, r in focus.iterrows():
         sym = r["symbol"]
@@ -890,7 +927,7 @@ def build_payload() -> dict:
             "turn": round(float(r["turnover_cr"]), 1) if pd.notna(r.get("turnover_cr")) else None,
             "score": _score_cov(sym)[0], "cov": _score_cov(sym)[1],
             "veto": _score_cov(sym)[2],
-            "arch": "" if "untagged" in arch else arch[:26],
+            "arch": _arch(arch),
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
             "pgttm": f.get("profit_growth_ttm"),
             "focus": True,
@@ -923,7 +960,7 @@ def build_payload() -> dict:
             "turn": None,
             "score": _score_cov(sym)[0], "cov": _score_cov(sym)[1],
             "veto": _score_cov(sym)[2],
-            "arch": "" if "untagged" in arch else arch[:26],
+            "arch": _arch(arch),
             "roce": f.get("roce_pct"), "pe": f.get("pe"),
             "pgttm": f.get("profit_growth_ttm"),
             "focus": False,

@@ -621,12 +621,23 @@ def tag_archetypes(row: dict, industry: str | None = None) -> list[str]:
     # cross-industry themes nightly since 2026-07-26, so this is no longer
     # blocked on data — it is simply not wired to the archetype tagger yet.
     # Saying "Phase C" implied the former.
-    return tags or ["(no archetype — see the Sectors tab for its theme)"]
+    return tags or [NO_ARCHETYPE]
 
 
 # ---------------------------------------------------------------------------
 # Assembly: all 8 dimensions for one stock
 # ---------------------------------------------------------------------------
+# The "this stock has no archetype" sentinel. NAMED because consumers have to
+# recognise it, and the last rename broke the one that did: build_dashboard
+# suppressed it by testing `"untagged" in arch` against the previous wording
+# ("(untagged — theme data Phase C)"). When this string changed, that test
+# silently stopped matching and the dashboard rendered `arch[:26]` instead —
+# "(no archetype — see the Se" — on 65 of 117 screener rows, wrapping every
+# one of them onto a second line. Match this constant, or the leading "(":
+# real archetypes are proper nouns and never start with a parenthesis.
+NO_ARCHETYPE = "(no archetype — see the Sectors tab for its theme)"
+
+
 def build_dimensions(tag_result: dict, rs_percentile: float | None,
                      fund_row: dict | None, industry: str | None = None) -> list[Dimension]:
     """Phase A rs_and_stage + Phase B fundamentals. theme/catalyst stay None."""
