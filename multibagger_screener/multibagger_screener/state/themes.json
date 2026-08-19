@@ -1,20 +1,19 @@
 {
- "generated": "2026-08-18T13:57:38",
+ "generated": "2026-08-19T13:58:05",
  "themes": [
   {
    "key": "defelec",
    "name": "Defence electronics & space",
    "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
    "n": 7,
-   "breadth": 57.1,
+   "breadth": 42.9,
    "rs_med": 96.3,
-   "ret3m": 20.4,
-   "news": 4.19,
-   "news_per_name": 0.599,
+   "ret3m": 20.3,
+   "news": 4.06,
+   "news_per_name": 0.58,
    "thin": false,
    "confirmed": [
     "MTARTECH",
-    "ASTRAMICRO",
     "DATAPATTNS",
     "ZENTEC"
    ],
@@ -27,58 +26,53 @@
    "n": 8,
    "breadth": 37.5,
    "rs_med": 96.6,
-   "ret3m": 12.4,
-   "news": 4.16,
-   "news_per_name": 0.52,
+   "ret3m": 14.4,
+   "news": 4.03,
+   "news_per_name": 0.504,
    "thin": false,
    "confirmed": [
     "STLTECH",
     "HFCL",
     "NETWEB"
    ],
-   "heat": 74.3
+   "heat": 77.3
   },
   {
    "key": "defence",
    "name": "Defence & aerospace",
    "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
    "n": 13,
-   "breadth": 46.2,
+   "breadth": 38.5,
    "rs_med": 94.2,
-   "ret3m": 8.7,
-   "news": 5.68,
-   "news_per_name": 0.437,
+   "ret3m": 8.9,
+   "news": 5.5,
+   "news_per_name": 0.423,
    "thin": false,
    "confirmed": [
     "MTARTECH",
-    "ASTRAMICRO",
     "DATAPATTNS",
     "DYNAMATECH",
     "ZENTEC",
     "MIDHANI"
    ],
-   "heat": 72.7
+   "heat": 70.0
   },
   {
-   "key": "hospital",
-   "name": "Hospitals & diagnostics",
-   "blurb": "Bed additions and the shift of diagnostics into organised chains.",
-   "n": 12,
-   "breadth": 50.0,
-   "rs_med": 77.0,
-   "ret3m": 8.1,
-   "news": 2.47,
-   "news_per_name": 0.206,
+   "key": "ems",
+   "name": "Electronics manufacturing (EMS)",
+   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
+   "n": 8,
+   "breadth": 25.0,
+   "rs_med": 96.1,
+   "ret3m": 29.7,
+   "news": 1.43,
+   "news_per_name": 0.178,
    "thin": false,
    "confirmed": [
-    "THYROCARE",
-    "VIJAYA",
-    "ASTERDM",
-    "LALPATHLAB",
-    "YATHARTH",
-    "KIMS"
+    "NETWEB",
+    "SYRMA"
    ],
-   "heat": 64.3
+   "heat": 68.7
   },
   {
    "key": "grid",
@@ -87,9 +81,9 @@
    "n": 14,
    "breadth": 35.7,
    "rs_med": 92.4,
-   "ret3m": 13.9,
-   "news": 1.95,
-   "news_per_name": 0.139,
+   "ret3m": 14.4,
+   "news": 1.89,
+   "news_per_name": 0.135,
    "thin": false,
    "confirmed": [
     "HFCL",
@@ -101,74 +95,24 @@
    "heat": 64.0
   },
   {
-   "key": "ems",
-   "name": "Electronics manufacturing (EMS)",
-   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
-   "n": 8,
-   "breadth": 25.0,
-   "rs_med": 96.1,
-   "ret3m": 29.8,
-   "news": 1.48,
-   "news_per_name": 0.184,
+   "key": "hospital",
+   "name": "Hospitals & diagnostics",
+   "blurb": "Bed additions and the shift of diagnostics into organised chains.",
+   "n": 12,
+   "breadth": 41.7,
+   "rs_med": 77.0,
+   "ret3m": 7.4,
+   "news": 3.01,
+   "news_per_name": 0.251,
    "thin": false,
    "confirmed": [
-    "NETWEB",
-    "SYRMA"
+    "THYROCARE",
+    "VIJAYA",
+    "LALPATHLAB",
+    "YATHARTH",
+    "MEDANTA"
    ],
    "heat": 63.3
-  },
-  {
-   "key": "chemicals",
-   "name": "Specialty chemicals & China+1",
-   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
-   "n": 11,
-   "breadth": 36.4,
-   "rs_med": 79.9,
-   "ret3m": 9.4,
-   "news": 0.49,
-   "news_per_name": 0.045,
-   "thin": false,
-   "confirmed": [
-    "NAVINFLUOR",
-    "FLUOROCHEM",
-    "AARTIIND",
-    "EPL"
-   ],
-   "heat": 56.7
-  },
-  {
-   "key": "ev",
-   "name": "EV & auto electrification",
-   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
-   "n": 10,
-   "breadth": 0.0,
-   "rs_med": 85.7,
-   "ret3m": 16.2,
-   "news": 2.95,
-   "news_per_name": 0.295,
-   "thin": false,
-   "confirmed": [],
-   "heat": 49.0
-  },
-  {
-   "key": "finfra",
-   "name": "Financial market infrastructure",
-   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
-   "n": 16,
-   "breadth": 31.2,
-   "rs_med": 78.6,
-   "ret3m": 6.6,
-   "news": 4.5,
-   "news_per_name": 0.282,
-   "thin": false,
-   "confirmed": [
-    "MCX",
-    "NAM-INDIA",
-    "PRUDENT",
-    "CDSL",
-    "KFINTECH"
-   ],
-   "heat": 45.7
   },
   {
    "key": "cdmo",
@@ -177,15 +121,54 @@
    "n": 11,
    "breadth": 18.2,
    "rs_med": 94.2,
-   "ret3m": 8.5,
-   "news": 2.75,
-   "news_per_name": 0.25,
+   "ret3m": 10.4,
+   "news": 2.66,
+   "news_per_name": 0.242,
    "thin": false,
    "confirmed": [
     "GRANULES",
     "EMCURE"
    ],
-   "heat": 42.7
+   "heat": 53.0
+  },
+  {
+   "key": "finfra",
+   "name": "Financial market infrastructure",
+   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
+   "n": 16,
+   "breadth": 31.2,
+   "rs_med": 78.6,
+   "ret3m": 8.2,
+   "news": 4.36,
+   "news_per_name": 0.272,
+   "thin": false,
+   "confirmed": [
+    "MCX",
+    "NAM-INDIA",
+    "PRUDENT",
+    "CDSL",
+    "KFINTECH"
+   ],
+   "heat": 51.3
+  },
+  {
+   "key": "chemicals",
+   "name": "Specialty chemicals & China+1",
+   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
+   "n": 11,
+   "breadth": 36.4,
+   "rs_med": 79.9,
+   "ret3m": 8.3,
+   "news": 0.48,
+   "news_per_name": 0.043,
+   "thin": false,
+   "confirmed": [
+    "NAVINFLUOR",
+    "FLUOROCHEM",
+    "AARTIIND",
+    "EPL"
+   ],
+   "heat": 50.7
   },
   {
    "key": "shipbuilding",
@@ -194,50 +177,62 @@
    "n": 5,
    "breadth": 40.0,
    "rs_med": 66.5,
-   "ret3m": -3.0,
-   "news": 0.55,
-   "news_per_name": 0.11,
+   "ret3m": -3.1,
+   "news": 0.53,
+   "news_per_name": 0.107,
    "thin": false,
    "confirmed": [
     "SCI",
     "GPPL"
    ],
-   "heat": 42.0
+   "heat": 44.7
   },
   {
-   "key": "water",
-   "name": "Water, environment & EPC",
-   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
-   "n": 6,
-   "breadth": 33.3,
-   "rs_med": 91.5,
-   "ret3m": 3.3,
-   "news": 0.7,
-   "news_per_name": 0.117,
+   "key": "ev",
+   "name": "EV & auto electrification",
+   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
+   "n": 10,
+   "breadth": 0.0,
+   "rs_med": 85.7,
+   "ret3m": 12.4,
+   "news": 2.86,
+   "news_per_name": 0.286,
    "thin": false,
-   "confirmed": [
-    "WABAG",
-    "SUPREMEIND"
-   ],
-   "heat": 35.3
+   "confirmed": [],
+   "heat": 43.0
   },
   {
    "key": "textiles",
    "name": "Textiles & apparel PLI",
    "blurb": "Technical textiles, garmenting and the incentive-led export push.",
    "n": 12,
-   "breadth": 25.0,
+   "breadth": 16.7,
    "rs_med": 79.7,
-   "ret3m": 5.2,
-   "news": 1.47,
-   "news_per_name": 0.122,
+   "ret3m": 4.8,
+   "news": 1.42,
+   "news_per_name": 0.118,
    "thin": false,
    "confirmed": [
-    "PGIL",
     "ICIL",
     "WELSPUNLIV"
    ],
-   "heat": 31.3
+   "heat": 28.7
+  },
+  {
+   "key": "water",
+   "name": "Water, environment & EPC",
+   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
+   "n": 6,
+   "breadth": 16.7,
+   "rs_med": 91.5,
+   "ret3m": 0.9,
+   "news": 0.68,
+   "news_per_name": 0.114,
+   "thin": false,
+   "confirmed": [
+    "SUPREMEIND"
+   ],
+   "heat": 24.7
   },
   {
    "key": "renewables",
@@ -246,32 +241,31 @@
    "n": 14,
    "breadth": 7.1,
    "rs_med": 69.4,
-   "ret3m": -7.8,
-   "news": 10.31,
-   "news_per_name": 0.736,
+   "ret3m": -9.3,
+   "news": 9.97,
+   "news_per_name": 0.712,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
    ],
-   "heat": 23.3
+   "heat": 20.3
   },
   {
    "key": "capex",
    "name": "Industrial capex & machinery",
    "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
    "n": 21,
-   "breadth": 14.3,
+   "breadth": 9.5,
    "rs_med": 75.8,
-   "ret3m": -4.6,
-   "news": 5.17,
-   "news_per_name": 0.246,
+   "ret3m": -3.8,
+   "news": 5.0,
+   "news_per_name": 0.238,
    "thin": false,
    "confirmed": [
     "LLOYDSENGG",
-    "GRINDWELL",
     "ELGIEQUIP"
    ],
-   "heat": 21.0
+   "heat": 20.0
   },
   {
    "key": "railways",
@@ -280,12 +274,12 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -7.9,
-   "news": 6.54,
-   "news_per_name": 0.654,
+   "ret3m": -9.1,
+   "news": 6.33,
+   "news_per_name": 0.633,
    "thin": false,
    "confirmed": [],
-   "heat": 14.0
+   "heat": 17.0
   },
   {
    "key": "semis",
@@ -294,7 +288,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 11.9,
-   "ret3m": 0.8,
+   "ret3m": 0.0,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -308,9 +302,9 @@
    "n": 2,
    "breadth": 50.0,
    "rs_med": 82.8,
-   "ret3m": 7.8,
-   "news": 1.64,
-   "news_per_name": 0.821,
+   "ret3m": 4.1,
+   "news": 1.59,
+   "news_per_name": 0.794,
    "thin": true,
    "confirmed": [
     "MTARTECH"

@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-18 13:57",
+ "generated": "2026-08-19 13:57",
  "n_checked": 650,
- "n_flagged": 64,
- "asm_total": 201,
+ "n_flagged": 65,
+ "asm_total": 199,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -515,6 +515,11 @@
   "KRN": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -522,7 +527,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
   },
   "LLOYDSENGG": {
    "flags": [
@@ -666,6 +671,18 @@
     }
    ],
    "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "RUBICON": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },
