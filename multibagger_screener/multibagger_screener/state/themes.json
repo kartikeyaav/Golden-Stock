@@ -1,19 +1,20 @@
 {
- "generated": "2026-08-19T13:58:05",
+ "generated": "2026-08-20T14:01:06",
  "themes": [
   {
    "key": "defelec",
    "name": "Defence electronics & space",
    "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
    "n": 7,
-   "breadth": 42.9,
+   "breadth": 57.1,
    "rs_med": 96.3,
-   "ret3m": 20.3,
-   "news": 4.06,
-   "news_per_name": 0.58,
+   "ret3m": 14.8,
+   "news": 3.92,
+   "news_per_name": 0.561,
    "thin": false,
    "confirmed": [
     "MTARTECH",
+    "PARAS",
     "DATAPATTNS",
     "ZENTEC"
    ],
@@ -26,36 +27,37 @@
    "n": 8,
    "breadth": 37.5,
    "rs_med": 96.6,
-   "ret3m": 14.4,
-   "news": 4.03,
-   "news_per_name": 0.504,
+   "ret3m": 14.6,
+   "news": 3.9,
+   "news_per_name": 0.487,
    "thin": false,
    "confirmed": [
     "STLTECH",
     "HFCL",
     "NETWEB"
    ],
-   "heat": 77.3
+   "heat": 75.0
   },
   {
-   "key": "defence",
-   "name": "Defence & aerospace",
-   "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
-   "n": 13,
-   "breadth": 38.5,
-   "rs_med": 94.2,
-   "ret3m": 8.9,
-   "news": 5.5,
-   "news_per_name": 0.423,
+   "key": "grid",
+   "name": "Power transmission & grid capex",
+   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
+   "n": 14,
+   "breadth": 42.9,
+   "rs_med": 92.4,
+   "ret3m": 13.8,
+   "news": 1.82,
+   "news_per_name": 0.13,
    "thin": false,
    "confirmed": [
-    "MTARTECH",
-    "DATAPATTNS",
-    "DYNAMATECH",
-    "ZENTEC",
-    "MIDHANI"
+    "HFCL",
+    "APARINDS",
+    "FINCABLES",
+    "KEI",
+    "VOLTAMP",
+    "SKIPPER"
    ],
-   "heat": 70.0
+   "heat": 72.0
   },
   {
    "key": "ems",
@@ -64,35 +66,57 @@
    "n": 8,
    "breadth": 25.0,
    "rs_med": 96.1,
-   "ret3m": 29.7,
-   "news": 1.43,
-   "news_per_name": 0.178,
+   "ret3m": 28.1,
+   "news": 1.38,
+   "news_per_name": 0.173,
    "thin": false,
    "confirmed": [
     "NETWEB",
     "SYRMA"
    ],
-   "heat": 68.7
+   "heat": 66.0
   },
   {
-   "key": "grid",
-   "name": "Power transmission & grid capex",
-   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
-   "n": 14,
-   "breadth": 35.7,
-   "rs_med": 92.4,
-   "ret3m": 14.4,
-   "news": 1.89,
-   "news_per_name": 0.135,
+   "key": "defence",
+   "name": "Defence & aerospace",
+   "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
+   "n": 13,
+   "breadth": 46.2,
+   "rs_med": 94.2,
+   "ret3m": 4.1,
+   "news": 5.32,
+   "news_per_name": 0.409,
    "thin": false,
    "confirmed": [
-    "HFCL",
-    "APARINDS",
-    "POWERINDIA",
-    "KEI",
-    "VOLTAMP"
+    "MTARTECH",
+    "PARAS",
+    "DATAPATTNS",
+    "DYNAMATECH",
+    "ZENTEC",
+    "MIDHANI"
    ],
-   "heat": 64.0
+   "heat": 60.7
+  },
+  {
+   "key": "finfra",
+   "name": "Financial market infrastructure",
+   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
+   "n": 16,
+   "breadth": 37.5,
+   "rs_med": 78.6,
+   "ret3m": 7.9,
+   "news": 4.22,
+   "news_per_name": 0.264,
+   "thin": false,
+   "confirmed": [
+    "ANANDRATHI",
+    "MCX",
+    "NAM-INDIA",
+    "PRUDENT",
+    "CDSL",
+    "KFINTECH"
+   ],
+   "heat": 60.0
   },
   {
    "key": "hospital",
@@ -101,9 +125,9 @@
    "n": 12,
    "breadth": 41.7,
    "rs_med": 77.0,
-   "ret3m": 7.4,
-   "news": 3.01,
-   "news_per_name": 0.251,
+   "ret3m": 6.0,
+   "news": 2.91,
+   "news_per_name": 0.243,
    "thin": false,
    "confirmed": [
     "THYROCARE",
@@ -112,7 +136,25 @@
     "YATHARTH",
     "MEDANTA"
    ],
-   "heat": 63.3
+   "heat": 54.3
+  },
+  {
+   "key": "water",
+   "name": "Water, environment & EPC",
+   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
+   "n": 6,
+   "breadth": 50.0,
+   "rs_med": 91.5,
+   "ret3m": -0.1,
+   "news": 0.66,
+   "news_per_name": 0.11,
+   "thin": false,
+   "confirmed": [
+    "WABAG",
+    "ASTRAL",
+    "SUPREMEIND"
+   ],
+   "heat": 51.3
   },
   {
    "key": "cdmo",
@@ -121,71 +163,15 @@
    "n": 11,
    "breadth": 18.2,
    "rs_med": 94.2,
-   "ret3m": 10.4,
-   "news": 2.66,
-   "news_per_name": 0.242,
+   "ret3m": 9.4,
+   "news": 2.58,
+   "news_per_name": 0.234,
    "thin": false,
    "confirmed": [
     "GRANULES",
     "EMCURE"
    ],
-   "heat": 53.0
-  },
-  {
-   "key": "finfra",
-   "name": "Financial market infrastructure",
-   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
-   "n": 16,
-   "breadth": 31.2,
-   "rs_med": 78.6,
-   "ret3m": 8.2,
-   "news": 4.36,
-   "news_per_name": 0.272,
-   "thin": false,
-   "confirmed": [
-    "MCX",
-    "NAM-INDIA",
-    "PRUDENT",
-    "CDSL",
-    "KFINTECH"
-   ],
-   "heat": 51.3
-  },
-  {
-   "key": "chemicals",
-   "name": "Specialty chemicals & China+1",
-   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
-   "n": 11,
-   "breadth": 36.4,
-   "rs_med": 79.9,
-   "ret3m": 8.3,
-   "news": 0.48,
-   "news_per_name": 0.043,
-   "thin": false,
-   "confirmed": [
-    "NAVINFLUOR",
-    "FLUOROCHEM",
-    "AARTIIND",
-    "EPL"
-   ],
-   "heat": 50.7
-  },
-  {
-   "key": "shipbuilding",
-   "name": "Shipbuilding & marine",
-   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
-   "n": 5,
-   "breadth": 40.0,
-   "rs_med": 66.5,
-   "ret3m": -3.1,
-   "news": 0.53,
-   "news_per_name": 0.107,
-   "thin": false,
-   "confirmed": [
-    "SCI",
-    "GPPL"
-   ],
-   "heat": 44.7
+   "heat": 46.7
   },
   {
    "key": "ev",
@@ -194,61 +180,65 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": 85.7,
-   "ret3m": 12.4,
-   "news": 2.86,
-   "news_per_name": 0.286,
+   "ret3m": 11.2,
+   "news": 2.77,
+   "news_per_name": 0.277,
    "thin": false,
    "confirmed": [],
    "heat": 43.0
+  },
+  {
+   "key": "chemicals",
+   "name": "Specialty chemicals & China+1",
+   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
+   "n": 11,
+   "breadth": 27.3,
+   "rs_med": 79.9,
+   "ret3m": 7.8,
+   "news": 0.46,
+   "news_per_name": 0.042,
+   "thin": false,
+   "confirmed": [
+    "NAVINFLUOR",
+    "FLUOROCHEM",
+    "AARTIIND"
+   ],
+   "heat": 42.7
   },
   {
    "key": "textiles",
    "name": "Textiles & apparel PLI",
    "blurb": "Technical textiles, garmenting and the incentive-led export push.",
    "n": 12,
-   "breadth": 16.7,
+   "breadth": 33.3,
    "rs_med": 79.7,
-   "ret3m": 4.8,
-   "news": 1.42,
-   "news_per_name": 0.118,
+   "ret3m": 6.0,
+   "news": 1.38,
+   "news_per_name": 0.115,
    "thin": false,
    "confirmed": [
+    "ARVIND",
+    "PGIL",
     "ICIL",
     "WELSPUNLIV"
    ],
-   "heat": 28.7
+   "heat": 42.3
   },
   {
-   "key": "water",
-   "name": "Water, environment & EPC",
-   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
-   "n": 6,
-   "breadth": 16.7,
-   "rs_med": 91.5,
-   "ret3m": 0.9,
-   "news": 0.68,
-   "news_per_name": 0.114,
+   "key": "shipbuilding",
+   "name": "Shipbuilding & marine",
+   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
+   "n": 5,
+   "breadth": 20.0,
+   "rs_med": 66.5,
+   "ret3m": -2.6,
+   "news": 0.52,
+   "news_per_name": 0.103,
    "thin": false,
    "confirmed": [
-    "SUPREMEIND"
+    "GPPL"
    ],
-   "heat": 24.7
-  },
-  {
-   "key": "renewables",
-   "name": "Renewables, solar & storage",
-   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
-   "n": 14,
-   "breadth": 7.1,
-   "rs_med": 69.4,
-   "ret3m": -9.3,
-   "news": 9.97,
-   "news_per_name": 0.712,
-   "thin": false,
-   "confirmed": [
-    "ACMESOLAR"
-   ],
-   "heat": 20.3
+   "heat": 23.3
   },
   {
    "key": "capex",
@@ -257,15 +247,31 @@
    "n": 21,
    "breadth": 9.5,
    "rs_med": 75.8,
-   "ret3m": -3.8,
-   "news": 5.0,
-   "news_per_name": 0.238,
+   "ret3m": -4.6,
+   "news": 5.46,
+   "news_per_name": 0.26,
    "thin": false,
    "confirmed": [
     "LLOYDSENGG",
     "ELGIEQUIP"
    ],
-   "heat": 20.0
+   "heat": 22.0
+  },
+  {
+   "key": "renewables",
+   "name": "Renewables, solar & storage",
+   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
+   "n": 14,
+   "breadth": 7.1,
+   "rs_med": 69.4,
+   "ret3m": -10.0,
+   "news": 9.65,
+   "news_per_name": 0.689,
+   "thin": false,
+   "confirmed": [
+    "ACMESOLAR"
+   ],
+   "heat": 19.3
   },
   {
    "key": "railways",
@@ -274,12 +280,12 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -9.1,
-   "news": 6.33,
-   "news_per_name": 0.633,
+   "ret3m": -8.3,
+   "news": 7.13,
+   "news_per_name": 0.713,
    "thin": false,
    "confirmed": [],
-   "heat": 17.0
+   "heat": 18.0
   },
   {
    "key": "semis",
@@ -288,7 +294,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 11.9,
-   "ret3m": 0.0,
+   "ret3m": -1.6,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -302,9 +308,9 @@
    "n": 2,
    "breadth": 50.0,
    "rs_med": 82.8,
-   "ret3m": 4.1,
-   "news": 1.59,
-   "news_per_name": 0.794,
+   "ret3m": 5.0,
+   "news": 1.54,
+   "news_per_name": 0.768,
    "thin": true,
    "confirmed": [
     "MTARTECH"
