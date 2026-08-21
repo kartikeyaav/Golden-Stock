@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-20T14:01:06",
+ "generated": "2026-08-21T13:59:04",
  "themes": [
   {
    "key": "defelec",
@@ -8,9 +8,9 @@
    "n": 7,
    "breadth": 57.1,
    "rs_med": 96.3,
-   "ret3m": 14.8,
-   "news": 3.92,
-   "news_per_name": 0.561,
+   "ret3m": 17.8,
+   "news": 4.8,
+   "news_per_name": 0.685,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -27,16 +27,16 @@
    "n": 8,
    "breadth": 37.5,
    "rs_med": 96.6,
-   "ret3m": 14.6,
-   "news": 3.9,
-   "news_per_name": 0.487,
+   "ret3m": 13.1,
+   "news": 3.77,
+   "news_per_name": 0.472,
    "thin": false,
    "confirmed": [
     "STLTECH",
     "HFCL",
-    "NETWEB"
+    "BHARTIHEXA"
    ],
-   "heat": 75.0
+   "heat": 76.7
   },
   {
    "key": "grid",
@@ -45,36 +45,19 @@
    "n": 14,
    "breadth": 42.9,
    "rs_med": 92.4,
-   "ret3m": 13.8,
-   "news": 1.82,
-   "news_per_name": 0.13,
+   "ret3m": 11.3,
+   "news": 1.77,
+   "news_per_name": 0.126,
    "thin": false,
    "confirmed": [
     "HFCL",
     "APARINDS",
+    "POWERINDIA",
     "FINCABLES",
     "KEI",
-    "VOLTAMP",
     "SKIPPER"
    ],
-   "heat": 72.0
-  },
-  {
-   "key": "ems",
-   "name": "Electronics manufacturing (EMS)",
-   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
-   "n": 8,
-   "breadth": 25.0,
-   "rs_med": 96.1,
-   "ret3m": 28.1,
-   "news": 1.38,
-   "news_per_name": 0.173,
-   "thin": false,
-   "confirmed": [
-    "NETWEB",
-    "SYRMA"
-   ],
-   "heat": 66.0
+   "heat": 74.7
   },
   {
    "key": "defence",
@@ -83,9 +66,9 @@
    "n": 13,
    "breadth": 46.2,
    "rs_med": 94.2,
-   "ret3m": 4.1,
-   "news": 5.32,
-   "news_per_name": 0.409,
+   "ret3m": 5.2,
+   "news": 6.14,
+   "news_per_name": 0.473,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -95,7 +78,24 @@
     "ZENTEC",
     "MIDHANI"
    ],
-   "heat": 60.7
+   "heat": 70.3
+  },
+  {
+   "key": "ems",
+   "name": "Electronics manufacturing (EMS)",
+   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
+   "n": 8,
+   "breadth": 25.0,
+   "rs_med": 96.1,
+   "ret3m": 28.8,
+   "news": 1.34,
+   "news_per_name": 0.167,
+   "thin": false,
+   "confirmed": [
+    "AVALON",
+    "SYRMA"
+   ],
+   "heat": 68.7
   },
   {
    "key": "finfra",
@@ -104,9 +104,9 @@
    "n": 16,
    "breadth": 37.5,
    "rs_med": 78.6,
-   "ret3m": 7.9,
-   "news": 4.22,
-   "news_per_name": 0.264,
+   "ret3m": 9.9,
+   "news": 4.08,
+   "news_per_name": 0.255,
    "thin": false,
    "confirmed": [
     "ANANDRATHI",
@@ -116,7 +116,7 @@
     "CDSL",
     "KFINTECH"
    ],
-   "heat": 60.0
+   "heat": 68.7
   },
   {
    "key": "hospital",
@@ -125,9 +125,9 @@
    "n": 12,
    "breadth": 41.7,
    "rs_med": 77.0,
-   "ret3m": 6.0,
-   "news": 2.91,
-   "news_per_name": 0.243,
+   "ret3m": 4.9,
+   "news": 2.82,
+   "news_per_name": 0.235,
    "thin": false,
    "confirmed": [
     "THYROCARE",
@@ -136,74 +136,58 @@
     "YATHARTH",
     "MEDANTA"
    ],
-   "heat": 54.3
-  },
-  {
-   "key": "water",
-   "name": "Water, environment & EPC",
-   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
-   "n": 6,
-   "breadth": 50.0,
-   "rs_med": 91.5,
-   "ret3m": -0.1,
-   "news": 0.66,
-   "news_per_name": 0.11,
-   "thin": false,
-   "confirmed": [
-    "WABAG",
-    "ASTRAL",
-    "SUPREMEIND"
-   ],
-   "heat": 51.3
-  },
-  {
-   "key": "cdmo",
-   "name": "Pharma CDMO & API",
-   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
-   "n": 11,
-   "breadth": 18.2,
-   "rs_med": 94.2,
-   "ret3m": 9.4,
-   "news": 2.58,
-   "news_per_name": 0.234,
-   "thin": false,
-   "confirmed": [
-    "GRANULES",
-    "EMCURE"
-   ],
-   "heat": 46.7
-  },
-  {
-   "key": "ev",
-   "name": "EV & auto electrification",
-   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
-   "n": 10,
-   "breadth": 0.0,
-   "rs_med": 85.7,
-   "ret3m": 11.2,
-   "news": 2.77,
-   "news_per_name": 0.277,
-   "thin": false,
-   "confirmed": [],
-   "heat": 43.0
+   "heat": 54.0
   },
   {
    "key": "chemicals",
    "name": "Specialty chemicals & China+1",
    "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
    "n": 11,
-   "breadth": 27.3,
+   "breadth": 36.4,
    "rs_med": 79.9,
-   "ret3m": 7.8,
-   "news": 0.46,
-   "news_per_name": 0.042,
+   "ret3m": 7.4,
+   "news": 0.45,
+   "news_per_name": 0.041,
    "thin": false,
    "confirmed": [
     "NAVINFLUOR",
     "FLUOROCHEM",
-    "AARTIIND"
+    "AARTIIND",
+    "EPL"
    ],
-   "heat": 42.7
+   "heat": 48.0
+  },
+  {
+   "key": "ev",
+   "name": "EV & auto electrification",
+   "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
+   "n": 10,
+   "breadth": 10.0,
+   "rs_med": 85.7,
+   "ret3m": 9.0,
+   "news": 3.27,
+   "news_per_name": 0.328,
+   "thin": false,
+   "confirmed": [
+    "EXIDEIND"
+   ],
+   "heat": 47.7
+  },
+  {
+   "key": "cdmo",
+   "name": "Pharma CDMO & API",
+   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
+   "n": 11,
+   "breadth": 9.1,
+   "rs_med": 94.2,
+   "ret3m": 9.7,
+   "news": 2.49,
+   "news_per_name": 0.227,
+   "thin": false,
+   "confirmed": [
+    "GRANULES"
+   ],
+   "heat": 41.3
   },
   {
    "key": "textiles",
@@ -212,9 +196,9 @@
    "n": 12,
    "breadth": 33.3,
    "rs_med": 79.7,
-   "ret3m": 6.0,
-   "news": 1.38,
-   "news_per_name": 0.115,
+   "ret3m": 4.9,
+   "news": 1.33,
+   "news_per_name": 0.111,
    "thin": false,
    "confirmed": [
     "ARVIND",
@@ -222,7 +206,23 @@
     "ICIL",
     "WELSPUNLIV"
    ],
-   "heat": 42.3
+   "heat": 39.3
+  },
+  {
+   "key": "water",
+   "name": "Water, environment & EPC",
+   "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
+   "n": 6,
+   "breadth": 16.7,
+   "rs_med": 91.5,
+   "ret3m": -0.6,
+   "news": 0.64,
+   "news_per_name": 0.106,
+   "thin": false,
+   "confirmed": [
+    "SUPREMEIND"
+   ],
+   "heat": 27.3
   },
   {
    "key": "shipbuilding",
@@ -231,14 +231,14 @@
    "n": 5,
    "breadth": 20.0,
    "rs_med": 66.5,
-   "ret3m": -2.6,
-   "news": 0.52,
-   "news_per_name": 0.103,
+   "ret3m": -3.0,
+   "news": 0.5,
+   "news_per_name": 0.1,
    "thin": false,
    "confirmed": [
     "GPPL"
    ],
-   "heat": 23.3
+   "heat": 26.0
   },
   {
    "key": "capex",
@@ -247,9 +247,9 @@
    "n": 21,
    "breadth": 9.5,
    "rs_med": 75.8,
-   "ret3m": -4.6,
-   "news": 5.46,
-   "news_per_name": 0.26,
+   "ret3m": -6.7,
+   "news": 5.28,
+   "news_per_name": 0.252,
    "thin": false,
    "confirmed": [
     "LLOYDSENGG",
@@ -264,14 +264,14 @@
    "n": 14,
    "breadth": 7.1,
    "rs_med": 69.4,
-   "ret3m": -10.0,
-   "news": 9.65,
-   "news_per_name": 0.689,
+   "ret3m": -11.2,
+   "news": 9.96,
+   "news_per_name": 0.711,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
    ],
-   "heat": 19.3
+   "heat": 17.7
   },
   {
    "key": "railways",
@@ -280,12 +280,12 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -8.3,
-   "news": 7.13,
-   "news_per_name": 0.713,
+   "ret3m": -10.5,
+   "news": 6.9,
+   "news_per_name": 0.69,
    "thin": false,
    "confirmed": [],
-   "heat": 18.0
+   "heat": 17.0
   },
   {
    "key": "semis",
@@ -294,7 +294,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 11.9,
-   "ret3m": -1.6,
+   "ret3m": 1.7,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -308,9 +308,9 @@
    "n": 2,
    "breadth": 50.0,
    "rs_med": 82.8,
-   "ret3m": 5.0,
-   "news": 1.54,
-   "news_per_name": 0.768,
+   "ret3m": 7.0,
+   "news": 1.49,
+   "news_per_name": 0.744,
    "thin": true,
    "confirmed": [
     "MTARTECH"

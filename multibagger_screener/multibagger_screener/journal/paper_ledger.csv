@@ -43,3 +43,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-08-19,SCI,SKIP,entry,0,,,[SCI@2026-08-18 21:31] already open in paper book
 2026-08-19,PGIL,BUY,entry,26,2354.0,,[PGIL@2026-08-18 21:32] analyst BUY/MEDIUM/HALF PLAN
 2026-08-19,USHAMART,BUY,entry,299,500.15,,[USHAMART@2026-08-18 21:34] analyst BUY/MEDIUM/FULL PLAN
+2026-08-21,HSCL,SELL,all,71,665.99,-6177.71,stop hit
+2026-08-21,WELCORP,SELL,partial,12,2065.48,4721.7,partial at 2.5R
