@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-21 13:58",
+ "generated": "2026-08-23 05:17",
  "n_checked": 650,
- "n_flagged": 63,
- "asm_total": 201,
+ "n_flagged": 61,
+ "asm_total": 200,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -276,18 +276,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "AARTIPHARM": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "AEQUS": {
    "flags": [
     {
@@ -541,18 +529,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "LUMAXTECH": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "MSTCLTD": {
    "flags": [
     {
@@ -788,11 +764,6 @@
   "SUDEEPPHRM": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -800,7 +771,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "SPARC": {
    "flags": [
