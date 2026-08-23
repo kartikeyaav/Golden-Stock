@@ -39,6 +39,276 @@ Minor shifts: ACE WATCH->EXTENDED, ABSLAMC BROKEN->WATCH, MAPMYINDIA WATCH->BROK
 
 _News moves attention, never entries — trades stay technical._
 
+
+
+
+
+## AI analyst verdicts
+
+**GOKULAGRO** — analyst unavailable (exit 1: This version of C:\Users\karth\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\bin\claude.exe is not compatib) — review the card manually before acting
+**SAIL** — analyst unavailable (exit 1: This version of C:\Users\karth\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\bin\claude.exe is not compatib) — review the card manually before acting
+**SANSERA** — analyst unavailable (exit 1: This version of C:\Users\karth\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\bin\claude.exe is not compatib) — review the card manually before acting
+**UJJIVANSFB** — analyst unavailable (exit 1: This version of C:\Users\karth\AppData\Roaming\npm\node_modules\@anthropic-ai\claude-code\bin\claude.exe is not compatib) — review the card manually before acting
+
+### GOKULAGRO
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Pledge clean and confirmed: promoter filed zero-encumbrance declaration for FY26 (Apr 2026); CRISIL reaffirmed A/A1 and revised bank-facility outlook to Positive (8-Jul-26) — no leverage/governance veto triggers.
+- Earnings inflection is real, not a one-off: Q1FY27 PAT +74% YoY came with EBITDA +52%/margin +121bps, driven by product-mix shift, higher exports/non-edible contribution, and biodiesel plant commissioning — plus a ₹430cr capex approved May-26 to lift refining capacity 46%, so growth has a funded runway, not just a base-effect quarter.
+- Second-order tailwind, if it lands: govt is weighing/raising the crude-vs-refined edible oil import duty spread specifically to protect domestic refiners' margins — direct channel to Gokul's core business, though I could not confirm whether the 2026 hike is enacted or still "under consideration" (sources conflicted, one report referenced a 2024 action).
+
+RISKS (max 2 bullets):
+- Duty-hike timing is unverified — if the government instead cuts duties (as it did in 2025) to fight food inflation, the refiner-margin tailwind reverses.
+- Standardised pack-size mandate (compliance within 3 months) is a near-term operational/cost distraction industry-wide, even though Gokul has publicly welcomed it.
+
+CHECKED: screener.in/company filings via search, TipRanks/Tribune/Tradebrains Q1FY27 result coverage, ScanX promoter-pledge filing, CRISIL rating action, Business Standard/Kotak on edible-oil duty policy, FNB/BusinessLine on pack-size regulation.
+CHANGES MY MIND: Confirmed government duty CUT (not hike) on refined edible oils, or any pledge/auditor disclosure — either flips this to SKIP/WAIT.
+
+### SAIL
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story checks out as real, not one-off: Q1 FY27 net profit +121% YoY driven by opex efficiency, value-added steel mix rising to 89% of dispatches (from 86%), and debt/equity down to 0.54 — a genuine operating inflection, not a base-effect fluke.
+- Sector tailwind confirmed via second-order channel: 12% safeguard duty on flat steel imports (cut H1 FY26 rolled-steel imports 38.7% YoY) plus a fresh 5-yr anti-dumping duty on Chinese electrical steel — direct realizations protection against the China dumping channel, not generic sector optimism.
+- No governance red flags found: no SEBI action, no auditor exit/modified opinion, no pledge (PSU, govt holds 65%); Bhilai capacity expansion (6.8→10.2 MTPA) and Krakatau JV are real capex catalysts, not vapor.
+
+RISKS (max 2 bullets):
+- Card itself flags NO VCP base — this is a trend-follow entry with no confirmed volume-breakout trigger, and RS blend is not improving (False); the machine's own edge (+1.27R) is not statistically established for this setup.
+- SAIL has approached DIPAM for a 5% FPO in FY27 to fund capex — real dilution overhang that could cap upside and pressure the stock into any announcement, timing unconfirmed.
+
+CHECKED: WebSearch — SAIL Q1 FY27 results coverage, SAIL/DIPAM FPO reporting, India steel safeguard duty & anti-dumping duty news (Aug 2026), auditor/SEBI screens.
+
+CHANGES MY MIND: A VCP-quality tight base forms before the trading lot trigger fires, or firm FPO pricing/timing is announced (would flip to WAIT until overhang clears).
+
+### SANSERA
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection has a real, diversifying driver: Q1 FY27 order book jumped ₹44.4bn→₹57.5bn on a new semicon-equipment (SEM) customer order (~$75M annualized), ADS/aerospace revenue more than tripled YoY, non-auto mix hit a record 20.8% of sales — not a one-off, management guided 18-20% FY27 growth and multiple brokerages (Nomura, ICICI Direct) raised targets post-print.
+- No red flags found: no SEBI action, auditor issue, or promoter/pledge controversy in any source checked; card's own governance read (no pledge) confirms.
+- Sector backdrop is a tailwind, not a headwind: 2W volumes strengthening, auto-ancillary outlook neutral-to-positive (8-10% FY26 growth per Ind-Ra), and the SEM order is direct evidence that customer's capex is accelerating, not stalling.
+
+RISKS (max 2 bullets):
+- Machine itself flags this as trend-following only — "no volume-breakout trigger, +1.27R edge not established" — entry quality is weaker than the system's validated setup, and P/E 65 leaves little room for disappointment.
+- Smart-money legs disagree (FII +1.9pp buying vs DII -6.0pp selling); results (12-Aug) are now past so binary event risk is behind us, but the run-up (+17% above 50-DMA, near 52w high) means a lot of good news may already be priced.
+
+CHECKED: WebSearch — SEBI/pledge/auditor screen, Q1 FY27 concall/earnings coverage, Nomura/analyst targets, auto-ancillary sector outlook.
+CHANGES MY MIND: Any pledge/SEBI/auditor disclosure, or evidence the SEM/ADS order book is being pulled forward rather than sustained into FY28.
+
+### UJJIVANSFB
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection is real, not a one-off: Q1FY27 PAT +206.7% YoY to ₹317cr, NII +38.6% YoY to a record ₹1,186cr, NIM +80bps to 8.5%, driven by falling credit costs — matches the card's +200% read almost exactly (Business Standard, EquityBulls).
+- Asset quality is genuinely improving, addressing the biggest MFI-sector risk: GNPA down to 2.17% (from 2.53% YoY), NNPA 0.34%, PCR up to 85% from 73% — management also raised FY27 RoA guidance, and MFIN/RBI commentary confirms the sector is past its 2024-25 stress peak with PAR stabilizing.
+- No SEBI action, auditor flag, or promoter/pledge issue found — Ujjivan has zero promoter holding since its 2023 reverse merger with the holding company (widely-held bank, nothing to pledge), consistent with the card's ungoverned pledge score.
+
+RISKS (max 2 bullets):
+- Entry is extended and untriggered by volume: no VCP base, +11.2% above 50-DMA (3.44 ATRs) — this is a trend-following add, not a fresh breakout, so the historical +1.27R edge doesn't strictly apply per the card's own caveat.
+- Sector-wide MFI stress, while past peak, hasn't fully normalized (PAR still 4.7% industry-wide as of Jan 2026) — a renewed collection-efficiency wobble at any SFB peer would hit sentiment across the group.
+
+CHECKED: WebSearch across investing.com/equitybulls/business-standard for Q1FY27 results & asset quality, MFIN/ICRA/RBI commentary on sector stress, and Ujjivan SEBI/pledge/promoter filings history.
+CHANGES MY MIND: A sequential GNPA/collection-efficiency deterioration in the Q2FY27 print, or any SEBI/RBI enforcement notice on the bank, would flip this to SKIP.
+
+### VIYASH
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection is real, not a one-off: Q1FY27 PAT +107-115% YoY on revenue +19.5%, with EBITDA margin expanding ~400-500bps (14.98%→18.9-21.6%) — broad operating leverage, not a base-effect blip. Confirmed via two independent sources.
+- No pledge (0% promoter pledge confirmed independently); the equity capital +74%/3yr flag is explained by the Sequent-Viyash Life Sciences merger scheme (Carlyle-backed) plus routine ESOP allotments — not distress dilution. Promoter stake rise to 61.3% is consistent with merger share issuance, not fresh insider conviction buying.
+- Sector tailwind confirmed: India veterinary API/CDMO is a genuine global outsourcing beneficiary (~7%+ CAGR), and the ₹188cr BioForLife Italia bolt-on (funded via a ₹400cr rights issue to subsidiary Alivira, not opportunistic equity) is a real inorganic growth catalyst, not empire-building on a stretched balance sheet.
+
+RISKS (max 2 bullets):
+- Card itself flags NO VCP BASE — the trend-following entry lacks the volume-breakout structure the backtest's +1.27R edge requires; this is a weaker-than-validated setup even though it's technically clean (8/8 trend template).
+- FII+DII both distributing sharply (DII -9.15pp) is hard to fully explain — could be merger-related share-base dilution rather than active selling, but I could not verify which; SEBI also issued a minor administrative warning (SDD/insider-trading database gaps, 2024) — compliance sloppiness, not fraud, but a mark against governance hygiene.
+
+CHECKED: WebSearch across Business Standard, ScanX, Investing.com/Yahoo transcripts, TipRanks (SEBI disclosure), Screener/MoneyWorks4Me (pledge), sector market reports.
+CHANGES MY MIND: Confirmation the FII/DII drop was active selling (not merger-related dilution) rather than passive rebasing, or any SEBI action escalating beyond the administrative SDD warning.
+
+### ALIVUS
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- No governance red flag found: promoter Nirma confirmed zero share encumbrance for FY26, no SEBI action/auditor issue/litigation surfaced — the pledge question the card left open comes back clean.
+- Q1 FY27 story is real but mixed: margin +650bps to 36.6% and non-GPL +26.5% are genuine, but GPL (~half the mix) fell 52.6% on inventory rationalization — management guides H2 recovery, not yet proven. CDMO pipeline (7 deals in talks, 2 expected H2) is still pre-revenue optionality, not a confirmed inflection. Small ₹9.12cr IQGenX bolt-on is cash-funded, immaterial dilution risk.
+- Sector tailwind is real but two-sided: China+1 diversification favors Indian CDMO/API long-term, but Chinese API price declines are actively compressing realizations for the API side of the business — not a clean one-way trade.
+
+RISKS (max 2 bullets):
+- The card itself flags no VCP base and no volume-breakout trigger — this is a trend-following entry into a stock already 16% / 3.36 ATR above its 50-DMA, chasing extension with no confirmed low-risk entry point.
+- Valuation is full: P/E 48 against management's own 10-12% FY27 revenue guidance leaves little margin for the GPL segment to disappoint again.
+
+CHECKED: WebSearch across scanx.trade/Sahi/EquityBulls/Business Standard (IQGenX deal, pledge/BRSR filing), Investing.com/Yahoo/Investywise (Q1 FY27 concall detail), general search for API/CDMO sector and USFDA inspection history (no adverse findings surfaced, but not exhaustively confirmed via 483Signal).
+CHANGES MY MIND: A volume-backed pullback into a proper base (giving a real VCP/trigger) plus confirmation GPL has stabilized in Q2 would upgrade this to a full-plan BUY.
+
+### ATHERENERG
+VERDICT: SKIP
+CONVICTION: HIGH
+SIZE: NONE
+
+WHY (max 3 bullets):
+- The card's own entry plan already rejects this trade — ATR stop measures 12.2%, over the 12.0% hard volatility cap (Design Law #7: skip, don't clamp). That's a mechanical veto on tradeability, not a discretionary call, and I can't widen the stop to fit it.
+- Story checks out on its own merits: Q1 FY27 revenue +87%, pre-orders +158% YoY (150k units), demand outstripping supply by ~13-15k units/month — a real capacity bottleneck, not a one-off. New Maharashtra plant (Factory 3.0, 500k units/yr) targeted for Q3 FY27.
+- Governance clean: promoters confirmed zero share encumbrance for FY26, Deloitte reappointed as auditor at the Aug 19 AGM (no auditor exit/qualification). No SEBI action found.
+
+RISKS (max 2 bullets):
+- Second-order: Bajaj's aggressively-priced Chetak C2501 (₹22k cheaper than TVS iQube) is winning share in mainstream E2W and narrowing the gap with TVS — a live price war among ICE-major entrants that could pressure realizations/share even though Ather sits in a more premium/tech niche.
+- Setup itself is simply too volatile for this system's risk framework right now, independent of fundamentals — re-test needed once volatility compresses.
+
+CHECKED: WebSearch — scanx.trade (AGM/pledge filings), sahi.com/entrackr/businesstoday (Q1 FY27 results, capacity), inc42/outlookbusiness (E2W competitive landscape).
+CHANGES MY MIND: A subsequent pullback/base that tightens the ATR stop back under 12% while the demand/capacity story stays intact would flip this to a valid BUY re-entry.
+
+### CAPLIPOINT
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- No red flags found: 0% promoter pledge confirmed via FY26 encumbrance declaration, no SEBI action, no USFDA warning letter (latest inspections/approvals are clean — Methylprednisolone Acetate approval Jan-2026).
+- Earnings inflection is real, not a one-off: Q1 FY27 PAT +18.8%, driven by US injectables (Caplin Steriles revenue 3x YoY to ₹43cr) and LatAm own-brand distribution (+18%) — management says the binding constraint is factory capacity, not demand ("booked out until Feb 2027"), which also explains the TTM deceleration the card flagged.
+- Second-order: Trump's generic-drug tariff (100%→200%) is deferred to Aug 2028 with a two-year zero-tariff window starting Aug 2026 — near-term headwind removed for Indian generics exporters, sector tailwind intact for now.
+
+RISKS (max 2 bullets):
+- Structural capacity bottleneck (7→17 injectable lines, new lines not live until late FY27/FY28) caps near-term revenue acceleration even as order book is full — growth could stay decelerating for 2-3 quarters.
+- Revenue concentration risk: LatAm/Francophone Africa ~82% of sales, exposed to currency devaluation and rising Indian/Chinese generic competition in those markets.
+
+CHECKED: screener.in/BSE pledge filing, WebSearch on SEBI/auditor/USFDA news, Q1 FY27 concall coverage (Investing.com, multibagg.ai, Yahoo Finance), tariff policy news (CNBC, BusinessToday).
+
+CHANGES MY MIND: capacity expansion timeline slips further (past FY28) or a LatAm currency shock/competitor share-loss shows up in next quarter's segment revenue.
+
+### MEDANTA
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story checks out: the -1% PAT "decline" the card flagged is a base-effect artifact — Q1FY26 had a one-off ₹19.6cr EPCG reversal gain; ex-that, Q1FY27 was record revenue (₹1,304cr, +26.5% YoY) and EBITDA +23.5%, driven by real capacity adds (Noida 550-bed unit ramping post-Nov'25 launch, plus Patna/Ranchi beds) — not one-offs.
+- No pledge confirmed (0% promoter pledge), no auditor/SEBI/litigation red flags found in primary sources; FY26 was a record year (revenue +19.6%, PAT +15.1%), inconsistent with any going-concern risk.
+- Sector tailwind real: hospital chain peers (Apollo/Max/Fortis) all expanding on structural under-bedding + rising insurance penetration; Goldman Sachs positive on the group — theme heat score (64/100) is fairly earned, not stale.
+
+RISKS (max 2 bullets):
+- Machine's own caveat stands: no VCP, no volume-breakout trigger — this is a trend-following entry with the statistical edge unestablished; RS blend not improving and FII is distributing while DII buys (legs disagree).
+- Valuation is stretched (P/E 67) with zero margin for a capacity-ramp misstep in the new Noida/Patna beds.
+
+CHECKED: WebSearch across screener.in-adjacent sources, company Q1FY27 results releases (EquityBulls/TradingView/InvestyWise), FY26 results (BW Healthcare), sector coverage (Zeebiz/Univest); one auditor "going-concern" hit traced and dismissed as a likely conflation with an unrelated ASX company (Melodiol Global Health) rather than Global Health Ltd/Medanta — could not find a primary NSE filing either confirming or refuting it, so flagging as residual "not fully verified."
+CHANGES MY MIND: A primary-source NSE filing confirming any auditor qualification/going-concern language, or occupancy data showing the new Noida/Patna beds are ramping slower than guided, would flip this to SKIP.
+
+### YATHARTH
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story confirmed genuine, not a one-off: Q1 FY27 revenue +51% YoY driven by real capacity additions — Gurugram hospital acquisition (250 beds, ₹100cr) and Faridabad Sector-20 unit hitting EBITDA breakeven in just 9 months. PAT deceleration (+11.9% vs revenue +51%) traces to margin dilution from ramping new hospitals (EBITDA margin -209bps YoY), not accounting or one-off issues — matches the card's own earnings-inflection concern with a clean explanation.
+- Governance clean: no current promoter pledge found (Dec-2025 release cut Dr. Kapil Kumar's encumbrance from 8.85%→6.18%, and FY26-close filings show no encumbrance); no SEBI action, auditor flag, or litigation surfaced. Card's "no pledge flagged" reading holds up.
+- Sector tailwind real: hospital demand structurally strong (insurance penetration rising, AB-PMJAY >435M cards, projected 16-18% sector revenue growth), supporting the NCR/UP expansion thesis.
+
+RISKS (max 2 bullets):
+- Margin compression is a real, ongoing cost of the growth strategy (new-hospital ramp-up drag) — if breakeven timelines slip, PAT deceleration continues and the "earnings inflection" thesis weakens further.
+- Stock fell ~2% post-Q1 print on revenue missing analyst expectations, and weekly committee did not select it — some distribution/skepticism already in the tape despite RS 75.
+
+CHECKED: WebSearch across screener.in/trendlyne/scanx/business-standard/gurufocus for pledge status, Q1 FY27 results/concall highlights, and hospital-sector capacity/insurance trends.
+CHANGES MY MIND: Any confirmed fresh pledge/encumbrance filing, or a second consecutive quarter of margin compression without new-hospital breakeven progress.
+
+### IDEA
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Real inflection, not a one-off: Q1FY27 loss narrowed to ₹3,754cr (from ₹6,608cr YoY), first net subscriber add since the Vi merger, EBITDA +9.1% YoY, revenue +6% YoY — operational, not accounting noise.
+- Catalyst on the card checks out: ₹6,400cr bank funding (warrants + fund/non-fund facilities) confirmed for capex, funding part of the ₹45,000cr 3-yr network buildout; 4G coverage +39.4M people, 5G now live in 200+ cities.
+- Second-order tailwind: Jio/Airtel are jointly pushing another 12-15% tariff hike toward Q4 2026 (industry-wide, 3-player market) — lifts Vi's ARPU (₹146, lowest of the three) even if Vi stays quiet, since all raise together.
+
+RISKS (max 2 bullets):
+- Card says "no pledge flagged (not verified zero)" — that undersells it: Vodafone Group's entire 44.39% promoter stake is pledged with foreign banks (long-standing since 2019, no *new* encumbrance in FY26 per filing, but still a real structural overhang the screen didn't surface).
+- AGR overhang remains large (₹66,149cr still owed per Aug-2026 Parliament disclosure) and government explicitly said in August no further relief is coming — plus the 123% equity growth reflects heavy past AGR/spectrum-to-equity dilution; still loss-making in absolute terms.
+
+CHECKED: WebSearch — Business Today, Business Standard, TipRanks (pledge filing), multibagg.ai, telecomtalk.info (Aug 2026 Q1 results, AGR dues update, promoter pledge disclosure, tariff hike outlook).
+CHANGES MY MIND: A fresh promoter-pledge encumbrance filing, or government confirming a new AGR demand/no-relief enforcement action, would flip this to SKIP.
+
+### ACMESOLAR
+VERDICT: SKIP
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Leverage is worse than the card's D/E 3.93 implies: net debt tripled in 12 months (₹4,591cr → ₹12,830cr, Mar25→Mar26) and debt/EBITDA has been reported as high as ~14x — this is a real balance-sheet risk, not just a scaling narrative, even after a ₹2,800cr QIP (Jun'26) and bond refinancing cut cost of debt to ~8.6%.
+- Second-order sector risk the keyword scan can't see: India solar curtailment hit 50-60% of solar hours in Rajasthan/Gujarat in Q2 FY27 as DISCOMs (₹7.4tn debt) can't absorb daytime output, and 43GW of auctioned capacity sits without signed PPAs — direct hit to revenue realization on ACME's 5,080MW under-construction pipeline. Additionally, China is engineering a module price floor (+15% in 3-4 months) which raises capex costs just as ACME guides ₹15,000-20,000cr FY27 capex.
+- Genuine positives don't offset this: earnings driver is real (capacity commissioning + fresh SECI PPAs, not one-off), promoter confirms zero pledge (verified via NSE filing), no SEBI/auditor issues found. But earnings are decelerating and weekly committee already excludes this name.
+
+RISKS (max 2 bullets):
+- Debt serviceability under stress if curtailment/DISCOM delays persist into FY27 while capex ramps.
+- Theme rank 18/100 (renewables out of favor) — technical strength (RS 90, Stage 2) may not be enough to offset fundamental headwinds.
+
+CHECKED: NSE promoter-pledge filing, Mercom/SolarQuarter Q1FY27 results, Business Standard/Saurenergy on QIP & refinancing, PV-Tech/Down To Earth on curtailment & DISCOM stress, pv-magazine-india on China module pricing.
+CHANGES MY MIND: Debt/EBITDA trending back toward single digits alongside evidence curtailment is easing (more signed PPAs, LPS arrears staying low) — would reopen this as a buy candidate.
+
+### JSFB
+VERDICT: WAIT
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Card's own read is trend-following only — "no VCP base, +1.27R edge not established" — this is a timing problem independent of fundamentals; better to wait for a volume-confirmed base.
+- Material item the keyword scan missed entirely: promoter (Jana Holdings) is mid-divestment — sold 4.9% to TVS Motor in May-26 to repay ~₹700cr owed to TPG Asia, is shopping another ~7% to drop below 10%, and is actively evaluating a merger with a peer SFB (reports from Jul-26). That's real overhang + event risk on the "core lot, hold for years" thesis, not yet resolved.
+- Fundamentals genuinely support the inflection though: Q1FY27 PAT +52% rode falling GNPA (2.39%) on secured-book mix shift, sector-wide (Ujjivan, Equitas, Utkarsh all improving), and Jana has applied for a universal banking license — real structural driver, not a one-off.
+
+RISKS (max 2 bullets):
+- FY25 RBI divergence (₹169cr GNPA gap, profit restated 501→459cr) is confirmed real, already absorbed in FY26 per company — priced, but shows the audited numbers still need a discount vs. reported.
+- Active merger evaluation could mean dilution or a changed capital/ownership structure before the "core lot" thesis plays out.
+
+CHECKED: screener/card data, moneycontrol/business-standard/whalesbook/tradingview/marketscreener coverage on RBI divergence, promoter stake sale to TVS, merger talks, and director cessation.
+CHANGES MY MIND: a volume-confirmed VCP breakout forms AND the promoter stake sale/merger question resolves cleanly (stake sold, no adverse merger terms) — re-look then.
+
+### EDELWEISS
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Story is real, not a one-off: Q1FY27 PAT +83% YoY (₹122cr) driven by fee-based AM/wealth franchise — alternatives AUM +27% YoY, MF equity AUM +32% YoY, plus insurance/lending gains; EAAA (alternatives arm) targeting a Q3FY27 listing, a genuine value-unlock catalyst, not accounting noise.
+- No current governance red flags: promoters confirmed zero fresh pledge in FY26 (Apr-2026 filing); no active SEBI/RBI action found. The one skeleton — RBI's May-2024 business restrictions on ECL Finance/Edelweiss ARC for loan-evergreening via structured transactions — was fully lifted Dec-2024 after remediation, so it's historical, not live, but it's a real reminder this group has a track record of aggressive structuring worth remembering.
+- Sector tailwind: NBFC/wealth-AMC space is in favor (AUM growth, HNWI wealth flows), consistent with the earnings mix.
+- Card itself flags no volume-breakout trigger / no VCP base — the +1.27R edge is unconfirmed at this entry, RS percentile is only 59, and EDELWEISS isn't on this week's committee shortlist.
+
+RISKS (max 2 bullets):
+- Financing margin compressing (35%→25%) inside a still-complex, multi-entity lending/ARC structure — the same structure RBI flagged before.
+- Entering without a confirmed volume trigger risks buying a trend-following drift, not a validated breakout.
+
+CHECKED: WebSearch — Business Standard, BusinessToday, Investing.com, Investywise/scanx.trade, SEBI filings page, Trendlyne shareholding, general NBFC-sector outlook pieces.
+CHANGES MY MIND: A volume-confirmed VCP breakout trigger forming, or EAAA IPO timeline getting concrete regulatory approval — either would upgrade this to BUY/FULL PLAN.
+
+### ANTHEM
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- No pledge, no SEBI action, no auditor flag found. Promoter stake drop (74.7%→71.4%) is a clean block sale to marquee long-only funds (Societe Generale, Prudential HK, Ghisallo, ~₹1,275cr) at market price — a monetization event, not distress, and it explains the card's governance flag positively.
+- Story checks out: Q1 revenue miss (-23% YoY) was flagged by management as deferred deliveries, not lost demand — 60% of FY27 order book already secured, EBITDA margin held at 39.6%, and management explicitly guided Q2/Q3 "make-up" upswings. Margin-led profit isn't pure cost-cutting; it's mix/timing.
+- Real second-order tailwind, not generic sector talk: US BIOSECURE Act (law since Dec 2025) is pushing biopharma sponsors to migrate CDMO contracts off Chinese "companies of concern" — India's CRDMO sector (Anthem is 81.5% CRDMO revenue) is the direct beneficiary of that specific transmission channel.
+
+RISKS (max 2 bullets):
+- Card itself flags no VCP base / no volume-breakout trigger — this is a trend-follow entry, not the validated +1.27R setup; edge for this exact entry type is unproven, independent of the fundamental case.
+- Valuation is rich (P/E ~84) — priced for the recovery already; any slip in the guided Q2/Q3 catch-up hits hard, and this name isn't on this week's committee picks list.
+
+CHECKED: WebSearch — screener/scanx pledge disclosure, Q1 FY27 earnings call/transcript coverage (Investing.com, EquityBulls, Marketsmojo), promoter block-deal reporting (Upstox), BIOSECURE Act/India CDMO tailwind coverage.
+CHANGES MY MIND: Q2 FY27 print fails to show the guided delivery catch-up (revenue/order-book confirmation) — that would flip the "timing not demand" thesis to a real structural miss.
+
+
 ## Cards
 
 ```
