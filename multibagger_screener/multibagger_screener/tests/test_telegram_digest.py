@@ -150,3 +150,18 @@ def test_skipped_names_are_not_counted_as_triggers():
     assert "ACT TODAY — nothing tradeable" in text
     assert "Fired but NOT tradeable" in text
     assert "ARVIND — ATR stop would be 13.6% wide" in text
+
+
+def test_book_state_is_owner_only():
+    """The slot line names how many positions are open and how concentrated
+    the book is. It answers the other half of "is there anything to do today"
+    — whether there is room to do it — but it discloses the book, so it must
+    never reach the friends' feed."""
+    raw = RAW.replace("3 alert(s):",
+                      "Book: 29/12 slots \u00b7 heat 36.2% of capital at risk "
+                      "\u00b7 OVER the validated cap by 17\n\n3 alert(s):")
+    priv = ST.build_digest(raw, public=False)
+    pub = ST.build_digest(raw, public=True)
+    assert "Book: 29/12 slots" in priv, "the owner lost their slot state"
+    assert "Book:" not in pub
+    assert "29/12" not in pub

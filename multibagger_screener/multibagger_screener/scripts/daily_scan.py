@@ -864,6 +864,29 @@ def main() -> None:
     prev = load_state(args.state_file)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [f"# Daily scan — {now}", ""]
+
+    # THE BOOK, EVERY NIGHT (2026-08-19). Until now every alert was judged in
+    # isolation: the scan never said how many positions were already open, so
+    # a night that fired 20 signals read the same whether the book was empty or
+    # full. The backtested edge was measured on a 12-slot portfolio, so the
+    # slot count is part of the signal, not background.
+    try:
+        from scoring.portfolio import book_state, status_line
+        import csv as _csv
+        _pp = os.path.join(ROOT, "paper_positions.csv")
+        if os.path.exists(_pp):
+            with open(_pp, encoding="utf-8") as _f:
+                _rows = list(_csv.DictReader(_f))
+            _ind = {}
+            _u = os.path.join(ROOT, "universe.csv")
+            if os.path.exists(_u):
+                with open(_u, encoding="utf-8") as _f:
+                    _ind = {r["symbol"]: r.get("industry", "")
+                            for r in _csv.DictReader(_f)}
+            _st = book_state(_rows, _ind)
+            lines += [status_line(_st), ""]
+    except Exception as e:  # noqa: BLE001 — a book read must never kill the scan
+        print(f"portfolio status skipped ({str(e)[:80]})")
     cards: list[str] = []
     card_idx: dict[str, int] = {}   # sym -> index into cards (same-night dedupe)
     journal_rows: list[dict] = []

@@ -38,6 +38,7 @@ from config import RISK, BUY_ALERT_KINDS
 from data.cache import load_ohlcv
 from scoring.regime import market_risk_scale
 from position_manager import check_positions, append_ledger
+from scoring.portfolio import book_state, check_new_position
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PAPER_PATH = os.path.join(ROOT, "paper_positions.csv")
@@ -99,6 +100,22 @@ def open_from_verdicts() -> list[str]:
     pos = _load_paper()
     lines, skip_rows, new_rows = [], [], []
 
+    # PORTFOLIO LAYER (2026-08-19). The backtest that produced the validated
+    # edge ran with RISK.max_open_positions in force and the live book never
+    # read it — measured that day, this book held 29 open against a cap of 12,
+    # i.e. 36% of capital at risk where the validated design risked 15%.
+    # Existing positions are left alone: forcing the book into compliance would
+    # write fabricated exits into an append-only record. The cap applies to
+    # what opens from here.
+    industry_of = {}
+    try:
+        import csv as _csv
+        with open(os.path.join(ROOT, "universe.csv"), encoding="utf-8") as _f:
+            industry_of = {r["symbol"]: r.get("industry", "")
+                           for r in _csv.DictReader(_f)}
+    except OSError:
+        pass  # sector WARNINGS degrade to silence; the slot BLOCK still works
+
     def skip(vid, sym, why):
         skip_rows.append({"date": str(pd.Timestamp.now().date()), "symbol": sym,
                           "action": "SKIP", "lot": "entry", "shares": 0,
@@ -146,6 +163,18 @@ def open_from_verdicts() -> list[str]:
         if shares < 2:
             skip(vid, sym, "stop too wide to size (<2 shares at risk budget)")
             continue
+        # Slot check LAST, so only a position that would really fill consumes
+        # one, and counting new_rows keeps a single run from blowing past the
+        # cap in one night.
+        existing = pos.to_dict("records") if not pos.empty else []
+        book = book_state(existing + new_rows, industry_of)
+        decision = check_new_position(sym, book, industry=industry_of.get(sym))
+        if not decision.allowed:
+            skip(vid, sym, decision.reason)
+            continue
+        if decision.warnings:
+            lines.append(f"- PAPER NOTE {sym}: {'; '.join(decision.warnings)}")
+
         trading = shares // 2
         core = shares - trading
         new_rows.append({

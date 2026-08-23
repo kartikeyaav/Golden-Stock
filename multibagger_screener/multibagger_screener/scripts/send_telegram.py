@@ -271,6 +271,13 @@ def build_digest(raw: str, public: bool = False) -> str:
     rg = _regime_line()
     if rg:
         L.append(rg.replace("Regime: ", "Market: "))
+    # Slot state, OWNER ONLY: it discloses how many positions are open and in
+    # what. Carried because "is there anything to do today" is only half the
+    # question — the other half is whether there is room to do it.
+    if not public:
+        bm = re.search(r"^(Book: [^\n]+)$", raw, re.M)
+        if bm:
+            L.append(bm.group(1))
 
     # 1. the only question that matters, first and always present
     buys = [(s, e) for s, e in trig] + [(s, "") for s in act] + [(s, e) for s, e in eps]
