@@ -105,6 +105,30 @@ def push_health_only(reason: str) -> None:
         else f"health push FAILED: {(pp.stderr or '')[:120]}")
 
 
+def commit_blocked(res) -> str | None:
+    """Distinguish a genuinely EMPTY commit from a BLOCKED one.
+
+    `git commit` exits non-zero for both "nothing to commit, working tree
+    clean" and "cannot commit because you have unmerged files" — and the
+    wrappers treated every non-zero as the former, logging "nothing to commit?"
+    and exiting 0.
+
+    That cost four days (2026-08-20 to 08-23). A `git pull --rebase --autostash`
+    left state/themes.json unmerged in the index; every subsequent commit
+    aborted; the wrapper reported success each night; 15 real verdicts sat
+    unpushed while origin's analyst_reports stopped dead at 08-18. The research
+    ran perfectly. Only the last step failed, silently, in the one place where
+    silence and success look identical.
+
+    Returns None when the tree was simply clean, else a reason string."""
+    out = ((res.stdout or "") + (res.stderr or "")).lower()
+    if "nothing to commit" in out or "no changes added to commit" in out:
+        return None
+    if "unmerged" in out or "conflict" in out:
+        return "UNMERGED FILES in the index — resolve them; nothing can be pushed until then"
+    return (((res.stdout or "") + (res.stderr or "")).strip() or
+            f"git commit exited {res.returncode} with no output")
+
 def _verdict_rows() -> list[str]:
     p = os.path.join(ROOT, "journal", "analyst_verdicts.csv")
     if not os.path.exists(p):
@@ -168,7 +192,14 @@ def main() -> int:
              f"local analyst: {len(new_rows)} pooled verdict(s) "
              f"{datetime.now():%Y-%m-%d %H:%M} (subscription run)"], cwd=gr)
     if c.returncode != 0:
-        log(f"nothing to commit? {(c.stdout or c.stderr or '')[:120]}")
+        why = commit_blocked(c)
+        if why is None:
+            log("nothing to commit (tree already clean)")
+        else:
+            # loud, and a FAILING exit — the whole point is that this must not
+            # read as a quiet night ever again
+            log(f"COMMIT BLOCKED, verdicts NOT pushed: {why[:200]}")
+            return 1
     else:
         run(["git", "pull", "--rebase", "--autostash"], cwd=gr)
         pp = run(["git", "push", "origin", "master"], cwd=gr)
