@@ -65,9 +65,20 @@ jobs:
       - name: Restore data cache (read-only)
         uses: actions/cache/restore@v4
         with:
+          # THIS LIST MUST MATCH daily/weekly/penny EXACTLY, including
+          # nse_cache, which this job never reads. actions/cache derives a
+          # cache VERSION from the path list, so a cache saved with three
+          # paths cannot be restored by a job asking for two — it is a silent
+          # miss, and restore-keys then falls back to the newest cache that
+          # does match. Adding nse_cache to the three pipeline workflows on
+          # 2026-08-18 without adding it here orphaned this job on the last
+          # 2-path cache (2026-08-17), so every published dashboard was
+          # rendered from six-day-old prices while the scans themselves were
+          # perfectly current. Nothing failed; the site just quietly aged.
           path: |
             multibagger_screener/multibagger_screener/data_cache
             multibagger_screener/multibagger_screener/fundamentals_cache
+            multibagger_screener/multibagger_screener/nse_cache
           key: golden-data-pages-${{ github.run_id }}
           restore-keys: golden-data-
 
