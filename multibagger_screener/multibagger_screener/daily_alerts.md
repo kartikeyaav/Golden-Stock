@@ -41,6 +41,77 @@ Minor shifts: ACE EXTENDED->WATCH, ABSLAMC WATCH->BROKEN, ATHERENERG CONFIRMED->
 
 _News moves attention, never entries — trades stay technical._
 
+## AI analyst verdicts
+
+### VOLTAMP
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Story confirmed, not embellished: Q1 FY27 order backlog ₹1,200cr + ₹1,142cr booked since April = ₹2,342cr revenue visibility, real demand not one-off (Business Upturn, Angel One). Sector tailwind is genuine — India T&D capex ~₹9tn through 2032, transformer supply industry-wide struggling to keep pace with demand (lead times stretching).
+- No governance red flags found beyond what the card already shows: no pledge, auditor (CNK & Associates) unchanged, no litigation, no dilution, routine SEBI filings only (Reg 74(5) confirmation, Large Corporate exemption — both boilerplate, not adverse).
+- But EBITDA margin compressed 238bps YoY (17.15%→14.77%) even as revenue grew 28% — earnings inflection is top-line-driven, not margin-driven, consistent with the card's own deceleration flag (TTM -3% vs 3yr 14%).
+
+RISKS (max 2 bullets):
+- Second-order supply risk: Siemens Energy India committed ₹2,060cr for a new transformer plant (+30,000 MVA capacity, Feb 2026), and POWERINDIA/T&R are also expanding — incoming capacity from larger competitors could compress industry realizations over 12-18 months just as Voltamp adds its own 2,300 MVA.
+- Entry is technically extended: +14.2% / 4.41 ATR above 50-DMA, PEG 2.48 (full price) — chasing here has poor risk/reward regardless of story quality.
+
+CHECKED: WebSearch — company filings/press via Business Upturn, Angel One, Cofacto, ScanX; sector data via TradingView/Open magazine on T&D capex and competitor capacity adds.
+CHANGES MY MIND: A pullback to/near the 30% base (price closer to 30-wk MA) with order momentum intact would turn this into a clean BUY at the mechanical plan.
+
+### BALAMINES
+VERDICT: SKIP
+CONVICTION: LOW
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Card's governance score (0.7) assumed pledge was an unverified zero because screener.in only reports pledge when material — it wasn't zero. Independent filings show promoters pledged fresh shares to HDFC Bank in Jan 2026 (Ande Srinivas Reddy; Dundurapu Ram Reddy & Vandana Reddy pledged 6.25L shares, 1.93% of capital), and secondary sources put cumulative promoter pledge near ~18% of total shareholding — material, not trivial.
+- That pledge sits on top of the card's own flag: debt +129% over 3 years. Promoters pledging stock for "credit facilities" while balance-sheet leverage is rising fast is the classic pledge+leverage combo the standing orders treat as an automatic veto — even though the mechanical card's own pledge check didn't catch it because the source is silent, not clean.
+- The earnings story itself is genuinely real (Q1 FY27 PAT +114% YoY, revenue +27%, DME plant commissioned, NMM/ACN and ₹750cr Balaji Speciality expansions underway) and sector tailwinds exist (anti-dumping duties on Chinese ethylenediamine/acetonitrile imports) — this is not a fundamentals problem, it's a governance/leverage problem.
+
+RISKS (max 2 bullets):
+- Could not obtain an authoritative, current total-pledge percentage from an NSE/BSE shareholding filing directly — the 18% figure is triangulated from secondary sources, not a primary filing; if it's stale or overstated the veto case weakens.
+- If pledges are unwound and debt growth decelerates next quarter, the earnings/capacity story alone would support re-rating the alert.
+
+CHECKED: Web search across scanx.trade pledge disclosures, Indian Chemical News/sahi.com Q1 FY27 results, screener/marketsmojo shareholding data, echemi/chemxpert anti-dumping notifications.
+CHANGES MY MIND: A confirmed NSE filing showing pledge <5-8% of promoter holding (not ~18%) and debt growth flattening — that would clear the veto and make this a genuine buy on the earnings inflection.
+
+### PARAS
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story confirmed: Q1 FY27 (reported Aug 7) revenue +37% YoY, PAT +45% YoY, driven by Optics/Optronics segment — matches card's "accelerating earnings" claim; no one-off, genuine order execution.
+- Second-order thesis from the committee holds up: BEL's order book remains steady at ₹72-75k cr with ~₹27-30k cr FY26 fresh inflows guided, supporting continued subcontract cascade to electro-optics vendors like Paras.
+- Governance clean on fresh check: FY26 annual disclosure (filed by promoter Sharad Shah, Apr-2026) confirms zero promoter encumbrance; no SEBI action, no auditor flag found — no veto triggered.
+
+RISKS (max 2 bullets):
+- Earnings quality wobble the card's score doesn't fully capture: PAT margin fell 6.5pp QoQ (22.7%→16.2%), and the stock actually dropped 3% on results day on margin/valuation concerns — market is already skeptical of the trajectory, not just the multiple.
+- Stacked froth: P/E 131, +80% debt growth over 3yrs (unverified driver — no specific capex/receivables news found), and the theme is the most crowded of 18 per the committee — three compounding reasons to not go full size into a 52-week-high entry.
+
+CHECKED: WebSearch — Q1 FY27 results/concall coverage (upstox, business-standard, DSIJ, whalesbook), BSE/NSE pledge disclosure filings, BEL order-book/capex news.
+CHANGES MY MIND: A Q2 print that fails to arrest the margin slide (sub-15% PAT margin) would flip this to SKIP; a fresh large BEL/DRDO order would flip conviction to HIGH.
+
+### INOXINDIA
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE (until pivot 2010 triggers — card itself flags this as "not yet a backtested entry")
+
+WHY (max 3 bullets):
+- No red flags found: auditor (SRBC & Co) issued unmodified opinion for FY26; promoter group (Kusum Mittal) filed nil-encumbrance for FY26; only promoter-side event is a share transmission after a family demise (Feb 2026), not a sale/pledge — governance clean, corroborates card's unflagged pledge status.
+- Order-book story is real, not a one-off: Q1FY27 order book hit record ₹1,686cr (+₹532cr fresh inflow), exports now >₹1,140cr, with repeat orders from a global space customer plus new CERN/ITER cryogenic-module wins — genuine capacity/demand driver, not accounting noise.
+- The card's "earnings decelerating" flag is explained, not deepened: PAT dip (-5% YoY) traces to an ₹8.5cr one-off US arbitration penalty plus Savli facility ramp-up costs, not demand weakness — EBITDA still grew and revenue/order-book both accelerated.
+
+RISKS (max 2 bullets):
+- Debt: card's "+800% over 3yr" concern is partly working-capital (current borrowings ₹34.4cr→₹69.5cr) tied to order execution scale-up, but conflicting sources also cite "zero net debt" — could not fully reconcile leverage picture; watch next balance sheet.
+- Valuation already rich (P/E 68) with no cross-industry theme tailwind scored by the machine — a name-specific bet, not a sector rerate.
+
+CHECKED: WebSearch — INOX India promoter/pledge/auditor filings, Q1FY27 concall/order-book coverage, FY26 debt/capex commentary, arbitration-expense detail.
+CHANGES MY MIND: A daily close above the 2010 pivot on expanding volume — then this becomes a BUY at the mechanical plan (full size); absent that, stand aside.
+
+
 ## Cards
 
 ```
