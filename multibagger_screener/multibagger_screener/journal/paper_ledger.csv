@@ -45,3 +45,14 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-08-19,USHAMART,BUY,entry,299,500.15,,[USHAMART@2026-08-18 21:34] analyst BUY/MEDIUM/FULL PLAN
 2026-08-21,HSCL,SELL,all,71,665.99,-6177.71,stop hit
 2026-08-21,WELCORP,SELL,partial,12,2065.48,4721.7,partial at 2.5R
+2026-08-24,GOKULAGRO,SKIP,entry,0,,,[GOKULAGRO@2026-08-20 21:32] already open in paper book
+2026-08-24,SAIL,SKIP,entry,0,,,[SAIL@2026-08-20 21:32] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,SANSERA,SKIP,entry,0,,,[SANSERA@2026-08-20 21:33] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,UJJIVANSFB,SKIP,entry,0,,,[UJJIVANSFB@2026-08-20 21:34] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,VIYASH,SKIP,entry,0,,,[VIYASH@2026-08-21 21:32] already open in paper book
+2026-08-24,CAPLIPOINT,SKIP,entry,0,,,[CAPLIPOINT@2026-08-21 21:35] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,MEDANTA,SKIP,entry,0,,,[MEDANTA@2026-08-23 12:41] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,YATHARTH,SKIP,entry,0,,,[YATHARTH@2026-08-23 12:42] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,IDEA,SKIP,entry,0,,,[IDEA@2026-08-23 12:43] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,ANTHEM,SKIP,entry,0,,,[ANTHEM@2026-08-23 23:24] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-08-24,JAMNAAUTO,SELL,all,428,119.13,-6248.8,stop hit
