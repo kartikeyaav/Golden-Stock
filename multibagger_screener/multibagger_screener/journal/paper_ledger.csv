@@ -56,3 +56,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-08-24,IDEA,SKIP,entry,0,,,[IDEA@2026-08-23 12:43] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
 2026-08-24,ANTHEM,SKIP,entry,0,,,[ANTHEM@2026-08-23 23:24] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
 2026-08-24,JAMNAAUTO,SELL,all,428,119.13,-6248.8,stop hit
+2026-08-25,PARAS,SKIP,entry,0,,,[PARAS@2026-08-24 21:35] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
+2026-08-25,AVL,SELL,all,185,576.29,-6227.1,stop hit

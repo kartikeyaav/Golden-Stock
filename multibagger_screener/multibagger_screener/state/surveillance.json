@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-24 14:03",
+ "generated": "2026-08-25 14:03",
  "n_checked": 650,
- "n_flagged": 60,
- "asm_total": 207,
+ "n_flagged": 61,
+ "asm_total": 211,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -203,6 +203,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "WELCORP": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "WOCKPHARMA": {
    "flags": [
