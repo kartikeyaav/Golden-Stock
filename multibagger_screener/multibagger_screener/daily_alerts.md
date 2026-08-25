@@ -37,6 +37,79 @@ Minor shifts: ANGELONE BROKEN->WATCH, CCL BROKEN->WATCH, CARBORUNIV CONFIRMED->W
 
 _News moves attention, never entries — trades stay technical._
 
+## AI analyst verdicts
+
+### MTARTECH
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Order book is real and accelerating — record ₹2,895cr Q1 inflow, book at ₹5,143–5,943cr, sales +130% YoY for 3 quarters; nuclear (Kaiga 5&6) and clean-energy fuel-cell orders are genuine drivers, not one-offs. Sector (defence/aerospace/nuclear) is in favor (heat 84/100).
+- No SEBI action, no auditor issue, no active pledge found — promoter stake dip (31.4%→~29–30%) traces to small open-market sales by two promoter-group members plus historical pledge releases (shares coming OFF pledge, not going on) — not a veto-worthy flag.
+- Second-order risk the card's keyword scan missed entirely: Bloom Energy is MTAR's largest customer (~55-65% of revenue). Bloom crashed ~38% and MTAR hit 6 lower circuits in 7 sessions in July on a Crusoe Energy/Oracle data-centre delay scare. MTAR denied any cancellation; Bloom has since recovered hard (+143% YTD, expanded Oracle deal, new Nebius/Brookfield financing) — the acute scare cooled, but the structural single-customer dependency on US AI-datacentre capex sentiment remains.
+
+RISKS:
+- MTAR is effectively a levered proxy on Bloom Energy/AI-datacentre capex, not a pure India defence/nuclear play — repeat violent drawdowns on Bloom-specific news are likely, unrelated to MTAR's own execution.
+- Valuation is extreme (P/E ~159–300x vs BEL ~53x, HAL ~35x) with debt +164% over 3y — zero room for a guidance miss.
+
+CHECKED: Business Standard, Outlook Business, Whalesbook, BusinessToday, CNBC/Yahoo Finance (Bloom Energy), scanx.trade pledge filings.
+
+CHANGES MY MIND: Confirmed volume breakout above 7148 pivot with clean Bloom Energy/Oracle news → upgrade to FULL PLAN; any fresh Bloom Energy capex-delay/cancellation news → SKIP.
+
+### KPRMILL
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- No red flags found: promoter group (P. Nataraj, K.R. Parvathi, KPR Developers) filed FY26 "zero encumbrance" declarations under SEBI Reg 31(4); no SEBI action, auditor (BSR & Co) flag, or governance news found. Confirms card's pledge-clean read.
+- Story checks out and has a real driver, not a one-off: Q1 FY27 PAT +21% YoY on flat-ish sales, led by garment segment ramp + product mix, backed by a fresh ₹1,225 Cr expansion approved Aug 10. Sector tailwind is real and specific — the Feb 2026 US-India deal cut the US tariff on Indian textiles to 18%, undercutting Bangladesh (~20%) and China (30-35%), a genuine transmission channel, not generic sector noise.
+- Second-order input-cost relief: cotton yarn prices ran up through H1 2026 on export demand, but government's June–Oct 2026 cotton import-duty holiday has started pulling raw cotton down (~₹67k→₹63k/candy) — margin tailwind, not headwind.
+
+RISKS (max 2 bullets):
+- Card itself flags this as "awaiting trigger" — price hasn't cleared the 1167.5 VCP pivot; buying here front-runs the mechanical signal.
+- Valuation is stretched (PEG ~21) — MOFSL published a post-earnings note saying good fundamentals are already priced in, capping near-term upside even if the story plays out.
+
+CHECKED: SEBI takeover-reg promoter filings (indiaipo.in/scanx), Q1 FY27 results coverage (BusinessToday/Whalesbook/Univest), fibre2fashion cotton pricing, US-India/US-Bangladesh tariff deal coverage (Feb 2026).
+
+CHANGES MY MIND: A confirmed volume breakout close above 1167.5 — trigger it and the earlier "no red flags, real driver" case converts this straight to BUY at the plan's mechanical size.
+
+### ATHERENERG
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Story is real, not a one-off: Q1 FY27 was Ather's first-ever EBITDA-positive quarter (₹9.45cr, margin -16%→+1% YoY), loss narrowed 71%, revenue +89%, driven by demand outstripping supply (dealer inventory down to 3 days) plus price/mix/cost discipline — a genuine inflection, confirmed via Business Standard/Outlook Business earnings coverage, not screener noise.
+- Governance clean: promoters confirmed zero encumbrance for FY26 (Apr-26 exchange filing), Deloitte reappointed routinely at AGM — no pledge, no auditor red flag. No veto triggered.
+- ₹1,200cr preferential issue is backed by existing strategic investor Hero MotoCorp (₹960cr) doubling down + India-Japan Fund, not a distress raise; ₹625cr earmarked for debt paydown, rest for the AURIC capacity expansion (+5 lakh units) that's the actual bull case.
+
+RISKS (max 2 bullets):
+- Second-order: China rare-earth magnet export curbs have already forced Ather to defer ₹26.25cr of PM E-DRIVE incentive claims across 52,000 vehicles — an input-supply chokepoint that hits the whole e2W industry's capacity ramp, not just Ather-specific.
+- Competitive share is eroding relative to peers, not improving — TVS just overtook Ola for cumulative e2W leadership and Ather sits behind TVS/Bajaj/Hero in volume; still loss-making TTM (no P/E), and the card's own pivot (1580) hasn't triggered yet.
+
+CHECKED: NSE/exchange filings (promoter encumbrance, AGM/EGM notices), Business Standard, Outlook Business, Yahoo Finance earnings-call summaries, Dealroom/Indian Retailer on the preferential issue, Autocar/Business Standard on e2W market share.
+CHANGES MY MIND: A volume breakout close above 1580 confirms the VCP trigger — that's the only missing piece; story and governance already check out.
+
+### RRKABEL
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection is real and broad-based, not one-off: Q1FY27 revenue +54%/PAT +129% driven by 17% volume growth (cables +25%), EBITDA margin +205bps to 9%, and FMEG hitting breakeven — demand-led, not a base-effect or one-time item.
+- No governance red flags found: promoters formally confirmed zero share encumbrance for FY26, auditors (BSR & Co, PwC) reappointed routinely, no SEBI action, litigation, or dilution news surfaced.
+- Sector tailwind is real and specific: RR Kabel is running a ₹1,200 Cr capex to add EHV (220kV) capacity on >90% utilization, riding the same data-center/grid capex wave lifting Polycab/KEI — this is a genuine capacity-cycle story, not generic sector chatter.
+
+RISKS (max 2 bullets):
+- Card's own technical read is the weak link: no VCP/volume-breakout trigger (trend-following entry only, +1.27R edge unproven) and RS blend "improving: False" despite high percentile, plus DII trimming (-2pp) against FII buying — legs disagree.
+- New capacity entrants (Adani, UTCEM) into wires & cables raise medium-term oversupply/price-competition risk industry-wide, even though RR Kabel's own numbers are strong today; one valuation note flagged growth priced generously (PEG already fair-to-full at 1.38).
+
+CHECKED: WebSearch — BSE filings/scanx on promoter encumbrance & auditors, Q1FY27 results coverage (Moneycontrol/NDTV/Investing.com/Yahoo), copper/cable-industry margin reports, Polycab/KEI/Havells capacity & competitive coverage (BusinessToday/Whalesbook).
+CHANGES MY MIND: Any promoter pledge disclosure, an auditor qualification, or a quarter where volume growth reverts to industry's "subdued" norm would flip this to SKIP.
+
+
 ## Cards
 
 ```
