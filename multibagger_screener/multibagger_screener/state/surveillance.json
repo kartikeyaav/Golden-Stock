@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-25 14:03",
+ "generated": "2026-08-26 14:06",
  "n_checked": 650,
- "n_flagged": 61,
- "asm_total": 211,
+ "n_flagged": 63,
+ "asm_total": 217,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -341,6 +341,18 @@
     {
      "code": "ASM",
      "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "BALUFORGE": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],
@@ -733,6 +745,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "SHILPAMED": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "STLTECH": {
    "flags": [
