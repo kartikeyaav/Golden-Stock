@@ -1,10 +1,10 @@
 {
- "generated": "2026-08-26 14:06",
+ "generated": "2026-08-27 23:01",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 0.0,
  "deadline": "2026-12-31",
- "days_to_deadline": 126,
+ "days_to_deadline": 125,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -152,38 +152,38 @@
     "ret_pct": 3.06,
     "first": 67.34,
     "last": 69.4,
-    "from": "2026-05-27",
+    "from": "2026-05-28",
     "to": "2026-08-26",
-    "sessions": 66
+    "sessions": 65
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": 1.26,
-    "first": 23907.15,
+    "ret_pct": 2.8,
+    "first": 23547.75,
     "last": 24207.75,
-    "from": "2026-05-27",
+    "from": "2026-05-29",
     "to": "2026-08-26",
-    "sessions": 64
+    "sessions": 63
    }
   },
   "12m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": 13.66,
-    "first": 61.06,
+    "ret_pct": 15.0,
+    "first": 60.35,
     "last": 69.4,
-    "from": "2025-08-26",
+    "from": "2025-08-28",
     "to": "2026-08-26",
-    "sessions": 250
+    "sessions": 249
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -2.04,
-    "first": 24712.05,
+    "ret_pct": -1.2,
+    "first": 24500.9,
     "last": 24207.75,
-    "from": "2025-08-26",
+    "from": "2025-08-28",
     "to": "2026-08-26",
-    "sessions": 247
+    "sessions": 246
    }
   }
  },

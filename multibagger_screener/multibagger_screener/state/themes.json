@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-26T14:06:39",
+ "generated": "2026-08-27T23:01:28",
  "themes": [
   {
    "key": "defelec",
@@ -9,8 +9,8 @@
    "breadth": 57.1,
    "rs_med": 95.3,
    "ret3m": 12.5,
-   "news": 5.07,
-   "news_per_name": 0.724,
+   "news": 4.86,
+   "news_per_name": 0.694,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -28,8 +28,8 @@
    "breadth": 53.8,
    "rs_med": 95.1,
    "ret3m": 12.5,
-   "news": 8.08,
-   "news_per_name": 0.622,
+   "news": 7.76,
+   "news_per_name": 0.597,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -50,8 +50,8 @@
    "breadth": 37.5,
    "rs_med": 81.3,
    "ret3m": 28.3,
-   "news": 1.13,
-   "news_per_name": 0.142,
+   "news": 1.06,
+   "news_per_name": 0.133,
    "thin": false,
    "confirmed": [
     "AVALON",
@@ -68,8 +68,8 @@
    "breadth": 50.0,
    "rs_med": 97.6,
    "ret3m": 9.3,
-   "news": 3.2,
-   "news_per_name": 0.4,
+   "news": 3.02,
+   "news_per_name": 0.378,
    "thin": false,
    "confirmed": [
     "STLTECH",
@@ -87,8 +87,8 @@
    "breadth": 25.0,
    "rs_med": 77.1,
    "ret3m": 12.3,
-   "news": 3.46,
-   "news_per_name": 0.216,
+   "news": 3.25,
+   "news_per_name": 0.203,
    "thin": false,
    "confirmed": [
     "ANANDRATHI",
@@ -106,8 +106,8 @@
    "breadth": 57.1,
    "rs_med": 90.1,
    "ret3m": 7.8,
-   "news": 1.5,
-   "news_per_name": 0.107,
+   "news": 1.45,
+   "news_per_name": 0.103,
    "thin": false,
    "confirmed": [
     "HFCL",
@@ -129,8 +129,8 @@
    "breadth": 20.0,
    "rs_med": 78.0,
    "ret3m": 10.7,
-   "news": 2.78,
-   "news_per_name": 0.278,
+   "news": 2.62,
+   "news_per_name": 0.262,
    "thin": false,
    "confirmed": [
     "LUMAXTECH",
@@ -146,8 +146,8 @@
    "breadth": 41.7,
    "rs_med": 72.8,
    "ret3m": 8.7,
-   "news": 3.01,
-   "news_per_name": 0.251,
+   "news": 2.84,
+   "news_per_name": 0.236,
    "thin": false,
    "confirmed": [
     "VIJAYA",
@@ -166,8 +166,8 @@
    "breadth": 41.7,
    "rs_med": 89.6,
    "ret3m": 9.1,
-   "news": 1.73,
-   "news_per_name": 0.144,
+   "news": 1.64,
+   "news_per_name": 0.136,
    "thin": false,
    "confirmed": [
     "PGIL",
@@ -186,8 +186,8 @@
    "breadth": 36.4,
    "rs_med": 74.6,
    "ret3m": 9.6,
-   "news": 0.86,
-   "news_per_name": 0.078,
+   "news": 0.82,
+   "news_per_name": 0.075,
    "thin": false,
    "confirmed": [
     "NAVINFLUOR",
@@ -205,8 +205,8 @@
    "breadth": 0.0,
    "rs_med": 93.9,
    "ret3m": 9.8,
-   "news": 2.69,
-   "news_per_name": 0.245,
+   "news": 2.53,
+   "news_per_name": 0.23,
    "thin": false,
    "confirmed": [],
    "heat": 37.0
@@ -219,8 +219,8 @@
    "breadth": 33.3,
    "rs_med": 56.8,
    "ret3m": 1.1,
-   "news": 0.54,
-   "news_per_name": 0.09,
+   "news": 0.52,
+   "news_per_name": 0.086,
    "thin": false,
    "confirmed": [
     "WABAG",
@@ -236,8 +236,8 @@
    "breadth": 20.0,
    "rs_med": 62.2,
    "ret3m": -0.9,
-   "news": 2.3,
-   "news_per_name": 0.459,
+   "news": 2.21,
+   "news_per_name": 0.442,
    "thin": false,
    "confirmed": [
     "GPPL"
@@ -252,8 +252,8 @@
    "breadth": 7.1,
    "rs_med": 82.8,
    "ret3m": -10.0,
-   "news": 11.34,
-   "news_per_name": 0.81,
+   "news": 10.83,
+   "news_per_name": 0.773,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
@@ -268,8 +268,8 @@
    "breadth": 9.5,
    "rs_med": 73.7,
    "ret3m": -2.9,
-   "news": 4.48,
-   "news_per_name": 0.213,
+   "news": 4.23,
+   "news_per_name": 0.202,
    "thin": false,
    "confirmed": [
     "AZAD",
@@ -285,8 +285,8 @@
    "breadth": 0.0,
    "rs_med": null,
    "ret3m": -6.5,
-   "news": 5.85,
-   "news_per_name": 0.585,
+   "news": 5.53,
+   "news_per_name": 0.553,
    "thin": false,
    "confirmed": [],
    "heat": 15.0
@@ -313,8 +313,8 @@
    "breadth": 50.0,
    "rs_med": 87.3,
    "ret3m": 9.5,
-   "news": 2.26,
-   "news_per_name": 1.131,
+   "news": 2.19,
+   "news_per_name": 1.094,
    "thin": true,
    "confirmed": [
     "MTARTECH"
