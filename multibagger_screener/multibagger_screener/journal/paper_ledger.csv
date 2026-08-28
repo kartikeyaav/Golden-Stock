@@ -59,3 +59,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-08-25,PARAS,SKIP,entry,0,,,[PARAS@2026-08-24 21:35] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
 2026-08-25,AVL,SELL,all,185,576.29,-6227.1,stop hit
 2026-08-26,RRKABEL,SKIP,entry,0,,,[RRKABEL@2026-08-25 21:35] slot limit 12 reached (27 open) — the backtested edge was measured with this cap in force
+2026-08-28,TDPOWERSYS,SKIP,entry,0,,,[TDPOWERSYS@2026-08-28 21:45] alert had no mechanical stop (risk engine skipped the plan)
