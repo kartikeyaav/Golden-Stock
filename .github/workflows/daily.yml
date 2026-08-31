@@ -71,9 +71,21 @@ jobs:
             echo "manual run — scanning regardless"; echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
           today=$(date -u +%F)
-          # a missing/unreadable state file must SCAN, never skip: absent data
-          # here would otherwise buy the job a night off
-          have=$(python -c "import json,sys;print(json.load(open('state/tags_state.json')).get('date',''))" 2>/dev/null || echo "")
+          # Read with grep, NOT with an interpreter. This job deliberately has
+          # no setup-python step, and bare `python` is not on PATH on GitHub's
+          # ubuntu runners (only `python3`) — so a `python -c` read here fails,
+          # the `|| echo ""` catches it, and the guard silently answers "run"
+          # every single time. It would have looked correct, passed review, and
+          # let all four crons do a full scan; the late ones would then rewrite
+          # daily_alerts.md empty. A guard that cannot say "skip" is decorative.
+          #
+          # save_state() writes {"date": "...", "tags": {...}} with date first,
+          # and the tag VALUES are bare stage names, so this key is unambiguous.
+          # A missing or unparseable file yields "" — which cannot equal a real
+          # date, so the job SCANS. Absent data must never buy a night off.
+          have=$(grep -o '"date"[[:space:]]*:[[:space:]]*"[0-9][0-9-]*"' \
+                   state/tags_state.json 2>/dev/null \
+                 | head -1 | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' || true)
           echo "tags_state date='$have'  today(UTC)='$today'"
           if [ "$have" = "$today" ]; then
             echo "today's scan already in the record — catch-up is a no-op"

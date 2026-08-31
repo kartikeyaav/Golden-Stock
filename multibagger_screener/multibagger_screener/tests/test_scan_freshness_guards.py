@@ -197,15 +197,46 @@ def test_daily_scan_is_gated_on_the_guard_job():
         "the scan job is not gated on the guard's verdict"
 
 
+def _guard_step(text: str, code_only: bool = False) -> str:
+    """The shell body of the guard's `check` step.
+
+    `code_only` drops `#` comment lines. Without it this file's own comment
+    explaining the no-interpreter rule trips the test that enforces it.
+    """
+    m = re.search(r"- id: check\n(.*?)(?=\n  \w|\n\n  \w|\Z)", text, re.S)
+    assert m, "guard's check step not found"
+    body = m.group(1)
+    if code_only:
+        body = "\n".join(ln for ln in body.splitlines()
+                         if not ln.strip().startswith("#"))
+    return body
+
+
 def test_daily_guard_fails_open():
     """A missing or unreadable tags_state.json must SCAN, never skip — absent
     data granting a night off is the exact bug this file exists for."""
     text = _wf("daily.yml")
     assert 'echo "run=true" >> "$GITHUB_OUTPUT"' in text
-    # the shell reads the stamp with `|| echo ""`, so an unreadable file gives
-    # an empty string, which cannot equal a real date -> the else branch runs
-    assert re.search(r'have=\$\(python .*\|\| echo ""\)', text), \
-        "the guard does not fall back to an empty stamp on a read failure"
+    body = _guard_step(text)
+    assert "|| true" in body, \
+        "the stamp read does not fall back to an empty string on a read failure"
+
+
+def test_daily_guard_needs_no_interpreter():
+    """The guard job has no setup-python step, and bare `python` is NOT on
+    PATH on GitHub's ubuntu runners — only `python3`. A `python -c` read there
+    fails, the fallback swallows it, and the guard answers "run" every time:
+    decorative, and the late catch-ups then blank the day's alerts.
+
+    Caught on 2026-08-31 in the first version of this very guard.
+    """
+    text = _wf("daily.yml")
+    body = _guard_step(text, code_only=True)
+    if not re.search(r"uses:\s*actions/setup-python", text.split("scan:")[0]):
+        assert not re.search(r"\bpython3?\b\s", body), (
+            "the guard shells out to python but its job never installs one — "
+            "add setup-python to the guard job or read the stamp without an "
+            "interpreter")
 
 
 def test_manual_dispatch_always_scans():
