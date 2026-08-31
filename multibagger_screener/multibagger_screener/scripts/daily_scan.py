@@ -796,6 +796,32 @@ def main() -> None:
     except Exception as e:  # noqa: BLE001 — context must never kill the scan
         feed_problems.append(f"news memory failed ({str(e)[:60]})")
 
+    # policy/macro radar over the SAME archive (2026-08-28). Reads the 86% of
+    # swept headlines that name no company — Cabinet decisions, PLI norms,
+    # duty changes, public tenders — and turns them into a per-theme pressure
+    # that phase_c folds into the catalyst dimension, bounded by
+    # macro_radar.MACRO_CAP. Must run AFTER the sweep (it reads tonight's
+    # archive) and BEFORE any enrichment (which reads its output). Derived and
+    # fully rebuildable; gates nothing.
+    try:
+        from data.macro_radar import scan_macro
+        _mr = scan_macro(persist=not DRY_RUN)
+        if _mr.get("ok"):
+            _hot = sorted(((v["pressure"], k) for k, v in _mr["themes"].items()
+                           if v["n_scored"]), reverse=True)[:3]
+            print(f"policy radar: {_mr['policy_hits']} government/regulatory "
+                  f"events in {_mr['headlines_read']} headlines -> "
+                  f"{_mr['stories']} stories"
+                  + (f"; strongest: "
+                     + ", ".join(f"{k} {p:+.2f}" for p, k in _hot) if _hot else
+                     "; no scored policy events"), flush=True)
+        else:
+            # NOT a silent zero: "no policy information" and "no policy
+            # tailwind" are different facts and the cards say which.
+            feed_problems.append(f"policy radar not built ({_mr.get('reason')})")
+    except Exception as e:  # noqa: BLE001 — context must never kill the scan
+        feed_problems.append(f"policy radar failed ({str(e)[:60]})")
+
     bench = load_ohlcv("NIFTY50")
     today_tags: dict[str, str] = {}
     tag_results: dict[str, dict] = {}
@@ -1157,6 +1183,15 @@ def main() -> None:
                   flush=True)
     except Exception as e:  # noqa: BLE001 — discovery must never kill the scan
         feed_problems.append(f"news radar failed ({str(e)[:60]})")
+
+    # policy radar: the same night's government/regulatory decisions, and
+    # which watched names sit in the themes they moved. Built earlier in the
+    # scan (right after the feed sweep); this only renders it.
+    try:
+        from data.macro_radar import load as load_macro, macro_md_section
+        lines += macro_md_section(load_macro(), universe_rows=universe.to_dict("records"))
+    except Exception as e:  # noqa: BLE001 — discovery must never kill the scan
+        feed_problems.append(f"policy radar section failed ({str(e)[:60]})")
 
     # position management: track every open position against ITS OWN plan
     pos_alerts, pos_journal = check_positions()

@@ -1857,6 +1857,102 @@ frozen-record family as §3T(4), this time in the merge rather than the store.
 
 ---
 
+## 3V. The policy radar — reading the 86% of the news that names no company (2026-08-28)
+
+User request: "we are identifying stock based news... I want to check the top
+news and global or Indian trends based on government or trends in general and
+identify the stocks which will have an impact and impart that in the news
+catalyst score."
+
+**The gap was real and bigger than expected.** Every news path in this system
+required a headline to NAME a company: Google News is queried per company,
+`news_sources.archived_for` matches the market archive by a company's
+distinctive name tokens, and `news_radar` reads NSE filings, which are
+first-party by construction. So the system read what was said ABOUT a company
+and never what was decided about the WORLD it sells into. Measured on the
+archive already on disk (7,937 headlines / 44 days):
+
+```
+headlines naming >=1 universe company :  1,107  (13.9%)
+headlines naming NO universe company  :  6,830  (86.1%)   <- read by nothing
+```
+
+Sitting unread in that 86%: "Cabinet approves Rs 1.27 trillion for
+Semiconductor Mission 2.0", "Gujarat unveils shipbuilding policy... targets
+Rs 27,000-crore investments", "NTPC-NPCIL JV floats Rs 28,000 crore tender for
+nuclear power plant", "Govt approves 31 proposals worth Rs 7,877 crore under
+electronics component scheme". Three of the ten swept feeds are ECONOMY
+sections — the data was already being fetched, archived and committed. It was
+being thrown away at the symbol-matching join.
+
+**The measurement inverted the obvious design.** Counting macro headlines per
+theme over the same 44 days gave finfra 172 hits (SEBI/IPO/mutual-fund
+boilerplate) and shipbuilding 139 ("port", "supply chain" in generic trade
+news), against semis 5, nuclear 2, ems 1 — where the real policy events live.
+Volume-weighting would have handed the biggest uplift to the noisiest themes
+and the smallest to the ones that mattered: the same error §3K's phase_c
+rewrite removed from company news. So `data/macro_radar.py` scores
+**materiality, never volume**, and is built to be rare: an ACTOR (a body that
+can decide something, incl. public-capital deployers like NTPC/NPCIL/DRDO)
+must take an ACTION (decide it) on one of the 17 mapped themes. On the live
+archive that is **18 policy events out of 7,935 headlines**.
+
+- **Intent is not action.** "Govt weighs / plans / mulls / may" is demoted to
+  attention and contributes ZERO — same reasoning that puts "partnership" at
+  0.2 in `NEWSQ.event_materiality`. A headline pulling both ways ("Govt eases
+  battery PLI norms... subsidies lowered") resolves to `attn`, not to a
+  guessed direction.
+- **One decision, one story.** Retellings collapse; syndication breadth is
+  displayed and never summed.
+- **Absent data grants nothing.** No radar / no theme membership / no policy
+  news on a name's themes -> delta exactly 0.0 with a note saying WHICH, never
+  a middle value. A radar older than `MAX_AGE_DAYS` (4) is treated as absent,
+  because the decay was applied at BUILD time and a frozen store would keep
+  asserting a tailwind that has since faded (the §3T(4) family).
+- **Bounded and reporting-only.** The overlay moves the CATALYST dimension by
+  at most `MACRO_CAP` = 0.12, and moves nothing else. It is deliberately NOT
+  also fed into `theme_tailwind`: one event moving two of the eight dimensions
+  would be double-counting dressed up as corroboration. **It gates, ranks and
+  sizes nothing — entries stay 100% technical.** `scoring/themes.py` records
+  that sector heat was tested as an entry filter and REJECTED (+0.22R at a 40%
+  gate vs +1.27R ungated); this must never become that filter by the back door.
+- Every moved number carries its headline: the dimension note gains
+  "+0.042 from policy tailwind on railways (pressure +0.35 from 3 events):
+  Railway Ministry approves...", and the card blob carries `macro_evidence`.
+
+**Two bugs found in the SHARED amount parser** (`news_nlp.extract_amount_cr`),
+which affect company news too, not just this module: "Rs 1.14 lakh crore" read
+as "1.14 lakh" returned **0.0114 crore for 1,14,000 crore** — a ten-million-fold
+understatement in the unit Indian policy and large-order headlines are most
+often written in — and "trillion" was not a unit at all, so the Rs 1.27
+trillion Semicon Mission parsed as no figure. Both fixed, with the pre-existing
+cases held.
+
+**Live tonight:** 93 of 650 universe names receive a non-zero policy delta
+(+0.014 to +0.042 catalyst units), across railways, ev, ems, semis, capex,
+shipbuilding, defence, renewables and hospital. Note the divergence this
+surfaces: Jupiter Wagons' theme_tailwind reads 15/100 (price-derived heat is
+cold) while the policy layer reads +0.35 — information the system did not
+previously have anywhere.
+
+**Wiring:** `daily_scan` builds it after the feed sweep and before any
+enrichment (ordering matters both ways); `run_shortlist` rebuilds it for the
+weekly, since the staleness guard would otherwise blank every weekly card;
+`state/macro_radar.json` is in daily.yml's commit list (a file that is not
+would silently not exist in production); a "## Policy radar" block goes to
+daily_alerts.md -> Telegram, naming the affected symbols. Guards in
+`tests/test_macro_radar.py` (13), built from the real archive including every
+false positive the first two runs produced — cyber-defence read as the defence
+sector, a "Defence stocks fire up!" price roundup, a statistic quoted to a
+ministry — and verified able to go red by zeroing MACRO_CAP.
+
+**Not built, deliberately:** the AI analyst and weekly committee briefings do
+not yet receive the policy radar. That is a genuine cross-feed (§3K's "layers
+collaborate" directive) and the obvious next step, but it is a separate change
+to what those layers are told, not part of the catalyst score.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -2171,6 +2267,16 @@ scripts/nightly_analyst_local.py  logon(+3m)/21:30-IST wrapper: pull -> pool gua
 data/news_radar.py            news-FIRST discovery: whitelist classifier over the NSE filings
                               archive, symbol matching, confluence/urgent ranking (3K)
 state/news_radar.json         radar output (dashboard panel + since-window baseline), committed nightly
+data/macro_radar.py           POLICY radar: the 86% of swept headlines that name no company —
+                              government/regulatory decisions -> per-theme pressure -> a bounded
+                              (MACRO_CAP 0.12) delta on the catalyst dimension. Whitelist, rare
+                              (18 hits in 7,935), materiality-weighted not volume-weighted (3V)
+state/macro_radar.json        policy radar output + the evidence headlines, committed nightly.
+                              Treated as ABSENT past MAX_AGE_DAYS (4) — decay is applied at build
+                              time, so a frozen file would keep asserting a faded tailwind
+tests/test_macro_radar.py     13 guards built from the real archive: recall on 7 live policy
+                              headlines, silence on 8 real false positives, intent-vs-action,
+                              absent-data-grants-nothing (with a positive control), MACRO_CAP bound
 logs/committee_local.log      local committee wrapper log
 scripts/weekly_refresh.py     full weekly chain
 scripts/build_dashboard.py    dashboard.html generator (RUN panel + command palette, terminal UI)

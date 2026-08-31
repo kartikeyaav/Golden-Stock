@@ -79,23 +79,28 @@ def _market_cap_cr(symbol: str) -> float | None:
 # ---------------------------------------------------------------------------
 
 def _theme_read(symbol: str, company: str, industry: str
-                ) -> tuple[float | None, list[str], str]:
-    """(score 0-1, theme names, note) from the nightly theme table.
+                ) -> tuple[float | None, list[str], str, list[str]]:
+    """(score 0-1, theme names, note, theme KEYS) from the nightly theme table.
 
     Heat is a RANK ACROSS THEMES, not an absolute — that decision is in
     scoring/themes.py and the reason is that the tape moves together, so
-    absolute heat compressed all 18 themes into a 33-41 band."""
+    absolute heat compressed all 18 themes into a 33-41 band.
+
+    The keys come back alongside the display names because data/macro_radar
+    is keyed on them, and re-deriving membership there would be a second
+    implementation of one decision — which is exactly how the filings layer
+    and the card layer drifted apart in July."""
     try:
         from scoring.themes import THEMES
     except Exception:                              # noqa: BLE001
         # NOT 0.3. "the theme map failed to load" is missing data, and giving
         # it the same number as "this name is in no theme" would state a fact
         # we do not have. None keeps the dimension out of coverage entirely.
-        return None, [], "theme map unavailable"
+        return None, [], "theme map unavailable", []
 
     mine = [t for t in THEMES if t.matches(symbol, company, industry)]
     if not mine:
-        return 0.3, [], "no cross-industry theme covers this name"
+        return 0.3, [], "no cross-industry theme covers this name", []
 
     heat: dict[str, float] = {}
     thin: set[str] = set()
@@ -109,11 +114,16 @@ def _theme_read(symbol: str, company: str, industry: str
         heat = {}
 
     names = [t.name for t in mine]
+    keys = [t.key for t in mine]
     if not heat:
         # membership is known, heat is not. Scoring 0.45 invented a middle
         # value out of a missing file; report membership and stay out of
         # the composite until the nightly theme table exists.
-        return None, names, f"in {', '.join(names)}; heat table not built yet"
+        #
+        # The KEYS still go back: the policy radar is keyed on membership
+        # alone and does not need the price-derived heat table, so a missing
+        # themes.json must not also blind the macro read.
+        return None, names, f"in {', '.join(names)}; heat table not built yet", keys
 
     best = max((heat.get(t.key, 0.0), t) for t in mine)
     hv, ht = best
@@ -124,7 +134,7 @@ def _theme_read(symbol: str, company: str, industry: str
     note = (f"{ht.name} ranks {hv:.0f}/100 on heat across the 18 themes"
             + (f"; also {', '.join(n for n in names if n != ht.name)}"
                if len(names) > 1 else ""))
-    return score, names, note
+    return score, names, note, keys
 
 
 # ---------------------------------------------------------------------------
@@ -247,9 +257,37 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
     if neg_flow > 0:
         catalyst = max(0.0, catalyst - min(0.35, 0.9 * neg_flow))
     catalyst += _abnormal_coverage(len(scoreable))
-    catalyst_score = round(max(0.0, min(1.0, catalyst)), 3)
 
-    theme_score, theme_names, theme_note = _theme_read(symbol, company_name, industry)
+    theme_score, theme_names, theme_note, theme_keys = _theme_read(
+        symbol, company_name, industry)
+
+    # ---- policy overlay: news that names no company but moves the ground ---
+    #
+    # Added 2026-08-28. Every other news path in this system requires a
+    # headline to NAME the company; 86% of the swept archive names no
+    # universe company at all and was read by nothing, and inside it sat
+    # things like "Cabinet approves Rs 1.27 trillion for Semiconductor
+    # Mission 2.0". See data/macro_radar.py for the measurement and for why
+    # this is materiality-weighted rather than volume-weighted.
+    #
+    # BOUNDED BY macro_radar.MACRO_CAP (0.12 catalyst units) and applied to
+    # the CATALYST dimension only. It is deliberately not also fed into
+    # theme_tailwind: one policy event moving two of the eight dimensions
+    # would be double-counting dressed up as corroboration.
+    #
+    # It changes a REPORTING number and nothing else. Entries stay 100%
+    # technical — scoring/themes.py records that sector heat was tested as an
+    # entry filter and rejected, and this must not become that filter by the
+    # back door.
+    try:
+        from data.macro_radar import macro_for_themes
+        macro = macro_for_themes(theme_keys)
+    except Exception as e:                         # noqa: BLE001 — overlay must never kill a scan
+        macro = {"delta": 0.0, "theme": "", "evidence": [], "pressure": 0.0,
+                 "note": f"policy radar unreadable ({type(e).__name__})"}
+    catalyst += macro["delta"]
+
+    catalyst_score = round(max(0.0, min(1.0, catalyst)), 3)
 
     # ---- the shapes the old contract promised (consumers depend on these) --
     events = sorted({r.event for r in scoreable if r.event})
@@ -278,6 +316,16 @@ def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
         "sent_neg": sum(1 for s in sents if s < 0),
         "catalyst_score": catalyst_score,
         "theme_score": theme_score,
+        # --- the policy overlay, kept as evidence rather than just a number.
+        # macro_delta is signed and already included in catalyst_score above;
+        # macro_evidence is the headline(s) it came from, so a reader can
+        # check the contribution by hand the way every other number here can
+        # be checked.
+        "macro_delta": macro["delta"],
+        "macro_theme": macro["theme"],
+        "macro_pressure": macro.get("pressure", 0.0),
+        "macro_note": macro["note"],
+        "macro_evidence": macro["evidence"],
         # --- new, for the card and the forward record ---
         "theme_note": theme_note,
         "stories": len({r.story for r in scoreable}),
@@ -552,6 +600,16 @@ def card_news_blob(e: dict) -> dict | None:
         "red_flags": e.get("red_flags", []),
         "top_story": e.get("top_story"), "dropped": e.get("dropped", {}),
         "theme_note": e.get("theme_note", ""),
+        # the policy overlay travels WITH its evidence: a card that showed the
+        # moved number without the headline behind it would be the one thing
+        # this layer is not allowed to be — an unexplained adjustment
+        "macro_delta": e.get("macro_delta", 0.0),
+        "macro_theme": e.get("macro_theme", ""),
+        "macro_note": e.get("macro_note", ""),
+        "macro_evidence": [{"t": x.get("title", ""), "d": x.get("date", "")[:10],
+                            "s": x.get("source", ""), "amt": x.get("amount_cr"),
+                            "ev": x.get("event", "")}
+                           for x in (e.get("macro_evidence") or [])[:3]],
         "gov_flags": e.get("gov_flags", []),
         "gov_window_days": e.get("gov_window_days"),
         "filings": [{"d": f.get("d", ""), "t": f.get("t", ""),
@@ -705,6 +763,12 @@ def enrichment_dimensions(e: dict) -> list[Dimension]:
                  f"events: {', '.join(e['events']) if e['events'] else 'none'}; "
                  f"sentiment {slabel} ({e.get('sent_pos', 0)}+/{e.get('sent_neg', 0)}-)"
                  f"{drop_note}")
+    # The policy contribution is named in the note whenever it is non-zero.
+    # A number that moved for a reason the reader cannot see is the thing
+    # this codebase keeps having to undo.
+    md = e.get("macro_delta") or 0.0
+    if md:
+        cat_notes += f"; {md:+.3f} from {e.get('macro_note', 'policy radar')}"
     dims = [Dimension("catalyst", e["catalyst_score"], cat_notes + " (news-based v0)")]
     # theme_score is None when the map or the heat table is unavailable.
     # Emitting a Dimension with score None would still be correct (assess()

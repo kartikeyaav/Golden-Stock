@@ -644,14 +644,28 @@ _NUM = r"(\d[\d,]*(?:\.\d+)?)"
 # "Rs.435-crore cable supply order" is how half the trade press writes it, so
 # the gap between number and unit may be a hyphen or nothing at all
 _GAP = r"[\s\-–—]*"
+# "Rs 1.14 lakh crore" must be matched BEFORE the bare "lakh" alternative can
+# claim the number: read as "1.14 lakh" it returned 0.0114 crore for a figure
+# that is 1,14,000 crore — a ten-million-fold understatement, and the unit
+# Indian policy and large-order headlines are most often written in. The
+# function takes the LARGEST match across all patterns, so listing it first is
+# belt-and-braces rather than the fix itself.
+#
+# "₹" survives as "?" in anything that came through news_sources._ascii()
+# (the archive is written ASCII for the cp1252 consoles this runs on), so the
+# currency marker has to accept it or every rupee figure in a swept headline
+# reads as an unprefixed number.
 _MAG_PATTERNS = [
-    (re.compile(rf"(?:rs\.?|inr|₹){_GAP}{_NUM}{_GAP}(crore|cr\b|lakh|billion|bn\b|million|mn\b)", re.I), "inr"),
+    (re.compile(rf"{_NUM}{_GAP}(lakh[\s\-]*crore)", re.I), "inr"),
+    (re.compile(rf"(?:rs\.?|inr|₹|\?){_GAP}{_NUM}{_GAP}(lakh[\s\-]*crore|crore|cr\b|lakh|trillion|billion|bn\b|million|mn\b)", re.I), "inr"),
     (re.compile(rf"{_NUM}{_GAP}(crore|cr\b|lakh){_GAP}(?:rupees)?", re.I), "inr"),
-    (re.compile(rf"(?:usd|us\$|\$){_GAP}{_NUM}{_GAP}(billion|bn\b|million|mn\b)", re.I), "usd"),
+    (re.compile(rf"(?:usd|us\$|\$){_GAP}{_NUM}{_GAP}(trillion|billion|bn\b|million|mn\b)", re.I), "usd"),
     (re.compile(rf"{_NUM}{_GAP}(million|billion)\s*rupees", re.I), "inr_plain"),
 ]
 _UNIT_CR = {"crore": 1.0, "cr": 1.0, "lakh": 0.01, "billion": 100.0, "bn": 100.0,
-            "million": 0.1, "mn": 0.1}
+            "million": 0.1, "mn": 0.1,
+            # 1 lakh crore = 1 trillion rupees = 1,00,000 crore
+            "lakh crore": 100000.0, "trillion": 100000.0}
 _USD_CR = 83.0 / 10  # 1 USD mn ~= Rs 8.3 Cr
 
 
@@ -664,10 +678,12 @@ def extract_amount_cr(text: str) -> float | None:
                 val = float(m.group(1).replace(",", ""))
             except ValueError:
                 continue
-            unit = m.group(2).lower().rstrip(".")
+            # "lakh  crore" / "lakh-crore" / "lakh crore" are one unit
+            unit = re.sub(r"[\s\-]+", " ", m.group(2).lower().rstrip("."))
             mult = _UNIT_CR.get(unit, 0.0)
             if kind == "usd":
-                mult = _USD_CR * (10.0 if unit in ("billion", "bn") else 1.0)
+                mult = _USD_CR * (10000.0 if unit == "trillion"
+                                  else 10.0 if unit in ("billion", "bn") else 1.0)
             elif kind == "inr_plain":
                 mult = 100.0 if unit == "billion" else 0.1
             cr = val * mult

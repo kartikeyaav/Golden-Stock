@@ -60,6 +60,23 @@ def main() -> None:
     bench = load_ohlcv("NIFTY50")
     risk_scale = market_risk_scale()
 
+    # Rebuild the policy radar before enriching anything (2026-08-28). The
+    # nightly scan builds it too, but the weekly runs on its own checkout and
+    # macro_radar.load() treats a file older than MAX_AGE_DAYS as absent —
+    # without this, every weekly card would read "policy radar unavailable"
+    # whenever the daily commit was more than a few days back. Cheap: it reads
+    # the archive already on disk and fetches nothing.
+    if not args.no_news:
+        try:
+            from data.macro_radar import scan_macro
+            _mr = scan_macro()
+            if _mr.get("ok"):
+                print(f"policy radar: {_mr['policy_hits']} government/"
+                      f"regulatory events -> {_mr['stories']} stories across "
+                      f"{len(_mr['themes'])} themes", flush=True)
+        except Exception as e:                     # noqa: BLE001 — never kill the refresh
+            print(f"policy radar failed ({str(e)[:70]})", flush=True)
+
     results = []
     for _, f in shortlist.iterrows():
         sym = f["symbol"]
