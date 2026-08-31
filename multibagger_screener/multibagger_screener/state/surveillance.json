@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-30 10:20",
+ "generated": "2026-08-31 19:36",
  "n_checked": 650,
- "n_flagged": 63,
- "asm_total": 221,
+ "n_flagged": 64,
+ "asm_total": 226,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -466,6 +466,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "ENTERO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "UTLSOLAR": {
    "flags": [
     {
@@ -790,11 +802,6 @@
   "SPARC": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -802,7 +809,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "THANGAMAYL": {
    "flags": [

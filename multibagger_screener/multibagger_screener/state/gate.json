@@ -1,10 +1,10 @@
 {
- "generated": "2026-08-30 10:20",
+ "generated": "2026-08-31 19:36",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 0.0,
  "deadline": "2026-12-31",
- "days_to_deadline": 122,
+ "days_to_deadline": 121,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -65,7 +65,7 @@
   "last": "2026-08-24"
  },
  "legacy": {
-  "n": 422,
+  "n": 428,
   "n_qualifying": 338,
   "n_unsized": 59,
   "expectancy_r": 0.343,
@@ -75,13 +75,13 @@
   "median_r": 0.113,
   "sum_r": 115.89,
   "win_rate_pct": 55.0,
-  "hit_stop_pct": 20.4,
+  "hit_stop_pct": 20.1,
   "best_trade_share_pct": 2.4,
   "best_r": 5.28,
   "worst_r": -3.85,
   "signal_basis_return_pct": 144.87,
   "first": "2026-07-07",
-  "last": "2026-08-28"
+  "last": "2026-08-31"
  },
  "extended": {
   "n": 1,
@@ -137,12 +137,12 @@
  },
  "benchmark2": {
   "sym": "NIFTY50",
-  "ret_pct": 0.75,
+  "ret_pct": 0.35,
   "first": 23995.95,
-  "last": 24175.65,
+  "last": 24080.4,
   "from": "2026-07-27",
-  "to": "2026-08-28",
-  "sessions": 25,
+  "to": "2026-08-31",
+  "sessions": 26,
   "label": "NIFTY 50"
  },
  "benchmark_context": {
@@ -158,12 +158,12 @@
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": 3.39,
+    "ret_pct": 2.98,
     "first": 23382.6,
-    "last": 24175.65,
+    "last": 24080.4,
     "from": "2026-06-01",
-    "to": "2026-08-28",
-    "sessions": 64
+    "to": "2026-08-31",
+    "sessions": 65
    }
   },
   "12m": {
@@ -178,12 +178,12 @@
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -1.82,
+    "ret_pct": -2.21,
     "first": 24625.05,
-    "last": 24175.65,
+    "last": 24080.4,
     "from": "2025-09-01",
-    "to": "2026-08-28",
-    "sessions": 246
+    "to": "2026-08-31",
+    "sessions": 247
    }
   }
  },

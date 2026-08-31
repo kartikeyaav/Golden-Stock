@@ -1,0 +1,616 @@
+{
+ "ok": true,
+ "generated": "2026-08-31T19:34:00",
+ "window_days": 45,
+ "half_life_days": 21.0,
+ "headlines_read": 8621,
+ "policy_hits": 17,
+ "stories": 16,
+ "themes": {
+  "defence": {
+   "pressure": 0.266,
+   "pos_flow": 0.229,
+   "neg_flow": 0.0,
+   "n_scored": 2,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
+     "date": "2026-08-28T20:41:02",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
+     "themes": [
+      "defence"
+     ],
+     "polarity": "pos",
+     "event": "policy/norms",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1404
+    },
+    {
+     "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
+     "date": "2026-08-25T19:28:06",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/companies/defence-ministry-opens-drdos-conventional-missile-tech-to-private-companies/article71388809.ece",
+     "themes": [
+      "defence"
+     ],
+     "polarity": "pos",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0886
+    }
+   ]
+  },
+  "datacentre": {
+   "pressure": 0.0,
+   "pos_flow": 0.0,
+   "neg_flow": 0.0,
+   "n_scored": 0,
+   "n_attn": 1,
+   "top": []
+  },
+  "renewables": {
+   "pressure": 0.11,
+   "pos_flow": 0.0863,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "Cabinet approves scheme for floating solar photovoltaic projects with energy storage",
+     "date": "2026-07-31T19:30:15",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/news/cabinet-approves-scheme-for-floating-solar-photovoltaic-projects-with-energy-storage/article71290275.ece",
+     "themes": [
+      "renewables"
+     ],
+     "polarity": "pos",
+     "event": "scheme/mission",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0863
+    }
+   ]
+  },
+  "hospital": {
+   "pressure": 0.109,
+   "pos_flow": 0.0857,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
+     "date": "2026-08-24T14:10:11",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/healthcare/biotech/healthcare/health-ministry-announces-medical-device-regulatory-reforms-for-ease-of-doing-business/articleshow/133458124.cms",
+     "themes": [
+      "hospital"
+     ],
+     "polarity": "pos",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0857
+    }
+   ]
+  },
+  "railways": {
+   "pressure": 0.322,
+   "pos_flow": 0.2881,
+   "neg_flow": 0.0,
+   "n_scored": 3,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
+     "date": "2026-08-20T11:30:45",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/transportation/railways/railway-ministry-approves-raising-train-speed-limit-to-100-kmph-on-katra-banihal-section/articleshow/133365944.cms",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1043
+    },
+    {
+     "title": "Cabinet approves one highway and four railway multi-tracking projects",
+     "date": "2026-08-19T17:01:35",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/transportation/railways/cabinet-approves-one-highway-and-four-railway-multi-tracking-projects/articleshow/133346848.cms",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1009
+    },
+    {
+     "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
+     "date": "2026-08-12T22:32:21",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/transportation/railways/indian-railways-big-update-2-new-trains-3-route-extensions-and-7-additional-halts-approved-check-routes-timings-and-stations/articleshow/133188624.cms",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0828
+    }
+   ]
+  },
+  "semis": {
+   "pressure": 0.127,
+   "pos_flow": 0.1009,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
+     "date": "2026-08-19T15:32:26",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/companies/microns-semiconductor-plant-at-sanand-gets-gujarat-govts-first-approval-for-12-hour-work-shift/article71363567.ece",
+     "themes": [
+      "semis"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1009
+    }
+   ]
+  },
+  "ems": {
+   "pressure": 0.243,
+   "pos_flow": 0.2059,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
+     "date": "2026-08-17T16:29:36",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/cons-products/electronics/govt-approves-31-proposals-worth-rs-7877-crore-under-electronics-component-scheme/articleshow/133294621.cms",
+     "themes": [
+      "ems"
+     ],
+     "polarity": "pos",
+     "event": "scheme/mission",
+     "amount_cr": 7877.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.2059
+    }
+   ]
+  },
+  "capex": {
+   "pressure": 0.169,
+   "pos_flow": 0.1369,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
+     "date": "2026-08-14T05:35:56",
+     "source": "Livemint",
+     "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
+     "themes": [
+      "capex",
+      "ev"
+     ],
+     "polarity": "pos",
+     "event": "scheme/mission",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1369
+    }
+   ]
+  },
+  "ev": {
+   "pressure": 0.308,
+   "pos_flow": 0.2727,
+   "neg_flow": 0.0,
+   "n_scored": 2,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
+     "date": "2026-08-14T05:35:56",
+     "source": "Livemint",
+     "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
+     "themes": [
+      "capex",
+      "ev"
+     ],
+     "polarity": "pos",
+     "event": "scheme/mission",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1369
+    },
+    {
+     "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
+     "date": "2026-08-12T00:42:59",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/auto/two-wheelers-three-wheelers/centre-extends-e2w-subsidies-under-pm-e-drive-till-march-2028-boosts-outlay-to-rs-11900-crore/articleshow/133164465.cms",
+     "themes": [
+      "ev"
+     ],
+     "polarity": "pos",
+     "event": "allocation",
+     "amount_cr": 11900.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 2,
+     "retellings": 2,
+     "weight": 0.1357
+    }
+   ]
+  },
+  "shipbuilding": {
+   "pressure": 0.138,
+   "pos_flow": 0.1102,
+   "neg_flow": 0.0,
+   "n_scored": 2,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Gujarat unveils shipbuilding policy; offers 50-year concessions, targets ?27,000-crore investments",
+     "date": "2026-07-27T19:23:30",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/logistics/gujarat-govt-unveils-shipbuilding-policy-targets-50-lakh-dwt-capacity-and-27000-cr-investments/article71272192.ece",
+     "themes": [
+      "shipbuilding"
+     ],
+     "polarity": "pos",
+     "event": "policy/norms",
+     "amount_cr": 27000.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0713
+    },
+    {
+     "title": "Govt Launches Sovereign-Backed Maritime Insurance Cover As War Spills Over",
+     "date": "2026-07-30T19:53:36",
+     "source": "NDTV Profit",
+     "link": "https://www.ndtvprofit.com/economy/govt-launches-sovereign-backed-maritime-insurance-cover-as-war-spills-over-11844166#publisher=newsstand",
+     "themes": [
+      "shipbuilding"
+     ],
+     "polarity": "pos",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0388
+    }
+   ]
+  }
+ },
+ "events": [
+  {
+   "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
+   "date": "2026-08-17T16:29:36",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/cons-products/electronics/govt-approves-31-proposals-worth-rs-7877-crore-under-electronics-component-scheme/articleshow/133294621.cms",
+   "themes": [
+    "ems"
+   ],
+   "polarity": "pos",
+   "event": "scheme/mission",
+   "amount_cr": 7877.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.2059
+  },
+  {
+   "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
+   "date": "2026-08-28T20:41:02",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
+   "themes": [
+    "defence"
+   ],
+   "polarity": "pos",
+   "event": "policy/norms",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1404
+  },
+  {
+   "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
+   "date": "2026-08-14T05:35:56",
+   "source": "Livemint",
+   "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
+   "themes": [
+    "capex",
+    "ev"
+   ],
+   "polarity": "pos",
+   "event": "scheme/mission",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1369
+  },
+  {
+   "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
+   "date": "2026-08-12T00:42:59",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/auto/two-wheelers-three-wheelers/centre-extends-e2w-subsidies-under-pm-e-drive-till-march-2028-boosts-outlay-to-rs-11900-crore/articleshow/133164465.cms",
+   "themes": [
+    "ev"
+   ],
+   "polarity": "pos",
+   "event": "allocation",
+   "amount_cr": 11900.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 2,
+   "retellings": 2,
+   "weight": 0.1357
+  },
+  {
+   "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
+   "date": "2026-08-25T18:23:26",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/news/national/ap-minister-nara-lokesh-inaugurates-suzlons-10500-cr-wind-energy-projects/article71388609.ece",
+   "themes": [
+    "renewables"
+   ],
+   "polarity": "attn",
+   "event": "",
+   "amount_cr": 10500.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1237
+  },
+  {
+   "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
+   "date": "2026-08-20T11:30:45",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/railway-ministry-approves-raising-train-speed-limit-to-100-kmph-on-katra-banihal-section/articleshow/133365944.cms",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1043
+  },
+  {
+   "title": "Cabinet approves one highway and four railway multi-tracking projects",
+   "date": "2026-08-19T17:01:35",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/cabinet-approves-one-highway-and-four-railway-multi-tracking-projects/articleshow/133346848.cms",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1009
+  },
+  {
+   "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
+   "date": "2026-08-19T15:32:26",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/companies/microns-semiconductor-plant-at-sanand-gets-gujarat-govts-first-approval-for-12-hour-work-shift/article71363567.ece",
+   "themes": [
+    "semis"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1009
+  },
+  {
+   "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
+   "date": "2026-08-25T19:28:06",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/companies/defence-ministry-opens-drdos-conventional-missile-tech-to-private-companies/article71388809.ece",
+   "themes": [
+    "defence"
+   ],
+   "polarity": "pos",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0886
+  },
+  {
+   "title": "Cabinet approves scheme for floating solar photovoltaic projects with energy storage",
+   "date": "2026-07-31T19:30:15",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/news/cabinet-approves-scheme-for-floating-solar-photovoltaic-projects-with-energy-storage/article71290275.ece",
+   "themes": [
+    "renewables"
+   ],
+   "polarity": "pos",
+   "event": "scheme/mission",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0863
+  },
+  {
+   "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
+   "date": "2026-08-24T14:10:11",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/healthcare/biotech/healthcare/health-ministry-announces-medical-device-regulatory-reforms-for-ease-of-doing-business/articleshow/133458124.cms",
+   "themes": [
+    "hospital"
+   ],
+   "polarity": "pos",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0857
+  },
+  {
+   "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
+   "date": "2026-08-12T22:32:21",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/indian-railways-big-update-2-new-trains-3-route-extensions-and-7-additional-halts-approved-check-routes-timings-and-stations/articleshow/133188624.cms",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0828
+  },
+  {
+   "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
+   "date": "2026-08-25T18:25:32",
+   "source": "NDTV Profit",
+   "link": "https://www.ndtvprofit.com/markets/missing-data-centres-sebi-opens-varanium-clouds-rs-190-crore-financial-mirage-orders-disgorgement-11957068#publisher=newsstand",
+   "themes": [
+    "datacentre"
+   ],
+   "polarity": "attn",
+   "event": "",
+   "amount_cr": 190.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0808
+  },
+  {
+   "title": "Gujarat unveils shipbuilding policy; offers 50-year concessions, targets ?27,000-crore investments",
+   "date": "2026-07-27T19:23:30",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/logistics/gujarat-govt-unveils-shipbuilding-policy-targets-50-lakh-dwt-capacity-and-27000-cr-investments/article71272192.ece",
+   "themes": [
+    "shipbuilding"
+   ],
+   "polarity": "pos",
+   "event": "policy/norms",
+   "amount_cr": 27000.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0713
+  },
+  {
+   "title": "Govt eases battery PLI norms to attract more storage players; subsidies lowered",
+   "date": "2026-07-19T19:15:32",
+   "source": "Livemint",
+   "link": "https://www.livemint.com/economy/govt-eases-battery-pli-norms-to-attract-more-storage-players-subsidies-lowered-11784455468074.html",
+   "themes": [
+    "capex",
+    "ev"
+   ],
+   "polarity": "attn",
+   "event": "scheme/mission",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0581
+  },
+  {
+   "title": "Govt Launches Sovereign-Backed Maritime Insurance Cover As War Spills Over",
+   "date": "2026-07-30T19:53:36",
+   "source": "NDTV Profit",
+   "link": "https://www.ndtvprofit.com/economy/govt-launches-sovereign-backed-maritime-insurance-cover-as-war-spills-over-11844166#publisher=newsstand",
+   "themes": [
+    "shipbuilding"
+   ],
+   "polarity": "pos",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0388
+  }
+ ]
+}
