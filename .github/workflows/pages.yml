@@ -23,8 +23,19 @@ on:
       - "multibagger_screener/multibagger_screener/journal/analyst_verdicts.csv"  # local analyst push
       - "multibagger_screener/multibagger_screener/daily_alerts.md"
       - ".github/workflows/pages.yml"
+  # PENNY IS IN THIS LIST (added 2026-08-31). It was not, and the consequence
+  # was invisible: the penny screen ran on its own 3-day cadence, committed
+  # penny_ranked/penny_meta/penny_details perfectly well, and then nothing
+  # republished the site — none of its output paths appear in the `push`
+  # filter above either. The penny tab therefore showed whatever vintage the
+  # last daily/weekly build happened to pick up. On 2026-08-31 the screen ran
+  # at 11:32 UTC and the live page still served the 08-28 screen. A job whose
+  # results never reach the page has not run, as far as the user is concerned.
   workflow_run:
-    workflows: ["Daily scan (cloud)", "Weekly refresh (cloud)"]
+    workflows:
+      - "Daily scan (cloud)"
+      - "Weekly refresh (cloud)"
+      - "Penny screen (cloud)"
     types: [completed]
   workflow_dispatch: {}
 

@@ -1,0 +1,53 @@
+name: Freshness watchdog
+
+# The job that notices the other jobs did not run.
+#
+# Every freshness outage this system has had was found by the user opening the
+# dashboard days later. That is structural, not bad luck: the page, the
+# Telegram digest and the health strip are all produced BY the nightly job, so
+# when it does not run there is nothing to produce them and nothing to
+# complain. Silence reads exactly like a quiet day.
+#
+# Deliberately OUTSIDE the pipeline — no data cache, no write permission, no
+# shared concurrency group, no dependency on any scan succeeding. It reads the
+# committed record only. If the whole pipeline is wedged, this still runs.
+#
+# 01:30 UTC Tue-Sat: the full UTC day of a Mon-Fri trading session plus 90
+# minutes, i.e. past the last of daily.yml's four catch-up slots (22:05 UTC).
+# Anything still missing at that point is a fault, not a delay.
+on:
+  schedule:
+    - cron: "30 1 * * 2-6"
+  workflow_dispatch: {}
+
+# read-only on purpose: a watchdog with write access is one bad edit away from
+# being another thing that can corrupt the record it is meant to guard
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: multibagger_screener/multibagger_screener
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master   # the tip, not the SHA the cron was created against
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # No pip install. The watchdog reads JSON and posts a message; giving it
+      # the pipeline's dependencies would let a broken dependency take out the
+      # alarm at the same moment it takes out the pipeline.
+      - name: Are the components inside their cadence?
+        run: python scripts/scan_watchdog.py

@@ -3,9 +3,32 @@ name: Daily scan (cloud)
 # Runs the mechanical daily pipeline in the cloud so it fires 365 nights
 # regardless of whether the laptop is on. 18:35 IST = 13:05 UTC, Mon-Fri
 # (NSE trading days). Also runnable on demand via the "Run workflow" button.
+#
+# FOUR CRONS, NOT ONE (2026-08-31). GitHub's scheduler is best-effort: it
+# delays crons under load and it drops them outright. This repo's own history
+# is the evidence — the daily run fired ~45 min late through mid-August, ~10 h
+# late on 08-27 and 08-28 (created 22:5x UTC for a 13:05 cron), and on Mon
+# 08-31 it never fired at all. Nothing downstream noticed, because the
+# dashboard is rebuilt BY this job: no run means no rebuild, so the published
+# page just kept showing Friday's prices. A single cron is a single point of
+# failure for the whole system's freshness.
+#
+# The retries are safe because daily_scan.py is idempotent within a session:
+# transitions are diffed against the SAVED tag state (which the first run of
+# the day advances) and BUY TRIGGER/EP events are keyed on the price bar, so a
+# second pass finds nothing new. Safe, but not free — a second pass would
+# rewrite daily_alerts.md with an empty list and blank the day's alerts. So the
+# guard job below makes the catch-ups a genuine no-op rather than a re-run.
+#
+# All four slots sit inside the SAME UTC DAY (NSE closes 15:30 IST = 10:00
+# UTC), which is what lets the guard compare against a plain UTC date. Do not
+# add a slot that crosses midnight UTC without changing the guard with it.
 on:
   schedule:
-    - cron: "5 13 * * 1-5"
+    - cron: "5 13 * * 1-5"   # 18:35 IST — the intended slot
+    - cron: "5 16 * * 1-5"   # +3h  catch-up
+    - cron: "5 19 * * 1-5"   # +6h  catch-up
+    - cron: "5 22 * * 1-5"   # +9h  last chance before the UTC day turns over
   workflow_dispatch: {}
 
 # allow the job to commit the forward record back to the repo
@@ -23,7 +46,46 @@ defaults:
     working-directory: multibagger_screener/multibagger_screener
 
 jobs:
+  # Has today's scan already landed? state/tags_state.json carries the date of
+  # the run that wrote it and is committed by the scan job below, so the
+  # committed record — not a runner-local file, not the Actions cache — is the
+  # thing being asked. Checks out master rather than the triggering SHA on
+  # purpose: a scheduled run is created against the tip as it was when the
+  # cron fired, which for a catch-up is exactly the commit we need to see.
+  #
+  # workflow_dispatch always runs. When the user presses the button they mean
+  # it, and --force-style re-runs are how a broken record gets rebuilt.
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - id: check
+        working-directory: multibagger_screener/multibagger_screener
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "manual run — scanning regardless"; echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          today=$(date -u +%F)
+          # a missing/unreadable state file must SCAN, never skip: absent data
+          # here would otherwise buy the job a night off
+          have=$(python -c "import json,sys;print(json.load(open('state/tags_state.json')).get('date',''))" 2>/dev/null || echo "")
+          echo "tags_state date='$have'  today(UTC)='$today'"
+          if [ "$have" = "$today" ]; then
+            echo "today's scan already in the record — catch-up is a no-op"
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "no scan recorded for today — running"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
   scan:
+    needs: guard
+    if: needs.guard.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
@@ -125,6 +187,7 @@ jobs:
           for p in journal state/tags_state.json state/alert_details.json \
                    state/analyst_health.json state/news_radar.json state/regime.json \
                    state/news_pressure.json state/themes.json \
+                   state/macro_radar.json \
                    state/surveillance.json state/gate.json \
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \

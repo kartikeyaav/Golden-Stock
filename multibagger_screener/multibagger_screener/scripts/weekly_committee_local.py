@@ -41,6 +41,13 @@ SHORTLIST_REL = "multibagger_screener/multibagger_screener/shortlist_ranked.csv"
 # stranded the 19-Jul picks and froze the committee for a week.
 COMMITTEE_TIMEOUT_S = 12000   # 3h20m
 
+# How old the picks may get before an UNSYNCED tree stops being an excuse to
+# skip. The committee cadence is weekly, so 8 days is one missed cycle plus a
+# day's slack — deliberately the same number the dashboard's health strip uses
+# to paint the committee chip amber, so the screen and the job agree on what
+# "overdue" means instead of drifting apart.
+PICKS_MAX_AGE_DAYS = 8
+
 
 def log(msg: str) -> None:
     os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
@@ -127,15 +134,42 @@ def main() -> int:
     log("committee wrapper start" + (" (--force)" if force else ""))
 
     # 1. sync: the guard must judge against the CLOUD's latest shortlist
-    git_pull_retry(git_root())
+    synced = git_pull_retry(git_root())
 
     # 2. freshness guard — the reason an every-logon trigger is safe
     picks_at = picks_generated_at()
     shortlist_at = shortlist_committed_at()
-    if not force:
+
+    # A FAILED PULL MUST NOT BUY A NO-OP (2026-08-31). git_pull_retry already
+    # logged "the freshness guard below is judging against a STALE shortlist"
+    # — and then the guard went ahead and judged, concluded the picks covered
+    # it, and exited 0. That is what happened on 2026-08-23: the tree had
+    # unmerged files, every pull attempt failed, the local shortlist stamp was
+    # still 16 Aug while the cloud had refreshed it that morning, and the
+    # committee declared itself up to date. The picks then sat at 18 Aug for
+    # thirteen days while the wrapper reported success each time.
+    #
+    # On an unsynced tree the local shortlist stamp is only a LOWER BOUND —
+    # the real one can be newer, never older — so "picks >= shortlist" is not
+    # a conclusion the wrapper is entitled to draw. Fall back to the one thing
+    # still true locally: how old the picks themselves are. Past a weekly
+    # cycle, run. The committee is idempotent and costs a subscription call,
+    # not credits; a redundant run is far cheaper than another silent fortnight.
+    # (The sibling nightly_analyst_local.py already refuses to report success
+    # on an unsynced no-op — this is the same rule, applied here at last.)
+    stale_tree_override = False
+    if not synced and not force:
+        picks_age = (datetime.now() - picks_at).days if picks_at else None
+        if picks_age is None or picks_age >= PICKS_MAX_AGE_DAYS:
+            log(f"pull failed AND picks are {picks_age if picks_age is not None else 'absent'}"
+                f" days old (>= {PICKS_MAX_AGE_DAYS}) — refusing to trust the "
+                f"stale shortlist stamp; running the committee anyway")
+            stale_tree_override = True
+
+    if not force and not stale_tree_override:
         if shortlist_at is None:
             log("no shortlist commit found — nothing to pick from; exit")
-            return 0
+            return 0 if synced else 1
         if picks_at is not None and picks_at >= shortlist_at:
             # stranded-output guard (real incident 2026-07-19): the wrapper
             # died mid-run (sleep/logoff) but the orphaned committee child
@@ -151,7 +185,9 @@ def main() -> int:
                 return _commit_and_push(picks_at)
             log(f"picks ({picks_at:%d %b %H:%M}) already cover the latest "
                 f"shortlist ({shortlist_at:%d %b %H:%M}) — no-op; exit")
-            return 0
+            # exit 1 on an unsynced tree so Task Scheduler's LastTaskResult
+            # stops reporting 0 for a decision made on data we could not read
+            return 0 if synced else 1
     sl_s = f"{shortlist_at:%d %b %H:%M}" if shortlist_at else "unknown"
     pk_s = f"{picks_at:%d %b %H:%M}" if picks_at else "never"
     log(f"fresh shortlist ({sl_s} > picks {pk_s}) — running committee")
