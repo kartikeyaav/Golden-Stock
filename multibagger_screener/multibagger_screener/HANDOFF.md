@@ -1953,6 +1953,96 @@ to what those layers are told, not part of the catalyst score.
 
 ---
 
+## 3W. Nothing was checking that the scans had run (2026-08-31, user-reported)
+
+The user opened the dashboard and found every panel stale. Four independent
+faults, none of which had ever raised a signal, and the reason they could not
+is structural: **the page, the Telegram digest and the health strip are all
+produced BY the nightly job.** When it does not run there is nothing to build
+them and nothing to complain. Silence is indistinguishable from a quiet day.
+
+**1. One best-effort cron is a single point of failure.** GitHub's scheduler
+delays and drops schedules. The repo's own run history: ~45 min late through
+mid-August, ~10 h late on 08-27 and 08-28 (created 22:5x UTC for a 13:05 cron),
+and on Mon 08-31 it never fired at all. `daily.yml` now has FOUR slots — 13:05,
+16:05, 19:05, 22:05 UTC — all inside the same UTC day, plus a `guard` job that
+skips when `state/tags_state.json` already carries today's date.
+
+The guard is not optional politeness. `daily_scan.py` is idempotent within a
+session (transitions diff against the SAVED tag state; BUY TRIGGER/EP events
+are keyed on the bar), so a second pass finds nothing new — and would then
+rewrite `daily_alerts.md` with an empty list and blank the day's alerts. All
+four slots must stay inside one UTC day because the guard compares a plain UTC
+date; a slot past midnight UTC would re-run and do exactly that damage.
+
+**The guard's first version was decorative and shipped that way for an hour.**
+It read the stamp with `python -c`. The guard job has no `setup-python` step,
+and bare `python` is not on PATH on GitHub's ubuntu runners — only `python3`.
+The read fails, the `|| echo ""` fallback swallows it, the stamp comes back
+empty, and an empty stamp can never equal today's date: **it answers "run" on
+every firing**, which is worse than no guard at all. It reads with `grep` now
+and depends on nothing the runner might not have.
+
+**2. A failed pull bought the committee a no-op — for thirteen days.**
+`weekly_committee_local.py` discarded `git_pull_retry`'s return value. On 08-23
+the tree had unmerged files, all four pull attempts failed, and the wrapper
+logged *"the freshness guard below is judging against a STALE shortlist"* — then
+judged anyway, compared 18-Aug picks against a 16-Aug local stamp the cloud had
+already moved past, declared itself current and exited 0. Task Scheduler
+recorded success every time. On an unsynced tree the local stamp is only a
+LOWER BOUND, so "mine is newer" is not a verdict the wrapper is entitled to
+reach; past `PICKS_MAX_AGE_DAYS` (8, the same number the health strip paints
+amber at) it now runs anyway, and an unsynced no-op exits 1 rather than 0.
+`nightly_analyst_local.py` had had this exact rule since 08-18 — **the fix
+reached one wrapper and never its twin.**
+
+**3. The penny screen published nowhere.** It ran on its own 3-day cadence and
+committed correctly, but `pages.yml` listed only Daily and Weekly under
+`workflow_run`, and none of penny's paths under `push`. It ran at 11:32 UTC on
+08-31 and the live site still served the 08-28 screen. It had been that way
+since the workflow was split out on 08-17. A job whose output never reaches the
+page has not run, as far as the user is concerned.
+
+**4. The laptop slept for 61 hours** (08-29 10:01 -> 08-31 23:00 IST, from
+`Microsoft-Windows-Power-Troubleshooter` — the TaskScheduler *Operational*
+channel is disabled here and has nothing). Three Task Scheduler behaviours
+compound and none of them log:
+
+- a missed WEEKLY trigger advances a FULL WEEK — the slept-through Sunday
+  committee trigger jumped straight to 09-06, a 14-day gap from one bad night;
+- a logon trigger does NOT fire on resume from sleep, only on a real logon;
+- `StartWhenAvailable` did not catch up — both tasks still showed the pre-sleep
+  `LastRunTime` 17 minutes after wake.
+
+Committee moved from weekly-Sunday to DAILY (its freshness guard makes idle
+days a sub-second no-op — that is what the every-logon design was always for),
+and the analyst gained the logon trigger this document already claimed it had.
+`NumberOfMissedRuns` / `NextRunTime` from `Get-ScheduledTaskInfo` are the
+fastest read on all three.
+
+**What was actually added: something outside the pipeline.** All four faults
+share one shape — the only thing that could have noticed was the thing that
+failed. `scripts/scan_watchdog.py` + `.github/workflows/watchdog.yml` run at
+01:30 UTC Tue-Sat with **no cache, no write permission, no shared concurrency
+group and no pip install**, reading only the committed record. If the whole
+pipeline is wedged, the watchdog still runs. It is allowed to stay silent; a
+watchdog that chats every night gets muted. Its dependency chain is
+stdlib-only on purpose — giving it the pipeline's dependencies would let a
+broken dependency take out the alarm at the same moment it takes out the
+pipeline.
+
+`tests/test_scan_freshness_guards.py` covers all four, and **every guard in it
+was checked by making it go red** — the two committee cases against the pre-fix
+code, and the no-interpreter rule by putting a `python -c` back in the guard.
+
+**Open:** `weekly.yml` and `penny.yml` still carry a single cron each and the
+same drop risk. Both fired on time through this incident, so they were left
+alone rather than rewritten speculatively; the guard shape in `daily.yml` is
+the template if either starts slipping. The watchdog covers the detection gap
+for both in the meantime.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -2352,7 +2442,19 @@ scripts/build_landing.py      generates landing.html from live state — the old
 tests/test_capital_gate.py    19 checks: cohort isolation, the closed-or-aged rule, unsized exclusion,
                               concentration/stop guards, benchmark windowing
 CLOUD.md                      GitHub Actions setup + operations (cache design, secrets, Pages, risks)
-.github/workflows/daily.yml   cloud daily pipeline (13:05 UTC Mon-Fri) + Pages publish
+.github/workflows/daily.yml   cloud daily pipeline, FOUR crons (13:05/16:05/19:05/22:05 UTC
+                              Mon-Fri) behind a guard job that skips once tags_state.json
+                              carries today's date. GitHub drops schedules; one cron is a
+                              single point of failure for the whole system's freshness (3W)
 .github/workflows/weekly.yml  cloud weekly refresh (04:30 UTC Sun)
+.github/workflows/watchdog.yml  the job that notices the other jobs did not run. 01:30 UTC
+                              Tue-Sat, OUTSIDE the pipeline: no cache, no write permission,
+                              no shared concurrency group, no pip install (3W)
+scripts/scan_watchdog.py      reads only the committed record — scan/committee/penny/analyst
+                              stamps vs their cadences — and stays silent unless something is
+                              genuinely late. stdlib only, so a broken dependency cannot take
+                              out the alarm and the pipeline together
+tests/test_scan_freshness_guards.py  the guards that let a job SKIP. Every case verified able
+                              to go red, incl. the no-interpreter rule for the daily guard
 tests/                        two-lot + synthetic regression (both green)
 ```
