@@ -1,4 +1,4 @@
-# Penny / nano-cap screen — 2026-08-31 11:32
+# Penny / nano-cap screen — 2026-09-01 09:49
 
 **Research surface. Zero capital. Not backtested.** The main system's
 evidence (+1.67R, walk-forward, 13 rejected overlays) says nothing about
