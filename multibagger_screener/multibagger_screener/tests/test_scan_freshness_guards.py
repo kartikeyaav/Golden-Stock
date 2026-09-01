@@ -239,6 +239,70 @@ def test_daily_guard_needs_no_interpreter():
             "interpreter")
 
 
+def _run_guard(now: str, stamp: str) -> str:
+    """Execute the guard's REAL shell at a chosen instant.
+
+    The block is lifted out of daily.yml rather than restated here — a test
+    that reimplements the rule proves only that the reimplementation agrees
+    with itself. SCAN_NOW exists in the workflow for exactly this.
+    """
+    import json as _json, shutil, subprocess, tempfile, textwrap
+    bash = shutil.which("bash")
+    if not bash:
+        pytest.skip("no bash available")
+    body = _guard_step(_wf("daily.yml"))
+    # everything from the session computation to the end of the step: the date
+    # maths, the grep read of the stamp AND the comparison that acts on both
+    m = re.search(r"(NOW=\"\$\{SCAN_NOW:-now\}\".*)", body, re.S)
+    assert m, "session block not found in daily.yml"
+    snippet = textwrap.dedent(m.group(1))
+    with tempfile.TemporaryDirectory() as d:
+        os.makedirs(os.path.join(d, "state"))
+        if stamp:
+            with open(os.path.join(d, "state", "tags_state.json"), "w",
+                      encoding="utf-8") as f:
+                _json.dump({"date": stamp, "tags": {"ACME": "CONFIRMED"}}, f)
+        out = os.path.join(d, "gh_output")
+        script = os.path.join(d, "g.sh")
+        with open(script, "w", newline="\n", encoding="utf-8") as f:
+            f.write("set -e\n" + snippet)
+        r = subprocess.run([bash, script], capture_output=True, text=True, cwd=d,
+                           env={**os.environ, "SCAN_NOW": now, "GITHUB_OUTPUT": out})
+        if r.returncode != 0 and not os.path.exists(out):
+            pytest.skip(f"guard shell unusable here: {r.stderr[:150]}")
+        verdict = open(out, encoding="utf-8").read()
+        assert "run=" in verdict, r.stderr[:200]
+        return "RUN" if "run=true" in verdict else "SKIP"
+
+
+@pytest.mark.parametrize("now,stamp,want", [
+    # THE RUN #58 REGRESSION. The Mon 22:05 slot was delivered at 01:06 UTC
+    # Tuesday. Comparing against the calendar date said "new day" and re-ran,
+    # replacing Monday's 8 alerts with a different 19.
+    ("2026-09-01 01:06", "2026-08-31", "SKIP"),
+    ("2026-08-31 19:28", "2026-08-28", "RUN"),   # #56, the catch-up that saved Monday
+    ("2026-08-31 23:10", "2026-08-31", "SKIP"),  # #57, correctly skipped
+    ("2026-09-01 13:05", "2026-08-31", "RUN"),   # Tuesday proper
+    ("2026-09-01 09:59", "2026-08-31", "SKIP"),  # before NSE close, still Monday's session
+    ("2026-09-01 10:01", "2026-08-31", "RUN"),   # one minute after close
+    ("2026-09-07 02:00", "2026-09-04", "SKIP"),  # Monday pre-close -> Friday's session
+    # fail-open, executed rather than asserted about: no stamp file at all must
+    # SCAN. Absent data has bought this codebase a night off before.
+    ("2026-09-01 13:05", "", "RUN"),
+])
+def test_guard_keys_on_the_session_not_the_calendar_date(now, stamp, want):
+    assert _run_guard(now, stamp) == want
+
+
+def test_guard_does_not_compare_against_the_bare_calendar_date():
+    """The original bug in one line, so it cannot come back by refactor."""
+    body = _guard_step(_wf("daily.yml"), code_only=True)
+    assert '"$have" = "$today"' not in body, (
+        "the guard is comparing the stamp to the calendar date again — a cron "
+        "delivered after UTC midnight will re-scan and overwrite the session")
+    assert '"$have" = "$target"' in body
+
+
 def test_manual_dispatch_always_scans():
     """When the user presses Run workflow they mean it; a rebuild of a broken
     record must not be skipped by the guard."""
