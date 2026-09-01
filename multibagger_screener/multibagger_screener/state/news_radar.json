@@ -1,19 +1,5 @@
 {
- "generated": "2026-08-31T19:34:22",
- "window_start": "2026-08-28T23:04:35",
- "hits": [
-  {
-   "sym": "TATACHEM",
-   "cls": "pos",
-   "event": "order win",
-   "subject": "TATA CHEMICALS LIMITED has informed the Exchange about Bagging/Receiving of orders/contracts  (Sub-para 4-Para B) |SUBJECT: Bagging/Receiving of orders/contract",
-   "date": "2026-08-29T00:53:05",
-   "n": 2,
-   "tag": "BROKEN",
-   "rs": 16.9,
-   "held": false,
-   "confluence": false,
-   "urgent": false
-  }
- ]
+ "generated": "2026-09-01T01:11:50",
+ "window_start": "2026-08-31T19:34:22",
+ "hits": []
 }
