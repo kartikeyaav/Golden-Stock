@@ -41,6 +41,79 @@ Minor shifts: BBTC WATCH->BROKEN, MAPMYINDIA BROKEN->WATCH, CRAFTSMAN CONFIRMED-
 
 _Policy moves the catalyst dimension by at most 0.12 and moves nothing else. Entries stay technical._
 
+## AI analyst verdicts
+
+### NAVINFLUOR
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Story checks out: CDMO +82% YoY (₹99cr→₹180cr) on genuine international client order momentum, not one-offs; R32 refrigerant capex (15,000 MTPA, Q3FY27 commissioning) targets 20-25% of revenue by FY28 — real driver, not accounting noise.
+- No red flags found beyond the card: no SEBI action, no auditor issue; promoter pledge (Mafatlal Impex) was fully *released* by SBI in Mar-2026 — a positive, not a leverage risk. Aug-26 "allotment" filing is routine ESOS (8,860 shares), immaterial dilution.
+- Second-order tailwind is real and specific: China's 2026 HFC quotas are frozen/near-flat with 6 producers holding 90%+ share, pushing China refrigerant prices to 14-year highs — this directly supports realizations/market share for non-China HFC producers like NAVINFLUOR as global buyers diversify (China+1).
+
+RISKS (max 2 bullets):
+- Valuation is full (PEG 2.62) with only moderate theme heat (44/100) — priced for continued execution, little room for a miss.
+- Card itself flags this as "AWAITING TRIGGER" — price hasn't broken the 8650 pivot on volume yet; this is not yet a backtested entry.
+
+CHECKED: WebSearch — NSE/BSE filings on pledge & allotment, Q1FY27 concall/investor-deck coverage (Business Standard, Investing.com, InvestyWise), China HFC quota/pricing coverage (cheaa.org, Blooming, Devdiscourse).
+CHANGES MY MIND: A volume breakout through 8650 confirms the trigger → upgrade to BUY per mechanical plan; a close back below the base without breaking out, or any pledge/SEBI headline, kills it.
+
+### WOCKPHARMA
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story verified real, not one-off: Q1 FY27 consol. PAT ₹107cr (vs -₹108cr loss YoY), revenue +26%, OPM leap on biosimilars +112% YoY and Zaynich (first India-discovered NCE, FDA-approved May 2026) — genuine structural mix-shift, not accounting noise.
+- Governance clean: promoters declared zero new pledge/encumbrance for FY26, 49% stake stable — corroborates the card's "no pledge flagged." No SEBI action or auditor flag found.
+- Only adverse item is a ₹16cr customs penalty (API misclassification, Aug 21) — immaterial vs quarterly PAT, company appealing; not a governance veto-type issue.
+
+RISKS (max 2 bullets):
+- Valuation already rich (P/E 77) and stock re-rated hard on the Dec-2025 Zaynich FDA news (+21% in two days) — much of the structural story may already be priced in; smart-money signal is mixed (FII +0.13pp but DII -1.76pp, net flat-to-negative), and it's absent from this week's committee shortlist.
+- Sector-level overhang: Trump's generic-drug tariff plan (0% now, ramping to 100%/200% from Aug 2028) targets India's commodity-generics exports — doesn't hit Zaynich/biosimilars directly but pressures the legacy generics book that's still part of revenue.
+
+CHECKED: WebSearch — trendlyne/business-standard/tradingview (Q1 results, customs order), scanx (pledge declaration), sahi/whalesbook (Zaynich FDA/pipeline), business-standard/forbesindia/policycircle (US pharma tariff policy), fiercepharma (historical FDA warning letters — none current, all 2013-17).
+CHANGES MY MIND: Any promoter pledge event, an adverse Zaynich EU/US regulatory update, or DII selling accelerating past this quarter's -1.76pp would flip this to SKIP/WAIT.
+
+### GLENMARK
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- No fresh pledge/SEBI/auditor red flags found beyond known legacy items; governance looks clean tonight, so no veto applies.
+- Story is real, not a one-off: Q1FY27 revenue +23% broad-based (India, NA, Europe, EM), driven by RYALTRIS respiratory (+40% secondary sales, 57 mkts) and derm/cardio momentum — though the headline 200% PAT YoY is flattered by a very weak year-ago base (₹46cr→₹482cr), so lean on the sales growth as the real confirmation.
+- Sector tailwind is neutral-to-positive short term: US tariffs on patented pharma are live, but generics remain exempted through 2028 (phased 100%/200% only from 2028-29) — no near-term margin threat to this story.
+
+RISKS (max 2 bullets):
+- Fresh Aug-2026 US class action alleges nitrosamine (carcinogen) contamination in generic carvedilol — unresolved product-liability tail risk not in the original keyword scan, on top of a July 2026 $29.6M multistate generic-pricing antitrust settlement.
+- The card itself flags no volume-breakout trigger ("edge not established for this entry") — this is a trend-only read, and GLENMARK isn't on this week's committee shortlist, suggesting the entry timing isn't confirmed yet.
+
+CHECKED: WebSearch across SEBI/pledge/promoter news, Q1FY27 earnings/concall coverage, Law360/litigation trackers, and US generic-tariff policy trackers (india-briefing, business-standard, businesstoday).
+
+CHANGES MY MIND: A volume-confirmed breakout above the base high (>2537.6) alongside no escalation in the carvedilol litigation would upgrade this to a HALF PLAN buy.
+
+### USHAMART
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Story verified real, not one-off: Q1 FY27 concall confirms EBITDA margin 16.3%→20.1% driven by mix-shift into high-margin elevator/mining/oil-offshore ropes, not a one-time item; management reiterated FY27 guidance of 10-12% volume growth, 15% value growth, >20% margins, and is deploying Rs250-300cr into elevator-rope capacity (60% of new capex into high-end segments) — matches the card's earnings inflection read.
+- No red flags found: promoter group formally confirmed zero share encumbrance in FY26; auditor change (S R Batliboi → MSKA) is a routine 5-year-term rotation, not a resignation/qualified-opinion event; no SEBI action or litigation surfaced.
+- Second-order tailwind: global steel wire-rod (input) prices are soft (China ~$480/MT), supporting margin, while end-market demand (mining, crane, oil & offshore) is described as "structurally supportive" in the concall — direct transmission channel, not generic sector talk.
+
+RISKS (max 2 bullets):
+- Middle East business declined on project delays this quarter — a real, named soft spot in an otherwise strong print.
+- Card itself flags no volume-confirmed VCP breakout — entry timing edge isn't established, and valuation is full (PEG 3.06); this is a trend-following entry, not a validated breakout.
+
+CHECKED: Web search across scanx.trade/TipRanks promoter-encumbrance and auditor filings, Investing.com/tradebrains Q1 FY27 concall coverage, and steel wire-rod/mining-demand market data.
+
+CHANGES MY MIND: Any promoter pledge disclosure, a qualified auditor opinion from the incoming auditor, or margin guidance walk-back next quarter would flip this to SKIP.
+
+
 ## Cards
 
 ```
