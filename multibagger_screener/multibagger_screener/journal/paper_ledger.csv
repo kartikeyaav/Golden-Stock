@@ -63,3 +63,7 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-01,MAHABANK,SKIP,entry,0,,,[MAHABANK@2026-08-28 21:46] slot limit 12 reached (27 open) — the backtested edge was measured with this cap in force
 2026-09-01,LUMAXTECH,SKIP,entry,0,,,[LUMAXTECH@2026-08-28 21:47] slot limit 12 reached (27 open) — the backtested edge was measured with this cap in force
 2026-09-01,SOUTHBANK,SKIP,entry,0,,,[SOUTHBANK@2026-08-28 21:48] slot limit 12 reached (27 open) — the backtested edge was measured with this cap in force
+2026-09-02,WOCKPHARMA,SKIP,entry,0,,,[WOCKPHARMA@2026-09-01 21:32] slot limit 12 reached (27 open) — the backtested edge was measured with this cap in force
+2026-09-02,USHAMART,SKIP,entry,0,,,[USHAMART@2026-09-01 21:33] already open in paper book
+2026-09-02,ENGINERSIN,SELL,partial,71,276.27,2556.0,partial at 2.5R
+2026-09-02,KEI,SELL,all,14,5369.36,-5894.56,stop hit

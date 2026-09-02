@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-01 01:13",
+ "generated": "2026-09-02 17:14",
  "n_checked": 650,
- "n_flagged": 64,
- "asm_total": 226,
+ "n_flagged": 67,
+ "asm_total": 232,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -91,6 +91,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "CYIENT": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "EMCURE": {
    "flags": [
     {
@@ -131,7 +143,7 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "LT Stage I",
+     "detail": "LT Stage IV",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     },
     {
@@ -299,6 +311,23 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "ALOKINDS": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "APOLLO": {
    "flags": [
@@ -494,6 +523,23 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "ASM"
+  },
+  "INDIAGLYCO": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
   },
   "JAIBALAJI": {
    "flags": [

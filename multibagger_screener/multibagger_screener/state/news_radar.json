@@ -1,5 +1,97 @@
 {
- "generated": "2026-09-01T01:11:50",
- "window_start": "2026-08-31T19:34:22",
- "hits": []
+ "generated": "2026-09-02T17:13:25",
+ "window_start": "2026-09-01T01:11:50",
+ "hits": [
+  {
+   "sym": "ANANDRATHI",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "Anand Rathi Wealth Limited has informed the Exchange about Intimation of further investment through subscribing right issue of equity shares of its wholly owned",
+   "date": "2026-09-02T16:56:03",
+   "n": 1,
+   "tag": "CONFIRMED",
+   "rs": 88.5,
+   "held": false,
+   "confluence": true,
+   "urgent": false
+  },
+  {
+   "sym": "KFINTECH",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "KFIN TECHNOLOGIES LIMITED has informed the Exchange regarding Amalgamation/ Merger |SUBJECT: Amalgamation OR Merger-XBRL",
+   "date": "2026-09-02T15:19:50",
+   "n": 1,
+   "tag": "ANTICIPATION",
+   "rs": 30.0,
+   "held": false,
+   "confluence": true,
+   "urgent": false
+  },
+  {
+   "sym": "PREMIERENE",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "Premier Energies Limited has informed the Exchange regarding Acquisition (including agreement to acquire) |SUBJECT: Acquisition (including agreement to acquire)",
+   "date": "2026-09-02T16:08:49",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 74.4,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "PVRINOX",
+   "cls": "pos",
+   "event": "buyback/bonus",
+   "subject": "PVR INOX Limited has informed the Exchange about public Announcement for Buy-back of equity shares of the Company. |SUBJECT: Public Announcement - Buyback of Sh",
+   "date": "2026-09-02T15:00:08",
+   "n": 2,
+   "tag": "WATCH",
+   "rs": 64.9,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "BEML",
+   "cls": "pos",
+   "event": "order win",
+   "subject": "BEML LIMITED has informed the Exchange about Bagging/Receiving of orders/contracts  (Sub-para 4-Para B) |SUBJECT: Bagging/Receiving of orders/contracts  (Sub-pa",
+   "date": "2026-09-02T16:53:25",
+   "n": 2,
+   "tag": "WATCH",
+   "rs": 62.5,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "MPHASIS",
+   "cls": "pos",
+   "event": "partnership",
+   "subject": "MphasiS Limited has informed the Exchange regarding a press release dated September 02, 2026, titled \"Mphasis and TechnoPro Holdings Sign Strategic agreement to",
+   "date": "2026-09-02T06:43:15",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 45.7,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  },
+  {
+   "sym": "CDSL",
+   "cls": "pos",
+   "event": "M&A/JV",
+   "subject": "CENTRAL DEPOSITORY SERVICES (INDIA) LIMITED has informed the Exchange regarding Update-Acquisition/Scheme/Sale/Disposal-XBRL |SUBJECT: Update-Acquisition (inclu",
+   "date": "2026-09-02T11:16:54",
+   "n": 1,
+   "tag": "WATCH",
+   "rs": 43.7,
+   "held": false,
+   "confluence": false,
+   "urgent": false
+  }
+ ]
 }

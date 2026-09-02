@@ -1,25 +1,26 @@
 {
- "generated": "2026-09-01T01:13:52",
+ "generated": "2026-09-02T17:14:52",
  "themes": [
   {
    "key": "hospital",
    "name": "Hospitals & diagnostics",
    "blurb": "Bed additions and the shift of diagnostics into organised chains.",
    "n": 12,
-   "breadth": 41.7,
+   "breadth": 50.0,
    "rs_med": 74.0,
-   "ret3m": 9.5,
-   "news": 2.48,
-   "news_per_name": 0.207,
+   "ret3m": 8.6,
+   "news": 2.37,
+   "news_per_name": 0.198,
    "thin": false,
    "confirmed": [
     "VIJAYA",
     "THYROCARE",
+    "YATHARTH",
     "LALPATHLAB",
     "MEDANTA",
     "METROPOLIS"
    ],
-   "heat": 81.3
+   "heat": 80.3
   },
   {
    "key": "ems",
@@ -28,111 +29,132 @@
    "n": 8,
    "breadth": 37.5,
    "rs_med": 83.7,
-   "ret3m": 21.1,
-   "news": 0.93,
-   "news_per_name": 0.116,
+   "ret3m": 16.8,
+   "news": 0.89,
+   "news_per_name": 0.111,
    "thin": false,
    "confirmed": [
     "AVALON",
     "SYRMA",
     "NETWEB"
    ],
-   "heat": 79.0
-  },
-  {
-   "key": "defelec",
-   "name": "Defence electronics & space",
-   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
-   "n": 7,
-   "breadth": 42.9,
-   "rs_med": 95.2,
-   "ret3m": 5.4,
-   "news": 4.24,
-   "news_per_name": 0.606,
-   "thin": false,
-   "confirmed": [
-    "MTARTECH",
-    "PARAS",
-    "DATAPATTNS"
-   ],
-   "heat": 72.0
-  },
-  {
-   "key": "grid",
-   "name": "Power transmission & grid capex",
-   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
-   "n": 14,
-   "breadth": 35.7,
-   "rs_med": 88.8,
-   "ret3m": 13.1,
-   "news": 1.27,
-   "news_per_name": 0.091,
-   "thin": false,
-   "confirmed": [
-    "APARINDS",
-    "FINCABLES",
-    "POWERINDIA",
-    "VOLTAMP",
-    "KEI"
-   ],
-   "heat": 69.7
+   "heat": 73.7
   },
   {
    "key": "defence",
    "name": "Defence & aerospace",
    "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
    "n": 13,
-   "breadth": 38.5,
+   "breadth": 46.2,
    "rs_med": 93.8,
-   "ret3m": 5.4,
-   "news": 6.79,
-   "news_per_name": 0.522,
+   "ret3m": 3.8,
+   "news": 6.39,
+   "news_per_name": 0.491,
    "thin": false,
    "confirmed": [
     "MTARTECH",
     "PARAS",
     "DATAPATTNS",
+    "AZAD",
     "DYNAMATECH",
-    "MIDHANI"
+    "ZENTEC"
    ],
-   "heat": 65.7
+   "heat": 70.7
   },
   {
    "key": "finfra",
    "name": "Financial market infrastructure",
    "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
    "n": 16,
-   "breadth": 18.8,
+   "breadth": 25.0,
    "rs_med": 78.5,
-   "ret3m": 10.4,
-   "news": 2.85,
-   "news_per_name": 0.178,
+   "ret3m": 9.5,
+   "news": 4.53,
+   "news_per_name": 0.283,
    "thin": false,
    "confirmed": [
     "ANANDRATHI",
+    "NUVAMA",
     "PRUDENT",
     "KFINTECH"
    ],
-   "heat": 61.0
+   "heat": 69.7
+  },
+  {
+   "key": "defelec",
+   "name": "Defence electronics & space",
+   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
+   "n": 7,
+   "breadth": 57.1,
+   "rs_med": 95.2,
+   "ret3m": 0.8,
+   "news": 4.0,
+   "news_per_name": 0.572,
+   "thin": false,
+   "confirmed": [
+    "MTARTECH",
+    "PARAS",
+    "DATAPATTNS",
+    "ZENTEC"
+   ],
+   "heat": 66.0
   },
   {
    "key": "chemicals",
    "name": "Specialty chemicals & China+1",
    "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
    "n": 11,
-   "breadth": 36.4,
+   "breadth": 27.3,
    "rs_med": 76.1,
-   "ret3m": 7.3,
-   "news": 1.63,
-   "news_per_name": 0.148,
+   "ret3m": 9.0,
+   "news": 1.56,
+   "news_per_name": 0.142,
    "thin": false,
    "confirmed": [
     "NAVINFLUOR",
     "FLUOROCHEM",
-    "AARTIIND",
-    "EPL"
+    "AARTIIND"
    ],
-   "heat": 60.3
+   "heat": 64.3
+  },
+  {
+   "key": "grid",
+   "name": "Power transmission & grid capex",
+   "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
+   "n": 14,
+   "breadth": 42.9,
+   "rs_med": 88.8,
+   "ret3m": 3.9,
+   "news": 1.19,
+   "news_per_name": 0.085,
+   "thin": false,
+   "confirmed": [
+    "HFCL",
+    "TDPOWERSYS",
+    "RRKABEL",
+    "APARINDS",
+    "FINCABLES",
+    "VOLTAMP"
+   ],
+   "heat": 60.0
+  },
+  {
+   "key": "datacentre",
+   "name": "Data centres & digital infrastructure",
+   "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
+   "n": 8,
+   "breadth": 37.5,
+   "rs_med": 99.7,
+   "ret3m": 3.4,
+   "news": 2.53,
+   "news_per_name": 0.317,
+   "thin": false,
+   "confirmed": [
+    "STLTECH",
+    "HFCL",
+    "NETWEB"
+   ],
+   "heat": 54.7
   },
   {
    "key": "ev",
@@ -141,44 +163,14 @@
    "n": 10,
    "breadth": 10.0,
    "rs_med": 77.4,
-   "ret3m": 8.3,
-   "news": 2.29,
-   "news_per_name": 0.229,
+   "ret3m": 7.2,
+   "news": 2.18,
+   "news_per_name": 0.218,
    "thin": false,
    "confirmed": [
-    "EXIDEIND"
+    "SONACOMS"
    ],
-   "heat": 49.7
-  },
-  {
-   "key": "datacentre",
-   "name": "Data centres & digital infrastructure",
-   "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
-   "n": 8,
-   "breadth": 12.5,
-   "rs_med": 99.7,
-   "ret3m": 7.1,
-   "news": 2.65,
-   "news_per_name": 0.331,
-   "thin": false,
-   "confirmed": [
-    "NETWEB"
-   ],
-   "heat": 47.3
-  },
-  {
-   "key": "cdmo",
-   "name": "Pharma CDMO & API",
-   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
-   "n": 11,
-   "breadth": 0.0,
-   "rs_med": 92.2,
-   "ret3m": 8.8,
-   "news": 2.22,
-   "news_per_name": 0.202,
-   "thin": false,
-   "confirmed": [],
-   "heat": 40.0
+   "heat": 49.0
   },
   {
    "key": "textiles",
@@ -187,17 +179,33 @@
    "n": 12,
    "breadth": 33.3,
    "rs_med": 88.3,
-   "ret3m": 4.3,
-   "news": 1.43,
-   "news_per_name": 0.119,
+   "ret3m": 3.1,
+   "news": 1.37,
+   "news_per_name": 0.114,
    "thin": false,
    "confirmed": [
     "ARVIND",
+    "PGIL",
     "ICIL",
-    "WELSPUNLIV",
     "KPRMILL"
    ],
-   "heat": 39.3
+   "heat": 42.0
+  },
+  {
+   "key": "cdmo",
+   "name": "Pharma CDMO & API",
+   "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
+   "n": 11,
+   "breadth": 9.1,
+   "rs_med": 92.2,
+   "ret3m": 6.3,
+   "news": 2.13,
+   "news_per_name": 0.194,
+   "thin": false,
+   "confirmed": [
+    "LAURUSLABS"
+   ],
+   "heat": 41.3
   },
   {
    "key": "shipbuilding",
@@ -206,31 +214,48 @@
    "n": 5,
    "breadth": 20.0,
    "rs_med": 65.7,
-   "ret3m": -1.6,
-   "news": 1.94,
-   "news_per_name": 0.387,
+   "ret3m": -4.8,
+   "news": 1.81,
+   "news_per_name": 0.362,
    "thin": false,
    "confirmed": [
     "GPPL"
    ],
-   "heat": 38.7
+   "heat": 36.0
   },
   {
    "key": "water",
    "name": "Water, environment & EPC",
    "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
    "n": 6,
-   "breadth": 33.3,
+   "breadth": 16.7,
    "rs_med": 89.2,
-   "ret3m": 1.4,
-   "news": 0.45,
-   "news_per_name": 0.075,
+   "ret3m": 3.5,
+   "news": 0.43,
+   "news_per_name": 0.072,
    "thin": false,
    "confirmed": [
-    "SUPREMEIND",
-    "ASTRAL"
+    "SUPREMEIND"
    ],
-   "heat": 33.3
+   "heat": 34.3
+  },
+  {
+   "key": "capex",
+   "name": "Industrial capex & machinery",
+   "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
+   "n": 21,
+   "breadth": 14.3,
+   "rs_med": 73.0,
+   "ret3m": -5.1,
+   "news": 3.54,
+   "news_per_name": 0.169,
+   "thin": false,
+   "confirmed": [
+    "AZAD",
+    "ACE",
+    "ELGIEQUIP"
+   ],
+   "heat": 21.7
   },
   {
    "key": "renewables",
@@ -239,31 +264,14 @@
    "n": 14,
    "breadth": 7.1,
    "rs_med": 67.4,
-   "ret3m": -10.5,
-   "news": 9.49,
-   "news_per_name": 0.678,
+   "ret3m": -10.4,
+   "news": 9.58,
+   "news_per_name": 0.684,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
    ],
-   "heat": 20.3
-  },
-  {
-   "key": "capex",
-   "name": "Industrial capex & machinery",
-   "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
-   "n": 21,
-   "breadth": 9.5,
-   "rs_med": 73.0,
-   "ret3m": -2.5,
-   "news": 3.71,
-   "news_per_name": 0.177,
-   "thin": false,
-   "confirmed": [
-    "ACE",
-    "ELGIEQUIP"
-   ],
-   "heat": 19.0
+   "heat": 20.7
   },
   {
    "key": "railways",
@@ -272,12 +280,12 @@
    "n": 10,
    "breadth": 0.0,
    "rs_med": null,
-   "ret3m": -8.8,
-   "news": 4.85,
-   "news_per_name": 0.485,
+   "ret3m": -11.6,
+   "news": 5.63,
+   "news_per_name": 0.563,
    "thin": false,
    "confirmed": [],
-   "heat": 15.0
+   "heat": 13.0
   },
   {
    "key": "semis",
@@ -286,7 +294,7 @@
    "n": 2,
    "breadth": 0.0,
    "rs_med": 23.9,
-   "ret3m": -1.5,
+   "ret3m": -0.7,
    "news": 0.0,
    "news_per_name": 0.0,
    "thin": true,
@@ -300,9 +308,9 @@
    "n": 2,
    "breadth": 50.0,
    "rs_med": 91.8,
-   "ret3m": 4.2,
-   "news": 1.92,
-   "news_per_name": 0.959,
+   "ret3m": 6.9,
+   "news": 1.79,
+   "news_per_name": 0.897,
    "thin": true,
    "confirmed": [
     "MTARTECH"
