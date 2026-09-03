@@ -156,6 +156,80 @@ def test_picks_max_age_matches_the_dashboard_warn_threshold():
 
 
 # --------------------------------------------------------------------------
+# the scan's half of the contract: it must WRITE what the guard reads
+# --------------------------------------------------------------------------
+
+def test_price_coverage_reproduces_the_real_incident_numbers():
+    """The two distributions this repo actually recorded, so the metric is
+    pinned to observed reality rather than to a hand-picked example."""
+    import pandas as pd
+    from daily_scan import price_coverage
+    aug31 = {**{f"S{i}": pd.Timestamp("2026-08-28") for i in range(647)},
+             **{f"F{i}": pd.Timestamp("2026-08-31") for i in range(4)}}
+    cov, newest, behind, total = price_coverage(aug31)
+    assert (behind, total) == (647, 651) and str(newest.date()) == "2026-08-31"
+    assert round(cov, 4) == 0.0061          # the alert said 99% behind
+    sep01 = {**{f"S{i}": pd.Timestamp("2026-08-28") for i in range(254)},
+             **{f"F{i}": pd.Timestamp("2026-08-31") for i in range(397)}}
+    assert round(price_coverage(sep01)[0], 4) == 0.6098   # 39% behind
+    # nothing to judge from is UNKNOWN, never 1.0 — a 1.0 here would hand the
+    # guard a perfect score for a scan that loaded no frames at all
+    assert price_coverage({})[0] is None
+    assert price_coverage(None)[0] is None
+
+
+def test_save_state_records_session_and_coverage():
+    """The guard reads these three keys. If save_state stops writing them the
+    guard silently degrades to 'always re-run', so the contract is pinned."""
+    import json as _json, tempfile
+    import pandas as pd
+    import daily_scan
+    last_bars = {**{f"S{i}": pd.Timestamp("2026-08-28") for i in range(9)},
+                 "F": pd.Timestamp("2026-08-31")}
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, "tags_state.json")
+        daily_scan.save_state(path, {"F": "CONFIRMED"}, last_bars=last_bars)
+        doc = _json.load(open(path, encoding="utf-8"))
+    assert doc["session"] == "2026-08-31", "session must come from the newest BAR"
+    assert doc["price_coverage"] == 0.1
+    assert doc["n_priced"] == 10
+    assert "date" in doc and "tags" in doc, "the existing contract must survive"
+
+
+def test_rescan_is_disclosed_in_the_alerts_file():
+    """A re-scan's alert list is an INCREMENT (the baseline is the earlier
+    pass's tags). The file has to say so, or the Tonight panel silently reads
+    as the session's complete alert list."""
+    import pandas as pd
+    from daily_scan import rescan_note
+    bars = {"A": pd.Timestamp("2026-08-31"), "B": pd.Timestamp("2026-08-31")}
+    note = rescan_note({"session": "2026-08-31", "price_coverage": 0.0061}, bars)
+    assert note and "RE-SCAN of the 2026-08-31 session" in note
+    assert "1% price coverage" in note          # 0.0061 -> "1%"
+    assert "signals_journal.csv" in note, "must say where the rest of the session is"
+    # a normal first pass over a NEW session says nothing
+    assert rescan_note({"session": "2026-08-28", "price_coverage": 0.99}, bars) is None
+    # and neither absent state nor absent bars may invent one
+    assert rescan_note(None, bars) is None
+    assert rescan_note({"session": "2026-08-31"}, {}) is None
+    # coverage missing from the earlier pass is reported honestly, not as 0%
+    assert "unknown price coverage" in rescan_note({"session": "2026-08-31"}, bars)
+
+
+def test_save_state_omits_coverage_rather_than_faking_it():
+    """With no frames there is no coverage to report. It must be ABSENT — the
+    guard reads absent as 'not good' and re-runs. Writing 0.0 or 1.0 here would
+    either cause a permanent re-run loop or grant a free pass."""
+    import json as _json, tempfile
+    import daily_scan
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, "tags_state.json")
+        daily_scan.save_state(path, {"A": "WATCH"}, last_bars={})
+        doc = _json.load(open(path, encoding="utf-8"))
+    assert "price_coverage" not in doc and "session" not in doc
+
+
+# --------------------------------------------------------------------------
 # the workflow-level guards
 # --------------------------------------------------------------------------
 
@@ -239,7 +313,8 @@ def test_daily_guard_needs_no_interpreter():
             "interpreter")
 
 
-def _run_guard(now: str, stamp: str) -> str:
+def _run_guard(now: str, stamp: str, cov: float | None = 1.0,
+               legacy: bool = False) -> str:
     """Execute the guard's REAL shell at a chosen instant.
 
     The block is lifted out of daily.yml rather than restated here — a test
@@ -259,9 +334,17 @@ def _run_guard(now: str, stamp: str) -> str:
     with tempfile.TemporaryDirectory() as d:
         os.makedirs(os.path.join(d, "state"))
         if stamp:
+            # `legacy` = a state file written before 2026-09-01: `date` only,
+            # no session and no coverage.
+            doc = {"date": stamp, "tags": {"ACME": "CONFIRMED"}}
+            if not legacy:
+                doc["session"] = stamp
+                if cov is not None:
+                    doc["price_coverage"] = cov
+                doc["n_priced"] = 651
             with open(os.path.join(d, "state", "tags_state.json"), "w",
                       encoding="utf-8") as f:
-                _json.dump({"date": stamp, "tags": {"ACME": "CONFIRMED"}}, f)
+                _json.dump(doc, f)
         out = os.path.join(d, "gh_output")
         script = os.path.join(d, "g.sh")
         with open(script, "w", newline="\n", encoding="utf-8") as f:
@@ -292,6 +375,35 @@ def _run_guard(now: str, stamp: str) -> str:
 ])
 def test_guard_keys_on_the_session_not_the_calendar_date(now, stamp, want):
     assert _run_guard(now, stamp) == want
+
+
+@pytest.mark.parametrize("cov,want,why", [
+    (1.00,   "SKIP", "a clean scan is done"),
+    (0.95,   "SKIP", "above the 90% bar"),
+    (0.90,   "SKIP", "exactly at the bar"),
+    (0.8999, "RUN",  "just below the bar"),
+    # the two coverages this repo actually recorded, both of which a date-only
+    # guard would have locked in for the rest of the day
+    (0.0061, "RUN",  "the 08-31 run: 647 of 651 names still on Friday's closes"),
+    (0.6098, "RUN",  "the 09-01 run: 254 of 651 still behind"),
+    (None,   "RUN",  "coverage absent is NOT coverage good"),
+])
+def test_a_scanned_session_with_bad_price_coverage_is_rescanned(cov, want, why):
+    assert _run_guard("2026-09-01 13:05", "2026-09-01", cov=cov) == want, why
+
+
+def test_legacy_state_file_without_coverage_rescans_once():
+    """A state file written before this field existed has no coverage, so the
+    guard cannot know the scan was sound and re-runs once. That run writes the
+    new fields and the cadence returns to normal — self-healing, and failing
+    towards work rather than towards a skip."""
+    assert _run_guard("2026-09-01 13:05", "2026-09-01", legacy=True) == "RUN"
+
+
+def test_coverage_gate_cannot_override_a_missing_session():
+    """Good coverage on the WRONG session must still scan — the two conditions
+    are an AND, not a fallback for each other."""
+    assert _run_guard("2026-09-01 13:05", "2026-08-31", cov=1.0) == "RUN"
 
 
 def test_guard_does_not_compare_against_the_bare_calendar_date():

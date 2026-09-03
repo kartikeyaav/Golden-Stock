@@ -106,17 +106,41 @@ jobs:
           # let all four crons do a full scan; the late ones would then rewrite
           # daily_alerts.md empty. A guard that cannot say "skip" is decorative.
           #
-          # save_state() writes {"date": "...", "tags": {...}} with date first,
-          # and the tag VALUES are bare stage names, so this key is unambiguous.
-          # A missing or unparseable file yields "" — which cannot equal a real
-          # date, so the job SCANS. Absent data must never buy a night off.
-          have=$(grep -o '"date"[[:space:]]*:[[:space:]]*"[0-9][0-9-]*"' \
-                   state/tags_state.json 2>/dev/null \
-                 | head -1 | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' || true)
-          echo "tags_state='$have'  now(UTC)=$today ${hour}h dow=$dow  session=$target"
-          if [ "$have" = "$target" ]; then
-            echo "the $target session is already in the record — catch-up is a no-op"
+          # TWO FACTS, NOT ONE. "A scan ran for this session" and "that scan
+          # saw real prices" are different, and only the first used to be
+          # readable here. On 2026-08-31 a run tagged the whole universe with
+          # 99% of names still on Friday's closes; on a date-only guard every
+          # later slot that day would have skipped and locked that in.
+          #
+          # `session` is the newest bar the scan actually had (from the data,
+          # not a clock), and `price_coverage` is how much of the universe
+          # carried it. Skip only when the session matches AND coverage is
+          # good. `date` is the fallback for a state file written before
+          # 2026-09-01, which has neither field.
+          #
+          # Read with grep, NOT with an interpreter. This job deliberately has
+          # no setup-python step, and bare `python` is not on PATH on GitHub's
+          # ubuntu runners (only `python3`) — so a `python -c` read here fails,
+          # the fallback swallows it, and the guard answers "run" every single
+          # time. A guard that cannot say "skip" is decorative.
+          #
+          # Any missing or unparseable field yields "" and SCANS. Absent data
+          # must never buy the job a night off.
+          key() { grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"\?[0-9][0-9.-]*\"\?" \
+                    state/tags_state.json 2>/dev/null | head -1 \
+                  | grep -oE '[0-9][0-9.-]*' || true; }
+          have=$(key session); [ -n "$have" ] || have=$(key date)
+          cov=$(key price_coverage)
+          echo "tags_state session='$have' coverage='$cov'  now(UTC)=$today ${hour}h dow=$dow  target=$target"
+          # awk, because POSIX sh has no floats. Absent coverage is NOT good.
+          cov_ok=$(awk -v c="$cov" 'BEGIN{print (c != "" && c+0 >= 0.90) ? "yes" : "no"}')
+          if [ "$have" = "$target" ] && [ "$cov_ok" = "yes" ]; then
+            echo "the $target session is already in the record at $cov coverage — no-op"
             echo "run=false" >> "$GITHUB_OUTPUT"
+          elif [ "$have" = "$target" ]; then
+            echo "the $target session was scanned but only at '$cov' price coverage —"
+            echo "re-running to pick up the bars that had not arrived"
+            echo "run=true" >> "$GITHUB_OUTPUT"
           else
             echo "no scan recorded for the $target session — running"
             echo "run=true" >> "$GITHUB_OUTPUT"

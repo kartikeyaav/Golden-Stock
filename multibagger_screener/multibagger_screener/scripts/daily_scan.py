@@ -98,6 +98,55 @@ ANALYST_SILENT_DAYS = 3       # the job has not run at all
 ANALYST_NO_SUCCESS_DAYS = 7   # it runs, but has produced nothing
 
 
+def price_coverage(last_bars: dict | None):
+    """How much of the universe actually carries the newest bar in the cache.
+
+    Returns (coverage 0..1 | None, newest bar | None, n_behind, n_total).
+
+    ONE definition, used by both the health warning and the state file, so the
+    number the alert shouts and the number the cloud guard reads can never
+    drift apart. Self-referential (each name vs the newest bar ANYWHERE) on
+    purpose: no trading calendar is needed, and a market holiday moves every
+    symbol together so it cannot false-positive.
+
+    None means "nothing to judge from" — no frames loaded. Callers must treat
+    that as unknown and DO the work, never as permission to skip.
+    """
+    lasts = last_bars or {}
+    if not lasts:
+        return None, None, 0, 0
+    newest = max(lasts.values())
+    n_behind = sum(1 for d in lasts.values() if d < newest)
+    return 1.0 - n_behind / len(lasts), newest, n_behind, len(lasts)
+
+
+def rescan_note(prev: dict | None, last_bars: dict | None) -> str | None:
+    """Say so when this run is a SECOND pass over a session already scanned.
+
+    WHY (2026-09-01). The cloud guard re-runs a session whose first pass had
+    poor price coverage. The diff baseline is then that pass's saved tags, so
+    the transitions here are only what changed SINCE it — an INCREMENT, not the
+    session's full alert list. That is deliberate: journal_append is a pure
+    append with no dedup, so re-deriving the whole session would duplicate rows
+    in the append-only forward record.
+
+    The cost is that daily_alerts.md, which the dashboard's Tonight panel is
+    built from, no longer lists the session's earlier alerts. Rather than merge
+    text (fragile) or duplicate the record (worse), the file states what it is
+    and where the rest lives. Returns None on a normal first pass.
+    """
+    prev_sess = (prev or {}).get("session")
+    cur = price_coverage(last_bars)[1]
+    if not prev_sess or cur is None or prev_sess != str(cur.date()):
+        return None
+    pc = (prev or {}).get("price_coverage")
+    pc_txt = f"{pc:.0%}" if isinstance(pc, (int, float)) else "unknown"
+    return (f"RE-SCAN of the {prev_sess} session (the earlier pass ran at "
+            f"{pc_txt} price coverage). The alerts below are only what changed "
+            f"since it — that session's earlier alerts are in "
+            f"journal/signals_journal.csv, not repeated here")
+
+
 def health_check(today_tags: dict, symbols: list[str],
                  extra_problems: list[str] | None = None,
                  last_bars: dict | None = None) -> list[str]:
@@ -122,16 +171,12 @@ def health_check(today_tags: dict, symbols: list[str],
     # normal night. Compare each name to the NEWEST bar anywhere in the cache
     # (self-referential on purpose: no trading calendar needed, and a market
     # holiday moves every symbol together so it cannot false-positive).
-    lasts = last_bars or {}
-    if lasts:
-        newest = max(lasts.values())
-        behind = [s for s, d in lasts.items() if d < newest]
-        frac = len(behind) / len(lasts)
-        if frac > 0.10:
-            problems.append(
-                f"{len(behind)} of {len(lasts)} names ({frac:.0%}) are behind the "
-                f"newest cached bar ({newest.date()}) — the price refresh did not "
-                f"complete; those tags are computed on stale closes")
+    cov, newest, n_behind, n_total = price_coverage(last_bars)
+    if cov is not None and (1.0 - cov) > 0.10:
+        problems.append(
+            f"{n_behind} of {n_total} names ({1 - cov:.0%}) are behind the "
+            f"newest cached bar ({newest.date()}) — the price refresh did not "
+            f"complete; those tags are computed on stale closes")
     if today_tags:
         counts = pd.Series(list(today_tags.values())).value_counts()
         if counts.index[0] == "WATCH" and counts.iloc[0] > 0.95 * len(today_tags):
@@ -253,11 +298,32 @@ def merge_with_todays_alerts(out_path: str, report: str) -> str:
 
 
 def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
-               entry_alerted: dict | None = None) -> None:
+               entry_alerted: dict | None = None,
+               last_bars: dict | None = None) -> None:
     if _skip_write(f"state -> {os.path.basename(path)} (+ history snapshot)"):
         return
     os.makedirs(os.path.dirname(path), exist_ok=True)
     payload = {"date": datetime.now().strftime("%Y-%m-%d"), "tags": tags}
+    # PRICE COVERAGE TRAVELS WITH THE STATE (2026-09-01). This file is the
+    # cloud guard's only evidence that a session was scanned, and "scanned" is
+    # not the same fact as "scanned on real prices". On 08-31 a run tagged the
+    # whole universe with 99% of names still on Friday's closes; the guard
+    # would then have skipped every later slot of the day and locked that in,
+    # because a date stamp cannot express how good the scan was.
+    #
+    # Written even when it is bad — especially when it is bad. Omitting it on a
+    # degraded night is how absent data would buy the job a pass again.
+    # `date` stays the RUN date — existing consumers read it and it keeps its
+    # meaning. `session` is the new, different fact: the trading day this scan
+    # actually saw, taken from the newest bar in the cache rather than from a
+    # clock. Taking it from the data means no trading calendar and no timezone
+    # rule is involved, and a run that fetched nothing new stamps the OLD
+    # session — which is exactly right, because it did not scan the new one.
+    cov, newest, _behind, n_total = price_coverage(last_bars)
+    if cov is not None:
+        payload["session"] = str(newest.date())
+        payload["price_coverage"] = round(cov, 4)
+        payload["n_priced"] = n_total
     cutoff = (datetime.now() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
     if ep_alerted:
         # EP alerts are one-day EVENTS, not state transitions — remember which
@@ -1252,13 +1318,25 @@ def main() -> None:
         except (ValueError, KeyError, TypeError):
             feed_problems.append("state/analyst_health.json unreadable — analyst "
                                  "status unknown, not good")
+    # RE-SCAN DISCLOSURE (2026-09-01). When the cloud guard re-runs a session
+    # because the first pass had poor price coverage, the transitions here are
+    # only what changed SINCE that pass — the diff baseline is its saved tags,
+    # not the previous session's. That is deliberate: journal_append is a pure
+    # append with no dedup, so re-deriving the whole session would duplicate
+    # rows in the forward record. But it means this file is an INCREMENT, and a
+    # reader who assumes it lists the session's every alert would be wrong.
+    # Say so rather than let the page imply otherwise.
+    _rescan = rescan_note(prev, last_bars)
+    if _rescan:
+        feed_problems.append(_rescan)
+
     problems = health_check(today_tags, symbols, extra_problems=feed_problems,
                             last_bars=last_bars)
     if problems:
         lines = lines[:2] + problems + [""] + lines[2:]
 
     save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
-               entry_alerted=entry_alerted)
+               entry_alerted=entry_alerted, last_bars=last_bars)
     journal_append(journal_rows)
     # freeze the dimension breakdown BEFORE alert_details is pruned to 30 days
     dimensions_append(journal_rows, alert_details)
