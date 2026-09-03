@@ -69,6 +69,78 @@ _News moves attention, never entries — trades stay technical._
 
 _Policy moves the catalyst dimension by at most 0.12 and moves nothing else. Entries stay technical._
 
+## AI analyst verdicts
+
+### TDPOWERSYS
+VERDICT: WAIT
+CONVICTION: HIGH
+SIZE: FULL PLAN (on trigger — no override taken)
+
+WHY (max 3 bullets):
+- Story is real, not a one-off: Q1FY27 order inflow ₹734cr (+87% YoY), 93% export-led, mgmt upgraded FY27 revenue guidance to ₹2,600cr on record demand across generator verticals. [Investing.com](https://www.investing.com/news/company-news/td-power-q1-fy27-slides-71-revenue-surge-exports-dominate-93CH-4853811)
+- Second-order tailwind confirmed and specific: global turbine OEMs (GE Vernova ~$176bn backlog, Siemens Energy €136-146bn backlog) are capacity-constrained by the AI-datacenter power boom, with 5-7yr turbine wait times — TDPS is a generator supplier riding this OEM overflow via exports, not a domestic-only story.
+- Governance clean: 0% promoter pledge confirmed via FY26 mandatory disclosure, no SEBI/auditor red flags found, recent promoter move was an indirect stake acquisition (no control change).
+
+RISKS (max 2 bullets):
+- Card doesn't mention it: board approved a ₹600cr QIP + preferential issue on 14-Aug, EGM scheduled 10-Sep-2026 — real dilution pending shareholder vote just days out, and event-driven volatility risk into that date.
+- Valuation already prices much of this in (P/E 86); stock hasn't triggered the 792.4 pivot yet — buying now is chasing an unconfirmed breakout.
+
+CHECKED: WebSearch — screener.in/ScanX pledge disclosure, Q1FY27 concall/investing.com transcript, GE Vernova/Siemens Energy backlog reporting, NSE/BSE fundraise filings.
+CHANGES MY MIND: A confirmed volume breakout close above 792.4 post-EGM (10-Sep) with QIP pricing not punitive to existing holders → upgrade to BUY, full plan.
+
+### PGIL
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Story confirmed by primary sources: Q1 FY27 concall shows record shipments (20.8mn pcs vs 17.2mn YoY), EBITDA margin at record 10.7%, and capacity math is real — Bihar shed-2 running, Bangladesh laundry facility live Sep-2026 (+6-7mn pcs), Vietnam land acquired for FY28 target of 125-130mn pcs.
+- Second-order tailwind verified, matches committee thesis: company's own Aug-2026 concall confirms the tariff reset — India now at the same 10% Section 301 tier as Bangladesh, vs Vietnam at 12.5%. Key customer Inditex/Zara (named in news as a Pearl Global customer) posted accelerating demand (+5.8% to +11.5% comps) with no signs of a sourcing pullback — real transmission channel, not generic sector talk.
+- No governance red flags found: FY26 promoter declaration confirms zero share encumbrance; no SEBI action, auditor issue, or litigation surfaced.
+
+RISKS (max 2 bullets):
+- Promoter Dr. Deepak Seth sold 1.19% of the company in the open market on 26-Aug-2026, right into the run-up — not disqualifying (holding still ~9.85%) but worth watching for follow-on selling.
+- Debt +69% over 3y funding the capex build; tariff-rate sourcing data is conflicting across trackers (some show India still at a disadvantage) — if the 10% parity doesn't hold, the second-order case weakens. Stock is already up 75% off its base and hasn't cleared the 2495 pivot on volume yet.
+
+CHECKED: screener.in/company filings, Pearl Global Q1FY27 investor presentation and concall (gurufocus, fibre2fashion), scanx.trade SEBI disclosures, Inditex Q1/summer trading updates.
+CHANGES MY MIND: Pivot breaks 2495 on volume with tariff parity holding → upgrade to BUY full plan; any reversal on the India tariff tier back above Bangladesh/Vietnam → downgrade to SKIP.
+
+### SKYGOLD
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE (no position until pivot 814.35 triggers — card itself flags this as "not yet a backtested entry")
+
+WHY (max 3 bullets):
+- Red flags clear: promoter confirmed zero pledge/encumbrance as of Apr-2026; May-2026 auditor change (V J Shah & Co → MSKA/BDO) was explained as scope increase from two new subsidiary acquisitions, passed 99.75% shareholder vote, paired with a move to appoint a global audit firm — reads as governance upgrade, not distress.
+- Story is real, not a one-off: Q1 FY27 volume (+66% YoY production to 447kg/mo) and margin drove the beat; more importantly the "financial_strength_trend" flag (debt +495%/3y) is stale — FY26 shows net debt down >50% YoY, operating CF improved from -₹272cr to -₹45cr, working-capital days 71→59. Equity capital jump ties to a disclosed ₹108cr preferential allotment + ₹20cr promoter infusion for working capital, not stealth dilution (though a board-approved ₹270cr QIP is still pending — watch for pricing/timing).
+- Sector is mixed, not a tailwind: domestic B2B jewelry (87% of revenue) has absorbed high gold prices fine, but the export leg the company is scaling (Dubai/GCC push) sits inside an industry-wide gold-supply-crunch headwind — India's plain gold jewellery exports fell ~40% YoY in Apr-May'26 on duty-free gold constraints and record gold prices. Second-order risk, not company-specific yet.
+
+RISKS (max 2 bullets):
+- Working-capital-intensive, thin-margin (~5% PAT margin) model remains structurally leveraged to gold price/supply; capacity utilization still only ~60%.
+- Pending ₹270cr QIP is a dilution overhang if priced opportunistically.
+
+CHECKED: BSE/NSE filings via scanx.trade, screener.in, moneycontrol/CNBC-TV18/InvestyWise Q1 FY27 transcripts, GJEPC export data via aninews/elitewealth, careratings credit note.
+CHANGES MY MIND: A confirmed volume breakout through 814.35 with the QIP priced fairly (or shelved) would upgrade this to BUY FULL PLAN; a pledge disclosure or another mid-year auditor exit would flip to SKIP.
+
+### CRAFTSMAN
+VERDICT: WAIT
+CONVICTION: MEDIUM
+SIZE: NONE
+
+WHY (max 3 bullets):
+- Earnings inflection is real, not a one-off: Q1FY27 revenue +36% YoY, EBITDA +51%, PAT +116%, margins 4%→6%, backed by a healthy 4W/2W order book, ₹1,500cr FY27 capex plan, and a new Hosur-3 plant explicitly to meet incremental southern-India OEM demand.
+- No hidden red flags: promoters formally confirmed zero share encumbrance for FY26 (no pledge), and the only auditor item is a routine cost-auditor reappointment — nothing SEBI/adverse-filing related found beyond what the card shows.
+- Sector modestly supportive, not euphoric: CV volumes guided +4-6% FY27, premium 2W recovering (entry-level 2W still soft) — a tailwind but not a blowout that would force urgency.
+
+RISKS (max 2 bullets):
+- Promoter selling has continued past the card's snapshot — stake fell 48.7%→42.41%→~38.14% by Jun-2026, including a large CMD open-market sale, right into a rallying stock. Worth watching for further disclosures before committing capital.
+- The mechanical trigger itself hasn't fired (VCP live, pivot 11500 not yet cleared) and P/E 62 leaves little cushion if the breakout fails or margins normalize.
+
+CHECKED: Web search across scanx.trade, Business Standard, Investing.com/Yahoo (Q1FY27 earnings call), ICRA auto outlook, and exchange filing summaries (BSE/NSE disclosures).
+
+CHANGES MY MIND: A confirmed volume breakout through 11500 with promoter selling stabilizing (no further stake reduction disclosed) would upgrade this to BUY/FULL PLAN.
+
+
 ## Cards
 
 ```
