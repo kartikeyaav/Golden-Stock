@@ -20,15 +20,37 @@ name: Daily scan (cloud)
 # rewrite daily_alerts.md with an empty list and blank the day's alerts. So the
 # guard job below makes the catch-ups a genuine no-op rather than a re-run.
 #
-# All four slots sit inside the SAME UTC DAY (NSE closes 15:30 IST = 10:00
-# UTC), which is what lets the guard compare against a plain UTC date. Do not
-# add a slot that crosses midnight UTC without changing the guard with it.
+# SCHEDULED EARLY ON PURPOSE (2026-09-03). The four-cron version fixed
+# "the scan does not run". It did not fix "the scan runs at a useful hour",
+# and the user noticed the way users do — the Telegram digest stopped turning
+# up in the evening. Measured over 09-01 and 09-02, every slot was DELIVERED
+# but each one late, by an amount that shrank through the day:
+#
+#     13:05 -> ~17:10   (+4h05)      16:05 -> ~19:15   (+3h10)
+#     19:05 -> ~21:43   (+2h38)      22:05 -> ~23:53   (+1h48)
+#
+# So the first scan of the day landed ~22:40 IST instead of 18:35, and the
+# digest with it. GitHub only ever delays a cron, never advances one, so the
+# fix is to ask earlier than you want and let the delay carry it: a 10:20 UTC
+# slot delivered four hours late still lands at 19:50 IST.
+#
+# Asking this early is only safe because of the coverage gate. NSE closes at
+# 10:00 UTC and Yahoo does not have every bar by 10:20; a slot delivered ON
+# TIME would scan at low coverage. That is no longer a trap — save_state
+# records the coverage, and the guard re-runs a session that was scanned badly
+# instead of treating it as finished. Early slots cost a re-run at worst.
+#
+# Every slot sits inside the SAME UTC DAY (NSE closes 10:00 UTC), but the
+# guard no longer depends on that: it keys on the SESSION, so a slot delivered
+# after midnight UTC still resolves to the right trading day.
 on:
   schedule:
-    - cron: "5 13 * * 1-5"   # 18:35 IST — the intended slot
-    - cron: "5 16 * * 1-5"   # +3h  catch-up
-    - cron: "5 19 * * 1-5"   # +6h  catch-up
-    - cron: "5 22 * * 1-5"   # +9h  last chance before the UTC day turns over
+    - cron: "20 10 * * 1-5"  # 15:50 IST, 20 min after the close — earliest useful
+    - cron: "50 11 * * 1-5"
+    - cron: "20 13 * * 1-5"  # ~18:50 IST if delivered on time
+    - cron: "5 16 * * 1-5"
+    - cron: "5 19 * * 1-5"
+    - cron: "5 22 * * 1-5"   # last chance before the UTC day turns over
   workflow_dispatch: {}
 
 # allow the job to commit the forward record back to the repo

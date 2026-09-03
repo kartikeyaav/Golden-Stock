@@ -260,6 +260,25 @@ def test_daily_catch_ups_stay_inside_one_utc_day_after_nse_close():
             "close or across the UTC midnight the guard keys on")
 
 
+def test_the_first_slot_is_early_enough_to_absorb_githubs_delay():
+    """GitHub only ever delays a cron, never advances one, and this repo's
+    measured delay on the FIRST slot of the day was ~4 hours (09-01, 09-02).
+    Asking at 13:05 therefore delivered at ~17:10 UTC = 22:40 IST, and the
+    Telegram digest with it. At least one slot must sit close to the 10:00 UTC
+    close so a four-hour delay still lands in the Indian evening.
+
+    Safe only because of the coverage gate: a slot delivered ON TIME at 10:20
+    scans before Yahoo has every bar, and the guard re-runs that session
+    rather than treating a badly-priced scan as finished.
+    """
+    mins = sorted(int(c.split()[1]) * 60 + int(c.split()[0]) for c in _crons("daily.yml"))
+    assert mins[0] <= 11 * 60, (
+        f"earliest daily slot is {mins[0] // 60:02d}:{mins[0] % 60:02d} UTC — too "
+        "late to survive the observed delay and still deliver in the evening IST")
+    assert mins[0] >= 10 * 60, "a slot before the 10:00 UTC close has no bar to scan"
+    assert len(mins) >= 4, "too few slots to survive a dropped schedule"
+
+
 def test_daily_scan_is_gated_on_the_guard_job():
     """Catch-ups are only safe because the guard turns them into no-ops:
     daily_scan.py diffs against the SAVED tag state, so a second pass on the
