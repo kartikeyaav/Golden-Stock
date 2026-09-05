@@ -46,6 +46,80 @@ _News moves attention, never entries — trades stay technical._
 
 _Policy moves the catalyst dimension by at most 0.12 and moves nothing else. Entries stay technical._
 
+## AI analyst verdicts
+
+### MARKSANS
+VERDICT: WAIT
+CONVICTION: HIGH
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Q1FY27 print is real and broad-based, not a one-off: revenue +35.6% YoY (₹840.8cr), EBITDA +112.8%, PAT +173.9% to ₹159cr, gross margin up to 59.1%; growth driven by UK/Europe (+74.7% YoY, highest-ever quarter) plus QliniQ (₹44cr) and ABCnow bolt-ons, not a single lumpy item.
+- Governance clean: promoters confirmed 0% pledge/encumbrance as of Apr-2026; no SEBI action, auditor issue, or litigation found — card's governance caveat is resolved, not a red flag.
+- Second-order tailwind is specific: Marksans' growth engine is UK/Europe expansion, which sidesteps the structural US generic-pricing squeeze (US pharma exports from India down ~11.5% YoY on inventory/tariff overhang per Sep-2026 trade data) that's hitting pure US-generic peers.
+
+RISKS (max 2 bullets):
+- Card flags debt +179% over 3y, but separate coverage describes the company as "debt-free" funding acquisitions from its own >₹1,000cr cash pile — this is a genuine conflict I could not reconcile from these sources; treat the debt-trend subscore with caution, don't assume it's benign.
+- US generic-drug tariffs are 0% only through Aug-2026 before phased escalation toward 100%+ by 2028 — a future headwind for the US-facing part of the book, though Europe pivot partially insulates it.
+- Trigger not yet live: pivot 341 hasn't printed a volume breakout, so this is a watch, not a fill.
+
+CHECKED: WebSearch across scanx.trade/BSE filings (pledge), Business Standard/Medical Dialogues/Investing.com (Q1FY27 results & concall), Business Standard/IndianPharmaPost (USFDA Goa & NY inspections), and trade-press coverage of US pharma tariffs/India export data (Sep-2026).
+CHANGES MY MIND: A confirmed volume breakout through 341 (triggers the mechanical entry) — or resolution of the debt discrepancy showing real leverage buildup, which would cut size to HALF PLAN.
+
+### TMB
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection verified real, not a one-off: Q1FY27 profit +35% YoY to ₹412cr, NIM expanded 3.84%→4.29% via deliberate gold-loan repricing in the agri book, GNPA nearly halved to 0.69% (from 1.22%), advances +27% YoY — a structural improvement across margin, growth, and asset quality simultaneously.
+- No governance red flags surfaced beyond what the card already discounts: TMB has no identifiable promoter (so no pledge risk by construction); the only adverse item found is a decades-old ED/SAFEMA share-confiscation case, which TMB won on appeal in July 2026; a ₹38k NSE/BSE penalty for a technical NRC-constitution lapse is immaterial.
+- Second-order tailwind: RBI's April-2026 tiered gold-loan LTV overhaul disadvantages smaller/pure-play gold lenders and favors larger, better-capitalized banks — directly supports the gold-loan repricing that's driving TMB's NIM beat, while sector-wide NIMs are stabilizing now that the rate-cut cycle has paused (repo held at 5.25% since Dec-25).
+
+RISKS (max 2 bullets):
+- Price already extended (+11% vs 50-DMA, 3.44 ATRs) into a fresh all-time high right after a Sep 2 analyst roadshow — could be event-driven and fade before the 941.85 pivot even triggers.
+- Weekly committee doesn't hold TMB — no independent corroboration; thin free-float, old-private-bank name with a recurring (if losing) ED/SAFEMA litigation history worth continued monitoring.
+
+CHECKED: Business Standard, ScanX/Trendlyne, NSE corporate filings, TradingView/Whalesbook (SAFEMA case), IIFL/Businessworld (RBI gold-loan norms).
+
+CHANGES MY MIND: A new adverse SEBI/RBI order, an ED win reopening the SAFEMA share matter, or management walking back NIM/growth guidance at upcoming concalls.
+
+### BELRISE
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: FULL PLAN
+
+WHY (max 3 bullets):
+- Second-order channel confirmed: Belrise's key 2W OEM customers (TVS +21%, Bajaj +30%, both record/near-record dispatches) posted their strongest August ever, driven by the GST cut on sub-350cc bikes from 28%→18% — a real, dated demand catalyst flowing straight into Belrise's component volumes, plus EV 2W (Belrise's stated growth platform) up 137% YoY at TVS.
+- No red flags found: FY26 results carried an unmodified auditor opinion (GSA & Associates), no pledge/SEBI action/litigation surfaced, and the ₹1,700 Cr QIP (completed July 2026 at ₹220) is stated for growth capex/JV investment and debt paydown — consistent with the card's deleveraging trend (debt 2353→1521 Cr), not distress dilution.
+- Smart money and technicals corroborate: FII+DII both accumulating (+3.2pp/+3.9pp) alongside RS 85th percentile and live VCP — institutional flow lines up with the earnings inflection.
+
+RISKS (max 2 bullets):
+- Valuation is full (PEG 2.56) and catalyst score is weak (0.174) — most of the good news (QIP, GST cut, OEM order wins) may already be priced in; EBITDA margin actually contracted 110bps in Q1 FY26 even as PAT rose, so the "inflection" is partly non-operating/tax-driven, not pure margin expansion.
+- Not on this week's committee shortlist (RRKABEL/MTARTECH/KARURVYSYA/EMCURE/PGIL) — no disqualifying reason found, but worth noting it didn't make the cut elsewhere.
+
+CHECKED: WebSearch across screener/business-standard/tipranks/scanx for pledge/SEBI/auditor status, Q1 FY26 results & QIP purpose, and 2W OEM (TVS/Bajaj/Hero) August 2026 dispatch data.
+CHANGES MY MIND: EBITDA margin keeps contracting next quarter despite OEM volume growth — would signal input-cost/pricing pressure eating the inflection rather than a real operating turn.
+
+### SCI
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection confirmed with a real driver: Q1 FY27 consolidated PAT +75% YoY (₹619cr), revenue +40%, EBITDA margin expanded ~10pp to 47.79% on strong global tanker freight rates and dry bulk ops — not a one-off/base-effect print.
+- No pledge or fresh SEBI enforcement found; only a minor ₹1.31cr fine for board-norm lapses (procedural, governance-linked, not fraud) — governance score of 0.7 on the card looks fair.
+- Second-order tailwind: crude tanker market (VLCC/Aframax) hit multi-year highs into early 2026 on Red Sea rerouting and tight mid-size tonnage — a genuine transmission channel benefiting SCI's tanker segment, its largest revenue driver.
+
+RISKS (max 2 bullets):
+- Tanker freight rates are volatile, not structural — VLCC rates fell 43–55% Nov 2025→Jan 2026 before rebounding; a rate roll-over would directly reverse the margin story this quarter.
+- SCI privatisation is stalled/under fresh review (bidders reportedly found ineligible) — an unresolved binary overhang that can swing the stock on headlines independent of fundamentals; theme heat is only middling (36/100), and it's absent from this week's committee picks.
+
+CHECKED: Web search — Q1 FY27 results coverage (sahi.com, whalesbook, kotakneo), tanker freight-rate outlook (EIA, Kpler), SCI privatisation status (Business Standard, niftytrader).
+
+CHANGES MY MIND: Confirmed government scraps/indefinitely shelves SCI privatisation (removes overhang, bullish) OR VLCC/tanker rates roll over sharply into Q2 FY27 (undercuts the inflection thesis, bearish).
+
+
 ## Cards
 
 ```
