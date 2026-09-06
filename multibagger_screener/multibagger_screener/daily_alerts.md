@@ -46,6 +46,7 @@ _News moves attention, never entries — trades stay technical._
 
 _Policy moves the catalyst dimension by at most 0.12 and moves nothing else. Entries stay technical._
 
+
 ## AI analyst verdicts
 
 ### MARKSANS
@@ -118,6 +119,77 @@ RISKS (max 2 bullets):
 CHECKED: Web search — Q1 FY27 results coverage (sahi.com, whalesbook, kotakneo), tanker freight-rate outlook (EIA, Kpler), SCI privatisation status (Business Standard, niftytrader).
 
 CHANGES MY MIND: Confirmed government scraps/indefinitely shelves SCI privatisation (removes overhang, bullish) OR VLCC/tanker rates roll over sharply into Q2 FY27 (undercuts the inflection thesis, bearish).
+
+### SOUTHBANK
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Q1FY27 results confirm real inflection, not a one-off: PAT +17-18% YoY to ₹378-380cr, NII +23% YoY to a record ₹1,025cr, and GNPA collapsed to 1.38% (from 3.15% YoY) with NNPA at 0.26% — broad-based credit-quality cleanup, not accounting noise.
+- Second-order positive: RBI approved Kotak Mahindra Bank in May 2026 to acquire up to 9.99% of SOUTHBANK — a strong private bank building a stake reads as an external vote of confidence, a signal the keyword scan wouldn't catch.
+- No promoter exists (0% promoter holding, professionally-managed old private bank) — the card's pledge veto is structurally inapplicable here, so governance flag is clean, not just unverified.
+
+RISKS (max 2 bullets):
+- Board sought AGM approval (Aug 2026) for a ₹1,000cr raise; sources conflict on structure — most recent reporting says Tier-II/NCD debt (non-dilutive), but the bank has run equity QIPs before, so dilution risk isn't fully ruled out.
+- Card's own flag stands: TTM earnings growth (14%) is decelerating vs 3-yr trend (23%) — the turnaround is real but decelerating, and sector-wide NIM pressure from 2025's rate cuts is only just easing, not yet a tailwind.
+
+CHECKED: WebSearch across business-standard, sahi.com, whalesbook, equitybulls, trendlyne, scanx.trade for Q1FY27 results, RBI/SEBI actions, shareholding, fundraise structure, and ICRA/sector NIM-credit growth commentary.
+
+CHANGES MY MIND: Confirmation the ₹1,000cr raise is equity (QIP) rather than Tier-II debt would flip this toward SKIP given dilution risk on top of an already-decelerating earnings trend.
+
+### EMIL
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Earnings inflection verified as real, not one-off: Q1FY27 PAT +458% YoY on 39% revenue growth, SSSG 34.2%, gross margin expansion 14.6%→17.2%, and working-capital debt cut from ₹658cr to ₹97cr — genuine operating leverage, not an accounting blip.
+- Second-order tailwind the card missed: GST on ACs/large TVs cut 28%→18% (effective Sep 2025, still flowing through), directly lifting realizations/volumes for EMIL as a durables retailer — a real transmission channel, not generic sector noise. Festive season (Oct-Nov) ahead is a further catalyst.
+- Governance clean: EMIL formally confirmed zero promoter share encumbrance for FY26; no SEBI action or auditor issue found — corroborates the card's unverified-pledge note as actually clean.
+
+RISKS (max 2 bullets):
+- Valuation is rich and inconsistent across sources (card says P/E 35, other trackers show P/E ~66 near 52-week highs) — a lot of good news may already be priced in.
+- FII stake fell 6.86%→4.77% even as story improved (DIIs absorbed it); concentration risk remains — top-5 brands drive most revenue, and expansion into new geographies (WB, NCR) carries execution risk.
+
+CHECKED: screener.in-style company data via search, business-standard/scanx/investing.com Q1FY27 earnings coverage, SEBI-compliance filing note on promoter pledge, GST Council reform coverage.
+
+CHANGES MY MIND: Any signal that SSSG/GST-linked demand pop reverses next quarter (post-festive normalization) or promoter pledge/insider selling emerges would flip this to SKIP.
+
+### DIACABS
+VERDICT: BUY
+CONVICTION: MEDIUM
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- Pledge verified clean: promoters (GSEC/Rakesh Shah consortium, 84% stake) show 0% pledged — governance flag resolves positive, not just "unverified."
+- Real, catalyst-backed inflection: PMLA/ED discharge by Ahmedabad Special Court (May 6, 2026) unlocked ~Rs 1,900 Cr in assets frozen since 2018, coinciding with a genuine order pipeline (₹195.48 Cr Rajesh Power/PGVCL, ₹185 Cr Adani Energy Solutions, ₹435.71 Cr data-center cables) and fresh capacity (7th CCV line + new copper wire/cable line commissioned) — this is demand + capacity-driven, not accounting one-offs.
+- Sector tailwind is direct and specific: India T&D capex cycle + data-center buildout is pulling real orders from named large customers (Adani Energy, PGVCL), not generic sector commentary.
+
+RISKS (max 2 bullets):
+- Company is a 2022 IBC/CIRP turnaround (99% of old equity wiped, relisted Sept 2023) with barely 2-3 years of clean operating history — debt +58%/3yr and negative operating cash flow fit a capex-heavy ramp but also echo the pre-insolvency profile.
+- Promoters (Monarch Infraparks/GSEC) ran an OFS in 2025 to sell up to ~6% stake — insiders trimming into strength, a mild overhang even though holding stays >84%.
+
+CHECKED: WebSearch — trendlyne/business-standard/investywise/tradebrains/scanx/tijorifinance for pledge data, PMLA/CBI discharge, order-win news, and shareholding pattern.
+CHANGES MY MIND: Any fresh ED/SEBI attachment, a large promoter share sale beyond the disclosed OFS, or a quarter where order-book growth doesn't convert to cash (OCF stays negative) — would flip this to SKIP.
+
+### ABSLAMC
+VERDICT: WAIT
+CONVICTION: LOW
+SIZE: HALF PLAN
+
+WHY (max 3 bullets):
+- No red flags: promoter pledge is zero, and the FY26 OFS stake sales (Aditya Birla 5% + Sun Life 6.5%) were routine minimum-public-shareholding compliance, not distress — this explains the card's FII/DII churn, nothing sinister.
+- Earnings deceleration is NOT a one-off — SEBI's 2026 TER→BER regulatory overhaul (effective Apr 1, 2026) is structurally compressing AMC fee economics industry-wide, and Q1 FY27 confirms it: PAT +12% YoY but MF QAAUM growth just 6% YoY, with press flagging "operating margin concerns" despite the profit beat.
+- Second-order headwind the keyword scan can't see: passive index funds' share of passive AUM jumped from 6.2% (2021) to 22.4% (Mar 2026), structurally eroding active-AMC economics like ABSLAMC's — this is a real transmission channel, not generic sector noise.
+- Setup itself is clean technically (8/8 trend template, live VCP) but price hasn't triggered the 1062 pivot yet — this is a watch item, not a live buy tonight.
+
+RISKS (max 2 bullets):
+- If TER/BER compression bites harder than modeled, earnings could decelerate further rather than re-accelerate, invalidating the "earnings inflection" thesis underlying the score.
+- Weekly committee (RRKABEL, MTARTECH, KARURVYSYA, EMCURE, PGIL) did not select this name — worth noting as an independent signal.
+
+CHECKED: screener/news search on ABSLAMC pledge & promoter filings, SEBI 2026 TER/BER regulation coverage, Q1 FY27 results, passive-fund market-share data.
+CHANGES MY MIND: A confirmed volume breakout above 1062 alongside a Q2 FY27 print showing MF QAAUM/BER-adjusted margins stabilizing (not still compressing) would upgrade this to FULL PLAN.
 
 
 ## Cards
