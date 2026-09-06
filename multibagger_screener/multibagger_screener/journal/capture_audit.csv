@@ -195,3 +195,31 @@ audit_date,window,rank,symbol,window_return_pct,turnover_cr,classification,ident
 2026-08-28,6m,5,SHILPAMED,167.9,82.41,CAUGHT,True,CONFIRMED (watch pivot),2026-06-26,571.6,60.8,173.0,0.35,,,flagged mid-move
 2026-08-28,6m,6,DIACABS,155.1,105.03,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-11,193.73,95.6,176.7,0.54,,,flagged with most of the move still ahead
 2026-08-28,6m,7,UTLSOLAR,136.0,16.77,TOO YOUNG,False,,,,,163.1,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-09-04,1w,1,NIACL,23.4,537.98,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-03,195.33,20.0,25.8,0.78,,,flagged with most of the move still ahead
+2026-09-04,1w,2,SMLMAH,21.4,129.32,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-28,5186.5,21.4,21.4,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-04,1w,3,WELENT,21.4,87.77,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-28,670.3,23.1,23.1,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-04,1w,4,SUDEEPPHRM,15.4,40.64,TOO YOUNG,False,,,,,17.8,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-09-04,1w,5,IFCI,12.7,2116.31,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-01,87.26,23.2,19.5,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-04,1w,6,GMMPFAUDLR,11.8,44.39,NO STRUCTURE,False,,,,,14.4,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-09-04,1w,7,CAPLIPOINT,11.7,192.6,CAUGHT,True,CONFIRMED (watch pivot),2026-09-01,2711.2,6.1,14.3,0.43,,,flagged mid-move
+2026-09-04,1m,1,ENTERO,45.2,73.16,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-05,1258.8,48.5,48.5,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-04,1m,2,WELCORP,44.9,637.47,CAUGHT,True,EPISODIC PIVOT,2026-08-21,2311.9,15.7,49.7,0.32,,2026-08-21,flagged mid-move
+2026-09-04,1m,3,WELENT,39.3,56.39,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-21,631.45,30.7,41.2,0.74,,,flagged with most of the move still ahead
+2026-09-04,1m,4,SUDEEPPHRM,38.6,35.68,TOO YOUNG,False,,,,,41.6,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-09-04,1m,5,IFCI,34.0,711.09,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-13,76.66,40.2,42.1,0.96,,,flagged with most of the move still ahead
+2026-09-04,1m,6,GMMPFAUDLR,33.9,52.51,NO STRUCTURE,False,,,,,37.1,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-09-04,1m,7,SHILPAMED,33.6,220.63,ALREADY FLAGGED,True,,,,,34.9,,,,"CONFIRMED before the window opened — on the radar the whole time, no fresh transition alert"
+2026-09-04,3m,1,CUPID,106.5,741.08,CAUGHT,True,CONFIRMED (watch pivot),2026-07-22,206.9,44.5,118.1,0.38,,,flagged mid-move
+2026-09-04,3m,2,WELCORP,86.5,322.74,CAUGHT EARLY,True,EPISODIC PIVOT,2026-06-08,1346.6,98.7,92.7,1.0,,2026-08-21,flagged with most of the move still ahead
+2026-09-04,3m,3,SHILPAMED,79.2,129.33,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-26,571.6,70.4,81.0,0.87,,,flagged with most of the move still ahead
+2026-09-04,3m,4,SUDEEPPHRM,76.2,28.59,TOO YOUNG,False,,,,,79.9,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-09-04,3m,5,SMLMAH,66.4,80.92,CAUGHT,True,EPISODIC PIVOT,2026-07-30,5479.2,15.0,66.4,0.23,,2026-07-30,flagged mid-move
+2026-09-04,3m,6,AEGISLOG,64.9,323.92,CAUGHT,True,CONFIRMED (watch pivot),2026-07-27,1291.3,16.0,94.4,0.17,,,flagged mid-move
+2026-09-04,3m,7,ENTERO,64.1,32.12,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-14,1241.6,50.5,67.8,0.75,,,flagged with most of the move still ahead
+2026-09-04,6m,1,STLTECH,313.1,153.84,CAUGHT EARLY,True,VALIDATED VCP ENTRY,2026-03-23,173.2,337.5,317.9,1.0,2026-08-04,,flagged with most of the move still ahead
+2026-09-04,6m,2,CUPID,252.0,474.54,CAUGHT EARLY,True,VALIDATED VCP ENTRY,2026-03-09,91.6,226.4,271.7,0.83,2026-03-09,,flagged with most of the move still ahead
+2026-09-04,6m,3,HFCL,232.3,592.07,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,163.68,56.8,268.6,0.21,,,flagged mid-move
+2026-09-04,6m,4,WELCORP,220.2,216.63,CAUGHT,True,EPISODIC PIVOT,2026-06-08,1346.6,98.7,230.8,0.43,,2026-08-21,flagged mid-move
+2026-09-04,6m,5,SHILPAMED,189.4,87.97,CAUGHT,True,CONFIRMED (watch pivot),2026-06-26,571.6,70.4,192.4,0.37,,,flagged mid-move
+2026-09-04,6m,6,DIACABS,145.2,105.18,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-11,193.73,95.6,180.1,0.53,,,flagged with most of the move still ahead
+2026-09-04,6m,7,BALAMINES,141.8,62.96,CAUGHT,True,VALIDATED VCP ENTRY + EPISODIC PIVOT,2026-05-14,1623.4,57.1,144.2,0.4,2026-08-24,2026-05-14,flagged mid-move
