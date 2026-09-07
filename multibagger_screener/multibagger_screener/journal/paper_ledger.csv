@@ -67,3 +67,9 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-02,USHAMART,SKIP,entry,0,,,[USHAMART@2026-09-01 21:33] already open in paper book
 2026-09-02,ENGINERSIN,SELL,partial,71,276.27,2556.0,partial at 2.5R
 2026-09-02,KEI,SELL,all,14,5369.36,-5894.56,stop hit
+2026-09-07,TMB,SKIP,entry,0,,,[TMB@2026-09-05 21:32] already open in paper book
+2026-09-07,BELRISE,SKIP,entry,0,,,[BELRISE@2026-09-05 21:33] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-07,SCI,SKIP,entry,0,,,[SCI@2026-09-05 21:34] already open in paper book
+2026-09-07,SOUTHBANK,SKIP,entry,0,,,[SOUTHBANK@2026-09-06 22:25] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-07,EMIL,SKIP,entry,0,,,[EMIL@2026-09-06 22:26] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-07,DIACABS,SKIP,entry,0,,,[DIACABS@2026-09-06 22:27] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
