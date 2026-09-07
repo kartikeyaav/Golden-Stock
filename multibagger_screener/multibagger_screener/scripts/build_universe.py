@@ -108,8 +108,37 @@ def main() -> None:
               f"{universe.loc[placeholders, 'symbol'].tolist()}")
         universe = universe.loc[~placeholders].reset_index(drop=True)
 
-    out_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                            "universe.csv")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    # THE COVERAGE-GAP COHORT (2026-09-07, PREREG_2026-09-07.md). Merged from a
+    # COMMITTED file, never rebuilt here: scripts/build_gap_universe.py derives
+    # it and is run deliberately at review. A pre-registered forward test cannot
+    # measure a moving target, so weekly membership churn is exactly what must
+    # not happen — and a live index fetch failing must never silently redefine
+    # the cohort either.
+    #
+    # Index names WIN on collision (drop_duplicates keeps the first frame): if a
+    # gap name is promoted into Microcap250 at the next rebalance it must be
+    # labelled by its index, not left tagged nse_gap, or the forward record
+    # would credit the experiment with an index name's trades.
+    gap_path = os.path.join(root, "gap_universe.csv")
+    if os.path.exists(gap_path):
+        gap = pd.read_csv(gap_path)
+        keep = [c for c in ("symbol", "company", "industry", "index_source")
+                if c in gap.columns]
+        gap = gap[keep]
+        before = len(universe)
+        universe = pd.concat([universe, gap], ignore_index=True)
+        universe = universe.drop_duplicates(subset="symbol").reset_index(drop=True)
+        promoted = len(gap) - (len(universe) - before)
+        print(f"gap cohort: +{len(universe) - before} names from gap_universe.csv"
+              + (f" ({promoted} already in an index — index label wins)" if promoted else ""))
+    else:
+        # Absent file = the cohort is not merged, and that is stated rather than
+        # silently producing a 650-name universe that looks normal.
+        print("NOTE: gap_universe.csv absent — coverage-gap cohort NOT included")
+
+    out_path = os.path.join(root, "universe.csv")
     universe.to_csv(out_path, index=False)
     print(f"\nUniverse: {len(universe)} unique symbols -> {out_path}")
     print(universe["index_source"].value_counts().to_string())

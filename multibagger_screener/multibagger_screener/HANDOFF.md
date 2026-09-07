@@ -2043,6 +2043,68 @@ for both in the meantime.
 
 ---
 
+## 3X. The universe had a hole between its two screens (2026-09-07)
+
+`universe.csv` was Midcap150 + Smallcap250 + Microcap250 — the Nifty Total
+Market minus the Nifty 100 largecaps. Below the Microcap250 cutoff sat a band
+watched by NOTHING: **377 companies** too big for the penny screen's gates
+(price ≥ ₹100 **and** mcap ≥ ₹1,000cr) and in no index, because Microcap250 has
+a hard 250-name cap and Nifty membership needs F&O eligibility and listing
+history — not because the businesses are worse. Metro Brands, Hatsun Agro,
+BASF India, Vinati Organics, G R Infraprojects. Of 2,079 NSE EQ names only 5
+were unseen by *any* layer, but "seen by the penny screen and rejected" is not
+"watched": that screen carries zero capital and has no backtest.
+
+**The snapshot lied and the backtest caught it.** A same-day technical read
+said the gap names beat the incumbents on every measure — Stage 2 51.9% vs
+41.4%, VCP 12.8% vs 10.3%, trend template 4.83 vs 4.27. Traded ALONE they
+return **7.14% CAGR against 19.63%**. A richer stage mix today is not a better
+universe, and adopting on that snapshot would have been right for the wrong
+reason.
+
+What justified adoption was the COMBINATION: 19.63 → **21.66% CAGR** with max
+drawdown **shallower** (−21.13 → −18.60%), risk-adjusted +25%. Net positive in
+6 of 8 years and counter-cyclical to the incumbent in two — 2026 has the
+incumbent at −₹131k while the gap cohort makes +₹168k. The gain is
+diversification, not stock-picking.
+
+**Three things were checked rather than assumed:**
+
+- `theme_tailwind` is a 15-point conviction dimension driven by NSE industry,
+  which the cohort does not have. If a themeless name returned `None` the
+  weight would renormalise AWAY and all 377 would float up — the exact shape
+  that put 22 junk names in the penny top-13 in July. `phase_c._theme_read`
+  already returns **0.3, a score not a None**, so they are mildly penalised
+  instead. Pinned by a test.
+- `gap_universe.csv` had to be TRACKED, or the cloud checkout would lack it,
+  `build_universe` would print its "absent" note, produce a normal-looking
+  650-name universe, and the weekly would COMMIT that — silently reverting the
+  adoption. The test for this went red before the file was staged.
+- The **capital gate was being contaminated.** `split_cohorts` filters on date,
+  kind and entry status, never on `index_source`, so gap signals would have
+  entered a pre-registration that judges "the entries the backtest validated".
+  Now excluded from gate/extended/legacy and tracked in its own partition;
+  amendment logged in `CAPITAL_GATE.md` §9. No gap signal had fired yet, so the
+  gate's collected data is byte-identical before and after.
+
+**The cohort is FROZEN.** `build_universe.py` merges the committed file and
+never rebuilds it — a pre-registered forward test cannot measure a moving
+target, and a live index-fetch failure must never silently redefine it. Index
+names win on collision, so a promoted name is relabelled and stops counting as
+the experiment.
+
+**The limitation that matters: survivorship.** The cohort came from *today's*
+NSE master, so any gap-band company that died between 2019 and 2026 is
+invisible — and that inflates the cohort more than the incumbent, because
+sub-index small caps fail more often. Unquantifiable here; the repo has
+historical constituent snapshots for indices and nothing for this band. That is
+why `PREREG_2026-09-07.md` exists and why §3's numbers are not confirmation.
+
+Cost: universe +58%, so nightly alerts go ~19 → ~30. Positions grew only 12% in
+the backtest — the slot constraint binds, so the book does not flood.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -2379,6 +2441,18 @@ scripts/import_holdings.py    sync holdings.csv from a Zerodha Console CSV expor
 scripts/backup_push.py        commits+pushes the forward record to GitHub nightly (non-fatal)
 AUDIT_2026-07-25.md           system audit: the validated-entry visibility gap (F1) + 7 more, with measurements
 data/nse_all.py               whole NSE cash market: symbol master, bhavcopy, circuit band + GSM, ASM
+scripts/build_gap_universe.py the 377-name nse_gap cohort: the band between the two screens —
+                              too big for the penny gates, in no index. Run DELIBERATELY at
+                              review, never on a cadence; build_universe.py only MERGES the
+                              committed gap_universe.csv so the pre-registered cohort cannot
+                              drift (3X)
+gap_universe.csv              the frozen cohort + mcap/turnover at add. MUST stay git-tracked:
+                              untracked, the cloud rebuilds a 650-name universe and commits
+                              the adoption away
+PREREG_2026-09-07.md          the forward test that decides whether the cohort stays. §4 confirm,
+                              §5 refute, §7 the survivorship limitation
+tests/test_gap_universe.py    7 checks incl. the tracked-by-git guard, the themeless-name-scores-
+                              0.3-not-None guard, and gap signals never entering the capital gate
 scripts/build_penny_universe.py  penny/nano universe = tradability gates first, then price<100 OR mcap<1000Cr
 scripts/penny_fundamentals.py    screener.in for penny names (never touches fundamentals_flat.csv)
 scoring/penny_score.py        5-block penny score + survival vetoes (research only, no backtest)

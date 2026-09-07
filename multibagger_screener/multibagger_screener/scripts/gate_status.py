@@ -128,12 +128,38 @@ def split_cohorts(outcomes: pd.DataFrame) -> dict:
     status_ok = df["_status_label"].isin(GATE.cohort_entry_status)
     extended = df["_status_label"].astype(str).str.contains("EXTENDED", na=False)
     in_window = df["logged_at"] >= start
-    gate = df[in_window & (kind_ok | status_ok) & ~extended]
+
+    # THE nse_gap COHORT IS NOT THIS GATE'S BUSINESS (2026-09-07, §9 amendment).
+    # This gate was registered 2026-07-26 to judge "the entries the backtest
+    # validated". The 377 coverage-gap names added on 2026-09-07 are an
+    # EXPERIMENT whose own forward test is PREREG_2026-09-07.md §4 — the
+    # backtest that justified them is survivor-biased and explicitly not
+    # confirmation. Letting their signals into this cohort would quietly change
+    # the population a real-capital decision is measured on, mid-flight.
+    #
+    # Read from the LIVE universe.csv, not the frozen cohort file, so a gap name
+    # promoted into an index at the next rebalance rejoins the gate under its
+    # index label — the same collision rule build_universe.py enforces.
+    gap_syms: set[str] = set()
+    try:
+        uni = pd.read_csv(os.path.join(ROOT, "universe.csv"))
+        gap_syms = set(uni.loc[uni["index_source"] == "nse_gap", "symbol"]
+                       .astype(str).str.strip())
+    except (OSError, KeyError, ValueError):
+        # universe.csv unreadable: exclude NOTHING. Silently dropping signals
+        # from the gate on a read failure would flatter it, and this gate must
+        # never be flattered by missing data.
+        pass
+    is_gap = df["symbol"].astype(str).str.strip().isin(gap_syms)
+
+    gate = df[in_window & (kind_ok | status_ok) & ~extended & ~is_gap]
     return {
         "gate": gate,
-        "extended": df[in_window & extended],
+        "extended": df[in_window & extended & ~is_gap],
+        # the experiment, tracked apart and counted toward nothing here
+        "gap": df[is_gap],
         # everything the old scan fired, kept whole and reported apart
-        "legacy": df[~(in_window & (kind_ok | status_ok) & ~extended)],
+        "legacy": df[~(in_window & (kind_ok | status_ok) & ~extended) & ~is_gap],
     }
 
 
