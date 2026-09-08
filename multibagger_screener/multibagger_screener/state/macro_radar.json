@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-09-08T19:26:58",
+ "generated": "2026-09-08T21:52:47",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 10372,
+ "headlines_read": 10378,
  "policy_hits": 16,
  "stories": 15,
  "themes": {
   "defence": {
-   "pressure": 0.214,
-   "pos_flow": 0.1781,
+   "pressure": 0.208,
+   "pos_flow": 0.1724,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -29,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1078
+     "weight": 0.1043
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0703
+     "weight": 0.068
     }
    ]
   },
@@ -59,8 +59,8 @@
    "top": []
   },
   "renewables": {
-   "pressure": 0.088,
-   "pos_flow": 0.0685,
+   "pressure": 0.086,
+   "pos_flow": 0.0662,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -80,7 +80,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0685
+     "weight": 0.0662
     }
    ]
   },
@@ -294,8 +294,8 @@
    ]
   },
   "shipbuilding": {
-   "pressure": 0.108,
-   "pos_flow": 0.0846,
+   "pressure": 0.107,
+   "pos_flow": 0.0836,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -332,7 +332,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0298
+     "weight": 0.0288
     }
    ]
   }
@@ -356,23 +356,6 @@
    "weight": 0.1581
   },
   {
-   "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
-   "date": "2026-08-28T20:41:02",
-   "source": "BusinessLine",
-   "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
-   "themes": [
-    "defence"
-   ],
-   "polarity": "pos",
-   "event": "policy/norms",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.1078
-  },
-  {
    "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
    "date": "2026-08-14T05:35:56",
    "source": "Livemint",
@@ -389,6 +372,23 @@
    "sources": 1,
    "retellings": 1,
    "weight": 0.1052
+  },
+  {
+   "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
+   "date": "2026-08-28T20:41:02",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
+   "themes": [
+    "defence"
+   ],
+   "polarity": "pos",
+   "event": "policy/norms",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1043
   },
   {
    "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -490,7 +490,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0703
+   "weight": 0.068
   },
   {
    "title": "Cabinet approves scheme for floating solar photovoltaic projects with energy storage",
@@ -507,7 +507,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0685
+   "weight": 0.0662
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -592,7 +592,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0298
+   "weight": 0.0288
   }
  ]
 }

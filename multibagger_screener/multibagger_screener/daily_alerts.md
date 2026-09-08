@@ -1,22 +1,11 @@
-# Daily scan — 2026-09-08 19:27
+# Daily scan — 2026-09-08 21:53
 
+!! HEALTH: RE-SCAN of the 2026-09-08 session (the earlier pass ran at 0% price coverage). The alerts below are only what changed since it — that session's earlier alerts are in journal/signals_journal.csv, not repeated here
 !! HEALTH: 1027 of 1028 names (100%) are behind the newest cached bar (2026-09-08) — the price refresh did not complete; those tags are computed on stale closes
 
 Book: 26/12 slots · heat 32.5% of capital at risk · OVER the validated cap by 14 · Healthcare 31% (over the 25% intent)
 
 No transitions among 998 watched names. (0 minor tag shifts.)
-
-## News radar — material filings since last scan
-
-- + **UNIMECH** [CONFIRMED] RS 90 (M&A/JV, CONFLUENCE): Unimech Aerospace and Manufacturing Limited has informed the Exchange regarding Acquisition (includi
-- + **ASIANENE** [EXTENDED] RS 89 (order win, pos): Asian Energy Services Limited has informed the Exchange about Receipt of Letter of Intent by Oilmax 
-- + **VISHNU** [EXTENDED] RS 85 (M&A/JV, pos): VISHNU CHEMICALS LIMITED has informed the Exchange regarding Joint venture agreements |SUBJECT: Agre
-- + **GVT&D** [WATCH] RS 74 (order win x2, pos): GE Vernova T&D India Limited has informed the Exchange about Bagging/Receiving of orders/contracts  
-- + **63MOONS** [WATCH] RS 72 (M&A/JV x2, pos): 63 moons technologies limited has informed the Exchange regarding Acquisition (including agreement t
-- + **PVRINOX** [WATCH] RS 50 (capex/investment, pos): PVR INOX Limited has informed the Exchange about Issue Summary Document (ISD) for Buy-back of Pre Is
-- ...and 12 more on the dashboard radar panel
-
-_News moves attention, never entries — trades stay technical._
 
 ## Policy radar — government decisions moving a whole theme
 
