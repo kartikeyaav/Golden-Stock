@@ -1,5 +1,5 @@
 {
- "date": "2026-09-07",
+ "date": "2026-09-08",
  "tags": {
   "MOMENTUM100": "WATCH",
   "ACMESOLAR": "CONFIRMED",
@@ -1000,7 +1000,7 @@
   "DAMCAPITAL": "BROKEN",
   "NELCAST": "WATCH"
  },
- "session": "2026-09-07",
- "price_coverage": 1.0,
+ "session": "2026-09-08",
+ "price_coverage": 0.001,
  "n_priced": 1028
 }

@@ -1,10 +1,10 @@
 {
- "generated": "2026-09-07 16:01",
+ "generated": "2026-09-08 19:28",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 10.0,
  "deadline": "2026-12-31",
- "days_to_deadline": 114,
+ "days_to_deadline": 113,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -162,21 +162,21 @@
   "3m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": 4.94,
-    "first": 64.64,
+    "ret_pct": 3.65,
+    "first": 65.44,
     "last": 67.83,
-    "from": "2026-06-08",
+    "from": "2026-06-09",
     "to": "2026-09-07",
-    "sessions": 66
+    "sessions": 65
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": 2.84,
-    "first": 23123.0,
+    "ret_pct": 2.31,
+    "first": 23242.1,
     "last": 23779.15,
-    "from": "2026-06-08",
+    "from": "2026-06-09",
     "to": "2026-09-07",
-    "sessions": 65
+    "sessions": 64
    }
   },
   "12m": {

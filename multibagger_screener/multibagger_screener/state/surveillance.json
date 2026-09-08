@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-07 16:01",
+ "generated": "2026-09-08 19:28",
  "n_checked": 1027,
- "n_flagged": 92,
- "asm_total": 217,
+ "n_flagged": 93,
+ "asm_total": 222,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -737,14 +737,14 @@
   "SMLMAH": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "LOTUSDEV": {
    "flags": [
@@ -898,6 +898,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "WELENT": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "VENTIVE": {
    "flags": [
     {
@@ -997,6 +1009,11 @@
   "SBCL": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -1004,7 +1021,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "ASM"
   },
   "CEIGALL": {
    "flags": [
