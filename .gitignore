@@ -8,6 +8,12 @@ multibagger_screener/multibagger_screener/fundamentals_cache/
 # raw NSE downloads for the penny screen (bhavcopy stack, symbol master,
 # band/GSM/ASM lists) — all re-fetchable in ~1 min
 multibagger_screener/multibagger_screener/nse_cache/
+# NSE F&O bhavcopy — one file per session of NIFTY option chains, 2019->now.
+# 71 MB and re-fetchable in ~3 min (scripts/fetch_option_chain.py is
+# idempotent and resumable), so it is cached, never committed. NOTE: it is
+# also absent from every workflow's actions/cache path list — see
+# OPTIONS_INTEGRATION.md §1 before running any options step in the cloud.
+multibagger_screener/multibagger_screener/fo_cache/
 
 # operational noise
 multibagger_screener/multibagger_screener/logs/
