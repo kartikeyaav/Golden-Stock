@@ -11,13 +11,20 @@ name: Weekly refresh (cloud)
 # laptop (Claude subscription auth — free at the margin), then pushes; the
 # committed ai_picks.json survives this job untouched (--no-ai never rewrites
 # it) and the dashboard build picks it up.
+# TWO SLOTS + A GUARD (2026-09-12), the same shape daily.yml has carried since
+# 08-31. A single best-effort cron is a single point of failure: GitHub delays
+# schedules by hours and drops them outright, and a missed Sunday means the
+# shortlist, the fundamentals and the committee briefing all stand still for a
+# week. The guard makes the second slot a no-op on any Sunday the first worked.
 on:
   schedule:
     - cron: "30 4 * * 0"
+    - cron: "30 10 * * 0"
   workflow_dispatch: {}
 
 permissions:
   contents: write
+  actions: read      # notify_failure.py reads this run's own job/step status
 
 concurrency:
   group: golden-stock-pipeline
@@ -28,15 +35,58 @@ defaults:
     working-directory: multibagger_screener/multibagger_screener
 
 jobs:
+  # Did this Sunday's refresh already land? shortlist_ranked.csv is the
+  # weekly's headline output and is committed by the job below, so its last
+  # commit time answers the question from the durable record rather than from
+  # a runner-local file. A manual dispatch always runs: pressing the button
+  # means you want it.
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0        # commit DATES are the whole point of this job
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "manual run — refreshing regardless"
+            echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          last=$(git log -1 --format=%ct -- shortlist_ranked.csv || echo 0)
+          case "$last" in ''|*[!0-9]*) last=0 ;; esac
+          now=$(date -u +%s)
+          age=$(( (now - last) / 3600 ))
+          echo "shortlist_ranked.csv last committed ${age}h ago"
+          # A read that fails leaves last=0 and age enormous, so the refresh
+          # RUNS. Absent data must never buy the job a week off.
+          if [ "$last" -gt 0 ] && [ "$age" -lt 20 ]; then
+            echo "this week's refresh is already in the record — no-op"
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "no refresh recorded for this cycle — running"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
   refresh:
+    needs: guard
+    if: needs.guard.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 180   # fundamentals scrape of the shortlist is the long pole
     env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      # see the note in daily.yml — empty until the secret exists, and the
+      # committee then keeps running on the laptop exactly as it does today
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
       PYTHONUNBUFFERED: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -62,6 +112,20 @@ jobs:
       - name: Weekly refresh (no AI committee — runs locally; penny is its own job)
         run: python scripts/weekly_refresh.py --no-ai --skip-penny
 
+      # THE COMMITTEE, WHEN THE CLOUD OWNS IT (2026-09-12). --no-ai above
+      # still skips it inside weekly_refresh; this is the same call as a
+      # separate, gated step, so the laptop path is untouched until the secret
+      # exists. The freshness guard in weekly_committee_local.py means the two
+      # cannot both produce a set for the same shortlist — but once this is
+      # proven, flip ai_runner.json to "cloud" and disable the Windows task,
+      # because two writers on one branch is the failure this whole pass is
+      # about.
+      - name: AI committee (only if the subscription token is set)
+        if: ${{ env.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          npm install -g @anthropic-ai/claude-code@2.1.238
+          python scripts/ai_picks.py || echo "committee degraded (non-fatal)"
+
       - name: Commit refreshed record
         run: |
           git config user.name "golden-stock-bot"
@@ -70,7 +134,8 @@ jobs:
           # key) must not abort staging of everything else
           for p in journal state/tags_state.json focus_list.csv universe.csv \
                    shortlist_ranked.csv shortlist_details.json \
-                   fundamentals_flat.csv ai_picks.json capture_audit_report.md \
+                   fundamentals_flat.csv ai_picks.json ai_picks.md \
+                   analyst_reports capture_audit_report.md \
                    penny_universe.csv penny_ranked.csv penny_report.md \
                    penny_excluded.csv state/penny_details.json \
                    state/penny_meta.json \
@@ -82,6 +147,25 @@ jobs:
             echo "no changes to commit"
           else
             git commit -m "cloud: weekly refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-            git pull --rebase --autostash origin master || true
+            # a conflicted rebase used to be swallowed by `|| true`, after
+            # which the push failed for a reason nobody could see. Abort and
+            # retry once, then let the push fail loudly — the failure step
+            # below now says so out loud.
+            if ! git pull --rebase --autostash origin master; then
+              echo "rebase failed — aborting it and retrying once"
+              git rebase --abort || true
+              if ! git pull --rebase --autostash origin master; then
+                echo "still cannot rebase; the push below will fail and report"
+              fi
+            fi
             git push origin HEAD:master
           fi
+
+      # THE ONE STEP THAT RUNS WHEN THE JOB DOES NOT (2026-09-12) — everything
+      # else that reports sits after the work inside this same job, so a crash
+      # skips its own announcers. See the longer note in daily.yml.
+      - name: Say it broke (failure only)
+        if: ${{ failure() }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/notify_failure.py "Weekly refresh" || true

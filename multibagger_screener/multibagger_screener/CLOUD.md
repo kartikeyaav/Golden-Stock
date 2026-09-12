@@ -87,3 +87,68 @@ the cloud's commits to your laptop for local viewing: `git pull`.
   bites, the fix is a longer `--pause` or a fetch retry — tell me the log.
 - **screener.in scraping (weekly)** may be blocked from cloud IPs similarly.
 - Cron can be delayed minutes during GitHub peak load — fine for a post-close job.
+
+---
+
+## What happens when a run fails (added 2026-09-12)
+
+Before this date, nothing did. Every step that reports — the dashboard build,
+the Telegram digest, the commit of the forward record — runs AFTER the work
+inside the same job, so a crashed scan skipped its own announcers. 18 runs
+failed across four sessions and the first word came from the watchdog 39 hours
+later. The repair has four parts:
+
+| When | What tells you |
+|---|---|
+| A job fails | `scripts/notify_failure.py` under `if: failure()` — names the failed step and the last error line, with a link to the run |
+| Three failures on the same commit in 20h | The daily guard stops replaying it and sends one message saying retries are paused (plain curl — that job has no interpreter by design) |
+| A scan ran but fetched no prices | `daily_scan` exits 1 below 50% coverage, so it is a red run, not a quiet evening |
+| Nothing ran at all | `scan_watchdog.py`, twice a night, judged on the SESSION and its coverage rather than on when the scan last ran |
+
+`state/tags_state.json` carries `session` and `price_coverage` for exactly this
+reason: "a scan ran" and "that scan saw prices" are different facts, and only
+the first used to be readable.
+
+## Cadence
+
+| Workflow | Slots | Guard |
+|---|---|---|
+| daily | six, 10:20–22:05 UTC Mon–Fri | session + coverage in the committed state; pauses after 3 same-commit failures |
+| weekly | 04:30 and 10:30 UTC Sunday | skips if `shortlist_ranked.csv` was committed in the last 20h |
+| penny | 05:00 and 11:00 UTC every 3rd day | skips if `state/penny_meta.json` was committed in the last 20h |
+| watchdog | 01:30 and 03:00 UTC Tue–Sat | none — it is the thing that watches |
+
+GitHub's scheduler is best effort: measured delays here run 1h48–4h05, and it
+dropped the daily cron entirely on 2026-08-31. The slots are early on purpose
+(a 10:20 slot delivered four hours late still lands at 19:50 IST) and the
+guards make the extra ones free. If the delivery hour ever matters more than
+this, the fix is an external cron calling `workflow_dispatch`, which starts
+within seconds — it needs a fine-grained token with Actions: write, scoped to
+this repo, kept at the scheduler (cron-job.org, a Cloudflare Worker, anything).
+
+## Moving the AI layers into the cloud
+
+Both AI layers run on the laptop's Claude subscription today. `claude
+setup-token` issues a long-lived subscription token, which makes them runnable
+headlessly — the reason they were kept local in July no longer holds, and the
+laptop is the system's last single point of failure (it sleeps, its login
+expires, its CLI self-updates, and it is a SECOND writer to this repo).
+
+1. Run `claude setup-token` locally and copy the token.
+2. Repo -> Settings -> Secrets and variables -> Actions -> New secret,
+   named **`CLAUDE_CODE_OAUTH_TOKEN`**. The gated steps in `daily.yml` and
+   `weekly.yml` start running; nothing else changes.
+3. When a cloud run has produced a verdict, set `ai_runner.json` to
+   `{"runner": "cloud"}` and commit it, then disable the laptop tasks:
+
+```powershell
+Disable-ScheduledTask -TaskName MultibaggerNightlyAnalystEvening
+Disable-ScheduledTask -TaskName MultibaggerWeeklyCommittee
+```
+
+Both wrappers already stand down on the marker alone, so the order is safe
+either way; the marker is what prevents two writers, and two writers on one
+branch is what wedged the tree for five days on 09-07.
+
+No API credits are involved at any point — this is the same subscription the
+laptop uses, and the same usage limits.

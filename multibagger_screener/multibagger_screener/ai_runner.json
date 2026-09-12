@@ -1,0 +1,5 @@
+{
+  "runner": "laptop",
+  "note": "Flip to \"cloud\" only after CLAUDE_CODE_OAUTH_TOKEN is set as a repo secret AND a cloud AI run has produced a verdict. Then disable the MultibaggerNightlyAnalystEvening and MultibaggerWeeklyCommittee tasks, or the two writers race again.",
+  "changed": "2026-09-12"
+}

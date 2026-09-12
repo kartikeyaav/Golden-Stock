@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from scoring.textnorm import as_text
 
 # ---------------------------------------------------------------------------
 # the map
@@ -57,13 +58,19 @@ class Theme:
 
     _rx: object = field(default=None, repr=False, compare=False)
 
-    def matches(self, sym: str, company: str, industry: str) -> bool:
+    def matches(self, sym: str, company: str, industry: object = "") -> bool:
         if sym in self.seeds:
             return True
         if not self.words:
             return False
+        # `(industry or "")` does NOT guard a missing value here: a NaN out of
+        # universe.csv is truthy, so it survived this line and then raised on
+        # .lower() (2026-09-08). It must also never reach the regex below as
+        # the string "nan", which would match words and invent a theme.
+        industry = as_text(industry)
+        company = as_text(company)
         if self.needs_industry and not any(
-                i.lower() in (industry or "").lower() for i in self.needs_industry):
+                i.lower() in industry.lower() for i in self.needs_industry):
             return False
         if self._rx is None:
             self._rx = re.compile("|".join(self.words), re.I)

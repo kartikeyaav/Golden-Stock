@@ -31,8 +31,19 @@ from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
+
+from _local_git import (acquire_lock, heal_stuck_rebase,  # noqa: E402
+                        release_lock, runner_is_cloud)
+
 LOG_PATH = os.path.join(ROOT, "logs", "analyst_local.log")
 PKG = "multibagger_screener/multibagger_screener"
+
+# The files this laptop OWNS: what a healed rebase restores, and the only
+# things this wrapper commits. daily_alerts.md is deliberately absent — see the
+# note at the `git add` below.
+RECORD_PATHS = (f"{PKG}/journal/analyst_verdicts.csv",
+                f"{PKG}/analyst_reports",
+                f"{PKG}/state/analyst_health.json")
 
 
 def log(msg: str) -> None:
@@ -99,7 +110,9 @@ def push_health_only(reason: str) -> None:
              f"{datetime.now():%Y-%m-%d %H:%M}"], cwd=gr)
     if c.returncode != 0:
         return  # nothing changed since the last push; the cloud is already current
-    run(["git", "pull", "--rebase", "--autostash"], cwd=gr)
+    if not git_pull_retry(gr, attempts=2, delay=10):
+        log("health NOT pushed: the tree is unsynced (see above)")
+        return
     pp = run(["git", "push", "origin", "master"], cwd=gr)
     log("health pushed (no verdicts)" if pp.returncode == 0
         else f"health push FAILED: {(pp.stderr or '')[:120]}")
@@ -137,7 +150,7 @@ def _verdict_rows() -> list[str]:
         return f.read().splitlines()
 
 
-def main() -> int:
+def _run() -> int:
     force = "--force" in sys.argv
     log("nightly analyst wrapper start" + (" (--force)" if force else ""))
 
@@ -185,8 +198,15 @@ def main() -> int:
 
     # 4. push the forward record — Pages republishes the dashboard from it
     gr = git_root()
+    # daily_alerts.md IS NOT IN THIS LIST (2026-09-12). The cloud rewrites that
+    # file on every scan and this wrapper used to insert verdicts into it too —
+    # the one file with two writers, and exactly what the 09-07 `git pull
+    # --rebase` stopped on, wedging the tree for five days. The verdicts still
+    # reach the cloud through analyst_verdicts.csv and the memos through
+    # analyst_reports/, both written only here, and the dashboard builds its
+    # verdict cards from those.
     run(["git", "add", "--", f"{PKG}/journal/analyst_verdicts.csv",
-         f"{PKG}/daily_alerts.md", f"{PKG}/state/analyst_health.json"], cwd=gr)
+         f"{PKG}/state/analyst_health.json"], cwd=gr)
     run(["git", "add", "-f", "--", f"{PKG}/analyst_reports"], cwd=gr)
     c = run(["git", "commit", "-m",
              f"local analyst: {len(new_rows)} pooled verdict(s) "
@@ -201,10 +221,21 @@ def main() -> int:
             log(f"COMMIT BLOCKED, verdicts NOT pushed: {why[:200]}")
             return 1
     else:
-        run(["git", "pull", "--rebase", "--autostash"], cwd=gr)
+        # CHECK THE PULL (2026-09-12). This line used to throw its result away,
+        # so a rebase that stopped on a conflict was followed by a push onto a
+        # wedged tree: rejected, logged as "retried next boot", and returned 0.
+        # Four days of verdicts went nowhere while Task Scheduler recorded
+        # success every night.
+        if not git_pull_retry(gr, attempts=2, delay=10):
+            log("VERDICTS COMMITTED BUT THE PULL FAILED — refusing to push onto "
+                "an unsynced tree. The next run heals the tree and pushes then.")
+            return 1
         pp = run(["git", "push", "origin", "master"], cwd=gr)
-        log("pushed" if pp.returncode == 0 else
-            f"push FAILED (retried next boot): {(pp.stderr or '')[:140]}")
+        if pp.returncode != 0:
+            log(f"PUSH FAILED — the verdicts are committed locally but are NOT "
+                f"in the cloud: {(pp.stderr or '').strip()[:140]}")
+            return 1
+        log("pushed")
 
     # 5. optional phone note (only if telegram is configured LOCALLY —
     # missing config degrades silently, the cloud's nightly digest is primary)
@@ -222,6 +253,27 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         log(f"telegram note skipped ({str(e)[:80]})")
     return 0
+
+
+def main() -> int:
+    """Stand-down checks first, then the run, and always unlocked afterwards.
+
+    Added 2026-09-12 after the fourth wedge of the same shape. Three things
+    must hold before this wrapper touches git at all: the laptop still owns the
+    AI layers, no sibling job is mid-run, and the tree is not stuck in a rebase
+    that somebody would otherwise have to finish by hand."""
+    if runner_is_cloud(ROOT):
+        log("ai_runner.json hands the AI layers to the CLOUD — this wrapper is "
+            "standing down. Flip it back to 'laptop' to re-enable, and disable "
+            "the scheduled task so it stops firing at all.")
+        return 0
+    if not acquire_lock(ROOT, log):
+        return 0
+    try:
+        heal_stuck_rebase(git_root(), run, log, RECORD_PATHS)
+        return _run()
+    finally:
+        release_lock(ROOT)
 
 
 if __name__ == "__main__":

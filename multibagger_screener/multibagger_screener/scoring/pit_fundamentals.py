@@ -31,6 +31,7 @@ import numpy as np
 import pandas as pd
 
 from data.screener_fetch import load_company
+from scoring.textnorm import as_text
 
 QUARTER_LAG_DAYS = 45
 ANNUAL_LAG_DAYS = 60
@@ -85,8 +86,8 @@ class PITFundamentals:
 
     def __init__(self, symbol: str, industry: str | None = None):
         self.symbol = symbol
-        self.is_financial = bool(industry) and (
-            "financial" in industry.lower() or "bank" in industry.lower())
+        ind = as_text(industry).lower()          # NaN-safe, see scoring/textnorm.py
+        self.is_financial = "financial" in ind or "bank" in ind
         raw = load_company(symbol)
         self.available = raw is not None
         if not self.available:

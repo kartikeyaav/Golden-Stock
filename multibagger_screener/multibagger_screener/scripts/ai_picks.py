@@ -179,8 +179,16 @@ def run_committee(briefing: str, model: str, thinking_tokens: int):
     claude_bin = shutil.which("claude")
     if claude_bin is None:
         return None, "claude CLI not found"
+    # CLAUDE_CODE_OAUTH_TOKEN is the ONE exception to the scrub (2026-09-12).
+    # It is how a Claude subscription authenticates headlessly (`claude
+    # setup-token`), and it is what lets these dives run in GitHub Actions
+    # instead of on a laptop that sleeps, expires its login and self-updates
+    # its CLI. Every other CLAUDE_CODE_* still goes: a host-injected proxy
+    # config is what poisoned the child CLI in July ("Invalid API key").
     clean_env = {k: v for k, v in os.environ.items()
-                 if not k.startswith("CLAUDE_CODE_") and k != "ANTHROPIC_BASE_URL"}
+                 if (k == "CLAUDE_CODE_OAUTH_TOKEN"
+                     or not k.startswith("CLAUDE_CODE_"))
+                 and k != "ANTHROPIC_BASE_URL"}
     # thinking: default 0 = the model's adaptive thinking (Sonnet 5 decides
     # per-turn). Forcing a large budget via MAX_THINKING_TOKENS made EVERY
     # turn of the ~30-turn research loop think at premium depth — the main

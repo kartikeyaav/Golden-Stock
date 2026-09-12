@@ -56,6 +56,7 @@ on:
 # allow the job to commit the forward record back to the repo
 permissions:
   contents: write
+  actions: read      # notify_failure.py reads this run's own job/step status
 
 # daily and weekly must never run at the same time (they share the cache and
 # both push) — one at a time, queued
@@ -82,8 +83,12 @@ jobs:
     timeout-minutes: 5
     outputs:
       run: ${{ steps.check.outputs.run }}
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: master
       - id: check
@@ -158,15 +163,46 @@ jobs:
           cov_ok=$(awk -v c="$cov" 'BEGIN{print (c != "" && c+0 >= 0.90) ? "yes" : "no"}')
           if [ "$have" = "$target" ] && [ "$cov_ok" = "yes" ]; then
             echo "the $target session is already in the record at $cov coverage — no-op"
-            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
           elif [ "$have" = "$target" ]; then
             echo "the $target session was scanned but only at '$cov' price coverage —"
             echo "re-running to pick up the bars that had not arrived"
-            echo "run=true" >> "$GITHUB_OUTPUT"
           else
             echo "no scan recorded for the $target session — running"
-            echo "run=true" >> "$GITHUB_OUTPUT"
           fi
+          # DO NOT REPLAY A CRASH (2026-09-12). A deterministic failure is not
+          # a transient one. On 09-08..09-11 the same NaN killed all six slots
+          # every day, and each replay re-pulled ~1,029 Yahoo series to reach
+          # the identical traceback. Three attempts per commit per day is
+          # enough to ride out a genuine blip; a fourth is just load.
+          #
+          # Any failure to READ this leaves fails=0 and the scan RUNS. Absent
+          # data must never buy the job a night off — that rule has its own
+          # entry in this repo's history and it applies to guards too.
+          since=$(date -u -d '20 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+          api="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/workflows/daily.yml/runs"
+          api="$api?per_page=30&status=completed"
+          q='[.workflow_runs[] | select(.head_sha==$sha and .conclusion=="failure" and .created_at > $since)] | length'
+          fails=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" "$api" | jq -r --arg sha "$GITHUB_SHA" --arg since "$since" "$q" || echo 0)
+          case "$fails" in ''|*[!0-9]*) fails=0 ;; esac
+          echo "failed attempts on $GITHUB_SHA in the last 20h: $fails"
+          if [ "$fails" -ge 3 ]; then
+            echo "three attempts on this commit already failed — not replaying a fourth"
+            msg="$fails attempts on the same commit have failed for the $target session."
+            msg="$msg Retries are paused until the next push. The record, the dashboard"
+            msg="$msg and the digest all still show the last good run."
+            msg="$msg  $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            # Sent with curl, not an interpreter: this job deliberately has no
+            # setup-python step, and a guard that shells out to something the
+            # runner may not have is how the first version of this guard became
+            # decorative (2026-08-31). tests/test_scan_freshness_guards.py pins it.
+            if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+              api="https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage"
+              curl -sf -X POST "$api" --data-urlencode "chat_id=$TELEGRAM_CHAT_ID" --data-urlencode "text=GOLDEN STOCK — daily scan retries PAUSED. $msg" > /dev/null || echo "telegram send failed; the log above still carries the verdict"
+            fi
+            echo "run=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
 
   scan:
     needs: guard
@@ -186,11 +222,17 @@ jobs:
       # secret is indistinguishable from "no channel configured", so the
       # public feed would silently never fire in the only place that runs.
       TELEGRAM_PUBLIC_CHAT_ID: ${{ secrets.TELEGRAM_PUBLIC_CHAT_ID }}
+      # Subscription auth for the AI analyst (2026-09-12). Empty until the
+      # secret exists, in which case the step below is skipped and the laptop
+      # keeps doing the dives exactly as before — adding this changes nothing
+      # on its own. Surfaced as env because `if:` cannot read secrets directly,
+      # and an unsurfaced secret is indistinguishable from "not configured".
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
       PYTHONUNBUFFERED: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -224,9 +266,26 @@ jobs:
       - name: Daily scan (prices + tag + diff + alerts + journal)
         run: python scripts/daily_scan.py
 
-      # AI analyst step REMOVED (2026-07-20, user decision): dives run on the
-      # laptop's subscription (scripts/nightly_analyst_local.py, pooled across
-      # nights the laptop is off) — the cloud never spends API credits.
+      # AI ANALYST, BACK IN THE CLOUD (2026-09-12) — and still no API credits.
+      #
+      # It was moved to the laptop on 2026-07-20 because subscription auth
+      # could not run headless. `claude setup-token` issues a long-lived OAuth
+      # token, so it can: the premise changed, and with it the reason the
+      # laptop was in the critical path at all. That laptop sleeps (61 h over
+      # 08-29..08-31), expires its login, self-updates its CLI into
+      # incompatibility, and was the SECOND writer to this repo — the direct
+      # cause of the 09-07 wedge that stranded four days of verdicts.
+      #
+      # --pool, not tonight's file: the pool is the journal backlog, so a night
+      # this step is skipped is cleared by the next one that is not.
+      - name: AI analyst (only if the subscription token is set)
+        if: ${{ env.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          # pinned: an unattended `latest` is how the laptop analyst broke on
+          # 2026-08-20 ("this version is not compatible")
+          npm install -g @anthropic-ai/claude-code@2.1.238
+          python scripts/ai_analyst.py --pool || echo "analyst degraded (non-fatal)"
+
 
       - name: Paper book + forward outcomes
         run: |
@@ -277,6 +336,7 @@ jobs:
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \
                    announcements_archive.csv news_archive.csv \
+                   analyst_reports \
                    paper_positions.csv; do
             # positions.csv and holdings.csv are NOT in this list. They are the
             # user's real book — removed from the repo 2026-08-04 at their
@@ -290,16 +350,38 @@ jobs:
             echo "no forward-record changes to commit"
           else
             git commit -m "cloud: daily run $(date -u +%Y-%m-%dT%H:%MZ)"
-            git pull --rebase --autostash origin master || true
+            # a conflicted rebase used to be swallowed by `|| true`, after
+            # which the push failed for a reason nobody could see. Abort and
+            # retry once, then let the push fail loudly — the failure step
+            # below now says so out loud.
+            if ! git pull --rebase --autostash origin master; then
+              echo "rebase failed — aborting it and retrying once"
+              git rebase --abort || true
+              if ! git pull --rebase --autostash origin master; then
+                echo "still cannot rebase; the push below will fail and report"
+              fi
+            fi
             git push origin HEAD:master
           fi
 
       - name: Upload dashboard artifact (view/download from the run page)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dashboard
           path: multibagger_screener/multibagger_screener/dashboard.html
           retention-days: 14
+
+      # THE ONE STEP THAT RUNS WHEN THE JOB DOES NOT (2026-09-12). Everything
+      # else that reports — the dashboard build, the Telegram digest, the
+      # commit of the forward record — sits AFTER the work inside this same
+      # job, so a crash skips its own announcers and the failure is visible
+      # only as a red X on a page nobody opens. That is how 18 failed runs
+      # across four sessions went unnoticed for 39 hours.
+      - name: Say it broke (failure only)
+        if: ${{ failure() }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/notify_failure.py "Daily scan" || true
 
 # Pages publishing moved to its OWN workflow (.github/workflows/pages.yml,
 # 2026-07-20): it triggers on this workflow's completion (workflow_run) so fresh

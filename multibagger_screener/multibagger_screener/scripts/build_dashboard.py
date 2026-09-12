@@ -17,7 +17,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 
@@ -32,6 +32,7 @@ from scoring.phase_b import NO_ARCHETYPE
 
 import gate_status
 import surveillance_snapshot
+from scoring.textnorm import as_text
 
 
 def _market_cap(sym: str):
@@ -611,6 +612,35 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
     return rows
 
 
+def _verdict_card(sym: str, memo: str) -> dict:
+    """One analyst verdict, parsed out of its memo text.
+
+    Shared by the two places a memo can come from: the "## AI analyst
+    verdicts" section of daily_alerts.md (written by whichever runner did the
+    dive) and analyst_reports/<date>_<SYM>.md (written per name, always). See
+    the note at the call site for why both are needed."""
+    def _bullets(section: str) -> list[str]:
+        bm = re.search(rf"{section}[^\n]*\n(.*?)(?=\n[A-Z][A-Z ]{{3,}}[:(]|\Z)",
+                       memo, re.S)
+        if not bm:
+            return []
+        return [ln.strip().lstrip("-").strip()[:220]
+                for ln in bm.group(1).splitlines()
+                if ln.strip().startswith("-")]
+
+    v = re.search(r"VERDICT:\s*([A-Z]+)", memo)
+    c = re.search(r"CONVICTION:\s*([A-Z]+)", memo)
+    s = re.search(r"SIZE:\s*([A-Z ]+?)\s*$", memo, re.M)
+    whys, risks = _bullets("WHY"), _bullets("RISKS")
+    fm = re.search(r"CHANGES MY MIND:\s*(.+?)(?=\n[A-Z][A-Z ]{3,}:|\Z)", memo, re.S)
+    return {"sym": sym, "verdict": v.group(1) if v else "?",
+            "conv": c.group(1) if c else "",
+            "size": s.group(1).strip() if s else "",
+            "why": whys[0] if whys else "",
+            "whys": whys[1:3], "risks": risks[:2],
+            "flip": (fm.group(1).strip().replace("\n", " ")[:220] if fm else "")}
+
+
 def build_payload() -> dict:
     def _newer(a: str | None, b: str | None) -> bool:
         """Is date-string a at least as recent as b? Missing dates compare as
@@ -791,39 +821,43 @@ def build_payload() -> dict:
         # header split out and the memo kept for a collapsible view
         verdict_items = []
         if vm:
-            def _bullets(section: str, memo: str) -> list[str]:
-                bm = re.search(rf"{section}[^\n]*\n(.*?)(?=\n[A-Z][A-Z ]{{3,}}[:(]|\Z)",
-                               memo, re.S)
-                if not bm:
-                    return []
-                return [ln.strip().lstrip("-").strip()[:220]
-                        for ln in bm.group(1).splitlines()
-                        if ln.strip().startswith("-")]
-
             for m in re.finditer(r"### (\w[\w&-]*)\n(.*?)(?=\n### |\Z)",
                                  vm.group(1), re.S):
-                sym, memo = m.group(1), m.group(2).strip()
-                v = re.search(r"VERDICT:\s*([A-Z]+)", memo)
-                c = re.search(r"CONVICTION:\s*([A-Z]+)", memo)
-                s = re.search(r"SIZE:\s*([A-Z ]+?)\s*$", memo, re.M)
-                whys = _bullets("WHY", memo)
-                risks = _bullets("RISKS", memo)
-                fm = re.search(r"CHANGES MY MIND:\s*(.+?)(?=\n[A-Z][A-Z ]{3,}:|\Z)",
-                               memo, re.S)
-                verdict_items.append({
-                    "sym": sym, "verdict": v.group(1) if v else "?",
-                    "conv": c.group(1) if c else "",
-                    "size": s.group(1).strip() if s else "",
-                    "why": whys[0] if whys else "",
-                    "whys": whys[1:3], "risks": risks[:2],
-                    "flip": (fm.group(1).strip().replace("\n", " ")[:220]
-                             if fm else "")})
+                verdict_items.append(_verdict_card(m.group(1), m.group(2).strip()))
             for m in re.finditer(r"\*\*(\w[\w&-]*)\*\* — analyst unavailable"
                                  r" \(([^)]{0,90})", vm.group(1)):
                 verdict_items.append({"sym": m.group(1), "verdict": "N/A",
                                       "conv": "", "size": "",
                                       "why": f"analyst unavailable ({m.group(2)})",
                                       "whys": [], "risks": [], "flip": ""})
+
+    # MEMOS ALSO COME FROM analyst_reports/ (2026-09-12). daily_alerts.md is
+    # the CLOUD's file: it is rewritten by every scan, the laptop analyst used
+    # to insert verdicts into it too, and that shared ownership is exactly what
+    # wedged the local tree for five days on 09-07. The laptop no longer
+    # commits it. The memos themselves are written per name into
+    # analyst_reports/, which only the analyst writes and which is committed,
+    # so this panel reads those for any recent verdict the alerts file does not
+    # already carry. Without this the panel would have quietly emptied — a code
+    # change that silently blanks a surface is the shape this repo keeps
+    # relearning.
+    have = {v["sym"] for v in verdict_items}
+    rdir = os.path.join(ROOT, "analyst_reports")
+    if os.path.isdir(rdir):
+        cutoff = (datetime.now() - timedelta(days=10)).strftime("%Y-%m-%d")
+        for name in sorted(os.listdir(rdir), reverse=True):
+            m = re.match(r"^(\d{4}-\d{2}-\d{2})_([\w&.-]+)\.md$", name)
+            if not m or m.group(1) < cutoff or m.group(2) in have:
+                continue
+            try:
+                memo = open(os.path.join(rdir, name), encoding="utf-8").read()
+            except OSError:
+                continue
+            card = _verdict_card(m.group(2), memo)
+            if card["verdict"] != "?":
+                card["stamp"] = m.group(1)
+                verdict_items.append(card)
+                have.add(m.group(2))
 
     # screener rows: focus list enriched with fundamentals where known
     fund_by_sym = {r["symbol"]: r for _, r in funds.iterrows()} if not funds.empty else {}
@@ -929,7 +963,8 @@ def build_payload() -> dict:
     # screener must show those names too, or alerted stocks are unfindable
     # (user-caught 2026-07-10). Non-focus names carry no RS percentile (that
     # is a focus-list artifact) but get tag/price/cap/score like everyone.
-    ind_by_sym = dict(zip(universe.get("symbol", []), universe.get("industry", [])))
+    ind_by_sym = {s: as_text(i) for s, i in
+                  zip(universe.get("symbol", []), universe.get("industry", []))}
     focus_syms = set(focus["symbol"]) if not focus.empty else set()
     for sym, tg in tags.items():
         if sym in focus_syms:

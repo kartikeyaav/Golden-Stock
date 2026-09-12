@@ -15,9 +15,14 @@ name: Freshness watchdog
 # 01:30 UTC Tue-Sat: the full UTC day of a Mon-Fri trading session plus 90
 # minutes, i.e. past the last of daily.yml's four catch-up slots (22:05 UTC).
 # Anything still missing at that point is a fault, not a delay.
+# TWO SLOTS, because the watchdog is itself a best-effort cron and the thing
+# it guards against is a cron that did not fire. 2026-09-10 it was delivered
+# 4h38 late (01:30 -> 06:08). If the first is dropped the second still asks.
+# Both sit before the Indian market opens, so a bad night is known by breakfast.
 on:
   schedule:
     - cron: "30 1 * * 2-6"
+    - cron: "0 3 * * 2-6"
   workflow_dispatch: {}
 
 # read-only on purpose: a watchdog with write access is one bad edit away from
@@ -38,11 +43,11 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       PYTHONUNBUFFERED: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: master   # the tip, not the SHA the cron was created against
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 

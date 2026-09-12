@@ -51,6 +51,7 @@ from data.news_radar import NOISE_SKIP, classify as classify_event
 from data.news_sources import collect
 from scoring import news_nlp as N
 from scoring.conviction import Dimension
+from scoring.textnorm import as_text
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _THEMES_PATH = os.path.join(ROOT, "state", "themes.json")
@@ -90,6 +91,7 @@ def _theme_read(symbol: str, company: str, industry: str
     is keyed on them, and re-deriving membership there would be a second
     implementation of one decision — which is exactly how the filings layer
     and the card layer drifted apart in July."""
+    industry = as_text(industry)                   # NaN-safe; see textnorm.py
     try:
         from scoring.themes import THEMES
     except Exception:                              # noqa: BLE001
@@ -148,6 +150,7 @@ def _decay(days: float, half_life: float) -> float:
 def enrich(symbol: str, company_name: str, industry: str = "") -> dict:
     """Fetch + read recent news for one company. Never raises — a network
     failure returns {'ok': False} and the card just says 'news unavailable'."""
+    industry = as_text(industry)                   # NaN-safe; see textnorm.py
     tokens = N.name_tokens(company_name)
     src_health: dict = {}
     try:

@@ -26,16 +26,20 @@ import math
 
 from config import CONVICTION
 from scoring.conviction import Dimension, Veto
+from scoring.textnorm import as_text
 
 
 def _clip01(x: float) -> float:
     return max(0.0, min(1.0, x))
 
 
-def _is_financial(industry: str | None) -> bool:
-    if not industry:
+def _is_financial(industry: object) -> bool:
+    # `if not industry` was the old guard and a pandas NaN walks straight past
+    # it: NaN is truthy, and .lower() then raises. On 2026-09-08 that took the
+    # nightly scan down for four sessions. See scoring/textnorm.py.
+    s = as_text(industry).lower()
+    if not s:
         return False
-    s = industry.lower()
     return "financial" in s or "bank" in s
 
 

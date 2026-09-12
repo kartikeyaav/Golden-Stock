@@ -315,8 +315,16 @@ def run_deep_dive(symbol: str, card: str) -> str | None:
     # point the child CLI at a proxy it has no token for ("Invalid API key").
     # A clean env lets the standalone CLI use the user's own /login or
     # ANTHROPIC_API_KEY. Harmless in a normal terminal (those vars aren't set).
+    # CLAUDE_CODE_OAUTH_TOKEN is the ONE exception to the scrub (2026-09-12).
+    # It is how a Claude subscription authenticates headlessly (`claude
+    # setup-token`), and it is what lets these dives run in GitHub Actions
+    # instead of on a laptop that sleeps, expires its login and self-updates
+    # its CLI. Every other CLAUDE_CODE_* still goes: a host-injected proxy
+    # config is what poisoned the child CLI in July ("Invalid API key").
     clean_env = {k: v for k, v in os.environ.items()
-                 if not k.startswith("CLAUDE_CODE_") and k != "ANTHROPIC_BASE_URL"}
+                 if (k == "CLAUDE_CODE_OAUTH_TOKEN"
+                     or not k.startswith("CLAUDE_CODE_"))
+                 and k != "ANTHROPIC_BASE_URL"}
     try:
         # prompt goes via STDIN — multiline text can't survive the Windows shell
         proc = subprocess.run(

@@ -31,9 +31,19 @@ import time
 from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+
+from _local_git import (acquire_lock, heal_stuck_rebase,  # noqa: E402
+                        release_lock, runner_is_cloud)
+
 LOG_PATH = os.path.join(ROOT, "logs", "committee_local.log")
 PICKS_PATH = os.path.join(ROOT, "ai_picks.json")
 SHORTLIST_REL = "multibagger_screener/multibagger_screener/shortlist_ranked.csv"
+
+# What this wrapper owns, and what a healed rebase restores for it.
+RECORD_PATHS = ("multibagger_screener/multibagger_screener/ai_picks.json",
+                "multibagger_screener/multibagger_screener/ai_picks.md",
+                "multibagger_screener/multibagger_screener/journal/ai_picks_journal.csv")
 
 # Must sit ABOVE ai_picks.TIMEOUT_S (3h) and BELOW the scheduled task's
 # ExecutionTimeLimit (PT4H), so the innermost budget is the one that bites and
@@ -129,7 +139,7 @@ def shortlist_committed_at() -> datetime | None:
     return datetime.fromtimestamp(int(ts)) if ts.isdigit() else None
 
 
-def main() -> int:
+def _run() -> int:
     force = "--force" in sys.argv
     log("committee wrapper start" + (" (--force)" if force else ""))
 
@@ -241,13 +251,40 @@ def _commit_and_push(prev_picks_at: datetime | None) -> int:
             return 0
         log(f"COMMIT BLOCKED, picks NOT pushed: {why[:200]}")
         return 1
-    run(["git", "pull", "--rebase", "--autostash"], cwd=gr, timeout=180)
+    # the pull's result used to be discarded here, exactly as in the sibling
+    # wrapper — see nightly_analyst_local.py and the 09-07 wedge. When a fix
+    # reaches one twin and not the other, the untouched one keeps failing
+    # silently; that is documented history in this repo.
+    if not git_pull_retry(gr, attempts=2, delay=10):
+        log("PICKS COMMITTED BUT THE PULL FAILED — refusing to push onto an "
+            "unsynced tree; the next run heals it and pushes then")
+        return 1
     p = run(["git", "push", "origin", "master"], cwd=gr, timeout=180)
     if p.returncode != 0:
         log(f"push FAILED (will retry next boot): {(p.stderr or '')[:150]}")
         return 1
     log("picks committed + pushed — cloud dashboard uses them from the next build")
     return 0
+
+
+def main() -> int:
+    """Stand-down checks first, then the run, and always unlocked afterwards.
+
+    The twin of the analyst's, added the same day and for the same reason:
+    when a fix reaches one wrapper and not the other, the untouched one goes
+    on failing silently."""
+    if runner_is_cloud(ROOT):
+        log("ai_runner.json hands the AI layers to the CLOUD — this wrapper is "
+            "standing down. Flip it back to 'laptop' to re-enable, and disable "
+            "the scheduled task so it stops firing at all.")
+        return 0
+    if not acquire_lock(ROOT, log):
+        return 0
+    try:
+        heal_stuck_rebase(git_root(), run, log, RECORD_PATHS)
+        return _run()
+    finally:
+        release_lock(ROOT)
 
 
 if __name__ == "__main__":

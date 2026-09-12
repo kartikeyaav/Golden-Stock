@@ -1,6 +1,8 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-07-26** (capital gate PRE-REGISTERED; exit-risk
+**Last updated: 2026-09-12** (RELIABILITY PASS — the nightly scan had been dead for four sessions on a NaN industry and the laptop wedged for five days mid-rebase; both fixed, and the reasons neither was noticed are fixed too. Read §3Y first.)
+
+**Superseded header, kept for the trail: 2026-07-26** (capital gate PRE-REGISTERED; exit-risk
 surveillance on the main universe; freshness header; stale KPIs corrected;
 dashboard + landing REBUILT as a trading terminal with a 615-stock universe
 map — see §3Q; the penny universe now settles its own arms once market caps
@@ -2105,6 +2107,124 @@ the backtest — the slot constraint binds, so the book does not flood.
 
 ---
 
+## 3Y. Four sessions lost to one NaN, and the five days the laptop spent wedged (2026-09-12)
+
+Two independent outages were running at once, and neither announced itself.
+
+**THE CRASH.** `universe.csv` gained 377 `nse_gap` names on 09-07 and none of
+them carries an NSE industry, so pandas hands the field over as NaN. NaN is a
+float — `industry.lower()` raises — and NaN is also **truthy**, so both guards
+this codebase already used (`if not industry:` and `(industry or "")`) let it
+straight through. Five functions die on it, all probed rather than assumed:
+`phase_b._is_financial`, `phase_b.tag_archetypes`, `phase_c._theme_read` ->
+`themes.Theme.matches`, and `PITFundamentals`.
+
+The first gap name to fire a buy alert killed the whole scan. **18 consecutive
+failed runs, 09-08 to 09-11, four sessions with no scan at all**, and the last
+genuinely good scan was 09-07. Nothing in the design contained it:
+
+- **no per-symbol isolation.** One name's card raised and took ~1,000 others,
+  the journal, the dashboard and the digest with it.
+- **the retries replayed it.** Six catch-up slots a day, each re-pulling ~1,029
+  Yahoo series to reach the identical traceback.
+- **two runs "succeeded" while doing nothing.** On 09-08, 1,027 of 1,028 names
+  were still on the previous close, so there were no transitions and nothing
+  reached the crash. They stamped the session anyway.
+- **the watchdog read the wrong field.** It asked whether `tags_state.date` was
+  recent. A hollow run writes a fresh date, so it stayed quiet until 09-10
+  06:08 UTC — **39 hours after the first crash**.
+- **nothing said the job had failed.** Every step that reports (dashboard,
+  digest, commit) runs AFTER the scan in the same job, so a crash skips its own
+  announcers. The failure was visible only as a red X on a page nobody opens.
+
+**THE WEDGE.** On 09-07 21:34 the analyst committed three minutes after a cloud
+push; its `git pull --rebase` stopped on `daily_alerts.md` — the one file both
+writers touch — and the tree sat mid-rebase for five days. Each night the
+wrapper pulled (failed), dived a stale pool, committed onto a detached HEAD,
+logged "push FAILED (retried next boot)" and **returned 0**, so Task Scheduler
+recorded success every time. **13 verdicts, 6 of them BUY** (EMCURE,
+NAVINFLUOR, DCBBANK, NAM-INDIA, KTKBANK, ANTHEM) never reached the cloud, so
+the paper book — the forward test of whether the AI layer earns its keep —
+simply missed them. Fourth wedge of this shape; the 07-27, 08-03 and 08-20 ones
+are still visible as orphaned `autostash` entries.
+
+### What shipped
+
+**The crash, closed at both ends.** `scoring/textnorm.py` (`as_text`: "" for
+None/NaN/NaT/pd.NA, and for the *strings* "nan"/"none"/"<NA>", which is how a
+missing field otherwise turns into fake text) is applied in all five scorers
+AND at every load boundary (`daily_scan`, `run_shortlist`, `build_dashboard`).
+`daily_scan.safe_build_candidate` means one broken name now prints
+`!! CARD FAILED for SYM` and the alert still fires, still journals, with the
+score missing for that name only. `tests/test_missing_industry.py` pins both,
+including a contract test that reads the REAL `universe.csv` — a fixture would
+have passed straight through this outage, because the defect was in the data
+the universe started carrying, not in any value a test author would invent.
+
+**Failure is now loud.** `scripts/notify_failure.py` runs under `if: failure()`
+in daily/weekly/penny, names the step that failed and pulls the last error line
+from the job log. The guard pauses after **three** failed attempts on the same
+commit in 20h and says so (by curl — that job has no interpreter on purpose,
+and `tests/test_scan_freshness_guards.py` enforces it). A run that fetched
+nothing now FAILS: `daily_scan` exits 1 below `STALE_PRICE_FAIL = 0.50`.
+
+**The watchdog asks the right question.** `expected_session()` (the guard's own
+close-based rule, plus 8h grace) plus `price_coverage` plus a dead-feed test.
+A market holiday is deliberately not an alarm. Canaried against the real
+committed state of 09-09: the old rule said "ok", the new one alarms.
+
+**The laptop can no longer wedge itself.** `scripts/_local_git.py`:
+a stuck rebase heals itself — rescue branch FIRST (asserted by test, canaried
+by inverting it), then abort, then restore the laptop-owned record; a lock so
+the two wrappers cannot run git at once (the 08-17 "cannot lock ref"); and
+`ai_runner.json` so either wrapper stands down when the cloud takes over.
+Both wrappers now check the pull before pushing and **return non-zero when the
+push fails**. The analyst no longer commits `daily_alerts.md` at all — the
+shared file is gone as a conflict source, and `build_dashboard` reads verdict
+memos from `analyst_reports/` (added to the nightly commit list) so the panel
+did not silently empty.
+
+**Both AI layers can now run in the cloud.** `claude setup-token` issues a
+long-lived subscription token, so the 2026-07-20 premise that subscription auth
+cannot work headless is obsolete. `daily.yml` and `weekly.yml` carry gated
+steps (skipped until `CLAUDE_CODE_OAUTH_TOKEN` exists), the CLI is pinned, and
+`clean_env` keeps that one variable while still scrubbing the rest.
+
+**Cadence and versions.** weekly and penny gained a second slot each plus a
+freshness guard (the daily shape from §3W); the watchdog gained a second slot
+because it too is a best-effort cron and was delivered 4h38 late on 09-10.
+`actions/checkout` -> v7, `setup-python` -> v7, `upload-artifact` -> v7.
+
+### Deliberately not done
+
+- **`actions/cache` and the Pages pair stay on v4/v3+v4.** A cache-action major
+  can change the cache version and force a full ~20-minute backfill across four
+  workflows, and a Pages pair mismatch takes the site down. Both are Node-20
+  deprecation debt to clear in a quiet window, not while the pipeline is being
+  repaired.
+- **NSE bhavcopy as the daily price source** (one request instead of 1,029)
+  would cut the throttling exposure and most of the runtime, but it is not
+  split-adjusted, so it needs the corporate-action guard reworked and
+  pre-registered first.
+- **Exact scheduling via an external trigger.** GitHub delivered the daily cron
+  1h48–4h05 late through 09-01/02 and dropped it entirely on 08-31; `schedule`
+  is best-effort and nothing in the repo can change that. A free external cron
+  calling `workflow_dispatch` starts within seconds. Needs the user's account
+  and a fine-grained token, so it is written up rather than shipped.
+
+### What it needs from the user
+
+1. `claude setup-token` -> add the value as the repo secret
+   **`CLAUDE_CODE_OAUTH_TOKEN`**. The gated steps start working; nothing else
+   changes.
+2. Once a cloud dive has produced a verdict: flip `ai_runner.json` to
+   `"cloud"`, then `Disable-ScheduledTask MultibaggerNightlyAnalystEvening`
+   and `MultibaggerWeeklyCommittee`. Both wrappers already stand down on the
+   marker alone, but a disabled task is one less thing running.
+3. Optional: the external cron above, if the delivery hour still matters.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -2174,6 +2294,15 @@ the backtest — the slot constraint binds, so the book does not flood.
    the run artifact. If that trade is unacceptable, the fallback is scrubbing
    both CSVs from the repo and its history and teaching `daily.yml` /
    `backup_push.py` not to commit them.
+
+**Needs the user (added 2026-09-12, see §3Y):**
+11. **`claude setup-token` -> repo secret `CLAUDE_CODE_OAUTH_TOKEN`.** This is
+    what moves both AI layers off the laptop. Until it exists the gated cloud
+    steps skip and the laptop keeps doing the dives.
+12. **Then flip `ai_runner.json` to "cloud" and disable the two Windows tasks.**
+    Two writers on one branch is what wedged the tree for five days.
+13. **Optional: an external cron calling `workflow_dispatch`** if the delivery
+    hour matters — GitHub's scheduler runs 2-4h late and sometimes not at all.
 
 **Needs watching (added 2026-07-26):**
 8b. **The 07-27 scan is the first that can produce a gate signal.** Confirm a

@@ -34,6 +34,7 @@ import os
 import re
 import sys
 import time
+import traceback
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -55,6 +56,7 @@ from fetch_fundamentals import _age_days, flatten
 from position_manager import check_positions
 from sync_positions import check as sync_check
 from update_prices import universe_and_holdings_symbols, update_symbols
+from scoring.textnorm import as_text
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_STATE = os.path.join(ROOT, "state", "tags_state.json")
@@ -96,6 +98,11 @@ BUY_TRIGGER_COOLDOWN_DAYS = 10
 # that both the 07-21 analyst outage and the committee outage went unnoticed.
 ANALYST_SILENT_DAYS = 3       # the job has not run at all
 ANALYST_NO_SUCCESS_DAYS = 7   # it runs, but has produced nothing
+
+# Below this share of the universe carrying the newest bar, the run is not a
+# scan of tonight — it is a reprint of last night — and it must fail rather
+# than report success. See the note at the end of main().
+STALE_PRICE_FAIL = 0.50
 
 
 def price_coverage(last_bars: dict | None):
@@ -702,6 +709,38 @@ def build_candidate(sym: str, tag_result: dict, industry: str | None,
     }
 
 
+def safe_build_candidate(sym: str, tag_result: dict, industry: object,
+                         rs_pctile: object, company_name: str = "",
+                         ep: dict | None = None) -> dict:
+    """build_candidate, except that one broken name cannot take the run down.
+
+    2026-09-08: a single alerted stock whose industry was NaN raised inside the
+    scorer, and the traceback ended the entire scan — the other ~1,000 names,
+    the journal, the dashboard and the Telegram digest with it. All six
+    catch-up slots then replayed the identical crash, so four sessions were
+    lost while the published page served week-old prices.
+
+    The alert still fires and is still journalled. What degrades is the scored
+    card for that ONE name, and the failure is PRINTED rather than swallowed:
+    a card that quietly goes missing is how this project loses a night without
+    noticing. The return shape is deliberately just card+detail — the journal
+    writer fills absent columns with "", so inventing keys here would be the
+    one way this wrapper could corrupt the record."""
+    try:
+        return build_candidate(sym, tag_result, industry, rs_pctile,
+                               company_name=company_name, ep=ep)
+    except Exception as e:  # noqa: BLE001 — deliberately broad, see docstring
+        why = f"{type(e).__name__}: {str(e)[:160]}"
+        print(f"!! CARD FAILED for {sym}: {why} — the alert stands, the score "
+              f"does not", flush=True)
+        traceback.print_exc()
+        card = (f"### {sym}\n\n"
+                f"!! CARD FAILED — {why}\n"
+                f"The alert is real and is journalled. The conviction score, "
+                f"plan and news could not be built for this name tonight.\n")
+        return {"card": card, "detail": {"symbol": sym, "card_failed": why}}
+
+
 def save_trigger_state(tag_results: dict) -> None:
     """Persist tonight's entry-fidelity read for EVERY watched name.
 
@@ -772,8 +811,13 @@ def main() -> None:
               flush=True)
 
     universe = pd.read_csv(os.path.join(ROOT, "universe.csv"))
-    industry_by_sym = dict(zip(universe["symbol"], universe["industry"]))
-    company_by_sym = dict(zip(universe["symbol"], universe["company"]))
+    # as_text, never the raw column: the 377 nse_gap names carry no industry,
+    # so the field arrives as NaN and reached five separate .lower() calls
+    # downstream (2026-09-08, four sessions lost).
+    industry_by_sym = {s: as_text(i) for s, i in
+                       zip(universe["symbol"], universe["industry"])}
+    company_by_sym = {s: as_text(c) or s for s, c in
+                      zip(universe["symbol"], universe["company"])}
     focus_path = os.path.join(ROOT, "focus_list.csv")
     rs_by_sym = {}
     if os.path.exists(focus_path):
@@ -1051,7 +1095,7 @@ def main() -> None:
                         "breakout_volume_ratio": tr.get("breakout_volume_ratio"),
                         "vcp_valid": tr.get("vcp_valid"),
                     })
-                    cand = build_candidate(sym, tr,
+                    cand = safe_build_candidate(sym, tr,
                                            industry_by_sym.get(sym), rs_by_sym.get(sym),
                                            company_name=company_by_sym.get(sym, sym))
                     cards.append(cand.pop("card"))
@@ -1153,7 +1197,7 @@ def main() -> None:
                    "old_tag": (prev.get("tags", {}) or {}).get(sym, ""),
                    "new_tag": today_tags.get(sym, ""),
                    "rs_pctile": rs_by_sym.get(sym, "")}
-            cand = build_candidate(sym, tr, industry_by_sym.get(sym),
+            cand = safe_build_candidate(sym, tr, industry_by_sym.get(sym),
                                    rs_by_sym.get(sym),
                                    company_name=company_by_sym.get(sym, sym))
             banner = (f"!! BUY TRIGGER — pivot {tr.get('pivot_price')} cleared on "
@@ -1214,7 +1258,7 @@ def main() -> None:
                         alert_details[sym]["ep"] = {"gap_pct": e["gap_pct"],
                                                     "vol_mult": e["vol_mult"]}
                 else:
-                    cand = build_candidate(sym, tr, industry_by_sym.get(sym),
+                    cand = safe_build_candidate(sym, tr, industry_by_sym.get(sym),
                                            rs_by_sym.get(sym),
                                            company_name=company_by_sym.get(sym, sym),
                                            ep=e)
@@ -1376,6 +1420,30 @@ def main() -> None:
     if journal_rows:
         print(f"-> {len(journal_rows)} row(s) appended to {JOURNAL_PATH}")
 
+    # A RUN THAT FETCHED NOTHING IS NOT A GOOD RUN (2026-09-12).
+    #
+    # On 2026-09-08 two runs reported SUCCESS with 1,027 of 1,028 names still
+    # sitting on the previous session's close. No new bars means no
+    # transitions, which is indistinguishable from a quiet evening — and they
+    # stamped the session anyway, which is the field the freshness watchdog
+    # reads. A pipeline that had already been crashing for nine hours went on
+    # looking healthy for another day and a half.
+    #
+    # Failing here makes the run red, fires the workflow's failure notice, and
+    # leaves the guard free to re-scan the same session from a later slot. The
+    # state file is still written first, on purpose: the guard reads the
+    # coverage figure recorded there to decide that a re-run is warranted.
+    cov = price_coverage(last_bars)[0]
+    if cov is not None and cov < STALE_PRICE_FAIL:
+        print("")
+        print(f"!! FAILING THIS RUN: only {cov:.1%} of watched names carry the "
+              f"newest bar, so tonight's tags are last night's tags. Nothing "
+              f"computed here is wrong — it simply is not news, and reporting "
+              f"it as a completed scan is what hid the 2026-09-08 outage.",
+              flush=True)
+        return 1
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

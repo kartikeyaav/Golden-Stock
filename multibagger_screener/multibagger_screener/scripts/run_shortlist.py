@@ -30,6 +30,7 @@ from reports.watchlist_card import render_card
 
 
 from scoring.regime import market_risk_scale
+from scoring.textnorm import as_text
 
 
 def main() -> None:
@@ -85,7 +86,7 @@ def main() -> None:
             continue
         tag = tag_stock(df, bench)
         fund_row = funds_by_sym.get(sym)
-        industry = f.get("industry")
+        industry = as_text(f.get("industry"))   # NaN-safe: nse_gap rows have none
 
         dims = build_dimensions(tag, f.get("rs_pctile"), fund_row, industry)
 
@@ -233,7 +234,9 @@ def main() -> None:
     # conviction number is a partial-coverage read — see newsSection() — so a
     # 75%-coverage score is never presented as if it were a full one.
     focus_rows = {r["symbol"]: r for _, r in focus.iterrows()}
-    industry_by_sym = dict(zip(universe["symbol"], universe.get("industry", universe["symbol"])))
+    industry_by_sym = {s: as_text(i) for s, i in
+                       zip(universe["symbol"],
+                           universe.get("industry", universe["symbol"]))}
     wider = list(dict.fromkeys(list(focus_rows) + sorted(funds_by_sym)))
     for sym in wider:
         f = focus_rows.get(sym, {"symbol": sym, "rs_pctile": None,
@@ -247,7 +250,7 @@ def main() -> None:
         if df is None:
             continue
         tag = tag_stock(df, bench)
-        industry = f.get("industry")
+        industry = as_text(f.get("industry"))   # NaN-safe: nse_gap rows have none
         dims = build_dimensions(tag, f.get("rs_pctile"), fund_row, industry)
 
         # NEWS FOR THESE NAMES TOO (2026-08-03, user-reported).
