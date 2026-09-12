@@ -73,3 +73,10 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-07,SOUTHBANK,SKIP,entry,0,,,[SOUTHBANK@2026-09-06 22:25] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
 2026-09-07,EMIL,SKIP,entry,0,,,[EMIL@2026-09-06 22:26] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
 2026-09-07,DIACABS,SKIP,entry,0,,,[DIACABS@2026-09-06 22:27] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-12,EMCURE,SKIP,entry,0,,,[EMCURE@2026-09-07 21:31] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-12,NAVINFLUOR,SKIP,entry,0,,,[NAVINFLUOR@2026-09-07 21:32] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-12,DCBBANK,SKIP,entry,0,,,[DCBBANK@2026-09-07 21:33] already open in paper book
+2026-09-12,NAM-INDIA,SKIP,entry,0,,,[NAM-INDIA@2026-09-08 21:32] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-12,KTKBANK,SKIP,entry,0,,,[KTKBANK@2026-09-08 21:34] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-12,ANTHEM,SKIP,entry,0,,,[ANTHEM@2026-09-09 21:34] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
+2026-09-10,PGIL,SELL,all,26,2121.51,-6044.74,stop hit
