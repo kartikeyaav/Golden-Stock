@@ -2225,6 +2225,63 @@ because it too is a best-effort cron and was delivered 4h38 late on 09-10.
 
 ---
 
+## 3Z. Three decisions, and two of them corrected the question (2026-09-12)
+
+Taken the same day as §3Y, after the pipeline was back up.
+
+**1. The gate deadline was NOT moved.** The proposal was "extend it or accept a
+smaller n". §5 already answers that: n < 40 by 2026-12-31 is a FREQUENCY
+finding about the trigger, explicitly "not to lower the bar to fit the sample
+that arrived", and §8 forbids changing the deadline at all. Extending is the
+move the pre-registration exists to prevent.
+
+What was missing was the **denominator**: nothing recorded whether the scanner
+was awake, so a rare trigger and a dead pipeline looked identical.
+`journal/scan_sessions.csv` now takes one append-only row per run (seeded from
+the committed `tags_state.json` history), and `gate_status` reports it:
+**32 of 35 weekday sessions observed, 3 missed, 2.19 cohort signals per SCANNED
+week** → ~39 of the required 40 by the 12-01 maturity cutoff. So the three
+sessions the crash cost are approximately the whole margin. Logged in
+CAPITAL_GATE.md §9 as a disclosure that moves no bar.
+
+**2. The slot cap was already in force — the register had it wrong.** It
+shipped 2026-08-19 and has been blocking since. The real damage was the
+inverse: 21 of the 26 open paper positions predate it, so counting all 26
+against a cap of 12 refused every new analyst BUY (18 of them) and would have
+starved the forward record for months while core lots drained.
+
+`scoring/portfolio.py` now partitions: the cap counts the **capped-era cohort**
+(5 of 12 used), the pre-cap book runs off under its own rules and stays in the
+record unedited, and `status_line` names it — `Book: 5/12 slots (+21 pre-cap
+running off)`. Aggregate heat is still warned on at every entry, so the
+partition cannot hide exposure. An **undated row counts as CAPPED**, not
+legacy; the existing suite caught that written the other way round, which would
+have let absent data buy an exemption from the one rule the backtest enforced.
+
+**3. The bhavcopy top-up is adopted** — `PREREG_2026-09-12_bhavcopy.md`,
+criteria fixed before measuring. Yahoo had published Friday's bar for 417 of
+1,028 names 22 hours after a session NSE's own file covers with 2,637 EQ rows.
+All four criteria passed (99.3% coverage; **1,020 of 1,020** closes agreeing
+within 0.5% on the one session both sources hold; 5 of 5 retrievable; a
+canaried seam test). `update_prices.topup_from_bhavcopy` fills the newest
+session only, for names exactly one session behind, and only when the
+exchange's own `prev_close` matches our cached close — after a split it does
+not, so the name waits for Yahoo's adjusted refetch instead of taking a raw bar.
+
+**Two defects caught during adoption, both in the prereg rather than tidied
+away.** The first rule tested prices and called that adjacency, filling 136
+names onto a three-session hole (repaired in place) — *agreement by coincidence
+is not adjacency*. And the top-up lived in `update_prices.main()`, which
+`daily_scan` never executes: it would have shipped, passed every test, and
+never once run on the job it was written for. Both are pinned by
+`tests/test_bhavcopy_seam.py`.
+
+**Still open:** the dashboard's "Price cache 1d" chip ages the newest bar
+rather than coverage. Narrowing on its own now that the top-up should hold
+coverage near 1.0.
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
