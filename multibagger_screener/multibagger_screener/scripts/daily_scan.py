@@ -99,10 +99,26 @@ BUY_TRIGGER_COOLDOWN_DAYS = 10
 ANALYST_SILENT_DAYS = 3       # the job has not run at all
 ANALYST_NO_SUCCESS_DAYS = 7   # it runs, but has produced nothing
 
-# Below this share of the universe carrying the newest bar, the run is not a
-# scan of tonight — it is a reprint of last night — and it must fail rather
+# Below this share of the universe carrying the newest bar, the run saw
+# essentially NOTHING new: it is a reprint of last night and must fail rather
 # than report success. See the note at the end of main().
-STALE_PRICE_FAIL = 0.50
+#
+# 0.20, not 0.50, and the number was measured rather than guessed (2026-09-12).
+# Yahoo publishes the session late for a large slice of this universe: on
+# Saturday 09-12 at 13:45 IST — 22 hours after Friday's close, a session the
+# NSE bhavcopy confirms happened — only 417 of 1,028 names carried Friday's
+# bar. A 50% floor therefore failed a run that had genuinely scanned 41% of
+# the universe on fresh closes and the rest on the previous session, throwing
+# away a record worth keeping.
+#
+# The two decisions are separate, and conflating them was the mistake:
+#   * WRITE THE RECORD unless the run saw almost nothing (this constant);
+#   * decide whether the SESSION IS FINISHED from the coverage stamped into
+#     the state file, which is the guard's job (it re-runs below 0.90).
+# A partial scan cannot invent transitions — a name still on the old bar keeps
+# the tag it already had — so the cost of keeping it is a late alert, while
+# the cost of discarding it is the whole night.
+STALE_PRICE_FAIL = 0.20
 
 
 def price_coverage(last_bars: dict | None):

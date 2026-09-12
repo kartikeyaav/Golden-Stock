@@ -89,9 +89,12 @@ CHECKS = [
 # 10:20 UTC and the last is 22:05, so anything tighter would alarm on a
 # perfectly healthy evening.
 GRACE_HOURS = 8
-# Below this share of the universe carrying the newest bar, a completed scan
-# did not actually see tonight's prices. Same number as daily_scan's
-# STALE_PRICE_FAIL: one definition of "the refresh happened".
+# Below this share of the universe carrying the newest bar, the session ended
+# badly covered. Deliberately HIGHER than daily_scan's STALE_PRICE_FAIL (0.20)
+# because the two answer different questions at different times: the scan asks
+# "did I see enough to be worth recording?" at 16:00, and this asks "did the
+# day END properly covered?" after the last slot has run. A day that finishes
+# at 40% is worth a message even though every individual run was worth keeping.
 MIN_COVERAGE = 0.50
 # The session may legitimately stand still over a long holiday weekend. Beyond
 # this, a feed that keeps answering with the same bar is a dead feed.

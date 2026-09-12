@@ -458,3 +458,35 @@ def test_every_committing_workflow_republishes_the_site():
     assert not missing, (
         f"{sorted(missing)} commit state but never trigger a republish — their "
         "results will sit in git and never reach the site")
+
+
+def test_the_three_coverage_numbers_keep_their_order():
+    """Three different jobs judge price coverage and they must not collapse
+    into one number (2026-09-12).
+
+        daily_scan.STALE_PRICE_FAIL  0.20  "I saw almost nothing — discard"
+        daily.yml guard              0.90  "not finished — run another slot"
+        scan_watchdog.MIN_COVERAGE   0.50  "the day ENDED badly covered — say so"
+
+    The first version used 0.50 for the scan, which failed a run that had
+    scanned 41% of the universe on fresh closes and threw the record away.
+    Yahoo publishes this universe late: 22 hours after the 09-11 close only
+    417 of 1,028 names carried that bar, on a session the NSE bhavcopy
+    confirms happened."""
+    import importlib.util
+    import re as _re
+
+    spec = importlib.util.spec_from_file_location(
+        "ds_probe", os.path.join(ROOT, "scripts", "daily_scan.py"))
+    ds = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ds)
+    import scan_watchdog as wd
+
+    guard = _re.search(r"c\+0 >= (0\.\d+)", _wf("daily.yml"))
+    assert guard, "the guard's coverage threshold is no longer readable in daily.yml"
+    guard_floor = float(guard.group(1))
+
+    assert ds.STALE_PRICE_FAIL < wd.MIN_COVERAGE < guard_floor, (
+        f"scan {ds.STALE_PRICE_FAIL} / watchdog {wd.MIN_COVERAGE} / guard "
+        f"{guard_floor} — discarding must be rarer than re-running")
+    assert ds.STALE_PRICE_FAIL > 0, "a zero floor cannot catch the 09-08 hollow run"
