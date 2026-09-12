@@ -106,7 +106,10 @@ def open_from_verdicts() -> list[str]:
     # i.e. 36% of capital at risk where the validated design risked 15%.
     # Existing positions are left alone: forcing the book into compliance would
     # write fabricated exits into an append-only record. The cap applies to
-    # what opens from here.
+    # what opens from here — and since 2026-09-12 it COUNTS only what opened
+    # from here too (scoring/portfolio.CAP_IN_FORCE_FROM). Counting the 21
+    # pre-cap lots against the cap of 12 refused every new analyst BUY for
+    # weeks, which silently starved the forward test this book exists to be.
     industry_of = {}
     try:
         import csv as _csv
@@ -186,6 +189,8 @@ def open_from_verdicts() -> list[str]:
             "notes": f"PAPER auto-entry from analyst verdict {v['logged_at']:%Y-%m-%d}",
             "verdict_id": vid, "verdict": v["verdict"],
             "conviction": v.get("conviction", ""), "size_plan": size_plan,
+            # every position from here is taken under the slot cap and says so
+            "cohort": "capped",
         })
         skip_rows.append({"date": str(pd.Timestamp(fill_bar["date"]).date()),
                           "symbol": sym, "action": "BUY", "lot": "entry",

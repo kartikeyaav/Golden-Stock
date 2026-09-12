@@ -55,7 +55,8 @@ from scoring.regime import market_risk_scale, save_breadth_snapshot
 from fetch_fundamentals import _age_days, flatten
 from position_manager import check_positions
 from sync_positions import check as sync_check
-from update_prices import universe_and_holdings_symbols, update_symbols
+from update_prices import (run_topup, universe_and_holdings_symbols,
+                           update_symbols)
 from scoring.textnorm import as_text
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,6 +77,10 @@ ENTRY_SIGNALS_PATH = os.path.join(ROOT, "journal", "entry_signals.csv")
 # entry_status auditable without ever gating on it. A cohort you can rewrite
 # proves nothing, which is why these live in the record and not in the
 # derived state file.
+SESSIONS_PATH = os.path.join(ROOT, "journal", "scan_sessions.csv")
+SESSIONS_FIELDS = ["run_at", "session", "price_coverage", "n_priced",
+                   "n_tagged", "n_alerts", "n_entry_signals", "source"]
+
 ENTRY_SIGNALS_FIELDS = ["logged_at", "symbol", "kind", "entry_status",
                         "validated_entry", "close", "pivot_price",
                         "breakout_today", "breakout_volume_ratio", "vcp_valid",
@@ -403,6 +408,28 @@ def journal_append(rows: list[dict]) -> None:
 DIMENSIONS_PATH = os.path.join(ROOT, "journal", "alert_dimensions.csv")
 DIMENSIONS_FIELDS = ["logged_at", "symbol", "kind", "dimension",
                      "weight", "score", "live"]
+
+
+def sessions_append(row: dict) -> None:
+    """One append-only row per scan: WHEN the scanner ran and WHAT it saw.
+
+    WHY (2026-09-12). The capital gate is judged at a fixed deadline, and
+    CAPITAL_GATE.md §5 reads n < 40 as a FREQUENCY finding about the trigger.
+    That reading is only sound if the scanner was actually awake: between
+    09-08 and 09-11 it crashed on every one of 18 attempts and four sessions
+    produced no scan at all, which is missing observation time, not a rare
+    trigger. Without this file the two are indistinguishable in December.
+
+    It carries no judgement and moves no threshold — it is the denominator."""
+    if _skip_write(f"1 row -> {os.path.basename(SESSIONS_PATH)}"):
+        return
+    os.makedirs(os.path.dirname(SESSIONS_PATH), exist_ok=True)
+    new_file = not os.path.exists(SESSIONS_PATH)
+    with open(SESSIONS_PATH, "a", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=SESSIONS_FIELDS)
+        if new_file:
+            w.writeheader()
+        w.writerow({k: row.get(k, "") for k in SESSIONS_FIELDS})
 
 
 def dimensions_append(rows: list[dict], details: dict) -> None:
@@ -857,6 +884,9 @@ def main() -> None:
         # read this list. Prices are the ONE input every tag, score and trigger
         # depends on — a failed refresh has to be as loud as a failed scan.
         ok, failures = update_symbols(symbols, pause=0.25)
+        # Yahoo publishes this universe a session late for most of it; the
+        # exchange's own file closes that gap (PREREG_2026-09-12_bhavcopy.md).
+        run_topup(symbols)
         if failures:
             frac = len(failures) / max(1, len(symbols)) * 100
             head = ", ".join(failures[:5]) + ("..." if len(failures) > 5 else "")
@@ -1398,6 +1428,14 @@ def main() -> None:
     save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
                entry_alerted=entry_alerted, last_bars=last_bars)
     journal_append(journal_rows)
+    _cov, _newest, _behind, _tot = price_coverage(last_bars)
+    sessions_append({
+        "run_at": now, "session": "" if _newest is None else str(_newest.date()),
+        "price_coverage": "" if _cov is None else round(_cov, 4),
+        "n_priced": _tot, "n_tagged": len(today_tags),
+        "n_alerts": len(journal_rows), "n_entry_signals": len(entry_signal_rows),
+        "source": "live",
+    })
     # freeze the dimension breakdown BEFORE alert_details is pruned to 30 days
     dimensions_append(journal_rows, alert_details)
     if _NEWS_BLIND:

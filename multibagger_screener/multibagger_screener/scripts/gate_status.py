@@ -41,7 +41,7 @@ from __future__ import annotations
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -267,6 +267,42 @@ def cohort_stats(df: pd.DataFrame, sized_only: bool = True,
 # ---------------------------------------------------------------------------
 # the gate itself
 # ---------------------------------------------------------------------------
+def observation_window(start: str, end: datetime) -> dict:
+    """How much of the judged window the scanner was actually awake for.
+
+    The gate is read at a fixed deadline and §5 treats a short sample as a
+    statement about the TRIGGER's frequency. That inference only holds if the
+    scanner ran: four sessions in September produced no scan at all, and two
+    more scanned on stale prices. This reports the denominator so the finding
+    can be stated per SCANNED session rather than per calendar week.
+
+    `eligible_weekdays` is an upper bound — NSE holidays are not modelled, and
+    saying so is cheaper than a holiday calendar that quietly goes stale."""
+    path = os.path.join(ROOT, "journal", "scan_sessions.csv")
+    first = datetime.strptime(start, "%Y-%m-%d")
+    weekdays = sum(1 for i in range((end - first).days + 1)
+                   if (first + timedelta(days=i)).weekday() < 5)
+    scanned, degraded = set(), 0
+    try:
+        rows = pd.read_csv(path)
+        for _, r in rows.iterrows():
+            day = str(r.get("session") or r.get("run_at") or "")[:10]
+            if not day or day < start:
+                continue
+            scanned.add(day)
+            cov = pd.to_numeric(pd.Series([r.get("price_coverage")]), errors="coerce").iloc[0]
+            if pd.notna(cov) and cov < 0.90:
+                degraded += 1
+    except (OSError, ValueError, KeyError):
+        pass            # absent record -> observed stays 0 and says so loudly
+    return {"window_start": start, "eligible_weekdays": weekdays,
+            "sessions_scanned": len(scanned),
+            "sessions_missed": max(0, weekdays - len(scanned)),
+            "observed_pct": round(100.0 * len(scanned) / weekdays, 1) if weekdays else None,
+            "degraded_scans": degraded,
+            "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"}
+
+
 def evaluate() -> dict:
     op = os.path.join(ROOT, "journal", "journal_outcomes.csv")
     outcomes = pd.read_csv(op) if os.path.exists(op) else pd.DataFrame()
@@ -361,6 +397,7 @@ def evaluate() -> dict:
         "progress_pct": round(min(100.0, gate.get("n_qualifying", 0)
                                   / max(GATE.min_signals, 1) * 100), 1),
         "deadline": GATE.deadline,
+        "observation": observation_window(GATE.cohort_start_date, datetime.now()),
         "days_to_deadline": days_left,
         "ruler": GATE.ruler,
         "required": {
@@ -401,6 +438,13 @@ def main() -> None:
     c = g["cohort"]
     print(f"GATE {g['verdict']}  ({c['n_qualifying']}/{GATE.min_signals} qualifying, "
           f"{g['days_to_deadline']}d to {g['deadline']})")
+    o = g.get("observation", {})
+    if o:
+        wk = o["sessions_scanned"] / 5.0
+        rate = f"{c.get('n', 0) / wk:.2f}/scanned week" if wk else "n/a"
+        print(f"  observed {o['sessions_scanned']} of {o['eligible_weekdays']} "
+              f"weekday sessions ({o['observed_pct']}%), {o['sessions_missed']} missed, "
+              f"{o['degraded_scans']} on <90% price coverage -> cohort rate {rate}")
     for k, v in g["conditions"].items():
         mark = "?" if v["ok"] is None else ("PASS" if v["ok"] else "FAIL")
         print(f"  [{mark:>4}] {k}: {v['detail']}")

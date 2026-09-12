@@ -48,6 +48,21 @@ from config import RISK  # noqa: E402
 
 TURNAROUND_TAG = "Turnaround"
 
+# The date the slot cap started blocking new paper entries. Positions opened
+# BEFORE it were taken with no cap in force, and forcing them into compliance
+# now would mean writing fabricated exits into an append-only record — so they
+# run off under their own two-lot rules and are counted separately.
+#
+# WHY THIS PARTITION EXISTS (2026-09-12). Measured that day: 26 open, of which
+# 21 predate the cap and 5 do not. Counting all 26 against a cap of 12 meant
+# every new analyst BUY was refused — 18 of them since 08-19 — so the layer
+# whose forward record this book IS could not accrue any evidence at all, and
+# would not have been able to for months while the legacy lots drained.
+# Counting the capped cohort against the cap restores the design the backtest
+# ran (12 concurrent, competing for slots) for every position taken from here,
+# while the legacy book stays in the record, visible, and unedited.
+CAP_IN_FORCE_FROM = "2026-08-19"
+
 
 def _truthy(v) -> bool:
     return str(v).strip().lower() in ("true", "1", "yes")
@@ -58,9 +73,31 @@ def is_open(row: dict) -> bool:
     return _truthy(row.get("trading_open")) or _truthy(row.get("core_open"))
 
 
+def is_legacy(row: dict) -> bool:
+    """Was this position taken before the slot cap existed?
+
+    Reads the explicit `cohort` column when present and falls back to the
+    entry date, so a positions file written before this column existed still
+    partitions correctly rather than silently counting everything as capped."""
+    cohort = str(row.get("cohort", "") or "").strip().lower()
+    if cohort:
+        return cohort == "legacy"
+    date = str(row.get("entry_date", "") or "")[:10]
+    if len(date) < 10:
+        # UNKNOWN PROVENANCE COUNTS AGAINST THE CAP. An undated row must not
+        # be read as "taken before the cap" — that is absent data buying an
+        # exemption from the one rule the backtest actually enforced, which is
+        # this codebase's most repeated defect. Caught by the existing suite
+        # the moment this function was written the other way round.
+        return False
+    return date < CAP_IN_FORCE_FROM
+
+
 @dataclass
 class BookState:
-    n_open: int = 0
+    n_open: int = 0                # every open position — the true exposure
+    n_capped: int = 0              # opened under the cap; these consume slots
+    n_legacy: int = 0              # opened before it; running off, not counted
     slots_total: int = RISK.max_open_positions
     sector_counts: dict = field(default_factory=dict)
     sector_pct: dict = field(default_factory=dict)
@@ -70,11 +107,15 @@ class BookState:
 
     @property
     def slots_free(self) -> int:
-        return max(0, self.slots_total - self.n_open)
+        """Slots the CAPPED cohort has left. The legacy run-off does not
+        consume them — see CAP_IN_FORCE_FROM for why."""
+        return max(0, self.slots_total - self.n_capped)
 
     @property
     def over_cap_by(self) -> int:
-        return max(0, self.n_open - self.slots_total)
+        """How far the capped cohort exceeds its cap. Should be 0 forever:
+        only a bug or a hand-edited file can push it above."""
+        return max(0, self.n_capped - self.slots_total)
 
 
 def book_state(positions: list[dict],
@@ -85,7 +126,9 @@ def book_state(positions: list[dict],
     archetype_of = archetype_of or {}
     open_rows = [r for r in positions if is_open(r)]
     n = len(open_rows)
-    st = BookState(n_open=n, symbols={r.get("symbol") for r in open_rows})
+    legacy = [r for r in open_rows if is_legacy(r)]
+    st = BookState(n_open=n, n_legacy=len(legacy), n_capped=n - len(legacy),
+                   symbols={r.get("symbol") for r in open_rows})
 
     for r in open_rows:
         sec = (industry_of.get(r.get("symbol")) or "(unknown)").strip() or "(unknown)"
@@ -163,7 +206,8 @@ def check_new_position(symbol: str, state: BookState,
 
 def status_line(state: BookState) -> str:
     """One line for the nightly alerts header and the dashboard."""
-    bits = [f"Book: {state.n_open}/{state.slots_total} slots",
+    bits = [f"Book: {state.n_capped}/{state.slots_total} slots"
+            + (f" (+{state.n_legacy} pre-cap running off)" if state.n_legacy else ""),
             f"heat {state.heat_pct:.1f}% of capital at risk"]
     if state.over_cap_by:
         bits.append(f"OVER the validated cap by {state.over_cap_by}")

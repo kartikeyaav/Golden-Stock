@@ -68,6 +68,141 @@ def _adjustment_detected(sym: str, fresh: pd.DataFrame) -> float | None:
     return med if abs(med - 1.0) > _ADJ_BAND else None
 
 
+# How far the exchange's own previous close may sit from our cached close
+# before the two are judged to be on different scales. The measured agreement
+# on 2026-09-07 was 1,020 of 1,020 names inside this band.
+_TOPUP_BAND = 0.005
+
+
+def topup_from_bhavcopy(symbols: list[str], bhav=None,
+                        prev_session=None) -> dict:
+    """Fill the newest session from NSE's own file for names Yahoo has not
+    published yet. Adopted 2026-09-12 — PREREG_2026-09-12_bhavcopy.md.
+
+    Yahoo publishes this universe a session late for most of it: on 2026-09-12,
+    611 of 1,028 names still had no bar for the 09-11 session 22 hours after
+    the close, while the exchange's bhavcopy for that session carried 2,637 EQ
+    rows. Tags computed on a stale close are a day-late transition and a
+    day-late alert.
+
+    Four rules keep a raw source from corrupting a split-adjusted history:
+
+      * ONE session per run — the newest bhavcopy, never a backfill.
+      * Only for a symbol already holding the session before it. A name
+        further behind waits for Yahoo, because a multi-session gap can hide a
+        corporate action.
+      * Only when the exchange's own `prev_close` matches our cached last
+        close within `_TOPUP_BAND`. This is the scale test: after a split
+        NSE's prev_close is adjusted while our Yahoo history is still at the
+        old scale, the ratio lands far outside the band, and the name is left
+        for Yahoo's full re-adjusted refetch instead of being handed a raw bar.
+      * EQ series only.
+
+    Yahoo keeps precedence on every date it eventually publishes:
+    `normalize_ohlcv` dedupes keep='last' and the Yahoo pass runs first.
+    """
+    from data.cache import load_ohlcv, save_ohlcv
+    stats = {"session": None, "filled": 0, "scale_skip": 0, "behind_skip": 0,
+             "absent": 0, "current": 0, "scale_names": []}
+    if bhav is None:
+        from datetime import date as _date
+        from data.nse_all import bhavcopy
+        d = _date.today()
+        for _ in range(7):
+            if d.weekday() < 5:
+                got = bhavcopy(d)
+                if got is not None and len(got):
+                    bhav = got
+                    break
+            d -= timedelta(days=1)
+    if bhav is None or not len(bhav):
+        return stats
+    if prev_session is None:
+        # the previous session per the exchange, so "one behind" is a calendar
+        # fact rather than an inference from a weekend or a holiday
+        from datetime import date as _date2
+        from data.nse_all import bhavcopy as _bh
+        _d = pd.Timestamp(bhav["date"].iloc[0]).date() - timedelta(days=1)
+        for _ in range(7):
+            if _d.weekday() < 5:
+                _got = _bh(_d)
+                if _got is not None and len(_got):
+                    prev_session = _d
+                    break
+            _d -= timedelta(days=1)
+
+    b = bhav[bhav["series"].astype(str).str.strip() == "EQ"].copy()
+    if not len(b):
+        return stats
+    session = pd.Timestamp(b["date"].iloc[0]).normalize()
+    stats["session"] = str(session.date())
+    rows = {str(r["symbol"]).strip(): r for _, r in b.iterrows()}
+
+    for sym in symbols:
+        row = rows.get(sym)
+        if row is None:
+            stats["absent"] += 1
+            continue
+        cached = load_ohlcv(sym)
+        if cached is None or cached.empty:
+            stats["absent"] += 1
+            continue
+        last = pd.Timestamp(cached["date"].iloc[-1]).normalize()
+        if last >= session:
+            stats["current"] += 1
+            continue
+        # EXACTLY ONE SESSION BEHIND — checked against the exchange's own
+        # calendar, not against prices. The first version of this only compared
+        # prev_close, and 136 names whose 09-07 close happened to sit within
+        # 0.5% of the 09-10 close were handed a 09-11 bar straight onto a
+        # three-session hole. Agreement by coincidence is not adjacency.
+        if prev_session is not None and last != pd.Timestamp(prev_session).normalize():
+            stats["behind_skip"] += 1
+            continue
+        prev = pd.to_numeric(pd.Series([row.get("prev_close")]), errors="coerce").iloc[0]
+        have = float(cached["close"].iloc[-1])
+        if pd.isna(prev) or not have:
+            stats["behind_skip"] += 1
+            continue
+        if abs(float(prev) - have) / have > _TOPUP_BAND:
+            stats["scale_skip"] += 1
+            if len(stats["scale_names"]) < 8:
+                stats["scale_names"].append(sym)
+            continue
+        one = pd.DataFrame([{
+            "date": session, "open": row["open"], "high": row["high"],
+            "low": row["low"], "close": row["close"], "volume": row["volume"],
+        }])
+        save_ohlcv(sym, one, meta={"last_topup": str(session.date()),
+                                   "last_topup_source": "nse_bhavcopy"})
+        stats["filled"] += 1
+    return stats
+
+
+def run_topup(symbols: list[str]) -> dict:
+    """Run the bhavcopy top-up and report it. Non-fatal by construction.
+
+    A FUNCTION, not a block inside main(), because `daily_scan.py` imports
+    `update_symbols` directly and never executes this module's main() — a
+    top-up living in main() would have shipped, passed its tests, and simply
+    never run on the job it was written for. tests/test_bhavcopy_seam.py pins
+    the wiring so it cannot quietly come loose again."""
+    try:
+        t = topup_from_bhavcopy(symbols)
+    except Exception as e:  # noqa: BLE001 — a price stopgap must never end a scan
+        print(f"bhavcopy top-up degraded (non-fatal): {str(e)[:120]}", flush=True)
+        return {"session": None, "filled": 0}
+    if t["session"]:
+        print(f"bhavcopy top-up for {t['session']}: filled {t['filled']}, "
+              f"already current {t['current']}, absent {t['absent']}, "
+              f"left for Yahoo {t['behind_skip'] + t['scale_skip']}"
+              + (f" (scale mismatch: {', '.join(t['scale_names'])})"
+                 if t["scale_names"] else ""), flush=True)
+    else:
+        print("bhavcopy top-up: no session available (NSE unreachable?)", flush=True)
+    return t
+
+
 def update_symbols(symbols: list[str], pause: float = 0.3) -> tuple[int, list[str]]:
     manifest = load_manifest()
     ok, failures, readjusted = 0, [], []
@@ -158,6 +293,10 @@ def main() -> None:
 
     t0 = time.time()
     ok, failures = update_symbols(symbols, pause=args.pause)
+    # the exchange's own file closes the gap Yahoo leaves open (see
+    # topup_from_bhavcopy). Non-fatal: if NSE is unreachable the run degrades
+    # to exactly the behaviour it had before this existed.
+    run_topup(symbols)
     print(f"updated {ok}/{len(symbols)} in {(time.time()-t0)/60:.1f} min"
           + (f"; failed: {len(failures)} -> {failures[:20]}"
              f"{'...' if len(failures) > 20 else ''}" if failures else ""))

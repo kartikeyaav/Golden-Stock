@@ -150,3 +150,65 @@ def test_paper_trader_routes_new_entries_through_the_layer():
     assert "continue" in body, "a refused entry must not fall through to the append"
     assert guard < src.index("new_rows.append("), \
         "the guard must sit before the position is recorded"
+
+
+# ---------------------------------------------------------------------------
+# the legacy / capped partition (2026-09-12)
+# ---------------------------------------------------------------------------
+
+def _dated(sym, date, **kw):
+    r = _pos(sym, **kw)
+    r["entry_date"] = date
+    return r
+
+
+def test_pre_cap_positions_do_not_consume_slots_but_stay_visible():
+    """Measured 2026-09-12: 26 open, 21 of them taken before the cap existed.
+    Counting all 26 against a cap of 12 refused every new analyst BUY — 18 of
+    them since 08-19 — which starved the forward record this book exists to
+    produce, with no way out for months while the legacy lots drained."""
+    rows = ([_dated(f"OLD{i}", "2026-07-20") for i in range(21)]
+            + [_dated(f"NEW{i}", "2026-09-01") for i in range(5)])
+    st = book_state(rows)
+    assert st.n_open == 26, "true exposure must still be reported in full"
+    assert st.n_legacy == 21 and st.n_capped == 5
+    assert st.slots_free == 7, "the capped cohort has room; the run-off does not block it"
+    assert st.over_cap_by == 0
+    d = check_new_position("FRESH", st)
+    assert d.allowed is True
+    assert any("heat" in w.lower() for w in d.warnings), (
+        "aggregate exposure must still be disclosed, or the partition hides it")
+
+
+def test_the_cap_still_blocks_once_the_capped_cohort_fills():
+    rows = ([_dated(f"OLD{i}", "2026-07-20") for i in range(21)]
+            + [_dated(f"NEW{i}", "2026-09-01") for i in range(CAP)])
+    st = book_state(rows)
+    assert st.n_capped == CAP and st.slots_free == 0
+    d = check_new_position("FRESH", st)
+    assert d.allowed is False
+    assert any("slot limit" in b for b in d.blocks)
+
+
+def test_the_partition_falls_back_to_the_entry_date_without_a_cohort_column():
+    """A positions file written before the column existed must still split
+    correctly — otherwise every legacy lot silently becomes 'capped' and the
+    cap stops meaning anything."""
+    from scoring.portfolio import is_legacy
+    assert is_legacy({"entry_date": "2026-07-09"}) is True
+    assert is_legacy({"entry_date": "2026-09-01"}) is False
+    assert is_legacy({"entry_date": "2026-07-09", "cohort": "capped"}) is False
+    assert is_legacy({"entry_date": "2026-09-01", "cohort": "legacy"}) is True
+    # and the direction that matters: an undated row consumes a slot rather
+    # than escaping the cap. Absent data must never buy an exemption.
+    assert is_legacy({}) is False
+    assert is_legacy({"entry_date": ""}) is False
+    assert is_legacy({"entry_date": "not-a-date"}) is False
+
+
+def test_the_book_line_names_the_run_off():
+    rows = ([_dated(f"OLD{i}", "2026-07-20") for i in range(21)]
+            + [_dated(f"NEW{i}", "2026-09-01") for i in range(5)])
+    line = status_line(book_state(rows))
+    assert "5/12" in line, line
+    assert "21 pre-cap" in line, "the overhang must be stated, never netted away"
