@@ -223,3 +223,31 @@ audit_date,window,rank,symbol,window_return_pct,turnover_cr,classification,ident
 2026-09-04,6m,5,SHILPAMED,189.4,87.97,CAUGHT,True,CONFIRMED (watch pivot),2026-06-26,571.6,70.4,192.4,0.37,,,flagged mid-move
 2026-09-04,6m,6,DIACABS,145.2,105.18,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-11,193.73,95.6,180.1,0.53,,,flagged with most of the move still ahead
 2026-09-04,6m,7,BALAMINES,141.8,62.96,CAUGHT,True,VALIDATED VCP ENTRY + EPISODIC PIVOT,2026-05-14,1623.4,57.1,144.2,0.4,2026-08-24,2026-05-14,flagged mid-move
+2026-09-11,1w,1,RAYMOND,35.4,751.2,EXTENDED / NO ENTRY,False,,,,,38.3,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up
+2026-09-11,1w,2,WHEELS,29.3,633.89,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-04,1724.9,44.8,44.8,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-11,1w,3,ASTEC,26.2,107.51,NO STRUCTURE,False,,,,,40.6,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-09-11,1w,4,VENUSPIPES,23.9,92.34,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-07,1805.4,13.2,25.3,0.52,,,flagged with most of the move still ahead
+2026-09-11,1w,5,PINELABS,21.5,1481.8,TOO YOUNG,False,,,,,24.0,,,,<260 bars for most of the window — no base can form (EP is the only path; EP did not fire)
+2026-09-11,1w,6,HLEGLAS,21.2,28.26,NO STRUCTURE,False,,,,,21.2,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-09-11,1w,7,STLTECH,19.8,202.85,ALREADY FLAGGED,True,,,,,19.8,,,,"CONFIRMED before the window opened — on the radar the whole time, no fresh transition alert"
+2026-09-11,1m,1,WHEELS,64.0,160.65,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-21,1512.8,65.1,83.7,0.78,,,flagged with most of the move still ahead
+2026-09-11,1m,2,RAYMOND,62.0,261.21,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-14,635.45,61.2,65.5,0.93,,,flagged with most of the move still ahead
+2026-09-11,1m,3,PRABHA,54.2,30.44,EXTENDED / NO ENTRY,False,,,,,65.7,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up
+2026-09-11,1m,4,SOLARA,48.2,55.2,EXTENDED / NO ENTRY,False,,,,,50.2,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up
+2026-09-11,1m,5,MANINDS,44.7,114.95,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-12,598.65,57.7,57.7,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-11,1m,6,WELCORP,43.3,711.86,CAUGHT,True,EPISODIC PIVOT,2026-08-21,2311.9,20.5,49.1,0.42,,2026-08-21,flagged mid-move
+2026-09-11,1m,7,ANTELOPUS,42.0,335.16,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-18,856.55,42.2,51.9,0.81,,,flagged with most of the move still ahead
+2026-09-11,3m,1,WELCORP,90.9,353.01,CAUGHT EARLY,True,EPISODIC PIVOT,2026-06-15,1379.7,101.8,98.6,1.0,,2026-08-21,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-11,3m,2,TFCILTD,89.5,129.46,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-14,80.53,83.3,97.7,0.85,,,flagged with most of the move still ahead
+2026-09-11,3m,3,DIACABS,82.8,128.16,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-12,201.91,87.7,87.7,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-09-11,3m,4,EMIL,78.6,99.05,CAUGHT LATE,True,CONFIRMED (watch pivot),2026-09-03,176.16,11.5,86.5,0.13,,,"flagged, but most of the move was already gone"
+2026-09-11,3m,5,SHILPAMED,75.8,131.3,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-26,571.6,71.5,79.3,0.9,,,flagged with most of the move still ahead
+2026-09-11,3m,6,CUPID,75.0,735.52,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-22,206.9,44.5,86.9,0.51,,,flagged with most of the move still ahead
+2026-09-11,3m,7,KALYANKJIL,74.4,1180.45,EXTENDED / NO ENTRY,False,,,,,88.2,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up
+2026-09-11,6m,1,STLTECH,380.0,153.24,CAUGHT EARLY,True,VALIDATED VCP ENTRY,2026-03-23,173.2,418.2,380.1,1.0,2026-08-04,,flagged with most of the move still ahead
+2026-09-11,6m,2,CUPID,267.2,472.58,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-03-27,84.65,253.2,292.1,0.87,,,flagged with most of the move still ahead
+2026-09-11,6m,3,WELCORP,234.5,233.14,CAUGHT,True,EPISODIC PIVOT,2026-06-08,1346.6,106.8,248.0,0.43,,2026-08-21,flagged mid-move
+2026-09-11,6m,4,HFCL,224.7,589.61,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,163.68,56.8,256.7,0.22,,,flagged mid-move
+2026-09-11,6m,5,SHILPAMED,207.3,90.76,CAUGHT,True,CONFIRMED (watch pivot),2026-06-26,571.6,71.5,213.3,0.34,,,flagged mid-move
+2026-09-11,6m,6,DIACABS,186.2,105.65,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,193.73,95.6,193.9,0.49,,,flagged mid-move
+2026-09-11,6m,7,RAYMOND,182.1,77.99,CAUGHT,True,CONFIRMED (watch pivot),2026-08-14,635.45,61.2,188.2,0.33,,,flagged mid-move
