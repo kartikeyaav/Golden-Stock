@@ -207,6 +207,79 @@ def test_the_live_marker_is_committed_and_readable():
     assert r.returncode == 0, "ai_runner.json is not tracked — the cloud will not have it"
 
 
+# ---------------------------------------------------------------------------
+# cloud-owned leftovers (2026-09-14)
+# ---------------------------------------------------------------------------
+
+class StatusFake:
+    """git status reports the given paths as dirty; everything else is clean."""
+
+    def __init__(self, dirty: dict):
+        self.dirty = dirty            # rel path -> porcelain code, e.g. " M" / "UU"
+        self.calls: list[list[str]] = []
+
+    def __call__(self, cmd, cwd=None, **kw):
+        self.calls.append(list(cmd))
+        if cmd[:3] == ["git", "status", "--porcelain"]:
+            rel = cmd[-1]
+            code = self.dirty.get(rel)
+            return FakeProc(0, f"{code} {rel}\n" if code else "")
+        return FakeProc(0)
+
+
+def test_a_verdict_block_left_in_daily_alerts_is_discarded_before_the_pull():
+    """Measured 2026-09-14: the analyst stopped COMMITTING daily_alerts.md on
+    09-12 but still writes its verdict block into it — 71 lines sat in the tree.
+    Carried into `pull --autostash` on top of the cloud's rewrite, that conflicts
+    and leaves the file unmerged: the 08-20 wedge, one cloud scan away."""
+    from _local_git import CLOUD_OWNED, discard_cloud_owned_edits
+    alerts = CLOUD_OWNED[0]
+    fake = StatusFake({alerts: " M"})
+    logged: list[str] = []
+    out = discard_cloud_owned_edits("/repo", fake, logged.append)
+    assert out == [alerts]
+    assert ["git", "checkout", "HEAD", "--", alerts] in fake.calls
+    assert any("cloud-owned" in m for m in logged)
+
+
+def test_an_unmerged_cloud_file_is_resolved_not_refused():
+    """`git checkout -- path` refuses an UNMERGED file — the exact state this
+    exists to clear — so the reset must name HEAD explicitly."""
+    from _local_git import CLOUD_OWNED, discard_cloud_owned_edits
+    themes = CLOUD_OWNED[1]
+    fake = StatusFake({themes: "UU"})
+    discard_cloud_owned_edits("/repo", fake, lambda m: None)
+    assert ["git", "checkout", "HEAD", "--", themes] in fake.calls
+
+
+def test_the_owners_own_uncommitted_work_is_never_touched():
+    """The safety property. This repo is also where the owner develops; a
+    cleanup that discarded whatever happened to be modified would eventually
+    destroy real work (the 09-07 autostash held a genuine .gitignore edit)."""
+    from _local_git import CLOUD_OWNED, discard_cloud_owned_edits
+    fake = StatusFake({"multibagger_screener/multibagger_screener/scripts/my_work.py": " M",
+                       "multibagger_screener/multibagger_screener/config.py": " M",
+                       ".gitignore": " M"})
+    out = discard_cloud_owned_edits("/repo", fake, lambda m: None)
+    assert out == []
+    touched = [c for c in fake.calls if c[:2] == ["git", "checkout"]]
+    assert touched == [], f"only CLOUD_OWNED paths may ever be reset: {touched}"
+    asked = {c[-1] for c in fake.calls if c[:3] == ["git", "status", "--porcelain"]}
+    assert asked == set(CLOUD_OWNED), "the cleanup must not even inspect other paths"
+
+
+def test_both_wrappers_clean_up_before_every_pull():
+    """The twin rule: a guard that reaches one wrapper and not its sibling is
+    documented history here, so both are asserted."""
+    for name in ("nightly_analyst_local.py", "weekly_committee_local.py"):
+        src = open(os.path.join(ROOT, "scripts", name), encoding="utf-8").read()
+        body = src.split("def git_pull_retry", 1)[1].split("\ndef ", 1)[0]
+        assert "discard_cloud_owned_edits(cwd, run, log)" in body, \
+            f"{name}: git_pull_retry no longer starts from a clean tree"
+        assert body.index("discard_cloud_owned_edits") < body.index('"git", "pull"'), \
+            f"{name}: the cleanup must come BEFORE the pull"
+
+
 if __name__ == "__main__":
     failures = 0
     for name, fn in sorted(globals().items()):

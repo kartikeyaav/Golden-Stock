@@ -33,8 +33,8 @@ from datetime import datetime
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
-from _local_git import (acquire_lock, heal_stuck_rebase,  # noqa: E402
-                        release_lock, runner_is_cloud)
+from _local_git import (acquire_lock, discard_cloud_owned_edits,  # noqa: E402
+                        heal_stuck_rebase, release_lock, runner_is_cloud)
 
 LOG_PATH = os.path.join(ROOT, "logs", "committee_local.log")
 PICKS_PATH = os.path.join(ROOT, "ai_picks.json")
@@ -108,6 +108,11 @@ def git_pull_retry(cwd: str, attempts: int = 4, delay: int = 20) -> bool:
     local picks against the CLOUD's shortlist commit, so a stale tree makes the
     committee no-op with "already cover the latest shortlist" and call it
     success."""
+    # EVERY pull starts from a tree with no cloud-owned leftovers in it — the
+    # analyst writes its verdict block into daily_alerts.md mid-run and then
+    # pulls again before pushing, so a cleanup only at start and end misses
+    # exactly the pull that conflicts (2026-09-14).
+    discard_cloud_owned_edits(cwd, run, log)
     last = ""
     for i in range(attempts):
         p = run(["git", "pull", "--rebase", "--autostash"], cwd=cwd, timeout=180)
@@ -282,8 +287,12 @@ def main() -> int:
         return 0
     try:
         heal_stuck_rebase(git_root(), run, log, RECORD_PATHS)
+        discard_cloud_owned_edits(git_root(), run, log)
         return _run()
     finally:
+        # and again on the way out, so a laptop that sleeps before the next
+        # start does not leave tonight's leftover sitting in the tree
+        discard_cloud_owned_edits(git_root(), run, log)
         release_lock(ROOT)
 
 

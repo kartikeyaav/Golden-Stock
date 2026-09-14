@@ -94,6 +94,47 @@ def heal_stuck_rebase(git_root: str, run, log, restore_paths=()) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# files the cloud regenerates — never carried into a pull
+# ---------------------------------------------------------------------------
+
+# The CLOUD rewrites these on every run, so a local modification to one is
+# never the record: it is a leftover. The analyst still writes its verdict
+# block into daily_alerts.md locally (it stopped COMMITTING the file on
+# 2026-09-12, but not writing it), and a local dashboard build or scan writes
+# themes.json. Carried into `git pull --rebase --autostash`, that leftover is
+# re-applied on top of the cloud's rewrite, conflicts, and leaves the file
+# UNMERGED — after which every pull refuses. That is the 08-20 wedge exactly,
+# and on 2026-09-14 it was one cloud scan away from happening again.
+#
+# The list is deliberately explicit. A blanket "discard whatever is modified"
+# would destroy uncommitted work in a repo the owner also develops in.
+CLOUD_OWNED = (
+    "multibagger_screener/multibagger_screener/daily_alerts.md",
+    "multibagger_screener/multibagger_screener/state/themes.json",
+)
+
+
+def discard_cloud_owned_edits(git_root: str, run, log) -> list[str]:
+    """Reset each CLOUD_OWNED file to HEAD if it is modified or unmerged.
+
+    `git checkout HEAD -- path` rather than `git checkout -- path`, because
+    the second refuses an UNMERGED file — which is the very state this exists
+    to clear. Nothing outside CLOUD_OWNED is ever touched."""
+    discarded = []
+    for rel in CLOUD_OWNED:
+        st = (run(["git", "status", "--porcelain", "--", rel], cwd=git_root).stdout or "")
+        st = st.strip()
+        if not st or st.startswith("??"):
+            continue
+        if run(["git", "checkout", "HEAD", "--", rel], cwd=git_root).returncode == 0:
+            discarded.append(rel)
+    if discarded:
+        log("discarded local edits to cloud-owned file(s) so they cannot conflict "
+            "on the next pull: " + ", ".join(os.path.basename(d) for d in discarded))
+    return discarded
+
+
+# ---------------------------------------------------------------------------
 # one writer at a time
 # ---------------------------------------------------------------------------
 
