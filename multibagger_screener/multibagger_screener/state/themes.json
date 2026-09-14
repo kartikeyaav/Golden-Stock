@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-14T17:13:59",
+ "generated": "2026-09-14T18:51:56",
  "themes": [
   {
    "key": "water",
@@ -29,8 +29,8 @@
    "breadth": 36.4,
    "rs_med": 90.8,
    "ret3m": 14.1,
-   "news": 1.43,
-   "news_per_name": 0.13,
+   "news": 1.41,
+   "news_per_name": 0.128,
    "thin": false,
    "confirmed": [
     "NEULANDLAB",
@@ -48,8 +48,8 @@
    "breadth": 36.4,
    "rs_med": 74.7,
    "ret3m": 9.7,
-   "news": 2.32,
-   "news_per_name": 0.211,
+   "news": 2.31,
+   "news_per_name": 0.21,
    "thin": false,
    "confirmed": [
     "AVALON",
@@ -68,7 +68,7 @@
    "rs_med": 90.2,
    "ret3m": 2.4,
    "news": 2.69,
-   "news_per_name": 0.337,
+   "news_per_name": 0.336,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -87,8 +87,8 @@
    "breadth": 37.5,
    "rs_med": 78.3,
    "ret3m": 4.5,
-   "news": 3.05,
-   "news_per_name": 0.191,
+   "news": 3.03,
+   "news_per_name": 0.189,
    "thin": false,
    "confirmed": [
     "MCX",
@@ -108,8 +108,8 @@
    "breadth": 40.0,
    "rs_med": 68.0,
    "ret3m": 3.0,
-   "news": 2.39,
-   "news_per_name": 0.159,
+   "news": 2.37,
+   "news_per_name": 0.158,
    "thin": false,
    "confirmed": [
     "VIJAYA",
@@ -129,7 +129,7 @@
    "breadth": 46.7,
    "rs_med": 90.1,
    "ret3m": 1.9,
-   "news": 5.27,
+   "news": 5.26,
    "news_per_name": 0.351,
    "thin": false,
    "confirmed": [
@@ -151,7 +151,7 @@
    "breadth": 33.3,
    "rs_med": 93.5,
    "ret3m": 13.2,
-   "news": 1.18,
+   "news": 1.17,
    "news_per_name": 0.065,
    "thin": false,
    "confirmed": [
@@ -172,8 +172,8 @@
    "breadth": 33.3,
    "rs_med": 77.2,
    "ret3m": 2.9,
-   "news": 2.94,
-   "news_per_name": 0.327,
+   "news": 2.93,
+   "news_per_name": 0.325,
    "thin": false,
    "confirmed": [
     "HFCL",
@@ -210,8 +210,8 @@
    "breadth": 25.0,
    "rs_med": 68.8,
    "ret3m": 1.9,
-   "news": 1.86,
-   "news_per_name": 0.116,
+   "news": 1.85,
+   "news_per_name": 0.115,
    "thin": false,
    "confirmed": [
     "NAVINFLUOR",
@@ -229,8 +229,8 @@
    "breadth": 25.0,
    "rs_med": 83.1,
    "ret3m": 1.7,
-   "news": 1.47,
-   "news_per_name": 0.122,
+   "news": 1.46,
+   "news_per_name": 0.121,
    "thin": false,
    "confirmed": [
     "UNIPARTS",
@@ -264,8 +264,8 @@
    "breadth": 6.7,
    "rs_med": 76.7,
    "ret3m": -14.3,
-   "news": 8.74,
-   "news_per_name": 0.583,
+   "news": 8.72,
+   "news_per_name": 0.582,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
@@ -280,8 +280,8 @@
    "breadth": 0.0,
    "rs_med": null,
    "ret3m": -9.7,
-   "news": 4.53,
-   "news_per_name": 0.412,
+   "news": 4.5,
+   "news_per_name": 0.409,
    "thin": false,
    "confirmed": [],
    "heat": 17.0
@@ -294,8 +294,8 @@
    "breadth": 13.0,
    "rs_med": 65.0,
    "ret3m": -7.9,
-   "news": 2.39,
-   "news_per_name": 0.104,
+   "news": 2.35,
+   "news_per_name": 0.102,
    "thin": false,
    "confirmed": [
     "AZAD",
