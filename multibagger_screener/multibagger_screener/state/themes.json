@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-14T16:32:16",
+ "generated": "2026-09-14T17:13:59",
  "themes": [
   {
    "key": "water",
@@ -87,8 +87,8 @@
    "breadth": 37.5,
    "rs_med": 78.3,
    "ret3m": 4.5,
-   "news": 3.07,
-   "news_per_name": 0.192,
+   "news": 3.05,
+   "news_per_name": 0.191,
    "thin": false,
    "confirmed": [
     "MCX",
@@ -108,8 +108,8 @@
    "breadth": 40.0,
    "rs_med": 68.0,
    "ret3m": 3.0,
-   "news": 2.41,
-   "news_per_name": 0.161,
+   "news": 2.39,
+   "news_per_name": 0.159,
    "thin": false,
    "confirmed": [
     "VIJAYA",
@@ -129,8 +129,8 @@
    "breadth": 46.7,
    "rs_med": 90.1,
    "ret3m": 1.9,
-   "news": 5.28,
-   "news_per_name": 0.352,
+   "news": 5.27,
+   "news_per_name": 0.351,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -229,8 +229,8 @@
    "breadth": 25.0,
    "rs_med": 83.1,
    "ret3m": 1.7,
-   "news": 1.48,
-   "news_per_name": 0.123,
+   "news": 1.47,
+   "news_per_name": 0.122,
    "thin": false,
    "confirmed": [
     "UNIPARTS",
@@ -264,8 +264,8 @@
    "breadth": 6.7,
    "rs_med": 76.7,
    "ret3m": -14.3,
-   "news": 7.71,
-   "news_per_name": 0.514,
+   "news": 8.74,
+   "news_per_name": 0.583,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"

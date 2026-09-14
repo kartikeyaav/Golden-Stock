@@ -690,3 +690,9 @@ NELCO  [CONFIRMED]   as of 2026-09-11
 - PAPER PENDING APARINDS: fills at next session's open
 - PAPER SKIP SYRMA: already open in paper book
 - **PAPER**: SCI — STOP HIT at 277.63 (low 277.50) — exit all remaining shares
+
+_Re-run at 17:12 found no new transitions — the alerts above are today's and stand._
+
+## Paper book (analyst-driven)
+
+- PAPER PENDING APARINDS: fills at next session's open

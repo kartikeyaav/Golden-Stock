@@ -1,9 +1,9 @@
 {
  "ok": true,
- "generated": "2026-09-14T16:29:09",
+ "generated": "2026-09-14T17:11:44",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9651,
+ "headlines_read": 9653,
  "policy_hits": 14,
  "stories": 13,
  "themes": {
@@ -111,8 +111,8 @@
    ]
   },
   "railways": {
-   "pressure": 0.22,
-   "pos_flow": 0.1836,
+   "pressure": 0.217,
+   "pos_flow": 0.1815,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -149,7 +149,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0657
+     "weight": 0.0636
     },
     {
      "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
@@ -197,8 +197,8 @@
    ]
   },
   "ems": {
-   "pressure": 0.166,
-   "pos_flow": 0.134,
+   "pressure": 0.161,
+   "pos_flow": 0.1297,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -218,7 +218,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.134
+     "weight": 0.1297
     }
    ]
   },
@@ -310,7 +310,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.134
+   "weight": 0.1297
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -413,7 +413,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0657
+   "weight": 0.0636
   },
   {
    "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
