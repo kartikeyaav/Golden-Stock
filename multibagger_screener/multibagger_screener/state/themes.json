@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-14T20:20:21",
+ "generated": "2026-09-14T22:34:00",
  "themes": [
   {
    "key": "water",
@@ -67,8 +67,8 @@
    "breadth": 62.5,
    "rs_med": 90.2,
    "ret3m": 2.4,
-   "news": 2.69,
-   "news_per_name": 0.336,
+   "news": 2.68,
+   "news_per_name": 0.335,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -130,7 +130,7 @@
    "rs_med": 90.1,
    "ret3m": 1.9,
    "news": 5.24,
-   "news_per_name": 0.35,
+   "news_per_name": 0.349,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -152,7 +152,7 @@
    "rs_med": 93.5,
    "ret3m": 13.2,
    "news": 1.16,
-   "news_per_name": 0.065,
+   "news_per_name": 0.064,
    "thin": false,
    "confirmed": [
     "NITINSPIN",
@@ -172,8 +172,8 @@
    "breadth": 33.3,
    "rs_med": 77.2,
    "ret3m": 2.9,
-   "news": 2.88,
-   "news_per_name": 0.32,
+   "news": 2.87,
+   "news_per_name": 0.319,
    "thin": false,
    "confirmed": [
     "HFCL",
@@ -190,8 +190,8 @@
    "breadth": 33.3,
    "rs_med": 85.0,
    "ret3m": 3.9,
-   "news": 1.32,
-   "news_per_name": 0.088,
+   "news": 1.3,
+   "news_per_name": 0.087,
    "thin": false,
    "confirmed": [
     "HFCL",
@@ -230,7 +230,7 @@
    "rs_med": 83.1,
    "ret3m": 1.7,
    "news": 1.45,
-   "news_per_name": 0.121,
+   "news_per_name": 0.12,
    "thin": false,
    "confirmed": [
     "UNIPARTS",
@@ -264,8 +264,8 @@
    "breadth": 6.7,
    "rs_med": 76.7,
    "ret3m": -14.3,
-   "news": 8.68,
-   "news_per_name": 0.579,
+   "news": 8.64,
+   "news_per_name": 0.576,
    "thin": false,
    "confirmed": [
     "ACMESOLAR"
