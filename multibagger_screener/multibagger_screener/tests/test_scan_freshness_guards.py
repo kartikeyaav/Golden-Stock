@@ -490,3 +490,18 @@ def test_the_three_coverage_numbers_keep_their_order():
         f"scan {ds.STALE_PRICE_FAIL} / watchdog {wd.MIN_COVERAGE} / guard "
         f"{guard_floor} — discarding must be rarer than re-running")
     assert ds.STALE_PRICE_FAIL > 0, "a zero floor cannot catch the 09-08 hollow run"
+
+
+def test_the_price_chip_reads_coverage_not_just_the_newest_bar():
+    """2026-09-12: the dashboard said "Price cache 1d" while 611 of 1,028 names
+    were a session behind — the one surface of four that did not say so. The
+    chip now carries price_coverage and lets it set a colour FLOOR that a young
+    newest bar cannot lift. This pins the wiring on both sides of the page."""
+    src = open(os.path.join(ROOT, "scripts", "build_dashboard.py"), encoding="utf-8").read()
+    assert "floor=price_floor, cov=price_cov" in src, \
+        "the Price cache row no longer ships its coverage"
+    assert "price_coverage" in src.split("COVERAGE, NOT JUST AGE", 1)[1][:1500], \
+        "the chip must read the coverage the scan stamps into its state"
+    assert "return worse(s,h.floor)" in src, \
+        "the browser re-classifies by age alone again — coverage cannot colour the chip"
+    assert "h.cov<90" in src, "the percentage no longer appears on a short session"

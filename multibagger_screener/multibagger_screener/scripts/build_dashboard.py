@@ -562,6 +562,32 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
         except ValueError:
             pass
 
+    # COVERAGE, NOT JUST AGE (2026-09-12). This chip used to age the NIFTY
+    # benchmark's last bar and nothing else — one series speaking for a
+    # thousand. On 2026-09-12 it read "Price cache 1d" while 611 of 1,028 names
+    # were still a session behind, and daily_alerts.md and the Telegram digest
+    # both said so; the dashboard was the one surface that did not. The scan
+    # stamps price_coverage into its state for exactly this, so the chip reads
+    # it: the percentage appears whenever it is short of 90%, and coverage sets
+    # a FLOOR on the colour that a young age cannot lift.
+    _ts = {}
+    try:
+        with open(os.path.join(ROOT, "state", "tags_state.json"), encoding="utf-8") as _f:
+            _ts = json.load(_f)
+    except (OSError, ValueError):
+        _ts = {}
+    _pc = _ts.get("price_coverage")
+    _pc = float(_pc) if isinstance(_pc, (int, float)) else None
+    _sess = str(_ts.get("session") or "")[:10]
+    if _pc is None:
+        price_detail = "coverage unknown (the scan state carries no price_coverage)"
+        price_floor, price_cov = "warn", None
+    else:
+        price_detail = (f"session {_sess or '?'}, carried by {_pc:.0%} of "
+                        f"{_ts.get('n_priced') or '?'} names")
+        price_floor = "fail" if _pc < 0.50 else "warn" if _pc < 0.90 else None
+        price_cov = int(round(_pc * 100))
+
     # the nightly scan runs Mon-Fri, so a Sunday read is legitimately ~2 days
     # old; the thresholds allow a normal weekend without shouting
     rows = [
@@ -570,10 +596,13 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
             "The mechanical core: tags the whole universe, diffs against last "
             "night, fires alerts. Runs Mon-Fri in the cloud, so a weekend read "
             "is normally one to two days old.", stamp=scan_date),
-        row("prices", "Price cache", bench_age if bench_age != 99 else None, 3, 5,
-            "Yahoo daily OHLCV", "Every tag, stop and chart reads this cache. "
-            "Stale prices mean every number on this page is stale.",
-            stamp=bench_stamp),
+        dict(row("prices", "Price cache", bench_age if bench_age != 99 else None, 3, 5,
+                 price_detail, "Every tag, stop and chart reads this cache. "
+                 "Stale prices mean every number on this page is stale, and a "
+                 "fresh newest bar does not mean every name has it: Yahoo "
+                 "publishes this universe a session late for much of it.",
+                 stamp=bench_stamp),
+             floor=price_floor, cov=price_cov),
         row("analyst", "AI analyst", verdicts_age, 4, 9,
             (health_json.get("status") or "?") + " · pooled deep-dives",
             "Deep-dives tonight's buy alerts and files a verdict on each. "
@@ -2623,10 +2652,15 @@ $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HAL
  const liveAge=h=>{if(!h.at)return h.age;
    const t=Date.parse(h.at); if(isNaN(t))return h.age;
    return (Date.now()-t)/864e5;};
- const liveState=(h,a)=>{if(a==null)return h.state||'unknown';
-   if(h.fail!=null&&a>=h.fail)return 'fail';
-   if(h.warn!=null&&a>=h.warn)return 'warn';
-   return 'ok';};
+ const rank={ok:0,warn:1,fail:2};
+ const worse=(x,y)=>(y&&rank[y]>(rank[x]==null?-1:rank[x]))?y:x;
+ /* h.floor comes from COVERAGE, set in Python: a young newest bar that most
+    names do not carry is not a fresh price cache, however recent it is. */
+ const liveState=(h,a)=>{if(a==null)return worse(h.state||'unknown',h.floor);
+   let s='ok';
+   if(h.fail!=null&&a>=h.fail)s='fail';
+   else if(h.warn!=null&&a>=h.warn)s='warn';
+   return worse(s,h.floor);};
  /* compact form for the chip */
  const ago=a=>a==null?'—':a<0.04?'now':a<1?Math.round(a*24)+'h':a<2?'1d':Math.round(a)+'d';
  /* full sentence for the tooltip. The chip form cannot just have " ago"
@@ -2638,7 +2672,7 @@ $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HAL
   const tip=[h.label+' — '+agoPhrase(a)+'.', detail?detail+'.':'', h.tip]
     .filter(Boolean).join(' ');
   return `<span class="hpip ${st}" data-tip="${esc(tip)}">
-  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(a)}</s></span>`}).join('');};
+  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(a)}${(h.cov!=null&&h.cov<90)?' · '+h.cov+'%':''}</s></span>`}).join('');};
  paint();
  /* a tab left open overnight must not keep claiming "now" */
  setInterval(paint,60000);})();
