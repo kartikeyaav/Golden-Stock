@@ -1,21 +1,9 @@
 {
- "generated": "2026-09-13 10:15",
+ "generated": "2026-09-14 16:32",
  "n_checked": 1027,
- "n_flagged": 97,
- "asm_total": 239,
+ "n_flagged": 94,
+ "asm_total": 229,
  "syms": {
-  "ACUTAAS": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "CPPLUS": {
    "flags": [
     {
@@ -77,11 +65,6 @@
   "CEMPRO": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -89,7 +72,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "EMCURE": {
    "flags": [
@@ -201,18 +184,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "OLAELEC": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "TRAVELFOOD": {
    "flags": [
@@ -358,18 +329,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "BALAMINES": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "BALUFORGE": {
    "flags": [
     {
@@ -486,11 +445,6 @@
   "UTLSOLAR": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -498,7 +452,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "INDIAGLYCO": {
    "flags": [
@@ -872,11 +826,6 @@
   "WEBELSOLAR": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -884,7 +833,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "WELENT": {
    "flags": [

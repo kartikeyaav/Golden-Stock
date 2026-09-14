@@ -1,19 +1,19 @@
 {
- "generated": "2026-09-13 10:15",
+ "generated": "2026-09-14 16:32",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 15.0,
  "deadline": "2026-12-31",
  "observation": {
   "window_start": "2026-07-25",
-  "eligible_weekdays": 35,
-  "sessions_scanned": 32,
+  "eligible_weekdays": 36,
+  "sessions_scanned": 33,
   "sessions_missed": 3,
-  "observed_pct": 91.4,
+  "observed_pct": 91.7,
   "degraded_scans": 1,
   "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"
  },
- "days_to_deadline": 108,
+ "days_to_deadline": 107,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -87,7 +87,7 @@
   "last": "2026-08-24"
  },
  "legacy": {
-  "n": 556,
+  "n": 565,
   "n_qualifying": 436,
   "n_unsized": 69,
   "expectancy_r": 0.303,
@@ -97,13 +97,13 @@
   "median_r": 0.07,
   "sum_r": 132.03,
   "win_rate_pct": 52.5,
-  "hit_stop_pct": 23.4,
+  "hit_stop_pct": 23.0,
   "best_trade_share_pct": 2.2,
   "best_r": 6.27,
   "worst_r": -6.34,
   "signal_basis_return_pct": 165.03,
   "first": "2026-07-07",
-  "last": "2026-09-12"
+  "last": "2026-09-14"
  },
  "extended": {
   "n": 1,

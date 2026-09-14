@@ -80,3 +80,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-12,KTKBANK,SKIP,entry,0,,,[KTKBANK@2026-09-08 21:34] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
 2026-09-12,ANTHEM,SKIP,entry,0,,,[ANTHEM@2026-09-09 21:34] slot limit 12 reached (26 open) — the backtested edge was measured with this cap in force
 2026-09-10,PGIL,SELL,all,26,2121.51,-6044.74,stop hit
+2026-09-14,SYRMA,SKIP,entry,0,,,[SYRMA@2026-09-14 21:34] already open in paper book
+2026-09-11,SCI,SELL,all,251,277.63,-6229.82,stop hit

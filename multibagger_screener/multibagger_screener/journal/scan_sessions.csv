@@ -42,3 +42,4 @@ run_at,session,price_coverage,n_priced,n_tagged,n_alerts,n_entry_signals,source
 2026-09-04 14:30,2026-09-04,1.0,651,622,,,seeded from tags_state commit history
 2026-09-07 16:01,2026-09-07,1.0,1028,998,,,seeded from tags_state commit history
 2026-09-08 19:28,2026-09-08,0.001,1028,998,,,seeded from tags_state commit history
+2026-09-14 16:29,2026-09-11,1.0,1028,1000,20,17,live
