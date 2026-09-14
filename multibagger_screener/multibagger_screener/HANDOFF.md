@@ -2276,9 +2276,28 @@ is not adjacency*. And the top-up lived in `update_prices.main()`, which
 never once run on the job it was written for. Both are pinned by
 `tests/test_bhavcopy_seam.py`.
 
-**Still open:** the dashboard's "Price cache 1d" chip ages the newest bar
-rather than coverage. Narrowing on its own now that the top-up should hold
-coverage near 1.0.
+**Closed 2026-09-14:** the dashboard's price chip now carries `price_coverage`
+and lets it floor the colour (amber < 90%, red < 50%) — it read "Price cache 1d"
+while 59% of names were a session behind.
+
+**Also 2026-09-14 — the wedge fix was only half a fix.** 09-12 took
+`daily_alerts.md` out of the laptop's COMMITS, but `ai_analyst` still WRITES its
+verdict block into the working tree (71 lines were sitting there). The next
+cloud scan rewrites that file, and `pull --rebase --autostash` would re-apply
+the leftover on top, conflict, and leave it unmerged — the 08-20 wedge, one scan
+away. `_local_git.discard_cloud_owned_edits` now resets an explicit list of
+cloud-regenerated files (`daily_alerts.md`, `state/themes.json`) to HEAD before
+EVERY pull, inside `git_pull_retry` in both twins; nothing outside the list is
+ever inspected, which a test asserts. It fired for real within minutes of
+shipping — on the `themes.json` a local dashboard build had just rewritten.
+
+**Verified in production over the weekend:** Sunday's weekly (#13) scored 86
+gap-cohort names with blank industry through the `run_shortlist` path that used
+to crash; its second slot and penny's second slot both no-op'd on the guard;
+the laptop analyst pushed cleanly (`dbf34fa`) without touching
+`daily_alerts.md`. **Not yet verified:** the bhavcopy top-up, the capped-cohort
+book and the `scan_sessions.csv` live row — GitHub had delivered no daily cron
+at all by 15:07 UTC Monday.
 
 ---
 
