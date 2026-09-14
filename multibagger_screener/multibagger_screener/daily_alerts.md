@@ -696,7 +696,12 @@ NELCO  [CONFIRMED]   as of 2026-09-11
 
 - PAPER PENDING APARINDS: fills at next session's open
 
-_Re-run at 18:49 found no new transitions — the alerts above are today's and stand._
+
+## Paper book (analyst-driven)
+
+- PAPER PENDING APARINDS: fills at next session's open
+
+_Re-run at 20:18 found no new transitions — the alerts above are today's and stand._
 
 ## Paper book (analyst-driven)
 

@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-09-14T18:49:18",
+ "generated": "2026-09-14T20:17:42",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9632,
- "policy_hits": 14,
- "stories": 13,
+ "headlines_read": 9591,
+ "policy_hits": 13,
+ "stories": 12,
  "themes": {
   "defence": {
-   "pressure": 0.179,
-   "pos_flow": 0.1461,
+   "pressure": 0.177,
+   "pos_flow": 0.1443,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0577
+     "weight": 0.0558
     }
    ]
   },
@@ -59,30 +59,12 @@
    "top": []
   },
   "renewables": {
-   "pressure": 0.073,
-   "pos_flow": 0.0562,
+   "pressure": 0.0,
+   "pos_flow": 0.0,
    "neg_flow": 0.0,
-   "n_scored": 1,
+   "n_scored": 0,
    "n_attn": 1,
-   "top": [
-    {
-     "title": "Cabinet approves scheme for floating solar photovoltaic projects with energy storage",
-     "date": "2026-07-31T19:30:15",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/news/cabinet-approves-scheme-for-floating-solar-photovoltaic-projects-with-energy-storage/article71290275.ece",
-     "themes": [
-      "renewables"
-     ],
-     "polarity": "pos",
-     "event": "scheme/mission",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0562
-    }
-   ]
+   "top": []
   },
   "hospital": {
    "pressure": 0.07,
@@ -447,24 +429,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0577
-  },
-  {
-   "title": "Cabinet approves scheme for floating solar photovoltaic projects with energy storage",
-   "date": "2026-07-31T19:30:15",
-   "source": "BusinessLine",
-   "link": "https://www.thehindubusinessline.com/news/cabinet-approves-scheme-for-floating-solar-photovoltaic-projects-with-energy-storage/article71290275.ece",
-   "themes": [
-    "renewables"
-   ],
-   "polarity": "pos",
-   "event": "scheme/mission",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0562
+   "weight": 0.0558
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",

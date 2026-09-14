@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-14T18:49:05",
+ "generated": "2026-09-14T20:17:29",
  "lookback_days": 90,
  "half_life_days": 21.0,
  "syms": {
@@ -213,7 +213,7 @@
    "summary": "4 positive developments over 37d (3x order win, M&A/JV); since 2026-07-07"
   },
   "TEAMLEASE": {
-   "p": 0.717,
+   "p": 0.701,
    "rp": 0.0,
    "n_pos": 5,
    "n_neg": 0,
@@ -366,7 +366,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-07"
   },
   "MEESHO": {
-   "p": 0.16,
+   "p": 0.155,
    "rp": 0.062,
    "n_pos": 1,
    "n_neg": 1,
@@ -389,7 +389,7 @@
    "summary": "1 positive development (M&A/JV); 1 negative filing; on 2026-08-04"
   },
   "POCL": {
-   "p": 0.423,
+   "p": 0.409,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -440,7 +440,7 @@
    "summary": "2 positive developments over 28d (2x M&A/JV); since 2026-07-09"
   },
   "PPLPHARMA": {
-   "p": 1.464,
+   "p": 1.434,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -491,7 +491,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-09"
   },
   "INTERARCH": {
-   "p": 0.958,
+   "p": 0.952,
    "rp": 0.246,
    "n_pos": 4,
    "n_neg": 1,
@@ -682,7 +682,7 @@
    "summary": "1 negative filing"
   },
   "GODREJPROP": {
-   "p": 0.73,
+   "p": 0.72,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -822,7 +822,7 @@
    "summary": "2 positive developments over 41d (rating upgrade, buyback/bonus); 1 negative filing; since 2026-07-15"
   },
   "CDSL": {
-   "p": 0.815,
+   "p": 0.808,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -855,7 +855,7 @@
    "summary": "4 positive developments over 54d (4x M&A/JV); since 2026-07-09"
   },
   "IKS": {
-   "p": 0.195,
+   "p": 0.193,
    "rp": 0.431,
    "n_pos": 2,
    "n_neg": 1,
@@ -883,7 +883,7 @@
    "summary": "2 positive developments over 19d (2x M&A/JV); 1 negative filing; since 2026-07-09"
   },
   "SANSTAR": {
-   "p": 0.438,
+   "p": 0.435,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -907,7 +907,7 @@
   },
   "SANDUMA": {
    "p": 0.653,
-   "rp": 0.068,
+   "rp": 0.066,
    "n_pos": 3,
    "n_neg": 1,
    "n_attn": 0,
@@ -1064,7 +1064,7 @@
    "summary": "3 positive developments over 66d (2x order win, capex/investment); since 2026-07-10"
   },
   "RAILTEL": {
-   "p": 0.993,
+   "p": 0.973,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -1143,7 +1143,7 @@
    "summary": "1 negative filing"
   },
   "ELGIEQUIP": {
-   "p": 0.342,
+   "p": 0.333,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -1166,7 +1166,7 @@
    "summary": "2 positive developments over 40d (2x M&A/JV); since 2026-07-11"
   },
   "RITES": {
-   "p": 0.264,
+   "p": 0.26,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -1291,7 +1291,7 @@
    "summary": "2 negative filings"
   },
   "SIS": {
-   "p": 0.899,
+   "p": 0.889,
    "rp": 0.0,
    "n_pos": 6,
    "n_neg": 0,
@@ -1334,7 +1334,7 @@
    "summary": "6 positive developments over 39d (4x M&A/JV, 2x buyback/bonus); since 2026-07-11"
   },
   "AIIL": {
-   "p": 0.284,
+   "p": 0.281,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -1362,7 +1362,7 @@
    "summary": "3 positive developments over 16d (3x M&A/JV); since 2026-07-12"
   },
   "WELCORP": {
-   "p": 0.666,
+   "p": 0.661,
    "rp": 0.0,
    "n_pos": 5,
    "n_neg": 0,
@@ -1400,7 +1400,7 @@
    "summary": "5 positive developments over 17d (2x M&A/JV, 2x order win, capex/investment); since 2026-07-14"
   },
   "NBCC": {
-   "p": 1.524,
+   "p": 1.518,
    "rp": 0.0,
    "n_pos": 6,
    "n_neg": 0,
@@ -1693,7 +1693,7 @@
    "summary": "2 positive developments over 35d (order win, partnership); since 2026-07-14"
   },
   "CAPACITE": {
-   "p": 0.134,
+   "p": 0.129,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -1711,7 +1711,7 @@
    "summary": "1 positive development (order win); on 2026-07-14"
   },
   "DALBHARAT": {
-   "p": 0.285,
+   "p": 0.283,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -1734,7 +1734,7 @@
    "summary": "2 positive developments over 13d (order win, M&A/JV); since 2026-07-14"
   },
   "HEROMOTOCO": {
-   "p": 0.08,
+   "p": 0.078,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -1831,7 +1831,7 @@
    "summary": "2 positive developments over 3d (M&A/JV, order win); since 2026-07-15"
   },
   "GUJTHEM": {
-   "p": 0.363,
+   "p": 0.358,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -1928,7 +1928,7 @@
    "summary": ""
   },
   "EMSLIMITED": {
-   "p": 1.286,
+   "p": 1.282,
    "rp": 0.0,
    "n_pos": 5,
    "n_neg": 0,
@@ -2117,7 +2117,7 @@
    "summary": "2 positive developments over 33d (2x M&A/JV); 1 negative filing; since 2026-07-15"
   },
   "NTPCGREEN": {
-   "p": 0.612,
+   "p": 0.603,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -2151,7 +2151,7 @@
   },
   "LATENTVIEW": {
    "p": 0.0,
-   "rp": 0.083,
+   "rp": 0.08,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -2169,7 +2169,7 @@
   },
   "SBFC": {
    "p": 0.0,
-   "rp": 0.083,
+   "rp": 0.08,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -2187,7 +2187,7 @@
   },
   "GALLANTT": {
    "p": 0.0,
-   "rp": 0.206,
+   "rp": 0.203,
    "n_pos": 0,
    "n_neg": 2,
    "n_attn": 0,
@@ -2209,7 +2209,7 @@
    "summary": "2 negative filings"
   },
   "EXIDEIND": {
-   "p": 0.329,
+   "p": 0.326,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -2232,7 +2232,7 @@
    "summary": "2 positive developments over 33d (2x M&A/JV); since 2026-07-15"
   },
   "BRIGADE": {
-   "p": 0.609,
+   "p": 0.601,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -2265,7 +2265,7 @@
    "summary": "3 positive developments over 21d (2x M&A/JV, partnership); since 2026-07-29"
   },
   "ACMESOLAR": {
-   "p": 2.068,
+   "p": 2.063,
    "rp": 0.0,
    "n_pos": 6,
    "n_neg": 0,
@@ -2331,7 +2331,7 @@
    "summary": "2 positive developments over 48d (M&A/JV, approval); since 2026-07-16"
   },
   "ARIS": {
-   "p": 0.958,
+   "p": 0.932,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -2546,7 +2546,7 @@
    "summary": "1 positive development (expansion); on 2026-07-16"
   },
   "PWL": {
-   "p": 0.308,
+   "p": 0.298,
    "rp": 0.263,
    "n_pos": 2,
    "n_neg": 1,
@@ -2574,7 +2574,7 @@
    "summary": "2 positive developments over 28d (2x M&A/JV); 1 negative filing; since 2026-07-16"
   },
   "GABRIEL": {
-   "p": 0.64,
+   "p": 0.636,
    "rp": 0.166,
    "n_pos": 3,
    "n_neg": 1,
@@ -2650,7 +2650,7 @@
    "summary": "4 positive developments over 40d (2x buyback/bonus, approval, M&A/JV); since 2026-07-16"
   },
   "TIMETECHNO": {
-   "p": 0.502,
+   "p": 0.49,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -2719,7 +2719,7 @@
    "summary": "3 positive developments over 19d (2x order win, partnership); since 2026-07-17"
   },
   "RVNL": {
-   "p": 1.458,
+   "p": 1.433,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -2780,14 +2780,14 @@
    "summary": "3 positive developments over 59d (3x M&A/JV); since 2026-07-17"
   },
   "WAAREEENER": {
-   "p": 1.0,
+   "p": 0.979,
    "rp": 0.0,
    "n_pos": 6,
    "n_neg": 0,
    "n_attn": 0,
    "first": "2026-07-17T14:31:21",
    "last": "2026-08-13T19:23:42",
-   "primed": true,
+   "primed": false,
    "events": [
     [
      "M&A/JV",
@@ -2953,7 +2953,7 @@
    "summary": "4 positive developments over 48d (4x buyback/bonus); since 2026-07-17"
   },
   "DCMSHRIRAM": {
-   "p": 0.682,
+   "p": 0.676,
    "rp": 0.301,
    "n_pos": 5,
    "n_neg": 2,
@@ -3038,7 +3038,7 @@
   },
   "LALPATHLAB": {
    "p": 0.362,
-   "rp": 0.147,
+   "rp": 0.143,
    "n_pos": 2,
    "n_neg": 1,
    "n_attn": 0,
@@ -3143,7 +3143,7 @@
   },
   "APLLTD": {
    "p": 0.814,
-   "rp": 0.195,
+   "rp": 0.189,
    "n_pos": 3,
    "n_neg": 1,
    "n_attn": 0,
@@ -3199,7 +3199,7 @@
   },
   "MINDACORP": {
    "p": 0.094,
-   "rp": 0.281,
+   "rp": 0.272,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -3433,7 +3433,7 @@
    "summary": ""
   },
   "IIFLCAPS": {
-   "p": 0.136,
+   "p": 0.131,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -3663,7 +3663,7 @@
    "summary": "1 positive development (order win); on 2026-07-21"
   },
   "VIYASH": {
-   "p": 0.3,
+   "p": 0.293,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -3686,7 +3686,7 @@
    "summary": "2 positive developments over 21d (2x M&A/JV); since 2026-07-21"
   },
   "JSWENERGY": {
-   "p": 0.394,
+   "p": 0.391,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -3714,7 +3714,7 @@
    "summary": "3 positive developments over 16d (2x M&A/JV, rating upgrade); since 2026-07-21"
   },
   "TRIDENT": {
-   "p": 0.101,
+   "p": 0.098,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -3778,7 +3778,7 @@
    "summary": "1 negative filing"
   },
   "MOBIKWIK": {
-   "p": 0.347,
+   "p": 0.344,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -3819,7 +3819,7 @@
    "summary": "1 negative filing"
   },
   "BHARATFORG": {
-   "p": 1.045,
+   "p": 1.038,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -3921,7 +3921,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-22"
   },
   "JUBLFOOD": {
-   "p": 0.108,
+   "p": 0.104,
    "rp": 0.31,
    "n_pos": 1,
    "n_neg": 2,
@@ -4000,7 +4000,7 @@
    "summary": "1 positive development (buyback/bonus); on 2026-07-22"
   },
   "SIYSIL": {
-   "p": 0.922,
+   "p": 0.904,
    "rp": 0.0,
    "n_pos": 5,
    "n_neg": 0,
@@ -4062,7 +4062,7 @@
   },
   "OFSS": {
    "p": 0.0,
-   "rp": 0.104,
+   "rp": 0.101,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -4079,7 +4079,7 @@
    "summary": "1 negative filing"
   },
   "SAATVIKGL": {
-   "p": 1.633,
+   "p": 1.627,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -4112,7 +4112,7 @@
    "summary": "4 positive developments over 42d (4x order win); since 2026-07-22"
   },
   "SAREGAMA": {
-   "p": 0.104,
+   "p": 0.101,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -4131,7 +4131,7 @@
   },
   "CIEINDIA": {
    "p": 0.431,
-   "rp": 0.104,
+   "rp": 0.101,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -4319,7 +4319,7 @@
    "summary": "1 positive development (approval); on 2026-08-11"
   },
   "CENTENKA": {
-   "p": 0.108,
+   "p": 0.104,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -4360,7 +4360,7 @@
    "summary": "1 positive development (rating upgrade); on 2026-08-04"
   },
   "NUVAMA": {
-   "p": 0.136,
+   "p": 0.131,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -4424,7 +4424,7 @@
    "summary": "1 positive development (order win); on 2026-07-24"
   },
   "AUROPHARMA": {
-   "p": 1.401,
+   "p": 1.396,
    "rp": 0.252,
    "n_pos": 5,
    "n_neg": 1,
@@ -4468,7 +4468,7 @@
   },
   "AXISCADES": {
    "p": 0.108,
-   "rp": 0.209,
+   "rp": 0.202,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 1,
@@ -4513,7 +4513,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-24"
   },
   "ACC": {
-   "p": 0.239,
+   "p": 0.235,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -4536,7 +4536,7 @@
    "summary": "2 positive developments over 5d (2x M&A/JV); since 2026-07-24"
   },
   "STLTECH": {
-   "p": 0.276,
+   "p": 0.267,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -4559,7 +4559,7 @@
    "summary": "1 positive development (order win); on 2026-08-05"
   },
   "HEG": {
-   "p": 0.672,
+   "p": 0.654,
    "rp": 0.91,
    "n_pos": 3,
    "n_neg": 2,
@@ -4907,7 +4907,7 @@
    "summary": "1 negative filing"
   },
   "WEWORK": {
-   "p": 0.144,
+   "p": 0.139,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -4925,7 +4925,7 @@
    "summary": "1 positive development (rating upgrade); on 2026-07-27"
   },
   "SOMANYCERA": {
-   "p": 0.123,
+   "p": 0.119,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -5002,7 +5002,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-28"
   },
   "360ONE": {
-   "p": 0.381,
+   "p": 0.373,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -5132,7 +5132,7 @@
    "summary": "4 positive developments over 48d (3x partnership, M&A/JV); since 2026-07-28"
   },
   "SHK": {
-   "p": 0.127,
+   "p": 0.123,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -5151,7 +5151,7 @@
   },
   "ARKADE": {
    "p": 0.0,
-   "rp": 0.212,
+   "rp": 0.205,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -5209,7 +5209,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-29"
   },
   "INOXWIND": {
-   "p": 1.162,
+   "p": 1.154,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -5355,7 +5355,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-29"
   },
   "UNIMECH": {
-   "p": 0.492,
+   "p": 0.476,
    "rp": 0.476,
    "n_pos": 1,
    "n_neg": 1,
@@ -5483,7 +5483,7 @@
    "summary": ""
   },
   "ASTRAL": {
-   "p": 0.131,
+   "p": 0.127,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -5501,7 +5501,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-29"
   },
   "EFCIL": {
-   "p": 0.586,
+   "p": 0.582,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -5539,7 +5539,7 @@
    "summary": "3 positive developments over 19d (3x M&A/JV); since 2026-07-29"
   },
   "SAMHI": {
-   "p": 0.155,
+   "p": 0.15,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -5563,7 +5563,7 @@
   },
   "SYNGENE": {
    "p": 0.3,
-   "rp": 0.131,
+   "rp": 0.127,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -5844,7 +5844,7 @@
    "summary": ""
   },
   "HARIOMPIPE": {
-   "p": 0.226,
+   "p": 0.219,
    "rp": 0.195,
    "n_pos": 1,
    "n_neg": 1,
@@ -5867,7 +5867,7 @@
    "summary": "1 positive development (expansion); 1 negative filing; on 2026-07-30"
   },
   "LENSKART": {
-   "p": 0.338,
+   "p": 0.333,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -6195,7 +6195,7 @@
    "summary": "2 negative filings"
   },
   "ENTERO": {
-   "p": 0.14,
+   "p": 0.136,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -6214,7 +6214,7 @@
   },
   "BOMDYEING": {
    "p": 0.0,
-   "rp": 0.14,
+   "rp": 0.136,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -6231,7 +6231,7 @@
    "summary": "1 negative filing"
   },
   "LGBBROSLTD": {
-   "p": 0.14,
+   "p": 0.136,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -6249,7 +6249,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-07-31"
   },
   "CESC": {
-   "p": 0.605,
+   "p": 0.601,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -6278,7 +6278,7 @@
   },
   "SWSOLAR": {
    "p": 0.0,
-   "rp": 0.14,
+   "rp": 0.136,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -6295,7 +6295,7 @@
    "summary": "1 negative filing"
   },
   "DATAMATICS": {
-   "p": 0.14,
+   "p": 0.136,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -6452,7 +6452,7 @@
   },
   "JAINREC": {
    "p": 0.32,
-   "rp": 0.155,
+   "rp": 0.15,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -6474,7 +6474,7 @@
    "summary": "1 positive development (M&A/JV); 1 negative filing; on 2026-08-26"
   },
   "GARUDA": {
-   "p": 0.155,
+   "p": 0.15,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -6492,7 +6492,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-08-03"
   },
   "ABDL": {
-   "p": 0.737,
+   "p": 0.723,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -6520,7 +6520,7 @@
    "summary": "3 positive developments over 15d (rating upgrade, expansion, M&A/JV); since 2026-08-03"
   },
   "ENDURANCE": {
-   "p": 0.155,
+   "p": 0.15,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -6746,7 +6746,7 @@
    "summary": "1 positive development (expansion); on 2026-08-04"
   },
   "METROPOLIS": {
-   "p": 0.16,
+   "p": 0.155,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -6764,7 +6764,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-08-04"
   },
   "HCG": {
-   "p": 0.303,
+   "p": 0.293,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -6792,8 +6792,8 @@
    "summary": "2 positive developments over 2d (capex/investment, M&A/JV); since 2026-08-04"
   },
   "NAZARA": {
-   "p": 0.592,
-   "rp": 0.16,
+   "p": 0.586,
+   "rp": 0.155,
    "n_pos": 2,
    "n_neg": 1,
    "n_attn": 1,
@@ -6825,7 +6825,7 @@
    "summary": "2 positive developments over 30d (2x M&A/JV); 1 negative filing; since 2026-08-04"
   },
   "GROWW": {
-   "p": 0.16,
+   "p": 0.155,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -7084,7 +7084,7 @@
    "summary": "1 positive development (approval); on 2026-08-05"
   },
   "ASTERDM": {
-   "p": 0.381,
+   "p": 0.376,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -7107,7 +7107,7 @@
    "summary": "2 positive developments over 8d (2x M&A/JV); since 2026-08-05"
   },
   "BIKAJI": {
-   "p": 0.166,
+   "p": 0.16,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -7248,7 +7248,7 @@
    "summary": "3 positive developments over 11d (2x order win, M&A/JV); since 2026-08-06"
   },
   "GPTINFRA": {
-   "p": 2.394,
+   "p": 2.385,
    "rp": 0.0,
    "n_pos": 4,
    "n_neg": 0,
@@ -7282,7 +7282,7 @@
   },
   "SBCL": {
    "p": 0.0,
-   "rp": 0.647,
+   "rp": 0.642,
    "n_pos": 0,
    "n_neg": 2,
    "n_attn": 0,
@@ -7489,7 +7489,7 @@
    "summary": "1 positive development (expansion); on 2026-08-17"
   },
   "UTLSOLAR": {
-   "p": 0.726,
+   "p": 0.717,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -7536,7 +7536,7 @@
   },
   "VEEDOL": {
    "p": 0.435,
-   "rp": 0.209,
+   "rp": 0.202,
    "n_pos": 2,
    "n_neg": 1,
    "n_attn": 0,
@@ -7672,7 +7672,7 @@
   },
   "WOCKPHARMA": {
    "p": 0.0,
-   "rp": 0.534,
+   "rp": 0.517,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 1,
@@ -7713,7 +7713,7 @@
   },
   "RUPA": {
    "p": 0.0,
-   "rp": 0.195,
+   "rp": 0.189,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -7902,7 +7902,7 @@
    "summary": ""
   },
   "DIACABS": {
-   "p": 1.497,
+   "p": 1.459,
    "rp": 0.0,
    "n_pos": 3,
    "n_neg": 0,
@@ -7931,7 +7931,7 @@
   },
   "TARC": {
    "p": 0.195,
-   "rp": 0.216,
+   "rp": 0.209,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -7953,14 +7953,14 @@
    "summary": "1 positive development (M&A/JV); 1 negative filing; on 2026-08-11"
   },
   "BEML": {
-   "p": 1.009,
+   "p": 0.999,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
    "n_attn": 0,
    "first": "2026-08-11T19:06:33",
    "last": "2026-09-02T08:56:49",
-   "primed": true,
+   "primed": false,
    "events": [
     [
      "order win",
@@ -7994,7 +7994,7 @@
    "summary": ""
   },
   "PIIND": {
-   "p": 0.202,
+   "p": 0.195,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -8172,7 +8172,7 @@
   },
   "KIRLOSIND": {
    "p": 0.0,
-   "rp": 0.209,
+   "rp": 0.202,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -8303,7 +8303,7 @@
   },
   "GRINFRA": {
    "p": 0.348,
-   "rp": 0.552,
+   "rp": 0.534,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -8380,7 +8380,7 @@
   },
   "THEMISMED": {
    "p": 0.0,
-   "rp": 0.216,
+   "rp": 0.209,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -8398,7 +8398,7 @@
   },
   "SIGNATURE": {
    "p": 0.0,
-   "rp": 0.647,
+   "rp": 0.64,
    "n_pos": 0,
    "n_neg": 2,
    "n_attn": 0,
@@ -8705,7 +8705,7 @@
    "summary": ""
   },
   "NEULANDLAB": {
-   "p": 0.334,
+   "p": 0.323,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -9078,7 +9078,7 @@
   },
   "TORNTPOWER": {
    "p": 0.254,
-   "rp": 0.272,
+   "rp": 0.263,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -9190,7 +9190,7 @@
    "summary": "1 negative filing"
   },
   "DIAMONDYD": {
-   "p": 0.592,
+   "p": 0.583,
    "rp": 0.0,
    "n_pos": 2,
    "n_neg": 0,
@@ -9357,7 +9357,7 @@
    "summary": "1 negative filing"
   },
   "CAPLIPOINT": {
-   "p": 0.421,
+   "p": 0.408,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -9394,7 +9394,7 @@
   },
   "KPEL": {
    "p": 0.5,
-   "rp": 0.417,
+   "rp": 0.404,
    "n_pos": 1,
    "n_neg": 1,
    "n_attn": 0,
@@ -9579,7 +9579,7 @@
   },
   "NPST": {
    "p": 0.0,
-   "rp": 0.32,
+   "rp": 0.31,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -9709,7 +9709,7 @@
    "summary": "1 negative filing"
   },
   "SENORES": {
-   "p": 0.331,
+   "p": 0.32,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -9727,7 +9727,7 @@
    "summary": "1 positive development (M&A/JV); on 2026-08-26"
   },
   "DEVYANI": {
-   "p": 0.331,
+   "p": 0.32,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -9818,7 +9818,7 @@
   },
   "IKIO": {
    "p": 0.0,
-   "rp": 0.417,
+   "rp": 0.404,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -9835,7 +9835,7 @@
    "summary": "1 negative filing"
   },
   "FINEORG": {
-   "p": 0.417,
+   "p": 0.404,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -9925,7 +9925,7 @@
    "summary": "1 negative filing"
   },
   "AVALON": {
-   "p": 0.431,
+   "p": 0.417,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
@@ -10142,7 +10142,7 @@
   },
   "SANGHVIMOV": {
    "p": 0.0,
-   "rp": 0.492,
+   "rp": 0.476,
    "n_pos": 0,
    "n_neg": 1,
    "n_attn": 0,
@@ -10213,7 +10213,7 @@
    "summary": ""
   },
   "BHEL": {
-   "p": 0.62,
+   "p": 0.6,
    "rp": 0.0,
    "n_pos": 1,
    "n_neg": 0,
