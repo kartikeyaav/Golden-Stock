@@ -1,6 +1,6 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-09-12** (RELIABILITY PASS — the nightly scan had been dead for four sessions on a NaN industry and the laptop wedged for five days mid-rebase; both fixed, and the reasons neither was noticed are fixed too. Read §3Y first.)
+**Last updated: 2026-09-15** (SESSIONS AND SCREENER COVERAGE: price age is counted in exchange sessions, and every screener column is filled or says why it is blank. Read §3AA first; the 09-12 reliability pass is §3Y.)
 
 **Superseded header, kept for the trail: 2026-07-26** (capital gate PRE-REGISTERED; exit-risk
 surveillance on the main universe; freshness header; stale KPIs corrected;
@@ -2298,6 +2298,77 @@ the laptop analyst pushed cleanly (`dbf34fa`) without touching
 `daily_alerts.md`. **Not yet verified:** the bhavcopy top-up, the capped-cohort
 book and the `scan_sessions.csv` live row — GitHub had delivered no daily cron
 at all by 15:07 UTC Monday.
+
+---
+
+## 3AA. Sessions, not days, and a screener where every blank says why (2026-09-15)
+
+Three user reports in one day, and a fourth defect found through one of them.
+Each turned out to be a narrow input feeding a wide surface.
+
+**1. "The price cache is 4 days old." Nothing was stale** (`773ae75`). Fri
+09-11 was the last session, Mon 09-14 was an NSE holiday (the archive 404s its
+bhavcopy), and Tuesday had not closed. The chip aged prices in calendar days,
+and the daily guard demanded a Monday session that could never arrive, so all
+six slots re-ran full scans. Now `data/nse_all.session_status` is tri-state:
+`session`, `no_session` (a weekend, or a clean 404 after 15:00 UTC) and
+`unknown` (everything else, never recorded, because an outage written down as
+a holiday teaches every consumer to skip a real session). Confirmed
+non-sessions persist in `tags_state.json["no_session_days"]`. The chip names
+the session it holds and counts sessions behind (`price_row_facts`, with a
+behavioural test after a source-grep test passed a patch that crashed the
+build). The guard probes the archive and steps back over a confirmed
+non-session (`NSE_HOLIDAY_PROBE=off` in tests). Measured the same day: the
+bhavcopy `prev_close` chain is 100% intact over 16 contiguous sessions, so the
+bhavcopy can be the PRIMARY daily source. That is the user's call (vs EODHD).
+
+**2. "Not all the values, and the news is not showing up"** (`0484a52`). Each
+column had its own, narrower feed. RS and turnover came from the weekly focus
+list (555 of 1,000 blank). News came only for names a job had enriched (536
+missing), and a name with no detail record lost the panel outright. The scan
+already ranked RS for every name and threw it away; it is now kept in
+`tags_state.json["rs_pctile"]`. Turnover comes from the price cache on the
+focus list's own definition. Drawers fall back to 30 days of committed filings
+and headlines through the scan's own matchers (`_archive_news`), labelled as
+not scored. Every remaining blank shows a dash and a reason on hover.
+
+**3. Industry for the 377 names outside the indices.** NSE classifies only
+index members. screener.in's "Sector" is the NSE label (seven of eight exact;
+the eighth an escaped ampersand and a comma apart).
+`scripts/backfill_industry.py` read it once, politely, into the committed
+`industry_labels.csv`: all 377 labelled, every label one of the 22 NSE labels
+already in use (12 needed the comma fold). `build_universe.apply_industry_labels`
+fills a BLANK only, index labels win, and membership is untouched
+(`gap_universe.csv` stays FROZEN). Screener focus rows now read the committed
+universe, not the weekly snapshot. Screener industry blanks: 378 → 1, and that
+one is not a company (item 4). Disclosed in `PREREG_2026-09-07.md` §9: neutral
+to that test's ruler (price-only entries, no resolved gap signal), but
+conviction, analyst context and sector warnings move for labelled names (28
+lenders −5.9 to +9.5 points; 16 textile names about +5 on theme; archetype tags
+change for none), so split the journal's conviction column at 2026-09-15. Every one of the 377 was
+run through the industry-reading code before commit: no errors.
+`tests/test_industry_labels.py`: the overwrite and neighbour-field guards were
+both made to go red.
+
+**4. The screener's last blank row was not a company.** The tagging loop
+skipped a hard-coded `"NIFTY50"`, while the price refresh watches every entry
+in `update_prices.BENCHMARK_SYMBOLS`. MOMENTUM100 (the capital gate's
+comparator ETF) joined that list on 07-26 and was tagged nightly from then on:
+a WATCH row with no industry or market cap, one extra entry in the breadth count
+that sizes plans and in the RS ranking, and an armed entry trigger. It never
+fired (0 journal rows), so nothing in the record changes. The skip is now
+derived from the list (`daily_scan.setup_symbols`); prices for both benchmarks
+are still refreshed. The RS ranking is computed after tagging and feeds only
+display, conviction and the radar, so no tag or entry moves.
+`tests/test_benchmarks_are_not_stocks.py`, canaried red on exactly MOMENTUM100.
+
+**Open after this section (none acted on without the user):** the bhavcopy as
+PRIMARY source vs EODHD; routing for the gap cohort's alerts; the
+`CLAUDE_CODE_OAUTH_TOKEN` secret, then `ai_runner.json` → `cloud` and the
+two Windows tasks disabled. **To confirm after the next cloud scan:**
+`rs_pctile` and `no_session_days` written, RS in every screener row, the
+session chip, a top-up fill, a live `scan_sessions.csv` row, a paper entry
+under the capped cohort, and MOMENTUM100 gone from `tags_state.json`.
 
 ---
 
