@@ -1,9 +1,9 @@
 {
  "ok": true,
- "generated": "2026-09-15T00:31:45",
+ "generated": "2026-09-15T15:09:55",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9578,
+ "headlines_read": 9851,
  "policy_hits": 14,
  "stories": 13,
  "themes": {
@@ -67,8 +67,8 @@
    ]
   },
   "hospital": {
-   "pressure": 0.07,
-   "pos_flow": 0.054,
+   "pressure": 0.068,
+   "pos_flow": 0.0522,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -88,13 +88,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.054
+     "weight": 0.0522
     }
    ]
   },
   "railways": {
-   "pressure": 0.216,
-   "pos_flow": 0.1798,
+   "pressure": 0.213,
+   "pos_flow": 0.1777,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -114,7 +114,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0657
+     "weight": 0.0636
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -205,8 +205,8 @@
    ]
   },
   "capex": {
-   "pressure": 0.11,
-   "pos_flow": 0.0863,
+   "pressure": 0.107,
+   "pos_flow": 0.0835,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -227,13 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0863
+     "weight": 0.0835
     }
    ]
   },
   "ev": {
-   "pressure": 0.207,
-   "pos_flow": 0.1718,
+   "pressure": 0.201,
+   "pos_flow": 0.1662,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -254,7 +254,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0863
+     "weight": 0.0835
     },
     {
      "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -271,7 +271,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.0855
+     "weight": 0.0827
     }
    ]
   }
@@ -313,24 +313,6 @@
    "weight": 0.108
   },
   {
-   "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
-   "date": "2026-08-14T05:35:56",
-   "source": "Livemint",
-   "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
-   "themes": [
-    "capex",
-    "ev"
-   ],
-   "polarity": "pos",
-   "event": "scheme/mission",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0863
-  },
-  {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
    "date": "2026-08-28T20:41:02",
    "source": "BusinessLine",
@@ -348,6 +330,24 @@
    "weight": 0.0856
   },
   {
+   "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
+   "date": "2026-08-14T05:35:56",
+   "source": "Livemint",
+   "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
+   "themes": [
+    "capex",
+    "ev"
+   ],
+   "polarity": "pos",
+   "event": "scheme/mission",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0835
+  },
+  {
    "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
    "date": "2026-08-12T00:42:59",
    "source": "The Economic Times",
@@ -362,7 +362,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0855
+   "weight": 0.0827
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -396,7 +396,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0657
+   "weight": 0.0636
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -464,7 +464,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.054
+   "weight": 0.0522
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",

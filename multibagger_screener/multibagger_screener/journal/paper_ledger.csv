@@ -82,3 +82,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-10,PGIL,SELL,all,26,2121.51,-6044.74,stop hit
 2026-09-14,SYRMA,SKIP,entry,0,,,[SYRMA@2026-09-14 21:34] already open in paper book
 2026-09-11,SCI,SELL,all,251,277.63,-6229.82,stop hit
+2026-09-15,APARINDS,BUY,entry,3,17598.0,,[APARINDS@2026-09-14 21:33] analyst BUY/MEDIUM/HALF PLAN
