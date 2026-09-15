@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-14T22:34:00",
+ "generated": "2026-09-15T00:33:28",
  "themes": [
   {
    "key": "water",
@@ -67,8 +67,8 @@
    "breadth": 62.5,
    "rs_med": 90.2,
    "ret3m": 2.4,
-   "news": 2.68,
-   "news_per_name": 0.335,
+   "news": 2.67,
+   "news_per_name": 0.334,
    "thin": false,
    "confirmed": [
     "MTARTECH",
@@ -129,7 +129,7 @@
    "breadth": 46.7,
    "rs_med": 90.1,
    "ret3m": 1.9,
-   "news": 5.24,
+   "news": 5.23,
    "news_per_name": 0.349,
    "thin": false,
    "confirmed": [

@@ -1,19 +1,19 @@
 {
- "generated": "2026-09-14 22:33",
+ "generated": "2026-09-15 00:33",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 15.0,
  "deadline": "2026-12-31",
  "observation": {
   "window_start": "2026-07-25",
-  "eligible_weekdays": 36,
+  "eligible_weekdays": 37,
   "sessions_scanned": 33,
-  "sessions_missed": 3,
-  "observed_pct": 91.7,
+  "sessions_missed": 4,
+  "observed_pct": 89.2,
   "degraded_scans": 1,
   "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"
  },
- "days_to_deadline": 107,
+ "days_to_deadline": 106,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -171,21 +171,21 @@
   "3m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": 1.25,
-    "first": 66.46,
+    "ret_pct": 0.82,
+    "first": 66.74,
     "last": 67.29,
-    "from": "2026-06-15",
+    "from": "2026-06-16",
     "to": "2026-09-11",
-    "sessions": 65
+    "sessions": 64
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -1.91,
-    "first": 23853.9,
+    "ret_pct": -2.46,
+    "first": 23989.15,
     "last": 23398.1,
-    "from": "2026-06-15",
+    "from": "2026-06-16",
     "to": "2026-09-11",
-    "sessions": 64
+    "sessions": 63
    }
   },
   "12m": {

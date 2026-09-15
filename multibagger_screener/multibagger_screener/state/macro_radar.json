@@ -1,12 +1,28 @@
 {
  "ok": true,
- "generated": "2026-09-14T22:31:17",
+ "generated": "2026-09-15T00:31:45",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9569,
- "policy_hits": 13,
- "stories": 12,
+ "headlines_read": 9578,
+ "policy_hits": 14,
+ "stories": 13,
  "themes": {
+  "renewables": {
+   "pressure": 0.0,
+   "pos_flow": 0.0,
+   "neg_flow": 0.0,
+   "n_scored": 0,
+   "n_attn": 2,
+   "top": []
+  },
+  "datacentre": {
+   "pressure": 0.0,
+   "pos_flow": 0.0,
+   "neg_flow": 0.0,
+   "n_scored": 0,
+   "n_attn": 2,
+   "top": []
+  },
   "defence": {
    "pressure": 0.174,
    "pos_flow": 0.1414,
@@ -50,22 +66,6 @@
     }
    ]
   },
-  "datacentre": {
-   "pressure": 0.0,
-   "pos_flow": 0.0,
-   "neg_flow": 0.0,
-   "n_scored": 0,
-   "n_attn": 1,
-   "top": []
-  },
-  "renewables": {
-   "pressure": 0.0,
-   "pos_flow": 0.0,
-   "neg_flow": 0.0,
-   "n_scored": 0,
-   "n_attn": 1,
-   "top": []
-  },
   "hospital": {
    "pressure": 0.07,
    "pos_flow": 0.054,
@@ -93,8 +93,8 @@
    ]
   },
   "railways": {
-   "pressure": 0.217,
-   "pos_flow": 0.1815,
+   "pressure": 0.216,
+   "pos_flow": 0.1798,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -148,7 +148,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0522
+     "weight": 0.0505
     }
    ]
   },
@@ -293,6 +293,24 @@
    "sources": 1,
    "retellings": 1,
    "weight": 0.1297
+  },
+  {
+   "title": "Waaree Renewable?s data centre push raises the stakes",
+   "date": "2026-09-15T05:55:23",
+   "source": "Livemint",
+   "link": "https://www.livemint.com/market/mark-to-market/waaree-renewable-technologies-sunstar-data-centers-ai-data-centres-india-11789370615415.html",
+   "themes": [
+    "renewables",
+    "datacentre"
+   ],
+   "polarity": "attn",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.108
   },
   {
    "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
@@ -449,23 +467,6 @@
    "weight": 0.054
   },
   {
-   "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
-   "date": "2026-08-12T22:32:21",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/indian-railways-big-update-2-new-trains-3-route-extensions-and-7-additional-halts-approved-check-routes-timings-and-stations/articleshow/133188624.cms",
-   "themes": [
-    "railways"
-   ],
-   "polarity": "pos",
-   "event": "approval",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0522
-  },
-  {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
    "date": "2026-08-25T18:25:32",
    "source": "NDTV Profit",
@@ -481,6 +482,23 @@
    "sources": 1,
    "retellings": 1,
    "weight": 0.0509
+  },
+  {
+   "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
+   "date": "2026-08-12T22:32:21",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/indian-railways-big-update-2-new-trains-3-route-extensions-and-7-additional-halts-approved-check-routes-timings-and-stations/articleshow/133188624.cms",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.0505
   }
  ]
 }
