@@ -35,7 +35,7 @@ import re
 import sys
 import time
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 
@@ -325,9 +325,31 @@ def merge_with_todays_alerts(out_path: str, report: str) -> str:
     return "\n".join(kept) + "\n"
 
 
+def no_session_days(days_back: int = 10) -> list[str]:
+    """Recent weekdays the EXCHANGE confirms did not trade.
+
+    Only nse_all.session_status's clean-404-after-publication counts. A
+    blocked request or a timeout comes back 'unknown' and is not recorded:
+    an outage written down as a holiday would teach every consumer to skip a
+    real session."""
+    from data.nse_all import session_status
+    out, today = [], datetime.now(timezone.utc).date()
+    for i in range(days_back, -1, -1):
+        d = today - timedelta(days=i)
+        if d.weekday() > 4:
+            continue
+        try:
+            if session_status(d) == "no_session":
+                out.append(str(d))
+        except Exception:  # noqa: BLE001 — never fatal, never guessed
+            pass
+    return out
+
+
 def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
                entry_alerted: dict | None = None,
-               last_bars: dict | None = None) -> None:
+               last_bars: dict | None = None,
+               no_session: list | None = None) -> None:
     if _skip_write(f"state -> {os.path.basename(path)} (+ history snapshot)"):
         return
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -352,6 +374,21 @@ def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
         payload["session"] = str(newest.date())
         payload["price_coverage"] = round(cov, 4)
         payload["n_priced"] = n_total
+    # EXCHANGE-CONFIRMED NON-SESSIONS (2026-09-15). On Tuesday 09-15 the price
+    # chip read "4 days old" because Friday was the last session and Monday
+    # was an NSE holiday: current data, wrong unit. Every consumer that ages a
+    # session — the chip, the guard's reasoning, the watchdog — needs to know
+    # which weekdays did not trade, and the only honest source is the
+    # exchange. Merged with what earlier runs recorded, 45 days kept.
+    try:
+        with open(path, encoding="utf-8") as _f:
+            _prev_days = json.load(_f).get("no_session_days", []) or []
+    except (OSError, ValueError, AttributeError):
+        _prev_days = []
+    _keep = (datetime.now() - pd.Timedelta(days=45)).strftime("%Y-%m-%d")
+    _days = sorted({d for d in list(_prev_days) + list(no_session or []) if d >= _keep})
+    if _days:
+        payload["no_session_days"] = _days
     cutoff = (datetime.now() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
     if ep_alerted:
         # EP alerts are one-day EVENTS, not state transitions — remember which
@@ -1425,8 +1462,13 @@ def main() -> None:
     if problems:
         lines = lines[:2] + problems + [""] + lines[2:]
 
+    try:
+        _nsd = [] if DRY_RUN else no_session_days()
+    except Exception:  # noqa: BLE001 — a calendar probe must never end a scan
+        _nsd = []
     save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
-               entry_alerted=entry_alerted, last_bars=last_bars)
+               entry_alerted=entry_alerted, last_bars=last_bars,
+               no_session=_nsd)
     journal_append(journal_rows)
     _cov, _newest, _behind, _tot = price_coverage(last_bars)
     sessions_append({

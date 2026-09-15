@@ -125,6 +125,31 @@ jobs:
               i=$((i + 1))
             done
           fi
+          # A WEEKDAY WITH NO SESSION (2026-09-15). The rule above knows weekends
+          # and nothing else, so on an exchange holiday it demands a session that
+          # can never arrive: on Mon 09-14 (Ganesh Chaturthi) all six slots ran a
+          # full scan and re-fetched ~1,029 series each, for a day that did not
+          # trade. NSE's archive answers directly — HTTP 404 for a date with no
+          # bhavcopy — but only once the file would have been published, so a 404
+          # counts only after 15:00 UTC (20:30 IST), or for an earlier day.
+          # ANYTHING other than a clean 404 (a block, a timeout, a 5xx) proves
+          # nothing and changes nothing: the scan runs. Curl, not an interpreter.
+          if [ "${NSE_HOLIDAY_PROBE:-on}" = "on" ]; then
+            for _step in 1 2 3 4 5; do
+              if [ "$target" = "$today" ] && [ "$hour" -lt 15 ]; then break; fi
+              ymd=$(date -u -d "$target" +%Y%m%d)
+              code=$(curl -s -o /dev/null -I -m 20 -A "Mozilla/5.0" -w "%{http_code}" "https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_${ymd}_F_0000.csv.zip" || echo 000)
+              if [ "$code" != "404" ]; then break; fi
+              echo "the exchange published no bhavcopy for $target — not a session, stepping back"
+              j=1
+              while :; do
+                prev=$(date -u -d "$target -$j day" +%F)
+                [ "$(date -u -d "$prev" +%u)" -le 5 ] && break
+                j=$((j + 1))
+              done
+              target="$prev"
+            done
+          fi
           # Read with grep, NOT with an interpreter. This job deliberately has
           # no setup-python step, and bare `python` is not on PATH on GitHub's
           # ubuntu runners (only `python3`) — so a `python -c` read here fails,

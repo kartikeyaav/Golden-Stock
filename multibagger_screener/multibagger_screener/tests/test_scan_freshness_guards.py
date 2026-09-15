@@ -332,8 +332,24 @@ def test_daily_guard_needs_no_interpreter():
             "interpreter")
 
 
+def _fake_curl(d: str, codes: dict) -> str:
+    """A `curl` that answers NSE archive probes with the HTTP status given per
+    YYYYMMDD and 200 for anything else. The guard puts the URL last."""
+    bindir = os.path.join(d, "fakebin")
+    os.makedirs(bindir, exist_ok=True)
+    cases = "".join(f'  *_{ymd}_F_*) printf "{code}";;\n' for ymd, code in codes.items())
+    body = ("#!/bin/sh\n"
+            'for a in "$@"; do url="$a"; done\n'
+            'case "$url" in\n' + cases + '  *) printf "200";;\nesac\n')
+    path = os.path.join(bindir, "curl")
+    with open(path, "w", newline="\n", encoding="utf-8") as f:
+        f.write(body)
+    os.chmod(path, 0o755)
+    return bindir
+
+
 def _run_guard(now: str, stamp: str, cov: float | None = 1.0,
-               legacy: bool = False) -> str:
+               legacy: bool = False, probe: dict | None = None) -> str:
     """Execute the guard's REAL shell at a chosen instant.
 
     The block is lifted out of daily.yml rather than restated here — a test
@@ -368,8 +384,14 @@ def _run_guard(now: str, stamp: str, cov: float | None = 1.0,
         script = os.path.join(d, "g.sh")
         with open(script, "w", newline="\n", encoding="utf-8") as f:
             f.write("set -e\n" + snippet)
+        env = {**os.environ, "SCAN_NOW": now, "GITHUB_OUTPUT": out,
+               "NSE_HOLIDAY_PROBE": "off"}
+        if probe is not None:
+            # the exchange is faked, never called: CI is deliberately network-free
+            env["NSE_HOLIDAY_PROBE"] = "on"
+            env["PATH"] = _fake_curl(d, probe) + os.pathsep + env.get("PATH", "")
         r = subprocess.run([bash, script], capture_output=True, text=True, cwd=d,
-                           env={**os.environ, "SCAN_NOW": now, "GITHUB_OUTPUT": out})
+                           env=env)
         if r.returncode != 0 and not os.path.exists(out):
             pytest.skip(f"guard shell unusable here: {r.stderr[:150]}")
         verdict = open(out, encoding="utf-8").read()
@@ -505,3 +527,103 @@ def test_the_price_chip_reads_coverage_not_just_the_newest_bar():
     assert "return worse(s,h.floor)" in src, \
         "the browser re-classifies by age alone again — coverage cannot colour the chip"
     assert "h.cov<90" in src, "the percentage no longer appears on a short session"
+
+
+# ---------------------------------------------------------------------------
+# sessions, not calendar days (2026-09-15)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("now,stamp,codes,want", [
+    # Mon 09-14 was Ganesh Chaturthi. All six slots demanded a session that
+    # could never arrive and ran a full scan each; asked, the exchange says so.
+    ("2026-09-14 16:22", "2026-09-11", {"20260914": 404}, "SKIP"),
+    # Tue 00:31 UTC: the target is still Monday — a holiday — so step to Friday.
+    ("2026-09-15 00:31", "2026-09-11", {"20260914": 404}, "SKIP"),
+    # before 15:00 UTC a 404 means NOT YET PUBLISHED, never "no session"
+    ("2026-09-14 14:26", "2026-09-11", {"20260914": 404}, "RUN"),
+    # a BLOCKED probe proves nothing: absent data must not buy a night off
+    ("2026-09-14 16:22", "2026-09-11", {"20260914": 403}, "RUN"),
+    ("2026-09-14 16:22", "2026-09-11", {"20260914": "000"}, "RUN"),
+    # an ordinary published session behaves exactly as it always did
+    ("2026-09-11 16:00", "2026-09-10", {}, "RUN"),
+])
+def test_the_guard_asks_the_exchange_before_demanding_a_session(now, stamp, codes, want):
+    assert _run_guard(now, stamp, probe=codes) == want
+
+
+def test_session_status_calls_only_a_published_404_no_session():
+    """bhavcopy() returns None for ANY failure. session_status must not: a
+    block or a timeout recorded as a holiday would teach every consumer to
+    skip a real session."""
+    import pathlib
+    import tempfile
+    import urllib.error
+    from datetime import date, datetime, timezone
+    import data.nse_all as nse
+
+    holiday = date(2026, 9, 14)
+    after = datetime(2026, 9, 14, 16, 0, tzinfo=timezone.utc)
+    before = datetime(2026, 9, 14, 9, 0, tzinfo=timezone.utc)
+
+    def raising(exc):
+        def _open(*a, **k):
+            raise exc
+        return _open
+
+    saved_open, saved_dir = nse.urllib.request.urlopen, nse.CACHE_DIR
+    nse.CACHE_DIR = pathlib.Path(tempfile.mkdtemp(prefix="sess_"))
+    try:
+        http = lambda code: urllib.error.HTTPError("u", code, "x", {}, None)
+        nse.urllib.request.urlopen = raising(http(404))
+        assert nse.session_status(holiday, after) == "no_session"
+        assert nse.session_status(holiday, before) == "unknown", \
+            "a 404 before publication is 'not yet', never 'no session'"
+        nse.urllib.request.urlopen = raising(http(403))
+        assert nse.session_status(holiday, after) == "unknown", "a block is not a holiday"
+        nse.urllib.request.urlopen = raising(urllib.error.URLError("timed out"))
+        assert nse.session_status(holiday, after) == "unknown", "a timeout is not a holiday"
+        assert nse.session_status(date(2026, 9, 12), after) == "no_session"   # Saturday
+        (nse.CACHE_DIR / "bhav_20260911.csv").write_text("x", encoding="utf-8")
+        assert nse.session_status(date(2026, 9, 11), after) == "session"
+    finally:
+        nse.urllib.request.urlopen, nse.CACHE_DIR = saved_open, saved_dir
+
+
+def test_the_scan_records_only_what_the_exchange_confirmed():
+    src = open(os.path.join(ROOT, "scripts", "daily_scan.py"), encoding="utf-8").read()
+    body = src.split("def no_session_days", 1)[1].split("\ndef ", 1)[0]
+    assert '== "no_session"' in body, "only a confirmed no-session may be recorded"
+    assert "no_session=_nsd" in src, "the scan no longer writes the confirmed calendar"
+
+
+def test_the_price_chip_counts_sessions_not_days():
+    src = open(os.path.join(ROOT, "scripts", "build_dashboard.py"), encoding="utf-8").read()
+    assert "const sessionsBehind=" in src, "the chip ages in calendar days again"
+    assert "shortDay(h.session)" in src, "the chip no longer names the session it holds"
+
+
+def test_price_row_facts_on_every_state_shape():
+    """BEHAVIOUR, not a grep. The first version of this chip passed a
+    source-grep test while crashing the dashboard build on every night without
+    a recorded holiday — the names the test looked for were all present, in
+    the wrong branch."""
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    from build_dashboard import price_row_facts as f
+
+    full = f({"session": "2026-09-11", "price_coverage": 1.0, "n_priced": 1028})
+    assert full["floor"] is None and full["cov"] == 100
+    assert full["session"] == "2026-09-11" and full["holidays"] == []
+    assert "no exchange session" not in full["detail"]
+
+    assert f({"session": "2026-09-11", "price_coverage": 0.4056})["floor"] == "fail"
+    assert f({"session": "2026-09-11", "price_coverage": 0.80})["floor"] == "warn"
+
+    hol = f({"session": "2026-09-11", "price_coverage": 1.0,
+             "no_session_days": ["2026-08-27", "2026-09-14"]})
+    assert "Mon 14 Sep" in hol["detail"], hol["detail"]
+    assert "27 Aug" not in hol["detail"], "a holiday before the session is not news"
+
+    blind = f({"session": "2026-09-11"})
+    assert blind["floor"] == "warn" and blind["cov"] is None, \
+        "unknown coverage must not read as healthy"
+    assert f({})["session"] is None

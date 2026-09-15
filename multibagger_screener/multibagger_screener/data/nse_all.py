@@ -33,9 +33,10 @@ import csv
 import io
 import json
 import time
+import urllib.error
 import urllib.request
 import zipfile
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -120,6 +121,38 @@ _BHAV_COLS = {
     "PrvsClsgPric": "prev_close", "TtlTradgVol": "volume",
     "TtlTrfVal": "turnover", "TtlNbOfTxsExctd": "trades",
 }
+
+
+# NSE's end-of-day files are out well before this; a 404 earlier in the day
+# means "not yet", not "never".
+PUBLISHED_BY_UTC_HOUR = 15
+
+
+def session_status(d: date, now_utc: datetime | None = None) -> str:
+    """'session', 'no_session' or 'unknown' for one date — never guessed.
+
+    WHY THIS IS NOT bhavcopy() (2026-09-15). bhavcopy() returns None for ANY
+    failure — a 404, a 403 block, a timeout and a DNS error all look the same
+    there. That is right for a caller that only wants data, and wrong for one
+    asking whether a day TRADED: record a blocked request as a holiday and an
+    outage buys the pipeline a night off, the defect this codebase keeps
+    relearning. Only a clean HTTP 404, for a file that should already be
+    published, is evidence that there was no session. Everything else is
+    'unknown', and 'unknown' is never recorded as a holiday."""
+    if d.weekday() > 4:
+        return "no_session"
+    if (CACHE_DIR / f"bhav_{d:%Y%m%d}.csv").exists():
+        return "session"
+    now_utc = now_utc or datetime.now(timezone.utc)
+    due = datetime(d.year, d.month, d.day, PUBLISHED_BY_UTC_HOUR, 0, tzinfo=timezone.utc)
+    try:
+        req = urllib.request.Request(BHAV_URL.format(d=d), headers=_HEADERS, method="HEAD")
+        with urllib.request.urlopen(req, timeout=TIMEOUT_S) as r:
+            return "session" if r.status == 200 else "unknown"
+    except urllib.error.HTTPError as e:
+        return "no_session" if (e.code == 404 and now_utc >= due) else "unknown"
+    except Exception:  # noqa: BLE001 — a failure to ask is not an answer
+        return "unknown"
 
 
 def bhavcopy(d: date, max_age_hours: float = 24 * 30) -> pd.DataFrame | None:

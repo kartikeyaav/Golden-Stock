@@ -504,6 +504,36 @@ def _file_age_days(*parts) -> float | None:
     return round((datetime.now().timestamp() - os.path.getmtime(p)) / 86400, 2)
 
 
+def price_row_facts(ts: dict) -> dict:
+    """What the Price cache chip says, derived from the scan's own state.
+
+    A pure function so it can be exercised without a price cache. The block it
+    replaces was patched in place on 2026-09-15 and the holiday note landed
+    INSIDE the else-branch that set the colour floor — so every night WITHOUT
+    a recorded holiday crashed the dashboard build with UnboundLocalError. The
+    test at the time grepped the source for the new names, found them, and
+    passed straight through the crash. tests/test_scan_freshness_guards.py now
+    calls this on every state shape instead."""
+    pc = ts.get("price_coverage")
+    pc = float(pc) if isinstance(pc, (int, float)) else None
+    sess = str(ts.get("session") or "")[:10]
+    holidays = [str(d) for d in (ts.get("no_session_days") or [])]
+    if pc is None:
+        detail = "coverage unknown (the scan state carries no price_coverage)"
+        floor, cov = "warn", None
+    else:
+        detail = (f"session {sess or '?'}, carried by {pc:.0%} of "
+                  f"{ts.get('n_priced') or '?'} names")
+        floor = "fail" if pc < 0.50 else "warn" if pc < 0.90 else None
+        cov = int(round(pc * 100))
+    closed = [d for d in holidays if sess and d > sess]
+    if closed:
+        detail += "; no exchange session on " + ", ".join(
+            pd.Timestamp(d).strftime("%a %d %b") for d in closed)
+    return {"detail": detail, "floor": floor, "cov": cov,
+            "session": sess or None, "holidays": holidays}
+
+
 def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
                   surv, gate) -> list[dict]:
     """One row per moving part: what it is, when it last ran, is that OK.
@@ -576,17 +606,9 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
             _ts = json.load(_f)
     except (OSError, ValueError):
         _ts = {}
-    _pc = _ts.get("price_coverage")
-    _pc = float(_pc) if isinstance(_pc, (int, float)) else None
-    _sess = str(_ts.get("session") or "")[:10]
-    if _pc is None:
-        price_detail = "coverage unknown (the scan state carries no price_coverage)"
-        price_floor, price_cov = "warn", None
-    else:
-        price_detail = (f"session {_sess or '?'}, carried by {_pc:.0%} of "
-                        f"{_ts.get('n_priced') or '?'} names")
-        price_floor = "fail" if _pc < 0.50 else "warn" if _pc < 0.90 else None
-        price_cov = int(round(_pc * 100))
+    _facts = price_row_facts(_ts)
+    price_detail, price_floor, price_cov = _facts["detail"], _facts["floor"], _facts["cov"]
+    _sess = _facts["session"] or ""
 
     # the nightly scan runs Mon-Fri, so a Sunday read is legitimately ~2 days
     # old; the thresholds allow a normal weekend without shouting
@@ -602,7 +624,8 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
                  "fresh newest bar does not mean every name has it: Yahoo "
                  "publishes this universe a session late for much of it.",
                  stamp=bench_stamp),
-             floor=price_floor, cov=price_cov),
+             floor=price_floor, cov=price_cov, session=_facts["session"],
+             holidays=_facts["holidays"]),
         row("analyst", "AI analyst", verdicts_age, 4, 9,
             (health_json.get("status") or "?") + " · pooled deep-dives",
             "Deep-dives tonight's buy alerts and files a verdict on each. "
@@ -2667,12 +2690,27 @@ $('#badges').innerHTML=(D.defensive?`<span class="badge b-amb">DEFENSIVE — HAL
     appended to it: that produced "last ran now ago" and "last ran — ago". */
  const agoPhrase=a=>a==null?'has never run':a<0.04?'ran just now'
    :a<1?'ran '+Math.round(a*24)+'h ago':a<2?'ran yesterday':'ran '+Math.round(a)+' days ago';
- const paint=()=>{el.innerHTML=H.map(h=>{const a=liveAge(h),st=liveState(h,a);
+ /* SESSIONS, NOT CALENDAR DAYS, for prices (2026-09-15). On Tuesday 09-15
+    this chip read "4d" — the last session was Friday and Monday was an NSE
+    holiday, so the data was exactly current and the unit was wrong. A
+    session counts once its 10:00 UTC close is 8 hours past; weekends and the
+    days the exchange confirmed did not trade (h.holidays) are skipped. */
+ const sessionsBehind=h=>{if(!h.session)return null;
+   const hol=new Set(h.holidays||[]);const cut=Date.now()-8*3600e3;
+   let t=Date.parse(h.session+'T10:00:00Z');let n=0;
+   for(let i=0;i<40;i++){t+=864e5;if(t>cut)break;
+     const d=new Date(t),wd=d.getUTCDay(),iso=d.toISOString().slice(0,10);
+     if(wd===0||wd===6||hol.has(iso))continue;n++;}
+   return n;};
+ const shortDay=s=>new Date(s+'T00:00:00Z').toUTCString().slice(0,11).replace(',','');
+ const paint=()=>{el.innerHTML=H.map(h=>{const a=liveAge(h),sb=sessionsBehind(h);
+  const st=sb==null?liveState(h,a):worse(sb>=2?'fail':sb===1?'warn':'ok',h.floor);
   const detail=(h.detail||'').trim().replace(/\.$/,'');
-  const tip=[h.label+' — '+agoPhrase(a)+'.', detail?detail+'.':'', h.tip]
+  const when=sb==null?agoPhrase(a):sb===0?'holds the latest completed session':sb+' session'+(sb>1?'s':'')+' behind';
+  const tip=[h.label+' — '+when+'.', detail?detail+'.':'', h.tip]
     .filter(Boolean).join(' ');
   return `<span class="hpip ${st}" data-tip="${esc(tip)}">
-  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${ago(a)}${(h.cov!=null&&h.cov<90)?' · '+h.cov+'%':''}</s></span>`}).join('');};
+  <i></i><b>${esc(h.label.replace(/^(AI|Nightly) /,''))}</b> <s>${sb==null?ago(a):shortDay(h.session)}${(h.cov!=null&&h.cov<90)?' · '+h.cov+'%':''}</s></span>`}).join('');};
  paint();
  /* a tab left open overnight must not keep claiming "now" */
  setInterval(paint,60000);})();
