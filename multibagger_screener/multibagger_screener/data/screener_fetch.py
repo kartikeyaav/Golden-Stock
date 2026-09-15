@@ -130,8 +130,37 @@ def _parse_pledge(html: str) -> float | None:
     return float(m.group(1)) if m else None
 
 
+def _parse_sector(html: str) -> str | None:
+    """The NSE industry label, as screener.in publishes it.
+
+    Measured 2026-09-15 on eight index names, one per industry: screener's
+    "Sector" field equals universe.csv's NSE industry label in 7 of 8, and the
+    eighth differs only by an escaped ampersand and a comma ("Oil, Gas &amp;
+    Consumable Fuels" vs "Oil Gas & Consumable Fuels"), which
+    nse_industry_label() folds back."""
+    import html as _html
+    m = re.search(r'title="Sector"[^>]*>([^<]+)<', html)
+    return _html.unescape(m.group(1)).strip() if m else None
+
+
+def nse_industry_label(raw: str | None, known: set | None = None) -> str | None:
+    """Map a screener sector onto the exact NSE label already in use, so a
+    backfilled name filters, themes and scores exactly like an index name.
+    Unknown labels pass through cleaned rather than being dropped."""
+    import html as _html
+    if not raw:
+        return None
+    clean = " ".join(_html.unescape(str(raw)).split())
+    key = re.sub(r"[^a-z0-9]", "", clean.lower())
+    for label in known or ():
+        if re.sub(r"[^a-z0-9]", "", str(label).lower()) == key:
+            return label
+    return clean or None
+
+
 def parse_company_page(html: str) -> dict:
     return {
+        "sector": _parse_sector(html),
         "top_ratios": _parse_top_ratios(html),
         "growth": _parse_ranges_tables(html),
         "quarters": _parse_data_table(html, "quarters",

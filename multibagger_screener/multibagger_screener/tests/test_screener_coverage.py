@@ -118,7 +118,7 @@ def test_the_drawer_never_goes_silent_and_blanks_explain_themselves():
         "the silent return is back"
     assert "from the archive, not read for scoring" in src, "archive items must be labelled"
     for must in ("Not enough price history to rank relative strength",
-                 "NSE publishes no industry for this name",
+                 "No industry published for this name",
                  "Fits none of the archetypes",
                  "No P/E published"):
         assert must in src, f"a blank cell no longer explains itself: {must}"

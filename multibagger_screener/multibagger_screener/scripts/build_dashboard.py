@@ -1053,6 +1053,12 @@ def build_payload() -> dict:
         return a
 
     screener_rows, closes = [], {}
+    # ONE industry source for every row (2026-09-15). universe.csv is committed
+    # and carries the backfilled labels for the names NSE's index files never
+    # classify (build_universe.apply_industry_labels); focus_list.csv is a
+    # WEEKLY snapshot and would keep showing those names blank until Sunday.
+    ind_by_sym = {s: as_text(i) for s, i in
+                  zip(universe.get("symbol", []), universe.get("industry", []))}
     for _, r in focus.iterrows():
         sym = r["symbol"]
         f = fund_by_sym.get(sym, {})
@@ -1069,7 +1075,7 @@ def build_payload() -> dict:
             round(float(r["last_close"]), 2) if pd.notna(r.get("last_close")) else None)
         screener_rows.append({
             "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
-            "ind": str(r.get("industry", ""))[:30],
+            "ind": (ind_by_sym.get(sym) or as_text(r.get("industry")))[:30],
             # tonight's state wins over the weekly focus snapshot (freshness)
             "tag": tags.get(sym, r.get("tag", "")),
             "tier": cap_tier(mcap, r.get("index_source", "")),
@@ -1090,8 +1096,6 @@ def build_payload() -> dict:
     # screener must show those names too, or alerted stocks are unfindable
     # (user-caught 2026-07-10). Non-focus names carry no RS percentile (that
     # is a focus-list artifact) but get tag/price/cap/score like everyone.
-    ind_by_sym = {s: as_text(i) for s, i in
-                  zip(universe.get("symbol", []), universe.get("industry", []))}
     focus_syms = set(focus["symbol"]) if not focus.empty else set()
     for sym, tg in tags.items():
         if sym in focus_syms:
@@ -3384,7 +3388,7 @@ $('#count').textContent=out.length+' stocks';
 $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td class="sym">${r.sym}${r.veto?' <span style="color:#f87171">⛔</span>':''}${survChip(r.sym,true)}</td>
 <td><span class="pill" style="border-color:${TIERC[r.tier]||'#475569'};color:${TIERC[r.tier]||'#94a3b8'}" title="${fmtCr(r.mcap)}">${r.tier||'—'}</span></td>
-<td class="dim"${r.ind?'':' data-tip="NSE publishes no industry for this name: it is one of the 377 added from outside the indices"'}>${r.ind?esc(r.ind):'—'}</td>
+<td class="dim"${r.ind?'':' data-tip="No industry published for this name: NSE classifies only its index members, and screener.in lists none for it either"'}>${r.ind?esc(r.ind):'—'}</td>
 <td><span class="pill" data-tip="${esc(tlt(r.tag))}" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${esc(tl(r.tag))}</span></td>
 <td><span class="pill" data-tip="${esc(TRIGLBL[strig(r)][2])}" style="border-color:${TRIGLBL[strig(r)][1]};color:${TRIGLBL[strig(r)][1]}">${TRIGLBL[strig(r)][0]}</span></td>
 <td class="mono"${r.rs!=null?'':' data-tip="Not enough price history to rank relative strength"'}>${r.rs!=null?Math.round(r.rs):'—'}</td>

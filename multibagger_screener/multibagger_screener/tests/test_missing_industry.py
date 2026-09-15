@@ -92,9 +92,16 @@ def test_every_industry_value_in_the_live_universe_is_scoreable():
     have thought to write down."""
     u = pd.read_csv(os.path.join(ROOT, "universe.csv"))
     values = list(u["industry"].drop_duplicates())
-    assert any(as_text(v) == "" for v in values), (
-        "universe.csv no longer has a single blank industry — if the gap "
-        "cohort was dropped, this guard has quietly stopped testing anything")
+    assert len(values) >= 20, "universe.csv carries almost no industries — not the real file?"
+    # THE BLANK IS INJECTED, NOT FOUND (2026-09-15). This test used to demand a
+    # blank industry in the live file, so the NaN path was exercised on real
+    # data. industry_labels.csv then filled every blank the gap cohort had, and
+    # the assertion correctly reported that the guard had stopped testing
+    # anything. A blank can still arrive tomorrow (a name with no label, an
+    # index CSV with a missing cell), so the four spellings pandas and the CSVs
+    # hand over are added here unconditionally: every real value AND every form
+    # of "nothing" must score, whatever the file happens to contain.
+    values += [float("nan"), None, "", "nan"]
     for v in values:
         phase_b._is_financial(v)
         phase_b.tag_archetypes({}, v)

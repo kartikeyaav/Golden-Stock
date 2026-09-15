@@ -62,6 +62,32 @@ def fetch_csv(urls: list[str]) -> pd.DataFrame:
     raise RuntimeError(f"all mirrors failed, last error: {last_err}")
 
 
+def apply_industry_labels(universe: pd.DataFrame, labels_path: str) -> pd.DataFrame:
+    """Fill a BLANK industry from industry_labels.csv; never overwrite one.
+
+    WHY (2026-09-15, user-reported blanks). NSE publishes an industry only in
+    its index files, so the 377 names merged from gap_universe.csv arrived with
+    none — 192 still blank on the screener, a flat 0.3 theme score, and no way
+    for _is_financial to recognise a bank among them. screener.in publishes the
+    same NSE label for every company (scripts/backfill_industry.py reads it).
+    The label file is separate from gap_universe.csv on purpose: that file is
+    FROZEN membership for a pre-registered test, and a label is not membership.
+    An index label always wins."""
+    from scoring.textnorm import as_text          # NaN / "nan" are blanks too
+    if not os.path.exists(labels_path) or "industry" not in universe.columns:
+        return universe
+    labels = pd.read_csv(labels_path)
+    fill = {s: as_text(i) for s, i in zip(labels["symbol"], labels["industry"])
+            if as_text(i)}
+    blank = universe["industry"].map(lambda v: as_text(v) == "")
+    before = int(blank.sum())
+    universe.loc[blank, "industry"] = universe.loc[blank, "symbol"].map(fill)
+    after = int(universe["industry"].map(lambda v: as_text(v) == "").sum())
+    print(f"industry labels: filled {before - after} of {before} blank industries "
+          f"from industry_labels.csv")
+    return universe
+
+
 def main() -> None:
     frames = []
     for index_name, urls in INDEX_SOURCES.items():
@@ -137,6 +163,8 @@ def main() -> None:
         # Absent file = the cohort is not merged, and that is stated rather than
         # silently producing a 650-name universe that looks normal.
         print("NOTE: gap_universe.csv absent — coverage-gap cohort NOT included")
+
+    universe = apply_industry_labels(universe, os.path.join(root, "industry_labels.csv"))
 
     out_path = os.path.join(root, "universe.csv")
     universe.to_csv(out_path, index=False)
