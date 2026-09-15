@@ -349,7 +349,8 @@ def no_session_days(days_back: int = 10) -> list[str]:
 def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
                entry_alerted: dict | None = None,
                last_bars: dict | None = None,
-               no_session: list | None = None) -> None:
+               no_session: list | None = None,
+               rs_pctile: dict | None = None) -> None:
     if _skip_write(f"state -> {os.path.basename(path)} (+ history snapshot)"):
         return
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -389,6 +390,13 @@ def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
     _days = sorted({d for d in list(_prev_days) + list(no_session or []) if d >= _keep})
     if _days:
         payload["no_session_days"] = _days
+    # THE RS EVERY NAME ALREADY HAS (2026-09-15, user-reported). The scan ranks
+    # live relative strength across the whole watched universe each night, then
+    # threw the ranking away after scoring the alerted cards — so the screener
+    # could only show the weekly focus list's RS, and 555 of 1,000 rows had a
+    # blank RS column. Kept here, it costs one dict and fills every row.
+    if rs_pctile:
+        payload["rs_pctile"] = {s: round(float(v), 1) for s, v in rs_pctile.items()}
     cutoff = (datetime.now() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
     if ep_alerted:
         # EP alerts are one-day EVENTS, not state transitions — remember which
@@ -1076,8 +1084,10 @@ def main() -> None:
     rs_blends = {s: tr.get("rs", {}).get("rs_blend")
                  for s, tr in tag_results.items()
                  if tr.get("rs", {}).get("rs_blend") is not None}
+    rs_live_map: dict = {}
     if rs_blends:
         rs_live = (pd.Series(rs_blends).rank(pct=True) * 100).round(1)
+        rs_live_map = {s: float(v) for s, v in rs_live.to_dict().items()}
         rs_by_sym = {**rs_by_sym, **rs_live.to_dict()}  # live wins; keep any focus-only names
 
     prev = load_state(args.state_file)
@@ -1468,7 +1478,7 @@ def main() -> None:
         _nsd = []
     save_state(args.state_file, today_tags, ep_alerted=ep_alerted,
                entry_alerted=entry_alerted, last_bars=last_bars,
-               no_session=_nsd)
+               no_session=_nsd, rs_pctile=rs_live_map)
     journal_append(journal_rows)
     _cov, _newest, _behind, _tot = price_coverage(last_bars)
     sessions_append({

@@ -67,6 +67,75 @@ def _ohlc(sym: str, days: int = 260) -> list:
                                         t["low"], t["close"], t["volume"])]
 
 
+def _turnover_cr(sym: str) -> float | None:
+    """Mean 20-day traded value in Rs crore — the SAME definition
+    build_focus_list uses, so focus and non-focus rows are comparable. The
+    column used to be filled for the focus list only (555 blanks)."""
+    df = load_ohlcv(sym)
+    if df is None or len(df) < 20:
+        return None
+    t = df.tail(20)
+    v = float((t["close"] * t["volume"]).mean() / 1e7)
+    return round(v, 1) if v == v else None
+
+
+def _archive_news(symbols: list, company_by_sym: dict, days: int = 30,
+                  per_name: int = 5) -> dict:
+    """Recent filings and headlines for names that have NO scored news read.
+
+    WHY (2026-09-15, user-reported: "the news is not showing up"). The drawer
+    showed news only for names a nightly or weekly job had enriched — 464 of
+    1,000. For the rest the panel said "not read for this name", or vanished
+    outright when the name had no detail record. The committed archives
+    already hold 30 days of NSE filings and market-feed headlines for most of
+    them. They are matched with the SAME matchers the scan uses
+    (announcements_fetch._same_company, news_sources.archived_for) — a second
+    matcher here would drift, which is this repo's most repeated defect — and
+    shown labelled as the archive. None of it reaches a score."""
+    out: dict = {}
+    if not symbols:
+        return out
+    try:
+        from data.announcements_fetch import (_ARCHIVE_PATH, _normalize_company,
+                                              _same_company)
+        from data import news_sources as NS
+        from scoring import news_nlp as N
+    except Exception:  # noqa: BLE001 — news context must never break the build
+        return out
+    cutoff = pd.Timestamp.now() - pd.Timedelta(days=days)
+    by_norm: dict = {}
+    try:
+        fa = pd.read_csv(_ARCHIVE_PATH)
+        fa["_d"] = pd.to_datetime(fa["date"], errors="coerce")
+        fa = fa[fa["_d"] >= cutoff].sort_values("_d", ascending=False)
+        by_norm = {k: g for k, g in fa.groupby("company_norm")}
+    except (OSError, ValueError, KeyError):
+        by_norm = {}
+    norms = list(by_norm)
+    for sym in symbols:
+        company = company_by_sym.get(sym) or sym
+        items = []
+        target = _normalize_company(str(company))
+        for norm in norms:
+            if _same_company(norm, target):
+                for _, r in by_norm[norm].head(per_name).iterrows():
+                    items.append({"d": str(r["_d"].date()), "t": str(r["subject"])[:160],
+                                  "src": "NSE filing", "u": str(r.get("link") or "")})
+        try:
+            for h in NS.archived_for(N.name_tokens(str(company)), days=days, limit=per_name):
+                when = h.get("date")
+                items.append({"d": str(when)[:10],
+                              "t": str(h.get("text") or h.get("title") or "")[:160],
+                              "src": str(h.get("source") or "headline")[:40],
+                              "u": str(h.get("link") or "")})
+        except Exception:  # noqa: BLE001
+            pass
+        if items:
+            items.sort(key=lambda x: x["d"], reverse=True)
+            out[sym] = items[:per_name]
+    return out
+
+
 def _closes(sym: str, days: int = 120) -> list:
     df = load_ohlcv(sym)
     if df is None or len(df) < 20:
@@ -827,9 +896,14 @@ def build_payload() -> dict:
     company_by_sym = dict(zip(universe.get("symbol", []), universe.get("company", [])))
 
     state_path = os.path.join(ROOT, "state", "tags_state.json")
-    tags = {}
+    tags, rs_live = {}, {}
     if os.path.exists(state_path):
-        tags = json.load(open(state_path, encoding="utf-8")).get("tags", {})
+        _st = json.load(open(state_path, encoding="utf-8"))
+        tags = _st.get("tags", {})
+        # the scan's nightly RS across the WHOLE universe (see daily_scan
+        # save_state) — fresher than the weekly focus list, and it exists for
+        # the 555 names the focus list never carried
+        rs_live = _st.get("rs_pctile", {}) or {}
 
     bench = load_ohlcv("NIFTY50")
     nifty, regime_defensive, bench_age = [], False, 99
@@ -1000,7 +1074,8 @@ def build_payload() -> dict:
             "tag": tags.get(sym, r.get("tag", "")),
             "tier": cap_tier(mcap, r.get("index_source", "")),
             "mcap": round(float(mcap), 0) if mcap is not None and pd.notna(mcap) else None,
-            "rs": round(float(r["rs_pctile"]), 1) if pd.notna(r.get("rs_pctile")) else None,
+            "rs": (round(float(rs_live[sym]), 1) if sym in rs_live
+                   else round(float(r["rs_pctile"]), 1) if pd.notna(r.get("rs_pctile")) else None),
             "close": live_close,
             "turn": round(float(r["turnover_cr"]), 1) if pd.notna(r.get("turnover_cr")) else None,
             "score": _score_cov(sym)[0], "cov": _score_cov(sym)[1],
@@ -1034,9 +1109,9 @@ def build_payload() -> dict:
             "tag": tg,
             "tier": cap_tier(mcap, ""),
             "mcap": round(float(mcap), 0) if mcap is not None and pd.notna(mcap) else None,
-            "rs": None,
+            "rs": round(float(rs_live[sym]), 1) if sym in rs_live else None,
             "close": live_close,
-            "turn": None,
+            "turn": _turnover_cr(sym),
             "score": _score_cov(sym)[0], "cov": _score_cov(sym)[1],
             "veto": _score_cov(sym)[2],
             "arch": _arch(arch),
@@ -1396,6 +1471,10 @@ def build_payload() -> dict:
         "reviewed": list(ranked.head(20)["symbol"]) if not ranked.empty else [],
         "rows": screener_rows, "watch": watch_rows,
         "closes": closes, "ohlc": ohlc, "details": details,
+        "archive_news": _archive_news(
+            [r["sym"] for r in screener_rows
+             if not (details.get(r["sym"]) or {}).get("news")],
+            company_by_sym),
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,
         "forensics": _build_forensics(outcomes),
@@ -2409,6 +2488,7 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
       <span id="tagfilters"></span>
       <span class="info" data-tip="Cap tiers: Micro < ₹2k Cr (highest multibagger runway, highest risk) · Small ₹2–12k Cr · Mid ₹12–50k Cr · Large > ₹50k Cr. Filter Micro + UPTREND for the potential-multibagger view.">?</span>
       <span class="dim" style="font-size:12px;margin-left:auto" id="count"></span>
+      <div class="axis" style="flex-basis:100%;font-size:11.5px;margin-top:6px">Every row: stage, trigger, RS, turnover and price, refreshed nightly. Fundamentals and conviction come from the weekly scoring; news is scored for alerted and focus names, and shown from the filings archive for the rest. A dash means the source has no value: hover it for why.</div>
     </div>
     <div class="tblx"><div class="tbly">
     <table id="tbl"><thead><tr>
@@ -3304,13 +3384,13 @@ $('#count').textContent=out.length+' stocks';
 $('#tbl tbody').innerHTML=out.map(r=>`<tr onclick="openDrawer('${r.sym}')">
 <td class="sym">${r.sym}${r.veto?' <span style="color:#f87171">⛔</span>':''}${survChip(r.sym,true)}</td>
 <td><span class="pill" style="border-color:${TIERC[r.tier]||'#475569'};color:${TIERC[r.tier]||'#94a3b8'}" title="${fmtCr(r.mcap)}">${r.tier||'—'}</span></td>
-<td class="dim">${esc(r.ind)}</td>
+<td class="dim"${r.ind?'':' data-tip="NSE publishes no industry for this name: it is one of the 377 added from outside the indices"'}>${r.ind?esc(r.ind):'—'}</td>
 <td><span class="pill" data-tip="${esc(tlt(r.tag))}" style="border-color:${TC[r.tag]};color:${TC[r.tag]}">${esc(tl(r.tag))}</span></td>
 <td><span class="pill" data-tip="${esc(TRIGLBL[strig(r)][2])}" style="border-color:${TRIGLBL[strig(r)][1]};color:${TRIGLBL[strig(r)][1]}">${TRIGLBL[strig(r)][0]}</span></td>
-<td class="mono">${r.rs??''}</td>
+<td class="mono"${r.rs!=null?'':' data-tip="Not enough price history to rank relative strength"'}>${r.rs!=null?Math.round(r.rs):'—'}</td>
 <td>${r.score!=null?`<span class="convcell"><span class="scorebar"><div style="width:${r.score}%"></div></span><b class="mono"${r.cov!=null&&r.cov<60?` data-tip="Technical read — only ${r.cov}% of the 8 scored questions had data at the weekly refresh. Not comparable with full-coverage conviction scores."`:''}>${r.score}${r.cov!=null&&r.cov<60?'<span style="color:#fbbf24">°</span>':''}</b></span>`:'<span class="dim">—</span>'}</td>
-<td class="dim ell"${r.arch?` data-tip="${esc(r.arch)}"`:''}>${esc(r.arch)}</td><td class="mono">${r.roce??''}</td><td class="mono">${r.pe??''}</td>
-<td class="mono" style="color:${r.pgttm>0?'#34d399':r.pgttm<0?'#f87171':''}">${r.pgttm??''}</td>
+<td class="dim ell"${r.arch?` data-tip="${esc(r.arch)}"`:' data-tip="Fits none of the archetypes: turnaround, quality, hyper-growth, super-cycle"'}>${r.arch?esc(r.arch):'<span class="axis">none</span>'}</td><td class="mono">${r.roce??'—'}</td><td class="mono"${r.pe!=null?'':' data-tip="No P/E published, which usually means earnings are negative"'}>${r.pe??'—'}</td>
+<td class="mono" style="color:${r.pgttm>0?'#34d399':r.pgttm<0?'#f87171':''}">${r.pgttm??'—'}</td>
 <td class="mono">${r.close??''}</td><td>${spark(D.closes[r.sym])}</td></tr>`).join('');}
 render();
 
@@ -3490,12 +3570,21 @@ function newsReason(dt){
  return 'News was not read for this stock in the last refresh. News is fetched for focus-list names and for any name that alerted; everything else is scored from fundamentals and price alone.';
 }
 
+/* ARCHIVE FALLBACK (2026-09-15, user-reported). A name with no scored news
+   read used to get either "not read for this name" or, with no detail record
+   at all, nothing — the panel silently vanished. The committed archives hold
+   30 days of NSE filings and headlines for most of them; they are shown here,
+   labelled, and never scored. */
+function archiveNews(sym,standalone){const A=(D.archive_news||{})[sym]||[];
+ if(!A.length)return standalone?`<div class="mini" style="margin-top:14px"><h3>News &amp; filings (30d)</h3><div class="axis">Nothing in the last 30 days of NSE filings or market headlines matched this company. That is the reach of the archive, not proof that nothing was published.</div></div>`:'';
+ return `<div class="mini" style="margin-top:14px"><h3>Filings &amp; headlines (30d) <span class="axis" style="font-weight:400">from the archive, not read for scoring</span></h3>`
+  +A.map(a=>`<div style="font-size:12.5px;margin:6px 0;line-height:1.4"><span class="axis mono">${esc(a.d)}</span> ${a.u?`<a href="${esc(a.u)}" target="_blank" rel="noopener" style="color:var(--txt)">${esc(a.t)}</a>`:esc(a.t)} <span class="axis">· ${esc(a.src)}</span></div>`).join('')+`</div>`;}
 function newsSection(sym){const dt=D.details[sym];
 /* A drawer that shows headlines beside a catalyst dimension reading "no data"
    is contradicting itself — the news panel and the score came from two
    different reads. Say so rather than letting the reader reconcile it.
    (User-reported 2026-08-03 on FEDERALBNK.) */
-if(!dt)return'';
+if(!dt)return archiveNews(sym,true);
 if(!dt.news){
  const scored=(dt.dims||[]).some(d=>d.k=='catalyst'&&d.live);
  if(scored)return'';
@@ -3504,7 +3593,7 @@ if(!dt.news){
  return `<div class="mini" style="margin-top:14px;border-color:#fbbf2433"><h3>News &amp; filings (30d) <span class="axis" style="font-weight:400">not read for this name</span></h3>
  <div style="font-size:12.5px;color:var(--txt)">${esc(newsReason(dt))}</div>
  <div class="axis" style="margin-top:6px">Because of that, ${dark.length} of the 8 questions scored no data (${dark.map(d=>esc(QLBL[d.k]||d.k)).join(', ')}), worth ${darkW} of the 100 points. The ${dt.score??'—'} above is a ${dt.coverage??'partial'}% read: the weights were renormalised over the questions that did have data, so it is <b>not</b> comparable with a full-coverage score and is, if anything, flattered by the gap.</div>
- <div class="axis" style="margin-top:5px">This is not a claim that nothing was published about the company.</div></div>`;}
+ <div class="axis" style="margin-top:5px">This is not a claim that nothing was published about the company.</div></div>`+archiveNews(sym,false);}
 const n=dt.news;
 const _catLive=(dt.dims||[]).some(d=>d.k=='catalyst'&&d.live);
 const sc=n.sentiment>0.15?'#34d399':n.sentiment<-0.15?'#f87171':'#94a0b0';
