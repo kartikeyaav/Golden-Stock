@@ -55,8 +55,8 @@ from scoring.regime import market_risk_scale, save_breadth_snapshot
 from fetch_fundamentals import _age_days, flatten
 from position_manager import check_positions
 from sync_positions import check as sync_check
-from update_prices import (run_topup, universe_and_holdings_symbols,
-                           update_symbols)
+from update_prices import (BENCHMARK_SYMBOLS, run_topup,
+                           universe_and_holdings_symbols, update_symbols)
 from scoring.textnorm import as_text
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -344,6 +344,24 @@ def no_session_days(days_back: int = 10) -> list[str]:
         except Exception:  # noqa: BLE001 — never fatal, never guessed
             pass
     return out
+
+
+def setup_symbols(symbols: list) -> list:
+    """The names the scan may tag, trigger and alert on: the watch set with the
+    benchmark series taken out.
+
+    WHY (2026-09-15, found through a user-reported screener row). The price
+    refresh watches every BENCHMARK_SYMBOLS entry so the gate never compares
+    against a stale comparator, but the tagging loop skipped only a hard-coded
+    "NIFTY50". MOMENTUM100 joined the benchmark list on 07-26 and has been
+    tagged nightly since, as if it were a stock: a WATCH row with no industry
+    or market cap on the screener, one extra name in the breadth count that
+    sizes plans, one extra entry in the RS ranking, and an entry trigger armed
+    on it. It never alerted, so no journal row exists. Had it fired, a
+    benchmark ETF with no universe row would have entered the forward record.
+    Deriving the skip from the list means a third benchmark cannot repeat this."""
+    bench = set(BENCHMARK_SYMBOLS)
+    return [s for s in symbols if s not in bench]
 
 
 def save_state(path: str, tags: dict, ep_alerted: dict | None = None,
@@ -1029,9 +1047,7 @@ def main() -> None:
     ep_hits: dict[str, dict] = {}
     last_bars: dict[str, pd.Timestamp] = {}
     breadth_above = breadth_total = 0
-    for sym in symbols:
-        if sym == "NIFTY50":
-            continue
+    for sym in setup_symbols(symbols):
         df = load_ohlcv(sym)
         if df is None or len(df) < 60:
             continue
