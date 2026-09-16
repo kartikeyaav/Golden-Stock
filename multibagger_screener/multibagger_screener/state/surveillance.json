@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-15 15:14",
+ "generated": "2026-09-16 15:09",
  "n_checked": 1027,
- "n_flagged": 94,
- "asm_total": 229,
+ "n_flagged": 92,
+ "asm_total": 225,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -1150,18 +1150,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "AYMSYNTEX": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "IZMO": {
    "flags": [
     {
@@ -1209,18 +1197,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "TNPETRO": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   }
  },
  "note": "Display only. Surveillance has never been tested as an entry filter here, so it flags and does not gate."
