@@ -1,6 +1,6 @@
 {
- "checked_at": "2026-09-15 21:53",
- "status": "ok",
- "note": "4/4 dives produced verdicts",
+ "checked_at": "2026-09-17 18:53",
+ "status": "failed",
+ "note": "AUTH: run `claude` then `/login` (see scripts/ai_analyst.py header)",
  "last_success_at": "2026-09-15 21:53"
 }
