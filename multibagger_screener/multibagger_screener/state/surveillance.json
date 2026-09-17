@@ -1,7 +1,7 @@
 {
- "generated": "2026-09-16 15:09",
+ "generated": "2026-09-17 15:11",
  "n_checked": 1027,
- "n_flagged": 92,
+ "n_flagged": 91,
  "asm_total": 225,
  "syms": {
   "CPPLUS": {
@@ -453,23 +453,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "INDIAGLYCO": {
-   "flags": [
-    {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 5.0,
-   "series": "BE",
-   "worst": "BAND 5%"
   },
   "JAIBALAJI": {
    "flags": [
