@@ -603,6 +603,29 @@ def price_row_facts(ts: dict) -> dict:
             "session": sess or None, "holidays": holidays}
 
 
+# A status a job wrote about ITSELF that means it is not working. Kept in step
+# with scan_watchdog.BAD_STATUS so the screen and the alarm agree.
+_BAD_STATUS = ("failed", "error", "degraded")
+
+
+def _status_floor(health: dict) -> str | None:
+    """Colour floor for a row whose job publishes a self-diagnosis.
+
+    WHY (2026-09-17). The analyst's OAuth session expired on 09-16. It wrote
+    {"status": "failed", "note": "AUTH: ..."} to state/analyst_health.json,
+    this very function pasted the word "failed" into the chip's SUBTITLE — and
+    the chip stayed GREEN, because its colour came only from the age of the
+    newest verdict (1.9 days, inside the 4-day amber threshold). The watchdog
+    had the identical blind spot. The diagnosis was on disk in three places and
+    every surface reported health.
+
+    A floor is the right instrument and it already exists for price coverage:
+    the browser re-classifies by age at view time and takes `worse(state,
+    floor)`, so a floor cannot be undone by a young timestamp."""
+    return "fail" if str(health.get("status", "")).strip().lower() \
+        in _BAD_STATUS else None
+
+
 def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
                   surv, gate) -> list[dict]:
     """One row per moving part: what it is, when it last ran, is that OK.
@@ -695,12 +718,15 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
                  stamp=bench_stamp),
              floor=price_floor, cov=price_cov, session=_facts["session"],
              holidays=_facts["holidays"]),
-        row("analyst", "AI analyst", verdicts_age, 4, 9,
-            (health_json.get("status") or "?") + " · pooled deep-dives",
-            "Deep-dives tonight's buy alerts and files a verdict on each. "
-            "Amber past 4 days, red past 9 — it has twice failed silently for "
-            "over a week, so its age is shown rather than assumed.",
-            stamp=verdicts_stamp),
+        dict(row("analyst", "AI analyst", verdicts_age, 4, 9,
+                 (health_json.get("status") or "?") + " · pooled deep-dives"
+                 + (f" · {str(health_json.get('note') or '')[:60]}"
+                    if _status_floor(health_json) else ""),
+                 "Deep-dives tonight's buy alerts and files a verdict on each. "
+                 "Amber past 4 days, red past 9 — and red the moment the job "
+                 "records its own failure, however recent the last verdict is.",
+                 stamp=verdicts_stamp),
+             floor=_status_floor(health_json)),
         row("committee", "AI committee", _age_days((ai_picks or {}).get("generated")),
             8, 15, f"{len((ai_picks or {}).get('picks') or [])} picks",
             "Picks 3-5 researched names from the weekly shortlist. One cycle "
@@ -718,11 +744,29 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
             f"{(surv or {}).get('n_checked', 0)} flagged",
             "ASM / GSM / circuit band / settlement series from NSE. A missing "
             "snapshot means UNKNOWN, never clean.", stamp=(surv or {}).get("generated")),
-        row("gate", "Capital gate", _age_days((gate or {}).get("generated")), 3, 8,
-            (gate or {}).get("verdict", "?"),
-            "The pre-registered forward test that decides real capital. "
-            "Recomputed on every dashboard build from the append-only journal.",
-            stamp=(gate or {}).get("generated")),
+        # AGE THE COHORT, NOT THE FILE (2026-09-17). This row used to age
+        # gate.generated — the moment the JSON was rewritten, which is every
+        # single build. It was therefore green by construction and could never
+        # say anything. Meanwhile the cohort itself had not gained a signal
+        # since 2026-08-21: 27 days of silence on the one number this project
+        # exists to produce, with a chip reading "ACCRUING · now" above it.
+        #
+        # The cohort ran at 0.61 signals/day over its first window, so a
+        # fortnight of silence is ~8 signals that did not arrive — worth a
+        # look; four weeks is worth an explanation. This is a CHIP, not a gate
+        # and not a Telegram: it reports the drought, it does not judge it, and
+        # it changes no threshold in CAPITAL_GATE.md.
+        row("gate", "Capital gate",
+            _age_days(((gate or {}).get("cohort") or {}).get("last")), 14, 28,
+            f"{(gate or {}).get('verdict', '?')} · "
+            f"{((gate or {}).get('cohort') or {}).get('n_qualifying', '?')}"
+            f"/{((gate or {}).get('required') or {}).get('min_signals', '?')}"
+            f" qualifying · last signal "
+            f"{((gate or {}).get('cohort') or {}).get('last') or 'never'}",
+            "The pre-registered forward test that decides real capital. The "
+            "age here is how long since the COHORT last gained a signal — not "
+            "when the file was rebuilt, which is every night by definition.",
+            stamp=((gate or {}).get("cohort") or {}).get("last")),
     ]
     if penny:
         rows.append(row("penny", "Penny screen", _age_days(penny.get("as_of")),

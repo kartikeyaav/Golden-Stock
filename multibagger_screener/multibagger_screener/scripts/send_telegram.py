@@ -50,6 +50,17 @@ import urllib.request
 from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# LOSSY CONSOLE, INTACT DATA (2026-09-17). Headlines now keep their rupee
+# signs, em-dashes and accented names (see data/news_sources._ascii), so any
+# entry point that can print one must survive a cp1252 Windows console. Same
+# idiom as scripts/scan_watchdog.py and scripts/daily_scan.py.
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 CONFIG_PATH = os.path.join(ROOT, "telegram_config.json")
 ALERTS_PATH = os.path.join(ROOT, "daily_alerts.md")
 # Remembers the last digest actually delivered. daily_scan now PRESERVES the

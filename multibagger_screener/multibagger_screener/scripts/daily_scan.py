@@ -41,6 +41,24 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# LOSSY CONSOLE, INTACT DATA (2026-09-17). News headlines carry the rupee sign,
+# em-dashes and accented names; a Windows console here is cp1252 and printing
+# one raised UnicodeEncodeError, which killed the 2026-07-06 scan outright.
+# The defence chosen then was to force every headline through
+# .encode("ascii", "replace") AT INGEST — so the archive itself was written
+# with the currency symbol already destroyed ("raise ?9,000 cr"), permanently,
+# for every consumer: the alert cards, the dashboard news drawers and the AI
+# analyst's briefing. 285 stored headlines, not one intact rupee sign.
+#
+# The print boundary is where a console's limits belong. This is the same
+# three lines scan_watchdog.py has used in production since 2026-08-31, for
+# the same reason: make stdout lossy, leave the data alone.
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 from config import NEWS
 from data.cache import load_ohlcv
 from data.screener_fetch import fetch_company, load_company, save_company

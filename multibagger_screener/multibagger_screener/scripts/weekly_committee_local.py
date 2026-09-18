@@ -27,6 +27,7 @@ import json
 import os
 import subprocess
 import sys
+import traceback
 import time
 from datetime import datetime
 
@@ -296,5 +297,31 @@ def main() -> int:
         release_lock(ROOT)
 
 
+def _guarded_main() -> int:
+    """main(), but a crash reaches the log instead of nowhere.
+
+    WHY (2026-09-17). The scheduled task runs this under `pythonw.exe`, which
+    has no console — so an unhandled traceback is written to a stream that goes
+    nowhere, and Windows' own Task Scheduler operational log is disabled on
+    this machine. On 09-15 and 09-17 the run stopped dead after "running
+    committee", left no further line in committee_local.log, and reported
+    exit 1. Two failures, zero evidence.
+
+    The wrapper already treats every OTHER failure as something to write down
+    loudly; an exception was the one path that stayed mute. Nothing here
+    changes what the wrapper does — it only refuses to die quietly."""
+    try:
+        return main()
+    except SystemExit:
+        raise
+    except BaseException:                      # noqa: BLE001 — including Ctrl-C
+        try:
+            log("CRASHED — unhandled exception, nothing was pushed:\n"
+                + traceback.format_exc())
+        except Exception:                      # noqa: BLE001
+            pass                               # never crash inside the reporter
+        return 1
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(_guarded_main())

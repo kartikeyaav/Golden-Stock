@@ -94,9 +94,38 @@ _GOOGLE = "https://news.google.com/rss/search?q={query}&hl=en-IN&gl=IN&ceid=IN:e
 
 
 def _ascii(s: str) -> str:
-    """Windows consoles here are cp1252 and these strings reach print(),
-    daily_alerts.md and Telegram (the 2026-07-06 lesson)."""
-    return (s or "").encode("ascii", "replace").decode("ascii")
+    """Clean a headline for storage WITHOUT destroying what it says.
+
+    Superseded behaviour, 2026-09-17: this used to be
+    `.encode("ascii", "replace")`, which answered a real problem in the wrong
+    layer. Windows consoles here are cp1252 and these strings reach print(),
+    so the 2026-07-06 scan died on a UnicodeEncodeError — but the fix chosen
+    was to flatten the text at INGEST, which meant the archive on disk was
+    written with the damage baked in. Every rupee sign became "?", in
+    news_archive.csv, permanently: "plans to raise ?9,000 cr". 285 stored
+    headlines, zero intact. Everything downstream inherited it — the alert
+    cards, the dashboard news drawers, and the briefing the AI analyst reads.
+    A console's encoding is not a property of the news.
+
+    The console is now made lossy at the print boundary instead (see the
+    reconfigure() block at the top of scripts/daily_scan.py, the same idiom
+    scan_watchdog.py has used since 2026-08-31). Every writer of this archive
+    already opens it with encoding="utf-8", and Telegram, daily_alerts.md and
+    the analyst subprocess are all UTF-8 end to end.
+
+    What still gets removed is what has no business in a CSV cell: control
+    characters, and the newlines/tabs that would break the row. The name is
+    kept because callers read as "make this safe to store"; it no longer means
+    "make this ASCII".
+
+    NOTE the damage is not retroactive — "?" cannot be turned back into "₹",
+    so the 285 already-stored headlines stay as they are. This only stops the
+    archive getting any more of them."""
+    return "".join(
+        " " if ch in "\r\n\t" else ch
+        for ch in (s or "")
+        if ch in "\r\n\t" or ch.isprintable()
+    ).strip()
 
 
 def _parse_date(raw: str | None):

@@ -159,3 +159,98 @@ def test_a_healthy_theme_table_is_silent(tmp_path, monkeypatch):
     monkeypatch.setattr(ds, "ROOT", str(tmp_path))
     out = " ".join(ds.health_check({"X": "WATCH"}, ["X", "Y"]))
     assert "themes.json" not in out, out
+
+
+# ---------------------------------------------------------------------------
+# A JOB THAT DECLARED ITSELF BROKEN MUST NOT READ GREEN  (2026-09-17)
+#
+# The analyst's OAuth session expired on 09-16. ai_analyst wrote
+# {"status": "failed", "note": "AUTH: ..."} to state/analyst_health.json
+# exactly as designed; daily_scan printed the warning into daily_alerts.md;
+# the dashboard chip pasted the word "failed" into its own subtitle. And both
+# alarms reported health for two days, because both asked only "how old is the
+# last success?" — which was 1.9 days, inside every limit.
+#
+# An age threshold answers "has it been quiet too long?". It cannot answer
+# "did it just tell us it is broken?". These tests pin the second question.
+# ---------------------------------------------------------------------------
+
+import scan_watchdog as WD          # noqa: E402
+import build_dashboard as BD        # noqa: E402
+
+
+@pytest.fixture
+def wd_root(tmp_path, monkeypatch):
+    monkeypatch.setattr(WD, "ROOT", str(tmp_path))
+    os.makedirs(tmp_path / "state", exist_ok=True)
+    # the other two components healthy, so only the analyst can speak
+    (tmp_path / "ai_picks.json").write_text(json.dumps(
+        {"generated": datetime.now().strftime("%Y-%m-%d %H:%M")}), encoding="utf-8")
+    (tmp_path / "state" / "penny_meta.json").write_text(json.dumps(
+        {"built_at": datetime.now().strftime("%Y-%m-%d %H:%M")}), encoding="utf-8")
+    return tmp_path
+
+
+def _health(root, status, last_success=None, note="the CLI is not logged in"):
+    stamp = (last_success or datetime.now()).strftime("%Y-%m-%d %H:%M")
+    (root / "state" / "analyst_health.json").write_text(json.dumps(
+        {"checked_at": stamp, "status": status, "note": note,
+         "last_success_at": stamp}), encoding="utf-8")
+
+
+def _analyst_row(rows):
+    return next(r for r in rows if r["key"] == "analyst")
+
+
+def test_declared_failure_fires_even_when_the_last_success_is_minutes_old(wd_root):
+    """The exact production shape: a fresh stamp and a broken job."""
+    _health(wd_root, "failed")
+    row = _analyst_row(WD.evaluate())
+    assert row["age"] < 1.0, "precondition: the age alone must look healthy"
+    assert row["late"], "a job that recorded its own failure read as ok"
+    assert "recorded its own failure" in row["why"]
+    assert "not logged in" in row["why"], "the actionable note must survive"
+
+
+def test_the_report_says_broken_not_an_age_comparison(wd_root):
+    _health(wd_root, "failed")
+    text = WD.report(WD.evaluate())
+    assert "BROKEN" in text
+    assert "limit 5d" not in text, "an age line understates a live failure"
+
+
+def test_degraded_also_fires(wd_root):
+    _health(wd_root, "degraded", note="2 of 4 dives failed")
+    assert _analyst_row(WD.evaluate())["late"]
+
+
+def test_a_healthy_analyst_is_silent(wd_root):
+    """The other direction — the guard must CLEAR, or it is just noise."""
+    _health(wd_root, "ok", note="4/4 dives produced verdicts")
+    row = _analyst_row(WD.evaluate())
+    assert not row["late"]
+    assert WD._declared_failure("state/analyst_health.json", ("status", "note")) is None
+
+
+def test_a_healthy_status_cannot_rescue_a_stale_analyst(wd_root):
+    """status=ok must not undo the age rule it was added alongside."""
+    _health(wd_root, "ok", last_success=datetime.now() - timedelta(days=30))
+    assert _analyst_row(WD.evaluate())["late"]
+
+
+def test_an_absent_health_file_is_not_silence(wd_root):
+    """The fixture deliberately writes no health file: this is the shape where
+    the analyst has never run at all."""
+    assert not (wd_root / "state" / "analyst_health.json").exists()
+    assert _analyst_row(WD.evaluate())["late"], "missing data bought a pass"
+
+
+@pytest.mark.parametrize("status,expected", [
+    ("failed", "fail"), ("FAILED", "fail"), ("degraded", "fail"),
+    ("error", "fail"), ("ok", None), ("", None), (None, None),
+])
+def test_dashboard_chip_floor_matches_the_watchdog(status, expected):
+    """The screen and the alarm must agree on what 'broken' means."""
+    assert BD._status_floor({"status": status} if status is not None else {}) == expected
+    if expected:
+        assert status.strip().lower() in WD.BAD_STATUS

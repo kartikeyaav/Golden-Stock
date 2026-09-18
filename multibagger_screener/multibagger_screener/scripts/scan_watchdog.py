@@ -74,15 +74,24 @@ for _s in (sys.stdout, sys.stderr):
 # the strip is a glance, this is an interruption. Each is "how long before the
 # absence is certainly a fault rather than a weekend, a holiday or a cadence".
 CHECKS = [
-    # (key, label, file, stamp field, max age, what a breach means)
+    # (key, label, file, stamp field, max age, what a breach means, status spec)
+    #
+    # `status spec` is (status field, note field) in the SAME file, or None.
+    # A component that has WRITTEN DOWN its own failure is late immediately,
+    # whatever its last success says — see _declared_failure below.
     ("committee", "AI committee", "ai_picks.json", "generated", 10.0,
      "the weekly committee has not produced a fresh set — check "
-     "logs/committee_local.log"),
+     "logs/committee_local.log", None),
     ("penny", "Penny screen", "state/penny_meta.json", "built_at", 5.0,
-     "the 3-day penny cadence has slipped"),
+     "the 3-day penny cadence has slipped", None),
     ("analyst", "AI analyst", "state/analyst_health.json", "last_success_at", 5.0,
-     "no successful deep-dive — check logs/analyst_local.log"),
+     "no successful deep-dive — check logs/analyst_local.log",
+     ("status", "note")),
 ]
+
+# A status this component wrote about ITSELF that means it is not working.
+# Anything else (including an absent status) falls through to the age rule.
+BAD_STATUS = ("failed", "error", "degraded")
 
 # NSE closes at 15:30 IST = 10:00 UTC. A session is only "expected" in the
 # record once its close is this many hours old — the scan's own first slot is
@@ -125,6 +134,33 @@ def _stamp(rel: str, field: str) -> datetime | None:
         except ValueError:
             continue
     return None
+
+
+def _declared_failure(rel: str, spec: tuple[str, str] | None) -> str | None:
+    """What a component says about ITSELF, when what it says is "broken".
+
+    WHY THIS EXISTS (2026-09-17). The analyst's OAuth session expired on 09-16.
+    ai_analyst wrote {"status": "failed", "note": "AUTH: ..."} to
+    state/analyst_health.json exactly as designed, the nightly scan printed the
+    same warning into daily_alerts.md, and the dashboard chip printed the word
+    "failed" in its own subtitle — and this watchdog reported `AI analyst ... ok`
+    for two days, because the only thing it read from that file was
+    `last_success_at`, which was 1.9 days old and inside the 5-day limit.
+
+    The diagnosis was on disk, in plain text, in three places, and every alarm
+    stayed green. An age threshold answers "has it been quiet too long?"; it
+    cannot answer "did it just tell us it is broken?" — so ask that separately.
+
+    Returns the note to report, or None when the component is not complaining."""
+    if spec is None:
+        return None
+    status_field, note_field = spec
+    data = _json(rel)
+    status = str(data.get(status_field, "")).strip().lower()
+    if status not in BAD_STATUS:
+        return None
+    note = str(data.get(note_field, "")).strip()
+    return f"{status}: {note}" if note else status
 
 
 def _as_date(raw: object) -> date | None:
@@ -194,12 +230,19 @@ def scan_row(now_utc: datetime | None = None,
 def evaluate(now: datetime | None = None) -> list[dict]:
     now = now or datetime.now()
     out = [scan_row()]
-    for key, label, rel, field, max_age, why in CHECKS:
+    for key, label, rel, field, max_age, why, status_spec in CHECKS:
         at = _stamp(rel, field)
         age = None if at is None else (now - at).total_seconds() / 86400.0
+        # TWO INDEPENDENT WAYS TO BE LATE, and the self-declared one wins the
+        # wording: "it says it is broken" is more actionable than "it has been
+        # quiet for N days", and it is true SOONER.
+        declared = _declared_failure(rel, status_spec)
         out.append({"key": key, "label": label, "at": at, "age": age,
-                    "max_age": max_age, "why": why, "detail": "",
-                    "late": age is None or age > max_age})
+                    "max_age": max_age,
+                    "why": f"the job recorded its own failure — {declared}"
+                           if declared else why,
+                    "detail": "", "declared": declared,
+                    "late": bool(declared) or age is None or age > max_age})
     return out
 
 
@@ -212,6 +255,13 @@ def report(rows: list[dict]) -> str:
             for why in r["why"].split("; "):
                 lines.append(f"  {why}")
             lines.append(f"  ({r['detail']})")
+        elif r.get("declared"):
+            # An age-vs-limit line would UNDERSTATE this: the job is broken
+            # now, and its last success can still be well inside the limit.
+            since = ("never" if r["age"] is None
+                     else f"last success {r['age']:.1f}d ago")
+            lines.append(f"• *{r['label']}* — BROKEN ({since})")
+            lines.append(f"  {r['why']}")
         else:
             age = "never" if r["age"] is None else f"{r['age']:.1f}d old"
             lines.append(f"• *{r['label']}* — {age} (limit {r['max_age']:.0f}d)")

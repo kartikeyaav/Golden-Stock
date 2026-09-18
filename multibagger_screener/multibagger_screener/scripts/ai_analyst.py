@@ -40,6 +40,17 @@ import sys
 from datetime import datetime, timedelta
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# LOSSY CONSOLE, INTACT DATA (2026-09-17). Headlines now keep their rupee
+# signs, em-dashes and accented names (see data/news_sources._ascii), so any
+# entry point that can print one must survive a cp1252 Windows console. Same
+# idiom as scripts/scan_watchdog.py and scripts/daily_scan.py.
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 sys.path.insert(0, ROOT)  # for scoring.regime in _cross_layer_context
 
 from config import BUY_ALERT_KINDS

@@ -26,6 +26,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import traceback
 import time
 from datetime import datetime
 
@@ -285,5 +286,26 @@ def main() -> int:
         release_lock(ROOT)
 
 
+def _guarded_main() -> int:
+    """main(), but a crash reaches the log instead of nowhere.
+
+    The twin of the committee wrapper's, added the same day and for the same
+    reason: when a fix reaches one wrapper and not the other, the untouched one
+    goes on failing silently. This one runs under python.exe today, so a
+    traceback would at least reach a console if anybody were watching one at
+    21:30 — nobody is, and the log is the only thing read afterwards."""
+    try:
+        return main()
+    except SystemExit:
+        raise
+    except BaseException:                      # noqa: BLE001 — including Ctrl-C
+        try:
+            log("CRASHED — unhandled exception, nothing was pushed:\n"
+                + traceback.format_exc())
+        except Exception:                      # noqa: BLE001
+            pass                               # never crash inside the reporter
+        return 1
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(_guarded_main())
