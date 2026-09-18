@@ -42,6 +42,63 @@ POSITIONS_PATH = os.path.join(ROOT, "positions.csv")
 LEDGER_FIELDS = ["date", "symbol", "action", "lot", "shares", "price", "pnl", "reason"]
 
 
+# Corporate-action rescaling. A 1:20 split gives a ratio of 0.05, so anything
+# outside [1/MAX, MAX] is treated as a data fault rather than a corporate
+# action: it is reported and the position is left ALONE, because guessing a
+# scale is worse than refusing to.
+CA_MAX_RATIO = 20.0
+# how far outside the entry bar's own range the stored entry may sit before we
+# call it a re-adjustment rather than fill slippage
+CA_TOLERANCE = 0.02
+
+
+def rescale_for_corporate_action(p, df) -> tuple[float, str] | None:
+    """Detect that the price series was re-adjusted AFTER this position opened,
+    and return the factor that brings the stored prices onto the new scale.
+
+    WHY THIS EXISTS (2026-09-18). `update_prices._adjustment_detected` already
+    catches a split/bonus and refetches the FULL history, so the cache silently
+    moves onto the new scale — every bar, including the ones that existed when
+    the position was opened. Nothing propagated that to the position book, and
+    `paper_positions.csv` stores raw entry/stop prices.
+
+    The consequence is not cosmetic. The very first thing check_positions does
+    is `if row["low"] <= stop`. After a 2:1 split the cached low halves while
+    the stored stop does not, so the test is trivially true: the position takes
+    a PHANTOM STOP-OUT, at a fabricated ~50% loss, booked into the append-only
+    ledger that the capital gate reads. A split is most likely in exactly the
+    names that have run — i.e. it destroys winners.
+
+    PGIL is the proof this is real and not theoretical: it split 2:1 mid-trade
+    on 2026-09-10. It happened to be closed by then, so only the post-hoc
+    analysis was wrong (its ledger exit of 2121.51 against a cache now showing
+    ~1180 reads as a -46% collapse that never happened). Had it still been
+    open, the book would have closed it for a loss it never took.
+
+    Detection uses the ENTRY BAR as the fixed reference: if the stored entry
+    price no longer falls inside that day's high/low, the series underneath it
+    moved. Returns (ratio, note) or None when nothing changed."""
+    try:
+        entry = float(p["entry_price"])
+        bar = df[df["date"] == pd.Timestamp(p["entry_date"])]
+    except (KeyError, ValueError, TypeError):
+        return None
+    if bar.empty or entry <= 0:
+        return None                      # no reference bar -> assert nothing
+    lo, hi = float(bar["low"].iloc[0]), float(bar["high"].iloc[0])
+    if lo <= 0 or hi <= 0:
+        return None
+    if lo * (1 - CA_TOLERANCE) <= entry <= hi * (1 + CA_TOLERANCE):
+        return None                      # still on the same scale
+    ratio = float(bar["close"].iloc[0]) / entry
+    if not (1 / CA_MAX_RATIO <= ratio <= CA_MAX_RATIO) or ratio <= 0:
+        return (0.0, f"entry {entry:.2f} sits far outside its own entry bar "
+                     f"({lo:.2f}-{hi:.2f}) and the implied factor is absurd — "
+                     f"NOT rescaling; this needs a human")
+    return (ratio, f"price series re-adjusted since entry (factor {ratio:.4f}) "
+                   f"— entry/stops rescaled and share count grossed up")
+
+
 def _bool(v) -> bool:
     return str(v).strip().lower() in ("true", "1", "yes")
 
@@ -83,6 +140,28 @@ def check_positions(positions_path: str = POSITIONS_PATH,
             continue
         df = add_moving_averages(df)
         row = df.iloc[-1]
+
+        # BEFORE ANY STOP IS TESTED. If the series was re-adjusted under this
+        # position (split/bonus), the stored stop is on the old scale and the
+        # very next line would read it as breached — a phantom exit at a loss
+        # that never happened. Rescale first, or refuse loudly.
+        ca = rescale_for_corporate_action(p, df)
+        if ca is not None:
+            ratio, note = ca
+            if ratio <= 0:
+                alerts.append(f"- **{label}**: {p['symbol']} — !! {note}")
+                continue                       # never manage a position we cannot price
+            for fld in ("entry_price", "initial_stop", "stop_current"):
+                p[fld] = float(p[fld]) * ratio
+                pos.at[i, fld] = p[fld]
+            for fld in ("shares_trading", "shares_core"):
+                p[fld] = int(round(int(p[fld]) / ratio))
+                pos.at[i, fld] = p[fld]
+            alerts.append(f"- **{label}**: {p['symbol']} — {note}")
+            journal_rows.append({"logged_at": now, "symbol": p["symbol"],
+                                 "kind": "MANAGE", "new_tag": "corporate action rescale",
+                                 "close": float(row["close"])})
+
         entry, stop = float(p["entry_price"]), float(p["stop_current"])
         risk = entry - float(p["initial_stop"])
         if risk <= 0:
