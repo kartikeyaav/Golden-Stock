@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-09-17T15:07:25",
+ "generated": "2026-09-18T14:38:41",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 10207,
+ "headlines_read": 10172,
  "policy_hits": 15,
  "stories": 14,
  "themes": {
   "railways": {
-   "pressure": 0.201,
-   "pos_flow": 0.1663,
+   "pressure": 0.195,
+   "pos_flow": 0.1609,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 1,
@@ -29,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0595
+     "weight": 0.0576
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0595
+     "weight": 0.0576
     },
     {
      "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
@@ -63,7 +63,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0472
+     "weight": 0.0457
     }
    ]
   },
@@ -84,8 +84,8 @@
    "top": []
   },
   "defence": {
-   "pressure": 0.164,
-   "pos_flow": 0.1324,
+   "pressure": 0.159,
+   "pos_flow": 0.1281,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -105,7 +105,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0801
+     "weight": 0.0775
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -122,13 +122,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0522
+     "weight": 0.0506
     }
    ]
   },
   "hospital": {
-   "pressure": 0.064,
-   "pos_flow": 0.0489,
+   "pressure": 0.062,
+   "pos_flow": 0.0473,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -148,13 +148,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0489
+     "weight": 0.0473
     }
    ]
   },
   "semis": {
-   "pressure": 0.077,
-   "pos_flow": 0.0595,
+   "pressure": 0.075,
+   "pos_flow": 0.0576,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -174,13 +174,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0595
+     "weight": 0.0576
     }
    ]
   },
   "ems": {
-   "pressure": 0.151,
-   "pos_flow": 0.1214,
+   "pressure": 0.147,
+   "pos_flow": 0.1175,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -200,13 +200,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1214
+     "weight": 0.1175
     }
    ]
   },
   "capex": {
-   "pressure": 0.1,
-   "pos_flow": 0.0781,
+   "pressure": 0.097,
+   "pos_flow": 0.0756,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -227,13 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0781
+     "weight": 0.0756
     }
    ]
   },
   "ev": {
-   "pressure": 0.189,
-   "pos_flow": 0.1556,
+   "pressure": 0.184,
+   "pos_flow": 0.1505,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -254,7 +254,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0781
+     "weight": 0.0756
     },
     {
      "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -271,7 +271,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.0774
+     "weight": 0.0749
     }
    ]
   }
@@ -292,7 +292,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1214
+   "weight": 0.1175
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -327,7 +327,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1011
+   "weight": 0.0978
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -344,7 +344,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0801
+   "weight": 0.0775
   },
   {
    "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
@@ -362,7 +362,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0781
+   "weight": 0.0756
   },
   {
    "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -379,7 +379,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0774
+   "weight": 0.0749
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -396,7 +396,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.073
+   "weight": 0.0706
   },
   {
    "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -413,7 +413,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0595
+   "weight": 0.0576
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -430,7 +430,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0595
+   "weight": 0.0576
   },
   {
    "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
@@ -447,7 +447,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0595
+   "weight": 0.0576
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -464,7 +464,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0506
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -481,7 +481,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0489
+   "weight": 0.0473
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -498,7 +498,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0476
+   "weight": 0.0461
   },
   {
    "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
@@ -515,7 +515,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0472
+   "weight": 0.0457
   }
  ]
 }
