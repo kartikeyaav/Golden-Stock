@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-18 14:43",
+ "generated": "2026-09-20 09:47",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 22.5,
@@ -13,7 +13,7 @@
   "degraded_scans": 1,
   "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"
  },
- "days_to_deadline": 103,
+ "days_to_deadline": 101,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -101,7 +101,7 @@
   "best_trade_share_pct": 2.5,
   "best_r": 7.28,
   "worst_r": -6.34,
-  "signal_basis_return_pct": 108.6,
+  "signal_basis_return_pct": 108.59,
   "first": "2026-07-07",
   "last": "2026-09-18"
  },
@@ -171,41 +171,41 @@
   "3m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": -0.74,
-    "first": 67.45,
+    "ret_pct": -1.22,
+    "first": 67.78,
     "last": 66.95,
-    "from": "2026-06-19",
+    "from": "2026-06-22",
     "to": "2026-09-18",
-    "sessions": 66
+    "sessions": 65
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -2.78,
-    "first": 24013.1,
+    "ret_pct": -3.14,
+    "first": 24102.9,
     "last": 23346.4,
-    "from": "2026-06-19",
+    "from": "2026-06-22",
     "to": "2026-09-18",
-    "sessions": 64
+    "sessions": 63
    }
   },
   "12m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": 5.4,
-    "first": 63.52,
+    "ret_pct": 5.93,
+    "first": 63.2,
     "last": 66.95,
-    "from": "2025-09-18",
+    "from": "2025-09-22",
     "to": "2026-09-18",
-    "sessions": 251
+    "sessions": 249
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -8.17,
-    "first": 25423.6,
+    "ret_pct": -7.36,
+    "first": 25202.35,
     "last": 23346.4,
-    "from": "2025-09-18",
+    "from": "2025-09-22",
     "to": "2026-09-18",
-    "sessions": 247
+    "sessions": 245
    }
   }
  },

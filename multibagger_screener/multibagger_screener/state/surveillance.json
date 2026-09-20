@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-18 14:43",
+ "generated": "2026-09-20 09:47",
  "n_checked": 1027,
- "n_flagged": 91,
- "asm_total": 225,
+ "n_flagged": 89,
+ "asm_total": 219,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -329,18 +329,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "BALUFORGE": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "BBOX": {
    "flags": [
     {
@@ -565,18 +553,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "PCJEWELLER": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "PARAS": {
    "flags": [
     {
@@ -657,11 +633,6 @@
   "SMLMAH": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -669,7 +640,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "LOTUSDEV": {
    "flags": [
@@ -960,18 +931,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "CENTUM": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "JUNIPER": {
    "flags": [
     {
@@ -983,6 +942,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "EMUDHRA": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "RAYMOND": {
    "flags": [
@@ -1124,14 +1095,14 @@
   "HLEGLAS": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "IZMO": {
    "flags": [
