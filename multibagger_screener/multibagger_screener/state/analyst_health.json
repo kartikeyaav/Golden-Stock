@@ -1,5 +1,5 @@
 {
- "checked_at": "2026-09-18 21:30",
+ "checked_at": "2026-09-20 23:38",
  "status": "failed",
  "note": "AUTH: run `claude` then `/login` (see scripts/ai_analyst.py header)",
  "last_success_at": "2026-09-15 21:53"
