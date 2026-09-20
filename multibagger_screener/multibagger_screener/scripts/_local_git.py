@@ -29,10 +29,13 @@ So three guarantees live in this module:
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
+import threading
 import time
 from datetime import datetime
+from typing import Iterator
 
 LOCK_REL = os.path.join("logs", "local_git.lock")
 # Long enough to cover a full analyst run (4 dives x 600s plus context work),
@@ -159,6 +162,41 @@ def acquire_lock(root: str, log, stale_s: int = LOCK_STALE_S) -> bool:
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"pid {os.getpid()} at {datetime.now():%Y-%m-%d %H:%M:%S}")
     return True
+
+
+@contextlib.contextmanager
+def lock_heartbeat(root: str, every_s: float = 300.0) -> Iterator[None]:
+    """Keep the lock FRESH for as long as its holder is alive.
+
+    WHY (2026-09-19). acquire_lock judges staleness by the file's mtime, and the
+    mtime was written once, at acquire, and never again. LOCK_STALE_S is 90
+    minutes; the committee alone may run 3h20m (COMMITTEE_TIMEOUT_S). So a
+    committee healthy at minute 91 was indistinguishable from one that died at
+    minute 1, and the nightly analyst would take its lock and run git
+    alongside it — the exact two-writer race the lock exists to prevent. It
+    had not fired only because the two schedules rarely overlapped that long.
+
+    A heartbeat makes "stale" mean what it was always meant to mean: the
+    holder stopped. A living holder touches the file every `every_s` seconds;
+    a killed one stops touching it, and 90 minutes later the lock is fairly
+    taken. Daemon thread, so it can never keep a finished process alive."""
+    path = os.path.join(root, LOCK_REL)
+    stop = threading.Event()
+
+    def beat() -> None:
+        while not stop.wait(every_s):
+            try:
+                os.utime(path, None)
+            except OSError:
+                pass                         # lock already released: nothing to keep fresh
+
+    t = threading.Thread(target=beat, name="lock-heartbeat", daemon=True)
+    t.start()
+    try:
+        yield
+    finally:
+        stop.set()
+        t.join(timeout=5)
 
 
 def release_lock(root: str) -> None:

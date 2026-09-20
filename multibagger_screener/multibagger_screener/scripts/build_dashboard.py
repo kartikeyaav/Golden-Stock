@@ -328,7 +328,11 @@ def _build_themes(rows: list[dict], closes: dict, news_mem: dict,
     from scoring.themes import THEMES, membership, rank_heat, summarize
 
     rows_by_sym = {r["sym"]: r for r in rows}
-    members = membership(rows)
+    # include_ai (2026-09-19): the weekly research's membership corrections,
+    # so a theme's heat and breadth are measured over the names that are
+    # really in it. `curated` is kept so the table can say which are which.
+    members = membership(rows, include_ai=True)
+    curated = membership(rows)
 
     # 3-month return from the same 120-close series the sparklines use
     ret3m = {}
@@ -365,6 +369,7 @@ def _build_themes(rows: list[dict], closes: dict, news_mem: dict,
                 "ret3m": round(ret3m[sym], 1) if sym in ret3m else None,
                 "news": round(press.get(sym, 0.0), 2),
                 "pick": sym in pick_syms,
+                "ai": sym not in curated.get(t.key, ()),
             })
         out.append({"key": t.key, "name": t.name, "blurb": t.blurb,
                     **s, "leaders": leaders})
@@ -387,7 +392,30 @@ def _build_themes(rows: list[dict], closes: dict, news_mem: dict,
 
     return {"themes": out,
             # the committee's narrative, when it has one (weekly, optional)
-            "read": ai_picks.get("theme_read", "")}
+            "read": ai_picks.get("theme_read", ""),
+            # the weekly thematic research (scripts/theme_intel.py)
+            "intel": _intel_payload()}
+
+
+def _intel_payload() -> dict:
+    """The weekly thematic research for the Sectors tab, read through the SAME
+    function the committee and the nightly analyst use (theme_intel.read_intel),
+    so the screen cannot show a read the layers are not acting on. A stale or
+    absent read renders nothing here; its AGE is on the health strip."""
+    try:
+        from theme_intel import read_intel
+        intel = read_intel()
+    except Exception:  # noqa: BLE001 — a research panel must never break the build
+        intel = None
+    if not intel:
+        return {}
+    v = intel.get("validation") or {}
+    return {k: intel.get(k) for k in ("week_of", "generated", "summary", "themes",
+                                      "outside_universe", "_age_days")} | {
+        "stats": {"accepted": v.get("accepted", 0),
+                  "rejected": len(v.get("rejected") or []),
+                  "hallucination_rate": v.get("hallucination_rate", 0.0)},
+        "corrections": sum(len(x) for x in (intel.get("overlay") or {}).values())}
 
 
 # Each exclusion reason build_penny_universe writes carries that NAME's own
@@ -702,6 +730,19 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
     price_detail, price_floor, price_cov = _facts["detail"], _facts["floor"], _facts["cov"]
     _sess = _facts["session"] or ""
 
+    # the weekly thematic research, read RAW (not through read_intel, which
+    # returns nothing once a read is stale — this row exists precisely to
+    # show that staleness in red instead of letting the row vanish)
+    _intel = {}
+    try:
+        with open(os.path.join(ROOT, "state", "theme_intel.json"), encoding="utf-8") as _f:
+            _intel = json.load(_f)
+    except (OSError, ValueError):
+        _intel = {}
+    _iv = _intel.get("validation") or {}
+    _intel_detail = (f"{len(_intel.get('themes') or [])} themes · "
+                     f"{_iv.get('accepted', 0)} calls" if _intel else "never run")
+
     # the nightly scan runs Mon-Fri, so a Sunday read is legitimately ~2 days
     # old; the thresholds allow a normal weekend without shouting
     rows = [
@@ -732,6 +773,12 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
             "Picks 3-5 researched names from the weekly shortlist. One cycle "
             "is 7 days, so anything past 8 is last week's read, not this "
             "week's.", stamp=(ai_picks or {}).get("generated")),
+        row("research", "Theme research", _age_days(_intel.get("generated")), 8, 15,
+            _intel_detail,
+            "Weekly research into national and international drivers and "
+            "industry reports, mapped to this universe. Runs on the laptop in "
+            "front of the committee; one cycle is 7 days, so past 8 it is "
+            "last week's read.", stamp=_intel.get("generated")),
         row("radar", "News radar", _age_days((radar or {}).get("generated")
                                              or (radar or {}).get("window_start")),
             2.5, 5, f"{len((radar or {}).get('hits') or [])} hits in window",
@@ -2503,6 +2550,19 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
     </div>
     <div id="thgrid"></div>
   </div>
+  <!-- Weekly thematic research (scripts/theme_intel.py): national and
+       international drivers and industry reports, mapped along value chains
+       to this universe. Under the table like every AI read on this tab — the
+       machine ranks, the research explains — but OPEN by default, because
+       "which of my names does this policy move" is what the tab is for. -->
+  <div class="card" id="thintelcard" style="display:none;border-color:#a78bfa3a">
+    <h2 style="color:#a78bfa">Thematic intelligence<span class="info" data-tip="Once a week a research session reads the week's government decisions, foreign trade and supply-chain actions, and consulting, rating-agency and industry-body reports, then maps which of these names each one reaches: order 1 sells the thing, order 2 supplies those who do, order 3 enables around it — and who is HURT. Every call carries its evidence and is validated before it lands: an invented ticker is discarded and counted, and a call without a source is dropped. The one thing it changes elsewhere is theme MEMBERSHIP (names tagged AI in the table above). It never changes an entry, a stop or a size.">?</span>
+      <span class="pill" style="border-color:#a78bfa;color:#a78bfa">WEEKLY RESEARCH</span></h2>
+    <div class="axis" id="thintelmeta" style="margin-bottom:6px"></div>
+    <div class="dim" id="thintelsum" style="font-size:12.6px;line-height:1.7;max-width:78ch;margin-bottom:8px"></div>
+    <div id="thintel"></div>
+    <div id="thintelout"></div>
+  </div>
   <!-- The committee's narrative is COMMENTARY on the table above, so it sits
        under it and starts collapsed. It ran ~1,100 characters of prose parked
        ABOVE the data — a third of the tab's text before you reached a single
@@ -3718,6 +3778,45 @@ const FPRE=/^.{0,80}?has (informed|submitted|intimated)\b.{0,40}?\b(about|regard
  if(x.dupes>0)meta+=' — '+(x.dupes+1)+' outlets'+(x.also&&x.also.length?': '+esc(x.also.join(', ')):'');
  h+=`<div style="font-size:12px;margin:4px 0${off?';opacity:.5':''}">${dot} <span class="dim">${x.d||''}</span> ${esc(_t)} <span class="axis">(${meta})</span></div>`;});
 return h+'</div>';}
+/* ---- Thematic intelligence (weekly research) --------------------------------
+   Everything here is model output, so everything here is UNTRUSTED: every
+   string goes through esc(), a link is rendered only for an http(s) URL (a
+   model-supplied "javascript:" href must never become clickable), and a
+   symbol opens the drawer only if it looks like a ticker. The server-side
+   validator already discarded invented tickers; this is the second fence. */
+(function(){const I=(D.themes||{}).intel||{};const T=I.themes||[];
+if(!T.length)return;
+$('#thintelcard').style.display='block';
+const safe=u=>/^https?:\/\//i.test(String(u||''))?String(u):null;
+const link=(u,t)=>{const s=safe(u);return s?`<a href="${esc(s)}" target="_blank" rel="noopener noreferrer">${esc(t)}</a>`:esc(u||'');};
+const symOk=s=>/^[A-Z0-9&\-]{1,20}$/.test(String(s||''));
+const dcol={tailwind:'#34d399',headwind:'#f87171',mixed:'#fbbf24'};
+const st=I.stats||{};
+$('#thintelmeta').textContent=`week of ${I.week_of||'?'} · ${I._age_days}d old · `+
+ `${st.accepted||0} calls kept, ${st.rejected||0} rejected by validation `+
+ `(${Math.round((st.hallucination_rate||0)*100)}% invented tickers) · `+
+ `${I.corrections||0} theme-membership corrections applied`;
+$('#thintelsum').textContent=I.summary||'';
+$('#thintel').innerHTML=T.map(t=>{
+ const c=dcol[t.direction]||'#94a3b8';
+ const drv=(t.drivers||[]).map(d=>`<li><span class="axis">${esc(d.date||'')} ${esc(d.where||'')}</span> ${esc(d.what||'')} &middot; ${link(d.source,'source')}</li>`).join('');
+ const rows=(t.beneficiaries||[]).map(b=>{
+  const eff=b.effect==='hurt'?'<b style="color:#f87171">HURT</b>':'<span style="color:#34d399">benefit</span>';
+  const sym=symOk(b.symbol)?`<td class="sym" style="cursor:pointer" onclick="openDrawer('${b.symbol}')">${b.symbol}</td>`:`<td>${esc(b.symbol)}</td>`;
+  return `<tr>${sym}<td class="mono" data-tip="1 = sells the thing, 2 = supplies those who do, 3 = enables around it">o${esc(b.order)}</td><td>${eff}</td><td class="mono">${esc(b.confidence)}</td><td class="dim wrap" style="font-size:11.5px;max-width:520px">${esc(b.mechanism)} ${link(b.evidence,'↗')}</td></tr>`;}).join('');
+ return `<details class="thbox" open><summary>
+  <span class="thname">${esc(t.name)}${t.status==='new'?' <span class="pill" style="border-color:#a78bfa;color:#a78bfa;font-size:9px" data-tip="A theme the curated map does not have. Research only: it touches no score until someone promotes it into scoring/themes.py.">NEW THEME</span>':''}</span>
+  <span class="pill" style="border-color:${c};color:${c}">${esc(t.direction)} ${esc(t.strength)}/5</span>
+  <span class="axis">${esc(t.horizon)} horizon &middot; ${esc(t.continuity)}</span></summary>
+  <div class="thbody"><div class="dim" style="font-size:12.4px;line-height:1.6;max-width:76ch;margin-bottom:8px">${esc(t.thesis||'')}</div>
+  <div class="axis" style="margin-bottom:4px">DRIVERS</div><ul style="margin:0 0 10px 18px;font-size:12px;line-height:1.6">${drv}</ul>
+  ${rows?`<table><thead><tr><th>Symbol</th><th>Order</th><th>Effect</th><th>Conf</th><th>Mechanism &middot; evidence</th></tr></thead><tbody>${rows}</tbody></table>`:''}
+  </div></details>`;}).join('');
+const O=I.outside_universe||[];
+if(O.length)$('#thintelout').innerHTML='<div class="axis" style="margin:12px 0 4px">BENEFICIARIES THE UNIVERSE DOES NOT HOLD &middot; a reason to widen it</div>'+
+ O.map(o=>`<div class="dim" style="font-size:12px;line-height:1.6">${esc(o.company)} <span class="axis">${esc(o.theme)}</span> &mdash; ${esc(o.why)}</div>`).join('');
+})();
+
 /* ---- Sectors & themes tab -------------------------------------------------
    The bridge between "what is going on in the market" and "what my machine
    already thinks about it". Every leader row carries the SAME tag the screener
@@ -3756,7 +3855,7 @@ function thrender(){
   const kcol=thK==='ret3m'?(t.ret3m>0?'#34d399':t.ret3m<0?'#f87171':'#94a3b8')
    :thK==='news'?'#a78bfa':c;
   const rows=t.leaders.map(l=>`<tr onclick="openDrawer('${l.sym}')">
-   <td class="sym">${l.sym}${l.pick?' <span class="pill" style="border-color:#fbbf24;color:#fbbf24;font-size:9px" data-tip="A current weekly committee pick.">PICK</span>':''}</td>
+   <td class="sym">${l.sym}${l.pick?' <span class="pill" style="border-color:#fbbf24;color:#fbbf24;font-size:9px" data-tip="A current weekly committee pick.">PICK</span>':''}${l.ai?' <span class="pill" style="border-color:#a78bfa;color:#a78bfa;font-size:9px" data-tip="Placed in this theme by the weekly research, not the curated map. See Thematic intelligence below for the driver and the evidence.">AI</span>':''}</td>
    <td class="dim wrap" style="font-size:11.5px;max-width:210px">${esc(l.company||'')}</td>
    <td><span class="pill" data-tip="${esc(tlt(l.tag))}" style="border-color:${TC[l.tag]||'#475569'};color:${TC[l.tag]||'#94a3b8'}">${esc(tl(l.tag)||'—')}</span></td>
    <td class="mono">${l.score!=null?l.score:'—'}</td>

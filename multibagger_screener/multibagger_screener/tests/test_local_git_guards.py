@@ -292,3 +292,47 @@ if __name__ == "__main__":
                 print(f"FAIL {name}: {type(e).__name__}: {str(e)[:200]}")
     print(f"\n{failures} failure(s)")
     sys.exit(1 if failures else 0)
+
+
+# ---------------------------------------------------------------------------
+# a LIVE holder must never look stale  (2026-09-19)
+#
+# The lock's mtime used to be written once, at acquire. LOCK_STALE_S is 90
+# minutes and the committee may run 3h20m, so a healthy committee at minute 91
+# was indistinguishable from a dead one and the nightly analyst would take its
+# lock. The heartbeat keeps the mtime fresh while the holder lives.
+# ---------------------------------------------------------------------------
+
+import time as _time                     # noqa: E402
+
+import _local_git as _LG                 # noqa: E402
+
+
+def test_a_live_holder_keeps_the_lock_fresh(tmp_path):
+    root = str(tmp_path)
+    assert _LG.acquire_lock(root, lambda m: None)
+    path = os.path.join(root, _LG.LOCK_REL)
+    two_hours_ago = _time.time() - 2 * 3600
+    os.utime(path, (two_hours_ago, two_hours_ago))     # as if the run were long
+    with _LG.lock_heartbeat(root, every_s=0.05):
+        _time.sleep(0.4)
+        assert _time.time() - os.path.getmtime(path) < 60, "heartbeat did not refresh the lock"
+        said = []
+        assert not _LG.acquire_lock(root, said.append), "a second job took a LIVE lock"
+        assert "standing down" in said[0]
+
+
+def test_a_dead_holder_s_lock_still_goes_stale(tmp_path):
+    """The heartbeat must not make a lock immortal: once the holder stops,
+    the old staleness rule applies again."""
+    root = str(tmp_path)
+    assert _LG.acquire_lock(root, lambda m: None)
+    with _LG.lock_heartbeat(root, every_s=0.05):
+        _time.sleep(0.1)
+    path = os.path.join(root, _LG.LOCK_REL)
+    long_ago = _time.time() - _LG.LOCK_STALE_S - 60
+    os.utime(path, (long_ago, long_ago))
+    _time.sleep(0.2)                                   # a stopped heartbeat stays stopped
+    said = []
+    assert _LG.acquire_lock(root, said.append), "a dead holder's lock was never released"
+    assert "stale" in said[0]

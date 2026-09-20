@@ -179,7 +179,19 @@ def build_briefing(cands) -> str:
                      f"conviction {c['score']} | RS {c['rs']} | {c['archetype']}{flag}")
         lines.append(f"    {c['highlights']}")
     return ("\n".join(lines) + recent_analyst_verdicts()
-            + theme_table() + _regime_line())
+            + theme_table() + _theme_intel_block(cands) + _regime_line())
+
+
+def _theme_intel_block(cands) -> str:
+    """The weekly thematic research (scripts/theme_intel.py), with this week's
+    candidates starred. Read through the same function the nightly analyst
+    uses, so the two layers cannot disagree about what the current read is.
+    Context, never fatal: a missing or stale read simply adds nothing."""
+    try:
+        from theme_intel import briefing_block, read_intel
+        return briefing_block(read_intel(), {c["symbol"] for c in cands})
+    except Exception:  # noqa: BLE001
+        return ""
 
 
 def run_committee(briefing: str, model: str, thinking_tokens: int):

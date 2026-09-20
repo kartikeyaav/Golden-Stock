@@ -100,9 +100,16 @@ def _theme_read(symbol: str, company: str, industry: str
         # we do not have. None keeps the dimension out of coverage entirely.
         return None, [], "theme map unavailable", []
 
-    mine = [t for t in THEMES if t.matches(symbol, company, industry)]
+    # include_ai (2026-09-19): the weekly thematic research corrects the
+    # curated map's MEMBERSHIP — QUADFUTURE into railways, ROSSTECH into
+    # defence. Without it a name the map simply forgot scores the same 0.3 as
+    # a name in no theme at all, and receives none of its theme's macro flow.
+    mine = [t for t in THEMES if t.matches(symbol, company, industry, include_ai=True)]
     if not mine:
         return 0.3, [], "no cross-industry theme covers this name", []
+    # which of those exist ONLY because the research placed the name there —
+    # said on the card, so a score moved by an AI membership is checkable
+    ai_only = [t.name for t in mine if not t.matches(symbol, company, industry)]
 
     heat: dict[str, float] = {}
     thin: set[str] = set()
@@ -125,7 +132,8 @@ def _theme_read(symbol: str, company: str, industry: str
         # The KEYS still go back: the policy radar is keyed on membership
         # alone and does not need the price-derived heat table, so a missing
         # themes.json must not also blind the macro read.
-        return None, names, f"in {', '.join(names)}; heat table not built yet", keys
+        return None, names, (f"in {', '.join(names)}; heat table not built yet"
+                             + (f"; AI-mapped: {', '.join(ai_only)}" if ai_only else "")), keys
 
     best = max((heat.get(t.key, 0.0), t) for t in mine)
     hv, ht = best
@@ -135,7 +143,8 @@ def _theme_read(symbol: str, company: str, industry: str
         score = min(score, 0.5)
     note = (f"{ht.name} ranks {hv:.0f}/100 on heat across the 18 themes"
             + (f"; also {', '.join(n for n in names if n != ht.name)}"
-               if len(names) > 1 else ""))
+               if len(names) > 1 else "")
+            + (f"; AI-mapped this week: {', '.join(ai_only)}" if ai_only else ""))
     return score, names, note, keys
 
 

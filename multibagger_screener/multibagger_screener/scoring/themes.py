@@ -32,9 +32,88 @@ trigger as any other name to become a buy.
 
 from __future__ import annotations
 
+import json
+import os
 import re
 from dataclasses import dataclass, field
+from datetime import datetime
+
 from scoring.textnorm import as_text
+
+# ---------------------------------------------------------------------------
+# the AI overlay (2026-09-19) — research-proposed corrections to membership
+#
+# The curated map below covered 22% of the universe, and 40 of one month's 50
+# best movers sat in no theme at all — QUADFUTURE missing from railways while
+# railways was the radar's hottest theme. scripts/theme_intel.py researches the
+# week's national and international drivers and proposes corrections: universe
+# names that plainly belong to an EXISTING theme. They live in
+# state/theme_intel.json under "overlay", each with its mechanism and evidence.
+#
+# OPT-IN, per call: Theme.matches(..., include_ai=True). The default is the
+# curated map alone, so every existing caller and test keeps its exact meaning
+# and nothing flips because a weekly research run said something new. The
+# production consumers opt in explicitly (phase_c's theme lookup and the
+# dashboard's Sectors tab).
+#
+# It can only ADD a name to an existing theme. It cannot create a theme,
+# remove a name, or touch seeds — and a stale read stops correcting the map
+# entirely rather than lingering (AI_OVERLAY_MAX_AGE_DAYS).
+# ---------------------------------------------------------------------------
+
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+AI_OVERLAY_PATH = os.path.join(_ROOT, "state", "theme_intel.json")
+# Three missed weekly runs. Past this the read describes a market that has
+# moved on, and a correction nobody has re-confirmed is a guess.
+AI_OVERLAY_MAX_AGE_DAYS = 21.0
+
+_AI_OVERLAY: dict[str, dict[str, dict]] | None = None
+
+
+def load_ai_overlay(path: str | None = None,
+                    now: datetime | None = None) -> dict[str, dict[str, dict]]:
+    """{theme_key: {symbol: provenance}} — EMPTY when the file is absent,
+    unreadable or stale. Every failure resolves to "no corrections", i.e. the
+    curated map exactly as it was: absent data must not grant membership."""
+    try:
+        with open(path or AI_OVERLAY_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+        gen = datetime.strptime(str(data.get("generated", "")), "%Y-%m-%d %H:%M")
+    except (OSError, ValueError, TypeError):
+        return {}
+    if ((now or datetime.now()) - gen).total_seconds() / 86400.0 > AI_OVERLAY_MAX_AGE_DAYS:
+        return {}
+    out: dict[str, dict[str, dict]] = {}
+    for key, rows in (data.get("overlay") or {}).items():
+        if not isinstance(rows, list):
+            continue
+        for r in rows:
+            sym = str((r or {}).get("symbol", "")).strip().upper()
+            if sym:
+                out.setdefault(str(key), {})[sym] = {
+                    "via": r.get("via", ""), "mechanism": r.get("mechanism", ""),
+                    "evidence": r.get("evidence", ""), "as_of": data.get("week_of", "")}
+    return out
+
+
+def ai_overlay() -> dict[str, dict[str, dict]]:
+    """Loaded once per process — the nightly scan and the dashboard build are
+    each one process, and the file changes weekly."""
+    global _AI_OVERLAY
+    if _AI_OVERLAY is None:
+        _AI_OVERLAY = load_ai_overlay()
+    return _AI_OVERLAY
+
+
+def set_ai_overlay(value: dict | None) -> None:
+    """Replace the cached overlay (tests), or pass None to reload from disk."""
+    global _AI_OVERLAY
+    _AI_OVERLAY = value
+
+
+def ai_provenance(symbol: str, key: str) -> dict | None:
+    """Why the research placed this name in this theme — for the card."""
+    return ai_overlay().get(key, {}).get(symbol)
 
 # ---------------------------------------------------------------------------
 # the map
@@ -58,8 +137,13 @@ class Theme:
 
     _rx: object = field(default=None, repr=False, compare=False)
 
-    def matches(self, sym: str, company: str, industry: object = "") -> bool:
+    def matches(self, sym: str, company: str, industry: object = "",
+                include_ai: bool = False) -> bool:
         if sym in self.seeds:
+            return True
+        # before the words check: a theme with no patterns must still accept a
+        # research-proposed member when the caller has opted in
+        if include_ai and sym in ai_overlay().get(self.key, {}):
             return True
         if not self.words:
             return False
@@ -238,7 +322,7 @@ THEMES: list[Theme] = [
 THEME_BY_KEY = {t.key: t for t in THEMES}
 
 
-def membership(rows: list[dict]) -> dict[str, list[str]]:
+def membership(rows: list[dict], include_ai: bool = False) -> dict[str, list[str]]:
     """theme key -> [symbols], from dashboard-style rows (sym/company/ind).
 
     A symbol may appear under several themes on purpose — SUZLON is renewables,
@@ -250,7 +334,7 @@ def membership(rows: list[dict]) -> dict[str, list[str]]:
         company = str(r.get("company", "") or "")
         industry = str(r.get("ind", "") or "")
         for t in THEMES:
-            if t.matches(sym, company, industry):
+            if t.matches(sym, company, industry, include_ai=include_ai):
                 out[t.key].append(sym)
     return out
 

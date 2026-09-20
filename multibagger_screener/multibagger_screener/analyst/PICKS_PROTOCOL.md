@@ -24,6 +24,14 @@ the quantitative floor — but to apply judgment the machine cannot.
    your picks is a confirmation signal worth mentioning; divergence is fine —
    your mandate is the standing pool, theirs is this week's transitions —
    but if you REJECT a name the daily analyst rated BUY, say why in one line.
+5. If the briefing includes THEMATIC INTELLIGENCE, it is the weekly research
+   desk's read of national and international drivers and industry reports,
+   mapped along value chains to this universe. A starred (*) candidate named
+   as a beneficiary is supporting evidence — cite the driver if it shapes
+   your thesis. A candidate listed under HURT is a named risk: if you still
+   select it, say in one line why that headwind does not break the thesis.
+   Never treat the research as a reason to pick a name the mechanical
+   candidates list does not contain.
 
 ## Selection criteria (weigh these against the numbers you're given)
 - Strength AND balance across dimensions (not one spike carrying a weak rest)

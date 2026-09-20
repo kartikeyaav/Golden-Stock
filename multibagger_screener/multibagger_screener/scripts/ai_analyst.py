@@ -308,6 +308,16 @@ def _cross_layer_context(symbol: str) -> str:
                          f"{symbol} is NOT among them.)")
     except (OSError, ValueError):
         pass
+    # WEEKLY THEMATIC RESEARCH (2026-09-19): the national/international driver
+    # and value-chain mechanism the weekly research found for this name, if
+    # any — and, as importantly, whether it named the name as HURT.
+    try:
+        from theme_intel import analyst_context, read_intel
+        tctx = analyst_context(symbol, read_intel())
+        if tctx:
+            parts.append(tctx)
+    except Exception:  # noqa: BLE001 — context, never fatal
+        pass
     return ("\n\n" + "\n\n".join(parts)) if parts else ""
 
 

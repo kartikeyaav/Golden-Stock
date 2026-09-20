@@ -80,6 +80,10 @@ def committee(monkeypatch):
     # module-level run() is only used here for `git status` on ai_picks.json;
     # empty output = the picks are committed, i.e. NOT the stranded-output case
     monkeypatch.setattr(wc, "run", lambda *a, **k: _FakeProc())
+    # the weekly theme research runs in front of the committee (2026-09-19) and
+    # is its own I/O edge with its own guard — tested in test_theme_intel.py.
+    # Stubbed here so "a subprocess ran" keeps meaning "the COMMITTEE ran".
+    monkeypatch.setattr(wc, "_maybe_run_theme_intel", lambda: 0)
 
     def setup(synced: bool, picks_age_days: float | None, shortlist_age_days: float):
         monkeypatch.setattr(wc, "git_pull_retry", lambda *a, **k: synced)

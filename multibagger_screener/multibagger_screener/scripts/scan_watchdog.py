@@ -84,6 +84,9 @@ CHECKS = [
      "logs/committee_local.log", None),
     ("penny", "Penny screen", "state/penny_meta.json", "built_at", 5.0,
      "the 3-day penny cadence has slipped", None),
+    ("research", "Theme research", "state/theme_intel.json", "generated", 10.0,
+     "the weekly thematic research has not produced a fresh read — it runs "
+     "in front of the committee; check logs/committee_local.log", None),
     ("analyst", "AI analyst", "state/analyst_health.json", "last_success_at", 5.0,
      "no successful deep-dive — check logs/analyst_local.log",
      ("status", "note")),

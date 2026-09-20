@@ -35,22 +35,41 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
 from _local_git import (acquire_lock, discard_cloud_owned_edits,  # noqa: E402
-                        heal_stuck_rebase, release_lock, runner_is_cloud)
+                        heal_stuck_rebase, lock_heartbeat, release_lock,
+                        runner_is_cloud)
 
 LOG_PATH = os.path.join(ROOT, "logs", "committee_local.log")
 PICKS_PATH = os.path.join(ROOT, "ai_picks.json")
 SHORTLIST_REL = "multibagger_screener/multibagger_screener/shortlist_ranked.csv"
 
+# The weekly thematic research's outputs (scripts/theme_intel.py), committed
+# by this wrapper right after the research runs.
+INTEL_PATHS = ("multibagger_screener/multibagger_screener/state/theme_intel.json",
+               "multibagger_screener/multibagger_screener/theme_intel.md",
+               "multibagger_screener/multibagger_screener/journal/theme_intel_journal.csv")
+
 # What this wrapper owns, and what a healed rebase restores for it.
 RECORD_PATHS = ("multibagger_screener/multibagger_screener/ai_picks.json",
                 "multibagger_screener/multibagger_screener/ai_picks.md",
-                "multibagger_screener/multibagger_screener/journal/ai_picks_journal.csv")
+                "multibagger_screener/multibagger_screener/journal/ai_picks_journal.csv"
+                ) + INTEL_PATHS
 
-# Must sit ABOVE ai_picks.TIMEOUT_S (3h) and BELOW the scheduled task's
-# ExecutionTimeLimit (PT4H), so the innermost budget is the one that bites and
-# the wrapper always survives to log and push. Inverting this ordering is what
-# stranded the 19-Jul picks and froze the committee for a week.
+# THE BUDGET, nested so the innermost limit always bites first and the wrapper
+# survives to log and push (inverting it is what stranded the 19-Jul picks):
+#
+#   theme_intel.TIMEOUT_S 40m  <  INTEL_TIMEOUT_S 45m
+#   ai_picks.TIMEOUT_S    3h   <  COMMITTEE_TIMEOUT_S 3h20m
+#   45m + 3h20m + git     ~4h10m  <  the task's ExecutionTimeLimit (PT5H)
+#
+# The task limit was PT4H until the research step was added in front of the
+# committee (2026-09-19); at PT4H a slow week would have killed the wrapper
+# mid-committee with its picks unpushed.
+INTEL_TIMEOUT_S = 2700        # 45m
 COMMITTEE_TIMEOUT_S = 12000   # 3h20m
+
+# Weekly research: due when its last read is this old. Six days, not seven, so
+# a Sunday run that lands a few hours later than last week's is still due.
+INTEL_MAX_AGE_DAYS = 6.0
 
 # How old the picks may get before an UNSYNCED tree stops being an excuse to
 # skip. The committee cadence is weekly, so 8 days is one missed cycle plus a
@@ -152,6 +171,77 @@ def _run() -> int:
     # 1. sync: the guard must judge against the CLOUD's latest shortlist
     synced = git_pull_retry(git_root())
 
+    # 1b. the weekly thematic research, FIRST, so the committee below reads
+    # this week's read rather than last week's. It has its own freshness guard
+    # and its own commit, so a committee that fails later cannot strand it.
+    # Its failure does not stop the committee — but it does fail the task, so
+    # Task Scheduler cannot record a clean run over a layer that did not run.
+    intel_rc = _maybe_run_theme_intel()
+    return max(_committee(synced, force), intel_rc)
+
+
+def _maybe_run_theme_intel() -> int:
+    """scripts/theme_intel.py when its last read is INTEL_MAX_AGE_DAYS old or
+    absent. 0 = not due or done and pushed; 1 = it failed (logged why)."""
+    try:
+        from theme_intel import intel_age_days
+        age = intel_age_days()
+    except Exception as e:  # noqa: BLE001
+        log(f"theme research: cannot read its state ({str(e)[:120]}) — running it")
+        age = None
+    if age is not None and age < INTEL_MAX_AGE_DAYS and "--force-intel" not in sys.argv:
+        log(f"theme research is {age:.1f}d old (< {INTEL_MAX_AGE_DAYS:.0f}d) — not due")
+        return 0
+    # an ABSENT read is due, never "fine": missing data must not buy a week off
+    log("theme research " + ("has never run" if age is None else f"is {age:.1f}d old")
+        + " — researching national + international drivers now")
+    env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
+    env["PYTHONIOENCODING"] = "utf-8"
+    from _stay_awake import stay_awake
+    with stay_awake(log):
+        try:
+            proc = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "theme_intel.py")],
+                                  capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", timeout=INTEL_TIMEOUT_S, cwd=ROOT, env=env)
+        except subprocess.TimeoutExpired:
+            log(f"theme_intel.py timed out after {INTEL_TIMEOUT_S}s — retried next run")
+            return 1
+    tail = "\n".join((proc.stdout or "").strip().splitlines()[-2:])
+    log(f"theme_intel.py exit {proc.returncode}: {tail[:300]}")
+    if proc.returncode != 0:
+        return 1
+    return _commit_intel()
+
+
+def _commit_intel() -> int:
+    gr = git_root()
+    # one path at a time: `git add` aborts ALL staging if any one pathspec
+    # matches nothing (the daily.yml lesson). -f because state/ is gitignored
+    # and every state file this system commits is force-added.
+    for rel in INTEL_PATHS:
+        run(["git", "add", "-f", "--", rel], cwd=gr)
+    c = run(["git", "commit", "-m",
+             f"local theme research {datetime.now():%Y-%m-%d} (subscription run)"], cwd=gr)
+    if c.returncode != 0:
+        why = commit_blocked(c)
+        if why is None:
+            log("theme research: nothing new to commit")
+            return 0
+        log(f"theme research COMMIT BLOCKED, not pushed: {why[:200]}")
+        return 1
+    if not git_pull_retry(gr, attempts=2, delay=10):
+        log("THEME RESEARCH COMMITTED BUT THE PULL FAILED — refusing to push onto "
+            "an unsynced tree; the next run heals it and pushes then")
+        return 1
+    p = run(["git", "push", "origin", "master"], cwd=gr, timeout=180)
+    if p.returncode != 0:
+        log(f"theme research push FAILED: {(p.stderr or '')[:150]}")
+        return 1
+    log("theme research committed + pushed — the cloud's next scan applies its map corrections")
+    return 0
+
+
+def _committee(synced: bool, force: bool) -> int:
     # 2. freshness guard — the reason an every-logon trigger is safe
     picks_at = picks_generated_at()
     shortlist_at = shortlist_committed_at()
@@ -289,7 +379,8 @@ def main() -> int:
     try:
         heal_stuck_rebase(git_root(), run, log, RECORD_PATHS)
         discard_cloud_owned_edits(git_root(), run, log)
-        return _run()
+        with lock_heartbeat(ROOT):         # a live holder never looks stale
+            return _run()
     finally:
         # and again on the way out, so a laptop that sleeps before the next
         # start does not leave tonight's leftover sitting in the tree

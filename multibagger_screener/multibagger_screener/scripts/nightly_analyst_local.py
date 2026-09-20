@@ -34,7 +34,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
 from _local_git import (acquire_lock, discard_cloud_owned_edits,  # noqa: E402
-                        heal_stuck_rebase, release_lock, runner_is_cloud)
+                        heal_stuck_rebase, lock_heartbeat, release_lock,
+                        runner_is_cloud)
 
 LOG_PATH = os.path.join(ROOT, "logs", "analyst_local.log")
 PKG = "multibagger_screener/multibagger_screener"
@@ -278,7 +279,8 @@ def main() -> int:
     try:
         heal_stuck_rebase(git_root(), run, log, RECORD_PATHS)
         discard_cloud_owned_edits(git_root(), run, log)
-        return _run()
+        with lock_heartbeat(ROOT):         # a live holder never looks stale
+            return _run()
     finally:
         # and again on the way out, so a laptop that sleeps before the next
         # start does not leave tonight's leftover sitting in the tree
