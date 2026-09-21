@@ -1,26 +1,26 @@
 {
- "generated": "2026-09-20 09:47",
+ "generated": "2026-09-21 16:40",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 22.5,
  "deadline": "2026-12-31",
  "observation": {
   "window_start": "2026-07-25",
-  "eligible_weekdays": 40,
-  "sessions_scanned": 37,
+  "eligible_weekdays": 41,
+  "sessions_scanned": 38,
   "sessions_missed": 3,
-  "observed_pct": 92.5,
+  "observed_pct": 92.7,
   "degraded_scans": 1,
   "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"
  },
- "days_to_deadline": 101,
+ "days_to_deadline": 100,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
   "min_age_days": 30,
   "min_expectancy_fraction": 0.5,
-  "expectancy_r": 0.2905,
-  "age_matched_reference_r": 0.581,
+  "expectancy_r": 0.2965,
+  "age_matched_reference_r": 0.593,
   "superseded_flat_min_expectancy_r": 0.5,
   "expectancy_curve": [
    [
@@ -52,65 +52,65 @@
   "n": 15,
   "n_qualifying": 9,
   "n_unsized": 2,
-  "expectancy_r": 0.298,
-  "median_age_days": 38,
-  "age_matched_reference_r": 0.581,
-  "required_expectancy_r": 0.2905,
-  "median_r": -0.001,
-  "sum_r": 2.68,
+  "expectancy_r": 0.245,
+  "median_age_days": 41,
+  "age_matched_reference_r": 0.593,
+  "required_expectancy_r": 0.2965,
+  "median_r": -0.058,
+  "sum_r": 2.21,
   "win_rate_pct": 44.4,
   "hit_stop_pct": 18.2,
-  "best_trade_share_pct": 37.7,
-  "best_r": 1.96,
+  "best_trade_share_pct": 34.6,
+  "best_r": 1.69,
   "worst_r": -1.03,
-  "signal_basis_return_pct": 3.35,
+  "signal_basis_return_pct": 2.76,
   "first": "2026-07-29",
   "last": "2026-08-21"
  },
  "cohort_running": {
   "n": 15,
-  "n_qualifying": 10,
+  "n_qualifying": 11,
   "n_unsized": 2,
-  "expectancy_r": 0.235,
-  "median_age_days": 37,
-  "age_matched_reference_r": 0.576,
-  "required_expectancy_r": 0.288,
-  "median_r": -0.043,
-  "sum_r": 2.35,
-  "win_rate_pct": 40.0,
+  "expectancy_r": 0.151,
+  "median_age_days": 40,
+  "age_matched_reference_r": 0.582,
+  "required_expectancy_r": 0.291,
+  "median_r": -0.058,
+  "sum_r": 1.66,
+  "win_rate_pct": 36.4,
   "hit_stop_pct": 15.4,
-  "best_trade_share_pct": 37.7,
-  "best_r": 1.96,
+  "best_trade_share_pct": 34.6,
+  "best_r": 1.69,
   "worst_r": -1.03,
-  "signal_basis_return_pct": 2.94,
+  "signal_basis_return_pct": 2.08,
   "first": "2026-07-29",
   "last": "2026-09-18"
  },
  "legacy": {
-  "n": 627,
-  "n_qualifying": 500,
-  "n_unsized": 84,
-  "expectancy_r": 0.174,
+  "n": 637,
+  "n_qualifying": 523,
+  "n_unsized": 85,
+  "expectancy_r": 0.177,
   "median_age_days": 34,
-  "age_matched_reference_r": 0.585,
-  "required_expectancy_r": 0.2925,
-  "median_r": -0.034,
-  "sum_r": 86.88,
-  "win_rate_pct": 47.0,
-  "hit_stop_pct": 32.8,
-  "best_trade_share_pct": 2.5,
-  "best_r": 7.28,
+  "age_matched_reference_r": 0.589,
+  "required_expectancy_r": 0.2945,
+  "median_r": -0.038,
+  "sum_r": 92.63,
+  "win_rate_pct": 44.6,
+  "hit_stop_pct": 32.4,
+  "best_trade_share_pct": 2.6,
+  "best_r": 8.11,
   "worst_r": -6.34,
-  "signal_basis_return_pct": 108.59,
+  "signal_basis_return_pct": 115.78,
   "first": "2026-07-07",
-  "last": "2026-09-18"
+  "last": "2026-09-21"
  },
  "extended": {
   "n": 1,
   "n_qualifying": 1,
   "n_unsized": 0,
   "expectancy_r": -1.037,
-  "median_age_days": 24,
+  "median_age_days": 27,
   "age_matched_reference_r": 0.533,
   "required_expectancy_r": 0.2665,
   "median_r": -1.037,
@@ -130,12 +130,12 @@
    "detail": "9 of 40 qualifying signals (closed, or aged 30d+)"
   },
   "expectancy": {
-   "ok": true,
-   "detail": "+0.30R vs +0.29R required \u2014 50% of the +0.58R the backtest reads at the same ages (median 38d)"
+   "ok": false,
+   "detail": "+0.24R vs +0.30R required \u2014 50% of the +0.59R the backtest reads at the same ages (median 41d)"
   },
   "beats_benchmark": {
    "ok": true,
-   "detail": "system +3.4% vs Momentum-quality ETF (MidSmall 400) -1.3% over the same window"
+   "detail": "system +2.8% vs Momentum-quality ETF (MidSmall 400) -1.1% over the same window"
   },
   "hit_stop": {
    "ok": true,
@@ -143,69 +143,69 @@
   },
   "concentration": {
    "ok": true,
-   "detail": "best trade is 37.7% of positive R vs 60.0% ceiling"
+   "detail": "best trade is 34.6% of positive R vs 60.0% ceiling"
   }
  },
  "benchmark": {
   "sym": "MOMENTUM100",
-  "ret_pct": -1.33,
+  "ret_pct": -1.11,
   "first": 67.85,
-  "last": 66.95,
+  "last": 67.1,
   "from": "2026-07-29",
-  "to": "2026-09-18",
-  "sessions": 38,
+  "to": "2026-09-21",
+  "sessions": 39,
   "label": "Momentum-quality ETF (MidSmall 400)",
   "note": "Nifty MidSmallcap400 Momentum Quality 100 ETF \u2014 the investable alternative to running this system."
  },
  "benchmark2": {
   "sym": "NIFTY50",
-  "ret_pct": -3.73,
+  "ret_pct": -3.45,
   "first": 24250.2,
-  "last": 23346.4,
+  "last": 23414.3,
   "from": "2026-07-29",
-  "to": "2026-09-18",
-  "sessions": 37,
+  "to": "2026-09-21",
+  "sessions": 38,
   "label": "NIFTY 50"
  },
  "benchmark_context": {
   "3m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": -1.22,
+    "ret_pct": -1.0,
     "first": 67.78,
-    "last": 66.95,
+    "last": 67.1,
     "from": "2026-06-22",
-    "to": "2026-09-18",
-    "sessions": 65
+    "to": "2026-09-21",
+    "sessions": 66
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -3.14,
+    "ret_pct": -2.86,
     "first": 24102.9,
-    "last": 23346.4,
+    "last": 23414.3,
     "from": "2026-06-22",
-    "to": "2026-09-18",
-    "sessions": 63
+    "to": "2026-09-21",
+    "sessions": 64
    }
   },
   "12m": {
    "bench": {
     "sym": "MOMENTUM100",
-    "ret_pct": 5.93,
+    "ret_pct": 6.17,
     "first": 63.2,
-    "last": 66.95,
+    "last": 67.1,
     "from": "2025-09-22",
-    "to": "2026-09-18",
-    "sessions": 249
+    "to": "2026-09-21",
+    "sessions": 250
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -7.36,
+    "ret_pct": -7.09,
     "first": 25202.35,
-    "last": 23346.4,
+    "last": 23414.3,
     "from": "2025-09-22",
-    "to": "2026-09-18",
-    "sessions": 245
+    "to": "2026-09-21",
+    "sessions": 246
    }
   }
  },

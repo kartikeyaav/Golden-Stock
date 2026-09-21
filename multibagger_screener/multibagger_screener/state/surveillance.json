@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-20 09:47",
+ "generated": "2026-09-21 16:40",
  "n_checked": 1027,
- "n_flagged": 89,
- "asm_total": 219,
+ "n_flagged": 88,
+ "asm_total": 197,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -113,19 +113,14 @@
   "HEG": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
      "code": "BE",
      "detail": "BE settlement series",
      "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 5.0,
+   "band": null,
    "series": "BE",
-   "worst": "BAND 5%"
+   "worst": "BE"
   },
   "HFCL": {
    "flags": [
@@ -184,6 +179,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "TATACHEM": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "TRAVELFOOD": {
    "flags": [
@@ -292,18 +299,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "APOLLO": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "ASTRAMICRO": {
    "flags": [
@@ -478,25 +473,8 @@
    "series": "EQ",
    "worst": "BAND 5%"
   },
-  "LLOYDSENGG": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "MSTCLTD": {
    "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
     {
      "code": "BAND 10%",
      "detail": "10% circuit band",
@@ -505,7 +483,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "MTARTECH": {
    "flags": [
@@ -961,9 +939,14 @@
      "code": "ASM",
      "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 20.0,
+   "band": 10.0,
    "series": "EQ",
    "worst": "ASM"
   },

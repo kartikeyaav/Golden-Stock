@@ -1,19 +1,36 @@
 {
  "ok": true,
- "generated": "2026-09-18T14:38:41",
+ "generated": "2026-09-21T16:36:28",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 10172,
- "policy_hits": 15,
- "stories": 14,
+ "headlines_read": 9613,
+ "policy_hits": 16,
+ "stories": 15,
  "themes": {
   "railways": {
-   "pressure": 0.195,
-   "pos_flow": 0.1609,
+   "pressure": 0.325,
+   "pos_flow": 0.2909,
    "neg_flow": 0.0,
-   "n_scored": 3,
+   "n_scored": 4,
    "n_attn": 1,
    "top": [
+    {
+     "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
+     "date": "2026-09-20T09:39:35",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/logistics/indian-railways-approves-multiple-infrastructure-safety-projects-to-enhance-operational-efficiency/article71486995.ece",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1451
+    },
     {
      "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
      "date": "2026-08-20T11:30:45",
@@ -29,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0576
+     "weight": 0.0522
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -46,24 +63,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0576
-    },
-    {
-     "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
-     "date": "2026-08-12T22:32:21",
-     "source": "The Economic Times",
-     "link": "https://economictimes.indiatimes.com/industry/transportation/railways/indian-railways-big-update-2-new-trains-3-route-extensions-and-7-additional-halts-approved-check-routes-timings-and-stations/articleshow/133188624.cms",
-     "themes": [
-      "railways"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0457
+     "weight": 0.0522
     }
    ]
   },
@@ -84,8 +84,8 @@
    "top": []
   },
   "defence": {
-   "pressure": 0.159,
-   "pos_flow": 0.1281,
+   "pressure": 0.145,
+   "pos_flow": 0.116,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -105,7 +105,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0775
+     "weight": 0.0702
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -122,13 +122,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0506
+     "weight": 0.0458
     }
    ]
   },
   "hospital": {
-   "pressure": 0.062,
-   "pos_flow": 0.0473,
+   "pressure": 0.056,
+   "pos_flow": 0.0429,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -148,13 +148,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0473
+     "weight": 0.0429
     }
    ]
   },
   "semis": {
-   "pressure": 0.075,
-   "pos_flow": 0.0576,
+   "pressure": 0.066,
+   "pos_flow": 0.0505,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -174,13 +174,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0576
+     "weight": 0.0505
     }
    ]
   },
   "ems": {
-   "pressure": 0.147,
-   "pos_flow": 0.1175,
+   "pressure": 0.13,
+   "pos_flow": 0.1029,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -200,13 +200,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1175
+     "weight": 0.1029
     }
    ]
   },
   "capex": {
-   "pressure": 0.097,
-   "pos_flow": 0.0756,
+   "pressure": 0.088,
+   "pos_flow": 0.0685,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -227,13 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0756
+     "weight": 0.0685
     }
    ]
   },
   "ev": {
-   "pressure": 0.184,
-   "pos_flow": 0.1505,
+   "pressure": 0.168,
+   "pos_flow": 0.1363,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -254,7 +254,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0756
+     "weight": 0.0685
     },
     {
      "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -271,12 +271,29 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.0749
+     "weight": 0.0679
     }
    ]
   }
  },
  "events": [
+  {
+   "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
+   "date": "2026-09-20T09:39:35",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/logistics/indian-railways-approves-multiple-infrastructure-safety-projects-to-enhance-operational-efficiency/article71486995.ece",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1451
+  },
   {
    "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
    "date": "2026-08-17T16:29:36",
@@ -292,7 +309,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1175
+   "weight": 0.1029
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -309,7 +326,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.108
+   "weight": 0.0978
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -327,7 +344,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0978
+   "weight": 0.0886
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -344,7 +361,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0775
+   "weight": 0.0702
   },
   {
    "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
@@ -362,7 +379,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0756
+   "weight": 0.0685
   },
   {
    "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -379,7 +396,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0749
+   "weight": 0.0679
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -396,7 +413,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0706
+   "weight": 0.0639
   },
   {
    "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -413,7 +430,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0576
+   "weight": 0.0522
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -430,7 +447,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0576
+   "weight": 0.0522
   },
   {
    "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
@@ -447,7 +464,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0576
+   "weight": 0.0505
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -464,7 +481,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0506
+   "weight": 0.0458
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -481,7 +498,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0473
+   "weight": 0.0429
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -498,7 +515,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0461
+   "weight": 0.0417
   },
   {
    "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
@@ -515,7 +532,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0457
+   "weight": 0.0414
   }
  ]
 }
