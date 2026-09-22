@@ -3670,12 +3670,14 @@ const QLBL={earnings_inflection:'earnings inflection',rs_and_stage:'technicals',
 function newsReason(dt){
  const s=dt.news_status||'';
  if(s.startsWith('not fetched'))
-  return 'News was not read for this stock. It is outside this week’s focus list, and news is fetched only for focus names so the weekly refresh stays inside its time budget.';
+  return s.includes('top ')
+   ? 'News was not read for this stock. It is outside this week’s focus list and outside the top '+((s.match(/top (\d+)/)||[])[1]||'200')+' names by conviction, and news is fetched only for those so the weekly refresh stays inside its time budget.'
+   : 'News was not read for this stock. It is outside this week’s focus list, and news is fetched only for focus names so the weekly refresh stays inside its time budget.';
  if(s.startsWith('unavailable'))
   return 'A news read was attempted and failed — '+s.replace(/^unavailable:\s*/,'')+'. That is a fetch failure, not a quiet news month.';
  if(s.startsWith('skipped'))
   return 'This refresh was built without the news layer, so the catalyst and theme questions had nothing to score.';
- return 'News was not read for this stock in the last refresh. News is fetched for focus-list names and for any name that alerted; everything else is scored from fundamentals and price alone.';
+ return 'News was not read for this stock in the last refresh. News is fetched for focus-list names, the top 200 by conviction and any name that alerted; everything else is scored from fundamentals and price alone.';
 }
 
 /* ARCHIVE FALLBACK (2026-09-15, user-reported). A name with no scored news

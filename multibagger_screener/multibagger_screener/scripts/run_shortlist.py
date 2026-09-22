@@ -38,6 +38,9 @@ def main() -> None:
     parser.add_argument("--cards", type=int, default=8)
     parser.add_argument("--no-news", action="store_true",
                         help="skip per-stock news enrichment (faster)")
+    parser.add_argument("--news-top", type=int, default=200,
+                        help="also read news for the top N names by conviction, "
+                             "not only the focus list (default 200)")
     args = parser.parse_args()
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -228,16 +231,20 @@ def main() -> None:
     # 328 of 618 rows with a dash in the conviction column while 327 of them
     # had real cached fundamentals sitting on disk (measured 2026-08-03).
     #
-    # News is the one thing that stays scoped to the focus list: it is the
-    # network cost, and taking it universe-wide would add ~35 minutes to the
-    # weekly job. Names scored without it carry an explicit note saying the
-    # conviction number is a partial-coverage read — see newsSection() — so a
-    # 75%-coverage score is never presented as if it were a full one.
+    # News is the network cost, so it is not read universe-wide (~35 extra
+    # minutes). It is read for the focus list AND for every name in the top
+    # --news-top by conviction — see the ranking step below. Names scored
+    # without it carry an explicit note saying the conviction number is a
+    # partial-coverage read — see newsSection() — so a 75%-coverage score is
+    # never presented as if it were a full one.
     focus_rows = {r["symbol"]: r for _, r in focus.iterrows()}
     industry_by_sym = {s: as_text(i) for s, i in
                        zip(universe["symbol"],
                            universe.get("industry", universe["symbol"]))}
     wider = list(dict.fromkeys(list(focus_rows) + sorted(funds_by_sym)))
+
+    # PASS 1: score every wider name from price + fundamentals. Local and cheap.
+    pending = []
     for sym in wider:
         f = focus_rows.get(sym, {"symbol": sym, "rs_pctile": None,
                                  "industry": industry_by_sym.get(sym)})
@@ -252,7 +259,35 @@ def main() -> None:
         tag = tag_stock(df, bench)
         industry = as_text(f.get("industry"))   # NaN-safe: nse_gap rows have none
         dims = build_dimensions(tag, f.get("rs_pctile"), fund_row, industry)
+        pending.append((sym, tag, industry, dims, fund_row,
+                        assess(dims, build_vetoes(fund_row))))
 
+    # THE TOP OF THE SCREENER GETS NEWS TOO (2026-09-22, user-reported: "some
+    # high-conviction stocks show 0 on news catalyst"). Measured on the
+    # 09-20 refresh: 53 of the top 200 by conviction had never been read,
+    # because news stopped at the focus list. And they did not merely lack a
+    # panel — they OUTRANKED the names that were read. A missing catalyst
+    # dimension is renormalised away instead of scored, so a 75%-coverage
+    # read floats up: 5 of the top 10 (HOMEFIRST #2, GLENMARK #3, RAMCOIND #4,
+    # BFINVEST, MAHLOG) were names nobody had read news for.
+    #
+    # So rank everything scored this run (shortlist names already read, plus
+    # these preliminary no-news scores — the ranking the screener would show)
+    # and read news for the top --news-top as well as the focus list. ~53
+    # extra fetches ≈ 6 minutes on the 180-minute weekly budget.
+    ranked = sorted(
+        [(d["score"], s) for s, d in details.items()
+         if not d["veto_reasons"] and d["score"] is not None]
+        + [(c.score, s) for s, *_, c in pending
+           if not c.vetoed and c.score is not None],
+        reverse=True)
+    top_syms = {s for _, s in ranked[:args.news_top]}
+    n_top_only = sum(1 for s, *_ in pending if s in top_syms and s not in focus_rows)
+    print(f"  news for {sum(1 for s, *_ in pending if s in focus_rows)} focus names "
+          f"+ {n_top_only} more from the top {args.news_top} by conviction", flush=True)
+
+    # PASS 2: read news where it is due, then write the detail blob.
+    for sym, tag, industry, dims, fund_row, _prelim in pending:
         # NEWS FOR THESE NAMES TOO (2026-08-03, user-reported).
         #
         # The first version of this pass scored them from fundamentals and set
@@ -273,10 +308,10 @@ def main() -> None:
         news_e = None
         if args.no_news:
             news_status = "skipped: this run was built without news"
-        elif sym not in focus_rows:
-            news_status = ("not fetched: outside this week's focus list, and "
-                           "news is read only for focus names to bound the "
-                           "weekly job")
+        elif sym not in focus_rows and sym not in top_syms:
+            news_status = (f"not fetched: outside this week's focus list and "
+                           f"the top {args.news_top} by conviction, and news is "
+                           f"read only for those to bound the weekly job")
         else:
             news_e = enrich(sym, company_by_sym.get(sym, sym), industry or "")
             time.sleep(0.3)
@@ -309,6 +344,7 @@ def main() -> None:
             "news": card_news_blob(news_e or {}),
             "news_status": news_status,
             "in_focus": sym in focus_rows,
+            "news_top": sym in top_syms,
         }
         extra += 1
         if extra % 25 == 0:
