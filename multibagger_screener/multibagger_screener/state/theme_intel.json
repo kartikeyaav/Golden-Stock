@@ -1,0 +1,731 @@
+{
+ "generated": "2026-09-22 20:05",
+ "model": "claude-sonnet-5",
+ "week_of": "2026-09-22",
+ "summary": "SEMICON India 2026 (Applied Materials' $5bn Vision 2035 pledge, seven new Tata Electronics MoUs, Micron's assembly scale-up) dominated sentiment, directly rallying Kaynes, MosChip and Syrma SGS. Trump's Russia-sanctions law is a two-sided driver — a headwind for Russia-configured refiners and US-exposed textile exporters, but a tailwind for domestic E&P, Gulf oil-infra consultancy and the newly secured EU steel quota. Two clean map gaps surfaced: Ola Electric and Ather Energy were missing from the EV theme despite being direct PM E-DRIVE beneficiaries, and Waaree Renewable's new AI-data-centre subsidiaries were missing from the data-centre theme.",
+ "themes": [
+  {
+   "key": "semis",
+   "status": "existing",
+   "name": "Semiconductors & OSAT",
+   "direction": "tailwind",
+   "strength": 5,
+   "horizon": "medium",
+   "continuity": "strengthening",
+   "thesis": "SEMICON India 2026 converted years of policy intent into signed capital commitments and a direct market reaction in OSAT/EMS names, while foreign capex (Applied Materials, Micron) deepens the domestic supply chain these companies plug into.",
+   "drivers": [
+    {
+     "what": "Applied Materials commits $5bn under India Vision 2035, incl. 140-acre semiconductor R&D park",
+     "where": "India",
+     "date": "2026-09-17",
+     "source": "https://www.businesstoday.in/technology/story/semicon-india-2026-factories-funding-and-fresh-faces-indias-chip-dream-getting-real-556272-2026-09-17"
+    },
+    {
+     "what": "Tata Electronics signs 7 MoUs incl. Fujifilm's ₹800cr semiconductor materials plant at Dholera",
+     "where": "India",
+     "date": "2026-09-17",
+     "source": "https://www.angelone.in/news/market-updates/tata-electronics-signs-7-mous-with-semiconductor-firms-applied-materials-commits-5-billion"
+    },
+    {
+     "what": "Kaynes Tech, Syrma SGS, MosChip rally up to 10% as PM Modi inaugurates Semicon 2026",
+     "where": "India",
+     "date": "2026-09-17",
+     "source": "The Economic Times, 09-17: 'Kaynes Tech, Syrma SGS, MosChip, others rally up to 10% as PM Modi set to inaugurate Semicon 2026'"
+    },
+    {
+     "what": "Micron to scale up India chip assembly 'multifold' next year as mission shifts to execution",
+     "where": "India",
+     "date": "2026-09-17",
+     "source": "The Economic Times, 09-17: 'Micron to scale up India chip assembly multifold next year as semiconductor mission shifts to execution'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "KAYNES",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "OSAT/EMS capacity directly qualifies for ISM 2.0 incentives; stock rallied on the Semicon 2026 news itself",
+     "evidence": "ET 09-17 rally headline"
+    },
+    {
+     "symbol": "MOSCHIP",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Chip design house, direct beneficiary of India's push to move beyond assembly into design; rallied on Semicon news",
+     "evidence": "ET 09-17 rally headline"
+    },
+    {
+     "symbol": "SYRMA",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "EMS + testing player positioning into back-end semiconductor assembly; rallied alongside Kaynes/MosChip on Semicon sentiment",
+     "evidence": "ET 09-17 rally headline"
+    },
+    {
+     "symbol": "TATAELXSI",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Design-services arm sits inside the Tata Electronics semiconductor ecosystem build-out (Dholera fab, new supplier MoUs)",
+     "evidence": "https://www.angelone.in/news/market-updates/tata-electronics-signs-7-mous-with-semiconductor-firms-applied-materials-commits-5-billion"
+    }
+   ],
+   "map_additions": [
+    "SYRMA"
+   ]
+  },
+  {
+   "key": "defence",
+   "status": "existing",
+   "name": "Defence & aerospace",
+   "direction": "tailwind",
+   "strength": 4,
+   "horizon": "medium",
+   "continuity": "strengthening",
+   "thesis": "Two decided liberalisations — a simplified export SOP/OGEL and DRDO opening missile technology to private industry — directly expand the addressable market and product scope for listed defence manufacturers.",
+   "drivers": [
+    {
+     "what": "MoD simplifies Defence Export SOP, widens OGEL from 41 countries to nearly all, validity extended 2→3 years",
+     "where": "India",
+     "date": "2026-08-28",
+     "source": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+    },
+    {
+     "what": "Defence Ministry opens DRDO's conventional missile technology to private companies",
+     "where": "India",
+     "date": "2026-08-25",
+     "source": "Policy radar, 2026-08-25: 'Defence Ministry opens DRDO's conventional missile tech to private companies'"
+    },
+    {
+     "what": "MoD signs ₹586cr deal with AICPL for tank hybrid power units",
+     "where": "India",
+     "date": "2026-09-21",
+     "source": "BusinessLine, 09-21: 'Ministry of Defence signs ₹586 cr deal with AICPL for tank hybrid power units'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "BDL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Missile systems maker directly positioned for DRDO tech transfer and export-driven order growth under the eased OGEL",
+     "evidence": "Policy radar 2026-08-25"
+    },
+    {
+     "symbol": "MIDHANI",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Specialty alloys/superalloys feed missile and defence-hardware makers now able to scale under the simplified regime",
+     "evidence": "Policy radar 2026-08-25"
+    },
+    {
+     "symbol": "DATAPATTNS",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Defence electronics exporter benefits directly from the widened OGEL country coverage",
+     "evidence": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+    },
+    {
+     "symbol": "ZENTEC",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Defence electronics systems maker, export-ready under simplified SOP",
+     "evidence": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+    },
+    {
+     "symbol": "COCHINSHIP",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Naval shipbuilder with export potential unlocked by the eased OGEL framework",
+     "evidence": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+    },
+    {
+     "symbol": "PTCIL",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Titanium/superalloy precision components for missile and aerospace-defence programmes opened to private players",
+     "evidence": "Policy radar 2026-08-25"
+    }
+   ],
+   "map_additions": [
+    "QUADFUTURE"
+   ]
+  },
+  {
+   "key": "ev",
+   "status": "existing",
+   "name": "EV & auto electrification",
+   "direction": "tailwind",
+   "strength": 4,
+   "horizon": "medium",
+   "continuity": "strengthening",
+   "thesis": "The government extended demand-side and supply-side EV support this month — e2w subsidies to FY28 with a higher outlay, and a battery-PLI deadline extension — directly benefiting the two-wheeler OEMs and battery makers that monetise it.",
+   "drivers": [
+    {
+     "what": "PM E-DRIVE e2w subsidy extended to March 2028, overall scheme outlay raised to Rs 11,900cr",
+     "where": "India",
+     "date": "2026-08-12",
+     "source": "https://www.autocarindia.com/industry/pm-e-drive-subsidy-for-electric-two-wheelers-extended-to-march-2028-440459"
+    },
+    {
+     "what": "Centre extends battery PLI deadline for Ola Electric and Reliance (Rajesh Exports excluded)",
+     "where": "India",
+     "date": "2026-08-14",
+     "source": "Policy radar, 2026-08-14: 'Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out'"
+    },
+    {
+     "what": "Exide Industries expands Europe battery export push via Germany's ExCom tie-up",
+     "where": "India/Germany",
+     "date": "2026-09-16",
+     "source": "BusinessLine, 09-16: 'Exide Industries eyes Europe battery exports growth with Germany's ExCom tie-up'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "OLAELEC",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Pure-play e2w OEM directly benefits from PM E-DRIVE subsidy extension to FY28 and its own battery-PLI deadline extension",
+     "evidence": "https://www.autocarindia.com/industry/pm-e-drive-subsidy-for-electric-two-wheelers-extended-to-march-2028-440459"
+    },
+    {
+     "symbol": "ATHERENERG",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Pure-play e2w OEM, direct beneficiary of the demand-incentive extension and raised scheme outlay",
+     "evidence": "https://www.autocarindia.com/industry/pm-e-drive-subsidy-for-electric-two-wheelers-extended-to-march-2028-440459"
+    },
+    {
+     "symbol": "EXIDEIND",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Battery maker signed a direct Europe export growth tie-up, adding revenue beyond the domestic PLI runway",
+     "evidence": "BusinessLine 09-16"
+    }
+   ],
+   "map_additions": [
+    "OLAELEC",
+    "ATHERENERG"
+   ]
+  },
+  {
+   "key": "datacentre",
+   "status": "existing",
+   "name": "Data centres & digital infrastructure",
+   "direction": "tailwind",
+   "strength": 3,
+   "horizon": "long",
+   "continuity": "strengthening",
+   "thesis": "A renewables EPC player crossing over into AI-ready data-centre ownership, plus global hyperscalers reportedly favouring smaller/modular deals, both point toward India capturing more compute build-out even before any single project is revenue-generating.",
+   "drivers": [
+    {
+     "what": "Waaree Renewable incorporates Sunstar and Aurovault Data Centers subsidiaries for AI/cloud infrastructure, leveraging captive solar",
+     "where": "India",
+     "date": "2026-09-14",
+     "source": "https://www.datacenterdynamics.com/en/news/indian-renewable-firm-waaree-forms-new-data-center-subsidiary/"
+    },
+    {
+     "what": "OpenAI, Anthropic reported exploring smaller data-centre deals amid AI compute race",
+     "where": "Global",
+     "date": "2026-09-18",
+     "source": "NDTV Profit, 09-18: 'AI Compute Race: OpenAI, Anthropic Explore Smaller Data Centre Deals'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "WAAREERTL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "New wholly-owned subsidiaries (Sunstar, Aurovault) formed specifically to build/operate hyperscale and AI-ready data centres powered by captive solar; not yet operational",
+     "evidence": "https://www.datacenterdynamics.com/en/news/indian-renewable-firm-waaree-forms-new-data-center-subsidiary/"
+    }
+   ],
+   "map_additions": [
+    "WAAREERTL"
+   ]
+  },
+  {
+   "key": "renewables",
+   "status": "existing",
+   "name": "Renewables, solar & storage",
+   "direction": "tailwind",
+   "strength": 3,
+   "horizon": "medium",
+   "continuity": "steady",
+   "thesis": "Storage diversification continues (a non-solar player winning a battery-bank order, a solar EPC firm entering data-centres) even as one BESS contractor's default at NTPC's Mouda plant is a reminder that execution risk in grid-scale storage remains real.",
+   "drivers": [
+    {
+     "what": "HEG wins Rs 217.56cr order from Indus Towers for lithium-ion battery banks",
+     "where": "India",
+     "date": "2026-09-21",
+     "source": "The Economic Times, 09-21: 'HEG shares rally 5% after receiving Rs 217.56 crore order from Indus Towers for lithium-ion battery banks'"
+    },
+    {
+     "what": "NTPC terminates Rs 413cr / 400MWh BESS contract awarded to GR Infraprojects over contractor default at Mouda",
+     "where": "India",
+     "date": "2026-09-19",
+     "source": "https://www.business-standard.com/industry/news/ntpc-terminates-400-mwh-bess-contract-awarded-to-g-r-infraprojects-126091900594_1.html"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "HEG",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Graphite-electrode maker diversifying into lithium-ion battery banks won a direct, signed telecom backup-power order",
+     "evidence": "ET 09-21 rally headline"
+    },
+    {
+     "symbol": "GRINFRA",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "high",
+     "mechanism": "NTPC terminated GRIL's 400MWh Mouda BESS contract for default and encashed ~Rs 91cr of securities",
+     "evidence": "https://www.business-standard.com/industry/news/ntpc-terminates-400-mwh-bess-contract-awarded-to-g-r-infraprojects-126091900594_1.html"
+    }
+   ],
+   "map_additions": [
+    "HEG"
+   ]
+  },
+  {
+   "key": "railways",
+   "status": "existing",
+   "name": "Railways & metro",
+   "direction": "tailwind",
+   "strength": 3,
+   "horizon": "medium",
+   "continuity": "steady",
+   "thesis": "Railways approved a fresh batch of infrastructure and safety projects this week, continuing the multi-tracking and speed-upgrade capex cycle, even as a coach-corrosion advisory flags rising maintenance/retrofit spend on the rolling-stock side.",
+   "drivers": [
+    {
+     "what": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
+     "where": "India",
+     "date": "2026-09-20",
+     "source": "BusinessLine, 09-20: 'Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency'"
+    },
+    {
+     "what": "Cabinet approves one highway and four railway multi-tracking projects",
+     "where": "India",
+     "date": "2026-08-19",
+     "source": "Policy radar, 2026-08-19: 'Cabinet approves one highway and four railway multi-tracking projects'"
+    },
+    {
+     "what": "Railway Board flags LHB coach bogies corroding from toilet leaks and salty air",
+     "where": "India",
+     "date": "2026-09-17",
+     "source": "The Economic Times, 09-17: 'LHB coach bogies are corroding: Railway Board raises safety concerns'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "RVNL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Rail infrastructure EPC arm of Indian Railways, direct executor of newly approved projects",
+     "evidence": "BusinessLine 09-20"
+    },
+    {
+     "symbol": "IRCON",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Direct executor of Cabinet-approved multi-tracking projects",
+     "evidence": "Policy radar 2026-08-19"
+    },
+    {
+     "symbol": "TITAGARH",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Coach/wagon maker positioned for potential retrofit or replacement orders arising from the corrosion advisory",
+     "evidence": "ET 09-17 LHB corrosion report"
+    }
+   ],
+   "map_additions": [
+    "GPTINFRA"
+   ]
+  },
+  {
+   "key": "steel",
+   "status": "new",
+   "name": "Steel & EU trade access",
+   "direction": "tailwind",
+   "strength": 3,
+   "horizon": "near",
+   "continuity": "new",
+   "thesis": "India locked in a country-specific EU tariff-rate quota just as domestic steel prices hit a four-year high on strong demand, giving export-facing steel and steel-pipe makers a decided volume window before the EU's 50% out-of-quota duty applies.",
+   "drivers": [
+    {
+     "what": "India secures 1.9 MT country-specific duty-free EU steel quota (2.8 MT total access) under the EU Steel Overcapacity Regulation",
+     "where": "India/EU",
+     "date": "2026-09-17",
+     "source": "https://www.businesstoday.in/latest/economy/story/india-secures-1-9-mt-steel-quota-under-eu-tariff-regime-total-access-seen-at-2-8-mt-556220-2026-09-17"
+    },
+    {
+     "what": "Steel prices hit 4-year high on rising costs amid strong demand",
+     "where": "India",
+     "date": "2026-09-21",
+     "source": "BusinessLine, 09-21: 'Steel prices hit 4-yr high on rise in cost amid strong demand'"
+    },
+    {
+     "what": "Coal Ministry opens 16th round of commercial coal mine auctions, 25 blocks across 9 states",
+     "where": "India",
+     "date": "2026-09-17",
+     "source": "https://indianinfrastructure.com/2026/09/21/ministry-of-coal-launches-16th-round-of-commercial-coal-mine-auctions/"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "JSL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Specialty/stainless steel exporter to the EU directly captures the new duty-free quota window",
+     "evidence": "https://www.businesstoday.in/latest/economy/story/india-secures-1-9-mt-steel-quota-under-eu-tariff-regime-total-access-seen-at-2-8-mt-556220-2026-09-17"
+    },
+    {
+     "symbol": "SAIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Large domestic steelmaker benefits from the price uptick and has EU export exposure covered by the quota",
+     "evidence": "BusinessLine 09-21"
+    },
+    {
+     "symbol": "JINDALSAW",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Steel pipe exporter benefits from EU quota access for line-pipe shipments",
+     "evidence": "https://www.businesstoday.in/latest/economy/story/india-secures-1-9-mt-steel-quota-under-eu-tariff-regime-total-access-seen-at-2-8-mt-556220-2026-09-17"
+    },
+    {
+     "symbol": "WELCORP",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Steel pipe exporter with both EU quota access and a freshly signed Rs 2,000cr Saudi Aramco pipe order, taking its order book to Rs 42,100cr",
+     "evidence": "https://www.business-standard.com/markets/capital-market-news/welspun-corp-s-associate-company-bags-rs-2-000-cr-contract-from-aramco-126092100420_1.html"
+    },
+    {
+     "symbol": "RATNAMANI",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Steel tube/pipe exporter benefits from both EU quota access and elevated global steel demand",
+     "evidence": "BusinessLine 09-21"
+    },
+    {
+     "symbol": "GPIL",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Sponge iron/pellet maker benefits from the steel price uptick and can bid for cost-advantaged captive coal in the 16th auction round",
+     "evidence": "https://indianinfrastructure.com/2026/09/21/ministry-of-coal-launches-16th-round-of-commercial-coal-mine-auctions/"
+    },
+    {
+     "symbol": "SARDAEN",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Ferro-alloys/steel producer with captive-coal exposure benefits from both the price cycle and the new coal-block auction",
+     "evidence": "https://indianinfrastructure.com/2026/09/21/ministry-of-coal-launches-16th-round-of-commercial-coal-mine-auctions/"
+    },
+    {
+     "symbol": "GRAPHITE",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Graphite electrode maker benefits from rising EAF steelmaking capacity utilisation as steel prices and demand climb",
+     "evidence": "BusinessLine 09-21"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "energysecurity",
+   "status": "new",
+   "name": "Energy security & Russian crude shift",
+   "direction": "mixed",
+   "strength": 3,
+   "horizon": "medium",
+   "continuity": "new",
+   "thesis": "Trump's Russia-sanctions law puts a 100%-tariff gun to the head of India's Russian-crude buyers, pressuring refiners configured for discounted Russian grades, while simultaneously accelerating a parallel push into domestic E&P, tanker capacity and Gulf oil-infrastructure consultancy work as alternatives are sought.",
+   "drivers": [
+    {
+     "what": "Trump signs the Graham Act Russia/Iran sanctions law, empowering tariffs up to 100% on the top five Russian crude/gas buyers, reassessed every 180 days",
+     "where": "US/Global",
+     "date": "2026-09-18",
+     "source": "https://www.techtimes.com/articles/327774/20260920/graham-act-gives-trump-five-year-tariff-power-over-india-russian-oil-hits-record.htm"
+    },
+    {
+     "what": "Indian refiners may cut Russian crude imports amid US tariff threat",
+     "where": "India",
+     "date": "2026-09-21",
+     "source": "BusinessLine, 09-21: 'Indian refiners may cut Russian crude oil imports amid US tariff threats'"
+    },
+    {
+     "what": "ONGC strikes gas in Mahanadi deepwater under Samudra Manthan",
+     "where": "India",
+     "date": "2026-09-21",
+     "source": "BusinessLine, 09-21: 'ONGC strikes gas in Mahanadi deepwater under Samudra Manthan'"
+    },
+    {
+     "what": "EIL in early talks with Saudi Arabia and UAE for ~$1bn of oil infrastructure to bypass the Strait of Hormuz",
+     "where": "India/Gulf",
+     "date": "2026-09-19",
+     "source": "https://www.business-standard.com/industry/news/eil-expects-order-boost-as-gulf-seeks-to-bypass-strait-of-hormuz-126091900002_1.html"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "ENGINERSIN",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "EIL is in direct talks for engineering/consultancy work on Gulf pipeline and storage projects designed to bypass Hormuz, though deals are not yet signed",
+     "evidence": "https://www.business-standard.com/industry/news/eil-expects-order-boost-as-gulf-seeks-to-bypass-strait-of-hormuz-126091900002_1.html"
+    },
+    {
+     "symbol": "OIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Domestic E&P player benefits from the broader push for energy security as Russian-crude dependence becomes politically risky",
+     "evidence": "BusinessLine 09-21 refiners-may-cut-Russian-imports"
+    },
+    {
+     "symbol": "GESHIP",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Tanker owner has optionality on freight-rate upside as crude trade flows reroute away from sanctioned Russian cargoes",
+     "evidence": "https://www.techtimes.com/articles/327774/20260920/graham-act-gives-trump-five-year-tariff-power-over-india-russian-oil-hits-record.htm"
+    },
+    {
+     "symbol": "MRPL",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Refiner with Russian-crude processing exposure faces higher input costs if forced to cut discounted Russian barrels",
+     "evidence": "BusinessLine 09-21 refiners-may-cut-Russian-imports"
+    },
+    {
+     "symbol": "CHENNPETRO",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Refiner exposed to the same Russian-crude sourcing shift and cost pressure",
+     "evidence": "BusinessLine 09-21 refiners-may-cut-Russian-imports"
+    },
+    {
+     "symbol": "HINDPETRO",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "low",
+     "mechanism": "PSU refiner with some Russian-crude sourcing exposure faces margin risk from diversification away from discounted grades",
+     "evidence": "BusinessLine 09-21 refiners-may-cut-Russian-imports"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "textiles",
+   "status": "existing",
+   "name": "Textiles & apparel PLI",
+   "direction": "headwind",
+   "strength": 3,
+   "horizon": "near",
+   "continuity": "new",
+   "thesis": "Trump's Russia-sanctions bill triggered an immediate, tariff-fear-driven selloff in US-exposed textile exporters this week, a near-term risk that sits on top of (and currently overshadows) the sector's structural PLI tailwind.",
+   "drivers": [
+    {
+     "what": "Gokaldas Exports and other textile stocks drop up to 5% after Trump signs Russia sanctions bill into law",
+     "where": "India",
+     "date": "2026-09-21",
+     "source": "The Economic Times, 09-21: 'Trump's tariff tantrums return? Gokaldas Exports, other textile stocks drop up to 5% after Trump signs Russia sanctions bill'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "GOKEX",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "high",
+     "mechanism": "US-exposed apparel exporter, named directly as dropping on renewed tariff-war fear tied to the Russia sanctions law",
+     "evidence": "ET 09-21: 'Gokaldas Exports, other textile stocks drop up to 5%'"
+    },
+    {
+     "symbol": "ICIL",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "low",
+     "mechanism": "US-heavy home-textile exporter carries the same tariff-escalation exposure as other India-to-US apparel/textile names this week",
+     "evidence": "ET 09-21 tariff selloff report"
+    }
+   ],
+   "map_additions": []
+  }
+ ],
+ "outside_universe": [
+  {
+   "company": "HCL Technologies / India Chip (HCL-Foxconn JV)",
+   "theme": "semis",
+   "why": "JV targeting 40% of India's display-driver chip demand; HCL is not a universe constituent"
+  },
+  {
+   "company": "L&T Semiconductor Technologies (Larsen & Toubro)",
+   "theme": "semis",
+   "why": "Unveiled 40 chip products incl. India's first SiC chip for EVs at Semicon 2026; L&T itself is not in the universe"
+  },
+  {
+   "company": "Tata Consultancy Services",
+   "theme": "semis",
+   "why": "Launched custom chip-design services for automotive/semiconductor clients; not a universe constituent"
+  },
+  {
+   "company": "Reliance Industries",
+   "theme": "ev",
+   "why": "Named beneficiary of the extended battery-PLI deadline alongside Ola Electric; not a universe constituent"
+  },
+  {
+   "company": "RIR Power Electronics",
+   "theme": "semis",
+   "why": "Smallcap semiconductor stock reported jumping ~8% on Semicon 2026 sentiment; not a universe constituent"
+  }
+ ],
+ "overlay": {
+  "semis": [
+   {
+    "symbol": "SYRMA",
+    "via": "map_addition",
+    "mechanism": "EMS + testing player positioning into back-end semiconductor assembly; rallied alongside Kaynes/MosChip on Semicon sentiment",
+    "evidence": "ET 09-17 rally headline"
+   },
+   {
+    "symbol": "KAYNES",
+    "via": "order1_benefit",
+    "mechanism": "OSAT/EMS capacity directly qualifies for ISM 2.0 incentives; stock rallied on the Semicon 2026 news itself",
+    "evidence": "ET 09-17 rally headline"
+   },
+   {
+    "symbol": "MOSCHIP",
+    "via": "order1_benefit",
+    "mechanism": "Chip design house, direct beneficiary of India's push to move beyond assembly into design; rallied on Semicon news",
+    "evidence": "ET 09-17 rally headline"
+   }
+  ],
+  "defence": [
+   {
+    "symbol": "QUADFUTURE",
+    "via": "map_addition",
+    "mechanism": "",
+    "evidence": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+   },
+   {
+    "symbol": "BDL",
+    "via": "order1_benefit",
+    "mechanism": "Missile systems maker directly positioned for DRDO tech transfer and export-driven order growth under the eased OGEL",
+    "evidence": "Policy radar 2026-08-25"
+   },
+   {
+    "symbol": "DATAPATTNS",
+    "via": "order1_benefit",
+    "mechanism": "Defence electronics exporter benefits directly from the widened OGEL country coverage",
+    "evidence": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+   },
+   {
+    "symbol": "ZENTEC",
+    "via": "order1_benefit",
+    "mechanism": "Defence electronics systems maker, export-ready under simplified SOP",
+    "evidence": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+   },
+   {
+    "symbol": "COCHINSHIP",
+    "via": "order1_benefit",
+    "mechanism": "Naval shipbuilder with export potential unlocked by the eased OGEL framework",
+    "evidence": "https://www.business-standard.com/india-news/govt-eases-defence-export-sop-widens-open-general-export-licence-ambit-126082801011_1.html"
+   }
+  ],
+  "ev": [
+   {
+    "symbol": "OLAELEC",
+    "via": "map_addition",
+    "mechanism": "Pure-play e2w OEM directly benefits from PM E-DRIVE subsidy extension to FY28 and its own battery-PLI deadline extension",
+    "evidence": "https://www.autocarindia.com/industry/pm-e-drive-subsidy-for-electric-two-wheelers-extended-to-march-2028-440459"
+   },
+   {
+    "symbol": "ATHERENERG",
+    "via": "map_addition",
+    "mechanism": "Pure-play e2w OEM, direct beneficiary of the demand-incentive extension and raised scheme outlay",
+    "evidence": "https://www.autocarindia.com/industry/pm-e-drive-subsidy-for-electric-two-wheelers-extended-to-march-2028-440459"
+   },
+   {
+    "symbol": "EXIDEIND",
+    "via": "order1_benefit",
+    "mechanism": "Battery maker signed a direct Europe export growth tie-up, adding revenue beyond the domestic PLI runway",
+    "evidence": "BusinessLine 09-16"
+   }
+  ],
+  "datacentre": [
+   {
+    "symbol": "WAAREERTL",
+    "via": "map_addition",
+    "mechanism": "New wholly-owned subsidiaries (Sunstar, Aurovault) formed specifically to build/operate hyperscale and AI-ready data centres powered by captive solar; not yet operational",
+    "evidence": "https://www.datacenterdynamics.com/en/news/indian-renewable-firm-waaree-forms-new-data-center-subsidiary/"
+   }
+  ],
+  "renewables": [
+   {
+    "symbol": "HEG",
+    "via": "map_addition",
+    "mechanism": "Graphite-electrode maker diversifying into lithium-ion battery banks won a direct, signed telecom backup-power order",
+    "evidence": "ET 09-21 rally headline"
+   }
+  ],
+  "railways": [
+   {
+    "symbol": "GPTINFRA",
+    "via": "map_addition",
+    "mechanism": "",
+    "evidence": "BusinessLine, 09-20: 'Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency'"
+   },
+   {
+    "symbol": "RVNL",
+    "via": "order1_benefit",
+    "mechanism": "Rail infrastructure EPC arm of Indian Railways, direct executor of newly approved projects",
+    "evidence": "BusinessLine 09-20"
+   },
+   {
+    "symbol": "IRCON",
+    "via": "order1_benefit",
+    "mechanism": "Direct executor of Cabinet-approved multi-tracking projects",
+    "evidence": "Policy radar 2026-08-19"
+   }
+  ]
+ },
+ "validation": {
+  "proposed": 35,
+  "accepted": 35,
+  "rejected": [],
+  "themes_dropped": [],
+  "hallucinated": 0,
+  "hallucination_rate": 0.0
+ }
+}
