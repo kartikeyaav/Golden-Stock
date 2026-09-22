@@ -90,3 +90,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-16,VIYASH,SELL,all,254,240.94,-6225.54,stop hit
 2026-09-16,USHAMART,SELL,all,299,464.8,-10569.65,stop hit
 2026-09-16,NEULANDLAB,SELL,all,6,21863.21,-4390.74,stop hit
+2026-09-22,ACMESOLAR,SELL,partial,13,467.35,1265.55,partial at 2.5R

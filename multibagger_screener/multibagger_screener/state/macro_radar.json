@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-09-21T16:36:28",
+ "generated": "2026-09-22T15:02:09",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9613,
+ "headlines_read": 9804,
  "policy_hits": 16,
  "stories": 15,
  "themes": {
   "railways": {
-   "pressure": 0.325,
-   "pos_flow": 0.2909,
+   "pressure": 0.316,
+   "pos_flow": 0.2814,
    "neg_flow": 0.0,
    "n_scored": 4,
    "n_attn": 1,
@@ -29,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1451
+     "weight": 0.1404
     },
     {
      "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0522
+     "weight": 0.0505
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -63,7 +63,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0522
+     "weight": 0.0505
     }
    ]
   },
@@ -84,8 +84,8 @@
    "top": []
   },
   "defence": {
-   "pressure": 0.145,
-   "pos_flow": 0.116,
+   "pressure": 0.141,
+   "pos_flow": 0.1122,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -105,7 +105,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0702
+     "weight": 0.0679
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -122,13 +122,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0458
+     "weight": 0.0443
     }
    ]
   },
   "hospital": {
-   "pressure": 0.056,
-   "pos_flow": 0.0429,
+   "pressure": 0.054,
+   "pos_flow": 0.0415,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -148,7 +148,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0429
+     "weight": 0.0415
     }
    ]
   },
@@ -205,8 +205,8 @@
    ]
   },
   "capex": {
-   "pressure": 0.088,
-   "pos_flow": 0.0685,
+   "pressure": 0.086,
+   "pos_flow": 0.0662,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -227,13 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0685
+     "weight": 0.0662
     }
    ]
   },
   "ev": {
-   "pressure": 0.168,
-   "pos_flow": 0.1363,
+   "pressure": 0.163,
+   "pos_flow": 0.1319,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -254,7 +254,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0685
+     "weight": 0.0662
     },
     {
      "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -271,7 +271,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.0679
+     "weight": 0.0657
     }
    ]
   }
@@ -292,7 +292,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1451
+   "weight": 0.1404
   },
   {
    "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
@@ -326,7 +326,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0978
+   "weight": 0.0946
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -344,7 +344,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0886
+   "weight": 0.0857
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -361,7 +361,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0702
+   "weight": 0.0679
   },
   {
    "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
@@ -379,7 +379,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0685
+   "weight": 0.0662
   },
   {
    "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -396,7 +396,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0679
+   "weight": 0.0657
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -413,7 +413,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0639
+   "weight": 0.0619
   },
   {
    "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -430,7 +430,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0505
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -447,7 +447,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0505
   },
   {
    "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
@@ -481,7 +481,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0458
+   "weight": 0.0443
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -498,7 +498,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0429
+   "weight": 0.0415
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -515,7 +515,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0417
+   "weight": 0.0404
   },
   {
    "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
@@ -532,7 +532,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0414
+   "weight": 0.0401
   }
  ]
 }

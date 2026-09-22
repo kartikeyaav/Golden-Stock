@@ -1,55 +1,50 @@
-# Daily scan — 2026-09-21 16:36
-
-!! HEALTH: AI analyst last run FAILED (AUTH: run `claude` then `/login` (see scripts/ai_analyst.py header)) — verdicts missing, review cards manually
+# Daily scan — 2026-09-22 15:02
 
 Book: 5/12 slots (+18 pre-cap running off) · heat 28.8% of capital at risk · Healthcare 30% (over the 25% intent)
 
-20 alert(s):
+21 alert(s):
 
-- **BUY CANDIDATE** [NO VCP BASE]: AEGISVOPAK  (WATCH -> CONFIRMED)  · conv 48
-- **BUY CANDIDATE** [NO VCP BASE]: PTCIL  (WATCH -> CONFIRMED)  · conv 68
-- **WATCH CLOSELY**: SARDAEN  (WATCH -> ANTICIPATION)
-- **RE-ENTRY WINDOW** [NO VCP BASE]: SYRMA  (EXTENDED -> CONFIRMED)  · conv 68
-- **WATCH CLOSELY**: LINDEINDIA  (WATCH -> ANTICIPATION)
-- **WATCH CLOSELY**: LUPIN  (WATCH -> ANTICIPATION)
-- **WATCH CLOSELY**: NTPCGREEN  (WATCH -> ANTICIPATION)
-- **RE-ENTRY WINDOW** [NO VCP BASE]: AVALON  (EXTENDED -> CONFIRMED)  · conv 70
-- **BUY CANDIDATE** [NO VCP BASE]: BBOX  (WATCH -> CONFIRMED)  · conv 55
-- **BUY CANDIDATE** [AWAITING TRIGGER]: JAYNECOIND  (WATCH -> CONFIRMED)  · conv 25 @80% cov · VETOED
-- **RE-ENTRY WINDOW** [AWAITING TRIGGER]: LUMAXTECH  (EXTENDED -> CONFIRMED)  · conv 70
-- **BUY CANDIDATE** [NO VCP BASE]: OPTIEMUS  (WATCH -> CONFIRMED)  · conv 51
-- **BUY CANDIDATE** [NO VCP BASE]: SHAILY  (WATCH -> CONFIRMED)  · conv 58
-- **RE-ENTRY WINDOW** [NO VCP BASE]: WELENT  (EXTENDED -> CONFIRMED)  · conv 50
-- **BUY CANDIDATE** [NO VCP BASE]: ASHIANA  (WATCH -> CONFIRMED)  · conv 58
-- **BUY CANDIDATE** [NO VCP BASE]: NPST  (WATCH -> CONFIRMED)  · conv 54
-- **BUY CANDIDATE** [AWAITING TRIGGER]: PANAMAPET  (WATCH -> CONFIRMED)  · conv 64
-- **RE-ENTRY WINDOW** [NO VCP BASE]: TALBROAUTO  (EXTENDED -> CONFIRMED)  · conv 56
-- **BUY CANDIDATE** [NO VCP BASE]: TARSONS  (WATCH -> CONFIRMED)  · conv 40
-- **WATCH CLOSELY**: ICEMAKE  (WATCH -> ANTICIPATION)
+- **BUY CANDIDATE** [NO VCP BASE]: CPPLUS  (WATCH -> CONFIRMED)  · conv 70
+- **BUY CANDIDATE** [NO VCP BASE]: BLUEJET  (WATCH -> CONFIRMED)  · conv 61 @80% cov
+- **BUY CANDIDATE** [NO VCP BASE]: GABRIEL  (WATCH -> CONFIRMED)  · conv 51
+- **BUY CANDIDATE** [NO VCP BASE]: HFCL  (WATCH -> CONFIRMED)  · conv 69
+- **RE-ENTRY WINDOW** [NO VCP BASE]: PVRINOX  (EXTENDED -> CONFIRMED)  · conv 61
+- **RE-ENTRY WINDOW** [NO VCP BASE]: APARINDS  (EXTENDED -> CONFIRMED)  · conv 69
+- **BUY CANDIDATE** [NO VCP BASE]: OBEROIRLTY  (WATCH -> CONFIRMED)  · conv 60
+- **BUY CANDIDATE** [NO VCP BASE]: PHOENIXLTD  (WATCH -> CONFIRMED)  · conv 59
+- **BUY CANDIDATE** [NO VCP BASE]: IDEA  (WATCH -> CONFIRMED)  · conv 59
+- **BUY CANDIDATE** [AWAITING TRIGGER]: APOLLO  (WATCH -> CONFIRMED)  · conv 25 · VETOED
+- **WATCH CLOSELY**: BLACKBUCK  (WATCH -> ANTICIPATION)
+- **BUY CANDIDATE** [NO VCP BASE]: RAIN  (WATCH -> CONFIRMED)  · conv 55
+- **BUY CANDIDATE** [AWAITING TRIGGER]: SUNFLAG  (WATCH -> CONFIRMED)  · conv 56
+- **BUY CANDIDATE** [NO VCP BASE]: ITDC  (WATCH -> CONFIRMED)  · conv 48
+- **BUY CANDIDATE** [AWAITING TRIGGER]: KOLTEPATIL  (WATCH -> CONFIRMED)  · conv 53
+- **BUY CANDIDATE** [NO VCP BASE]: 63MOONS  (WATCH -> CONFIRMED)  · conv 41
+- **BUY CANDIDATE** [NO VCP BASE]: STEELCAS  (WATCH -> CONFIRMED)  · conv 60
+- **BUY CANDIDATE** [NO VCP BASE]: GREENPLY  (WATCH -> CONFIRMED)  · conv 63
+- **BUY CANDIDATE** [NO VCP BASE]: WINDMACHIN  (WATCH -> CONFIRMED)  · conv 25 · VETOED
+- **BUY CANDIDATE** [AWAITING TRIGGER]: SPORTKING  (WATCH -> CONFIRMED)  · conv 71
+- **BUY CANDIDATE** [NO VCP BASE]: ARMANFIN  (WATCH -> CONFIRMED)  · conv 62
 
-Minor shifts: ACMESOLAR CONFIRMED->EXTENDED, ABSLAMC CONFIRMED->BROKEN, ANGELONE WATCH->BROKEN, BANDHANBNK WATCH->BROKEN, BBTC WATCH->BROKEN, EIHOTEL ANTICIPATION->BROKEN, ENGINERSIN CONFIRMED->EXTENDED, ERIS BROKEN->WATCH, GRAVITA BROKEN->WATCH, GESHIP WATCH->EXTENDED, JMFINANCIL BROKEN->WATCH, JYOTICNC WATCH->EXTENDED, KFINTECH ANTICIPATION->BROKEN, PVRINOX CONFIRMED->EXTENDED, PFIZER WATCH->BROKEN, SONATSOFTW BROKEN->WATCH, TRAVELFOOD BROKEN->WATCH, ATGL CONFIRMED->WATCH, BSE BROKEN->WATCH, BAJAJHFL WATCH->BROKEN, BALKRISIND WATCH->BROKEN, BHARATFORG BROKEN->WATCH, BHARTIHEXA ANTICIPATION->BROKEN, BIOCON WATCH->BROKEN, COROMANDEL WATCH->BROKEN, FLUOROCHEM CONFIRMED->WATCH, JSWENERGY BROKEN->WATCH, LAURUSLABS CONFIRMED->EXTENDED, MANKIND BROKEN->WATCH, MARICO BROKEN->WATCH, OFSS CONFIRMED->WATCH, POLYCAB BROKEN->WATCH, SBICARD WATCH->BROKEN, ARVIND CONFIRMED->WATCH, CUPID CONFIRMED->WATCH, EMBDL BROKEN->WATCH, ENTERO CONFIRMED->EXTENDED, GPPL ANTICIPATION->WATCH, HEMIPROP WATCH->BROKEN, JAMNAAUTO BROKEN->WATCH, RELAXO WATCH->BROKEN, SMLMAH CONFIRMED->EXTENDED, LOTUSDEV EXTENDED->WATCH, SAMHI WATCH->BROKEN, SANSERA CONFIRMED->EXTENDED, ANUP BROKEN->WATCH, V2RETAIL BROKEN->WATCH, LMW CONFIRMED->WATCH, SJS CONFIRMED->WATCH, UNIMECH CONFIRMED->EXTENDED, DODLA WATCH->BROKEN, SIS CONFIRMED->WATCH, CARERATING WATCH->BROKEN, CENTUM CONFIRMED->EXTENDED, EMUDHRA WATCH->EXTENDED, KOLTEPATIL CONFIRMED->WATCH, ZOTA BROKEN->WATCH, UNICHEMLAB CONFIRMED->WATCH, POCL BROKEN->WATCH, DDEVPLSTIK BROKEN->WATCH, PRABHA EXTENDED->WATCH, ORISSAMINE BROKEN->WATCH, MUFIN CONFIRMED->WATCH, PROTEAN BROKEN->WATCH, CANTABIL ANTICIPATION->WATCH, JINDRILL WATCH->BROKEN, SURAKSHA CONFIRMED->EXTENDED, RGL WATCH->EXTENDED, KROSS CONFIRMED->EXTENDED, MONTECARLO WATCH->BROKEN, LAXMIDENTL BROKEN->WATCH
-
-1 BUY TRIGGER(s) — the backtested entry fired (VCP pivot cleared on volume):
-
-- **BUY TRIGGER** [VALIDATED]: SOMANYCERA  (pivot 576.8 cleared on 2.1x vol)
+Minor shifts: ACUTAAS CONFIRMED->WATCH, BANDHANBNK BROKEN->WATCH, DEEPAKFERT WATCH->BROKEN, DEEPAKNTR WATCH->BROKEN, FINCABLES CONFIRMED->EXTENDED, GESHIP EXTENDED->WATCH, NIVABUPA BROKEN->WATCH, PNBHOUSING CONFIRMED->WATCH, ZENTEC WATCH->BROKEN, ABCAPITAL CONFIRMED->WATCH, AJANTPHARM CONFIRMED->WATCH, ALKEM ANTICIPATION->WATCH, BSE WATCH->BROKEN, BIOCON BROKEN->WATCH, GODREJIND WATCH->BROKEN, HDBFS WATCH->BROKEN, HEXT WATCH->BROKEN, POWERINDIA WATCH->BROKEN, HONAUT WATCH->BROKEN, LUPIN ANTICIPATION->WATCH, MPHASIS WATCH->BROKEN, NHPC ANTICIPATION->WATCH, SCHAEFFLER WATCH->BROKEN, SAIL CONFIRMED->BROKEN, BBOX CONFIRMED->WATCH, GODREJAGRO CONFIRMED->WATCH, JAYNECOIND CONFIRMED->WATCH, LUMAXTECH CONFIRMED->EXTENDED, OPTIEMUS CONFIRMED->EXTENDED, PCJEWELLER WATCH->EXTENDED, SHAILY CONFIRMED->WATCH, STLTECH CONFIRMED->EXTENDED, VMART CONFIRMED->WATCH, INNOVACAP CONFIRMED->EXTENDED, RPGLIFE CONFIRMED->WATCH, SMSPHARMA WATCH->EXTENDED, PRABHA WATCH->EXTENDED, SOMANYCERA CONFIRMED->EXTENDED, GOCLCORP CONFIRMED->WATCH, YATRA BROKEN->WATCH, JINDRILL BROKEN->WATCH, IKIO CONFIRMED->WATCH, SIGNPOST WATCH->BROKEN, RGL EXTENDED->WATCH
 
 ## News radar — material filings since last scan
 
-- + **DIACABS** [CONFIRMED] RS 99 (order win x2, CONFLUENCE): Diamond Power Infrastructure Limited has informed the Exchange about Bagging/Receiving of orders/con
-- + **BEML** [CONFIRMED] RS 66 (order win, CONFLUENCE): BEML LIMITED has informed the Exchange about Bagging/Receiving of orders/contracts  (Sub-para 4-Para
-- + **SHILPAMED** [EXTENDED] RS 100 (approval, pos): Shilpa Medicare Limited has informed the Exchange about USFDA Inspection of Shilpa Medicare Limited,
-- + **ACMESOLAR** [EXTENDED] RS 92 (M&A/JV x2, pos): ACME Solar Holdings Limited has informed the Exchange regarding Amalgamation/ Merger |SUBJECT: Amalg
-- + **THYROCARE** [WATCH] RS 85 (M&A/JV x2, pos): Thyrocare Technologies Limited has informed the Exchange regarding Acquisition (including agreement 
-- + **HSCL** [WATCH] RS 84 (M&A/JV x3, pos): Himadri Speciality Chemical Limited has informed the Exchange regarding De-merger |SUBJECT: De-merge
-- ...and 18 more on the dashboard radar panel
+- + **ATHERENERG** [CONFIRMED] RS 98 (M&A/JV, CONFLUENCE): Ather Energy Limited has informed the Exchange regarding Acquisition of to be incorporated companies
+- + **EMIL** [CONFIRMED] RS 94 (expansion, CONFLUENCE): Electronics Mart India Limited has informed the Exchange about Commencement of commercial production
+- + **GOODLUCK** [CONFIRMED] RS 87 (M&A/JV, CONFLUENCE): Mahesh Chandra Garg?has Submitted to the Exchange a copy of Disclosure under Regulation 10 (5) of th
+- + **CEIGALL** [CONFIRMED] RS 80 (expansion, CONFLUENCE): Ceigall India Limited has informed the Exchange regarding a press release titled "Ceigall India s Ma
+- + **STYLAMIND** [WATCH] RS 92 (expansion, pos): Stylam Industries Limited has informed the Exchange about Commencement of commercial production. |SU
+- + **SHAREINDIA** [EXTENDED] RS 91 (M&A/JV, pos): SHARE INDIA SECURITIES LIMITED has informed the Exchange regarding Acquisition of to be incorporated
+- ...and 22 more on the dashboard radar panel
 
 _News moves attention, never entries — trades stay technical._
 
 ## Policy radar — government decisions moving a whole theme
 
-- + **railways** (+0.33 from 4 event(s)): Indian Railways approves multiple infrastructure, safety projects to enhance operational effici
+- + **railways** (+0.32 from 4 event(s)): Indian Railways approves multiple infrastructure, safety projects to enhance operational effici
   -> BEML, HBLENGINE, IRCON, JWL, RAILTEL, TITAGARH +5 more
-- + **ev** (+0.17 from 2 event(s)): Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out
+- + **ev** (+0.16 from 2 event(s)): Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out
   -> BELRISE, JBMA, OLECTRA, SONACOMS, ENDURANCE, EXIDEIND +6 more
 - + **defence** (+0.14 from 2 event(s)): Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach
   -> DATAPATTNS, GRSE, PTCIL, ZENTEC, BDL, COCHINSHIP +9 more
@@ -62,611 +57,777 @@ _Policy moves the catalyst dimension by at most 0.12 and moves nothing else. Ent
 
 ```
 ========================================================================
-AEGISVOPAK  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 48/100 (coverage 100%)
-  Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.45  qtr PAT YoY -13%; decelerating (TTM 43% < 3y 1472%); latest quarter did not beat its year-ago quarter; sales +12% YoY, 5 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.79  RS percentile 85; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.486  FII 6.07->5.35% (-0.72pp); DII 5.03->5.3% (+0.27pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.328  debt rising fast (+57% over 3y); equity capital +110700% over 3y — check bonus/split vs genuine dilution
-    [  10] catalyst                   0.321  lead: news; 20 scoreable of 29 read across 9 distinct stories; events: M&A/JV; sentiment positive (5+/1-); 9 filtered (3 datapage, 3 listicle, 2 low relevance, 1 price_move) (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.05  froth: P/E 130 on established earnings
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 8.72% over 8w, price 34.85% vs 30wMA, pos-in-52w-range 0.984)
-  Base       : depth 3.66%, 0d since 52w high, price 0.83% below base high (320.95)
-  RS vs bench: 3m 1.33 / 6m 1.671 / 12m 1.361  blend 1.547  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +11.73% (2.48 ATRs)
-  VCP        : none detected
-
-  Read:
-    - Stage 2 + full 8-point trend template
-
-  News (30d)  : 29 headlines | catalyst 0.321 | themes: none
-    [NSE 18-Sep] Credit rating |SUBJECT: Credit rating
-    [NSE 15-Sep] Aegis Vopak Terminals Limited has informed the Exchange about Schedule of meet |SUBJECT: A
-    [NSE 14-Sep] Axis Trustee Services Limited has informed the exchange for Aegis Vopak Terminals Limited 
-    [18-Sep] Aegis Vopak Terminals Credit Rating IND AA Positive 2026 - Kalkine India (Kalkine India)
-    [17-Sep] Aegis Vopak Terminals Q2 2026 Earnings: Revenue Rises 16.96% YoY as Stock Gains 4.63% - Guidanc (siam.in)
-    [17-Sep] Aegis Vopak Terminals Ltd Short Term MTF Research Recommendation - HDFC Sky (HDFC Sky)
-    [16-Sep] Aegis Vopak Terminals: Best Stock in Its Sector? Key Metrics - Univest (Univest)
-
-  Entry plan (two-lot, risk-normalized):
-    entry ~318.3  stop 284.58 (2.5 x ATR(14))  risk/share 33.72
-    size: 370 sh (~117,771 INR, 12,478 INR at risk)
-    trading lot 185 sh: partial 33% at 402.61 (2.5R), then trail daily close below 50-DMA
-    core lot    185 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
-
-========================================================================
-PTCIL  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 68/100 (coverage 100%)
-  Archetype: Hyper-growth
-    [  20] earnings_inflection        1.0  qtr PAT YoY +200%; accelerating (TTM 103% > 3y 59%); 4 consecutive quarter(s) above their year-ago level; sales +98% YoY, 8 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.771  RS percentile 80; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.586  Defence & aerospace ranks 48/100 on heat across the 18 themes; also Nuclear & new energy (theme map, price-derived)
-    [  12] smart_money                0.632  FII 3.41->3.95% (+0.54pp); DII 8.51->9.35% (+0.84pp); both FII and DII accumulating; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.575  negative operating cash flow
-    [  10] catalyst                   0.446  lead: news (Rs603 Cr); 16 scoreable of 25 read across 9 distinct stories; events: none; sentiment positive (5+/0-); 9 filtered (1 datapage, 2 listicle, 2 price_move, 4 procedural); +0.017 from policy tailwind on defence (pressure +0.14 from 2 government/regulatory event(s)): Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.05  froth: P/E 272 on established earnings
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 5.93% over 8w, price 22.4% vs 30wMA, pos-in-52w-range 0.81)
-  Base       : depth 8.58%, 11d since 52w high, price 7.56% below base high (24125.0)
-  RS vs bench: 3m 1.282 / 6m 1.309 / 12m 1.673  blend 1.455  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +10.34% (2.48 ATRs)
-  VCP        : none detected
-
-  Read:
-    - Stage 2 + full 8-point trend template
-
-  News (30d)  : 25 headlines | catalyst 0.446 | themes: Defence & aerospace, Nuclear & new energy
-    [31-Aug] PTC Industries Q2 2026 Earnings: Revenue Jumps 95.7% YoY to ₹602.78 Crore; EPS at ₹67.74 - ROIC (siam.in)
-    [17-Sep] PTC Industries Share: Bull Case vs Bear Case for 2026 - Univest (Univest)
-    [29-Aug] PTC Industries Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - Value Research (Value Research)
-    [24-Aug] PTC Industries Share Price: Fundamentals and Sector View - Univest (Univest)
-
-  Entry plan (two-lot, risk-normalized):
-    entry ~22300.0  stop 20194.64 (2.5 x ATR(14))  risk/share 2105.36
-    size: 5 sh (~111,500 INR, 10,527 INR at risk)
-    trading lot 2 sh: partial 33% at 27563.39 (2.5R), then trail daily close below 50-DMA
-    core lot    3 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
-
-========================================================================
-SYRMA  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 68/100 (coverage 100%)
-  Archetype: Hyper-growth
-    [  20] earnings_inflection        1.0  qtr PAT YoY +112%; accelerating (TTM 84% > 3y 39%); 8 consecutive quarter(s) above their year-ago level; sales +68% YoY, 4 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.842  RS percentile 98; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.488  Electronics manufacturing (EMS) ranks 34/100 on heat across the 18 themes (theme map, price-derived)
-    [  12] smart_money                0.492  FII 7.02->7.51% (+0.49pp); DII 16.38->15.9% (-0.48pp); foreign accumulation into domestic distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.723  clean balance sheet
-    [  10] catalyst                   0.389  lead: news (Rs830 Cr); 33 scoreable of 58 read across 12 distinct stories; events: expansion; sentiment positive (11+/0-); 25 filtered (5 datapage, 9 listicle, 8 price_move, 3 procedural); +0.016 from policy tailwind on ems (pressure +0.13 from 1 government/regulatory event(s)): Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.25  P/E 90 — expensive
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 19.99% over 8w, price 41.58% vs 30wMA, pos-in-52w-range 0.955)
-  Base       : depth 8.62%, 1d since 52w high, price 2.87% below base high (1764.0)
-  RS vs bench: 3m 1.32 / 6m 2.254 / 12m 2.191  blend 2.229  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +16.98% (3.2 ATRs)
-  VCP        : none detected
-
-  Read:
-    - Stage 2 + full 8-point trend template
-
-  News (30d)  : 58 headlines | catalyst 0.389 | themes: Electronics manufacturing (EMS)
-    [NSE 21-Sep] SYRMA SGS TECHNOLOGY LIMITED has informed the Exchange about Change in Directors/KMP/SMP/A
-    [04-Sep] Syrma SGS sees Elemaster JV revenue reaching $100 million in 3–5 years - CNBC TV18 (CNBC TV18)
-    [07-Sep] Record High: Syrma SGS Technology shares extend gains for third-consecutive day, surge nearly 1 (CNBC TV18)
-    [04-Sep] Syrma SGS weighs semiconductor opportunity with caution - BusinessLine (BusinessLine)
-    [04-Sep] Syrma SGS Technology Ltd. Key Financial Ratios – Valuation, Profitability & More - Value Resear (Value Research)
-
-  Entry plan (two-lot, risk-normalized):
-    entry ~1713.3  stop 1518.73 (2.5 x ATR(14))  risk/share 194.57
-    size: 64 sh (~109,651 INR, 12,453 INR at risk)
-    trading lot 32 sh: partial 33% at 2199.73 (2.5R), then trail daily close below 50-DMA
-    core lot    32 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
-
-========================================================================
-AVALON  [CONFIRMED]   as of 2026-09-21
+CPPLUS  [CONFIRMED]   as of 2026-09-22
 ========================================================================
   >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
   Conviction: 70/100 (coverage 100%)
-  Archetype: Turnaround
-    [  20] earnings_inflection        1.0  qtr PAT YoY +150%; accelerating (TTM 67% > 3y 28%); 8 consecutive quarter(s) above their year-ago level; sales +50% YoY, 8 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.847  RS percentile 99; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.488  Electronics manufacturing (EMS) ranks 34/100 on heat across the 18 themes (theme map, price-derived)
-    [  12] smart_money                0.517  FII 10.04->7.81% (-2.23pp); DII 22.84->24.72% (+1.88pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.88  deleveraging: debt 342 -> 213 Cr
-    [  10] catalyst                   0.494  lead: capex/investment (Rs1,000 Cr); 21 scoreable of 34 read across 13 distinct stories; events: M&A/JV, capex/investment; sentiment positive (7+/0-); 13 filtered (2 datapage, 2 listicle, 8 price_move, 1 procedural); +0.016 from policy tailwind on ems (pressure +0.13 from 1 government/regulatory event(s)): Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.05  froth: P/E 125 on established earnings
+  Archetype: Turnaround + Quality
+    [  20] earnings_inflection        0.963  qtr PAT YoY +200%; accelerating (TTM 215% > 3y 48%); 3 consecutive quarter(s) above their year-ago level; sales +90% YoY, 5 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.844  RS percentile 98; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.971  FII 4.44->6.35% (+1.91pp); DII 10.06->13.61% (+3.55pp); both FII and DII accumulating; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.863  deleveraging: debt 427 -> 256 Cr; equity capital +500% over 3y — check bonus/split vs genuine dilution
+    [  10] catalyst                   0.314  lead: news; 14 scoreable of 25 read across 10 distinct stories; events: fund raise; sentiment neutral (3+/1-); 11 filtered (2 datapage, 1 fluff, 3 listicle, 3 price_move, 2 procedural) (news-based v0)
+    [   8] governance                 0.4  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); promoter stake 77.12->74.71% (check WHY: lockup expiry / PSU divestment / genuine exit); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.5  P/E 90 distorted by recovering earnings base (turnaround) — trailing P/E not yet meaningful
 
-  Stage      : Stage 2 (advancing)  (30wMA slope 26.96% over 8w, price 55.15% vs 30wMA, pos-in-52w-range 0.928)
-  Base       : depth 15.27%, 1d since 52w high, price 5.05% below base high (2618.0)
-  RS vs bench: 3m 1.485 / 6m 2.779 / 12m 2.76  blend 2.771  improving: False
+  Stage      : Stage 2 (advancing)  (30wMA slope 23.81% over 8w, price 23.89% vs 30wMA, pos-in-52w-range 0.845)
+  Base       : depth 20.59%, 28d since 52w high, price 10.86% below base high (4094.0)
+  RS vs bench: 3m 1.047 / 6m 2.209 / 12m 2.738  blend 2.421  improving: False
   Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +22.38% (2.99 ATRs)
+  vs 50-DMA  : +1.81% (0.4 ATRs)
   VCP        : none detected
 
   Read:
     - Stage 2 + full 8-point trend template
 
-  News (30d)  : 34 headlines | catalyst 0.494 | themes: Electronics manufacturing (EMS)
-    [04-Sep] Zollner enters India with Avalon JV, to invest ₹1,000 crore in TN unit - Business Standard (Business Standard)
-    [04-Sep] Avalon Technologies, Zollner Elektronik AG form strategic JV for advanced electronics manufactu (The Economic Times)
-    [09-Sep] Avalon Technologies Q2 FY27: Date and Outlook - Univest (Univest)
-    [04-Sep] Avalon Technologies forms a JV with a European EMS co for PCB assembly - The Times of India (The Times of India)
+  News (30d)  : 25 headlines | catalyst 0.314 | themes: none
+    !! EVENT RISK [results/board mtg, 17-Sep]: The Exchange had sought clarification from Aditya Infotech Limited for the quarter ended 30-Jun-2026 with resp — binary event risk near a breakout, check the date before sizing
+    [NSE 22-Sep] Aditya Infotech Limited has informed the Exchange regarding Outcome of QIP Committee Meeti
+    [NSE 22-Sep] Aditya Infotech Limited has informed the Exchange about qualified Institutional Placement 
+    [NSE 17-Sep] The Exchange had sought clarification from Aditya Infotech Limited for the quarter ended 3
+    [21-Sep] Aditya Infotech Wins Strong Shareholder Backing for Fundraising via Securities Issue - The Glob (The Globe and Mail)
+    [04-Sep] Aditya Infotech Ltd Key Financial Ratios – Valuation, Profitability & More - valueresearchonlin (valueresearchonline.com)
+    [27-Aug] Trade Spotlight: How should you trade Aditya Infotech, Nykaa, Cochin Shipyard, SAIL, Jindal Ste (Moneycontrol.com)
+    [20-Sep] Aditya Infotech shareholders approve special resolution for fund raising - scanx.trade (scanx.trade)
 
-  Entry plan : SKIP — ATR stop would be 15.3% wide — beyond the 12.0% hard cap; setup is untradeably volatile (Design Law #7: skip, don't clamp)
+  Entry plan (two-lot, risk-normalized):
+    entry ~3649.5  stop 3246.86 (2.5 x ATR(14))  risk/share 402.64
+    size: 31 sh (~113,134 INR, 12,482 INR at risk)
+    trading lot 15 sh: partial 33% at 4656.11 (2.5R), then trail daily close below 50-DMA
+    core lot    16 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
 
-NEWS RISK — 1 negative filing(s) in the last 90d. Read them before acting.
 ========================================================================
-BBOX  [CONFIRMED]   as of 2026-09-21
+BLUEJET  [CONFIRMED]   as of 2026-09-22
 ========================================================================
   >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 55/100 (coverage 100%)
+  Conviction: 61/100 (coverage 80%)
   Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.415  qtr PAT YoY +19%; decelerating (TTM 4% < 3y 80%); 2 consecutive quarter(s) above their year-ago level; sales +24% YoY, 4 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.821  RS percentile 93; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.833  FII 4.22->4.69% (+0.47pp); DII 0.04->3.41% (+3.37pp); both FII and DII accumulating; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.38  debt rising fast (+84% over 3y)
-    [  10] catalyst                   0.15  lead: distress; 14 scoreable of 15 read across 14 distinct stories; events: distress; sentiment neutral (1+/3-); 1 filtered (1 listicle) (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.95  P/E 52 cheaper than growth (PEG 0.65)
+    [  20] rs_and_stage               0.721  RS percentile 68; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.803  Pharma CDMO & API ranks 79/100 on heat across the 18 themes (theme map, price-derived)
+    [  12] smart_money                0.654  FII 1.14->0.63% (-0.51pp); DII 4.65->9.11% (+4.46pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.717  clean balance sheet
+    [  10] catalyst                   0.278  lead: news; 7 scoreable of 12 read across 7 distinct stories; events: none; sentiment positive (2+/0-); 5 filtered (2 datapage, 1 listicle, 2 procedural) (news-based v0)
+    [   8] governance                 0.4  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); promoter stake 79.81->73.15% (check WHY: lockup expiry / PSU divestment / genuine exit); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.25  P/E 79 — expensive
 
-  Stage      : Stage 2 (advancing)  (30wMA slope 9.96% over 8w, price 9.02% vs 30wMA, pos-in-52w-range 0.588)
-  Base       : depth 35.71%, 76d since 52w high, price 24.63% below base high (1103.0)
-  RS vs bench: 3m 0.871 / 6m 1.631 / 12m 1.963  blend 1.763  improving: False
+  Stage      : Stage 2 (advancing)  (30wMA slope 9.14% over 8w, price 18.09% vs 30wMA, pos-in-52w-range 0.713)
+  Base       : depth 53.1%, 238d since 52w high, price 15.24% below base high (692.9)
+  RS vs bench: 3m 1.165 / 6m 1.562 / 12m 0.882  blend 1.29  improving: False
   Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +7.74% (1.59 ATRs)
+  vs 50-DMA  : +0.44% (0.17 ATRs)
   VCP        : none detected
 
   Read:
     - Stage 2 + full 8-point trend template
 
-  News (30d)  : 15 headlines | catalyst 0.15 | themes: none
-    !! RED FLAG: 'distress': One name led to another to crack the ‘black box’: How Express investigated Karnataka 
-    [NSE 17-Sep] Black Box Limited has informed the Exchange about Copy of Newspaper Publication |SUBJECT: 
-    [NSE 16-Sep] Black Box Limited has submitted the Exchange a copy Srutinizers report of  Annual General 
-    [NSE 16-Sep] Black Box Limited has informed the Exchange about Schedule of meet |SUBJECT: Analysts/Inst
-    [21-Sep] One name led to another to crack the ‘black box’: How Express investigated Karnataka jobs scam  (The Indian Express)
-    [20-Sep] How Black Box Data Is Used in Truck Accident Investigations - OCNJ Daily (OCNJ Daily)
-    [20-Sep] THE “BLACK BOX” ISSUE: ALGORITHMIC OPACITY, AUTOMATED DECISION-MAKING AND CONSTITUTIONAL RESPON (Legal Maestros)
-    [17-Sep] Black box justice is not inevitable — Marina Danielyan on AI, fairness and the future of legal  (Law Society of Scotland)
+  News (30d)  : 12 headlines | catalyst 0.278 | themes: Pharma CDMO & API
+    [NSE 21-Sep] Blue Jet Healthcare Limited has informed the Exchange regarding Proceedings of Annual Gene
+    [09-Sep] Blue Jet Healthcare Share Price: Good Buy After Q1 FY27 Results? - Univest (Univest)
+    [30-Aug] Blue Jet Healthcare Ltd Financials – Balance Sheet, Profit & Loss, Cash Flow - valueresearchonl (valueresearchonline.com)
+    [30-Aug] Blue Jet Healthcare Ltd Key Financial Ratios – Valuation, Profitability & More - valueresearcho (valueresearchonline.com)
+    [21-Sep] Blue Jet Healthcare declares Re 1.20 dividend per share for FY26 - scanx.trade (scanx.trade)
 
   Entry plan (two-lot, risk-normalized):
-    entry ~831.35  stop 737.32 (2.5 x ATR(14))  risk/share 94.03
-    size: 132 sh (~109,738 INR, 12,412 INR at risk)
-    trading lot 66 sh: partial 33% at 1066.42 (2.5R), then trail daily close below 50-DMA
-    core lot    66 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+    entry ~587.3  stop 549.16 (2.5 x ATR(14))  risk/share 38.14
+    size: 255 sh (~149,762 INR, 9,726 INR at risk)
+    trading lot 127 sh: partial 33% at 682.66 (2.5R), then trail daily close below 50-DMA
+    core lot    128 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
 
 NEWS RISK — 1 negative filing(s) in the last 90d. Read them before acting.
 ========================================================================
-JAYNECOIND  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend template, VCP base live — watch the pivot 93.07 for a volume breakout (not yet a backtested entry)
-  Conviction: 25/100 (coverage 80%) -- VETOED: promoter_pledge: 99.9% of promoter holding pledged
-  Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] rs_and_stage               0.884  RS percentile 71; TT 8/8, stage 2, VCP live
-    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.55  FII 1.07->1.32% (+0.25pp); DII 0.51->0.78% (+0.27pp); both FII and DII accumulating; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.16  debt rising fast (+70% over 3y); D/E 1.94; equity capital +29% over 3y — check bonus/split vs genuine dilution
-    [  10] catalyst                   0.348  lead: news; 13 scoreable of 19 read across 12 distinct stories; events: capex/investment, regulatory action; sentiment neutral (3+/1-); 6 filtered (1 datapage, 2 listicle, 1 price_move, 2 procedural) (news-based v0)
-    [   8] governance                 0.05  pledge 99.9% — veto territory; adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.35  no P/E (loss-making TTM or data missing) — cautious neutral
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 4.48% over 8w, price 0.69% vs 30wMA, pos-in-52w-range 0.517)
-  Base       : depth 29.47%, 96d since 52w high, price 21.71% below base high (117.0)
-  RS vs bench: 3m 1.056 / 6m 1.268 / 12m 1.46  blend 1.345  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +0.05% (0.01 ATRs)
-  VCP        : live valid base
-
-  Read:
-    - Stage 2 + full 8-point trend template
-    - live VCP base — watch the pivot for a fresh trigger
-
-  News (30d)  : 19 headlines | catalyst 0.348 | themes: none
-    !! RED FLAG: 'regulatory action' [single low-tier source]: Jayaswal Neco pays ₹75.59 lakh BSE fine for delayed filing - scanx.trade
-    [16-Sep] Jayaswal Neco Q2 Preview: Revenue & Margin Trends - Univest (Univest)
-    [07-Sep] Jayaswal Neco Industries JAYNECOIND Volume Surge Clarification - Kalkine India (Kalkine India)
-    [04-Sep] Jayaswal Neco Industries Share Price: Price Action View - Univest (Univest)
-    [04-Sep] Jayaswal Neco (NSE: JAYNECOIND) Chart Analysis - Kalkine India (Kalkine India)
-
-  Entry plan (two-lot, risk-normalized):
-    entry ~91.6  stop 82.96 (2.5 x ATR(14))  risk/share 8.64
-    size: 1447 sh (~132,545 INR, 12,496 INR at risk)
-    trading lot 723 sh: partial 33% at 113.19 (2.5R), then trail daily close below 50-DMA
-    core lot    724 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
-
-========================================================================
-LUMAXTECH  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend template, VCP base live — watch the pivot 2118.4 for a volume breakout (not yet a backtested entry)
-  Conviction: 70/100 (coverage 100%)
-  Archetype: Hyper-growth
-    [  20] earnings_inflection        0.967  qtr PAT YoY +83%; accelerating (TTM 77% > 3y 43%); 9 consecutive quarter(s) above their year-ago level; sales +33% YoY, 9 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.951  RS percentile 88; TT 8/8, stage 2, VCP live
-    [  15] theme_tailwind             0.588  EV & auto electrification ranks 48/100 on heat across the 18 themes (theme map, price-derived)
-    [  12] smart_money                0.609  FII 7.33->8.7% (+1.37pp); DII 16.59->16.53% (-0.06pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.348  debt rising fast (+85% over 3y); D/E 1.02
-    [  10] catalyst                   0.214  lead: news; 9 scoreable of 13 read across 6 distinct stories; events: none; sentiment neutral (2+/1-); 4 filtered (2 datapage, 1 price_move, 1 procedural); +0.020 from policy tailwind on ev (pressure +0.17 from 2 government/regulatory event(s)): Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.95  P/E 42 cheaper than growth (PEG 0.99)
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 7.25% over 8w, price 21.11% vs 30wMA, pos-in-52w-range 0.924)
-  Base       : depth 11.87%, 14d since 52w high, price 3.72% below base high (2148.7)
-  RS vs bench: 3m 1.289 / 6m 1.334 / 12m 2.061  blend 1.625  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +13.92% (3.35 ATRs)
-  VCP        : live valid base
-
-  Read:
-    - Stage 2 + full 8-point trend template
-    - live VCP base — watch the pivot for a fresh trigger
-
-  News (30d)  : 13 headlines | catalyst 0.214 | themes: EV & auto electrification
-    [15-Sep] Lumax Auto Technologies Bull Case vs Bear Case for 2026 - Univest (Univest)
-    [31-Aug] Lumax Auto Technologies Ltd. Stock News - Value Research (Value Research)
-    [31-Aug] Lumax Auto Technologies Share Price Today: Price Action Analysis - Univest (Univest)
-    [21-Sep] Lumax Auto Expands its Wallet Through Advanced Plastics Segment - marketscreener.com (marketscreener.com)
-
-  Entry plan (two-lot, risk-normalized):
-    entry ~2068.8  stop 1879.98 (2.5 x ATR(14))  risk/share 188.82
-    size: 66 sh (~136,541 INR, 12,462 INR at risk)
-    trading lot 33 sh: partial 33% at 2540.85 (2.5R), then trail daily close below 50-DMA
-    core lot    33 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
-
-NEWS RISK — 1 negative filing(s) in the last 90d. Read them before acting.
-========================================================================
-OPTIEMUS  [CONFIRMED]   as of 2026-09-21
+GABRIEL  [CONFIRMED]   as of 2026-09-22
 ========================================================================
   >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
   Conviction: 51/100 (coverage 100%)
   Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.466  qtr PAT YoY +40%; decelerating (TTM 11% < 3y 16%); 1 consecutive quarter(s) above their year-ago level; sales +103% YoY — earnings confirmed by the top line
-    [  20] rs_and_stage               0.777  RS percentile 82; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.488  Electronics manufacturing (EMS) ranks 34/100 on heat across the 18 themes (theme map, price-derived)
-    [  12] smart_money                0.632  FII 2.61->3.31% (+0.70pp); DII 1.72->2.4% (+0.68pp); both FII and DII accumulating; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.352  debt rising fast (+216% over 3y); negative operating cash flow
-    [  10] catalyst                   0.076  lead: news; 5 scoreable of 9 read across 5 distinct stories; events: none; sentiment neutral (0+/0-); 4 filtered (2 datapage, 1 price_move, 1 procedural); +0.016 from policy tailwind on ems (pressure +0.13 from 1 government/regulatory event(s)): Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme (news-based v0)
+    [  20] earnings_inflection        0.506  qtr PAT YoY +3%; growth horizons incomplete; 2 consecutive quarter(s) above their year-ago level; sales +16% YoY, 9 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.789  RS percentile 85; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.286  FII 6.49->6.0% (-0.49pp); DII 16.2->11.91% (-4.29pp); both FII and DII distributing; promoter stake 55.0->66.29% — insider buying; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.731  clean balance sheet
+    [  10] catalyst                   0.267  lead: M&A/JV; 41 scoreable of 49 read across 14 distinct stories; events: M&A/JV, capex/investment, partnership; sentiment positive (18+/0-); 8 filtered (1 datapage, 2 listicle, 4 price_move, 1 procedural) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.25  P/E 72 — expensive
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 11.5% over 8w, price 25.97% vs 30wMA, pos-in-52w-range 0.84)
+  Base       : depth 20.74%, 34d since 52w high, price 8.04% below base high (1600.0)
+  RS vs bench: 3m 1.234 / 6m 1.72 / 12m 1.286  blend 1.547  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +4.70% (1.12 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 49 headlines | catalyst 0.267 | themes: none
+    [NSE 22-Sep] Gabriel India Limited has informed the Exchange about Schedule of Analysts or Institutiona
+    [NSE 21-Sep] Gabriel India Limited has informed the Exchange about Non Deal Road show to be held on Sep
+    [26-Aug] Gabriel India to acquire stake in HL Klemove India for ADAS - Autocar Professional (Autocar Professional)
+    [17-Sep] Gabriel India Slips Below ₹1,285 as Auto Ancillary Stock Tests Near-Term Support - Leveraged ET (siam.in)
+    [16-Sep] Emily should marry Gabriel: JD Vance calls Emily in Paris Shakespeare of our time - India Today (India Today)
+    [10-Sep] Gabriel India Q2 2026 Earnings: 15.18% Revenue Growth Fails to Lift the Stock - Balance Sheet S (siam.in)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~1471.4  stop 1324.1 (2.5 x ATR(14))  risk/share 147.3
+    size: 84 sh (~123,598 INR, 12,374 INR at risk)
+    trading lot 42 sh: partial 33% at 1839.66 (2.5R), then trail daily close below 50-DMA
+    core lot    42 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+HFCL  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 69/100 (coverage 100%)
+  Archetype: Turnaround
+    [  20] earnings_inflection        0.963  loss->profit swing CONFIRMED by margin expansion (OPM 3.3->22.0%) and 3 consecutive improving quarters; accelerating (TTM 1591% > 3y 1%); 3 consecutive quarter(s) above their year-ago level; sales +120% YoY, 3 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.849  RS percentile 100; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.518  Power transmission & grid capex ranks 38/100 on heat across the 18 themes; also Data centres & digital infrastructure (theme map, price-derived)
+    [  12] smart_money                0.47  FII 7.48->15.74% (+8.26pp); DII 13.57->10.92% (-2.65pp); foreign accumulation into domestic distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.376  debt rising fast (+103% over 3y); negative operating cash flow
+    [  10] catalyst                   0.714  lead: news (Rs21,206 Cr); 45 scoreable of 57 read across 24 distinct stories; events: capex/investment, expansion, order win; sentiment positive (19+/3-); 12 filtered (1 datapage, 4 listicle, 7 price_move) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.5  PEG 59.30 is drawn on 3-year growth that spans the loss period — not meaningful for a turnaround; P/E 59 on recovering earnings
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 34.02% over 8w, price 32.62% vs 30wMA, pos-in-52w-range 0.819)
+  Base       : depth 20.1%, 16d since 52w high, price 13.88% below base high (256.7)
+  RS vs bench: 3m 1.116 / 6m 3.102 / 12m 3.259  blend 3.165  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +0.24% (0.05 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 57 headlines | catalyst 0.714 | themes: Power transmission & grid capex, Data centres & digital infrastructure
+    [NSE 18-Sep] HFCL Limited has informed the Exchange about Intimation of ESG rating by Niche Ninety Nine
+    [NSE 15-Sep] HFCL Limited has informed the Exchange about General Updates on Intimation to Shareholders
+    [07-Sep] HFCL shares jump 5% as FY26 order book surges 113% to Rs 21,206 crore - The Economic Times (The Economic Times)
+    [14-Sep] HFCL shares decline 5% after board approves capacity expansion worth ₹820 crore; details here - (Upstox)
+    [14-Sep] HFCL raises capex to Rs 1,800 cr to boost optical fibre production - Moneycontrol.com (Moneycontrol.com)
+    [10-Sep] HFCL share price: Why recent rally is a red flag; analyst says this on fresh entry - Business T (Business Today)
+
+  Entry plan : SKIP — ATR stop would be 12.4% wide — beyond the 12.0% hard cap; setup is untradeably volatile (Design Law #7: skip, don't clamp)
+
+NEWS RISK — 1 negative filing(s) in the last 90d. Read them before acting.
+========================================================================
+PVRINOX  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 61/100 (coverage 100%)
+  Archetype: Turnaround
+    [  20] earnings_inflection        1.0  loss->profit swing CONFIRMED by margin expansion (OPM 28.0->33.0%) and 7 consecutive improving quarters; accelerating (TTM 321% > 3y 45%); 7 consecutive quarter(s) above their year-ago level; sales +12% YoY, 5 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.73  RS percentile 70; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.397  FII 21.8->18.08% (-3.72pp); DII 35.35->35.72% (+0.37pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.515  clean balance sheet
+    [  10] catalyst                   0.15  lead: buyback/bonus (Rs300 Cr); 51 scoreable of 66 read across 22 distinct stories; events: buyback/bonus, capex/investment, regulatory action; sentiment neutral (12+/9-); 15 filtered (1 fluff, 4 listicle, 1 low relevance, 5 price_move, 4 procedural) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.95  P/E 41 cheaper than growth (PEG 0.91)
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 6.12% over 8w, price 25.97% vs 30wMA, pos-in-52w-range 0.949)
+  Base       : depth 3.81%, 1d since 52w high, price 1.69% below base high (1357.8)
+  RS vs bench: 3m 1.401 / 6m 1.335 / 12m 1.282  blend 1.314  improving: True
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +13.67% (3.08 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 66 headlines | catalyst 0.15 | themes: none
+    !! RED FLAG: 'regulatory action': Crackdown on plastic & waste: Bengaluru civic body slaps PVR INOX with ₹75,000 penalt
+    [NSE 22-Sep] PVR INOX Limited has informed the Exchange about Schedule of Analysts or Institutional Inv
+    [NSE 17-Sep] PVR INOX Limited has informed the Exchange about opening of 3-screen multiplex at DLF Summ
+    [02-Sep] PVR Inox?s  ?300-crore buyback: on track for a comeback? (Livemint)
+    [15-Sep] A $200 million fund manager explains his bet on HDFC Bank, Coforge, and PVR Inox - CNBC TV18 (CNBC TV18)
+    [07-Sep] PVR Inox shares fall 8% amid internal probe into alleged Rs 200-crore kickbacks; company clarif (Moneycontrol.com)
+    [17-Sep] PVR INOX asks to pay using UPI only; customer sends legal notice for refusing to accept cash pa (The Economic Times)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~1334.8  stop 1204.59 (2.5 x ATR(14))  risk/share 130.21
+    size: 95 sh (~126,806 INR, 12,370 INR at risk)
+    trading lot 47 sh: partial 33% at 1660.34 (2.5R), then trail daily close below 50-DMA
+    core lot    48 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+APARINDS  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 69/100 (coverage 100%)
+  Archetype: Quality
+    [  20] earnings_inflection        0.955  qtr PAT YoY +78%; accelerating (TTM 37% > 3y 16%); 6 consecutive quarter(s) above their year-ago level; sales +29% YoY, 9 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.837  RS percentile 97; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.518  Power transmission & grid capex ranks 38/100 on heat across the 18 themes (theme map, price-derived)
+    [  12] smart_money                0.854  FII 9.35->11.36% (+2.01pp); DII 23.2->24.88% (+1.68pp); both FII and DII accumulating; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.572  debt rising fast (+154% over 3y)
+    [  10] catalyst                   0.476  lead: rating upgrade; 20 scoreable of 36 read across 13 distinct stories; events: partnership, rating upgrade; sentiment positive (6+/0-); 16 filtered (2 datapage, 10 listicle, 3 price_move, 1 procedural) (news-based v0)
+    [   8] governance                 0.4  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); promoter stake 57.77->55.42% (check WHY: lockup expiry / PSU divestment / genuine exit); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.25  P/E 63 — expensive
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 19.59% over 8w, price 30.47% vs 30wMA, pos-in-52w-range 0.917)
+  Base       : depth 6.99%, 0d since 52w high, price 5.36% below base high (19265.0)
+  RS vs bench: 3m 1.118 / 6m 1.934 / 12m 2.274  blend 2.07  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +11.98% (2.41 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 36 headlines | catalyst 0.476 | themes: Power transmission & grid capex
+    [NSE 22-Sep] Apar Industries Limited has submitted the Exchange a copy Srutinizers report of  Annual Ge
+    [NSE 21-Sep] Apar Industries Limited has informed the Exchange regarding 'Change in name of Wholly Owne
+    [10-Sep] APAR Industries receives upgrade in LT credit rating for bank facilities - business-standard.co (business-standard.com)
+    [11-Sep] Multibagger Apar Industries Delivers 2,540% In 5 Years, Outperforming Nifty 500 - ndtvprofit.co (ndtvprofit.com)
+    [10-Sep] APAR Industries (NSE:APARINDS): Why Did It Publish a Special Window Notice for Physical Share T (Kalkine India)
+    [10-Sep] Apar Industries (APARINDS.NS) Edges 0.61% Lower to ₹17,342 as Stock Holds Mid-Range - Positive  (siam.in)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~18233.0  stop 16213.54 (2.5 x ATR(14))  risk/share 2019.46
+    size: 6 sh (~109,398 INR, 12,117 INR at risk)
+    trading lot 3 sh: partial 33% at 23281.66 (2.5R), then trail daily close below 50-DMA
+    core lot    3 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+OBEROIRLTY  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 60/100 (coverage 100%)
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.845  qtr PAT YoY +29%; accelerating (TTM 28% > 3y 9%); 4 consecutive quarter(s) above their year-ago level; sales +32% YoY, 4 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.712  RS percentile 65; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.518  FII 16.06->15.11% (-0.95pp); DII 13.85->14.83% (+0.98pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.917  deleveraging: debt 3944 -> 2825 Cr
+    [  10] catalyst                   0.15  lead: news; 14 scoreable of 18 read across 10 distinct stories; events: none; sentiment neutral (3+/1-); 4 filtered (1 listicle, 1 low relevance, 2 price_move) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.45  full price (PEG 2.81)
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 4.47% over 8w, price 7.56% vs 30wMA, pos-in-52w-range 0.764)
+  Base       : depth 16.42%, 56d since 52w high, price 7.07% below base high (1986.1)
+  RS vs bench: 3m 1.106 / 6m 1.277 / 12m 1.24  blend 1.262  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +0.69% (0.25 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 18 headlines | catalyst 0.15 | themes: none
+    [NSE 17-Sep] Oberoi Realty Limited has informed the Exchange about Project Three Sixty North Gurugram  
+    [03-Sep] Experts recommend 9 buy calls, 1 sell call; Oberoi Realty, CDSL and Coal India in focus - CNBC  (CNBC TV18)
+    [01-Sep] Oberoi Realty sells over 460 Gurugram homes - Construction World (Construction World)
+    [18-Sep] HC extends interim direction restraining allotments in Oberoi Realty's project in Gurugram till (ET Realty)
+    [15-Sep] ICICI Bank, Ashok Leyland, Oberoi Realty, SBI shares: Rate sensitives slide as 25 bps Oct rate  (IndiaIPO)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~1845.6  stop 1720.83 (2.5 x ATR(14))  risk/share 124.77
+    size: 81 sh (~149,494 INR, 10,106 INR at risk)
+    trading lot 40 sh: partial 33% at 2157.52 (2.5R), then trail daily close below 50-DMA
+    core lot    41 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+PHOENIXLTD  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 59/100 (coverage 100%)
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.845  qtr PAT YoY +23%; accelerating (TTM 32% > 3y 12%); 5 consecutive quarter(s) above their year-ago level; sales +13% YoY, 5 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.715  RS percentile 66; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.54  FII 33.45->31.73% (-1.72pp); DII 15.47->17.38% (+1.91pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.572  equity capital +100% over 3y — check bonus/split vs genuine dilution
+    [  10] catalyst                   0.312  lead: news; 17 scoreable of 30 read across 13 distinct stories; events: M&A/JV; sentiment positive (3+/0-); 13 filtered (3 datapage, 1 fluff, 1 low relevance, 2 price_move, 6 procedural) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.45  full price (PEG 4.49)
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 2.38% over 8w, price 7.09% vs 30wMA, pos-in-52w-range 0.693)
+  Base       : depth 16.11%, 50d since 52w high, price 9.97% below base high (2169.8)
+  RS vs bench: 3m 1.077 / 6m 1.223 / 12m 1.348  blend 1.273  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +0.68% (0.31 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 30 headlines | catalyst 0.312 | themes: none
+    [09-Sep] Phoenix Mills (PHOENIXLTD.NS) Holds Steady at ₹1,885.3: Consolidation Between ₹1,791 Support an (siam.in)
+    [08-Sep] The Phoenix Mills LTD | The Phoenix Mills LTD New Projects | ID - 1266638 - Housing (Housing)
+    [05-Sep] Phoenix Mills sets Sept 10 as effective date for six-subsidiary merger - scanx.trade (scanx.trade)
+    [04-Sep] The Phoenix Mills Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - valueresearchonli (valueresearchonline.com)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~1953.4  stop 1845.52 (2.5 x ATR(14))  risk/share 107.88
+    size: 76 sh (~148,458 INR, 8,198 INR at risk)
+    trading lot 38 sh: partial 33% at 2223.09 (2.5R), then trail daily close below 50-DMA
+    core lot    38 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+IDEA  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 59/100 (coverage 100%)
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.633  still loss-making; accelerating (TTM 17% > 3y 6%); 4 consecutive quarter(s) above their year-ago level; sales +6% YoY, 8 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.815  RS percentile 91; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.624  FII 5.99->6.17% (+0.18pp); DII 4.74->6.05% (+1.31pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.5  equity capital +123% over 3y — check bonus/split vs genuine dilution
+    [  10] catalyst                   0.608  lead: news (Rs49,000 Cr); 52 scoreable of 65 read across 34 distinct stories; events: order win; sentiment positive (10+/0-); 13 filtered (5 listicle, 8 price_move) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.35  no P/E (loss-making TTM or data missing) — cautious neutral
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 7.49% over 8w, price 13.42% vs 30wMA, pos-in-52w-range 0.807)
+  Base       : depth 13.17%, 9d since 52w high, price 9.63% below base high (15.79)
+  RS vs bench: 3m 1.009 / 6m 1.541 / 12m 2.005  blend 1.727  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +2.43% (0.74 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 65 headlines | catalyst 0.608 | themes: none
+    [NSE 22-Sep] Vodafone Idea Limited has informed the Exchange about Copies of Newspaper Advertisement re
+    [NSE 21-Sep] Vodafone Idea Limited has informed the Exchange about Notice of Shareholders Meeting for P
+    [NSE 16-Sep] Vodafone Idea Limited has informed the Exchange about Action(s) taken or orders passed (su
+    [28-Aug] Vodafone Idea plans to repay ?49,000 crore spectrum dues in 3 years (The Economic Times)
+    [17-Sep] Vodafone Idea share price snaps losing streak amid positive market | Is it time to book profits (Livemint)
+    [16-Sep] Vodafone Idea share price extends losses after TRAI order | Details here - Livemint (Livemint)
+    [15-Sep] Vodafone Idea appoints Gopika Pant as Additional Director on Board - BusinessLine (BusinessLine)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~14.27  stop 13.12 (2.5 x ATR(14))  risk/share 1.15
+    size: 10511 sh (~149,992 INR, 12,050 INR at risk)
+    trading lot 5255 sh: partial 33% at 17.14 (2.5R), then trail daily close below 50-DMA
+    core lot    5256 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+APOLLO  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend template, VCP base live — watch the pivot 412.65 for a volume breakout (not yet a backtested entry)
+  Conviction: 25/100 (coverage 100%) -- VETOED: promoter_pledge: 30.5% of promoter holding pledged
+  Archetype: Hyper-growth
+    [  20] earnings_inflection        0.878  qtr PAT YoY +39%; accelerating (TTM 83% > 3y 76%); 9 consecutive quarter(s) above their year-ago level; sales +87% YoY, 9 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.968  RS percentile 92; TT 8/8, stage 2, VCP live
+    [  15] theme_tailwind             0.684  Defence & aerospace ranks 62/100 on heat across the 18 themes; also Defence electronics & space (theme map, price-derived)
+    [  12] smart_money                0.459  FII 8.94->7.59% (-1.35pp); DII 1.45->1.71% (+0.26pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.351  debt rising fast (+277% over 3y); negative operating cash flow; equity capital +71% over 3y — check bonus/split vs genuine dilution
+    [  10] catalyst                   0.605  lead: M&A/JV; 27 scoreable of 43 read across 14 distinct stories; events: M&A/JV, order win; sentiment positive (12+/0-); 16 filtered (4 datapage, 7 listicle, 1 price_move, 4 procedural); +0.017 from policy tailwind on defence (pressure +0.14 from 2 government/regulatory event(s)): Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach (news-based v0)
+    [   8] governance                 0.05  pledge 30.5% — veto territory; adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.05  froth: P/E 114 on established earnings
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 13.62% over 8w, price 18.03% vs 30wMA, pos-in-52w-range 0.792)
+  Base       : depth 22.53%, 57d since 52w high, price 12.81% below base high (466.5)
+  RS vs bench: 3m 1.021 / 6m 2.01 / 12m 1.358  blend 1.749  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +3.58% (0.76 ATRs)
+  VCP        : live valid base
+
+  Read:
+    - Stage 2 + full 8-point trend template
+    - live VCP base — watch the pivot for a fresh trigger
+
+  News (30d)  : 43 headlines | catalyst 0.605 | themes: Defence & aerospace, Defence electronics & space
+    !! EVENT RISK [results/board mtg, 16-Sep]: The Exchange had sought clarification from Apollo Micro Systems Limited for the quarter ended 30-Jun-2026 with — binary event risk near a breakout, check the date before sizing
+    [NSE 22-Sep] Apollo Micro Systems Limited has informed the Exchange about Investor Presentation |SUBJEC
+    [NSE 16-Sep] Apollo Micro Systems Limited has informed the Exchange about General Updates |SUBJECT: Gen
+    [NSE 16-Sep] The Exchange had sought clarification from Apollo Micro Systems Limited for the quarter en
+    [24-Aug] Apollo Micro Systems Acquires 34% Stake in Defence Technology Company Linked to Dr. A. P. J. Ab (Dalal Street Investment Journal)
+    [20-Sep] Apollo Micro Systems acquires Premier Explosives, wins Navy contract - scanx.trade (scanx.trade)
+    [21-Sep] Apollo Micro, BEL, HAL, Solar Industries: Defence stocks rally amid fresh tensions in Europe; k (Upstox)
+    [31-Aug] Apollo Micro Systems Ltd. Key Financial Ratios – Valuation, Profitability & More - valueresearc (valueresearchonline.com)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~406.75  stop 360.71 (2.5 x ATR(14))  risk/share 46.04
+    size: 271 sh (~110,229 INR, 12,478 INR at risk)
+    trading lot 135 sh: partial 33% at 521.86 (2.5R), then trail daily close below 50-DMA
+    core lot    136 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+RAIN  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 55/100 (coverage 100%)
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.925  qtr PAT YoY +200%; accelerating (TTM 229% > 3y -69%); 7 consecutive quarter(s) above their year-ago level; sales +17% YoY, 6 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.828  RS percentile 95; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.085  FII 10.4->8.02% (-2.38pp); DII 4.62->2.67% (-1.95pp); both FII and DII distributing; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.4  D/E 1.35
+    [  10] catalyst                   0.228  lead: news; 11 scoreable of 14 read across 8 distinct stories; events: none; sentiment positive (3+/0-); 3 filtered (1 datapage, 2 price_move) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.55  P/E 14, growth context missing
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 10.93% over 8w, price 25.48% vs 30wMA, pos-in-52w-range 0.787)
+  Base       : depth 24.19%, 32d since 52w high, price 12.88% below base high (252.0)
+  RS vs bench: 3m 1.216 / 6m 1.946 / 12m 1.705  blend 1.849  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +2.93% (0.68 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 14 headlines | catalyst 0.228 | themes: none
+    [NSE 16-Sep] Rain Industries Limited has informed the Exchange about Credit Rating |SUBJECT: Credit Rat
+    [16-Sep] Rain Industries: Best Stock in Its Sector? Key Metrics - Univest (Univest)
+    [16-Sep] Rain Industries (NSE: RAIN): Industrial Materials Business Overview and Key Insights - Kalkine  (Kalkine India)
+    [15-Sep] Rain Industries Share Price Today: Fall, Valuation, Peers - Univest (Univest)
+    [04-Sep] Rain Industries Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - valueresearchonline (valueresearchonline.com)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~219.54  stop 196.65 (2.5 x ATR(14))  risk/share 22.89
+    size: 546 sh (~119,869 INR, 12,497 INR at risk)
+    trading lot 273 sh: partial 33% at 276.76 (2.5R), then trail daily close below 50-DMA
+    core lot    273 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+SUNFLAG  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend template, VCP base live — watch the pivot 347.0 for a volume breakout (not yet a backtested entry)
+  Conviction: 56/100 (coverage 100%)
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.475  qtr PAT YoY +5%; accelerating (TTM 8% > 3y -2%); 1 consecutive quarter(s) above their year-ago level; sales +6% YoY, 5 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.943  RS percentile 86; TT 8/8, stage 2, VCP live
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.521  FII 0.64->0.86% (+0.22pp); DII 0.18->0.21% (+0.03pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.744  clean balance sheet
+    [  10] catalyst                   0.142  lead: news (Rs1,079 Cr); 4 scoreable of 4 read across 3 distinct stories; events: none; sentiment positive (2+/0-) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.55  P/E 30, growth context missing
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 9.65% over 8w, price 9.4% vs 30wMA, pos-in-52w-range 0.691)
+  Base       : depth 24.46%, 97d since 52w high, price 17.04% below base high (428.0)
+  RS vs bench: 3m 1.033 / 6m 1.64 / 12m 1.452  blend 1.565  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +0.53% (0.16 ATRs)
+  VCP        : live valid base
+
+  Read:
+    - Stage 2 + full 8-point trend template
+    - live VCP base — watch the pivot for a fresh trigger
+
+  News (30d)  : 4 headlines | catalyst 0.142 | themes: none
+    [NSE 21-Sep] Sunflag Iron and Steel Company Limited has informed the Exchange about Change in Directors
+    [NSE 21-Sep] Sunflag Iron And Steel Company Limited has informed the Exchange regarding Cessation of Mr
+    [NSE 18-Sep] Sunflag Iron and steel Company Limited has informed the Exchange about Closure of Trading 
+    [24-Aug] Sunflag Iron Consolidated June 2026 Net Sales at Rs 1,078.95 crore, up 6.53% Y-o-Y - Moneycontr (Moneycontrol.com)
+    [21-Sep] Sunflag Iron Steel SUNFLAG: Director Cessation Sept 2026 - Kalkine India (Kalkine India)
+    [07-Sep] Sunflag Iron and Steel (NSE:SUNFLAG) Could Be A Buy For Its Upcoming Dividend - simplywall.st (simplywall.st)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~355.05  stop 324.99 (2.5 x ATR(14))  risk/share 30.06
+    size: 415 sh (~147,346 INR, 12,476 INR at risk)
+    trading lot 207 sh: partial 33% at 430.21 (2.5R), then trail daily close below 50-DMA
+    core lot    208 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+ITDC  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 48/100 (coverage 100%)
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.23  qtr PAT YoY -4%; decelerating (TTM 3% < 3y 12%); latest quarter did not beat its year-ago quarter; sales +3% YoY — earnings improving on roughly flat sales, so the gain is margin-led
+    [  20] rs_and_stage               0.772  RS percentile 80; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.502  FII 0.01->0.03% (+0.02pp); DII 1.78->1.78% (+0.00pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.76  clean balance sheet
+    [  10] catalyst                   0.252  lead: order win (Rs45 Cr); 9 scoreable of 16 read across 7 distinct stories; events: order win; sentiment positive (2+/0-); 7 filtered (2 datapage, 1 fluff, 3 price_move, 1 procedural) (news-based v0)
     [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
     [   5] valuation_sanity           0.25  P/E 73 — expensive
 
-  Stage      : Stage 2 (advancing)  (30wMA slope 9.17% over 8w, price 24.62% vs 30wMA, pos-in-52w-range 0.712)
-  Base       : depth 59.61%, 246d since 52w high, price 17.15% below base high (713.0)
-  RS vs bench: 3m 1.376 / 6m 1.807 / 12m 0.993  blend 1.482  improving: False
+  Stage      : Stage 2 (advancing)  (30wMA slope 6.9% over 8w, price 16.53% vs 30wMA, pos-in-52w-range 0.744)
+  Base       : depth 23.71%, 46d since 52w high, price 14.14% below base high (822.0)
+  RS vs bench: 3m 1.188 / 6m 1.628 / 12m 1.169  blend 1.444  improving: False
   Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +1.45% (0.34 ATRs)
+  vs 50-DMA  : +1.91% (0.43 ATRs)
   VCP        : none detected
 
   Read:
     - Stage 2 + full 8-point trend template
 
-  News (30d)  : 9 headlines | catalyst 0.076 | themes: Electronics manufacturing (EMS)
-    [17-Sep] Optiemus Infracom Share: Bull Case vs Bear Case for 2026 - Univest (Univest)
-    [04-Sep] Optiemus Infracom Ltd. Key Financial Ratios – Valuation, Profitability & More - Value Research (Value Research)
-    [03-Sep] Optiemus Infracom Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - Value Research (Value Research)
-    [15-Sep] Optiemus Infracom Share Price Today: Key Stock Analysis - Univest (Univest)
+  News (30d)  : 16 headlines | catalyst 0.252 | themes: none
+    [NSE 22-Sep] Significant increase in volume has been observed in India Tourism Development Corporation 
+    [NSE 22-Sep] India Tourism Development Corporation Limited has informed the Exchange about the comments
+    [NSE 22-Sep] India Tourism Development Corporation Limited has informed the Exchange regarding Proceedi
+    [24-Aug] GRSE bags ?45-crore electric ferry contract from West Bengal Tourism Development Corporation (BusinessLine)
+    [18-Sep] India Tourism Development Corporation served the nation with distinguished services: Tourism Mi (newsonair.gov.in)
+    [11-Sep] India Tourism Development Corporation Bull Case vs Bear Case for 2026 - Univest (Univest)
+    [10-Sep] ITDC NSE Volume Spurt: Company Denies Undisclosed Information - Kalkine India (Kalkine India)
 
   Entry plan (two-lot, risk-normalized):
-    entry ~590.75  stop 528.07 (2.5 x ATR(14))  risk/share 62.68
-    size: 199 sh (~117,559 INR, 12,473 INR at risk)
-    trading lot 99 sh: partial 33% at 747.45 (2.5R), then trail daily close below 50-DMA
-    core lot    100 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+    entry ~705.75  stop 628.71 (2.5 x ATR(14))  risk/share 77.04
+    size: 162 sh (~114,332 INR, 12,480 INR at risk)
+    trading lot 81 sh: partial 33% at 898.34 (2.5R), then trail daily close below 50-DMA
+    core lot    81 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
 
 ========================================================================
-SHAILY  [CONFIRMED]   as of 2026-09-21
+KOLTEPATIL  [CONFIRMED]   as of 2026-09-22
 ========================================================================
-  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 58/100 (coverage 100%)
-  Archetype: Quality
-    [  20] earnings_inflection        0.659  qtr PAT YoY +17%; decelerating (TTM 51% < 3y 69%); 9 consecutive quarter(s) above their year-ago level; sales +14% YoY, 9 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.776  RS percentile 81; TT 8/8, stage 2, VCP none
+  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend template, VCP base live — watch the pivot 438.05 for a volume breakout (not yet a backtested entry)
+  Conviction: 53/100 (coverage 100%)
+  Archetype: Turnaround
+    [  20] earnings_inflection        0.542  loss->profit swing margin-confirmed (OPM -32.0->21.0%) but only 1 quarter(s) of YoY improvement — one print, not a trend; growth horizons incomplete; 1 consecutive quarter(s) above their year-ago level; sales +1022% YoY — earnings confirmed by the top line
+    [  20] rs_and_stage               0.84  RS percentile 60; TT 8/8, stage 2, VCP live
     [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.896  FII 11.3->18.18% (+6.88pp); DII 13.71->14.84% (+1.13pp); both FII and DII accumulating; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.693  clean balance sheet
-    [  10] catalyst                   0.266  lead: news; 9 scoreable of 15 read across 7 distinct stories; events: none; sentiment positive (2+/0-); 6 filtered (3 datapage, 2 price_move, 1 procedural) (news-based v0)
-    [   8] governance                 0.4  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); promoter stake 43.72->41.09% (check WHY: lockup expiry / PSU divestment / genuine exit); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.25  P/E 85 — expensive
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 13.63% over 8w, price 18.39% vs 30wMA, pos-in-52w-range 0.81)
-  Base       : depth 15.91%, 29d since 52w high, price 9.68% below base high (3615.2)
-  RS vs bench: 3m 1.216 / 6m 1.442 / 12m 1.528  blend 1.476  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +2.80% (0.74 ATRs)
-  VCP        : none detected
-
-  Read:
-    - Stage 2 + full 8-point trend template
-
-  News (30d)  : 15 headlines | catalyst 0.266 | themes: none
-    [NSE 21-Sep] Shaily Engineering Plastics Limited has informed the Exchange about Schedule of meet |SUBJ
-    [21-Sep] Why Hindalco, Shaily Engineering shares are in focus - Zee Business (Zee Business)
-    [08-Sep] Shaily Engineering - Ashish Kacholia's portfolio: How ace investor's top 5 stock holdings perfo (The Economic Times)
-    [30-Aug] Shaily Engineering Plastics (SHAILY.NS) Sheds 0.88% as Stock Consolidates Between Key Support a (siam.in)
-    [27-Aug] Shaily Engineering Plastics Ltd. Key Financial Ratios – Valuation, Profitability & More - Value (Value Research)
-
-  Entry plan (two-lot, risk-normalized):
-    entry ~3265.1  stop 2963.87 (2.5 x ATR(14))  risk/share 301.23
-    size: 41 sh (~133,869 INR, 12,351 INR at risk)
-    trading lot 20 sh: partial 33% at 4018.18 (2.5R), then trail daily close below 50-DMA
-    core lot    21 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
-
-========================================================================
-WELENT  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 50/100 (coverage 100%)
-  Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.129  qtr PAT YoY -45%; decelerating (TTM 2% < 3y 12%); latest quarter did not beat its year-ago quarter; sales -8% YoY while profit rose — MARGIN-LED, check whether this is cost cutting rather than growth
-    [  20] rs_and_stage               0.815  RS percentile 91; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.477  FII 3.98->3.92% (-0.06pp); DII 9.46->9.25% (-0.21pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.447  debt rising fast (+160% over 3y)
-    [  10] catalyst                   0.835  lead: M&A/JV (Rs2,500 Cr); 30 scoreable of 40 read across 11 distinct stories; events: M&A/JV, order win, partnership; sentiment positive (16+/2-); 10 filtered (2 datapage, 6 listicle, 1 low relevance, 1 price_move) (news-based v0)
+    [  12] smart_money                0.553  FII 8.77->10.61% (+1.84pp); DII 3.7->3.3% (-0.40pp); foreign accumulation into domestic distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.359  debt rising fast (+111% over 3y)
+    [  10] catalyst                   0.244  lead: news; 11 scoreable of 14 read across 6 distinct stories; events: capex/investment; sentiment positive (3+/0-); 3 filtered (1 datapage, 1 price_move, 1 procedural) (news-based v0)
     [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.45  full price (PEG 2.55)
+    [   5] valuation_sanity           0.55  P/E 31, growth context missing
 
-  Stage      : Stage 2 (advancing)  (30wMA slope 11.82% over 8w, price 36.88% vs 30wMA, pos-in-52w-range 0.867)
-  Base       : depth 8.3%, 0d since 52w high, price 6.79% below base high (841.9)
-  RS vs bench: 3m 1.398 / 6m 1.699 / 12m 1.757  blend 1.722  improving: False
+  Stage      : Stage 2 (advancing)  (30wMA slope 6.04% over 8w, price 13.39% vs 30wMA, pos-in-52w-range 0.546)
+  Base       : depth 25.5%, 30d since 52w high, price 21.47% below base high (554.6)
+  RS vs bench: 3m 1.198 / 6m 1.353 / 12m 1.008  blend 1.215  improving: False
   Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +19.72% (3.13 ATRs)
-  VCP        : none detected
-
-  Read:
-    - Stage 2 + full 8-point trend template
-
-  News (30d)  : 40 headlines | catalyst 0.835 | themes: none
-    [NSE 17-Sep] WELSPUN ENTERPRISES LIMITED has informed the Exchange about Schedule of Analysts or Instit
-    [NSE 16-Sep] Welspun Enterprises Limited has informed the Exchange about Schedule of meets of Investors
-    [04-Sep] Goenka Group?s Purvah Green Power to acquire Welspun New Energy for ?2,500 cr (The Economic Times)
-    [20-Sep] Welspun Enterprises WELENT: WMEL Bags Rs 351 Crore AMC Orders - Kalkine India (Kalkine India)
-    [20-Sep] Welspun Enterprises Receives ₹7,300 Crore Pune-Shirur Highway Project Letter of Award - scanx.t (scanx.trade)
-    [25-Aug] Welspun Corp Block Deal: Promoter Group, CEO Vipul Mathur To Sell Rs 1,400-Crore Stake (NDTV Profit)
-
-  Entry plan : SKIP — ATR stop would be 13.2% wide — beyond the 12.0% hard cap; setup is untradeably volatile (Design Law #7: skip, don't clamp)
-
-NEWS RISK — 1 negative filing(s) in the last 90d. Read them before acting.
-========================================================================
-ASHIANA  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 58/100 (coverage 100%)
-  Archetype: Hyper-growth
-    [  20] earnings_inflection        0.423  qtr PAT YoY +0%; accelerating (TTM 195% > 3y 61%); latest quarter did not beat its year-ago quarter; sales -64% YoY while profit rose — MARGIN-LED, check whether this is cost cutting rather than growth
-    [  20] rs_and_stage               0.738  RS percentile 72; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.528  FII 7.87->8.19% (+0.32pp); DII 8.06->8.08% (+0.02pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.519  debt rising fast (+76% over 3y)
-    [  10] catalyst                   0.805  lead: capex/investment (Rs1,000 Cr); 19 scoreable of 22 read across 9 distinct stories; events: capex/investment, regulatory action; sentiment positive (9+/3-); 3 filtered (2 datapage, 1 procedural) (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.95  P/E 34 cheaper than growth (PEG 0.56)
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 4.68% over 8w, price 14.27% vs 30wMA, pos-in-52w-range 0.818)
-  Base       : depth 23.62%, 43d since 52w high, price 6.96% below base high (435.9)
-  RS vs bench: 3m 1.075 / 6m 1.324 / 12m 1.391  blend 1.351  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +9.30% (2.52 ATRs)
-  VCP        : none detected
-
-  Read:
-    - Stage 2 + full 8-point trend template
-
-  News (30d)  : 22 headlines | catalyst 0.805 | themes: none
-    !! RED FLAG: 'regulatory action': Rajasthan Rera imposes penalty on Ashiana Housing - Business Standard
-    [NSE 17-Sep] Ashiana Housing Limited has informed the Exchange about Intimation of trading under Regula
-    [20-Sep] Ashiana Housing to invest Rs 1,000 cr in FY27 to acquire land for expansion: MD Vishal Gupta -  (The Economic Times)
-    [21-Sep] Ashiana Housing eyes ₹2,400 crore sales bookings, over ₹1,000 crore land acquisitions in FY27 - (ET Realty)
-    [03-Sep] Rajasthan Rera imposes penalty on Ashiana Housing - Business Standard (Business Standard)
-    [21-Sep] Ashiana Housing: 7 Stock Signals to Watch - Univest (Univest)
-
-  Entry plan (two-lot, risk-normalized):
-    entry ~405.55  stop 371.37 (2.5 x ATR(14))  risk/share 34.18
-    size: 365 sh (~148,026 INR, 12,475 INR at risk)
-    trading lot 182 sh: partial 33% at 491.00 (2.5R), then trail daily close below 50-DMA
-    core lot    183 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
-
-NEWS RISK — 1 negative filing(s) in the last 90d. Read them before acting.
-========================================================================
-NPST  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 54/100 (coverage 100%)
-  Archetype: Hyper-growth
-    [  20] earnings_inflection        0.668  qtr PAT YoY +57%; decelerating (TTM 25% < 3y 84%); 3 consecutive quarter(s) above their year-ago level; sales +65% YoY, 3 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.785  RS percentile 84; TT 8/8, stage 2, VCP none
-    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.502  FII 0.11->0.08% (-0.03pp); DII 9.96->10.02% (+0.06pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.458  financing margin 29.0->25.0%; ROE 15.0%; book value +1809% over 3y; share capital +250% over 3y — dilution; asset quality (GNPA, provisions, CASA) is NOT published on the free source and is NOT in this score
-    [  10] catalyst                   0.321  lead: news; 8 scoreable of 15 read across 8 distinct stories; events: none; sentiment positive (3+/0-); 7 filtered (2 datapage, 1 fluff, 1 low relevance, 3 price_move) (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.25  P/E 83 — expensive
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 8.37% over 8w, price 26.94% vs 30wMA, pos-in-52w-range 0.745)
-  Base       : depth 59.91%, 251d since 52w high, price 15.26% below base high (2111.9)
-  RS vs bench: 3m 1.189 / 6m 1.932 / 12m 0.91  blend 1.523  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +10.48% (1.9 ATRs)
-  VCP        : none detected
-
-  Read:
-    - Stage 2 + full 8-point trend template
-
-  News (30d)  : 15 headlines | catalyst 0.321 | themes: none
-    [18-Sep] NETWORK PEOPLE SRV TECH L Share Price - Live NSE: NPST Stock Price & Chart - Upstox (Upstox)
-    [16-Sep] Network People Services Technologies Share: Bull Case vs Bear Case for 2026 - Univest (Univest)
-    [09-Sep] NPST’s Annual Revenue Crosses Rs2 Bn - fintechbiznews.com (fintechbiznews.com)
-    [18-Sep] Network People Services Technologies Ltd Upgraded to Buy on Strong Technical and Financial Perf (MarketsMojo)
-
-  Entry plan : SKIP — ATR stop would be 12.5% wide — beyond the 12.0% hard cap; setup is untradeably volatile (Design Law #7: skip, don't clamp)
-
-========================================================================
-PANAMAPET  [CONFIRMED]   as of 2026-09-21
-========================================================================
-  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend template, VCP base live — watch the pivot 476.9 for a volume breakout (not yet a backtested entry)
-  Conviction: 64/100 (coverage 100%)
-  Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.85  qtr PAT YoY +200%; accelerating (TTM 167% > 3y -3%); 2 consecutive quarter(s) above their year-ago level; sales +150% YoY, 5 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.971  RS percentile 93; TT 8/8, stage 2, VCP live
-    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.499  FII 12.02->11.72% (-0.30pp); DII 0.47->0.67% (+0.20pp); domestic accumulation into foreign distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.599  negative operating cash flow
-    [  10] catalyst                   0.262  lead: news; 7 scoreable of 12 read across 7 distinct stories; events: none; sentiment neutral (1+/0-); 5 filtered (1 datapage, 2 price_move, 2 procedural) (news-based v0)
-    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.55  P/E 6, growth context missing
-
-  Stage      : Stage 2 (advancing)  (30wMA slope 15.59% over 8w, price 25.16% vs 30wMA, pos-in-52w-range 0.664)
-  Base       : depth 27.14%, 28d since 52w high, price 20.76% below base high (599.6)
-  RS vs bench: 3m 0.985 / 6m 1.823 / 12m 1.681  blend 1.766  improving: False
-  Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +0.19% (0.05 ATRs)
+  vs 50-DMA  : +0.99% (0.27 ATRs)
   VCP        : live valid base
 
   Read:
     - Stage 2 + full 8-point trend template
     - live VCP base — watch the pivot for a fresh trigger
 
-  News (30d)  : 12 headlines | catalyst 0.262 | themes: none
-    [18-Sep] Panama Petrochem Stock Price Forecast. Should You Buy PANAMAPET.NS? - StockInvest.us (StockInvest.us)
-    [17-Sep] Panama Petrochem Share: Bull Case vs Bear Case for 2026 - Univest (Univest)
-    [16-Sep] Panama Petrochem (NSE: PANAMAPET): Industrial Materials Business Overview and Key Insights - Ka (Kalkine India)
-    [10-Sep] Panama Petrochem Q2 FY27: Date and Expectations - Univest (Univest)
+  News (30d)  : 14 headlines | catalyst 0.244 | themes: none
+    [18-Sep] Kolte-Patil Dev. Nine Monthly results - The Economic Times (The Economic Times)
+    [10-Sep] Kolte Patil Developers advances on strong demand for Pune residential project - business-standa (business-standard.com)
+    [15-Sep] Kolte-Patil Developers Bull Case vs Bear Case for 2026 - Univest (Univest)
+    [10-Sep] Kolte Patil sells 600 apartments in 60 hours for its 'Vyana at The Reserve' project - business- (business-standard.com)
 
   Entry plan (two-lot, risk-normalized):
-    entry ~475.15  stop 430.1 (2.5 x ATR(14))  risk/share 45.05
-    size: 277 sh (~131,617 INR, 12,480 INR at risk)
-    trading lot 138 sh: partial 33% at 587.78 (2.5R), then trail daily close below 50-DMA
-    core lot    139 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+    entry ~435.55  stop 395.65 (2.5 x ATR(14))  risk/share 39.9
+    size: 313 sh (~136,327 INR, 12,489 INR at risk)
+    trading lot 156 sh: partial 33% at 535.30 (2.5R), then trail daily close below 50-DMA
+    core lot    157 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
 
 ========================================================================
-TALBROAUTO  [CONFIRMED]   as of 2026-09-21
+63MOONS  [CONFIRMED]   as of 2026-09-22
 ========================================================================
   >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 56/100 (coverage 100%)
+  Conviction: 41/100 (coverage 100%)
   Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.574  qtr PAT YoY +36%; decelerating (TTM 17% < 3y 23%); 3 consecutive quarter(s) above their year-ago level; sales +15% YoY, 3 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.83  RS percentile 95; TT 8/8, stage 2, VCP none
+    [  20] earnings_inflection        0.075  still loss-making; decelerating (TTM -77% < 3y -23%); latest quarter did not beat its year-ago quarter; sales +357% YoY, 6 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.725  RS percentile 69; TT 8/8, stage 2, VCP none
     [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.559  FII 0.72->1.27% (+0.55pp); DII 0.02->0.18% (+0.16pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.731  clean balance sheet
-    [  10] catalyst                   0.079  lead: news; 4 scoreable of 12 read across 4 distinct stories; events: none; sentiment positive (1+/0-); 8 filtered (3 datapage, 5 procedural) (news-based v0)
+    [  12] smart_money                0.537  FII 1.17->1.61% (+0.44pp); DII 0.0->0.0% (+0.00pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.62  negative operating cash flow
+    [  10] catalyst                   0.041  lead: M&A/JV (Rs70 Cr); 2 scoreable of 4 read across 1 distinct stories; events: M&A/JV, capex/investment; sentiment positive (2+/0-); 2 filtered (1 listicle, 1 procedural) (news-based v0)
     [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.7  reasonable for growth (PEG 1.12)
+    [   5] valuation_sanity           0.35  no P/E (loss-making TTM or data missing) — cautious neutral
 
-  Stage      : Stage 2 (advancing)  (30wMA slope 14.06% over 8w, price 31.52% vs 30wMA, pos-in-52w-range 0.93)
-  Base       : depth 4.86%, 0d since 52w high, price 3.81% below base high (485.8)
-  RS vs bench: 3m 1.326 / 6m 2.004 / 12m 1.677  blend 1.873  improving: False
+  Stage      : Stage 2 (advancing)  (30wMA slope 8.2% over 8w, price 20.2% vs 30wMA, pos-in-52w-range 0.763)
+  Base       : depth 22.85%, 36d since 52w high, price 12.13% below base high (957.95)
+  RS vs bench: 3m 1.268 / 6m 1.536 / 12m 0.962  blend 1.306  improving: False
   Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +12.38% (2.92 ATRs)
+  vs 50-DMA  : +3.54% (0.6 ATRs)
   VCP        : none detected
 
   Read:
     - Stage 2 + full 8-point trend template
 
-  News (30d)  : 12 headlines | catalyst 0.079 | themes: none
-    !! EVENT RISK [results/board mtg, 16-Sep]: Talbros Automotive Components Limited has informed the Exchange regarding Outcome of Board Meeting held on Sep — binary event risk near a breakout, check the date before sizing
-    [NSE 17-Sep] Talbros Automotive Components Limited has informed the Exchange about Copy of Newspaper Pu
-    [NSE 16-Sep] Talbros Automotive Components Limited has informed the Exchange about Notice of Shareholde
-    [NSE 16-Sep] TALBROS AUTOMOTIVE COMPONENTS LIMITED has informed the Exchange about Change in Directors/
-    [04-Sep] Talbros Automotive Components Ltd. Key Financial Ratios – Valuation, Profitability & More - Val (Value Research)
-    [24-Aug] Talbros Automotive (NSE:TALBROAUTO): What Is Planned for Its Analyst Meet on 31 August 2026? -  (Kalkine India)
-    [16-Sep] Talbros Automotive appoints Rahul Bhutoria as independent director - scanx.trade (scanx.trade)
-    [18-Sep] Strong Momentum Meets Stretched Valuations as Talbros Automotive Components Ltd Reaches All-Tim (MarketsMojo)
+  News (30d)  : 4 headlines | catalyst 0.041 | themes: none
+    [07-Sep] 63 Moons WOS acquires ₹70 crore stake in subsidiary Ticker Ltd - scanx.trade (scanx.trade)
+    [27-Aug] 63 Moons Technologies schedules 38th AGM for September 23, 2026 - scanx.trade (scanx.trade)
 
-  Entry plan (two-lot, risk-normalized):
-    entry ~467.3  stop 423.17 (2.5 x ATR(14))  risk/share 44.13
-    size: 283 sh (~132,246 INR, 12,490 INR at risk)
-    trading lot 141 sh: partial 33% at 577.63 (2.5R), then trail daily close below 50-DMA
-    core lot    142 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+  Entry plan : SKIP — ATR stop would be 14.1% wide — beyond the 12.0% hard cap; setup is untradeably volatile (Design Law #7: skip, don't clamp)
 
 ========================================================================
-TARSONS  [CONFIRMED]   as of 2026-09-21
+STEELCAS  [CONFIRMED]   as of 2026-09-22
 ========================================================================
   >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
-  Conviction: 40/100 (coverage 100%)
-  Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.225  qtr PAT YoY -100%; growth horizons incomplete; latest quarter did not beat its year-ago quarter; sales +21% YoY, 9 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.791  RS percentile 85; TT 8/8, stage 2, VCP none
+  Conviction: 60/100 (coverage 100%)
+  Archetype: Turnaround
+    [  20] earnings_inflection        0.577  qtr PAT YoY +20%; accelerating (TTM 15% > 3y 7%); 1 consecutive quarter(s) above their year-ago level; sales +17% YoY — growing, below the 25% bar
+    [  20] rs_and_stage               0.802  RS percentile 88; TT 8/8, stage 2, VCP none
     [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.252  FII 5.82->0.15% (-5.67pp); DII 0.08->0.1% (+0.02pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.455  debt rising fast (+1686% over 3y)
-    [  10] catalyst                   0.173  lead: news; 7 scoreable of 12 read across 7 distinct stories; events: none; sentiment neutral (1+/1-); 5 filtered (3 datapage, 1 low relevance, 1 procedural) (news-based v0)
+    [  12] smart_money                0.628  FII 0.19->0.29% (+0.10pp); DII 1.11->2.55% (+1.44pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.96  deleveraging: debt 24 -> 0 Cr
+    [  10] catalyst                   0.281  lead: news; 12 scoreable of 18 read across 9 distinct stories; events: none; sentiment positive (2+/0-); 6 filtered (4 datapage, 2 procedural) (news-based v0)
     [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.05  froth: P/E 153 on established earnings
+    [   5] valuation_sanity           0.45  full price (PEG 5.60)
 
-  Stage      : Stage 2 (advancing)  (30wMA slope 15.16% over 8w, price 33.11% vs 30wMA, pos-in-52w-range 0.84)
-  Base       : depth 23.44%, 25d since 52w high, price 8.99% below base high (375.0)
-  RS vs bench: 3m 1.299 / 6m 1.822 / 12m 1.155  blend 1.555  improving: False
+  Stage      : Stage 2 (advancing)  (30wMA slope 12.78% over 8w, price 18.73% vs 30wMA, pos-in-52w-range 0.921)
+  Base       : depth 6.85%, 0d since 52w high, price 4.07% below base high (365.0)
+  RS vs bench: 3m 1.195 / 6m 1.521 / 12m 1.775  blend 1.623  improving: False
   Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +6.02% (1.21 ATRs)
+  vs 50-DMA  : +6.88% (1.36 ATRs)
   VCP        : none detected
 
   Read:
     - Stage 2 + full 8-point trend template
 
-  News (30d)  : 12 headlines | catalyst 0.173 | themes: none
-    [NSE 21-Sep] Significant increase in volume has been observed in Tarsons Products Limited. The Exchange
-    [21-Sep] Tarsons Products Share Price Rise: Fundamental Analysis - Univest (Univest)
-    [31-Aug] Tarsons Products Ltd. Key Financial Ratios – Valuation, Profitability & More - Value Research (Value Research)
-    [28-Aug] Tarsons Products Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - Value Research (Value Research)
-    [25-Aug] Tarsons (TARSONS.NS) Shares: Finishes 0.39% Down at ₹345.50 on the Day; Chart View: Support at  (siam.in)
+  News (30d)  : 18 headlines | catalyst 0.281 | themes: none
+    [NSE 21-Sep] Steelcast Limited has informed the Exchange about Schedule of meet |SUBJECT: Analysts/Inst
+    [22-Sep] Steelcast Ltd. Share Price rise: fundamentals and sector - Univest (Univest)
+    [16-Sep] Steelcast (STEELCAS.NS) Gives Up -4.32% — Downtrend Accelerates 2026-09-16 - Volume Dry Up - si (siam.in)
+    [10-Sep] Steelcast NSE:STEELCAS Analyst Meetings September 2026 - Kalkine India (Kalkine India)
+    [04-Sep] Steelcast Ltd. Key Financial Ratios – Valuation, Profitability & More - valueresearchonline.com (valueresearchonline.com)
 
   Entry plan (two-lot, risk-normalized):
-    entry ~341.3  stop 301.19 (2.5 x ATR(14))  risk/share 40.11
-    size: 311 sh (~106,144 INR, 12,473 INR at risk)
-    trading lot 155 sh: partial 33% at 441.57 (2.5R), then trail daily close below 50-DMA
-    core lot    156 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+    entry ~350.15  stop 308.73 (2.5 x ATR(14))  risk/share 41.42
+    size: 301 sh (~105,395 INR, 12,467 INR at risk)
+    trading lot 150 sh: partial 33% at 453.70 (2.5R), then trail daily close below 50-DMA
+    core lot    151 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
 
-!! BUY TRIGGER — pivot 576.8 cleared on 2.1x vol (2026-09-21). This is the exact entry the backtest validated.
 ========================================================================
-SOMANYCERA  [CONFIRMED]   as of 2026-09-21
+GREENPLY  [CONFIRMED]   as of 2026-09-22
 ========================================================================
-  >> VALIDATED ENTRY: fresh breakout over pivot 576.8 on 2.12x avg volume — matches the backtested trigger
-  Conviction: 66/100 (coverage 100%)
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 63/100 (coverage 100%)
   Archetype: (no archetype — see the Sectors tab for its theme)
-    [  20] earnings_inflection        0.963  qtr PAT YoY +200%; accelerating (TTM 85% > 3y 6%); 3 consecutive quarter(s) above their year-ago level; sales +24% YoY, 8 quarters rising — earnings confirmed by the top line
-    [  20] rs_and_stage               0.931  RS percentile 83; TT 8/8, stage 2, VCP live
+    [  20] earnings_inflection        0.796  qtr PAT YoY +36%; accelerating (TTM 34% > 3y 6%); 2 consecutive quarter(s) above their year-ago level; sales +21% YoY, 9 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.725  RS percentile 69; TT 8/8, stage 2, VCP none
     [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
-    [  12] smart_money                0.342  FII 0.98->1.38% (+0.40pp); DII 23.17->19.42% (-3.75pp); foreign accumulation into domestic distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
-    [  10] financial_strength_trend   0.843  deleveraging: debt 534 -> 374 Cr
-    [  10] catalyst                   0.308  lead: expansion (Rs200 Cr); 11 scoreable of 15 read across 7 distinct stories; events: expansion; sentiment positive (2+/0-); 4 filtered (3 datapage, 1 price_move) (news-based v0)
+    [  12] smart_money                0.413  FII 4.49->4.44% (-0.05pp); DII 32.41->31.42% (-0.99pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.805  deleveraging: debt 695 -> 515 Cr
+    [  10] catalyst                   0.749  lead: capex/investment (Rs332 Cr); 27 scoreable of 33 read across 15 distinct stories; events: M&A/JV, capex/investment, partnership; sentiment positive (12+/1-); 6 filtered (3 datapage, 3 procedural) (news-based v0)
     [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
-    [   5] valuation_sanity           0.45  full price (PEG 3.67)
+    [   5] valuation_sanity           0.45  full price (PEG 5.53)
 
-  Stage      : Stage 2 (advancing)  (30wMA slope 8.55% over 8w, price 20.82% vs 30wMA, pos-in-52w-range 0.954)
-  Base       : depth 4.88%, 0d since 52w high, price 2.08% below base high (602.0)
-  RS vs bench: 3m 1.168 / 6m 1.636 / 12m 1.319  blend 1.509  improving: False
+  Stage      : Stage 2 (advancing)  (30wMA slope 6.8% over 8w, price 11.25% vs 30wMA, pos-in-52w-range 0.761)
+  Base       : depth 17.76%, 43d since 52w high, price 11.29% below base high (334.4)
+  RS vs bench: 3m 1.025 / 6m 1.51 / 12m 1.002  blend 1.306  improving: False
   Trend tmpl : 8/8 checks  [PASS]
-  vs 50-DMA  : +11.21% (3.24 ATRs)
+  vs 50-DMA  : +0.92% (0.25 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 33 headlines | catalyst 0.749 | themes: none
+    [11-Sep] Greenply JV restructuring: Samet to invest up to $40 million, voting stake to rise to 81% - CNB (CNBC TV18)
+    [11-Sep] Greenply Industries Ltd announces Proposed Capital Restructuring of Joint Venture Entity to Foc (EquityBulls)
+    [11-Sep] Greenply eyes ₹2,000-cr capex as MDF and interiors widen growth runway: Sanidhya Mittal - Adgul (Adgully.com)
+    [09-Sep] Greenply partners with GreenLine to deploy LNG-powered trucks for outbound logistics - The Hind (The Hindu)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~296.65  stop 269.72 (2.5 x ATR(14))  risk/share 26.93
+    size: 464 sh (~137,646 INR, 12,495 INR at risk)
+    trading lot 232 sh: partial 33% at 363.97 (2.5R), then trail daily close below 50-DMA
+    core lot    232 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+WINDMACHIN  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 25/100 (coverage 100%) -- VETOED: promoter_pledge: 48.8% of promoter holding pledged
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.57  still loss-making; accelerating (TTM 114% > 3y -36%); 2 consecutive quarter(s) above their year-ago level; sales +31% YoY, 7 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.711  RS percentile 65; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.449  FII 1.06->2.31% (+1.25pp); DII 2.5->0.73% (-1.77pp); foreign accumulation into domestic distribution (legs disagree — domestic weighted higher); delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.415  debt rising fast (+139% over 3y); negative operating cash flow; equity capital +38% over 3y — check bonus/split vs genuine dilution
+    [  10] catalyst                   0.09  lead: news; 6 scoreable of 8 read across 5 distinct stories; events: none; sentiment negative (0+/1-); 2 filtered (1 datapage, 1 procedural) (news-based v0)
+    [   8] governance                 0.05  pledge 48.8% — veto territory; adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.05  froth: P/E 1092 on established earnings
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 4.74% over 8w, price 4.33% vs 30wMA, pos-in-52w-range 0.694)
+  Base       : depth 22.77%, 74d since 52w high, price 12.77% below base high (343.9)
+  RS vs bench: 3m 0.98 / 6m 1.385 / 12m 1.075  blend 1.261  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +0.04% (0.01 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 8 headlines | catalyst 0.09 | themes: none
+    [NSE 16-Sep] Windsor Machines Limited has informed the Exchange about trading approval for 17,32,405 Eq
+    [03-Sep] Windsor Machines - Madhusudan Kela’s portfolio: Top 5 holdings and how they performed in August (The Economic Times)
+    [19-Sep] Windsor Machines SRC Reconstitution: What Investors Should Know - Kalkine India (Kalkine India)
+    [27-Aug] Windsor Machines Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - valueresearchonlin (valueresearchonline.com)
+    [16-Sep] Windsor Machines Ltd is Rated Strong Sell - MarketsMojo (MarketsMojo)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~300.0  stop 272.6 (2.5 x ATR(14))  risk/share 27.4
+    size: 456 sh (~136,800 INR, 12,495 INR at risk)
+    trading lot 228 sh: partial 33% at 368.50 (2.5R), then trail daily close below 50-DMA
+    core lot    228 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+SPORTKING  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, AWAITING TRIGGER: Stage 2 + trend template, VCP base live — watch the pivot 219.79 for a volume breakout (not yet a backtested entry)
+  Conviction: 71/100 (coverage 100%)
+  Archetype: (no archetype — see the Sectors tab for its theme)
+    [  20] earnings_inflection        0.812  qtr PAT YoY +124%; accelerating (TTM 37% > 3y -8%); 1 consecutive quarter(s) above their year-ago level; sales +20% YoY, 3 quarters rising — earnings confirmed by the top line
+    [  20] rs_and_stage               0.984  RS percentile 96; TT 8/8, stage 2, VCP live
+    [  15] theme_tailwind             0.535  Textiles & apparel PLI ranks 41/100 on heat across the 18 themes (theme map, price-derived)
+    [  12] smart_money                0.529  FII 0.01->0.36% (+0.35pp); DII 0.0->0.0% (+0.00pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.619  clean balance sheet
+    [  10] catalyst                   0.58  lead: capex/investment (Rs1,000 Cr); 15 scoreable of 19 read across 10 distinct stories; events: capex/investment; sentiment positive (6+/1-); 4 filtered (3 datapage, 1 procedural) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.55  P/E 17, growth context missing
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 21.8% over 8w, price 24.07% vs 30wMA, pos-in-52w-range 0.835)
+  Base       : depth 18.75%, 35d since 52w high, price 11.19% below base high (241.51)
+  RS vs bench: 3m 1.246 / 6m 1.883 / 12m 2.112  blend 1.975  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +1.40% (0.31 ATRs)
   VCP        : live valid base
 
   Read:
     - Stage 2 + full 8-point trend template
     - live VCP base — watch the pivot for a fresh trigger
 
-  News (30d)  : 15 headlines | catalyst 0.308 | themes: none
-    [11-Sep] Somany Ceramics Plans 5 MSM Capacity Expansion Via Debottlenecking For ₹200 Crore Revenue - Sah (Sahi)
-    [13-Sep] Somany Ceramics collaborates with Sister Nivedita University on tile recycling art project - Me (MediaBrief)
-    [13-Sep] Somany Ceramics: Style, Design, and Brand Communication Strategy in India's Organised Tiles Mar (MarkHub24)
-    [08-Sep] Somany Ceramics SOMANYCERA Analyst Meet September 2026 - Kalkine India (Kalkine India)
+  News (30d)  : 19 headlines | catalyst 0.58 | themes: Textiles & apparel PLI
+    [18-Sep] Sportking India to Invest ₹1,000 Crore in Odisha Expected to Create 6,000+ Jobs: How the State  (Trade Brains)
+    [08-Sep] Sportking India CRISIL A+ Rating Reaffirmed, Facilities at Rs 1525 Cr - Kalkine India (Kalkine India)
+    [10-Sep] Sportking India (SPORTKING.NS) Eases to ₹215.83 as Textile Counter Consolidates Below Resistanc (siam.in)
+    [04-Sep] Sportking India Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - valueresearchonline (valueresearchonline.com)
 
   Entry plan (two-lot, risk-normalized):
-    entry ~589.45  stop 543.59 (2.5 x ATR(14))  risk/share 45.86
-    size: 254 sh (~149,720 INR, 11,648 INR at risk)
-    trading lot 127 sh: partial 33% at 704.09 (2.5R), then trail daily close below 50-DMA
-    core lot    127 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+    entry ~214.49  stop 190.37 (2.5 x ATR(14))  risk/share 24.12
+    size: 518 sh (~111,106 INR, 12,493 INR at risk)
+    trading lot 259 sh: partial 33% at 274.78 (2.5R), then trail daily close below 50-DMA
+    core lot    259 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
+
+========================================================================
+ARMANFIN  [CONFIRMED]   as of 2026-09-22
+========================================================================
+  >> CONFIRMED, NO VCP BASE: trend-following read only — no volume-breakout trigger; the +1.27R edge is not established for this entry
+  Conviction: 62/100 (coverage 100%)
+  Archetype: Turnaround
+    [  20] earnings_inflection        0.887  loss->profit swing CONFIRMED by margin expansion (OPM -7.0->29.0%) and 3 consecutive improving quarters; accelerating (TTM 1780% > 3y -16%); 3 consecutive quarter(s) above their year-ago level
+    [  20] rs_and_stage               0.762  RS percentile 78; TT 8/8, stage 2, VCP none
+    [  15] theme_tailwind             0.3  no cross-industry theme covers this name (theme map, price-derived)
+    [  12] smart_money                0.608  FII 1.8->3.08% (+1.28pp); DII 4.83->4.85% (+0.02pp); little institutional movement either way; delivery % unavailable for this symbol; bulk/block deals not yet wired in
+    [  10] financial_strength_trend   0.696  financing margin -7.0->29.0%, up 3 quarters running; ROE 6.26%; book value +160% over 3y; share capital +38% over 3y — dilution; asset quality (GNPA, provisions, CASA) is NOT published on the free source and is NOT in this score
+    [  10] catalyst                   0.198  lead: news; 14 scoreable of 19 read across 10 distinct stories; events: none; sentiment neutral (1+/1-); 5 filtered (2 datapage, 3 procedural) (news-based v0)
+    [   8] governance                 0.7  no pledge flagged by the source (not a verified zero — screener.in only reports pledge when material); adverse-filing check (auditor exit, modified opinion, pledge, regulatory action) shown separately on this card; related-party exposure is NOT checked — no free source publishes it as structured data
+    [   5] valuation_sanity           0.55  P/E 18, growth context missing
+
+  Stage      : Stage 2 (advancing)  (30wMA slope 6.71% over 8w, price 13.42% vs 30wMA, pos-in-52w-range 0.786)
+  Base       : depth 16.31%, 27d since 52w high, price 8.51% below base high (2158.6)
+  RS vs bench: 3m 1.24 / 6m 1.354 / 12m 1.486  blend 1.407  improving: False
+  Trend tmpl : 8/8 checks  [PASS]
+  vs 50-DMA  : +0.04% (0.01 ATRs)
+  VCP        : none detected
+
+  Read:
+    - Stage 2 + full 8-point trend template
+
+  News (30d)  : 19 headlines | catalyst 0.198 | themes: none
+    [NSE 18-Sep] Arman Financial Services Limited has informed the Exchange about Schedule of meet |SUBJECT
+    [NSE 15-Sep] ARMAN FINANCIAL SERVICES LIMITED has informed the Exchange regarding Allotment of Securiti
+    [NSE 15-Sep] Arman Financial Services Limited has informed the Exchange regarding Allotment of 31571  S
+    [09-Sep] Is Arman Financial Services a Good Buy After Its Q1 FY27 Results? - Univest (Univest)
+    [04-Sep] Arman Financial Services (NSE:ARMANFIN): What Is the Analyst Meeting Scheduled for September 20 (Kalkine India)
+    [30-Aug] Arman Financial Services Ltd. Key Financial Ratios – Valuation, Profitability & More - valueres (valueresearchonline.com)
+    [30-Aug] Arman Financial Services Ltd. Financials – Balance Sheet, Profit & Loss, Cash Flow - valueresea (valueresearchonline.com)
+
+  Entry plan (two-lot, risk-normalized):
+    entry ~1974.9  stop 1790.35 (2.5 x ATR(14))  risk/share 184.55
+    size: 67 sh (~132,318 INR, 12,365 INR at risk)
+    trading lot 33 sh: partial 33% at 2436.28 (2.5R), then trail daily close below 50-DMA
+    core lot    34 sh: exit ONLY on weekly close below the 150-day SMA (~30-week MA) — this lot is allowed to become the multibagger
 
 ```
+
+## Paper book (analyst-driven)
+
+- PAPER PENDING SOMANYCERA: fills at next session's open
+- PAPER PENDING BELRISE: fills at next session's open
+- **PAPER**: ACMESOLAR — PARTIAL PROFIT 2.5R hit at 467.35 — sell ~13 sh of trading lot
