@@ -1,15 +1,42 @@
 {
  "ok": true,
- "generated": "2026-09-22T15:02:09",
+ "generated": "2026-09-23T15:10:28",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9804,
- "policy_hits": 16,
- "stories": 15,
+ "headlines_read": 10057,
+ "policy_hits": 17,
+ "stories": 16,
  "themes": {
+  "capex": {
+   "pressure": 0.083,
+   "pos_flow": 0.0641,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
+     "date": "2026-08-14T05:35:56",
+     "source": "Livemint",
+     "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
+     "themes": [
+      "capex",
+      "ev"
+     ],
+     "polarity": "pos",
+     "event": "scheme/mission",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0641
+    }
+   ]
+  },
   "railways": {
-   "pressure": 0.316,
-   "pos_flow": 0.2814,
+   "pressure": 0.308,
+   "pos_flow": 0.2723,
    "neg_flow": 0.0,
    "n_scored": 4,
    "n_attn": 1,
@@ -29,7 +56,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1404
+     "weight": 0.1359
     },
     {
      "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -46,7 +73,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0505
+     "weight": 0.0488
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -63,7 +90,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0505
+     "weight": 0.0488
     }
    ]
   },
@@ -84,8 +111,8 @@
    "top": []
   },
   "defence": {
-   "pressure": 0.141,
-   "pos_flow": 0.1122,
+   "pressure": 0.136,
+   "pos_flow": 0.1086,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -105,7 +132,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0679
+     "weight": 0.0657
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -122,13 +149,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0443
+     "weight": 0.0429
     }
    ]
   },
   "hospital": {
-   "pressure": 0.054,
-   "pos_flow": 0.0415,
+   "pressure": 0.053,
+   "pos_flow": 0.0401,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -148,13 +175,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0415
+     "weight": 0.0401
     }
    ]
   },
   "semis": {
-   "pressure": 0.066,
-   "pos_flow": 0.0505,
+   "pressure": 0.064,
+   "pos_flow": 0.0488,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -174,13 +201,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0505
+     "weight": 0.0488
     }
    ]
   },
   "ems": {
-   "pressure": 0.13,
-   "pos_flow": 0.1029,
+   "pressure": 0.126,
+   "pos_flow": 0.0996,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -200,40 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1029
-    }
-   ]
-  },
-  "capex": {
-   "pressure": 0.086,
-   "pos_flow": 0.0662,
-   "neg_flow": 0.0,
-   "n_scored": 1,
-   "n_attn": 0,
-   "top": [
-    {
-     "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
-     "date": "2026-08-14T05:35:56",
-     "source": "Livemint",
-     "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
-     "themes": [
-      "capex",
-      "ev"
-     ],
-     "polarity": "pos",
-     "event": "scheme/mission",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0662
+     "weight": 0.0996
     }
    ]
   },
   "ev": {
-   "pressure": 0.163,
-   "pos_flow": 0.1319,
+   "pressure": 0.158,
+   "pos_flow": 0.1276,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -254,7 +254,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0662
+     "weight": 0.0641
     },
     {
      "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -271,12 +271,29 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.0657
+     "weight": 0.0635
     }
    ]
   }
  },
  "events": [
+  {
+   "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
+   "date": "2026-09-23T05:30:00",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/auto/auto-news/govt-set-to-consider-auto-pli-applications-with-chinese-investment-after-fdi-nod/articleshow/134419730.cms",
+   "themes": [
+    "capex"
+   ],
+   "polarity": "attn",
+   "event": "scheme/mission",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": true,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.24
+  },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
    "date": "2026-09-20T09:39:35",
@@ -292,7 +309,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1404
+   "weight": 0.1359
   },
   {
    "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
@@ -309,7 +326,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1029
+   "weight": 0.0996
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -326,7 +343,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0946
+   "weight": 0.0916
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -344,7 +361,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0857
+   "weight": 0.0829
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -361,7 +378,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0679
+   "weight": 0.0657
   },
   {
    "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
@@ -379,7 +396,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0662
+   "weight": 0.0641
   },
   {
    "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
@@ -396,7 +413,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0657
+   "weight": 0.0635
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -413,7 +430,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0619
+   "weight": 0.0599
   },
   {
    "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -430,7 +447,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0505
+   "weight": 0.0488
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -447,7 +464,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0505
+   "weight": 0.0488
   },
   {
    "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
@@ -464,7 +481,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0505
+   "weight": 0.0488
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -481,7 +498,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0443
+   "weight": 0.0429
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -498,7 +515,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0415
+   "weight": 0.0401
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -515,7 +532,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0404
+   "weight": 0.0391
   },
   {
    "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
@@ -532,7 +549,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0388
   }
  ]
 }

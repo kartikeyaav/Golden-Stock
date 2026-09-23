@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-22 15:06",
+ "generated": "2026-09-23 15:15",
  "n_checked": 1027,
- "n_flagged": 88,
- "asm_total": 197,
+ "n_flagged": 89,
+ "asm_total": 201,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -109,18 +109,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "HEG": {
-   "flags": [
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": null,
-   "series": "BE",
-   "worst": "BE"
   },
   "HFCL": {
    "flags": [
@@ -324,6 +312,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "AVALON": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "BBOX": {
    "flags": [
     {
@@ -413,18 +413,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "ENTERO": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "UTLSOLAR": {
    "flags": [
     {
@@ -436,6 +424,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "GMMPFAUDLR": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "JAIBALAJI": {
    "flags": [
@@ -832,6 +832,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "PAISALO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "SUNFLAG": {
    "flags": [
     {
@@ -937,7 +949,7 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "ST Stage I",
+     "detail": "LT Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     },
     {
@@ -1078,6 +1090,11 @@
   "HLEGLAS": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -1085,7 +1102,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
   },
   "IZMO": {
    "flags": [
@@ -1098,18 +1115,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "ASTEC": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "FAZE3Q": {
    "flags": [
@@ -1134,6 +1139,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "KOPRAN": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   }
  },
  "note": "Display only. Surveillance has never been tested as an entry filter here, so it flags and does not gate."
