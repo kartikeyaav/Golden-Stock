@@ -23,6 +23,7 @@ on:
       - "multibagger_screener/multibagger_screener/journal/analyst_verdicts.csv"  # local analyst push
       - "multibagger_screener/multibagger_screener/daily_alerts.md"
       - ".github/workflows/pages.yml"
+      - "ui-designs/**"
   # PENNY IS IN THIS LIST (added 2026-08-31). It was not, and the consequence
   # was invisible: the penny screen ran on its own 3-day cadence, committed
   # penny_ranked/penny_meta/penny_details perfectly well, and then nothing
@@ -107,6 +108,10 @@ jobs:
           # dashboard is best-effort (needs the data cache)
           python scripts/build_dashboard.py && cp dashboard.html _site/dashboard.html \
             || echo "dashboard build degraded — landing published, dashboard skipped this run"
+          # Independent UI previews: preserve the production routes above.
+          mkdir -p _site/ui-designs
+          cp ../../ui-designs/index.html ../../ui-designs/styles.css _site/ui-designs/
+          cp -R ../../ui-designs/v2 ../../ui-designs/v3 ../../ui-designs/shared _site/ui-designs/
 
       - uses: actions/upload-pages-artifact@v3
         with:

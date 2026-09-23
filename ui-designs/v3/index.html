@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080c13">
+  <title>Golden Stock — Terminal · Design III</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23172320'/%3E%3Cpath d='M32 15H17v18h16V23H24' fill='none' stroke='%23c9b47f' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="../shared/app.js" defer></script>
+  <script src="terminal.js" defer></script>
+</head>
+<body data-design="III">
+<a class="skip" href="#workspace">Skip to workspace</a>
+<aside class="sidebar" id="sidebar">
+  <button class="icon-btn mobile-close" id="close-menu" aria-label="Close navigation">×</button>
+  <a href="#overview" class="brand" aria-label="Golden Stock home"><svg viewBox="0 0 42 42" aria-hidden="true"><path d="M32 8H10v26h23V21H22M6 4h12M36 38H24"/></svg><span>GOLDEN STOCK<small>INTELLIGENCE TERMINAL</small></span></a>
+  <div class="workspace-label"><span class="square-dot"></span> Research preview <span class="mono">03</span></div>
+  <nav aria-label="Main navigation" id="nav"></nav>
+  <div class="rail-note"><div class="orbital" aria-hidden="true"><span></span><i></i></div><span class="eyebrow">SIGNAL OVER NOISE</span><p>Precision.<br>With perspective.</p><button class="rail-link" data-page="evidence">Explore the evidence <span>↗</span></button></div>
+  <div class="rail-foot"><span class="avatar">G</span><div>Researcher<small>Public design preview</small></div><span class="edition">III</span></div>
+</aside>
+<div class="shell">
+  <header class="topbar"><button class="icon-btn mobile-menu" id="menu" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">☰</button><div class="breadcrumb">TERMINAL <span>/</span> <b id="crumb">Overview</b></div><button class="search-open" id="search-open"><span class="search-icon"></span><span>Find a company</span><kbd>Ctrl K</kbd></button><button class="snapshot-button" data-page="system"><span class="dot"></span> Snapshot <span id="snapshot-date">15 Sep 2026</span></button></header>
+  <main id="workspace" tabindex="-1"><div class="loading">Opening your research desk…</div></main>
+  <footer><span>GOLDEN STOCK <b> / </b> DESIGN III</span><span>Design preview · Archived data · No live orders</span><a href="../v2/">Try the original Design II ↗</a><a href="../">Compare both designs ↗</a></footer>
+</div>
+<dialog id="stock-dialog" class="stock-dialog" aria-labelledby="stock-title"><div id="stock-content"></div></dialog>
+<dialog id="search-dialog" class="search-dialog" aria-label="Find a company"><div class="search-dialog-head"><span class="search-icon"></span><input id="global-search" aria-label="Search all companies" placeholder="Search company or symbol…" autocomplete="off"><button class="icon-btn" id="close-search" aria-label="Close search">×</button></div><div id="search-results"></div><div class="search-help">Search the archived universe <kbd>Esc to close</kbd></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>
