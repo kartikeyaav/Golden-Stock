@@ -71,6 +71,150 @@ def _adjustment_detected(sym: str, fresh: pd.DataFrame) -> float | None:
     return med if abs(med - 1.0) > _ADJ_BAND else None
 
 
+# ---------------------------------------------------------------------------
+# Breaks inside YAHOO'S OWN series (2026-09-26).
+#
+# Yahoo sometimes applies a split/bonus only back to a year boundary: a fresh
+# full-history fetch of MOTILALOFS returns 1,240.8 on 2023-12-29 and 315.0 on
+# 2024-01-01 — a phantom -75% day, because its 3:1 bonus (June 2024) was
+# applied to 2024 onward only. The corporate-action guard above cannot fix it
+# (a refetch returns the same break), and the cached history carried it for
+# CGCL, GPIL, MOTILALOFS, PARAS, REDTAPE, SHARDAMOTR and SILVERTUC — big
+# 2024-25 winners that spent their whole run looking 75-90% below a fake
+# 52-week high, so the trend template could never pass them.
+#
+# The exchange arbitrates: a one-day move this large cannot be an NSE trading
+# day (20% circuits), so for each break the exchange's OWN raw closes for the
+# two sessions are fetched. If NSE shows an ordinary day (and no restated prior
+# close, i.e. no corporate action that day), the jump is Yahoo's, and the
+# history BEFORE it is rescaled by the unexplained part. A break the exchange
+# confirms (a real action on that date) is left alone.
+# ---------------------------------------------------------------------------
+_BREAK_LOG = 0.47          # log(1.6): a >60% one-day level change
+_PERSIST_LOG = 0.405       # log(1.5): ...that holds for the next sessions
+
+
+def scale_breaks(df: pd.DataFrame) -> list[int]:
+    """Row positions i where close[i]/close[i-1] jumps >60% and the new level
+    persists (a median of 5 sessions either side still differs by >50%)."""
+    import numpy as np
+    c = df["close"].to_numpy(dtype=float)
+    out = []
+    for i in range(1, len(c)):
+        if c[i - 1] > 0 and c[i] > 0 and abs(np.log(c[i] / c[i - 1])) > _BREAK_LOG:
+            before = np.median(c[max(0, i - 5):i])
+            after = np.median(c[i:i + 5])
+            if before > 0 and after > 0 and abs(np.log(after / before)) > _PERSIST_LOG:
+                out.append(i)
+    return out
+
+
+def _former_symbols(sym: str) -> list[str]:
+    """The symbols this company traded under before (NSE's symbolchange.csv,
+    followed backwards): PATANJALI was RUCHISOYA in 2020."""
+    try:
+        from data.nse_history import _symbol_chain
+        chain = _symbol_chain()
+    except Exception:  # noqa: BLE001
+        return []
+    return [old for old, new in chain.items() if new == sym]
+
+
+def repair_scale_breaks(sym: str, df: pd.DataFrame, session_rows=None,
+                        former=None) -> tuple[pd.DataFrame, list[str]]:
+    """Return (repaired df, notes). `session_rows(date)` -> the exchange's rows
+    for that session (data.nse_history.session_rows); injectable for tests.
+
+    For each break, the exchange decides what the stock REALLY did that day:
+      * NSE restated the prior close -> a corporate action (split, bonus,
+        demerger) happened; the real move is close / restated prior close;
+      * no restatement but a huge raw move that matches a standard split/bonus
+        ratio within 3% -> an unrestated action; the real move is the raw move
+        divided by that ratio;
+      * no restatement and no ratio match on a huge move -> a real crash: kept;
+      * an ordinary raw move -> the jump is Yahoo's alone.
+    History before the break is rescaled by Yahoo's jump / the real move, so a
+    Yahoo series that never adjusted a demerger (RAYMOND 2025-05-14, ABFRL
+    2025-05-22) or adjusted a bonus only back to a year boundary (MOTILALOFS
+    2024-01-01) stops reading as a crash to every moving average and high."""
+    import numpy as np
+    if session_rows is None:
+        from data.nse_history import session_rows
+    if former is None:
+        former = _former_symbols
+    try:
+        from data.nse_history import _STD as std_mult
+    except Exception:  # noqa: BLE001
+        std_mult = np.array([0.5, 0.2, 0.1, 0.25, 1 / 3, 2 / 3])
+    df = df.sort_values("date").reset_index(drop=True).copy()
+    df["volume"] = df["volume"].astype(float)
+    notes = []
+    names = None
+    for i in scale_breaks(df):
+        d1, d0 = df["date"].iloc[i].date(), df["date"].iloc[i - 1].date()
+        b1, b0 = session_rows(d1), session_rows(d0)
+        if b1 is None or b0 is None:
+            notes.append(f"{d1}: exchange file unavailable — left as is")
+            continue
+        r1 = r0 = None
+        if names is None:
+            names = [sym] + list(former(sym))
+        for nm in names:
+            x1 = b1[(b1["symbol"] == nm) & b1["series"].isin(["EQ", "BE", "BZ"])]
+            x0 = b0[(b0["symbol"] == nm) & b0["series"].isin(["EQ", "BE", "BZ"])]
+            if not x1.empty and not x0.empty:
+                r1, r0 = x1, x0
+                break
+        if r1 is None:
+            notes.append(f"{d1}: {sym} absent from the exchange file — left as is")
+            continue
+        c1, c0 = float(r1["close"].iloc[0]), float(r0["close"].iloc[0])
+        pc1 = float(r1["prev_close"].iloc[0])
+        ex_q = c1 / c0
+        y_q = float(df["close"].iloc[i] / df["close"].iloc[i - 1])
+        if abs(pc1 / c0 - 1) > 0.02:
+            real, why = c1 / pc1, f"NSE restated the prior close (an action of x{pc1 / c0:.3f})"
+        elif 0.75 < ex_q < 1.33:
+            real, why = ex_q, f"NSE moved x{ex_q:.3f}"
+        else:
+            # an unrestated action must ALSO look like one in volume: after a
+            # split/bonus/demerger, volume x price ratio stays near or below 1
+            # (measured 0.0-1.3 on the 14 cached demergers and splits); a crash
+            # (YESBANK 2020-03-06) comes with a 10-20x volume explosion.
+            v = df["volume"].to_numpy(dtype=float)
+            pre, post = np.median(v[max(0, i - 20):i]), np.median(v[i:i + 20])
+            sig = (post / pre) * ex_q if pre > 0 else np.nan
+            k = int(np.argmin(np.abs(np.log(std_mult / ex_q))))
+            if abs(np.log(std_mult[k] / ex_q)) < np.log(1.03) and np.isfinite(sig) and sig <= 3:
+                real, why = ex_q / std_mult[k], (f"an unrestated x{std_mult[k]:.3f} action "
+                                                 f"(volume signature {sig:.2f})")
+            else:
+                notes.append(f"{d1}: the exchange shows a real move (x{ex_q:.3f}) — kept")
+                continue
+        fix = y_q / real
+        if abs(np.log(fix)) < 0.02:
+            continue                                   # Yahoo already agrees with the exchange
+        px = ["open", "high", "low", "close"]
+        df.loc[: i - 1, px] = df.loc[: i - 1, px] * fix
+        df.loc[: i - 1, "volume"] = df.loc[: i - 1, "volume"] / fix
+        notes.append(f"{d1}: Yahoo jumped x{y_q:.3f}; {why} — history before rescaled x{fix:.4f}")
+    return df, notes
+
+
+def repair_cached(sym: str) -> list[str]:
+    """Detect and repair Yahoo-series breaks in one cached symbol; returns the
+    notes (empty when the series is clean — the common, cheap case)."""
+    from data.cache import load_ohlcv
+    df = load_ohlcv(sym)
+    if df is None or len(df) < 10 or not scale_breaks(df):
+        return []
+    fixed, notes = repair_scale_breaks(sym, df)
+    if any("rescaled" in n for n in notes):
+        path = CACHE_DIR / f"{sym}.csv"
+        fixed.to_csv(path, index=False)          # a full overwrite: every row is corrected
+    return notes
+
+
 # How far the exchange's own previous close may sit from our cached close
 # before the two are judged to be on different scales. The measured agreement
 # on 2026-09-07 was 1,020 of 1,020 names inside this band.
@@ -229,6 +373,11 @@ def update_symbols(symbols: list[str], pause: float = 0.3) -> tuple[int, list[st
                     print(f"[{i}/{len(symbols)}] CORP-ACTION {sym}: overlap x{ratio:.3f} "
                           f"-> full refetch (split/bonus)", flush=True)
             save_ohlcv(sym, df, meta={"source": "yahoo", "yahoo_symbol": yahoo_sym})
+            try:
+                for note in repair_cached(sym):
+                    print(f"[{i}/{len(symbols)}] SERIES BREAK {sym} {note}", flush=True)
+            except Exception as e:  # noqa: BLE001 — a repair must never end a price run
+                print(f"[{i}/{len(symbols)}] series-break check skipped for {sym}: {str(e)[:80]}", flush=True)
             ok += 1
         except Exception as e:  # noqa: BLE001
             failures.append(sym)

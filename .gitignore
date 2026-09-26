@@ -52,3 +52,11 @@ theme_samples.html
 
 # debug artifact that once carried a positions table
 multibagger_screener/multibagger_screener/theme_samples.html
+
+# research outputs: the per-event / per-row files are regenerated from the
+# survivorship-free panel (~/golden_stock_data, never in git); only the small
+# JSON + markdown summaries are committed as the record
+multibagger_screener/multibagger_screener/research/out/*.csv
+multibagger_screener/multibagger_screener/research/out/*.csv.gz
+multibagger_screener/multibagger_screener/research/out/*.log
+multibagger_screener/multibagger_screener/research/out/*_smoke.*
