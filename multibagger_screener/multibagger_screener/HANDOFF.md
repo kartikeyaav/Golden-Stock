@@ -2487,7 +2487,13 @@ with one dated amendment (regime exits).
 - **The live breakout system without survivorship bias**
   (`scripts/run_pit_rerun.py`, traded-value rank 101-750 on each date):
   2006-26 made 11.1% / −22.4% ideal and 13.3% / −27.4% realistic; 2020-26
-  made 35.8% / −31.7% ideal, against 45.1% / −21.2% biased.
+  made 35.8% / −31.7% ideal (against 45.1% / −21.2% biased) and 29.6% /
+  −24.5% realistic (against 30.3% biased).
+- **The momentum core's rules, unbiased:** 22.9% / −56.0% over 2006-26 and
+  32.9% / −35.0% over 2020-26. Equal weight made 11.8% / −76.4%.
+- **The 50/50 breakout + momentum book:** 18.4% / −38.6% over 2006-26, and
+  31.8% / −24.9% with a Sharpe of 1.22 over 2020-26. 2022 cost only −4%.
+  **This combination is the best-balanced result measured.**
 - **Fundamentals (2016-26 only, in-sample):** cheap + new uptrend had a
   +18.6% 12-month median and the best 5×-in-2-years lift (1.96). It is the
   next forward-test candidate.

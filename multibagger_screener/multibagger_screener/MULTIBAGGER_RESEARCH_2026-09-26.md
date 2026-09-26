@@ -201,7 +201,30 @@ re-run, on the stocks ranked 101–750 by traded value on each date):
 | 2020–2026 on today's index members (the 09-25 re-run): ideal / realistic | 45.1% / 30.3% | −21.2% / −24.8% | — |
 
 **Survivorship bias was worth about 9 points of CAGR with ideal fills in
-2020–2026, and almost nothing with realistic execution.** The bigger truth is the window: over twenty years, which include
+2020–2026, and almost nothing with realistic execution.**
+
+**The whole book without survivorship bias** (the same point-in-time universe;
+the momentum core's registered rules; realistic execution for the breakout
+book; the blend rebalanced 50/50):
+
+| survivorship-free | 2006–2026 CAGR | worst DD | 2020–2026 CAGR | worst DD | Sharpe 2020–26 |
+|---|---|---|---|---|---|
+| own the universe, equal weight | 11.8% | −76.4% | 24.1% | −44.6% | 0.85 |
+| breakout book (VCP + EP, realistic) | 13.3% | −27.4% | 29.6% | −24.5% | 1.05 |
+| — VCP entries only (ideal) | — | — | 20.4% | −31.6% | 0.76 |
+| — episodic pivots only (ideal) | — | — | 26.8% | −14.1% | 1.08 |
+| momentum core (monthly, breadth) | 22.9% | −56.0% | 32.9% | −35.0% | 1.16 |
+| **50/50 breakout + momentum** | **18.4%** | **−38.6%** | **31.8%** | **−24.9%** | **1.22** |
+
+The two books cover each other's weaknesses:
+- **Momentum** doubles the market over twenty years but falls with it.
+- **The breakout book** earns roughly the market's return with a third of the
+  drawdown.
+
+Together, 2022 cost 4% where the pure momentum books lost 39–48%. The blend
+year by year (2006–2026):
++50, +94, −33, +38, +20, −13, +25, +6, +86, −5, −11, +52, −7, 0, +24, +62, −4,
++29, +23, +5, +23 (2026 to date). The bigger truth is the window: over twenty years, which include
 2008, 2011 and 2018–20, the same rules made 11–13% a year. That is about what
 owning the market made, with a third of its drawdown. The system's 2020–2026
 record mostly reflects an exceptional small-cap bull market.
@@ -210,10 +233,14 @@ record mostly reflects an exceptional small-cap bull market.
 
 **In individual years, yes. As a compounded rate, not on any evidence here.**
 Every approach tested made 100%+ in the strong years (2006–07, 2009, 2014,
-2017, 2020–21, 2023) and lost 20–50% in the weak ones. The best long-run
-figures on unbiased data are **20–30% a year**, with drawdowns that regime
-exits bring down to 30–50%, not lower. Twenty years at 100% would multiply
-capital a million times; no investor on record has done that.
+2017, 2020–21, 2023) and lost 20–50% in the weak ones. On unbiased data:
+- **The best single books** make **20–30% a year**, with drawdowns that
+  regime exits bring down only to 30–50%.
+- **The balanced book** (breakout + momentum) makes **about 18% over twenty
+  years and 32% over 2020–2026**, with a −25% to −39% worst drawdown.
+
+Twenty years at 100% would multiply capital a million times; no investor on
+record has done that.
 
 The big levers are measured:
 1. **Hold the right kind of stock.** Momentum leaders and power plays, not
