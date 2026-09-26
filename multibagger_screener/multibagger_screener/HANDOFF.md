@@ -1,6 +1,8 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-09-25** (FULL REVIEW + v7 INTERFACE. The strategy was re-measured honestly — the live config is 45% a year with ideal fills and 30% with realistic execution over 2020→2026, not 54.5% — the gate's ruler and benchmark were corrected, the conviction weights moved to v2, and the dashboard was rebuilt. Read `REVIEW_2026-09-25.md`, then §3AB.)
+**Last updated: 2026-09-27** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
+
+**Superseded header, kept for the trail: 2026-09-25** (FULL REVIEW + v7 INTERFACE. The strategy was re-measured honestly — the live config is 45% a year with ideal fills and 30% with realistic execution over 2020→2026, not 54.5% — the gate's ruler and benchmark were corrected, the conviction weights moved to v2, and the dashboard was rebuilt. Read `REVIEW_2026-09-25.md`, then §3AB.)
 
 **Superseded header, kept for the trail: 2026-09-15** (SESSIONS AND SCREENER COVERAGE: price age is counted in exchange sessions, and every screener column is filled or says why it is blank. Read §3AA first; the 09-12 reliability pass is §3Y.)
 
@@ -2445,6 +2447,83 @@ looped and froze screenshots — the charts use `autoSize: true` now.
 holdings files (destructive, public repo). §5 items 11–13 below are
 SUPERSEDED: on 2026-09-17 the cloud AI runner was tried and rejected on cost —
 the laptop stays the AI runner (`ai_runner.json` = laptop).
+
+---
+
+## 3AC. Multibagger research, survivorship-free data, the 3:10 PM check (2026-09-26/27)
+
+The user's instruction: identify quality multibaggers early "at any cost",
+research smart money, ICT and proven stock pickers, backtest properly, and
+reach more than 100% a year. Record: `MULTIBAGGER_RESEARCH_2026-09-26.md`.
+Plan: `PREREG_2026-09-26_multibagger_research.md`, frozen before any result,
+with one dated amendment (regime exits).
+
+**Data (new, outside the repo).**
+- `data/nse_history.py` downloads NSE's own daily files for every calendar
+  day from 2005: bhavcopy plus MTO delivery. 27 weekend sessions exist.
+- It builds sessions × companies grids for 4,061 companies, including
+  delisted ones, into `~/golden_stock_data/nse/panel.npz`.
+- Corporate actions come from three sources: NSE's restated prior close
+  (660), unrestated gaps matching a standard ratio with a split-like volume
+  signature (1,635), and Yahoo-declared events confirmed by the price move
+  (947 companies).
+- 89% of 1,176 overlapping stocks line up flat with the Yahoo cache.
+- `research/` holds the study code: grid, hypotheses, event study, recall,
+  simulator (`Book`), strategy grid, regime test, and fundamentals.
+
+**Findings (details in the record):**
+- **Survivors of confirmation:** power play (lift 2.06 / 2.65), RS leader
+  (1.76 / 1.88) and discovery (1.69 / 1.52).
+- **VCP breakout:** 1.08 / 1.14.
+- **ICT:** the sweep has no edge; order blocks and fair-value gaps show ~1.4,
+  a momentum echo.
+- **Recall:** only 19% of NSE triples-within-a-year were buyable (₹1 Cr/day)
+  at the low.
+- **Portfolios:** 20-30% (2006-15) and 15-25% (2016-26) with 40-70%
+  drawdowns. Regime exits cut 2008-type drawdowns to about −40% at no cost.
+  The 2022 momentum crash is NOT stopped.
+- **The chosen configuration** (RS leader, 5 positions, 30-week exit, breadth
+  exit): 29.9% / −31.9%, then 18.2% / −50.9%.
+- **The live breakout system without survivorship bias**
+  (`scripts/run_pit_rerun.py`, traded-value rank 101-750 on each date):
+  2006-26 made 11.1% / −22.4% ideal and 13.3% / −27.4% realistic; 2020-26
+  made 35.8% / −31.7% ideal, against 45.1% / −21.2% biased.
+- **Fundamentals (2016-26 only, in-sample):** cheap + new uptrend had a
+  +18.6% 12-month median and the best 5×-in-2-years lift (1.96). It is the
+  next forward-test candidate.
+
+**Live changes (all pushed):**
+- `scripts/breakout_watch.py`: the 3:10 PM check, Windows task
+  `MultibaggerBreakoutWatch`, weekdays 15:10. Measured: 95% precision, 92%
+  recall, and a 15:20 fill a median 0.00% from the close. GitHub cron was
+  measured a median 95 min late, so it runs on the laptop. **Telegram needs
+  `scripts/set_telegram_local.ps1`, run by the user once.**
+- `scripts/multibagger_radar.py`: nightly in the cloud, whole-market (it
+  rebuilds ~14 months from NSE files), on the Today card and in the digest
+  block.
+- `scripts/multibagger_sleeve.py` +
+  `PREREG_2026-09-27_multibagger_sleeve.md`: the chosen configuration forward
+  on paper from 2026-09-28. It is stepped with `research/sim.Book`, which is
+  proven identical to the backtest.
+- `scripts/update_prices.py` `repair_scale_breaks`: Yahoo's own series had
+  phantom crashes (MOTILALOFS ₹1,240.8 → ₹315.0 on 2024-01-01; demergers never
+  adjusted). The repair uses NSE's closes; 26 cached stocks were fixed.
+
+**Gotchas met this session:**
+- Heredoc `\\` collapses into a newline or line-continuation: use the Edit
+  tool for backslash text in YAML and Python.
+- Running the radar or sleeve locally writes `state/*.json`, which is
+  cloud-owned. It is harmless because `state/` is gitignored and the cloud
+  uses `git add -f`, but do not commit it from the laptop.
+- `bhavcopy()` in `data/nse_all.py` only reads the post-July-2024 format;
+  use `data.nse_history.session_rows` for any era.
+
+**Open, for the user:**
+- Run `set_telegram_local.ps1`.
+- Decide whether the next forward test is cheap + new uptrend, which would
+  need the fundamentals refreshed weekly from the laptop.
+- Promoter buying: BSE's API answers without a session, but the quantities
+  sit in attachments. It is the strongest untapped smart-money source.
 
 ---
 
