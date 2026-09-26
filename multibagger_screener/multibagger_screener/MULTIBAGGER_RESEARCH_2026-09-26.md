@@ -154,6 +154,11 @@ The setup:
 (2016–2026).** Indian small caps had three brutal bear markets in these
 twenty years (2008, 2011, 2018–20).
 
+(The no-regime grid below ran before the last corporate-action pass, the
+Yahoo-declared events. It is being re-run on the final panel into
+`research/out/strategy_grid_final.json`. Its first twelve configurations moved
+by a median 0.1 points, and by at most about 2.)
+
 **Signal portfolios without a regime rule** (192 configurations): about
 **20–30% a year on 2006–2015 and 15–25% on 2016–2026, with 40–70% drawdowns.**
 Power play was the best family: with 8 positions and a 30-week trailing exit
