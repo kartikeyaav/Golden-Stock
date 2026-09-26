@@ -42,7 +42,7 @@ RAW = f"""# Daily scan — 2026-08-04 15:36
 - **BUY TRIGGER** [VALIDATED]: ARVIND  (pivot 538.9 cleared on 1.9x vol)
 - **BUY TRIGGER** [VALIDATED (EXTENDED)]: HEG  (pivot cleared)
 - **BUY CANDIDATE** [AWAITING TRIGGER]: AEGISLOG  (WATCH -> CONFIRMED)
-- **EXIT WARNING**: DIACABS  (held name broke down)
+- **EXIT WARNING**: HELDNAME  (held name broke down)
 - **BUY CANDIDATE** [NO VCP BASE]: WEAKONE  (WATCH -> CONFIRMED)
 
 ## Cards
@@ -77,11 +77,11 @@ def test_public_feed_hides_the_book():
     pub = ST.build_digest(RAW, public=True)
     # present privately: proves the assertions below are not passing on an
     # empty/broken digest
-    assert "DIACABS" in priv
+    assert "HELDNAME" in priv
     assert "EXIT WARNING" in priv
     assert "HEG" in priv
     # absent publicly
-    assert "DIACABS" not in pub
+    assert "HELDNAME" not in pub
     assert "EXIT WARNING" not in pub
     assert "HEG" not in pub
 

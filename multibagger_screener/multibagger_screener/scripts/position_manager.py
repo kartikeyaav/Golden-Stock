@@ -131,6 +131,9 @@ def check_positions(positions_path: str = POSITIONS_PATH,
     ledger_rows: list[dict] = []
     now = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M")
 
+    if "last_checked" not in pos.columns:
+        pos["last_checked"] = ""
+
     for i, p in pos.iterrows():
         trading_open, core_open = _bool(p["trading_open"]), _bool(p["core_open"])
         if not (trading_open or core_open):
@@ -138,7 +141,7 @@ def check_positions(positions_path: str = POSITIONS_PATH,
         df = load_ohlcv(p["symbol"])
         if df is None or df.empty:
             continue
-        df = add_moving_averages(df)
+        df = add_moving_averages(df).reset_index(drop=True)
         row = df.iloc[-1]
 
         # BEFORE ANY STOP IS TESTED. If the series was re-adjusted under this
@@ -162,84 +165,122 @@ def check_positions(positions_path: str = POSITIONS_PATH,
                                  "kind": "MANAGE", "new_tag": "corporate action rescale",
                                  "close": float(row["close"])})
 
-        entry, stop = float(p["entry_price"]), float(p["stop_current"])
+        entry = float(p["entry_price"])
         risk = entry - float(p["initial_stop"])
         if risk <= 0:
             continue
         shares_trading = int(p["shares_trading"])
         partial_shares = int(shares_trading * RISK.partial_profit_fraction)
 
-        def fire(msg: str):
-            alerts.append(f"- **{label}**: {p['symbol']} — {msg}")
-            journal_rows.append({"logged_at": now, "symbol": p["symbol"],
-                                 "kind": "MANAGE", "new_tag": msg[:60],
-                                 "close": float(row["close"])})
+        # EVERY SESSION SINCE THE LAST ONE THIS POSITION WAS CHECKED AGAINST
+        # (AUDIT 2026-09-22 F5). This read only the newest bar, so a stop
+        # breached on a session the scan did not run — a missed cron, a
+        # holiday catch-up, a two-day-late Yahoo bar — was never seen if price
+        # recovered by the next run, and the position stayed open on a stop it
+        # had already hit. A row with no stamp (every position that predates
+        # this column) is checked against the newest bar only, exactly as
+        # before, so no historical event can re-fire; the stamp takes over
+        # from the next run.
+        last_checked = str(p.get("last_checked") or "").strip()
+        if last_checked and last_checked.lower() != "nan":
+            todo = df.index[df["date"] > pd.Timestamp(last_checked)].tolist()
+        else:
+            todo = [len(df) - 1]
+        entry_day = pd.Timestamp(str(p.get("entry_date") or "1900-01-01"))
 
-        def book(lot: str, shares: int, price: float, reason: str, when=None):
-            if ledger_path and shares > 0:
-                ledger_rows.append({
-                    "date": str(pd.Timestamp(when if when is not None else row["date"]).date()),
-                    "symbol": p["symbol"], "action": "SELL", "lot": lot,
-                    "shares": shares, "price": round(float(price), 2),
-                    "pnl": round(shares * (float(price) - entry), 2),
-                    "reason": reason})
+        for k in todo:
+            row = df.iloc[k]
+            if pd.Timestamp(row["date"]) < entry_day:
+                continue
+            stop = float(pos.at[i, "stop_current"])
+            trading_open = _bool(pos.at[i, "trading_open"])
+            core_open = _bool(pos.at[i, "core_open"])
+            if not (trading_open or core_open):
+                break
 
-        # 1. stop hit -> everything open exits
-        if row["low"] <= stop:
-            fire(f"STOP HIT at {stop:.2f} (low {row['low']:.2f}) — exit all remaining shares")
-            open_shares = ((shares_trading - (partial_shares if _bool(p["partial_taken"]) else 0))
-                           if trading_open else 0) + (int(p["shares_core"]) if core_open else 0)
-            book("all", open_shares, stop, "stop hit")
-            pos.at[i, "trading_open"] = False
-            pos.at[i, "core_open"] = False
-            continue
+            def fire(msg: str, _row=row):
+                alerts.append(f"- **{label}**: {p['symbol']} — {msg}")
+                journal_rows.append({"logged_at": now, "symbol": p["symbol"],
+                                     "kind": "MANAGE", "new_tag": msg[:60],
+                                     "close": float(_row["close"])})
 
-        # 2. partial profit (trading lot, once)
-        partial_level = entry + risk * RISK.partial_profit_r_multiple
-        if trading_open and not _bool(p["partial_taken"]) and row["high"] >= partial_level:
-            fire(f"PARTIAL PROFIT {RISK.partial_profit_r_multiple}R hit at "
-                 f"{partial_level:.2f} — sell ~{partial_shares} sh of trading lot")
-            book("partial", partial_shares, partial_level,
-                 f"partial at {RISK.partial_profit_r_multiple}R")
-            pos.at[i, "partial_taken"] = True
+            def book(lot: str, shares: int, price: float, reason: str, when=None, _row=row):
+                if ledger_path and shares > 0:
+                    ledger_rows.append({
+                        "date": str(pd.Timestamp(when if when is not None else _row["date"]).date()),
+                        "symbol": p["symbol"], "action": "SELL", "lot": lot,
+                        "shares": shares, "price": round(float(price), 2),
+                        "pnl": round(shares * (float(price) - entry), 2),
+                        "reason": reason})
 
-        # 3. breakeven ratchet (both lots, once)
-        be_trigger = entry + risk * RISK.breakeven_after_r_multiple
-        if not _bool(p["breakeven_moved"]) and row["close"] >= be_trigger:
-            fire(f"MOVE STOP TO BREAKEVEN ({entry:.2f}) — "
-                 f"+{RISK.breakeven_after_r_multiple}R closed")
-            pos.at[i, "stop_current"] = max(stop, entry)
-            pos.at[i, "breakeven_moved"] = True
+            # 1. stop hit -> everything open exits. A gap BELOW the stop fills
+            # at the open, not at the stop (F5): the stop price was never
+            # available that morning, and booking it there overstated every
+            # gap-down loss's recovery.
+            if row["low"] <= stop:
+                gapped = pd.notna(row.get("open")) and float(row["open"]) < stop
+                fill = float(row["open"]) if gapped else stop
+                how = f"gapped through, filled at the open {fill:.2f}" if gapped \
+                    else f"low {row['low']:.2f}"
+                fire(f"STOP HIT at {stop:.2f} ({how}) — exit all remaining shares")
+                open_shares = ((shares_trading - (partial_shares if _bool(pos.at[i, "partial_taken"]) else 0))
+                               if trading_open else 0) + (int(p["shares_core"]) if core_open else 0)
+                book("all", open_shares, fill, "stop hit (gap)" if gapped else "stop hit")
+                pos.at[i, "trading_open"] = False
+                pos.at[i, "core_open"] = False
+                break
 
-        # 4. trading lot trail (after partial): daily close < 50-DMA
-        sma50 = row.get(f"sma_{RISK.trailing_ma_period}")
-        if (_bool(pos.at[i, "trading_open"]) and _bool(pos.at[i, "partial_taken"])
-                and pd.notna(sma50) and row["close"] < sma50):
-            fire(f"TRADING LOT EXIT — closed {row['close']:.2f} below 50-DMA {sma50:.2f}")
-            book("trading", shares_trading - partial_shares, row["close"],
-                 "trading-lot trail: close < 50-DMA")
-            pos.at[i, "trading_open"] = False
+            # 2. partial profit (trading lot, once)
+            partial_level = entry + risk * RISK.partial_profit_r_multiple
+            if trading_open and not _bool(pos.at[i, "partial_taken"]) and row["high"] >= partial_level:
+                fire(f"PARTIAL PROFIT {RISK.partial_profit_r_multiple}R hit at "
+                     f"{partial_level:.2f} — sell ~{partial_shares} sh of trading lot")
+                book("partial", partial_shares, partial_level,
+                     f"partial at {RISK.partial_profit_r_multiple}R")
+                pos.at[i, "partial_taken"] = True
 
-        # 5. core lot: last COMPLETED week's close below the 150d SMA
-        # (robust to holiday Fridays — a week whose Friday label is still in
-        # the future is incomplete and ignored; Monday catches a bad prior
-        # week even if Friday was a holiday)
-        if _bool(pos.at[i, "core_open"]):
-            wk_period = df["date"].dt.to_period("W-FRI")
-            current_period = wk_period.iloc[-1]
-            is_friday = pd.Timestamp(row["date"]).weekday() == 4
-            completed = df[(wk_period < current_period)
-                           | (is_friday & (wk_period == current_period))]
-            if len(completed):
-                wl = completed.iloc[-1]  # last daily bar of last completed week
-                wl_sma = wl.get(f"sma_{RISK.core_exit_ma_period}")
-                if pd.notna(wl_sma) and wl["close"] < wl_sma:
-                    fire(f"CORE LOT EXIT — weekly close {wl['close']:.2f} "
-                         f"(w/e {pd.Timestamp(wl['date']).date()}) below "
-                         f"30-week MA {wl_sma:.2f} (the trend is over)")
-                    book("core", int(p["shares_core"]), wl["close"],
-                         "core exit: weekly close < 30-week MA", when=wl["date"])
-                    pos.at[i, "core_open"] = False
+            # 3. breakeven ratchet (both lots, once)
+            be_trigger = entry + risk * RISK.breakeven_after_r_multiple
+            if not _bool(pos.at[i, "breakeven_moved"]) and row["close"] >= be_trigger:
+                fire(f"MOVE STOP TO BREAKEVEN ({entry:.2f}) — "
+                     f"+{RISK.breakeven_after_r_multiple}R closed")
+                pos.at[i, "stop_current"] = max(stop, entry)
+                pos.at[i, "breakeven_moved"] = True
+
+            # 4. trading lot trail (after partial): daily close < 50-DMA
+            sma50 = row.get(f"sma_{RISK.trailing_ma_period}")
+            if (_bool(pos.at[i, "trading_open"]) and _bool(pos.at[i, "partial_taken"])
+                    and pd.notna(sma50) and row["close"] < sma50):
+                fire(f"TRADING LOT EXIT — closed {row['close']:.2f} below 50-DMA {sma50:.2f}")
+                book("trading", shares_trading - partial_shares, row["close"],
+                     "trading-lot trail: close < 50-DMA")
+                pos.at[i, "trading_open"] = False
+
+            # 5. core lot: last COMPLETED week's close below the 150d SMA
+            # (robust to holiday Fridays — a week whose Friday label is still in
+            # the future is incomplete and ignored; Monday catches a bad prior
+            # week even if Friday was a holiday). Judged on the history AS OF
+            # this bar, so a replayed session cannot see a later week.
+            if _bool(pos.at[i, "core_open"]):
+                hist = df.iloc[:k + 1]
+                wk_period = hist["date"].dt.to_period("W-FRI")
+                current_period = wk_period.iloc[-1]
+                is_friday = pd.Timestamp(row["date"]).weekday() == 4
+                completed = hist[(wk_period < current_period)
+                                 | (is_friday & (wk_period == current_period))]
+                if len(completed):
+                    wl = completed.iloc[-1]  # last daily bar of last completed week
+                    wl_sma = wl.get(f"sma_{RISK.core_exit_ma_period}")
+                    if (pd.notna(wl_sma) and wl["close"] < wl_sma
+                            and pd.Timestamp(wl["date"]) >= entry_day):
+                        fire(f"CORE LOT EXIT — weekly close {wl['close']:.2f} "
+                             f"(w/e {pd.Timestamp(wl['date']).date()}) below "
+                             f"30-week MA {wl_sma:.2f} (the trend is over)")
+                        book("core", int(p["shares_core"]), wl["close"],
+                             "core exit: weekly close < 30-week MA", when=wl["date"])
+                        pos.at[i, "core_open"] = False
+
+        pos.at[i, "last_checked"] = str(pd.Timestamp(df["date"].iloc[-1]).date())
 
     pos.to_csv(positions_path, index=False)
     if ledger_path:

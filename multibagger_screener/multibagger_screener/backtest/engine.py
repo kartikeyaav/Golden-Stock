@@ -42,6 +42,30 @@ from scoring.technical_score import (add_moving_averages, compute_atr,
 # ---------------------------------------------------------------------------
 # Signal generation (per stock) — v1 logic (validated) + ATR + week-end flags
 # ---------------------------------------------------------------------------
+def week_end_flags(dates: pd.Series) -> pd.Series:
+    """True on the last trading day of each ISO week.
+
+    The final row has no successor, so it used to be flagged a week-end
+    unconditionally (AUDIT 2026-09-22 F6). On a Tuesday data cut that turned a
+    two-day-old week into a "completed" one: the core lot could exit on a
+    partial week, and a forward replay could read CLOSED — which counts toward
+    the capital gate's sample at once — while the position was still open.
+    The last row now closes its week only on a Friday. A Friday holiday
+    therefore delays that week's check to the next week, the conservative
+    side for an exit rule that is meant to be slow. Historical P&L is
+    unchanged: a position still open on the last bar is booked at the same
+    close by backtest_end either way; only the exit label differs.
+    """
+    d = pd.to_datetime(dates).reset_index(drop=True)
+    iso = d.dt.isocalendar()
+    wk_key = iso["year"].astype(int) * 100 + iso["week"].astype(int)
+    flags = (wk_key != wk_key.shift(-1))
+    if len(d):
+        flags.iloc[-1] = bool(d.iloc[-1].weekday() == 4)
+    flags.index = dates.index
+    return flags.astype(bool)
+
+
 def generate_signals(df: pd.DataFrame, fundamental_score) -> pd.DataFrame:
     """df: OHLCV [date, open, high, low, close, volume] ascending.
     fundamental_score: float (constant — flags look-ahead bias) or a
@@ -52,9 +76,7 @@ def generate_signals(df: pd.DataFrame, fundamental_score) -> pd.DataFrame:
     df["atr"] = compute_atr(df)
 
     # last trading day of each ISO week (for the core lot's weekly exit check)
-    iso = df["date"].dt.isocalendar()
-    wk_key = iso["year"].astype(int) * 100 + iso["week"].astype(int)
-    df["is_week_end"] = (wk_key != wk_key.shift(-1)).fillna(True)
+    df["is_week_end"] = week_end_flags(df["date"])
 
     # faster trailing MAs for the P6 trailing-speed matrix (pre-registered
     # 2026-07-27). Computed always so a config only has to name a period; the
@@ -194,6 +216,7 @@ class Lot:
     partial_taken: bool = False   # trading lot only
     weekly_breaks: int = 0        # consecutive weekly closes below the core MA
     realized_pnl: float = 0.0
+    fees: float = 0.0             # ledger costs charged to this lot (entry share + exits)
     closed: bool = False
     exit_date: Optional[datetime] = None
     exit_price: Optional[float] = None
@@ -233,9 +256,16 @@ class Trade:
 
 
 class Portfolio:
-    def __init__(self, starting_cash: float):
+    def __init__(self, starting_cash: float, cost_rate: float = 0.0):
         self.cash = starting_cash
         self.starting_cash = starting_cash
+        # fraction of traded value charged on EVERY fill (entry and each exit).
+        # 0.0 = the historical gross ledger, where costs were only ever
+        # subtracted from a COPY of the trade table afterwards (apply_costs),
+        # so CAGR and drawdown came from a gross equity curve while expectancy
+        # was quoted net (AUDIT 2026-09-22 F4).
+        self.cost_rate = cost_rate
+        self.fees_paid = 0.0
         self.open_trades: dict[str, Trade] = {}
         self.closed_trades: list[Trade] = []
         self.equity_curve: list[dict] = []
@@ -269,11 +299,14 @@ class Portfolio:
         if shares * entry_price > max_value:
             shares = int(max_value // entry_price)
         # equity-basis sizing can want more than the cash on hand — clamp
-        if shares * entry_price > self.cash:
-            shares = int(self.cash // entry_price)
+        # (the entry fee has to come out of the same cash)
+        per_share_cash = entry_price * (1 + self.cost_rate)
+        if shares * per_share_cash > self.cash:
+            shares = int(self.cash // per_share_cash)
 
         cost = shares * entry_price
-        if shares <= 0 or cost > self.cash:
+        fee = cost * self.cost_rate
+        if shares <= 0 or cost + fee > self.cash:
             return None
 
         frac = RISK.trading_lot_fraction if trading_fraction is None else trading_fraction
@@ -285,8 +318,11 @@ class Portfolio:
         lots = [Lot("trading", t_shares, stop_price)]
         if c_shares:
             lots.append(Lot("core", c_shares, stop_price))
+        for lot in lots:                      # entry fee split by shares
+            lot.fees += fee * lot.shares / shares
 
-        self.cash -= cost
+        self.cash -= cost + fee
+        self.fees_paid += fee
         trade = Trade(name=name, entry_date=date, entry_price=entry_price,
                       initial_stop=stop_price, lots=lots, entry_class=entry_class)
         self.open_trades[name] = trade
@@ -298,7 +334,10 @@ class Portfolio:
         shares_to_sell = min(shares_to_sell, lot.remaining_shares)
         if shares_to_sell <= 0:
             return
-        self.cash += shares_to_sell * price
+        fee = shares_to_sell * price * self.cost_rate
+        self.cash += shares_to_sell * price - fee
+        self.fees_paid += fee
+        lot.fees += fee
         lot.realized_pnl += shares_to_sell * (price - trade.entry_price)
         lot.remaining_shares -= shares_to_sell
 
@@ -388,6 +427,21 @@ def run_backtest(
                                          # off the portfolio's OWN trailing results
                                          # (point-in-time: called before the day's entries,
                                          # sees only already-closed trades / prior equity).
+    cost_pct_per_side: float = 0.0,      # AUDIT 2026-09-22 F4: charge this % of traded
+                                         # value on every fill INSIDE the ledger, so the
+                                         # equity curve (CAGR, drawdown, MAR) is net. 0.0 =
+                                         # the historical gross ledger; callers that pass
+                                         # it must read the *_net columns, not re-apply
+                                         # metrics.apply_costs (that would charge twice).
+    entry_day_stop: bool = False,        # AUDIT 2026-09-22 F3: with an OPEN fill, the
+                                         # rest of the entry day's bar happened after the
+                                         # fill — a low through the stop that day is a
+                                         # stop-out. The loop processes exits before
+                                         # entries, so a new position was never checked
+                                         # against its own first bar. Conservative: the
+                                         # same-day upside (partial target) is NOT taken.
+                                         # Ignored for close fills, where the bar's low
+                                         # came before the entry.
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """signals_by_stock: {name: generate_signals(...) output}.
     Returns (trades_df — ONE ROW PER LOT, equity_curve_df).
@@ -398,7 +452,8 @@ def run_backtest(
     same-day breakouts arrive than position slots, candidates are taken in
     order of breakout volume strength (point-in-time data only)."""
     starting_cash = starting_cash or RISK.capital
-    portfolio = Portfolio(starting_cash)
+    portfolio = Portfolio(starting_cash, cost_rate=cost_pct_per_side / 100.0)
+    check_entry_bar = bool(entry_day_stop and entry_price_col == "open")
 
     # P6 (pre-registered 2026-07-27): trail_ma overrides the trading lot's
     # trailing MA for this run only. Default None = the config value, so every
@@ -577,6 +632,15 @@ def run_backtest(
                     sizing_base=sizing_base, entry_class=entry_class)
                 if trade is not None:
                     last_prices[name] = entry_price
+                    if check_entry_bar:
+                        bar = indexed[name].loc[date]
+                        if pd.notna(bar.get("low")) and bar["low"] <= trade.initial_stop:
+                            for lot in trade.lots:
+                                if not lot.closed:
+                                    portfolio.sell(trade, lot, date, trade.initial_stop,
+                                                   "stop_loss_entry_day")
+                        elif pd.notna(bar.get("close")):
+                            last_prices[name] = bar["close"]
 
         portfolio.mark_to_market(date, last_prices)
 
@@ -597,7 +661,7 @@ def run_backtest(
     for t in portfolio.closed_trades:
         for lot in t.lots:
             denom = lot.shares * t.risk_per_share
-            rows.append({
+            row = {
                 "name": t.name, "lot": lot.lot_type,
                 "entry_class": t.entry_class,
                 "entry_date": t.entry_date, "entry_price": t.entry_price,
@@ -607,7 +671,13 @@ def run_backtest(
                 "risk_per_share": t.risk_per_share,
                 "realized_pnl": lot.realized_pnl,
                 "r_multiple": round(lot.realized_pnl / denom, 3) if denom > 0 else np.nan,
-            })
+            }
+            if cost_pct_per_side:
+                net = lot.realized_pnl - lot.fees
+                row["fees"] = round(lot.fees, 2)
+                row["realized_pnl_net"] = net
+                row["r_multiple_net"] = round(net / denom, 3) if denom > 0 else np.nan
+            rows.append(row)
     trades_df = pd.DataFrame(rows)
     equity_df = pd.DataFrame(portfolio.equity_curve)
     return trades_df, equity_df

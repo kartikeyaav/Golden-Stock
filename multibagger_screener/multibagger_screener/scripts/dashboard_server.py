@@ -141,11 +141,13 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802 (stdlib naming)
         clean = self.path.split("?")[0]
-        if clean in ("/", "/dashboard.html", "/landing.html"):
+        if clean in ("/", "/dashboard.html", "/landing.html", "/dashboard_classic.html"):
             # landing.html served too (2026-07-20): same-origin local preview
-            # of the public front door — Pages serves it as index in prod
-            target = os.path.join(ROOT, "landing.html") \
-                if clean == "/landing.html" else DASHBOARD
+            # of the public front door — Pages serves it as index in prod.
+            # dashboard_classic.html (2026-09-25): the v6 page, kept beside v7.
+            target = {"/landing.html": os.path.join(ROOT, "landing.html"),
+                      "/dashboard_classic.html": os.path.join(ROOT, "dashboard_classic.html"),
+                      }.get(clean, DASHBOARD)
             if not os.path.exists(target):
                 self.send_error(404, os.path.basename(target) +
                                 " not built yet — run a job first")

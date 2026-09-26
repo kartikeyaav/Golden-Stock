@@ -144,7 +144,7 @@ def render(f: dict) -> str:
     # is a multiple of the amount a trade RISKS, so +1.34R means the average
     # trade hands back the rupee it risked plus 1.34 more.
     back_per_rupee = 1 + EVIDENCE.expectancy_r
-    x3 = (1 + EVIDENCE.cagr_pct / 100) ** 3           # validated window, 3y
+    x3 = (1 + EVIDENCE.cagr_pct / 100) ** 3           # three years at the measured rate
     x3s = (1 + EVIDENCE.stress_cagr_pct / 100) ** 3   # same, stressed fills
 
     return f"""<!doctype html>
@@ -582,15 +582,15 @@ footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
       <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">configurations tested and rejected</div></div>
     </div>
     <div class="compound">
-      <span>Compounded, that is <b style="color:var(--gold)">₹10 lakh → ₹{x3 * 10:.1f} lakh</b>
-        over the three-year test window</span>
+      <span>Compounded for three years at that rate, <b style="color:var(--gold)">₹10 lakh → ₹{x3 * 10:.1f} lakh</b></span>
       <span class="sep">·</span>
       <span>on the <b>stressed</b> read — next-open fills, gap-aware stops, full costs —
         <b style="color:var(--txt)">₹{x3s * 10:.1f} lakh</b> ({EVIDENCE.stress_cagr_pct}% a year)</span>
     </div>
     <div class="honest">
-      <b>How to read this.</b> These are the rules run over roughly three years of history, and
-      that universe excludes companies that later delisted — so treat them as evidence of an edge,
+      <b>How to read this.</b> These are the exact live rules run over nearly seven years of history —
+      the 2020 crash, the 2021 run, the 2022 chop, the 2025 drawdown — net of costs. That universe
+      excludes companies that later delisted, so treat the numbers as evidence of an edge,
       not a forecast of your account. Plan against the stressed column. The live record that will
       confirm or kill them is being written now, in public, one timestamped signal at a time.
     </div>

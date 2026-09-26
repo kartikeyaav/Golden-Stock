@@ -23,7 +23,7 @@ system stored across 117 real alerts in `state/alert_details.json`, plus the
 
 Concrete failures, all real headlines from the record:
 
-- `Order worth over Rs 435 crore bagged by Diamond Power Infra` → **0**. A ₹435 Cr order on a name the user holds.
+- `Order worth over Rs 435 crore bagged by Diamond Power Infra` → **0**. A ₹435 Cr order scored as nothing at all.
 - `Deepfake scam hits Sky Gold subsidiary: Rs 11 crore loss` → **0**. "scam" was a red-flag word but never a sentiment word.
 - `Sterlite Q1 FY27 slides: record results on AI data center boom` → **−1**. "slides" is the deck.
 - `Usha Martin fixes record date Aug 13 for FY26 dividend` → **+1**. "record" matched inside "record date".

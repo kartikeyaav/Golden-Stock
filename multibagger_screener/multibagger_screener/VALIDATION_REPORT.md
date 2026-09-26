@@ -272,3 +272,27 @@ comes from exposure (the adopted breadth-regime halving, 6D), not from breadth o
 holdings. Concentration (8 slots) is the mirror image: expectancy +1.98R and P2
 +0.43R — it genuinely picks better trades — but CAGR still falls because capital
 sits idle. The system remains capacity-limited by its signal rate.
+
+## 6G. Honest re-run of the live configuration (2026-09-25, research diagnostic)
+
+Every row above measured ONE adoption at a time, on a 2.9-year window starting
+2023-08, with costs subtracted from the trade table but not from the equity
+curve (AUDIT 2026-09-22 F4). `scripts/run_honest_rerun.py` runs exactly what
+the system runs — VCP + EP, breadth-regime sizing, equity basis, 12 slots,
+two-lot exits — once, on the corrected engine (ledger costs, entry-day stops,
+Friday week-ends), over 2020-01 → 2026-09, beside two controls on the same
+universe. Full table: `honest_rerun_report.md`. Headline:
+
+| 2020 → 2026, 650 index names | CAGR | max DD | MAR |
+|---|---|---|---|
+| live config, ideal (close) fills, net | 45.1% | −21.2% | 2.13 |
+| live config, realistic execution | 30.3% | −24.8% | 1.22 |
+| own the universe, equal weight | 33.2% | −42.6% | 0.78 |
+| momentum rotation + breadth rule | 44.3% | −23.3% | 1.90 |
+
+The published 54.5% / −15.2% reproduces on this harness for its own window and
+engine (55.1% / −15.2%), so the gap is measurement, not code. Read every number
+against the equal-weight row: the universe is today's index members, and owning
+it returned 33% a year where the investable Midcap-100 ETF returned 21%.
+`config.EVIDENCE` now carries the two live-config rows. Discussion and the
+forward-record measurements: `REVIEW_2026-09-25.md`.

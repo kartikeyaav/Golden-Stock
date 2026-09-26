@@ -1,6 +1,8 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-09-15** (SESSIONS AND SCREENER COVERAGE: price age is counted in exchange sessions, and every screener column is filled or says why it is blank. Read §3AA first; the 09-12 reliability pass is §3Y.)
+**Last updated: 2026-09-25** (FULL REVIEW + v7 INTERFACE. The strategy was re-measured honestly — the live config is 45% a year with ideal fills and 30% with realistic execution over 2020→2026, not 54.5% — the gate's ruler and benchmark were corrected, the conviction weights moved to v2, and the dashboard was rebuilt. Read `REVIEW_2026-09-25.md`, then §3AB.)
+
+**Superseded header, kept for the trail: 2026-09-15** (SESSIONS AND SCREENER COVERAGE: price age is counted in exchange sessions, and every screener column is filled or says why it is blank. Read §3AA first; the 09-12 reliability pass is §3Y.)
 
 **Superseded header, kept for the trail: 2026-07-26** (capital gate PRE-REGISTERED; exit-risk
 surveillance on the main universe; freshness header; stale KPIs corrected;
@@ -238,8 +240,8 @@ Fixes, all live:
   `journal/quarantine_intraday_2026-07-09.csv` (preserved for audit, out of
   the forward-validation stats); state was restored from the 07-07 snapshot
   and the 16:39 post-close re-scan journaled the clean set (19 transitions
-  covering Jul-8+9). MOSCHIP's breakeven flag (set intraday) was reverted and
-  legitimately re-fired on the final close.
+  covering Jul-8+9). A managed position's breakeven flag (set intraday) was
+  reverted and legitimately re-fired on the final close.
 - **Task Scheduler**: both jobs previously had DisallowStartIfOnBatteries +
   no catch-up — that's why Jul-8 was silently skipped on this laptop. Now:
   run on battery, StartWhenAvailable catch-up (safe with the bar guard), 4h
@@ -1128,9 +1130,9 @@ on the argument that you lose in that class because you cannot GET OUT. The
 main 651 were never checked. They are now: **66 of 652 carry a flag**, and the
 first run found them in exactly the places that matter —
 
-- **DIACABS, a live holding, is on a 5% band.** Its stop sits 18% below the
-  last price: **four consecutive limit-down sessions away.** It cannot fill in
-  one move. The drawer now says this in those words.
+- **An alerted name on a 5% band** had its stop 18% below the last price:
+  **four consecutive limit-down sessions away.** It cannot fill in one move.
+  The drawer now says this in those words.
 - **STLTECH** (alerted within 7 days): ASM + 5% band + BE trade-to-trade.
 - 2 of 4 committee picks flagged (PARAS on ASM); 7 of 61 names alerted in the
   last week.
@@ -2372,6 +2374,80 @@ under the capped cohort, and MOMENTUM100 gone from `tags_state.json`.
 
 ---
 
+## 3AB. The review, the honest re-run, and the v7 interface (2026-09-25)
+
+The user asked for a full analysis now that forward data had accumulated.
+`REVIEW_2026-09-25.md` is the record; the short version:
+
+**Measured.** (1) Forward event study, every buy alert vs an equal-weight
+universe from the next open: base-ready alerts +13.8% over 40 sessions (75%
+beat), uptrend-only alerts (77% of all alerts) +3.8%. (2) Conviction score:
+separates the bottom (<50, vetoes) and does not rank above 50;
+`PREREG_2026-08-13.md` evaluated on the post-08-14 cohort and FAILS.
+(3) Analyst BUY +0.35R vs WAIT +0.19R vs SKIP +0.25R — research, not a filter.
+(4) Top-50 movers since 07-07: 30 alerted, mostly mid-move; 29 were gap names
+not scanned before 09-07. (5) `scripts/run_honest_rerun.py`: the live config
+(VCP + EP + breadth) run ONCE on the corrected engine over 2020→2026 —
+45.1% / −21.2% ideal, 30.3% / −24.8% realistic; owning the (survivor-biased)
+universe equal-weight 33.2%; monthly momentum rotation + breadth 44.3% / −23.3%
+(43.6% at 0.25% costs). Next-open fills alone cost 10.4 points a year.
+
+**Changed.** Engine: `entry_day_stop`, `cost_pct_per_side` (ledger costs),
+`week_end_flags` — all opt-in or label-only, history reproduces. Position
+manager replays missed sessions (`last_checked` column), fills gap-downs at the
+open, ignores weeks that closed before entry. Gate: ruler uses the entry-day
+stop (cohort +0.410R → +0.420R); benchmark MOM100 → MIDSMALL (the registered
+ETF) — both in `CAPITAL_GATE.md` §9. `config.EVIDENCE` = the honest run (the
+landing page follows it). `config.CONVICTION.weights` = v2 (`weights_v1` kept;
+per-dimension scores in `journal/alert_dimensions.csv` keep v1 recomputable —
+evaluate v2 vs v1 on alerts after 2026-09-25). Split the journal's
+`conviction_score` column at 2026-09-25.
+
+**v7 interface.** `ui/app.{html,css,js}` (real files, no JS in Python strings)
+are inlined by `build_dashboard.render_v7` into `dashboard.html`; the old page
+is built beside it as `dashboard_classic.html` (gitignored, published by
+`pages.yml`). New data lives in `scripts/dashboard_extras.py` (setups with
+pivots and plans, paper-position next-rules, breadth history, equal-weight
+index, event study, honest re-run, momentum core). Heavy blocks are JSON
+islands parsed on first use (core 1.8 MB of 19 MB). Tests:
+`tests/test_dashboard_v7.py`, `tests/test_measurement_fixes.py`,
+`tests/test_momentum_core.py`.
+
+**Personal holdings removed (user, 2026-09-25: "I don't want my holdings to
+show up").** `holdings.csv` / `positions.csv` cleared to header-only; no
+dashboard builder reads them (`test_personal_holdings_never_reach_the_page`,
+canaried); 6 journal rows that managed them removed from
+`journal/signals_journal.csv` (5) and `journal/quarantine_intraday_2026-07-09.csv`
+(1) — no cohort, gate or outcome reads MANAGE rows; `backup_push.py` no longer
+lists them. Git HISTORY still contains the old files and rows (pre-2026-08-04
+commits); rewriting a public repo's history is the user's call.
+
+**Momentum core (PREREG_2026-09-25_momentum_core.md).** The strategy review's
+main recommendation, shipped as a pre-registered PAPER sleeve:
+`scoring/momentum.py` (the one scorer + rebalance, shared with the backtest —
+refactor verified to reproduce 50.1% / −34.3% and 33.2% exactly),
+`scripts/momentum_core.py` (nightly in `daily.yml`, cloud-only writer,
+idempotent, NAV rebuilt from recorded books, `--status`),
+`state/momentum_core.json` (committed), `journal/momentum_core_ledger.csv`.
+First signal 2026-09-30, first fill at the 2026-10-01 open. Judged at 6 and 12
+rebalances against MIDSMALL and the universe. Unknown breadth = half exposure
+(tested). Also fixed AUDIT F9: `regime.market_risk_scale()` returns 0.5, not
+1.0, when neither breadth nor NIFTY is available.
+
+**Gotchas hit this session.** A local `build_dashboard.py` rewrites
+`state/themes.json` — restore it (`git checkout HEAD -- state/themes.json`)
+before the 21:30 laptop wrapper pulls, or it is the shared-file wedge again.
+Navigating the preview to a new `#hash` on the same URL does not reload the
+page; call `location.reload()`. A hand-rolled ResizeObserver on the charts
+looped and froze screenshots — the charts use `autoSize: true` now.
+
+**Open for the user:** whether to rewrite git history to purge the old
+holdings files (destructive, public repo). §5 items 11–13 below are
+SUPERSEDED: on 2026-09-17 the cloud AI runner was tried and rejected on cost —
+the laptop stays the AI runner (`ai_runner.json` = laptop).
+
+---
+
 ## 4. Live production state (as of 2026-07-19)
 
 - **Everything runs in the cloud, verified**: daily cron fires Mon-Fri
@@ -2396,12 +2472,10 @@ under the capped cohort, and MOMENTUM100 gone from `tags_state.json`.
 - **First committee run** (Opus 4.7): picked KEI(HIGH)/STLTECH/CHENNPETRO/
   EMCURE/MAHABANK across 5 sectors; externally benchmarked against
   independent analysts and corroborated (STLTECH froth-caution matched).
-- **Holdings synced from Zerodha** (2026-07-12): user holds MOSCHIP (200 @
-  [redacted]) and DIACABS ([redacted] — a stock the system itself alerted
-  2026-07-10; seeded stop 195.37, 2.5xATR). Both in `holdings.csv` +
-  `positions.csv` with reconstructed stops (flagged as such). Kite sessions
-  expire DAILY (SEBI reg) — re-sync needs a fresh login each time, OR use
-  `scripts/import_holdings.py` against a Zerodha Console CSV export (no login).
+- **Personal holdings: removed from the system at the user's request
+  (2026-09-25).** `holdings.csv` and `positions.csv` are kept header-only and
+  gitignored, no dashboard builder reads them, and the journal rows that
+  managed them were removed. Do not reintroduce a personal-holdings surface.
 - **Repo pushed to GitHub** (github.com/kartikeyaav/Golden-Stock), all history
   through commit `8746dc3`+; cloud workflows added but **not yet verified
   live** — the first Actions run is a user-triggered step (see §3J/CLOUD.md).

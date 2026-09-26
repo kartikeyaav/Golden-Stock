@@ -268,9 +268,11 @@ def health_check(today_tags: dict, symbols: list[str],
     # state/themes.json: 89 names scored with theme_tailwind dark and nothing
     # anywhere said why. Absent is a warning; unparseable is louder, because
     # the file existing is what makes the failure look like normal operation.
+    from config import CONVICTION as _CONV
+    _THEME_W = _CONV.weights.get("theme_tailwind", 0)
     th_path = os.path.join(ROOT, "state", "themes.json")
     if not os.path.exists(th_path):
-        problems.append("no state/themes.json — the theme dimension (weight 15) "
+        problems.append(f"no state/themes.json — the theme dimension (weight {_THEME_W:g}) "
                         "is dark for every name until the next scan writes it")
     else:
         try:
@@ -278,11 +280,11 @@ def health_check(today_tags: dict, symbols: list[str],
             n_themes = len(th.get("themes") or [])
             if n_themes == 0:
                 problems.append("state/themes.json has no themes — the theme "
-                                "dimension (weight 15) is dark for every name")
+                                f"dimension (weight {_THEME_W:g}) is dark for every name")
         except ValueError as e:
             problems.append(
                 f"state/themes.json UNPARSEABLE ({type(e).__name__}) — the theme "
-                "dimension (weight 15) is silently dark on every card; check for "
+                f"dimension (weight {_THEME_W:g}) is silently dark on every card; check for "
                 "merge conflict markers or a truncated write")
     return [f"!! HEALTH: {p}" for p in problems]
 

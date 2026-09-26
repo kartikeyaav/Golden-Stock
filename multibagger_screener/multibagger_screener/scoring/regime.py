@@ -62,6 +62,9 @@ def _breadth_scale() -> float | None:
     return None
 
 
+UNKNOWN_REGIME_SCALE = 0.5
+
+
 def market_risk_scale() -> float:
     scale = _breadth_scale()
     if scale is not None:
@@ -69,7 +72,11 @@ def market_risk_scale() -> float:
     # fallback: the previously adopted NIFTY/150-DMA rule (matrix v3b)
     bench = load_ohlcv("NIFTY50")
     if bench is None or len(bench) < 150:
-        return 1.0
+        # UNKNOWN REGIME IS DEFENSIVE (AUDIT 2026-09-22 F9, fixed 2026-09-25).
+        # This returned 1.0 — full risk — when both the breadth snapshot and
+        # the NIFTY series were missing, the exact opposite of this module's
+        # own promise that missing data can never turn sizing permissive.
+        return UNKNOWN_REGIME_SCALE
     sma150 = bench["close"].rolling(150).mean().iloc[-1]
     return 0.5 if float(bench["close"].iloc[-1]) < float(sma150) else 1.0
 

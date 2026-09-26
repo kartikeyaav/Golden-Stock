@@ -78,7 +78,7 @@ def test_every_gap_name_is_sized_and_exitable():
 
 
 def test_blank_industry_is_scored_not_renormalised_away():
-    """The cohort has no NSE macro-industry, and theme_tailwind is a 15-point
+    """The cohort has no NSE macro-industry, and theme_tailwind is a weighted
     conviction dimension. If a themeless name returned None the weight would
     renormalise AWAY and every gap name would float up — the exact failure that
     put 22 junk names in the penny top-13 in July. It returns 0.3 (a score, a

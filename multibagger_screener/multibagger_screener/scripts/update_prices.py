@@ -30,10 +30,13 @@ FULL_BACKFILL_START = "2019-01-01"
 # capital gate's "dumb alternative" — a momentum-quality mid/small-cap ETF you
 # could buy instead of running any of this (CAPITAL_GATE.md §4 condition 2).
 # Its TRADED price is what we want, tracking error and expenses included.
-_SPECIAL_YAHOO = {"NIFTY50": "^NSEI", GATE.benchmark_symbol: GATE.benchmark_yahoo}
+_SPECIAL_YAHOO = {"NIFTY50": "^NSEI", GATE.benchmark_symbol: GATE.benchmark_yahoo,
+                  **{sym: yh for sym, yh, _label in GATE.reference_benchmarks}}
 # every price refresh keeps both benchmarks current, so the gate can never be
-# evaluated against a stale comparator
-BENCHMARK_SYMBOLS = ["NIFTY50", GATE.benchmark_symbol]
+# evaluated against a stale comparator. Reference series ride along so the
+# corrected mapping (config.GATE, 2026-09-25) stays comparable on the page.
+BENCHMARK_SYMBOLS = ["NIFTY50", GATE.benchmark_symbol,
+                     *[sym for sym, _yh, _label in GATE.reference_benchmarks]]
 # if the fresh fetch disagrees with the cached history on the overlap window by
 # more than this, Yahoo has re-adjusted the whole series (split/bonus) and our
 # cached history is at the OLD scale — beyond any circuit band, so it can only

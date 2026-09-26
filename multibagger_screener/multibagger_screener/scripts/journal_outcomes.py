@@ -130,6 +130,10 @@ def _plan_followed(sym: str, alert_date: pd.Timestamp,
         {sym: sig},
         entry_price_col="open",       # next session's open — the honest fill
         stop_fill="gap_aware",        # F3: gap-throughs fill at the open, not -1.0R
+        # the rest of the fill day happened AFTER the open fill, so its low
+        # can stop the trade out (AUDIT 2026-09-22 F3, CAPITAL_GATE.md §9
+        # 2026-09-25: measured +0.01R on the cohort mean, one trade moved)
+        entry_day_stop=True,
         size_on="equity",
         max_stop_pct=_MEASURE_STOP_CAP_PCT if not sized else None,
     )

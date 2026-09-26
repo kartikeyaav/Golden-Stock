@@ -156,8 +156,16 @@ def chunk(text: str, limit: int = MAX_LEN) -> list[str]:
 import re
 DASH_URL = "kartikeyaav.github.io/Golden-Stock/dashboard.html"
 
+# The line may carry a trailing suffix after the transition — daily_scan has
+# written "· conv 71", "· VETOED" and "· news: M&A/JV" there since mid-August.
+# The old pattern ended in `\s*$`, so every suffixed line failed to match and
+# was silently dropped: on 2026-09-25 the digest parsed 1 of 25 alert lines,
+# the WATCH list had been empty for six weeks, and two VALIDATED breakouts
+# that the capital gate counts (BALAMINES 08-24, BELRISE 09-18) never reached
+# "ACT TODAY". The tests passed throughout because their fixture lines had no
+# suffix; tests/test_near_pivot_digest.py now uses the production format.
 ALERT_RX = re.compile(r"^- \*\*([A-Z -]+)\*\*(?:\s*\[([^\]]*)\])?: "
-                      r"(\w[\w&-]*)\s*(?:\((.*?)\))?\s*$", re.M)
+                      r"(\w[\w&-]*)\s*(?:\((.*?)\))?[^\n]*$", re.M)
 
 
 def _regime_line() -> str:
@@ -211,6 +219,43 @@ def _num(x: float) -> str:
     return f"{x:,.0f}" if x >= 100 else f"{x:,.2f}"
 
 
+def _vol(v) -> str:
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return "?"
+    if v >= 1e7:
+        return f"{v / 1e7:.1f} Cr"
+    if v >= 1e5:
+        return f"{v / 1e5:.1f} L"
+    return f"{v / 1e3:.0f}k"
+
+
+def near_pivot(limit: int = 5, within_pct: float = 3.0) -> list[dict]:
+    """Uptrend names with a live base, within `within_pct`% of their pivot.
+
+    THE BREAKOUT-DAY-CLOSE WORKFLOW (REVIEW_2026-09-25 §3). The validated entry
+    is a CLOSE above the pivot on >=1.5x average volume; a post-close alert can
+    only be acted on at the next morning's open, which cost ~10 points a year
+    in the re-run. Seeing tomorrow's candidates tonight lets a price alert at
+    the pivot, and a volume check near 3:15 PM, buy on the breakout day itself.
+    Pivot, volume and stop are chart facts, not sizing, so both feeds get them.
+    Empty on any failure — a digest must never die for a nice-to-have."""
+    try:
+        sys.path.insert(0, os.path.join(ROOT, "scripts"))
+        import dashboard_extras
+        with open(os.path.join(ROOT, "state", "tags_state.json"), encoding="utf-8") as f:
+            tags = (json.load(f) or {}).get("tags") or {}
+        rows = [{"sym": s, "tag": t} for s, t in tags.items()]
+        out = [s for s in dashboard_extras.build_setups(rows)["rows"]
+               if s.get("status") == "AWAITING TRIGGER" and s.get("tag") == "CONFIRMED"
+               and not (s.get("plan") or {}).get("skip") and s.get("dist") is not None
+               and -1.0 <= s["dist"] <= within_pct]
+        return sorted(out, key=lambda s: s["dist"])[:limit]
+    except Exception:  # noqa: BLE001
+        return []
+
+
 def _verdicts(raw: str) -> dict:
     """symbol -> plain-English decision, e.g. 'BUY (high conviction)'."""
     out = {}
@@ -243,7 +288,7 @@ def build_ops_alert(raw: str) -> str:
     return "\n".join(L)
 
 
-def build_digest(raw: str, public: bool = False) -> str:
+def build_digest(raw: str, public: bool = False, near: list[dict] | None = None) -> str:
     """The nightly decision digest.
 
     Structured so the first line under the header answers the only question
@@ -344,6 +389,17 @@ def build_digest(raw: str, public: bool = False) -> str:
         if len(watch) > 6:
             L.append(f"  +{len(watch) - 6} more")
 
+    # 2b. tomorrow's candidates, for buying ON the breakout day
+    shown_watch = set(watch)
+    near = [s for s in (near or []) if s.get("sym") not in shown_watch]
+    if near:
+        L.append("")
+        L.append("NEAR PIVOT — buy only on a CLOSE above it, on volume")
+        for s in near:
+            L.append(f"  {s['sym']} — above {_num(s['pivot'])} on ≥{_vol(s.get('vneed'))} shares"
+                     f" · stop {_num(s['plan']['stop'])}")
+        L.append("  alert at the pivot; confirm volume near 3:15 PM")
+
     # 3. owner-only: anything that reveals or manages the book
     if not public:
         if exits:
@@ -405,8 +461,9 @@ def main() -> None:
     with open(ALERTS_PATH, "r", encoding="utf-8") as f:
         raw = f.read()
 
+    near = near_pivot()
     try:
-        text = build_digest(raw, public=False)
+        text = build_digest(raw, public=False, near=near)
     except Exception as e:  # noqa: BLE001 — a digest bug must never kill delivery
         print(f"digest build failed ({e}) — falling back to full report")
         text = raw.replace("**", "").replace("```", "").replace("# ", "")
@@ -434,7 +491,7 @@ def main() -> None:
     pub = public_chat_id()
     if pub:
         try:
-            for part in chunk(build_digest(raw, public=True))[:2]:
+            for part in chunk(build_digest(raw, public=True, near=near))[:2]:
                 send_message(token, pub, part)
             sent += 1
             print(f"public digest sent to {pub}")

@@ -50,6 +50,7 @@ def _market_cap(sym: str):
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "dashboard.html")
+OUT_CLASSIC = os.path.join(ROOT, "dashboard_classic.html")
 
 
 def _read_csv(name: str) -> pd.DataFrame:
@@ -863,7 +864,11 @@ def build_payload() -> dict:
     focus = _read_csv("focus_list.csv")
     ranked = _read_csv("shortlist_ranked.csv")
     funds = _read_csv("fundamentals_flat.csv")
-    positions = _read_csv("positions.csv")
+    # PERSONAL POSITIONS ARE NEVER READ (user decision 2026-09-25: "I don't
+    # want my holdings to show up"). An empty frame keeps every downstream
+    # consumer's shape; refilling positions.csv cannot reach either page.
+    positions = pd.DataFrame(columns=["symbol", "entry_price", "initial_stop",
+                                      "stop_current", "shares_trading", "shares_core", "notes"])
     journal = _read_csv(os.path.join("journal", "signals_journal.csv"))
     outcomes = _read_csv(os.path.join("journal", "journal_outcomes.csv"))
     details = {}
@@ -1629,12 +1634,63 @@ def build() -> None:
             return [_denan(v) for v in o]
         return o
 
-    payload = json.dumps(_denan(build_payload()), separators=(",", ":"),
-                         default=str, allow_nan=False)
+    data = _denan(build_payload())
+
+    # CLASSIC (the v6 terminal), kept beside the new interface for a transition
+    # period so nothing it showed is lost while v7 beds in.
+    payload = json.dumps(data, separators=(",", ":"), default=str, allow_nan=False)
     html = TEMPLATE.replace("%%PAYLOAD%%", payload)
+    with open(OUT_CLASSIC, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"classic dashboard -> {OUT_CLASSIC}  ({os.path.getsize(OUT_CLASSIC) / 1e6:.1f} MB)")
+
+    # v7 (2026-09-25): ui/app.{html,css,js} are real files — no more JavaScript
+    # living inside a Python string, where a backslash or apostrophe broke the
+    # page more than once. The heavy blocks (price history, drawer details,
+    # fundamentals, archived news, penny) ship as separate JSON islands that
+    # the page parses only when first needed, so the first screen renders from
+    # a ~2 MB core instead of parsing 19 MB up front.
+    import dashboard_extras
+    extras = _denan(dashboard_extras.build_all(data))
+    html, core_len = render_v7(data, extras)
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"dashboard -> {OUT}  ({os.path.getsize(OUT) / 1e6:.1f} MB)")
+    print(f"dashboard -> {OUT}  ({os.path.getsize(OUT) / 1e6:.1f} MB, core "
+          f"{core_len / 1e6:.1f} MB)")
+
+
+HEAVY_BLOCKS = ("ohlc", "details", "fund", "archive_news", "penny")
+
+
+def _island(obj) -> str:
+    """JSON for a <script type="application/json"> island. A "</script>" inside
+    a headline must not end the island early, so every "</" is written "<\\/"
+    — a legal JSON escape that JSON.parse reads back as "</"."""
+    s = json.dumps(obj, separators=(",", ":"), default=str, allow_nan=False)
+    return s.replace("</", "<\\/")
+
+
+def render_v7(data: dict, extras: dict, ui_dir: str | None = None) -> tuple[str, int]:
+    """The v7 page as a string: ui/app.html with the stylesheet, the script
+    and the JSON islands filled in. Pure, so the tests can render it from a
+    synthetic payload without the price cache."""
+    ui = ui_dir or os.path.join(ROOT, "ui")
+    with open(os.path.join(ui, "app.html"), encoding="utf-8") as f:
+        shell = f.read()
+    with open(os.path.join(ui, "app.css"), encoding="utf-8") as f:
+        css_src = f.read()
+    with open(os.path.join(ui, "app.js"), encoding="utf-8") as f:
+        js_src = f.read()
+    core = {k: v for k, v in data.items() if k not in HEAVY_BLOCKS}
+    core["v7"] = extras
+    fills = {"CSS": css_src, "JS": js_src.replace("</script", "<\\/script"),
+             "CORE": _island(core), "OHLC": _island(data.get("ohlc") or {}),
+             "DETAILS": _island(data.get("details") or {}), "FUND": _island(data.get("fund") or {}),
+             "NEWS": _island(data.get("archive_news") or {}), "PENNY": _island(data.get("penny"))}
+    # one pass over the SHELL only: inserted content is never re-scanned, so a
+    # headline that happens to contain "%%JS%%" cannot pull code into data
+    html = re.sub(r"%%([A-Z]+)%%", lambda m: fills.get(m.group(1), m.group(0)), shell)
+    return html, len(fills["CORE"])
 
 
 TEMPLATE = r"""<!DOCTYPE html>

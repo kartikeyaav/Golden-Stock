@@ -17,6 +17,11 @@ on:
     paths:
       - "multibagger_screener/multibagger_screener/landing.html"
       - "multibagger_screener/multibagger_screener/scripts/build_dashboard.py"
+      - "multibagger_screener/multibagger_screener/scripts/dashboard_extras.py"
+      - "multibagger_screener/multibagger_screener/scripts/momentum_core.py"
+      - "multibagger_screener/multibagger_screener/scoring/momentum.py"
+      - "multibagger_screener/multibagger_screener/ui/**"
+      - "multibagger_screener/multibagger_screener/honest_rerun_results.json"
       - "multibagger_screener/multibagger_screener/scripts/build_landing.py"
       - "multibagger_screener/multibagger_screener/state/gate.json"
       - "multibagger_screener/multibagger_screener/ai_picks.json"  # local committee push
@@ -107,6 +112,7 @@ jobs:
           cp landing.html _site/index.html
           # dashboard is best-effort (needs the data cache)
           python scripts/build_dashboard.py && cp dashboard.html _site/dashboard.html \
+            && cp dashboard_classic.html _site/dashboard_classic.html \
             || echo "dashboard build degraded — landing published, dashboard skipped this run"
           # Independent UI previews: preserve the production routes above.
           mkdir -p _site/ui-designs

@@ -129,16 +129,45 @@ class TechnicalConfig:
 @dataclass
 class ConvictionConfig:
     # dimension weights, must sum to 100 (checked in scoring/conviction.py)
+    #
+    # v2, 2026-09-25 (REVIEW_2026-09-25.md §4). The v1 weights below were the
+    # 2026-07-04 starting points, "subject to marginal-value testing", and
+    # were never tested. Measured on 640 forward alerts (excess return over an
+    # equal-weight universe from the next open, 10/20/40 sessions):
+    #   theme_tailwind      rho -0.07 / -0.05 / -0.13   (was 15: now 5)
+    #   earnings_inflection rho +0.03 / -0.01 / -0.04   (was 20: now 15)
+    #   financial_strength  rho +0.09 / +0.08 / +0.26   (was 10: now 20)
+    #   catalyst            rho +0.08 / +0.10 / +0.11   (was 10: now 15)
+    #   rs_and_stage        rho +0.02 / +0.06 / +0.05; RS pctile top third
+    #                       +10.7% vs +3.7% at 40 sessions (was 20: now 25)
+    # The direction agrees with the older, independent backtest evidence:
+    # sector-heat and fundamental GATES both cut expectancy (matrix v1/v2).
+    # In-sample the composite's rank correlation moves 0.076 -> 0.118 at 20
+    # sessions, holding in both chronological halves; that is an in-sample
+    # read, so the out-of-sample test is alerts after 2026-09-25, and every
+    # alert's per-dimension scores stay in journal/alert_dimensions.csv so v1
+    # remains recomputable for that comparison.
+    #
+    # WHAT THE SCORE IS FOR, measured: it separates the BOTTOM (under 50,
+    # vetoes included, lagged the universe) and does not rank above ~50. It
+    # never gates, ranks entries or sizes a trade — the entries stay 100%
+    # technical (brief §2B).
     weights: Dict[str, float] = field(default_factory=lambda: {
-        "earnings_inflection": 20.0,   # Phase B — level+delta, YoY, EBIT-checked
-        "rs_and_stage": 20.0,          # Phase A — LIVE NOW
-        "theme_tailwind": 15.0,        # Phase C
-        "smart_money": 12.0,           # Phase C
-        "financial_strength_trend": 10.0,  # Phase B — incl. dilution check
-        "catalyst": 10.0,              # Phase C — dated events only
-        "governance": 8.0,             # Phase C — also feeds vetoes
+        "earnings_inflection": 15.0,   # Phase B — level+delta, YoY, EBIT-checked
+        "rs_and_stage": 25.0,          # Phase A
+        "theme_tailwind": 5.0,         # Phase C — measured non-predictive
+        "smart_money": 10.0,           # Phase C
+        "financial_strength_trend": 20.0,  # Phase B — incl. dilution check
+        "catalyst": 15.0,              # Phase C — dated events only
+        "governance": 5.0,             # Phase C — the VETO does the real work
         "valuation_sanity": 5.0,       # Phase B — penalize froth only
     })
+    weights_v1: Dict[str, float] = field(default_factory=lambda: {
+        "earnings_inflection": 20.0, "rs_and_stage": 20.0, "theme_tailwind": 15.0,
+        "smart_money": 12.0, "financial_strength_trend": 10.0, "catalyst": 10.0,
+        "governance": 8.0, "valuation_sanity": 5.0,
+    })
+    weights_changed: str = "2026-09-25"
     min_coverage_for_conviction: float = 0.60  # below this: "Technical Read" label,
                                                # no 0-100 conviction card
     veto_cap: float = 25.0             # any triggered veto caps composite here
@@ -520,33 +549,45 @@ class PennyConfig:
 # ---------------------------------------------------------------------------
 @dataclass
 class EvidenceConfig:
-    # the live entry set: VCP breakout + episodic pivot, equity-basis sizing
-    # (VALIDATION_REPORT 6E, "COMBINED VCP + EP_A")
-    expectancy_r: float = 1.337
-    cagr_pct: float = 54.5
-    max_dd_pct: float = -15.2
-    mar: float = 3.58
-    win_rate_pct: float = 31.3
-    positions: int = 142
-    source: str = "VALIDATION_REPORT 6E — COMBINED VCP + EP_A (pre-registered)"
+    # RE-MEASURED 2026-09-25 (honest_rerun_report.md, REVIEW_2026-09-25.md).
+    # The previous read (54.5% CAGR, -15.2% DD, +1.34R, 142 positions) came
+    # from a 2.9-year window starting 2023-08, with costs subtracted from the
+    # trade table but NOT from the equity curve (AUDIT 2026-09-22 F4), and it
+    # was not the live configuration: breadth sizing and the EP class had
+    # been adopted from separate runs. This is ONE run of exactly what the
+    # system runs — VCP breakouts + episodic pivots, breadth-regime sizing,
+    # equity basis, 12 slots, two-lot exits — on the corrected engine (fees
+    # debited in the ledger), over the whole history the cache supports
+    # (2020-01 -> 2026-09), on the 650 index names. Survivor-biased like every
+    # row before it: owning that same universe equal-weight returned 33.2% a
+    # year, so read these against that, never against a deposit.
+    expectancy_r: float = 2.234
+    cagr_pct: float = 45.1
+    max_dd_pct: float = -21.2
+    mar: float = 2.13
+    win_rate_pct: float = 36.8
+    positions: int = 261
+    source: str = ("honest_rerun_report.md F1 — live config (VCP + EP, breadth), "
+                   "corrected engine, 2020-01 to 2026-09")
 
-    # deployment stress: next-open fills + gap-aware stops + full costs. Only
-    # ever run on the VCP-only config (6C, "B STRESS"), so it is a FLOOR read
-    # for the combined system, not its measurement. Labelled as such in the UI.
-    stress_expectancy_r: float = 1.102
-    stress_cagr_pct: float = 32.5
-    stress_max_dd_pct: float = -20.7
-    stress_source: str = "VALIDATION_REPORT 6C — B STRESS (VCP-only basis)"
+    # realistic execution on the SAME configuration: next-session-open fills,
+    # stops filled at the open on gap-throughs, entry-day stop checks, costs
+    # at 0.25% a side. The old stress figure (32.5%) was a VCP-only run.
+    stress_expectancy_r: float = 1.169
+    stress_cagr_pct: float = 30.3
+    stress_max_dd_pct: float = -24.8
+    stress_source: str = "honest_rerun_report.md F2 — same config, realistic execution"
 
-    # VCP-only baseline, kept because most of the project's prose quotes it
-    vcp_only_expectancy_r: float = 1.667
-    payoff_ratio: str = "9.6:1"
+    # VCP class alone over the same window (F3); EP alone was +40.0% / -19.6%
+    vcp_only_expectancy_r: float = 1.440
+    payoff_ratio: str = "8.8:1"
 
     combined_note: str = (
-        "Breadth-regime sizing and the EP entry class were adopted from "
-        "separate pre-registered matrices; no cell ran both. Headline = the "
-        "combined-entry row (NIFTY/150 regime); breadth improved the VCP-only "
-        "family to MAR 3.35 at -14.8% drawdown. The gains are not added.")
+        "One run of the live configuration (VCP breakouts + episodic pivots, "
+        "breadth-regime sizing) on the corrected engine, 2020-01 to 2026-09. "
+        "Realistic execution (next-open fills, gap-aware stops, 0.25% costs) "
+        "reads 30.3% a year at -24.8%. The universe is today's index members, "
+        "so it is survivor-biased: owning it equal-weight made 33.2% a year.")
 
 
 # ---------------------------------------------------------------------------
@@ -653,16 +694,31 @@ class CapitalGateConfig:
     # --- benchmark ---------------------------------------------------------
     # Mirae Nifty MidSmallcap400 Momentum Quality 100 ETF — the closest thing
     # to "this strategy, bought as a product": mid/small-cap, momentum-ranked,
-    # quality-screened, one click, ~0.5% cost. Its TRADED price is used (not
+    # quality-screened, one click, ~0.4% cost. Its TRADED price is used (not
     # the index), because tracking error and expenses are part of what you
     # would actually have earned.
-    benchmark_symbol: str = "MOMENTUM100"
-    benchmark_yahoo: str = "MOM100.NS"
+    #
+    # CORRECTED 2026-09-25 (CAPITAL_GATE.md §9). From registration until this
+    # date the symbol was MOM100.NS, which is Motilal Oswal's plain NIFTY
+    # MIDCAP 100 ETF — a different mandate that the label and the note above
+    # never described (AUDIT 2026-09-22 F1, verified against the exchange
+    # listing). The registered instrument trades as MIDSMALL. Over the gate
+    # window to 2026-09-25 it returned +0.5% against MOM100's -1.4%, so the
+    # mis-mapping made condition 3 easier to pass, not harder. A new cache
+    # name, because splicing a ~51-rupee series onto a ~64-rupee history would
+    # sit inside the split guard's band and corrupt both.
+    benchmark_symbol: str = "MIDSMALL"
+    benchmark_yahoo: str = "MIDSMALL.NS"
     benchmark_label: str = "Momentum-quality ETF (MidSmall 400)"
-    benchmark_note: str = ("Nifty MidSmallcap400 Momentum Quality 100 ETF — the "
-                           "investable alternative to running this system.")
+    benchmark_note: str = ("Mirae Nifty MidSmallcap400 Momentum Quality 100 ETF "
+                           "(NSE: MIDSMALL) — the investable alternative to "
+                           "running this system.")
     secondary_benchmark_symbol: str = "NIFTY50"
     secondary_benchmark_label: str = "NIFTY 50"
+    # kept fresh as REFERENCE series only (never a pass condition): the plain
+    # midcap ETF the gate used by mistake until 2026-09-25, so the correction
+    # stays auditable on the page that shows it.
+    reference_benchmarks: tuple = (("MOMENTUM100", "MOM100.NS", "Nifty Midcap 100 ETF"),)
 
 
 # ---------------------------------------------------------------------------

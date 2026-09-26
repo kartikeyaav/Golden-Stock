@@ -30,11 +30,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GIT_ROOT = os.path.dirname(os.path.dirname(ROOT))          # files/ (the repo root)
 REL = os.path.relpath(ROOT, GIT_ROOT).replace("\\", "/")   # project path within repo
 
-# only these paths are staged — small, append-only, the actual record
+# only these paths are staged — small, append-only, the actual record.
+# holdings.csv / positions.csv are NOT here and never will be: they are the
+# user's personal book, gitignored since 2026-08-04 and kept off every
+# surface since 2026-09-25 (a plain `git add` of an ignored path also fails
+# the WHOLE add, which silently skipped every backup while they were listed).
 BACKUP_PATHS = [
     f"{REL}/journal",
-    f"{REL}/holdings.csv",
-    f"{REL}/positions.csv",
     f"{REL}/paper_positions.csv",
     f"{REL}/daily_alerts.md",
     f"{REL}/announcements_archive.csv",

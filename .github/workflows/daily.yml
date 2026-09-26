@@ -317,6 +317,21 @@ jobs:
           python scripts/paper_trader.py || echo "paper degraded (non-fatal)"
           python scripts/journal_outcomes.py || echo "outcomes degraded (non-fatal)"
 
+      # the momentum core, run forward as a paper sleeve
+      # (PREREG_2026-09-25_momentum_core.md). Rebalances once per closed month
+      # at the next session's open; idempotent, so every catch-up slot is safe.
+      # The cloud is its ONLY writer — the laptop never runs it — so
+      # state/momentum_core.json can never become a two-writer conflict.
+      - name: Momentum core (paper sleeve)
+        run: python scripts/momentum_core.py || echo "momentum core degraded (non-fatal)"
+
+      # NSE bulk + block deals, archived forward (data/deals.py). Context only:
+      # a named buyer taking size, with same-session buy+sell churn set aside.
+      # NSE publishes the latest session only, so the committed archive IS the
+      # history.
+      - name: Bulk and block deals (context)
+        run: python data/deals.py || echo "deals degraded (non-fatal)"
+
       # exchange surveillance (ASM/GSM/circuit band/series) for the MAIN
       # universe — display-only exit risk, never a gate. Non-fatal: NSE
       # sometimes blocks datacenter IPs, and a missing snapshot renders as
@@ -358,9 +373,10 @@ jobs:
                    state/news_pressure.json state/themes.json \
                    state/macro_radar.json \
                    state/surveillance.json state/gate.json \
+                   state/momentum_core.json \
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \
-                   announcements_archive.csv news_archive.csv \
+                   announcements_archive.csv news_archive.csv deals_archive.csv \
                    analyst_reports \
                    paper_positions.csv; do
             # positions.csv and holdings.csv are NOT in this list. They are the
