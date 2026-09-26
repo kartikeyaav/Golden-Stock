@@ -335,6 +335,14 @@ jobs:
       - name: Multibagger radar (whole market)
         run: python scripts/multibagger_radar.py || echo "multibagger radar degraded (non-fatal)"
 
+      # the multibagger sleeve, run forward on paper
+      # (PREREG_2026-09-27_multibagger_sleeve.md): the configuration the
+      # research chose on 2006-2015 only, stepped with research/sim.py's own
+      # Book on the panel the radar just built. Idempotent (keyed by the last
+      # session processed); the cloud is its only writer.
+      - name: Multibagger sleeve (paper)
+        run: python scripts/multibagger_sleeve.py || echo "multibagger sleeve degraded (non-fatal)"
+
       # NSE bulk + block deals, archived forward (data/deals.py). Context only:
       # a named buyer taking size, with same-session buy+sell churn set aside.
       # NSE publishes the latest session only, so the committed archive IS the
@@ -384,7 +392,7 @@ jobs:
                    state/macro_radar.json \
                    state/surveillance.json state/gate.json \
                    state/momentum_core.json \
-                   state/multibagger_radar.json \
+                   state/multibagger_radar.json state/multibagger_sleeve.json \
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \
                    announcements_archive.csv news_archive.csv deals_archive.csv \

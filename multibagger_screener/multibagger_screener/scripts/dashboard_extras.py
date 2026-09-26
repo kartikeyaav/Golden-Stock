@@ -388,6 +388,13 @@ def build_momentum() -> dict | None:
     return st
 
 
+def build_multibagger_sleeve() -> dict | None:
+    """The multibagger sleeve (PREREG_2026-09-27_multibagger_sleeve.md):
+    holdings, pending orders, NAV and the MIDSMALL comparison."""
+    import multibagger_sleeve
+    return multibagger_sleeve.snapshot()
+
+
 def build_all(payload: dict) -> dict:
     rows = payload.get("rows") or []
     syms = [r["sym"] for r in rows]
@@ -399,6 +406,7 @@ def build_all(payload: dict) -> dict:
                     ("honest", build_honest),
                     ("momentum", build_momentum),
                     ("radar", lambda: _load_json("state", "multibagger_radar.json")),
+                    ("mbsleeve", build_multibagger_sleeve),
                     ("deals", lambda: build_deals(syms)),
                     ("macro", lambda: _load_json("state", "macro_radar.json"))):
         try:

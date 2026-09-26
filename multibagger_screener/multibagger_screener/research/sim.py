@@ -52,6 +52,186 @@ class SimConfig:
     start_cash: float = 1e6
 
 
+class Context:
+    """Everything one grid can tell a Book, precomputed once. Positions are
+    keyed by SYMBOL so a live sleeve can carry them across nights, when the
+    grid (and every column index) is rebuilt."""
+
+    def __init__(self, g: Grid, signal: np.ndarray, rank: np.ndarray | None, cfg: SimConfig,
+                 exposure: np.ndarray | None = None, risk_on: np.ndarray | None = None):
+        self.g, self.cfg, self.signal = g, cfg, signal
+        self.c, self.o = g.c, g.o
+        prev_c = shift(g.c, 1)
+        self.locked = (g.h <= g.l) & (g.c < prev_c)             # limit-down, no range
+        if cfg.exit == "sma":
+            self.trail = g.sma(cfg.trail)
+        else:
+            tr = np.fmax(g.h - g.l, np.fmax(np.abs(g.h - prev_c), np.abs(g.l - prev_c)))
+            self.atr = roll(tr, 14, "mean", minp=10)
+        self.medtv = roll(g.tv, 20, "median", minp=10)
+        self.rank = self.medtv if rank is None else rank
+        self.exposure, self.risk_on = exposure, risk_on
+        self.col = {s: j for j, s in enumerate(g.symbols)}
+        self.symbols = g.symbols
+
+
+class Book:
+    """One portfolio, advanced one session at a time by step(). The backtest
+    (run) loops step() over history; the live sleeve restores a Book from its
+    state file and steps it over the sessions since it last ran — the SAME
+    code, so the measured strategy and the tracked one cannot drift apart."""
+
+    def __init__(self, cfg: SimConfig, cash: float | None = None):
+        self.cfg = cfg
+        self.cash = cfg.start_cash if cash is None else cash
+        self.pos: dict[str, dict] = {}          # symbol -> position
+        self.pending_buys: list[str] = []
+        self.pending_sells: list[str] = []
+        self.last_px: dict[str, float] = {}
+        self.trades: list[dict] = []
+
+    # ---- persistence (the live sleeve) --------------------------------------
+    def to_state(self) -> dict:
+        return {"cash": self.cash, "pos": self.pos, "pending_buys": self.pending_buys,
+                "pending_sells": self.pending_sells, "last_px": self.last_px}
+
+    @classmethod
+    def from_state(cls, cfg: SimConfig, st: dict) -> "Book":
+        b = cls(cfg, st.get("cash"))
+        b.pos = {k: dict(v) for k, v in (st.get("pos") or {}).items()}
+        b.pending_buys = list(st.get("pending_buys") or [])
+        b.pending_sells = list(st.get("pending_sells") or [])
+        b.last_px = {k: float(v) for k, v in (st.get("last_px") or {}).items()}
+        return b
+
+    def value(self) -> float:
+        return self.cash + sum(p["sh"] * self.last_px.get(s, p["px"]) for s, p in self.pos.items())
+
+    # ---- one session ----------------------------------------------------------
+    def step(self, ctx: Context, t: int, allow_entries: bool = True) -> float:
+        """Open fills, mark, stale/regime/exit decisions and entry decisions for
+        session t. Returns the marked value at t's close."""
+        cfg, c, o = self.cfg, ctx.c, ctx.o
+        col = ctx.col
+        # ---- fills at today's open (decided at yesterday's close) --------------
+        for s in list(self.pending_sells):
+            j = col.get(s)
+            if s not in self.pos:
+                self.pending_sells.remove(s)
+                continue
+            if j is None or ctx.locked[t, j] or not np.isfinite(o[t, j]):
+                continue                                     # cannot sell today; try again
+            p = self.pos.pop(s)
+            px = float(o[t, j])
+            self.cash += p["sh"] * px * (1 - cfg.cost_pct / 100)
+            self.trades.append({**p, "sym": s, "exit_t": t, "exit_px": px, "mult": px / p["px"]})
+            self.pending_sells.remove(s)
+        if cfg.fill == "open":
+            for s in self.pending_buys:
+                if len(self.pos) >= cfg.max_positions:
+                    break                                    # a stuck sale still holds its slot
+                j = col.get(s)
+                if j is None:
+                    continue
+                px = float(o[t, j]) if np.isfinite(o[t, j]) else np.nan
+                self._buy(ctx, s, j, t, t - 1, px)
+            self.pending_buys = []
+
+        # ---- mark to market ----------------------------------------------------
+        for s in self.pos:
+            j = col.get(s)
+            if j is not None and np.isfinite(c[t, j]):
+                self.last_px[s] = float(c[t, j])
+        val = self.cash + sum(p["sh"] * self.last_px[s] for s, p in self.pos.items()
+                              if s in self.last_px)
+
+        # ---- a holding that stopped trading (suspended / delisted) -------------
+        # closes at its last traded price after STALE_SESSIONS without a print,
+        # instead of occupying a slot forever (no close = no exit rule can fire)
+        for s in list(self.pos):
+            j = col.get(s)
+            if j is None or not np.isfinite(c[t, j]):
+                self.pos[s]["stale"] = self.pos[s].get("stale", 0) + 1
+                if self.pos[s]["stale"] >= STALE_SESSIONS and s in self.last_px:
+                    p = self.pos.pop(s)
+                    px = float(self.last_px[s])
+                    self.cash += p["sh"] * px * (1 - cfg.cost_pct / 100)
+                    self.trades.append({**p, "sym": s, "exit_t": t, "exit_px": px,
+                                        "mult": px / p["px"], "stale": True})
+                    if s in self.pending_sells:
+                        self.pending_sells.remove(s)
+            elif "stale" in self.pos[s]:
+                self.pos[s]["stale"] = 0
+        # ---- the regime exit: risk off -> everything out at the next open --------
+        if ctx.risk_on is not None and not bool(ctx.risk_on[t]):
+            for s in self.pos:
+                if s not in self.pending_sells:
+                    self.pending_sells.append(s)
+            self.pending_buys = []
+            return val
+        # ---- exits decided at today's close ---------------------------------------
+        for s, p in self.pos.items():
+            j = col.get(s)
+            if j is None:
+                continue
+            cj = c[t, j]
+            if not np.isfinite(cj):
+                continue
+            p["peak"] = max(p["peak"], float(cj))
+            held = t - p["entry_t"] if "entry_t" in p else p.get("held", 0)
+            out = cj <= p["px"] * (1 - cfg.stop_pct)
+            if not out and held >= cfg.min_hold:
+                if cfg.exit == "sma":
+                    tj = ctx.trail[t, j]
+                    out = np.isfinite(tj) and cj < tj
+                else:
+                    a = ctx.atr[t, j]
+                    out = np.isfinite(a) and cj < p["peak"] - cfg.chandelier_k * a
+            if out and s not in self.pending_sells:
+                self.pending_sells.append(s)
+
+        # ---- entries decided at today's close ------------------------------------
+        free = cfg.max_positions - len(self.pos) + len(self.pending_sells)
+        if free > 0 and allow_entries:
+            cand = np.nonzero(ctx.signal[t] & np.isfinite(c[t]))[0]
+            cand = [j for j in cand if ctx.symbols[j] not in self.pos]
+            if cand:
+                r = ctx.rank[t, cand]
+                order = [cand[k] for k in np.argsort(-np.nan_to_num(r, nan=-np.inf))]
+                chosen = order[:free]
+                if cfg.fill == "close":
+                    for j in chosen:
+                        if len(self.pos) >= cfg.max_positions:
+                            break
+                        self._buy(ctx, ctx.symbols[j], j, t, t, float(c[t, j]))
+                else:
+                    self.pending_buys = [ctx.symbols[j] for j in chosen]
+        return val
+
+    def _buy(self, ctx: Context, s: str, j: int, t: int, t_decide: int, px: float) -> None:
+        """Fill one entry at `px` on session t, sized with what was known at
+        `t_decide` (the signal session); a batch of buys draws down ONE cash."""
+        cfg = self.cfg
+        if not np.isfinite(px) or px <= 0 or s in self.pos:
+            return
+        # equity is approximated by cash + position cost basis (mark-to-market is
+        # applied daily in the curve; sizing on it avoids a second full valuation)
+        equity = self.cash + sum(p["sh"] * p["px"] for p in self.pos.values())
+        alloc = equity / cfg.max_positions
+        if ctx.exposure is not None:
+            x = ctx.exposure[t_decide]
+            alloc *= float(x) if np.isfinite(x) else 0.5            # unknown regime = half (AUDIT F9)
+        mt = ctx.medtv[t_decide, j]
+        cap = cfg.liq_cap * float(mt) if np.isfinite(mt) else 0.0
+        alloc = min(alloc, cap, self.cash / (1 + cfg.cost_pct / 100))
+        sh = int(alloc // px)
+        if sh <= 0:
+            return
+        self.cash -= sh * px * (1 + cfg.cost_pct / 100)
+        self.pos[s] = {"j": j, "entry_t": t, "px": px, "sh": sh, "peak": px}
+        self.last_px.setdefault(s, px)
+
+
 def run(g: Grid, signal: np.ndarray, rank: np.ndarray | None, cfg: SimConfig,
         start: pd.Timestamp, end: pd.Timestamp | None = None,
         exposure: np.ndarray | None = None, risk_on: np.ndarray | None = None) -> dict:
@@ -60,147 +240,20 @@ def run(g: Grid, signal: np.ndarray, rank: np.ndarray | None, cfg: SimConfig,
     risk_on: bool (T,) — the REGIME EXIT (PREREG amendment 2026-09-26): on a
     close where it is False every position is sold at the next open and no
     entry is taken until it is True again."""
-    T, N = g.T, g.N
     t0 = int(np.searchsorted(g.dates.values, np.datetime64(start)))
-    t1 = T if end is None else int(np.searchsorted(g.dates.values, np.datetime64(end), side="right"))
-    c, o, h, l = g.c, g.o, g.h, g.l
-    prev_c = shift(c, 1)
-    locked = (h <= l) & (c < prev_c)                         # limit-down, no range
-    if cfg.exit == "sma":
-        trail = g.sma(cfg.trail)
-    else:
-        tr = np.fmax(h - l, np.fmax(np.abs(h - prev_c), np.abs(l - prev_c)))
-        atr = roll(tr, 14, "mean", minp=10)
-    medtv = roll(g.tv, 20, "median", minp=10)
-    if rank is None:
-        rank = medtv
-    cash = cfg.start_cash
-    pos: dict[int, dict] = {}                                # j -> position
-    pending_buys: list[int] = []
-    pending_sells: list[int] = []
-    eq_curve, trades = [], []
-    last_px = np.full(N, np.nan, dtype="float64")
-
+    t1 = g.T if end is None else int(np.searchsorted(g.dates.values, np.datetime64(end), side="right"))
+    ctx = Context(g, signal, rank, cfg, exposure, risk_on)
+    book = Book(cfg)
+    eq_curve = []
     for t in range(t0, t1):
-        # ---- fills at today's open (decided at yesterday's close) --------------
-        for j in list(pending_sells):
-            if j not in pos:
-                pending_sells.remove(j)
-                continue
-            if locked[t, j] or not np.isfinite(o[t, j]):
-                continue                                     # cannot sell today; try again
-            p = pos.pop(j)
-            px = float(o[t, j])
-            cash += p["sh"] * px * (1 - cfg.cost_pct / 100)
-            trades.append({**p, "exit_t": t, "exit_px": px, "mult": px / p["px"]})
-            pending_sells.remove(j)
-        if cfg.fill == "open":
-            cash_ref = [cash]
-            for j in pending_buys:
-                if len(pos) >= cfg.max_positions:
-                    break                                    # a stuck sale still holds its slot
-                px = float(o[t, j]) if np.isfinite(o[t, j]) else np.nan
-                _buy(j, t, t - 1, px, pos, cfg, medtv, exposure, cash_ref)
-            cash = cash_ref[0]
-            pending_buys = []
-
-        # ---- mark to market ----------------------------------------------------
-        row = c[t]
-        ok = np.isfinite(row)
-        last_px[ok] = row[ok]
-        val = cash + sum(p["sh"] * last_px[j] for j, p in pos.items() if np.isfinite(last_px[j]))
-        eq_curve.append((g.dates[t], val))
-
-        # ---- a holding that stopped trading (suspended / delisted) -------------
-        # closes at its last traded price after STALE_SESSIONS without a print,
-        # instead of occupying a slot forever (no close = no exit rule can fire)
-        for j in list(pos):
-            if not np.isfinite(c[t, j]):
-                pos[j]["stale"] = pos[j].get("stale", 0) + 1
-                if pos[j]["stale"] >= STALE_SESSIONS and np.isfinite(last_px[j]):
-                    p = pos.pop(j)
-                    px = float(last_px[j])
-                    cash += p["sh"] * px * (1 - cfg.cost_pct / 100)
-                    trades.append({**p, "exit_t": t, "exit_px": px, "mult": px / p["px"], "stale": True})
-                    if j in pending_sells:
-                        pending_sells.remove(j)
-            elif "stale" in pos[j]:
-                pos[j]["stale"] = 0
-        # ---- the regime exit: risk off -> everything out at the next open --------
-        if risk_on is not None and not bool(risk_on[t]):
-            for j in pos:
-                if j not in pending_sells:
-                    pending_sells.append(j)
-            pending_buys = []
-            continue
-        # ---- exits decided at today's close ---------------------------------------
-        for j, p in pos.items():
-            cj = c[t, j]
-            if not np.isfinite(cj):
-                continue
-            p["peak"] = max(p["peak"], float(cj))
-            held = t - p["entry_t"]
-            out = cj <= p["px"] * (1 - cfg.stop_pct)
-            if not out and held >= cfg.min_hold:
-                if cfg.exit == "sma":
-                    tj = trail[t, j]
-                    out = np.isfinite(tj) and cj < tj
-                else:
-                    a = atr[t, j]
-                    out = np.isfinite(a) and cj < p["peak"] - cfg.chandelier_k * a
-            if out and j not in pending_sells:
-                pending_sells.append(j)
-
-        # ---- entries decided at today's close ------------------------------------
-        free = cfg.max_positions - len(pos) + len(pending_sells)
-        if free > 0 and t + 1 < t1:
-            cand = np.nonzero(signal[t] & np.isfinite(c[t]))[0]
-            cand = [j for j in cand if j not in pos]
-            if cand:
-                r = rank[t, cand]
-                order = [cand[k] for k in np.argsort(-np.nan_to_num(r, nan=-np.inf))]
-                chosen = order[:free]
-                if cfg.fill == "close":
-                    cash_ref = [cash]
-                    for j in chosen:
-                        if len(pos) >= cfg.max_positions:
-                            break
-                        _buy(j, t, t, float(c[t, j]), pos, cfg, medtv, exposure, cash_ref)
-                    cash = cash_ref[0]
-                else:
-                    pending_buys = chosen
-
+        eq_curve.append((g.dates[t], book.step(ctx, t, allow_entries=t + 1 < t1)))
     # close the book at the end (marked, not sold)
-    for j, p in pos.items():
-        px = last_px[j]
-        trades.append({**p, "exit_t": None, "exit_px": float(px), "mult": float(px) / p["px"],
-                       "open": True})
+    for s, p in book.pos.items():
+        px = book.last_px.get(s, p["px"])
+        book.trades.append({**p, "sym": s, "exit_t": None, "exit_px": float(px),
+                            "mult": float(px) / p["px"], "open": True})
     eq = pd.Series(dict(eq_curve)).sort_index()
-    return {"equity": eq, "trades": pd.DataFrame(trades)}
-
-
-def _buy(j, t, t_decide, px, pos, cfg, medtv, exposure, cash_ref):
-    """Fill one entry at `px` on session t, sized with what was known at
-    `t_decide` (the signal session). cash_ref is a one-item list so a batch of
-    buys draws down the SAME cash."""
-    if not np.isfinite(px) or px <= 0 or j in pos:
-        return
-    cash = cash_ref[0]
-    # equity is approximated by cash + position cost basis (mark-to-market is
-    # applied daily in the curve; sizing on it avoids a second full valuation)
-    equity = cash + sum(p["sh"] * p["px"] for p in pos.values())
-    alloc = equity / cfg.max_positions
-    if exposure is not None:
-        x = exposure[t_decide]
-        alloc *= float(x) if np.isfinite(x) else 0.5            # unknown regime = half (AUDIT F9)
-    cap = cfg.liq_cap * float(medtv[t_decide, j]) if np.isfinite(medtv[t_decide, j]) else 0.0
-    alloc = min(alloc, cap, cash / (1 + cfg.cost_pct / 100))
-    sh = int(alloc // px)
-    if sh <= 0:
-        return
-    cash -= sh * px * (1 + cfg.cost_pct / 100)
-    pos[j] = {"j": j, "entry_t": t, "px": px, "sh": sh, "peak": px}
-    cash_ref[0] = cash
+    return {"equity": eq, "trades": pd.DataFrame(book.trades)}
 
 
 def perf(eq: pd.Series) -> dict:

@@ -51,6 +51,7 @@ const newsMem = (D.news_mem && D.news_mem.syms) || {};
 const POS = X.positions_v7 || { paper: [] };
 const MC = X.momentum || {};                       // momentum-core paper sleeve
 const RD = X.radar || {};                          // whole-market multibagger radar
+const MB = X.mbsleeve || {};                       // multibagger sleeve (paper, pre-registered)
 const posBy = {};
 (POS.paper || []).forEach(p => { (posBy[p.sym] = posBy[p.sym] || []).push(p); });
 const MC_LAST = (MC.rebalances || []).slice(-1)[0] || null;
@@ -736,12 +737,43 @@ function drawCoreNav() {
   s.setData(nav.map(p => ({ time: p[0], value: p[1] })));
   ch.timeScale().fitContent();
 }
+function mbSleeveSection() {
+  if (!MB.registered) return "";
+  const nav = MB.nav || [], hold = MB.holdings || [];
+  if (nav.length) AFTER.push(() => drawNav("mbnav", nav, "--buy"));
+  const kpis = nav.length ? `
+    <div class="kpi"><div class="label">Since ${esc(dateLabel(nav[0][0]))}</div><div class="value ${cls(MB.since_pct)}">${pct(MB.since_pct)}</div><div class="note">NAV ${inrShort(nav[nav.length - 1][1])} on a ₹10L paper book</div></div>
+    <div class="kpi"><div class="label">MIDSMALL ETF</div><div class="value sm ${cls(MB.midsmall_pct)}">${pct(MB.midsmall_pct)}</div><div class="note">same dates — the bar it is judged by</div></div>
+    <div class="kpi"><div class="label">Holdings</div><div class="value sm">${hold.length} / 5</div><div class="note">cash ${inrShort(MB.cash)}</div></div>
+    <div class="kpi"><div class="label">Regime</div><div class="value sm ${MB.risk_on ? "pos" : "neg"}">${MB.risk_on ? "On" : "Off — in cash"}</div><div class="note">off while under 50% of stocks are above their 200-day average</div></div>`
+    : `
+    <div class="kpi"><div class="label">Starts</div><div class="value text">First session after 27 Sep</div><div class="note">buys at the next open after a signal close</div></div>
+    <div class="kpi"><div class="label">2006–2015 (chosen here)</div><div class="value sm pos">+29.9%/yr</div><div class="note">−31.9% worst drawdown, survivorship-free</div></div>
+    <div class="kpi"><div class="label">2016–2026 (read once)</div><div class="value sm pos">+18.2%/yr</div><div class="note">−50.9% worst drawdown (the 2022 momentum crash)</div></div>
+    <div class="kpi"><div class="label">Own the market</div><div class="value sm">+13.8%/yr</div><div class="note">equal weight, 2016–2026, −62% drawdown</div></div>`;
+  const tbl = hold.length ? `<div class="card flush"><div class="card-head"><h3>Holdings</h3><span class="hint">${(MB.pending_sells || []).length ? "selling at the next open: " + esc(MB.pending_sells.join(", ")) : ""}</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Since</th><th class="r">Entry</th><th class="r">Last</th><th class="r">Return</th></tr></thead>
+    <tbody>${hold.map(h => `<tr ${rowBy[h.sym] ? `data-sym="${esc(h.sym)}"` : ""}><td class="sym">${esc(h.sym)}</td><td class="r">${esc(dateLabel(h.since))}</td><td class="r num">${px(h.entry)}</td><td class="r num">${px(h.last)}</td><td class="r num ${cls(h.ret_pct)}">${pct(h.ret_pct)}</td></tr>`).join("")}</tbody></table></div></div>`
+    : `<div class="empty">${(MB.pending_buys || []).length ? "Buying at the next open: <b>" + esc(MB.pending_buys.join(", ")) + "</b>." : "No holdings yet."}</div>`;
+  return `<div class="section-title" style="margin-top:28px">Multibagger sleeve ${info("The configuration the multibagger research chose on 2006–2015 alone: RS leaders (6- and 12-month return both in the top 10% of the whole liquid NSE market), 5 slots, bought at the next open, sold on a close under the 30-week average (after 20 sessions) or 20% below entry, and everything to cash while under half the market is above its 200-day average. It is run by the research simulator's own code. It is registered with its weak 2016–2026 result, because choosing with hindsight is what the process forbids (PREREG_2026-09-27_multibagger_sleeve.md).")}<span class="chip sm ai">pre-registered · paper</span><span class="line"></span></div>
+    <div class="kpis" style="margin-bottom:14px">${kpis}</div>
+    ${nav.length ? `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Growth of the paper book</h3></div><div class="chart-box" id="mbnav" style="height:200px"></div></div>` : ""}
+    ${tbl}`;
+}
+function drawNav(id, nav, colorVar) {
+  const box = $("#" + id);
+  if (!box || !nav.length || !window.LightweightCharts) return;
+  const ch = makeChart(box, { bucket: _pageCharts });
+  const s = ch.addAreaSeries({ lineColor: css(colorVar), topColor: css(colorVar) + "33", bottomColor: css(colorVar) + "05", lineWidth: 2, priceLineVisible: false });
+  s.setData(nav.map(p => ({ time: p[0], value: p[1] })));
+  ch.timeScale().fitContent();
+}
 function pagePortfolio() {
   const paper = POS.paper || [], P = D.paper || {};
   const led = P.ledger || [];
   return `
-  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">One book in two parts, both run on paper by rules alone: the momentum core (monthly) and the breakout book (every analyst BUY, managed by the two-lot plan).</div></div></div>
+  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">One book in three parts, all run on paper by rules alone: the momentum core (monthly), the multibagger sleeve (RS leaders, daily, pre-registered 27 Sep) and the breakout book (every analyst BUY, managed by the two-lot plan).</div></div></div>
   ${momentumSection()}
+  ${mbSleeveSection()}
   <div class="section-title" style="margin-top:28px">Breakout book ${info("Every AI-analyst BUY verdict auto-entered at the next session's open, sized by the mechanical plan and exited by the same two-lot rules. It is the running test of whether the analyst layer adds money. Notional ₹10L book.")}<span class="line"></span></div>
   <div class="kpis" style="margin-bottom:14px">
     <div class="kpi"><div class="label">Net result</div><div class="value ${cls(P.net)}">${inrShort(P.net)}</div><div class="note">${pct(P.net_pct, 1)} of the ₹10L notional book</div></div>
