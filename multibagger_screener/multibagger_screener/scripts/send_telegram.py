@@ -288,7 +288,21 @@ def build_ops_alert(raw: str) -> str:
     return "\n".join(L)
 
 
-def build_digest(raw: str, public: bool = False, near: list[dict] | None = None) -> str:
+RADAR_WORD = {"H7": "power play", "H9": "new RS leader", "H14": "discovery"}
+
+
+def radar_today() -> dict:
+    """state/multibagger_radar.json (scripts/multibagger_radar.py), or {} —
+    the digest must never die for a nice-to-have."""
+    try:
+        with open(os.path.join(ROOT, "state", "multibagger_radar.json"), encoding="utf-8") as f:
+            return json.load(f) or {}
+    except (OSError, ValueError):
+        return {}
+
+
+def build_digest(raw: str, public: bool = False, near: list[dict] | None = None,
+                 radar: dict | None = None) -> str:
     """The nightly decision digest.
 
     Structured so the first line under the header answers the only question
@@ -400,6 +414,19 @@ def build_digest(raw: str, public: bool = False, near: list[dict] | None = None)
                      f" · stop {_num(s['plan']['stop'])}")
         L.append("  alert at the pivot; confirm volume near 3:15 PM")
 
+    # the multibagger radar: only signals that fired on the scan's own session
+    # (a research watchlist; chart facts only, so both feeds get it)
+    fresh = [r for r in ((radar or {}).get("rows") or []) if r.get("fresh")]
+    if fresh:
+        L.append("")
+        L.append("MULTIBAGGER RADAR — new today (research watchlist, ~1 in 10 triple)")
+        for r in fresh[:6]:
+            sig = ", ".join(RADAR_WORD.get(k, k) for k in (r.get("signals") or {}))
+            L.append(f"  {r['sym']} — {sig} · 6m {r.get('ret_6m_pct'):+.0f}%"
+                     if isinstance(r.get("ret_6m_pct"), (int, float)) else f"  {r['sym']} — {sig}")
+        if len(fresh) > 6:
+            L.append(f"  +{len(fresh) - 6} more on the dashboard")
+
     # 3. owner-only: anything that reveals or manages the book
     if not public:
         if exits:
@@ -462,8 +489,9 @@ def main() -> None:
         raw = f.read()
 
     near = near_pivot()
+    radar = radar_today()
     try:
-        text = build_digest(raw, public=False, near=near)
+        text = build_digest(raw, public=False, near=near, radar=radar)
     except Exception as e:  # noqa: BLE001 — a digest bug must never kill delivery
         print(f"digest build failed ({e}) — falling back to full report")
         text = raw.replace("**", "").replace("```", "").replace("# ", "")
@@ -491,7 +519,7 @@ def main() -> None:
     pub = public_chat_id()
     if pub:
         try:
-            for part in chunk(build_digest(raw, public=True, near=near))[:2]:
+            for part in chunk(build_digest(raw, public=True, near=near, radar=radar))[:2]:
                 send_message(token, pub, part)
             sent += 1
             print(f"public digest sent to {pub}")

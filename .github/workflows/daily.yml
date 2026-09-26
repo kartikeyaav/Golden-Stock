@@ -325,6 +325,16 @@ jobs:
       - name: Momentum core (paper sleeve)
         run: python scripts/momentum_core.py || echo "momentum core degraded (non-fatal)"
 
+      # the whole-market multibagger radar (scripts/multibagger_radar.py): the
+      # three signals that raised the odds of a triple within a year in BOTH
+      # halves of 2005-2026 on the survivorship-free NSE panel
+      # (PREREG_2026-09-26_multibagger_research.md). It rebuilds the market's
+      # last ~14 months from NSE's own daily files (~300 downloads, a minute or
+      # two) instead of the cache, because multibaggers are born mostly among
+      # names the cache does not hold. Non-fatal: NSE can refuse datacenter IPs.
+      - name: Multibagger radar (whole market)
+        run: python scripts/multibagger_radar.py || echo "multibagger radar degraded (non-fatal)"
+
       # NSE bulk + block deals, archived forward (data/deals.py). Context only:
       # a named buyer taking size, with same-session buy+sell churn set aside.
       # NSE publishes the latest session only, so the committed archive IS the
@@ -374,6 +384,7 @@ jobs:
                    state/macro_radar.json \
                    state/surveillance.json state/gate.json \
                    state/momentum_core.json \
+                   state/multibagger_radar.json \
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \
                    announcements_archive.csv news_archive.csv deals_archive.csv \

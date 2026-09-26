@@ -398,6 +398,7 @@ def build_all(payload: dict) -> dict:
                     ("event_study", lambda: build_event_study(syms)),
                     ("honest", build_honest),
                     ("momentum", build_momentum),
+                    ("radar", lambda: _load_json("state", "multibagger_radar.json")),
                     ("deals", lambda: build_deals(syms)),
                     ("macro", lambda: _load_json("state", "macro_radar.json"))):
         try:

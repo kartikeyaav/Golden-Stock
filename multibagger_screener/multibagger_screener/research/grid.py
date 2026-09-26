@@ -148,8 +148,8 @@ class Grid:
         return self.get(f"fr{k}", _fr)
 
 
-def load_grid(start: str | None = None) -> Grid:
-    p: Panel = load_panel()
+def load_grid(start: str | None = None, path=None) -> Grid:
+    p: Panel = Panel(path) if path else load_panel()
     rows = slice(None)
     if start:
         rows = p.dates >= pd.Timestamp(start)

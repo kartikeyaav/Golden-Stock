@@ -50,6 +50,7 @@ const newsMem = (D.news_mem && D.news_mem.syms) || {};
    (user decision 2026-09-25) — the builder does not read them at all. */
 const POS = X.positions_v7 || { paper: [] };
 const MC = X.momentum || {};                       // momentum-core paper sleeve
+const RD = X.radar || {};                          // whole-market multibagger radar
 const posBy = {};
 (POS.paper || []).forEach(p => { (posBy[p.sym] = posBy[p.sym] || []).push(p); });
 const MC_LAST = (MC.rebalances || []).slice(-1)[0] || null;
@@ -375,6 +376,8 @@ function pageToday() {
   ${readyTable(ready.slice(0, 10), false)}
   ${ready.length > 10 ? `<div style="margin-top:8px"><button class="btn link" data-go="setups">All ${ready.length} ready setups →</button></div>` : ""}
 
+  ${radarSection()}
+
   <div class="grid grid-2" style="margin-top:28px">
     <div>
       <div class="section-title">Market pulse<span class="line"></span></div>
@@ -382,6 +385,32 @@ function pageToday() {
     </div>
     <div>${headsUpCard() || `<div class="section-title">Heads-up<span class="line"></span></div><div class="empty">No negative filing or exchange-surveillance flag on anything in the paper portfolio or about to be bought.</div>`}</div>
   </div>`;
+}
+/* The whole-market multibagger radar (scripts/multibagger_radar.py): the three
+   signals that raised the odds of a stock tripling within a year in BOTH halves
+   of 2005-2026 on the survivorship-free NSE panel. A research watchlist under
+   forward test — never presented as a buy list. */
+const RADAR_WORD = { H7: "Power play", H9: "RS leader", H14: "Discovery" };
+const RADAR_TIP = {
+  H7: "Up 90%+ within 40 sessions with no pullback deeper than 25%, closing at a new high — often the surge itself, sometimes the break of a short flag after it.",
+  H9: "6-month AND 12-month return both in the top 10% of the liquid market — the day it first got there.",
+  H14: "Daily traded value rose from the market's bottom half to its top quarter within 60 sessions — new money arriving.",
+};
+function radarSection() {
+  const rows = RD.rows || [];
+  if (!RD.asof) return "";
+  const R = RD.research || {};
+  const odds = Object.entries(RADAR_WORD).filter(([k]) => R[k] && isNum(R[k].tripled_within_1y_pct))
+    .map(([k, w]) => `${w}: <b>${num(R[k].tripled_within_1y_pct, 1)}%</b> tripled within a year (all liquid stocks ${num(R[k].universe_pct, 1)}%)`).join(" · ");
+  const body = rows.length ? `<div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th>Signal</th><th class="r">6 months</th><th class="r">12 months</th><th class="r hide-sm" data-tip="6-month return percentile in the liquid market (100 = strongest).">RS</th><th class="r hide-sm">From 52-wk high</th><th class="r hide-sm" data-tip="Median daily traded value, last 20 sessions.">Traded / day</th></tr></thead>
+    <tbody>${rows.slice(0, 15).map(r => `<tr ${rowBy[r.sym] ? `data-sym="${esc(r.sym)}"` : ""}><td><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "outside the scanned universe")}</span></div></td>
+      <td>${Object.entries(r.signals || {}).map(([k, d]) => `<span class="chip sm ${k === "H7" ? "buy" : k === "H14" ? "ai" : "watch"}" data-tip="${esc(RADAR_TIP[k] + " Fired " + d + ".")}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ")}</td>
+      <td class="r num ${cls(r.ret_6m_pct)}">${pct(r.ret_6m_pct, 0)}</td><td class="r num ${cls(r.ret_12m_pct)}">${pct(r.ret_12m_pct, 0)}</td>
+      <td class="r num hide-sm">${num(r.rs_pct, 0)}</td><td class="r num hide-sm">${pct(r.off_52w_high_pct, 1)}</td><td class="r num hide-sm">₹${num(r.traded_value_cr, 1)} Cr</td></tr>`).join("")}</tbody></table></div></div>`
+    : `<div class="empty">No power play, new RS leader or discovery signal in the last ${num(RD.window_sessions)} sessions.</div>`;
+  return `<div class="section-title" style="margin-top:28px">Multibagger radar <span class="chip sm">${rows.length}</span>${info("The whole NSE market (" + num(RD.universe_size) + " liquid stocks, not just the scanned universe), rebuilt nightly from the exchange's own files. These three signals raised the chance of a stock tripling within a year in BOTH 2005–2015 and 2016–2026 on a survivorship-free panel; the system's own VCP breakout barely did. Even the best was followed by a triple only about 1 time in 10 — a list to research, not to buy blindly.")}<span class="line"></span><span class="hint">as of ${esc(RD.asof)}</span></div>
+    ${body}
+    ${odds ? `<div class="hint" style="margin-top:8px">Measured 2016–2026: ${odds}.</div>` : ""}`;
 }
 function emptyBuys() {
   const recent = recentTriggers().filter(a => !(a.dokind === "act" || a.dokind === "ep") || a.status !== "ACTIONABLE");

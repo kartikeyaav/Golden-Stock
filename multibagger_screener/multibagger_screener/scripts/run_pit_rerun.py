@@ -201,7 +201,10 @@ def main() -> int:
     cells = [("F1_live", "comb", False, False), ("F2_live_stress", "comb", True, True),
              ("F3_vcp_only", "vcp", False, False), ("F4_ep_only", "ep", False, False)]
     for label, start in wins.items():
-        for name, kind, shifted, stress in cells:
+        # the 2020 window repeats all four cells of the biased re-run (like for
+        # like); the 20-year window runs the live configuration only (ideal and
+        # realistic fills) — each 20-year cell is ~3x the engine time
+        for name, kind, shifted, stress in (cells if label == "2020" else cells[:2]):
             live = set_cell(frames, kind, start, shift_entry=shifted)
             kw = dict(stress=True, ledger_cost=HR.COST_STRESS) if stress else {}
             curves[f"PIT_{name}_{label}"] = HR.run_cell(f"PIT_{name}_{label}", live, breadth_reg,

@@ -35,6 +35,9 @@ import pandas as pd
 from research.grid import Grid, roll, shift
 
 
+STALE_SESSIONS = 20
+
+
 @dataclass
 class SimConfig:
     max_positions: int = 10
@@ -108,6 +111,21 @@ def run(g: Grid, signal: np.ndarray, rank: np.ndarray | None, cfg: SimConfig,
         val = cash + sum(p["sh"] * last_px[j] for j, p in pos.items() if np.isfinite(last_px[j]))
         eq_curve.append((g.dates[t], val))
 
+        # ---- a holding that stopped trading (suspended / delisted) -------------
+        # closes at its last traded price after STALE_SESSIONS without a print,
+        # instead of occupying a slot forever (no close = no exit rule can fire)
+        for j in list(pos):
+            if not np.isfinite(c[t, j]):
+                pos[j]["stale"] = pos[j].get("stale", 0) + 1
+                if pos[j]["stale"] >= STALE_SESSIONS and np.isfinite(last_px[j]):
+                    p = pos.pop(j)
+                    px = float(last_px[j])
+                    cash += p["sh"] * px * (1 - cfg.cost_pct / 100)
+                    trades.append({**p, "exit_t": t, "exit_px": px, "mult": px / p["px"], "stale": True})
+                    if j in pending_sells:
+                        pending_sells.remove(j)
+            elif "stale" in pos[j]:
+                pos[j]["stale"] = 0
         # ---- the regime exit: risk off -> everything out at the next open --------
         if risk_on is not None and not bool(risk_on[t]):
             for j in pos:

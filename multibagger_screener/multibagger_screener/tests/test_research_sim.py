@@ -99,3 +99,20 @@ def test_trend_exit_waits_for_min_hold():
                                       stop_pct=0.5), start=g.dates[0])
     t = res["trades"].iloc[0]
     assert bool(t.get("open", False))                  # the early dip did not exit it
+
+
+def test_a_holding_that_stops_trading_frees_its_slot():
+    """A suspended/delisted stock prints no close, so no exit rule can fire;
+    after 20 silent sessions it is closed at its last traded price."""
+    T = 80
+    c = np.full((T, 2), 100.0)
+    c[30:, 0] = np.nan                                 # stock 0 stops trading on day 30
+    g = _grid(c)
+    sig = np.zeros((T, 2), bool)
+    sig[13, 0] = True
+    sig[60, 1] = True                                  # a later signal needs the only slot
+    res = run(g, sig, None, SimConfig(max_positions=1, cost_pct=0.0, liq_cap=1.0), start=g.dates[0])
+    tr = res["trades"]
+    stale = tr[tr["j"] == 0].iloc[0]
+    assert bool(stale.get("stale")) and abs(stale["exit_px"] - 100.0) < 1e-6
+    assert (tr["j"] == 1).any()                        # the freed slot was used
