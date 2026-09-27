@@ -1,6 +1,6 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-09-27** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
+**Last updated: 2026-09-28** (a third pre-registered paper sleeve: PROMOTER BUYING + MOMENTUM, 32% a year over 2016-2026 in the backtest, forward from 29 Sep; see the end of §3AC.) **Previous header, 2026-09-27:** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
 
 **Superseded header, kept for the trail: 2026-09-25** (FULL REVIEW + v7 INTERFACE. The strategy was re-measured honestly — the live config is 45% a year with ideal fills and 30% with realistic execution over 2020→2026, not 54.5% — the gate's ruler and benchmark were corrected, the conviction weights moved to v2, and the dashboard was rebuilt. Read `REVIEW_2026-09-25.md`, then §3AB.)
 
@@ -2547,7 +2547,7 @@ test and promoter buying"; and "are we checking fundamentals?").**
     because one trickling socket hung a backfill for an hour.
   - **Results:** `PREREG_2026-09-27_promoter_buying.md` was committed before
     the results. Only **H25, promoter purchase (60d) + RS leader or trend
-    template, survives: lift 2.33 / 2.38**, against 1.58 / 1.47 for momentum
+    template, survives: lift 2.32 / 2.38** (2.33 before the 09-28 ticker fix), against 1.58 / 1.47 for momentum
     alone, with the 12-month median doubling to +15.5% / +19%.
   - **Controls:** promoter selling passes the negative control; pledge
     creation fails it (a volatility confound).
@@ -2564,6 +2564,43 @@ test and promoter buying"; and "are we checking fundamentals?").**
 - Run `set_telegram_local.ps1`.
 - Watch the first cloud runs of the insider step (403 or not) and the weekly
   value refresh.
+
+**2026-09-28 follow-up (the user: "add promoter buying + momentum as a paper
+sleeve too").**
+
+- **Registered before the test:** `PREREG_2026-09-28_promoter_momentum.md` and
+  `research/promoter_momentum.py` were committed first (a23ff60). The rule is
+  the value sleeve's 8-cell grid, chosen by MAR on 2016-20, plus a registered
+  comparison with momentum alone.
+- **Chosen:** 5 slots, 3×ATR chandelier, breadth exit. It made 51.5% / −26.3%
+  on 2016-20, then 23.5% / −43.4% on 2021-26 read once, and 32.3% / −40.3%
+  over 2016-26.
+  - **Momentum alone, same cell:** 33.8% / 14.3% / 21.0%.
+  - **2022:** −9%, against −43% for momentum alone.
+  - **Against the market:** only matched it on 2021-26 (22.1%), and lagged in
+    2024-25.
+- **Live:** `scripts/multibagger_sleeve.py --sleeve promoter_momentum`.
+  - The spec is in SPECS. A new `breadth_exit` key is explicit for every
+    sleeve, and the sell reasons name the actual trail.
+  - The signal is `research/insider_study.h25_grid` run on
+    `insider_archive.csv`, via `load_insider_archive`.
+  - State and ledger: `state/promoter_momentum_sleeve.json` and
+    `journal/promoter_momentum_sleeve_ledger.csv`, both in the commit list
+    of `daily.yml`.
+  - The state records `insider_asof`. The card prints it as "Promoter data",
+    so a blocked feed shows as a date that stops moving.
+- **Defect fixed:** `signal_rows` sent a reused ticker's disclosures to its
+  OLDEST company (`NAME`) instead of the one trading then (`NAME~2`).
+  - It affected 43 of 30,614 promoter purchases, on 4 tickers.
+  - A live-vs-research parity check found it (PREMIERPOL).
+  - The studies were re-run: H25 moved 2.33 to 2.32, and the choice is
+    unchanged.
+  - Parity is now exact on 214 sessions.
+- **Survivorship in the insider data, checked:** 76% of the companies that
+  stopped trading after 2016 have disclosures, against 83% of survivors.
+- **Gotcha:** `scripts/build_dashboard.py` rewrites the cloud-owned
+  `state/themes.json` locally. Run `git checkout -- state/themes.json` after
+  a local build, or the 21:30 analyst's `pull --rebase` meets a dirty tree.
 
 ---
 

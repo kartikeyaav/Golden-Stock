@@ -18,6 +18,10 @@ configurations). Each night:
 
 The cloud is the only writer (daily.yml commits both files).
 
+Every other sleeve is a frozen spec on the same engine (SPECS below):
+`--sleeve value_breakout` (cheap + new uptrend) and `--sleeve
+promoter_momentum` (promoter buying + momentum, read from insider_archive.csv).
+
     python scripts/multibagger_sleeve.py            # nightly
     python scripts/multibagger_sleeve.py --status   # print, change nothing
 """
@@ -50,6 +54,7 @@ SPECS = {
         "ledger": os.path.join(ROOT, "journal", "multibagger_sleeve_ledger.csv"),
         "cfg": SimConfig(max_positions=5, fill="open", exit="sma", trail=150, stop_pct=0.20,
                          min_hold=20, cost_pct=0.25, liq_cap=0.05, start_cash=1_000_000.0),
+        "breadth_exit": True,
         "signal": "rs_leader", "reason": "RS leader: 6m and 12m return in the top 10%"},
     # PREREG_2026-09-27_value_breakout.md section 3
     "value_breakout": {
@@ -58,8 +63,20 @@ SPECS = {
         "ledger": os.path.join(ROOT, "journal", "value_breakout_sleeve_ledger.csv"),
         "cfg": SimConfig(max_positions=10, fill="open", exit="sma", trail=150, stop_pct=0.20,
                          min_hold=20, cost_pct=0.25, liq_cap=0.05, start_cash=1_000_000.0),
+        "breadth_exit": True,
         "signal": "value_breakout",
         "reason": "cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start"},
+    # PREREG_2026-09-28_promoter_momentum.md section 3: the cell chosen on
+    # 2016-2020 by the rule registered in section 2 (research/promoter_momentum.py)
+    "promoter_momentum": {
+        "registered": "2026-09-28",
+        "state": os.path.join(ROOT, "state", "promoter_momentum_sleeve.json"),
+        "ledger": os.path.join(ROOT, "journal", "promoter_momentum_sleeve_ledger.csv"),
+        "cfg": SimConfig(max_positions=5, fill="open", exit="chandelier", chandelier_k=3.0, stop_pct=0.20,
+                         min_hold=20, cost_pct=0.25, liq_cap=0.05, start_cash=1_000_000.0),
+        "breadth_exit": True,
+        "signal": "promoter_momentum",
+        "reason": "promoter market purchase disclosed in the last 60 sessions + RS leader or trend template"},
 }
 # the multibagger sleeve's names, kept for the tests and the dashboard
 REGISTERED = SPECS["multibagger"]["registered"]
@@ -67,10 +84,26 @@ STATE = SPECS["multibagger"]["state"]
 LEDGER = SPECS["multibagger"]["ledger"]
 CFG = SPECS["multibagger"]["cfg"]
 VALUE_TABLE = os.path.join(ROOT, "value_fundamentals.csv")
+INSIDER_ARCHIVE = os.path.join(ROOT, "insider_archive.csv")
+
+
+def load_insider_archive() -> pd.DataFrame:
+    """The committed promoter / director / KMP trades (data/insider.py), each
+    renamed symbol carried to today's name, exactly as the radar reads them."""
+    tr = pd.read_csv(INSIDER_ARCHIVE, parse_dates=["disclosed_at"])
+    try:
+        from data.nse_history import _symbol_chain
+        chain = _symbol_chain()
+    except Exception:  # noqa: BLE001 — no chain = today's names only
+        chain = {}
+    tr["symbol"] = tr["symbol"].astype(str).str.strip().map(lambda s: chain.get(s, s))
+    return tr
 
 
 def signal_for(g, kind: str, table=None):
-    """The frozen signal of a sleeve, from the research code."""
+    """The frozen signal of a sleeve, from the research code. `table` is the
+    sleeve's data file (value fundamentals, or insider trades) — tests pass a
+    synthetic one; None reads the committed file."""
     from research.hypotheses import h9_rs_leader
     U = g.universe()
     if kind == "rs_leader":
@@ -81,6 +114,10 @@ def signal_for(g, kind: str, table=None):
         tab = table if table is not None else pd.read_csv(VALUE_TABLE)
         fg = F.grids_from_table(g, tab)
         return F.h20_cheap_new_uptrend(g, fg, h2_multi_year_base_breakout(g), h5_stage2_start(g)) & U
+    if kind == "promoter_momentum":
+        from research.insider_study import h25_grid
+        tr = table if table is not None else load_insider_archive()
+        return h25_grid(g, tr) & U
     raise ValueError(kind)
 
 
@@ -137,8 +174,14 @@ def advance(g, st: dict, spec: str = "multibagger", table=None) -> tuple[dict, l
     cfg = S["cfg"]
     registered = REGISTERED if spec == "multibagger" else S["registered"]
     U = g.universe()
+    if S["signal"] == "promoter_momentum":
+        # the latest disclosure this night traded on: a feed NSE refuses shows
+        # up as a date that stops moving, never as silence (PREREG_2026-09-28 §5)
+        table = table if table is not None else load_insider_archive()
+        st["insider_asof"] = str(table["disclosed_at"].max())[:16] if len(table) else None
     ctx = Context(g, signal_for(g, S["signal"], table), xrank(g.ret(126), U), cfg,
-                  risk_on=breadth_risk_on(g))
+                  risk_on=breadth_risk_on(g) if S["breadth_exit"] else None)
+    trail = "30-week trail" if cfg.exit == "sma" else f"{cfg.chandelier_k:g}xATR trail"
     book = Book.from_state(cfg, st["book"]) if st.get("book") else Book(cfg)
     dates = g.dates
     for s, p in book.pos.items():                       # tonight's grid, tonight's indices
@@ -161,7 +204,8 @@ def advance(g, st: dict, spec: str = "multibagger", table=None) -> tuple[dict, l
                          "reason": S["reason"]})
         for tr in book.trades[n_trades:]:
             why = ("stopped trading (last price)" if tr.get("stale")
-                   else "regime exit or stop / 30-week trail")
+                   else f"regime exit or stop / {trail}" if ctx.risk_on is not None
+                   else f"stop / {trail}")
             rows.append({"date": day, "symbol": str(tr["sym"]).split("~")[0], "action": "SELL",
                          "shares": tr["sh"], "price": round(tr["exit_px"], 2),
                          "value": round(tr["sh"] * tr["exit_px"], 2),
@@ -170,7 +214,7 @@ def advance(g, st: dict, spec: str = "multibagger", table=None) -> tuple[dict, l
         st["last_session"] = day
     book.trades = []                                     # the ledger is the record
     st["book"] = book.to_state()
-    st["risk_on"] = bool(ctx.risk_on[-1]) if g.T else None
+    st["risk_on"] = bool(ctx.risk_on[-1]) if g.T and ctx.risk_on is not None else None
     st["asof"] = str(dates[-1].date()) if g.T else None
     return st, rows
 
@@ -182,6 +226,7 @@ def snapshot(spec: str = "multibagger") -> dict:
     book = st.get("book") or {}
     nav = st.get("nav") or []
     out = {"registered": st.get("registered"), "asof": st.get("asof"), "risk_on": st.get("risk_on"),
+           "breadth_exit": SPECS[spec]["breadth_exit"], "insider_asof": st.get("insider_asof"),
            "cash": (book or {}).get("cash"), "nav": nav,
            "holdings": [{"sym": s.split("~")[0], "since": p.get("entry_date"), "entry": p.get("px"),
                          "shares": p.get("sh"), "last": (book.get("last_px") or {}).get(s),
@@ -236,9 +281,11 @@ def main() -> int:
     save_state(st, spec)
     append_ledger(rows, spec)
     book = st["book"]
+    regime = "n/a" if st.get("risk_on") is None else "on" if st["risk_on"] else "OFF"
+    feed = f"; promoter disclosures up to {st['insider_asof']}" if st.get("insider_asof") else ""
     print(f"{spec} sleeve: sessions {before or SPECS[spec]['registered']} -> {st.get('last_session')}; "
           f"fills {len(rows)}; holdings {sorted(book['pos'])}; pending buys {book['pending_buys']}; "
-          f"cash {book['cash']:,.0f}; regime {'on' if st.get('risk_on') else 'OFF'}")
+          f"cash {book['cash']:,.0f}; regime {regime}{feed}")
     return 0
 
 

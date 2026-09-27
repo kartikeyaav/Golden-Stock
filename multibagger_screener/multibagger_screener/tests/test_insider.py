@@ -9,7 +9,9 @@ What must hold:
 - the same trade reported by both eras around the May-2026 switch is kept once;
 - H25 is point in time: a purchase disclosed at 20:04 is usable from the NEXT
   session's close, only while the stock is a momentum leader, and only within
-  60 sessions.
+  60 sessions;
+- a reused ticker's disclosure lands on the company trading at that session
+  (NAME is the oldest incarnation, NAME~2 the next), never on the oldest by name.
 """
 
 from __future__ import annotations
@@ -26,7 +28,7 @@ sys.path.insert(0, ROOT)
 
 from data import insider as I  # noqa: E402
 from research.grid import Grid  # noqa: E402
-from research.insider_study import h25_grid  # noqa: E402
+from research.insider_study import h25_grid, signal_rows  # noqa: E402
 
 XML = """<xbrli:xbrl>
 <in-bse-pit:Symbol contextRef="MainI">ALEMBICLTD</in-bse-pit:Symbol>
@@ -108,3 +110,16 @@ def test_promoter_signal_is_point_in_time_and_needs_momentum():
     assert not h[:251, 0].any()                          # never before the disclosure
     assert not h[:, 1].any()                             # a falling stock is not a momentum leader
     assert h[251 + 59, 0] and not h[251 + 60, 0]         # the 60-session window, and its end
+
+
+def test_a_reused_ticker_maps_to_the_company_trading_then():
+    T = 400
+    c = np.full((T, 3), 50.0)
+    c[150:, 0] = np.nan                                  # X: the first company, gone after session 149
+    c[:200, 1] = np.nan                                  # X~2: a new company on the same ticker from 200
+    g = _grid(c)
+    g.symbols = ["X", "X~2", "Y"]
+    at = lambda t: pd.Timestamp(g.dates[t]) + pd.Timedelta(hours=10)     # during session t
+    tr = pd.DataFrame({"symbol": ["X", "X", "Y"], "disclosed_at": [at(100), at(300), at(300)]})
+    rows = signal_rows(g, tr).sort_values("t")
+    assert list(zip(rows["t"], rows["j"])) == [(100, 0), (300, 1), (300, 2)]

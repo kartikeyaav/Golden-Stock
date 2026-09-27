@@ -159,14 +159,14 @@ exchange disseminated it. Discovery 2015–2020, confirmation 2021–2026.
 
 | signal | tripled in 1y, lift 2015–20 / 2021–26 | events |
 |---|---|---|
-| **Promoter market purchase in the last 60 sessions + RS leader or trend template (H25)** | **2.33 / 2.38** | 323 / 444 |
+| **Promoter market purchase in the last 60 sessions + RS leader or trend template (H25)** | **2.32 / 2.38** | 324 / 445 |
 | — momentum alone (RS leader or trend template), same years, for reference | 1.58 / 1.47 | 2,829 / 6,004 |
 | Director / KMP market purchase ≥ ₹10 lakh | 1.99 / 1.46 | 265 / 192 |
-| Promoter stake increase ≥ 0.10 pp | 1.63 / 1.19 | 404 / 362 |
+| Promoter stake increase ≥ 0.10 pp | 1.62 / 1.19 | 405 / 362 |
 | Promoter market purchase ≥ ₹1 crore | 1.41 / 1.30 | 568 / 578 |
 | Promoter purchase cluster (2+ in 30 days) | 1.25 / 1.57 | 611 / 646 |
 | Promoter market purchase ≥ ₹10 lakh | 1.17 / 1.38 | 833 / 895 |
-| *negative control:* promoter market sale ≥ ₹1 crore | 0.90 / 0.64 ✓ | 576 / 669 |
+| *negative control:* promoter market sale ≥ ₹1 crore | 0.90 / 0.64 ✓ | 576 / 670 |
 | *negative control:* promoter pledge creation | 1.65 / 1.22 ✗ | 527 / 376 |
 
 **One survivor, and it is the strongest combination found anywhere in this
@@ -190,6 +190,10 @@ On the controls:
 H25 now runs on the whole-market radar as a pre-registered forward signal
 ("Promoter buying").
 
+The table's figures were corrected on 2026-09-28, when reused tickers were
+mapped to the right company (§6). H25's discovery lift moved from 2.33 to
+2.32; nothing else changed by more than one event.
+
 ### Cheap + new uptrend as a portfolio — the forward test's rules
 
 `research/value_breakout.py`: 8 configurations, chosen on 2016–2020 only.
@@ -203,6 +207,52 @@ H25 now runs on the whole-market radar as a pre-registered forward signal
 Every configuration suffered in the 2018–20 small-cap bear. The forward test
 (`PREREG_2026-09-27_value_breakout.md`) runs from 28 September. The live signal
 reproduces the research exactly: 41,641 signal days, zero cells differ.
+
+### Promoter buying + momentum as a portfolio (2026-09-28)
+
+The user asked for H25 as a paper sleeve too. `PREREG_2026-09-28_promoter_momentum.md`
+was committed before this ran. It uses the same 8-cell grid and choice rule
+as the value-breakout sleeve, plus one registered comparison: the chosen cell
+with **momentum alone**. Code: `research/promoter_momentum.py`.
+
+| CAGR / worst drawdown | 2016–2020 (chosen here) | 2021–2026 (read once) | 2016–2026 |
+|---|---|---|---|
+| **Promoter buying + momentum: 5 slots, 3×ATR exit, breadth exit** | **51.5% / −26.3%** | **23.5% / −43.4%** | **32.3% / −40.3%** |
+| Momentum alone, the same rules | 33.8% / −29.3% | 14.3% / −51.0% | 21.0% / −53.1% |
+| The RS-leader sleeve's configuration | 17.0% / −47.3% | 19.7% / −47.6% | 18.2% / −50.9% |
+| Equal-weight universe | 4.7% / −62.2% | 22.1% / −26.8% | 13.8% / −62.2% |
+
+Year by year, the chosen book made:
+
+| 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 to Sep |
+|---|---|---|---|---|---|---|---|---|---|---|
+| +81% | +176% | −9% | −8% | +90% | +55% | −9% | +83% | +13% | −24% | +15% |
+
+What it shows:
+
+- **The promoter condition adds at the portfolio level, not only in the event
+  study.** Against momentum alone with identical rules it made +17.7 and
+  +9.2 points a year more, with a shallower drawdown in both halves.
+- **It sidestepped most of the 2022 momentum crash.** It lost 9%, where
+  momentum alone lost 43% and the RS-leader sleeve 38%. 2022 lies in the
+  read-once years, so this is an observation, not a designed fix.
+- **All eight cells made 20–37% a year over 2016–2026**, against 13.8% for the
+  market. The +176% of 2017 was followed by two small losing years (−9%, −8%),
+  not a give-back.
+- **Against the market in the held-out years, the chosen cell only matched it**
+  (23.5% against 22.1%), with a deeper drawdown, and it lagged in 2024 and
+  2025. With hindsight the 10-slot cells did better on 2021–2026 (23.5–42.2%),
+  but choosing one now would be exactly the hindsight the process forbids.
+- **Capacity:** on a typical session about 10 names qualify (median 9; none
+  on 1% of sessions), so a 5- or 10-slot book stays fillable.
+- **Data checks:**
+  - NSE's insider archive keeps companies that later stopped trading: 76% of
+    them have disclosures, against 83% of survivors.
+  - The live signal matches the research one on all 214 comparable sessions,
+    after the reused-ticker fix (§6).
+
+It runs forward on paper from 29 September 2026
+(`scripts/multibagger_sleeve.py --sleeve promoter_momentum`).
 
 ## 3. How many multibaggers can be caught at all (recall)
 
@@ -337,6 +387,9 @@ Every approach tested made 100%+ in the strong years (2006–07, 2009, 2014,
   regime exits bring down only to 30–50%.
 - **The balanced book** (breakout + momentum) makes **about 18% over twenty
   years and 32% over 2020–2026**, with a −25% to −39% worst drawdown.
+- **Promoter buying + momentum** (2016–2026 only, because the disclosures start
+  in late 2015) made **32% a year**, including +176% in 2017, but its
+  held-out half only matched the market (23.5% against 22.1%).
 
 Twenty years at 100% would multiply capital a million times; no investor on
 record has done that.
@@ -368,6 +421,15 @@ of any fix for them is forward data, because 2016–2026 has now been seen.
   corporate actions are detected from the price and volume signature too (§1).
 - **Weekend sessions exist.** Skipping them had faked ~30,000 "corporate
   actions".
+- **A reused ticker's disclosures went to its oldest company** (2026-09-28).
+  The panel keeps each company that reused a ticker separately (`NAME`, then
+  `NAME~2`), and matching insider disclosures by name alone sent them to the
+  oldest one.
+  - A live-vs-research parity check exposed it: PREMIERPOL's 2026 promoter
+    buying had landed on a company that no longer traded.
+  - 43 of 30,614 promoter purchases were affected, on 4 tickers.
+  - `research/insider_study.signal_rows` now uses the company trading at each
+    session. The studies were re-run; H25 moved from 2.33 to 2.32.
 
 ## 7. What changed in the live system
 
@@ -381,6 +443,13 @@ of any fix for them is forward data, because 2016–2026 has now been seen.
   scanned universe, uses the three surviving signals, and shows the research
   odds beside every name. It appears on the Today page and in the phone digest.
 - **The Yahoo break repair** in the nightly price update.
+- **Three pre-registered paper sleeves**, all stepped nightly by the
+  simulator's own `Book` from 28–29 September 2026:
+  - multibagger (RS leaders);
+  - value breakout (cheap + new uptrend);
+  - promoter buying + momentum.
+
+  Each is judged at 6 and 12 months against the MIDSMALL ETF.
 
 ## Sources
 

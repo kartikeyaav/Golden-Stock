@@ -37,11 +37,39 @@ def load_trades() -> pd.DataFrame:
 
 def signal_rows(g, trades: pd.DataFrame) -> pd.DataFrame:
     """Each disclosure -> (session index, column). The signal session is the
-    first session whose close (15:30 IST) falls AFTER the disclosure."""
+    first session whose close (15:30 IST) falls AFTER the disclosure.
+
+    A reused ticker is split into incarnations (NAME, NAME~2, ... — oldest
+    first; data/nse_history). A disclosure belongs to the incarnation TRADING
+    at its session. Matching by name alone sent it to the oldest company:
+    2026-09-28, 43 promoter purchases on 4 tickers (PREMIERPOL, PVP, KMSUGAR,
+    ADROITINFO) had landed on a company that no longer traded."""
     closes = g.dates + CLOSE_TIME
     t = np.searchsorted(closes.values, trades["disclosed_at"].values, side="right")
     col = {s: j for j, s in enumerate(g.symbols)}
     out = trades.assign(t=t, j=trades["symbol"].map(col))
+    reused: dict[str, list[int]] = {}
+    for k, s in enumerate(g.symbols):
+        reused.setdefault(s.split("~")[0], []).append(k)
+    reused = {b: ks for b, ks in reused.items() if len(ks) > 1}
+    m = out["symbol"].isin(reused)
+    if m.any():
+        fin = np.isfinite(g.c)
+        span = {}                                    # column -> first and last session with a close
+        for ks in reused.values():
+            for k in ks:
+                idx = np.flatnonzero(fin[:, k])
+                span[k] = (idx[0], idx[-1]) if len(idx) else (g.T, -1)
+
+        def trading_at(sym: str, tt: int) -> int:
+            ks, tt = reused[sym], min(tt, g.T - 1)
+            inside = [k for k in ks if span[k][0] <= tt <= span[k][1]]
+            if inside:
+                return inside[0]
+            began = [k for k in ks if span[k][0] <= tt]  # between lives: the last one that began
+            return max(began, key=lambda k: span[k][0]) if began else ks[0]
+
+        out.loc[m, "j"] = [trading_at(s, tt) for s, tt in zip(out.loc[m, "symbol"], out.loc[m, "t"])]
     return out[out["j"].notna() & (out["t"] < g.T)].astype({"j": int})
 
 

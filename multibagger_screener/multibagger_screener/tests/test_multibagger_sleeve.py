@@ -6,7 +6,10 @@ What must hold:
 - a re-run over the same sessions is a no-op; a later night continues from
   the last processed session (a missed night is caught up, never repeated);
 - when breadth breaks (< 50% of the universe above its 200-day average) the
-  book is emptied at the next open.
+  book is emptied at the next open;
+- the promoter-buying sleeve buys a leader only once a promoter's market
+  purchase has been DISCLOSED (from the first close after it), never a leader
+  without one, and records the latest disclosure it traded on.
 """
 
 from __future__ import annotations
@@ -26,10 +29,11 @@ from research.grid import Grid  # noqa: E402
 import multibagger_sleeve as MS  # noqa: E402
 
 
-def _market(T=330, N=120, end="2026-10-09", crash_from=None, seed=3):
+def _market(T=330, N=120, end="2026-10-09", crash_from=None, seed=3, leaders=(0,)):
     rng = np.random.default_rng(seed)
     c = 100 * np.exp(np.cumsum(rng.normal(0.0008, 0.01, (T, N)), axis=0))   # a rising market
-    c[:, 0] = np.linspace(100, 600, T)                                      # the clear leader
+    for i in leaders:
+        c[:, i] = np.linspace(100, 600, T)                                  # the clear leader(s)
     if crash_from is not None:
         c[crash_from:, :] *= np.linspace(1.0, 0.5, T - crash_from)[:, None]  # breadth breaks
     dates = pd.bdate_range(end=end, periods=T)
@@ -77,3 +81,36 @@ def test_breadth_break_empties_the_book():
     assert not st["book"]["pending_buys"]
     held = set(st["book"]["pos"])
     assert held <= set(st["book"]["pending_sells"])            # anything still held is on its way out
+
+
+def _insider(rows):
+    return pd.DataFrame([{"symbol": sym, "company": sym, "person": "P", "category": "promoter",
+                          "txn": "buy", "mode": "Market Purchase", "value": 2e6,
+                          "disclosed_at": pd.Timestamp(ts)} for sym, ts in rows])
+
+
+def _fresh_pm():
+    return {"registered": MS.SPECS["promoter_momentum"]["registered"], "nav": [],
+            "last_session": None, "book": None}
+
+
+def test_promoter_sleeve_buys_a_leader_only_after_a_disclosed_purchase():
+    g = _market(leaders=(0, 1))                                  # S0 and S1 lead equally
+    reg = MS.SPECS["promoter_momentum"]["registered"]
+    # S0's promoter buys, disclosed Wednesday 30 Sep at 19:00 (after the close);
+    # S1 is just as strong a leader, with no promoter purchase
+    st, rows = MS.advance(g, _fresh_pm(), "promoter_momentum", table=_insider([("S0", "2026-09-30 19:00")]))
+    buys = [r for r in rows if r["action"] == "BUY"]
+    assert [r["symbol"] for r in buys] == ["S0"]                # never S1, never a random stock
+    # usable from Thursday's close (1 Oct), filled at Friday's open (2 Oct)
+    assert buys[0]["date"] == "2026-10-02"
+    assert all(d > reg for d, _ in st["nav"])
+    assert st["insider_asof"] == "2026-09-30 19:00"
+    assert (st["risk_on"] is None) == (not MS.SPECS["promoter_momentum"]["breadth_exit"])
+
+
+def test_promoter_sleeve_without_any_purchase_stays_in_cash():
+    g = _market(leaders=(0, 1))
+    st, rows = MS.advance(g, _fresh_pm(), "promoter_momentum", table=_insider([("S0", "2026-01-05 19:00")]))
+    assert rows == []                                            # the purchase is > 60 sessions old
+    assert st["book"]["cash"] == MS.SPECS["promoter_momentum"]["cfg"].start_cash

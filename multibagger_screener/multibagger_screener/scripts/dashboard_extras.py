@@ -389,7 +389,8 @@ def build_momentum() -> dict | None:
 
 
 def build_multibagger_sleeve(spec: str = "multibagger") -> dict | None:
-    """A paper sleeve (PREREG_2026-09-27_multibagger_sleeve.md, _value_breakout.md):
+    """A paper sleeve (PREREG_2026-09-27_multibagger_sleeve.md, _value_breakout.md,
+    PREREG_2026-09-28_promoter_momentum.md):
     holdings, pending orders, NAV and the MIDSMALL comparison."""
     import multibagger_sleeve
     return multibagger_sleeve.snapshot(spec)
@@ -408,6 +409,7 @@ def build_all(payload: dict) -> dict:
                     ("radar", lambda: _load_json("state", "multibagger_radar.json")),
                     ("mbsleeve", build_multibagger_sleeve),
                     ("vbsleeve", lambda: build_multibagger_sleeve("value_breakout")),
+                    ("pmsleeve", lambda: build_multibagger_sleeve("promoter_momentum")),
                     ("deals", lambda: build_deals(syms)),
                     ("macro", lambda: _load_json("state", "macro_radar.json"))):
         try:

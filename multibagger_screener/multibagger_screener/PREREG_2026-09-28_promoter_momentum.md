@@ -59,7 +59,76 @@ rule as the value-breakout sleeve, so nothing is tuned to this signal:
   (29 September 2026). State is in `state/promoter_momentum_sleeve.json` and
   fills in `journal/promoter_momentum_sleeve_ledger.csv`. The cloud is the only
   writer.
-- **Configuration:** see §6.
+- **Configuration (chosen by §2's rule; frozen):**
+  - **Slots:** 5, equal weight at entry, each capped at 5% of the stock's 20-day
+    median traded value. Ties go to the strongest 6-month relative strength.
+  - **Entry:** the next session's open after a signal close.
+  - **Exits** (decided at the close, filled at the next open):
+    - a close 20% below entry;
+    - after 20 sessions, a close more than 3×ATR(14) below the highest close
+      since entry.
+  - **Regime exit:** everything is sold at the next open, and nothing is
+    bought, while fewer than 50% of the universe close above their 200-day
+    average.
+  - **Costs and mechanics:** 0.25% per side, the lower-circuit lock, and the
+    stale-holding exit.
+
+### The portfolio test, as run (`research/out/promoter_momentum.json`)
+
+| survivorship-free NSE panel | 2016–2020 (chosen here) | 2021–2026 (read once) | 2016–2026 |
+|---|---|---|---|
+| **Chosen: 5 slots, 3×ATR, breadth exit** | **51.5% / −26.3%** | **23.5% / −43.4%** | **32.3% / −40.3%** |
+| Momentum alone, the same cell (the registered comparison) | 33.8% / −29.3% | 14.3% / −51.0% | 21.0% / −53.1% |
+| The RS-leader sleeve's configuration | 17.0% / −47.3% | 19.7% / −47.6% | 18.2% / −50.9% |
+| Equal-weight universe | 4.7% / −62.2% | 22.1% / −26.8% | 13.8% / −62.2% |
+
+CAGR / worst drawdown. The chosen cell's years were:
+
+| 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 to Sep |
+|---|---|---|---|---|---|---|---|---|---|---|
+| +81% | +176% | −9% | −8% | +90% | +55% | −9% | +83% | +13% | −24% | +15% |
+
+- **The registered comparison:** the promoter condition beat momentum alone
+  in both halves, by +17.7 and +9.2 points a year, with a shallower drawdown
+  each time.
+  - In 2022, the momentum crash, it lost 9%. Momentum alone lost 43% and the
+    RS-leader sleeve lost 38%.
+  - This is an observation from the read-once years, not a fix designed for
+    2022.
+- **Against the market,** the chosen cell only matched it on 2021–2026
+  (23.5% against 22.1%), with a deeper drawdown (−43% against −27%). It
+  lagged in 2024 and 2025.
+- **The other cells:** all eight made 20–37% a year over 2016–2026. With
+  hindsight, the 10-slot cells did better on 2021–2026 (23.5–42.2%). Choosing
+  one now would be the selection this process exists to prevent.
+- **How full the book was:** the signal averaged 10 qualifying names a session
+  and was empty on 1% of sessions. On average 63% of the chosen book's slots
+  were filled. The rest was mostly cash under the breadth exit: the same cells
+  without it filled 98%.
+
+### Two data checks, before trusting it
+
+- **Survivorship in the insider data.** NSE's archive keeps companies that
+  later stopped trading:
+  - 76% of the 187 universe members that stopped trading after 2016 have
+    disclosures in it, against 83% of the companies still trading;
+  - promoter purchases on them are 4.1% of events, against 5.8% of
+    universe stock-days.
+
+  That is a mild under-representation at most, not a purge.
+- **A reused ticker's disclosures went to the wrong company.** The research
+  panel keeps each company that reused a ticker separately (`NAME`, then
+  `NAME~2`, ...). Matching by name alone sent disclosures to the oldest one.
+  - The live-vs-research parity check found it: 18 PREMIERPOL signal days were
+    live-only.
+  - 43 of 30,614 promoter purchases were affected, on 4 tickers.
+  - `research/insider_study.signal_rows` now maps each disclosure to the
+    company trading at that session, and a test covers it.
+  - After the fix, H25's lifts are 2.32 / 2.38 (they were 2.33 / 2.38), and
+    the chosen cell is unchanged. Its 2016–2020 CAGR moved from 49.9% to 51.5%.
+- **Parity after the fix:** the live signal (the committed 400-day archive on
+  the radar's panel) matches the research signal on all 214 sessions where
+  the archive covers the whole 60-session window.
 
 ## 4. The bar (frozen): the same as the other sleeves
 
@@ -91,3 +160,5 @@ If it stops moving, the fetch moves to the laptop. The rules do not change.
 | date | change | reason |
 |---|---|---|
 | 2026-09-28 | registration (§1, §2, §4, §5) | before the portfolio test |
+| 2026-09-28 | §3 configuration: 5 slots, 3×ATR exit, breadth exit | chosen by §2's rule on 2016–2020; it passed the selection bar |
+| 2026-09-28 | disclosures mapped to the company trading at the time (reused tickers) | a defect found by the parity check; results re-run, choice unchanged |

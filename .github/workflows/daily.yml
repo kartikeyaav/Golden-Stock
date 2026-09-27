@@ -357,6 +357,13 @@ jobs:
       - name: Value-breakout sleeve (paper)
         run: python scripts/multibagger_sleeve.py --sleeve value_breakout || echo "value sleeve degraded (non-fatal)"
 
+      # promoter buying + momentum, forward on paper
+      # (PREREG_2026-09-28_promoter_momentum.md): the same engine, its own frozen
+      # spec; reads insider_archive.csv as refreshed above, and records the
+      # latest disclosure it traded on, so a blocked feed shows on its card
+      - name: Promoter-buying sleeve (paper)
+        run: python scripts/multibagger_sleeve.py --sleeve promoter_momentum || echo "promoter sleeve degraded (non-fatal)"
+
       # NSE bulk + block deals, archived forward (data/deals.py). Context only:
       # a named buyer taking size, with same-session buy+sell churn set aside.
       # NSE publishes the latest session only, so the committed archive IS the
@@ -407,7 +414,8 @@ jobs:
                    state/surveillance.json state/gate.json \
                    state/momentum_core.json \
                    state/multibagger_radar.json state/multibagger_sleeve.json \
-                   state/value_breakout_sleeve.json insider_archive.csv \
+                   state/value_breakout_sleeve.json state/promoter_momentum_sleeve.json \
+                   insider_archive.csv \
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \
                    announcements_archive.csv news_archive.csv deals_archive.csv \

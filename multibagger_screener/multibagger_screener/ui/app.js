@@ -53,6 +53,7 @@ const MC = X.momentum || {};                       // momentum-core paper sleeve
 const RD = X.radar || {};                          // whole-market multibagger radar
 const MB = X.mbsleeve || {};                       // multibagger sleeve (paper, pre-registered)
 const VB = X.vbsleeve || {};                       // value-breakout sleeve (paper, pre-registered)
+const PM = X.pmsleeve || {};                       // promoter-buying sleeve (paper, pre-registered)
 const posBy = {};
 (POS.paper || []).forEach(p => { (posBy[p.sym] = posBy[p.sym] || []).push(p); });
 const MC_LAST = (MC.rebalances || []).slice(-1)[0] || null;
@@ -747,22 +748,31 @@ const SLEEVES = {
   vb: { title: "Value-breakout sleeve", chart: "vbnav", color: "--info", slots: 10,
         info: "Cheap + new uptrend: companies in the market's cheapest 30% on BOTH free-cash-flow yield and book value (cash flow positive), bought when they break out of a 2-year base or start a new stage-2 uptrend. 10 slots, the same exits and breadth rule as the multibagger sleeve. The best typical outcome of everything the research tested (+18.6% median 12-month return), but fundamentals only reach back to 2016, so this is the least-proven of the forward tests (PREREG_2026-09-27_value_breakout.md).",
         pre: [["2016–2020 (chosen here)", "+6.6%/yr", "−45.3% worst drawdown; the market made 4.7%"], ["2021–2026 (read once)", "+31.1%/yr", "−30.8% worst drawdown; the market made 22.1%"]] },
+  pm: { title: "Promoter-buying sleeve", chart: "pmnav", color: "--watch", slots: 5,
+        info: "Promoter buying + momentum: a promoter or promoter-group entity bought the company's own shares in the open market (worth at least ₹10 lakh, as disclosed to NSE) within the last 60 sessions, AND the stock is already a price leader (RS leader or trend template). The strongest combination the research found: about 2.3× the market's odds of tripling within a year, in both 2015–2020 and 2021–2026. 5 slots, bought at the next open; sold on a close 20% below entry or, after 20 sessions, 3×ATR below the highest close since entry; everything to cash while under half the market is above its 200-day average (PREREG_2026-09-28_promoter_momentum.md).",
+        pre: [["2016–2020 (chosen here)", "+51.5%/yr", "−26.3% worst drawdown; the market made 4.7%"], ["2021–2026 (read once)", "+23.5%/yr", "−43.4% worst drawdown; the market made 22.1%; momentum alone 14.3%"]] },
 };
-function mbSleeveSection() { return sleeveSection(MB, SLEEVES.mb) + sleeveSection(VB, SLEEVES.vb); }
+function mbSleeveSection() { return sleeveSection(MB, SLEEVES.mb) + sleeveSection(VB, SLEEVES.vb) + sleeveSection(PM, SLEEVES.pm); }
 function sleeveSection(S, o) {
   if (!S.registered) return "";
   const MB = S;
   const nav = MB.nav || [], hold = MB.holdings || [];
   if (nav.length) AFTER.push(() => drawNav(o.chart, nav, o.color));
+  // a sleeve fed by NSE's insider disclosures shows how fresh they are: a
+  // blocked feed is a date that stops moving (PREREG_2026-09-28 §5)
+  const feed = MB.insider_asof ? `
+    <div class="kpi"><div class="label">Promoter data</div><div class="value sm">${esc(dateLabel(MB.insider_asof))}</div><div class="note">latest disclosure it trades on; if this stops moving, the feed is blocked</div></div>` : "";
   const kpis = nav.length ? `
     <div class="kpi"><div class="label">Since ${esc(dateLabel(nav[0][0]))}</div><div class="value ${cls(MB.since_pct)}">${pct(MB.since_pct)}</div><div class="note">NAV ${inrShort(nav[nav.length - 1][1])} on a ₹10L paper book</div></div>
     <div class="kpi"><div class="label">MIDSMALL ETF</div><div class="value sm ${cls(MB.midsmall_pct)}">${pct(MB.midsmall_pct)}</div><div class="note">same dates — the bar it is judged by</div></div>
     <div class="kpi"><div class="label">Holdings</div><div class="value sm">${hold.length} / ${o.slots}</div><div class="note">cash ${inrShort(MB.cash)}</div></div>
-    <div class="kpi"><div class="label">Regime</div><div class="value sm ${MB.risk_on ? "pos" : "neg"}">${MB.risk_on ? "On" : "Off — in cash"}</div><div class="note">off while under 50% of stocks are above their 200-day average</div></div>`
+    ${MB.breadth_exit === false
+      ? `<div class="kpi"><div class="label">Regime exit</div><div class="value sm">None</div><div class="note">stays invested; every exit is per stock</div></div>`
+      : `<div class="kpi"><div class="label">Regime</div><div class="value sm ${MB.risk_on ? "pos" : "neg"}">${MB.risk_on ? "On" : "Off — in cash"}</div><div class="note">off while under 50% of stocks are above their 200-day average</div></div>`}${feed}`
     : `
-    <div class="kpi"><div class="label">Starts</div><div class="value text">First session after 27 Sep</div><div class="note">buys at the next open after a signal close</div></div>
+    <div class="kpi"><div class="label">Starts</div><div class="value text">First session after ${esc(dateLabel(MB.registered))}</div><div class="note">buys at the next open after a signal close</div></div>
     ${o.pre.map(([l, v, n]) => `<div class="kpi"><div class="label">${esc(l)}</div><div class="value sm pos">${esc(v)}</div><div class="note">${esc(n)}</div></div>`).join("")}
-    <div class="kpi"><div class="label">Own the market</div><div class="value sm">+13.8%/yr</div><div class="note">equal weight, 2016–2026, −62% drawdown</div></div>`;
+    <div class="kpi"><div class="label">Own the market</div><div class="value sm">+13.8%/yr</div><div class="note">equal weight, 2016–2026, −62% drawdown</div></div>${feed}`;
   const tbl = hold.length ? `<div class="card flush"><div class="card-head"><h3>Holdings</h3><span class="hint">${(MB.pending_sells || []).length ? "selling at the next open: " + esc(MB.pending_sells.join(", ")) : ""}</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Since</th><th class="r">Entry</th><th class="r">Last</th><th class="r">Return</th></tr></thead>
     <tbody>${hold.map(h => `<tr ${rowBy[h.sym] ? `data-sym="${esc(h.sym)}"` : ""}><td class="sym">${esc(h.sym)}</td><td class="r">${esc(dateLabel(h.since))}</td><td class="r num">${px(h.entry)}</td><td class="r num">${px(h.last)}</td><td class="r num ${cls(h.ret_pct)}">${pct(h.ret_pct)}</td></tr>`).join("")}</tbody></table></div></div>`
     : `<div class="empty">${(MB.pending_buys || []).length ? "Buying at the next open: <b>" + esc(MB.pending_buys.join(", ")) + "</b>." : "No holdings yet."}</div>`;
@@ -783,7 +793,7 @@ function pagePortfolio() {
   const paper = POS.paper || [], P = D.paper || {};
   const led = P.ledger || [];
   return `
-  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">One book in four parts, all run on paper by rules alone: the momentum core (monthly), the multibagger sleeve (RS leaders) and the value-breakout sleeve (cheap + new uptrend), both daily and pre-registered on 27 Sep, and the breakout book (every analyst BUY, managed by the two-lot plan).</div></div></div>
+  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">One book in five parts, all run on paper by rules alone: the momentum core (monthly); three daily, pre-registered sleeves — multibagger (RS leaders), value breakout (cheap + new uptrend) and promoter buying + momentum; and the breakout book (every analyst BUY, managed by the two-lot plan).</div></div></div>
   ${momentumSection()}
   ${mbSleeveSection()}
   <div class="section-title" style="margin-top:28px">Breakout book ${info("Every AI-analyst BUY verdict auto-entered at the next session's open, sized by the mechanical plan and exited by the same two-lot rules. It is the running test of whether the analyst layer adds money. Notional ₹10L book.")}<span class="line"></span></div>
