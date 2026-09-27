@@ -118,7 +118,10 @@ def research_stats() -> dict:
     return out
 
 
-def scan(g) -> dict:
+def scan(g, extras: bool = True) -> dict:
+    """`extras` adds the signals that read committed data files (value
+    breakout: value_fundamentals.csv; promoter buying: insider_archive.csv).
+    Each is non-fatal: an extra signal can never take the radar down."""
     from research.grid import xrank
     from research.hypotheses import h7_power_play, h9_rs_leader, h14_discovery
     U = g.universe()
@@ -128,26 +131,32 @@ def scan(g) -> dict:
     # H20, cheap + new uptrend (PREREG_2026-09-27_value_breakout.md): the SAME
     # computation as the research (parity checked: zero cells differ), from
     # the committed annual table the weekly job refreshes
-    if os.path.exists(VALUE_TABLE):
-        import pandas as pd
-        from research import fundamentals as F
-        from research.hypotheses import h2_multi_year_base_breakout, h5_stage2_start
-        fg = F.grids_from_table(g, pd.read_csv(VALUE_TABLE))
-        raw["H20"] = F.h20_cheap_new_uptrend(g, fg, h2_multi_year_base_breakout(g), h5_stage2_start(g)) & U
+    if extras and os.path.exists(VALUE_TABLE):
+        try:
+            import pandas as pd
+            from research import fundamentals as F
+            from research.hypotheses import h2_multi_year_base_breakout, h5_stage2_start
+            fg = F.grids_from_table(g, pd.read_csv(VALUE_TABLE))
+            raw["H20"] = F.h20_cheap_new_uptrend(g, fg, h2_multi_year_base_breakout(g), h5_stage2_start(g)) & U
+        except Exception as e:  # noqa: BLE001
+            print(f"value-breakout signal skipped: {type(e).__name__}: {str(e)[:120]}")
     # H25, a promoter market purchase in the prior 60 sessions + an RS leader or
     # trend-template pass (PREREG_2026-09-27_promoter_buying.md, the survivor):
     # the research function itself, on the committed insider archive
     insider_asof = None
-    if os.path.exists(INSIDER_ARCHIVE):
-        import pandas as pd
-        from data.nse_history import _symbol_chain
-        from research.insider_study import h25_grid
-        tr = pd.read_csv(INSIDER_ARCHIVE, parse_dates=["disclosed_at"])
-        if len(tr):
-            chain = _symbol_chain()
-            tr["symbol"] = tr["symbol"].astype(str).str.strip().map(lambda s: chain.get(s, s))
-            raw["H25"] = h25_grid(g, tr) & U
-            insider_asof = str(tr["disclosed_at"].max())[:16]
+    if extras and os.path.exists(INSIDER_ARCHIVE):
+        try:
+            import pandas as pd
+            from data.nse_history import _symbol_chain
+            from research.insider_study import h25_grid
+            tr = pd.read_csv(INSIDER_ARCHIVE, parse_dates=["disclosed_at"])
+            if len(tr):
+                chain = _symbol_chain()
+                tr["symbol"] = tr["symbol"].astype(str).str.strip().map(lambda s: chain.get(s, s))
+                raw["H25"] = h25_grid(g, tr) & U
+                insider_asof = str(tr["disclosed_at"].max())[:16]
+        except Exception as e:  # noqa: BLE001
+            print(f"promoter-buying signal skipped: {type(e).__name__}: {str(e)[:120]}")
     # the research EVENT: the first firing per stock per 120 sessions
     # (research/event_study.DEDUPE). A persistent state — an RS leader stays in
     # the top 10% for months — is one event on the day it began, not a fresh

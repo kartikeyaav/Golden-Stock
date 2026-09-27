@@ -289,9 +289,16 @@ def _symbol_chain() -> dict[str, str]:
     url = f"{_BASE}/content/equities/symbolchange.csv"
     cache = HIST_DIR / "symbolchange.csv"
     if not cache.exists() or time.time() - cache.stat().st_mtime > 7 * 86400:
-        status, blob = _get(url, _Gate())
-        if status == "ok" and blob:
-            cache.write_bytes(blob)
+        # a fresh machine (a CI runner, a new laptop) has no HIST_DIR yet, and
+        # an unreachable NSE must mean "no chain", never a crash (2026-09-28:
+        # the radar test failed in CI on exactly this write)
+        try:
+            status, blob = _get(url, _Gate())
+            if status == "ok" and blob:
+                cache.parent.mkdir(parents=True, exist_ok=True)
+                cache.write_bytes(blob)
+        except OSError:
+            pass
     if not cache.exists():
         return {}
     df = pd.read_csv(cache, header=None, dtype=str, encoding="latin-1",

@@ -46,7 +46,7 @@ def test_power_play_found_when_it_first_fires():
     base = np.full(T, 100.0)
     base[300:] = np.linspace(100, 205, 20)            # +105% over the last 20 sessions
     c[:, 0] = base
-    out = MR.scan(_grid(c))
+    out = MR.scan(_grid(c), extras=False)
     row = next(r for r in out["rows"] if r["sym"] == "S0")
     assert "H7" in row["signals"]
 
@@ -61,7 +61,7 @@ def test_an_old_power_play_is_not_repeated():
     base[260:290] = np.linspace(100, 200, 30)         # the surge fired ~30 sessions ago
     base[290:] = np.linspace(200, 230, 30)            # a slow grind to new highs since
     c[:, 0] = base
-    out = MR.scan(_grid(c))
+    out = MR.scan(_grid(c), extras=False)
     row = next((r for r in out["rows"] if r["sym"] == "S0"), None)
     assert row is None or "H7" not in row["signals"]
 
@@ -70,7 +70,7 @@ def test_a_persistent_rs_leader_is_one_event_not_a_daily_signal():
     T, N = 320, 40
     c = np.tile(np.linspace(100, 101, T)[:, None], (1, N))
     c[:, 0] = np.linspace(100, 400, T)                # the strongest name, all year
-    out = MR.scan(_grid(c))
+    out = MR.scan(_grid(c), extras=False)
     row = next((r for r in out["rows"] if r["sym"] == "S0"), None)
     # it became a leader long before the last 10 sessions: no event on the radar now
     assert row is None or "H9" not in row["signals"]
