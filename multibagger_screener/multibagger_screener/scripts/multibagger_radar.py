@@ -45,12 +45,15 @@ sys.path.insert(0, ROOT)
 
 from data import nse_history as H  # noqa: E402
 
-LOOKBACK_DAYS = 430            # calendar days -> ~295 sessions (the universe needs 250)
+LOOKBACK_DAYS = 800            # calendar days -> ~540 sessions: the 2-year breakout in the
+                               # value signal needs 500 prior closes (the universe needs 250)
 RADAR_PANEL = H.HIST_DIR / "panel_recent.npz"
 STATE = os.path.join(ROOT, "state", "multibagger_radar.json")
 STUDY = os.path.join(ROOT, "research", "out", "event_study.json")
 ACTIVE_WINDOW = 10             # a signal stays on the radar for 10 sessions after it fires
-SIGNALS = {"H7": "power play", "H9": "RS leader", "H14": "discovery"}
+SIGNALS = {"H7": "power play", "H9": "RS leader", "H14": "discovery", "H20": "value breakout"}
+FUND_STUDY = os.path.join(ROOT, "research", "out", "fundamental_study.json")
+VALUE_TABLE = os.path.join(ROOT, "value_fundamentals.csv")
 
 
 def latest_session(today: date, probes: int = 7) -> date | None:
@@ -94,13 +97,20 @@ def research_stats() -> dict:
             res = json.load(f)["results"]
     except (OSError, ValueError, KeyError):
         return {}
+    try:
+        with open(FUND_STUDY, encoding="utf-8") as f:
+            res.update(json.load(f)["results"])
+    except (OSError, ValueError, KeyError):
+        pass
     out = {}
     for key in SIGNALS:
         name = next((n for n in res if n.split()[0] == key), None)
         c = (res.get(name) or {}).get("confirmation") or {}
         mb = c.get("MB3_1y") or {}
+        r12 = c.get("r252") or {}
         out[key] = {"tripled_within_1y_pct": mb.get("rate"), "universe_pct": mb.get("base"),
-                    "lift": mb.get("lift"), "events": c.get("n")}
+                    "lift": mb.get("lift"), "events": c.get("n"),
+                    "median_12m_pct": r12.get("median")}
     return out
 
 
@@ -111,6 +121,15 @@ def scan(g) -> dict:
     t = g.T - 1
     lo = max(0, t - ACTIVE_WINDOW + 1)
     raw = {"H7": h7_power_play(g) & U, "H9": h9_rs_leader(g) & U, "H14": h14_discovery(g) & U}
+    # H20, cheap + new uptrend (PREREG_2026-09-27_value_breakout.md): the SAME
+    # computation as the research (parity checked: zero cells differ), from
+    # the committed annual table the weekly job refreshes
+    if os.path.exists(VALUE_TABLE):
+        import pandas as pd
+        from research import fundamentals as F
+        from research.hypotheses import h2_multi_year_base_breakout, h5_stage2_start
+        fg = F.grids_from_table(g, pd.read_csv(VALUE_TABLE))
+        raw["H20"] = F.h20_cheap_new_uptrend(g, fg, h2_multi_year_base_breakout(g), h5_stage2_start(g)) & U
     # the research EVENT: the first firing per stock per 120 sessions
     # (research/event_study.DEDUPE). A persistent state — an RS leader stays in
     # the top 10% for months — is one event on the day it began, not a fresh
@@ -144,7 +163,11 @@ def scan(g) -> dict:
             "traded_value_cr": round(float(np.nanmedian(g.tv[max(0, t - 19):t + 1, j])) / 1e7, 2),
         })
     rows.sort(key=lambda r: (-len(r["signals"]), -(r["rs_pct"] or 0)))
-    return {"asof": str(g.dates[t].date()), "universe_size": int(U[t].sum()), "rows": rows}
+    # the liquid universe tonight: the weekly fundamentals refresh
+    # (scripts/value_fundamentals.py) keeps exactly these companies current
+    uni = sorted({g.symbols[j].split("~")[0] for j in np.nonzero(U[t])[0]})
+    return {"asof": str(g.dates[t].date()), "universe_size": int(U[t].sum()), "rows": rows,
+            "universe": uni}
 
 
 def main() -> int:

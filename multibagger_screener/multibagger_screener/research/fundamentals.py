@@ -113,6 +113,101 @@ def grids(g: Grid) -> dict[str, np.ndarray]:
     return {"fcf_yield": fy, "bm": bm, "turnaround": turn, "invest_ok": inv_ok, "have": have}
 
 
+def grids_from_table(g: Grid, tab: pd.DataFrame) -> dict[str, np.ndarray]:
+    """The live form of grids(): the same FCF-yield and book-to-market grids,
+    built from the compact committed table (scripts/value_fundamentals.py)
+    instead of the research page cache. Market cap is scaled from each
+    company's OWN fetch date (the table is refreshed on a rolling basis), and
+    fiscal year Y is known from 1 October Y, exactly as in grids()."""
+    T, N = g.T, g.N
+    fy = np.full((T, N), np.nan, "float32")
+    bm = np.full((T, N), np.nan, "float32")
+    have = np.zeros(N, bool)
+    dates = g.dates
+    known_from = {y: int(np.searchsorted(dates.values, np.datetime64(f"{y}-10-01"))) for y in range(2005, 2031)}
+    # a reused symbol maps to its LATEST incarnation (today's company)
+    col: dict[str, int] = {}
+    for j, s in enumerate(g.symbols):
+        col[s.split("~")[0]] = j
+    cf = pd.DataFrame(g.c).ffill().to_numpy()
+    for sym, grp in tab.groupby("symbol"):
+        j = col.get(str(sym))
+        if j is None:
+            continue
+        mcap_now = pd.to_numeric(grp["mcap_now"], errors="coerce").dropna()
+        if mcap_now.empty or mcap_now.iloc[0] <= 0:
+            continue
+        t_f = int(np.searchsorted(dates.values, np.datetime64(str(grp["fetched_at"].max())[:10]), side="right")) - 1
+        t_f = min(max(t_f, 0), T - 1)
+        c_f = cf[t_f, j]
+        if not np.isfinite(c_f) or c_f <= 0:
+            continue
+        have[j] = True
+        mc = float(mcap_now.iloc[0]) * g.c[:, j] / c_f
+        grp = grp[grp["sales"].notna() | grp["eq"].notna()].sort_values("fy")
+        years = [int(y) for y in grp["fy"]]
+        for k, (y, r) in enumerate(zip(years, grp.itertuples())):
+            a = known_from.get(y)
+            if a is None or a >= T:
+                continue
+            b = known_from.get(years[k + 1], T) if k + 1 < len(years) else T
+            b = min(b, T)
+            fcf = (r.cfo if pd.notna(r.cfo) else np.nan) + (r.cfi if pd.notna(r.cfi) else np.nan)
+            e = r.eq if pd.notna(r.eq) else np.nan
+            with np.errstate(divide="ignore", invalid="ignore"):
+                fy[a:b, j] = fcf / mc[a:b]
+                bm[a:b, j] = e / mc[a:b]
+    return {"fcf_yield": fy, "bm": bm, "have": have}
+
+
+def fy_grids(g: Grid, tab: pd.DataFrame, fields=("np", "sales", "cfo")) -> dict[str, np.ndarray]:
+    """For each field: the value of the latest fiscal year KNOWN at each session
+    (FY Y from 1 October Y), and of the one and two years before it —
+    `np`, `np_1`, `np_2`, ... NaN where unknown."""
+    T, N = g.T, g.N
+    out = {f"{f}{sfx}": np.full((T, N), np.nan, "float32") for f in fields for sfx in ("", "_1", "_2")}
+    known_from = {y: int(np.searchsorted(g.dates.values, np.datetime64(f"{y}-10-01"))) for y in range(2005, 2031)}
+    col: dict[str, int] = {}
+    for j, s in enumerate(g.symbols):
+        col[s.split("~")[0]] = j
+    for sym, grp in tab.groupby("symbol"):
+        j = col.get(str(sym))
+        if j is None:
+            continue
+        grp = grp.sort_values("fy")
+        by = {int(r.fy): r for r in grp.itertuples()}
+        years = sorted(by)
+        for k, y in enumerate(years):
+            a = known_from.get(y)
+            if a is None or a >= T:
+                continue
+            b = min(known_from.get(years[k + 1], T) if k + 1 < len(years) else T, T)
+            for f in fields:
+                for back, sfx in ((0, ""), (1, "_1"), (2, "_2")):
+                    r = by.get(y - back)
+                    v = getattr(r, f) if r is not None else np.nan
+                    out[f"{f}{sfx}"][a:b, j] = v if pd.notna(v) else np.nan
+    return out
+
+
+def quality(fy: dict) -> np.ndarray:
+    """PREREG_2026-09-26 amendment 2026-09-27: profit > 0, operating cash flow
+    > 0, sales growth > 0 and profit growth > 0 on the latest known year."""
+    with np.errstate(invalid="ignore"):
+        q = ((fy["np"] > 0) & (fy["cfo"] > 0) & (fy["sales"] > fy["sales_1"]) & (fy["np"] > fy["np_1"]))
+    return np.nan_to_num(q).astype(bool)
+
+
+def earnings_acceleration(fy: dict) -> np.ndarray:
+    """H32 (O'Neil's "A"): latest-year profit growth >= 25% and faster than the
+    year before; profit > 0 in both of the last two years."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        g1 = fy["np"] / fy["np_1"] - 1
+        g0 = fy["np_1"] / fy["np_2"] - 1
+        ok = (fy["np"] > 0) & (fy["np_1"] > 0) & (fy["np_2"] > 0) & (g1 >= 0.25) & (g1 > g0)
+    return np.nan_to_num(ok).astype(bool)
+
+
 def coverage(g: Grid, fg: dict, U: np.ndarray) -> dict:
     """Share of universe cells (and of the MB3_1y multibaggers) with data."""
     hasdata = np.isfinite(fg["bm"])

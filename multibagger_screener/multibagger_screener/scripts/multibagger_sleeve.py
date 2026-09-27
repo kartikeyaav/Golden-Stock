@@ -40,13 +40,48 @@ sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
 from research.sim import Book, Context, SimConfig  # noqa: E402
 
-REGISTERED = "2026-09-27"
-STATE = os.path.join(ROOT, "state", "multibagger_sleeve.json")
-LEDGER = os.path.join(ROOT, "journal", "multibagger_sleeve_ledger.csv")
 LEDGER_FIELDS = ["date", "symbol", "action", "shares", "price", "value", "reason"]
-# PREREG_2026-09-27 §2 — frozen
-CFG = SimConfig(max_positions=5, fill="open", exit="sma", trail=150, stop_pct=0.20,
-                min_hold=20, cost_pct=0.25, liq_cap=0.05, start_cash=1_000_000.0)
+# Every sleeve is a frozen spec from its pre-registration; the engine is shared.
+SPECS = {
+    # PREREG_2026-09-27_multibagger_sleeve.md section 2
+    "multibagger": {
+        "registered": "2026-09-27",
+        "state": os.path.join(ROOT, "state", "multibagger_sleeve.json"),
+        "ledger": os.path.join(ROOT, "journal", "multibagger_sleeve_ledger.csv"),
+        "cfg": SimConfig(max_positions=5, fill="open", exit="sma", trail=150, stop_pct=0.20,
+                         min_hold=20, cost_pct=0.25, liq_cap=0.05, start_cash=1_000_000.0),
+        "signal": "rs_leader", "reason": "RS leader: 6m and 12m return in the top 10%"},
+    # PREREG_2026-09-27_value_breakout.md section 3
+    "value_breakout": {
+        "registered": "2026-09-27",
+        "state": os.path.join(ROOT, "state", "value_breakout_sleeve.json"),
+        "ledger": os.path.join(ROOT, "journal", "value_breakout_sleeve_ledger.csv"),
+        "cfg": SimConfig(max_positions=10, fill="open", exit="sma", trail=150, stop_pct=0.20,
+                         min_hold=20, cost_pct=0.25, liq_cap=0.05, start_cash=1_000_000.0),
+        "signal": "value_breakout",
+        "reason": "cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start"},
+}
+# the multibagger sleeve's names, kept for the tests and the dashboard
+REGISTERED = SPECS["multibagger"]["registered"]
+STATE = SPECS["multibagger"]["state"]
+LEDGER = SPECS["multibagger"]["ledger"]
+CFG = SPECS["multibagger"]["cfg"]
+VALUE_TABLE = os.path.join(ROOT, "value_fundamentals.csv")
+
+
+def signal_for(g, kind: str, table=None):
+    """The frozen signal of a sleeve, from the research code."""
+    from research.hypotheses import h9_rs_leader
+    U = g.universe()
+    if kind == "rs_leader":
+        return h9_rs_leader(g) & U
+    if kind == "value_breakout":
+        from research import fundamentals as F
+        from research.hypotheses import h2_multi_year_base_breakout, h5_stage2_start
+        tab = table if table is not None else pd.read_csv(VALUE_TABLE)
+        fg = F.grids_from_table(g, tab)
+        return F.h20_cheap_new_uptrend(g, fg, h2_multi_year_base_breakout(g), h5_stage2_start(g)) & U
+    raise ValueError(kind)
 
 
 def breadth_risk_on(g) -> np.ndarray:
@@ -60,29 +95,32 @@ def breadth_risk_on(g) -> np.ndarray:
     return (frac >= 0.5) & (n >= 100)
 
 
-def load_state() -> dict:
+def load_state(spec: str = "multibagger") -> dict:
+    S = SPECS[spec]
     try:
-        with open(STATE, encoding="utf-8") as f:
+        with open(S["state"], encoding="utf-8") as f:
             return json.load(f)
     except (OSError, ValueError):
-        return {"registered": REGISTERED, "capital": CFG.start_cash, "nav": [], "last_session": None,
-                "book": None}
+        return {"registered": S["registered"], "capital": S["cfg"].start_cash, "nav": [],
+                "last_session": None, "book": None}
 
 
-def save_state(st: dict) -> None:
-    os.makedirs(os.path.dirname(STATE), exist_ok=True)
-    tmp = STATE + ".tmp"
+def save_state(st: dict, spec: str = "multibagger") -> None:
+    path = SPECS[spec]["state"]
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(st, f, indent=1, default=float)
-    os.replace(tmp, STATE)
+    os.replace(tmp, path)
 
 
-def append_ledger(rows: list[dict]) -> None:
+def append_ledger(rows: list[dict], spec: str = "multibagger") -> None:
     if not rows:
         return
-    os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
-    new = not os.path.exists(LEDGER)
-    with open(LEDGER, "a", newline="", encoding="utf-8") as f:
+    path = SPECS[spec]["ledger"]
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    new = not os.path.exists(path)
+    with open(path, "a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=LEDGER_FIELDS)
         if new:
             w.writeheader()
@@ -90,20 +128,23 @@ def append_ledger(rows: list[dict]) -> None:
             w.writerow({k: r.get(k, "") for k in LEDGER_FIELDS})
 
 
-def advance(g, st: dict) -> tuple[dict, list[dict]]:
-    """Step the sleeve over every session in `g` after the last one processed
+def advance(g, st: dict, spec: str = "multibagger", table=None) -> tuple[dict, list[dict]]:
+    """Step a sleeve over every session in `g` after the last one processed
     (and after registration). Pure apart from its inputs: tests drive it with
-    synthetic grids."""
+    synthetic grids (and, for the value sleeve, a synthetic table)."""
     from research.grid import xrank
-    from research.hypotheses import h9_rs_leader
+    S = SPECS[spec]
+    cfg = S["cfg"]
+    registered = REGISTERED if spec == "multibagger" else S["registered"]
     U = g.universe()
-    ctx = Context(g, h9_rs_leader(g) & U, xrank(g.ret(126), U), CFG, risk_on=breadth_risk_on(g))
-    book = Book.from_state(CFG, st["book"]) if st.get("book") else Book(CFG)
+    ctx = Context(g, signal_for(g, S["signal"], table), xrank(g.ret(126), U), cfg,
+                  risk_on=breadth_risk_on(g))
+    book = Book.from_state(cfg, st["book"]) if st.get("book") else Book(cfg)
     dates = g.dates
     for s, p in book.pos.items():                       # tonight's grid, tonight's indices
         d = p.get("entry_date")
         p["entry_t"] = int(np.searchsorted(dates.values, np.datetime64(d))) if d else 0
-    after = st.get("last_session") or REGISTERED
+    after = st.get("last_session") or registered
     todo = [t for t in range(g.T) if str(dates[t].date()) > after]
     rows = []
     nav = st.setdefault("nav", [])
@@ -117,7 +158,7 @@ def advance(g, st: dict) -> tuple[dict, list[dict]]:
             p["entry_date"] = day
             rows.append({"date": day, "symbol": s.split("~")[0], "action": "BUY", "shares": p["sh"],
                          "price": round(p["px"], 2), "value": round(p["sh"] * p["px"], 2),
-                         "reason": "RS leader: 6m and 12m return in the top 10%"})
+                         "reason": S["reason"]})
         for tr in book.trades[n_trades:]:
             why = ("stopped trading (last price)" if tr.get("stale")
                    else "regime exit or stop / 30-week trail")
@@ -134,10 +175,10 @@ def advance(g, st: dict) -> tuple[dict, list[dict]]:
     return st, rows
 
 
-def snapshot() -> dict:
+def snapshot(spec: str = "multibagger") -> dict:
     """What the dashboard shows: holdings, pending orders, NAV, and the forward
     comparison against the MIDSMALL ETF on the same dates."""
-    st = load_state()
+    st = load_state(spec)
     book = st.get("book") or {}
     nav = st.get("nav") or []
     out = {"registered": st.get("registered"), "asof": st.get("asof"), "risk_on": st.get("risk_on"),
@@ -150,7 +191,7 @@ def snapshot() -> dict:
            "pending_sells": [s.split("~")[0] for s in book.get("pending_sells") or []]}
     if nav:
         first, last = nav[0], nav[-1]
-        out["since_pct"] = round((last[1] / CFG.start_cash - 1) * 100, 2)
+        out["since_pct"] = round((last[1] / SPECS[spec]["cfg"].start_cash - 1) * 100, 2)
         try:
             from data.cache import load_ohlcv
             b = load_ohlcv("MIDSMALL")
@@ -166,12 +207,14 @@ def snapshot() -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--sleeve", default="multibagger", choices=sorted(SPECS))
     a = ap.parse_args()
+    spec = a.sleeve
     if a.status:
-        print(json.dumps(snapshot(), indent=1, default=str)[:4000])
+        print(json.dumps(snapshot(spec), indent=1, default=str)[:4000])
         return 0
     import multibagger_radar as MR
-    st = load_state()
+    st = load_state(spec)
     # the later catch-up slots: the radar already covers the latest session and
     # this sleeve already processed it -> nothing to do, and no rebuild of the
     # whole-market panel (the radar skipped it in this runner)
@@ -181,19 +224,19 @@ def main() -> int:
     except (OSError, ValueError):
         radar_asof = None
     if radar_asof and st.get("last_session") and st["last_session"] >= radar_asof:
-        print(f"multibagger sleeve already current ({st['last_session']}) — nothing to do")
+        print(f"{spec} sleeve already current ({st['last_session']}) — nothing to do")
         return 0
     if not MR.RADAR_PANEL.exists():
         MR.build_recent(date.today())
     from research.grid import load_grid
     g = load_grid(path=MR.RADAR_PANEL)
     before = st.get("last_session")
-    st, rows = advance(g, st)
+    st, rows = advance(g, st, spec)
     st["generated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
-    save_state(st)
-    append_ledger(rows)
+    save_state(st, spec)
+    append_ledger(rows, spec)
     book = st["book"]
-    print(f"multibagger sleeve: sessions {before or REGISTERED} -> {st.get('last_session')}; "
+    print(f"{spec} sleeve: sessions {before or SPECS[spec]['registered']} -> {st.get('last_session')}; "
           f"fills {len(rows)}; holdings {sorted(book['pos'])}; pending buys {book['pending_buys']}; "
           f"cash {book['cash']:,.0f}; regime {'on' if st.get('risk_on') else 'OFF'}")
     return 0

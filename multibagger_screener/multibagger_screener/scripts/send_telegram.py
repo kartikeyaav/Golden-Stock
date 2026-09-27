@@ -288,7 +288,7 @@ def build_ops_alert(raw: str) -> str:
     return "\n".join(L)
 
 
-RADAR_WORD = {"H7": "power play", "H9": "new RS leader", "H14": "discovery"}
+RADAR_WORD = {"H7": "power play", "H9": "new RS leader", "H14": "discovery", "H20": "value breakout"}
 
 
 def radar_today() -> dict:

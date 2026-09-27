@@ -126,6 +126,15 @@ jobs:
           npm install -g @anthropic-ai/claude-code@2.1.238
           python scripts/ai_picks.py || echo "committee degraded (non-fatal)"
 
+      # annual fundamentals for the WHOLE liquid market, rolling: the ~400
+      # stalest companies per week (a full cycle about monthly — annual
+      # accounts change once a year). The nightly radar and the value-breakout
+      # sleeve read the committed table (PREREG_2026-09-27_value_breakout.md).
+      # Its own time limit, so it can never starve the steps above.
+      - name: Value fundamentals (whole market, rolling)
+        timeout-minutes: 60
+        run: python scripts/value_fundamentals.py || echo "value fundamentals degraded (non-fatal)"
+
       - name: Commit refreshed record
         run: |
           git config user.name "golden-stock-bot"
@@ -140,7 +149,7 @@ jobs:
                    penny_excluded.csv state/penny_details.json \
                    state/penny_meta.json \
                    state/surveillance.json state/gate.json \
-                   state/parser_health.json; do
+                   state/parser_health.json value_fundamentals.csv; do
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
           done
           if git diff --cached --quiet; then

@@ -52,6 +52,7 @@ const POS = X.positions_v7 || { paper: [] };
 const MC = X.momentum || {};                       // momentum-core paper sleeve
 const RD = X.radar || {};                          // whole-market multibagger radar
 const MB = X.mbsleeve || {};                       // multibagger sleeve (paper, pre-registered)
+const VB = X.vbsleeve || {};                       // value-breakout sleeve (paper, pre-registered)
 const posBy = {};
 (POS.paper || []).forEach(p => { (posBy[p.sym] = posBy[p.sym] || []).push(p); });
 const MC_LAST = (MC.rebalances || []).slice(-1)[0] || null;
@@ -391,21 +392,22 @@ function pageToday() {
    signals that raised the odds of a stock tripling within a year in BOTH halves
    of 2005-2026 on the survivorship-free NSE panel. A research watchlist under
    forward test — never presented as a buy list. */
-const RADAR_WORD = { H7: "Power play", H9: "RS leader", H14: "Discovery" };
+const RADAR_WORD = { H7: "Power play", H9: "RS leader", H14: "Discovery", H20: "Value breakout" };
 const RADAR_TIP = {
   H7: "Up 90%+ within 40 sessions with no pullback deeper than 25%, closing at a new high — often the surge itself, sometimes the break of a short flag after it.",
   H9: "6-month AND 12-month return both in the top 10% of the liquid market — the day it first got there.",
   H14: "Daily traded value rose from the market's bottom half to its top quarter within 60 sessions — new money arriving.",
+  H20: "Cheap on free cash flow AND book value (both in the market's cheapest 30%, cash flow positive) and breaking out of a 2-year base or starting a new stage-2 uptrend. 2016–2026 evidence only; under forward test.",
 };
 function radarSection() {
   const rows = RD.rows || [];
   if (!RD.asof) return "";
   const R = RD.research || {};
   const odds = Object.entries(RADAR_WORD).filter(([k]) => R[k] && isNum(R[k].tripled_within_1y_pct))
-    .map(([k, w]) => `${w}: <b>${num(R[k].tripled_within_1y_pct, 1)}%</b> tripled within a year (all liquid stocks ${num(R[k].universe_pct, 1)}%)`).join(" · ");
+    .map(([k, w]) => `${w}: <b>${num(R[k].tripled_within_1y_pct, 1)}%</b> tripled within a year (all liquid stocks ${num(R[k].universe_pct, 1)}%)` + (k === "H20" && isNum(R[k].median_12m_pct) ? `, median 12-month return <b>${pct(R[k].median_12m_pct, 1)}</b>` : "")).join(" · ");
   const body = rows.length ? `<div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th>Signal</th><th class="r">6 months</th><th class="r">12 months</th><th class="r hide-sm" data-tip="6-month return percentile in the liquid market (100 = strongest).">RS</th><th class="r hide-sm">From 52-wk high</th><th class="r hide-sm" data-tip="Median daily traded value, last 20 sessions.">Traded / day</th></tr></thead>
     <tbody>${rows.slice(0, 15).map(r => `<tr ${rowBy[r.sym] ? `data-sym="${esc(r.sym)}"` : ""}><td><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "outside the scanned universe")}</span></div></td>
-      <td>${Object.entries(r.signals || {}).map(([k, d]) => `<span class="chip sm ${k === "H7" ? "buy" : k === "H14" ? "ai" : "watch"}" data-tip="${esc(RADAR_TIP[k] + " Fired " + d + ".")}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ")}</td>
+      <td>${Object.entries(r.signals || {}).map(([k, d]) => `<span class="chip sm ${k === "H7" ? "buy" : k === "H14" ? "ai" : k === "H20" ? "info" : "watch"}" data-tip="${esc(RADAR_TIP[k] + " Fired " + d + ".")}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ")}</td>
       <td class="r num ${cls(r.ret_6m_pct)}">${pct(r.ret_6m_pct, 0)}</td><td class="r num ${cls(r.ret_12m_pct)}">${pct(r.ret_12m_pct, 0)}</td>
       <td class="r num hide-sm">${num(r.rs_pct, 0)}</td><td class="r num hide-sm">${pct(r.off_52w_high_pct, 1)}</td><td class="r num hide-sm">₹${num(r.traded_value_cr, 1)} Cr</td></tr>`).join("")}</tbody></table></div></div>`
     : `<div class="empty">No power play, new RS leader or discovery signal in the last ${num(RD.window_sessions)} sessions.</div>`;
@@ -737,26 +739,35 @@ function drawCoreNav() {
   s.setData(nav.map(p => ({ time: p[0], value: p[1] })));
   ch.timeScale().fitContent();
 }
-function mbSleeveSection() {
-  if (!MB.registered) return "";
+const SLEEVES = {
+  mb: { title: "Multibagger sleeve", chart: "mbnav", color: "--buy", slots: 5,
+        info: "The configuration the multibagger research chose on 2006–2015 alone: RS leaders (6- and 12-month return both in the top 10% of the whole liquid NSE market), 5 slots, bought at the next open, sold on a close under the 30-week average (after 20 sessions) or 20% below entry, and everything to cash while under half the market is above its 200-day average. It is run by the research simulator's own code. It is registered with its weak 2016–2026 result, because choosing with hindsight is what the process forbids (PREREG_2026-09-27_multibagger_sleeve.md).",
+        pre: [["2006–2015 (chosen here)", "+29.9%/yr", "−31.9% worst drawdown, survivorship-free"], ["2016–2026 (read once)", "+18.2%/yr", "−50.9% worst drawdown (the 2022 momentum crash)"]] },
+  vb: { title: "Value-breakout sleeve", chart: "vbnav", color: "--info", slots: 10,
+        info: "Cheap + new uptrend: companies in the market's cheapest 30% on BOTH free-cash-flow yield and book value (cash flow positive), bought when they break out of a 2-year base or start a new stage-2 uptrend. 10 slots, the same exits and breadth rule as the multibagger sleeve. The best typical outcome of everything the research tested (+18.6% median 12-month return), but fundamentals only reach back to 2016, so this is the least-proven of the forward tests (PREREG_2026-09-27_value_breakout.md).",
+        pre: [["2016–2020 (chosen here)", "+6.6%/yr", "−45.3% worst drawdown; the market made 4.7%"], ["2021–2026 (read once)", "+31.1%/yr", "−30.8% worst drawdown; the market made 22.1%"]] },
+};
+function mbSleeveSection() { return sleeveSection(MB, SLEEVES.mb) + sleeveSection(VB, SLEEVES.vb); }
+function sleeveSection(S, o) {
+  if (!S.registered) return "";
+  const MB = S;
   const nav = MB.nav || [], hold = MB.holdings || [];
-  if (nav.length) AFTER.push(() => drawNav("mbnav", nav, "--buy"));
+  if (nav.length) AFTER.push(() => drawNav(o.chart, nav, o.color));
   const kpis = nav.length ? `
     <div class="kpi"><div class="label">Since ${esc(dateLabel(nav[0][0]))}</div><div class="value ${cls(MB.since_pct)}">${pct(MB.since_pct)}</div><div class="note">NAV ${inrShort(nav[nav.length - 1][1])} on a ₹10L paper book</div></div>
     <div class="kpi"><div class="label">MIDSMALL ETF</div><div class="value sm ${cls(MB.midsmall_pct)}">${pct(MB.midsmall_pct)}</div><div class="note">same dates — the bar it is judged by</div></div>
-    <div class="kpi"><div class="label">Holdings</div><div class="value sm">${hold.length} / 5</div><div class="note">cash ${inrShort(MB.cash)}</div></div>
+    <div class="kpi"><div class="label">Holdings</div><div class="value sm">${hold.length} / ${o.slots}</div><div class="note">cash ${inrShort(MB.cash)}</div></div>
     <div class="kpi"><div class="label">Regime</div><div class="value sm ${MB.risk_on ? "pos" : "neg"}">${MB.risk_on ? "On" : "Off — in cash"}</div><div class="note">off while under 50% of stocks are above their 200-day average</div></div>`
     : `
     <div class="kpi"><div class="label">Starts</div><div class="value text">First session after 27 Sep</div><div class="note">buys at the next open after a signal close</div></div>
-    <div class="kpi"><div class="label">2006–2015 (chosen here)</div><div class="value sm pos">+29.9%/yr</div><div class="note">−31.9% worst drawdown, survivorship-free</div></div>
-    <div class="kpi"><div class="label">2016–2026 (read once)</div><div class="value sm pos">+18.2%/yr</div><div class="note">−50.9% worst drawdown (the 2022 momentum crash)</div></div>
+    ${o.pre.map(([l, v, n]) => `<div class="kpi"><div class="label">${esc(l)}</div><div class="value sm pos">${esc(v)}</div><div class="note">${esc(n)}</div></div>`).join("")}
     <div class="kpi"><div class="label">Own the market</div><div class="value sm">+13.8%/yr</div><div class="note">equal weight, 2016–2026, −62% drawdown</div></div>`;
   const tbl = hold.length ? `<div class="card flush"><div class="card-head"><h3>Holdings</h3><span class="hint">${(MB.pending_sells || []).length ? "selling at the next open: " + esc(MB.pending_sells.join(", ")) : ""}</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Since</th><th class="r">Entry</th><th class="r">Last</th><th class="r">Return</th></tr></thead>
     <tbody>${hold.map(h => `<tr ${rowBy[h.sym] ? `data-sym="${esc(h.sym)}"` : ""}><td class="sym">${esc(h.sym)}</td><td class="r">${esc(dateLabel(h.since))}</td><td class="r num">${px(h.entry)}</td><td class="r num">${px(h.last)}</td><td class="r num ${cls(h.ret_pct)}">${pct(h.ret_pct)}</td></tr>`).join("")}</tbody></table></div></div>`
     : `<div class="empty">${(MB.pending_buys || []).length ? "Buying at the next open: <b>" + esc(MB.pending_buys.join(", ")) + "</b>." : "No holdings yet."}</div>`;
-  return `<div class="section-title" style="margin-top:28px">Multibagger sleeve ${info("The configuration the multibagger research chose on 2006–2015 alone: RS leaders (6- and 12-month return both in the top 10% of the whole liquid NSE market), 5 slots, bought at the next open, sold on a close under the 30-week average (after 20 sessions) or 20% below entry, and everything to cash while under half the market is above its 200-day average. It is run by the research simulator's own code. It is registered with its weak 2016–2026 result, because choosing with hindsight is what the process forbids (PREREG_2026-09-27_multibagger_sleeve.md).")}<span class="chip sm ai">pre-registered · paper</span><span class="line"></span></div>
+  return `<div class="section-title" style="margin-top:28px">${esc(o.title)} ${info(o.info)}<span class="chip sm ai">pre-registered · paper</span><span class="line"></span></div>
     <div class="kpis" style="margin-bottom:14px">${kpis}</div>
-    ${nav.length ? `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Growth of the paper book</h3></div><div class="chart-box" id="mbnav" style="height:200px"></div></div>` : ""}
+    ${nav.length ? `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Growth of the paper book</h3></div><div class="chart-box" id="${o.chart}" style="height:200px"></div></div>` : ""}
     ${tbl}`;
 }
 function drawNav(id, nav, colorVar) {
@@ -771,7 +782,7 @@ function pagePortfolio() {
   const paper = POS.paper || [], P = D.paper || {};
   const led = P.ledger || [];
   return `
-  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">One book in three parts, all run on paper by rules alone: the momentum core (monthly), the multibagger sleeve (RS leaders, daily, pre-registered 27 Sep) and the breakout book (every analyst BUY, managed by the two-lot plan).</div></div></div>
+  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">One book in four parts, all run on paper by rules alone: the momentum core (monthly), the multibagger sleeve (RS leaders) and the value-breakout sleeve (cheap + new uptrend), both daily and pre-registered on 27 Sep, and the breakout book (every analyst BUY, managed by the two-lot plan).</div></div></div>
   ${momentumSection()}
   ${mbSleeveSection()}
   <div class="section-title" style="margin-top:28px">Breakout book ${info("Every AI-analyst BUY verdict auto-entered at the next session's open, sized by the mechanical plan and exited by the same two-lot rules. It is the running test of whether the analyst layer adds money. Notional ₹10L book.")}<span class="line"></span></div>
