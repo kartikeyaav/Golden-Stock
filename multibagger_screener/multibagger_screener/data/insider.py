@@ -39,6 +39,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -209,6 +210,15 @@ def fetch_old(s: Session, a: date, b: date) -> list[dict]:
     return [normalise_old(r) for r in (j.get("data") or [])]
 
 
+XML_HARD_TIMEOUT = 30
+
+
+def _xml(url: str) -> str:
+    req = urllib.request.Request(url, headers={"User-Agent": _H["User-Agent"], "Accept": "*/*"})
+    with urllib.request.urlopen(req, timeout=15) as r:
+        return r.read().decode("utf-8", "replace")
+
+
 def fetch_new(s: Session, a: date, b: date, pause: float = 0.15, verbose: bool = False) -> list[dict]:
     """The XBRL era, fetched a WEEK at a time: the list endpoint answers a
     month-long range slowly (a backfill sat on one month for 50 minutes), and
@@ -219,12 +229,18 @@ def fetch_new(s: Session, a: date, b: date, pause: float = 0.15, verbose: bool =
         e = min(d + timedelta(days=6), b)
         j = s.get_json(NEW_API.format(a=_fmt(d), b=_fmt(e)))
         lst = [m for m in (j.get("data") or []) if str(m.get("xmlFileName") or "").endswith(".xml")]
-        for meta in lst:
+        # XML files sit on the static archive (no session needed). A HARD
+        # per-file limit: urllib's timeout is per socket operation, so a
+        # response trickling in slowly once hung a whole backfill for an hour.
+        ex = ThreadPoolExecutor(max_workers=4)
+        futs = [(meta, ex.submit(_xml, meta["xmlFileName"])) for meta in lst]
+        for meta, fut in futs:
             try:
-                rows += parse_xbrl(s.get_text(meta["xmlFileName"]), meta)
-            except Exception:  # noqa: BLE001 — one unreadable filing never stops the rest
+                rows += parse_xbrl(fut.result(timeout=XML_HARD_TIMEOUT), meta)
+            except Exception:  # noqa: BLE001 — one unreadable or stalled filing never stops the rest
                 bad += 1
-            time.sleep(pause)
+        ex.shutdown(wait=False, cancel_futures=True)
+        time.sleep(pause)
         if verbose:
             print(f"    {d:%Y-%m-%d}..{e:%m-%d}: {len(lst)} filings, {len(rows)} disclosures so far"
                   + (f", {bad} unreadable" if bad else ""), flush=True)
@@ -296,9 +312,22 @@ def recent(days: int = 10) -> pd.DataFrame:
     return df
 
 
+def seed_archive() -> pd.DataFrame:
+    """The committed live archive from the research history: the last
+    ARCHIVE_DAYS of promoter / director / KMP trades."""
+    df = pd.read_csv(RESEARCH_PATH, parse_dates=["disclosed_at", "trade_from", "trade_to"])
+    cutoff = pd.Timestamp(date.today() - timedelta(days=ARCHIVE_DAYS))
+    df = df[df["category"].isin(["promoter", "promoter_group", "director", "kmp"])
+            & (df["disclosed_at"] >= cutoff)]
+    df.to_csv(ARCHIVE, index=False)
+    print(f"seeded {ARCHIVE}: {len(df):,} rows since {cutoff:%Y-%m-%d}")
+    return df
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("seed-archive")
     b = sub.add_parser("backfill")
     b.add_argument("--start", default="2015-06-01")
     r = sub.add_parser("recent")
@@ -306,6 +335,8 @@ def main() -> int:
     a = ap.parse_args()
     if a.cmd == "backfill":
         backfill(date.fromisoformat(a.start), date.today())
+    elif a.cmd == "seed-archive":
+        seed_archive()
     else:
         recent(a.days)
     return 0

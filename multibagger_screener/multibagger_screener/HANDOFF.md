@@ -2524,12 +2524,46 @@ with one dated amendment (regime exits).
 - `bhavcopy()` in `data/nse_all.py` only reads the post-July-2024 format;
   use `data.nse_history.session_rows` for any era.
 
+**2026-09-27 follow-up (the user: "go ahead with cheap + new uptrend forward
+test and promoter buying"; and "are we checking fundamentals?").**
+
+- **Value breakout (H20), forward.** `PREREG_2026-09-27_value_breakout.md`,
+  with rules chosen on 2016-20 by `research/value_breakout.py`: 10 slots,
+  30-week exit, breadth exit. It made 6.6% / −45.3% there, then 31.1% /
+  −30.8% on 2021-26.
+  - **Data:** `value_fundamentals.csv`, committed, 1,706 companies. The cloud
+    refreshes the ~400 stalest each week in `weekly.yml` via
+    `scripts/value_fundamentals.py`.
+  - **Live code:** `research/fundamentals.grids_from_table` is proven
+    identical to the research (41,641 signal days, 0 differ).
+  - **Sleeve:** `scripts/multibagger_sleeve.py --sleeve value_breakout`
+    (SPECS). The radar's "Value breakout" chip uses an 800-day window.
+- **Promoter buying.** `data/insider.py` covers 332,852 disclosures from
+  Nov 2015. The structured `/api/corporates-pit` feed runs to May 2026;
+  after that it is `/api/corporates-pit-gg` plus the XBRL files on
+  nsearchives.
+  - **Session:** prime cookies from the insider page; the home page returns 403.
+  - **Downloads:** fetch weekly chunks. A per-file hard timeout is needed,
+    because one trickling socket hung a backfill for an hour.
+  - **Results:** `PREREG_2026-09-27_promoter_buying.md` was committed before
+    the results. Only **H25, promoter purchase (60d) + RS leader or trend
+    template, survives: lift 2.33 / 2.38**, against 1.58 / 1.47 for momentum
+    alone, with the 12-month median doubling to +15.5% / +19%.
+  - **Controls:** promoter selling passes the negative control; pledge
+    creation fails it (a volatility confound).
+  - **Live:** `insider_archive.csv` (400 days, committed) is refreshed by
+    `daily.yml` just before the radar. If that step logs 403 from Actions, move
+    it to the laptop analyst wrapper as the SINGLE writer.
+- **Fundamental quality on momentum** (the user's question; registered as
+  an amendment, then run): requiring quality LOWERS the tripling lift (1.91 /
+  1.48 against 2.20 / 2.48 without it) while nudging the median up. Earnings
+  acceleration alone has no edge (1.04 / 0.81). Fundamentals belong as the
+  value lens and the vetoes, not as a quality filter.
+
 **Open, for the user:**
 - Run `set_telegram_local.ps1`.
-- Decide whether the next forward test is cheap + new uptrend, which would
-  need the fundamentals refreshed weekly from the laptop.
-- Promoter buying: BSE's API answers without a session, but the quantities
-  sit in attachments. It is the strongest untapped smart-money source.
+- Watch the first cloud runs of the insider step (403 or not) and the weekly
+  value refresh.
 
 ---
 

@@ -110,6 +110,100 @@ strongest predictors of multibaggers) meet the momentum evidence: cheap,
 cash-generating companies at the moment their trend turns. It is the leading
 candidate for the next forward test.
 
+### Does fundamental *quality* make the momentum signals better? (2026-09-27)
+
+The user asked whether fundamentals are checked, since "the fundamentals of a
+company play a vital role in identifying multibaggers". Registered first as an
+amendment, then run (`research/quality_study.py`).
+
+- **Quality company:** on the latest year known at the date, net profit > 0,
+  operating cash flow > 0, and both sales and profit growing.
+- **Earnings acceleration** (O'Neil's "A"): profit growth ≥ 25% and faster
+  than the year before.
+
+| 2016–2026 | tripled in 1y, lift 2016–20 / 2021–26 | 12-month median | doubled in 12m |
+|---|---|---|---|
+| power play or RS leader, **not** a quality company | **2.20 / 2.48** | +5.9% | 14.2% |
+| power play or RS leader **and** a quality company | 1.91 / 1.48 | +7.5% | 13.8% |
+| quality companies at random | 0.97 / 0.80 | +6.6% | 8.9% |
+| earnings acceleration alone | 1.04 / 0.81 | +4.2% | 9.9% |
+| earnings acceleration + power play or RS leader | 1.98 / 1.59 | +4.7% | 14.5% |
+
+**Requiring quality lowers the odds of finding a multibagger.** It trims the
+downside a little: the median is higher, the right tail thinner.
+
+The biggest winners come disproportionately from companies whose *last reported
+year looked weak*: turnarounds, cyclicals at the bottom, businesses in the middle
+of a change. The turnaround signal's 1.89 lift says the same, and so does
+Yartseva's finding that earnings growth does not predict multibaggers. Annual
+accounts are also 6–18 months old by the time they are known; the price has
+usually moved on them first.
+
+**Where fundamentals do earn their place:**
+- **Value:** cheap on free cash flow and book value, as the trend turns (H20,
+  the best typical outcome, now under forward test).
+- **Red-flag vetoes:** the conviction score's vetoed names lagged the market
+  at every horizon.
+
+Fundamentals do **not** belong as a "must be a quality company" filter on
+momentum signals.
+
+### Smart money: promoters buying their own stock (2015–2026)
+
+`PREREG_2026-09-27_promoter_buying.md`, registered and committed before any
+result. The data: NSE's own insider-trading disclosures (`data/insider.py`),
+**332,852 disclosures from Nov 2015 to Sep 2026**, including 30,614 promoter
+market purchases. It comes from the structured feed until May 2026, then from
+the XBRL filings. Each disclosure counts from the first close after the
+exchange disseminated it. Discovery 2015–2020, confirmation 2021–2026.
+
+| signal | tripled in 1y, lift 2015–20 / 2021–26 | events |
+|---|---|---|
+| **Promoter market purchase in the last 60 sessions + RS leader or trend template (H25)** | **2.33 / 2.38** | 323 / 444 |
+| — momentum alone (RS leader or trend template), same years, for reference | 1.58 / 1.47 | 2,829 / 6,004 |
+| Director / KMP market purchase ≥ ₹10 lakh | 1.99 / 1.46 | 265 / 192 |
+| Promoter stake increase ≥ 0.10 pp | 1.63 / 1.19 | 404 / 362 |
+| Promoter market purchase ≥ ₹1 crore | 1.41 / 1.30 | 568 / 578 |
+| Promoter purchase cluster (2+ in 30 days) | 1.25 / 1.57 | 611 / 646 |
+| Promoter market purchase ≥ ₹10 lakh | 1.17 / 1.38 | 833 / 895 |
+| *negative control:* promoter market sale ≥ ₹1 crore | 0.90 / 0.64 ✓ | 576 / 669 |
+| *negative control:* promoter pledge creation | 1.65 / 1.22 ✗ | 527 / 376 |
+
+**One survivor, and it is the strongest combination found anywhere in this
+research: promoter buying + momentum.** A promoter's market purchase within
+the prior 60 sessions, on a stock that is already a price leader:
+- the odds of tripling within a year rise from ~1.5× (momentum alone) to **2.35×**;
+- the median 12-month return roughly doubles, from +8–9% to **+15.5% / +19.0%**;
+- 5× within two years has a lift of 2.3.
+
+Promoter buying **on its own** is weak (1.2–1.4). It is a *confirmation* of
+momentum, not a signal by itself.
+
+On the controls:
+- **Promoter selling passes:** big promoter sales precede fewer multibaggers,
+  so the data behave as expected.
+- **Pledge creation fails its control** (lift > 1). Pledges cluster in
+  volatile small caps, which have fatter tails in both directions, so the
+  tripling lift cannot show pledges as a warning. It is reported, not
+  explained away.
+
+H25 now runs on the whole-market radar as a pre-registered forward signal
+("Promoter buying").
+
+### Cheap + new uptrend as a portfolio — the forward test's rules
+
+`research/value_breakout.py`: 8 configurations, chosen on 2016–2020 only.
+
+| 10 slots, 30-week exit, breadth exit | CAGR | worst DD |
+|---|---|---|
+| 2016–2020 (where chosen) | 6.6% | −45.3% |
+| 2021–2026 (read once) | 31.1% | −30.8% |
+| equal-weight universe, 2016–20 / 2021–26 | 4.7% / 22.1% | −62.2% / −26.8% |
+
+Every configuration suffered in the 2018–20 small-cap bear. The forward test
+(`PREREG_2026-09-27_value_breakout.md`) runs from 28 September. The live signal
+reproduces the research exactly: 41,641 signal days, zero cells differ.
+
 ## 3. How many multibaggers can be caught at all (recall)
 
 `research/capture.py` found **5,324 episodes of an NSE stock tripling within a

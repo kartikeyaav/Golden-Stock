@@ -392,11 +392,12 @@ function pageToday() {
    signals that raised the odds of a stock tripling within a year in BOTH halves
    of 2005-2026 on the survivorship-free NSE panel. A research watchlist under
    forward test — never presented as a buy list. */
-const RADAR_WORD = { H7: "Power play", H9: "RS leader", H14: "Discovery", H20: "Value breakout" };
+const RADAR_WORD = { H7: "Power play", H9: "RS leader", H14: "Discovery", H20: "Value breakout", H25: "Promoter buying" };
 const RADAR_TIP = {
   H7: "Up 90%+ within 40 sessions with no pullback deeper than 25%, closing at a new high — often the surge itself, sometimes the break of a short flag after it.",
   H9: "6-month AND 12-month return both in the top 10% of the liquid market — the day it first got there.",
   H14: "Daily traded value rose from the market's bottom half to its top quarter within 60 sessions — new money arriving.",
+  H25: "A promoter bought shares in the market (≥ ₹10 lakh) in the last 60 sessions AND the stock is an RS leader or passes the trend template. The smart-money survivor: in 2021–2026, 8.8% tripled within a year (market 3.7%) and the median 12-month return was +19%, twice momentum alone.",
   H20: "Cheap on free cash flow AND book value (both in the market's cheapest 30%, cash flow positive) and breaking out of a 2-year base or starting a new stage-2 uptrend. 2016–2026 evidence only; under forward test.",
 };
 function radarSection() {
@@ -404,16 +405,16 @@ function radarSection() {
   if (!RD.asof) return "";
   const R = RD.research || {};
   const odds = Object.entries(RADAR_WORD).filter(([k]) => R[k] && isNum(R[k].tripled_within_1y_pct))
-    .map(([k, w]) => `${w}: <b>${num(R[k].tripled_within_1y_pct, 1)}%</b> tripled within a year (all liquid stocks ${num(R[k].universe_pct, 1)}%)` + (k === "H20" && isNum(R[k].median_12m_pct) ? `, median 12-month return <b>${pct(R[k].median_12m_pct, 1)}</b>` : "")).join(" · ");
+    .map(([k, w]) => `${w}: <b>${num(R[k].tripled_within_1y_pct, 1)}%</b> tripled within a year (all liquid stocks ${num(R[k].universe_pct, 1)}%)` + ((k === "H20" || k === "H25") && isNum(R[k].median_12m_pct) ? `, median 12-month return <b>${pct(R[k].median_12m_pct, 1)}</b>` : "")).join(" · ");
   const body = rows.length ? `<div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th>Signal</th><th class="r">6 months</th><th class="r">12 months</th><th class="r hide-sm" data-tip="6-month return percentile in the liquid market (100 = strongest).">RS</th><th class="r hide-sm">From 52-wk high</th><th class="r hide-sm" data-tip="Median daily traded value, last 20 sessions.">Traded / day</th></tr></thead>
     <tbody>${rows.slice(0, 15).map(r => `<tr ${rowBy[r.sym] ? `data-sym="${esc(r.sym)}"` : ""}><td><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "outside the scanned universe")}</span></div></td>
-      <td>${Object.entries(r.signals || {}).map(([k, d]) => `<span class="chip sm ${k === "H7" ? "buy" : k === "H14" ? "ai" : k === "H20" ? "info" : "watch"}" data-tip="${esc(RADAR_TIP[k] + " Fired " + d + ".")}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ")}</td>
+      <td>${Object.entries(r.signals || {}).map(([k, d]) => `<span class="chip sm ${k === "H7" || k === "H25" ? "buy" : k === "H14" ? "ai" : k === "H20" ? "info" : "watch"}" data-tip="${esc(RADAR_TIP[k] + " Fired " + d + ".")}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ")}</td>
       <td class="r num ${cls(r.ret_6m_pct)}">${pct(r.ret_6m_pct, 0)}</td><td class="r num ${cls(r.ret_12m_pct)}">${pct(r.ret_12m_pct, 0)}</td>
       <td class="r num hide-sm">${num(r.rs_pct, 0)}</td><td class="r num hide-sm">${pct(r.off_52w_high_pct, 1)}</td><td class="r num hide-sm">₹${num(r.traded_value_cr, 1)} Cr</td></tr>`).join("")}</tbody></table></div></div>`
     : `<div class="empty">No power play, new RS leader or discovery signal in the last ${num(RD.window_sessions)} sessions.</div>`;
   return `<div class="section-title" style="margin-top:28px">Multibagger radar <span class="chip sm">${rows.length}</span>${info("The whole NSE market (" + num(RD.universe_size) + " liquid stocks, not just the scanned universe), rebuilt nightly from the exchange's own files. These three signals raised the chance of a stock tripling within a year in BOTH 2005–2015 and 2016–2026 on a survivorship-free panel; the system's own VCP breakout barely did. Even the best was followed by a triple only about 1 time in 10 — a list to research, not to buy blindly.")}<span class="line"></span><span class="hint">as of ${esc(RD.asof)}</span></div>
     ${body}
-    ${odds ? `<div class="hint" style="margin-top:8px">Measured 2016–2026: ${odds}.</div>` : ""}`;
+    ${odds ? `<div class="hint" style="margin-top:8px">Measured 2016–2026 (promoter buying: 2021–2026): ${odds}.${RD.insider_asof ? ` Promoter disclosures up to ${esc(RD.insider_asof)}.` : ""}</div>` : ""}`;
 }
 function emptyBuys() {
   const recent = recentTriggers().filter(a => !(a.dokind === "act" || a.dokind === "ep") || a.status !== "ACTIONABLE");

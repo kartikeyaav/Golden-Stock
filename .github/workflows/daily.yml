@@ -332,6 +332,15 @@ jobs:
       # last ~14 months from NSE's own daily files (~300 downloads, a minute or
       # two) instead of the cache, because multibaggers are born mostly among
       # names the cache does not hold. Non-fatal: NSE can refuse datacenter IPs.
+      # promoter / director / KMP trades (SEBI PIT disclosures, NSE XBRL feed):
+      # the last 10 days merged into the committed insider_archive.csv, which
+      # the radar's promoter-buying signal reads (PREREG_2026-09-27_promoter_buying.md,
+      # H25 — the survivor). NSE's dynamic site can refuse datacenter IPs:
+      # non-fatal, and the radar prints the latest disclosure it has, so a
+      # blocked feed shows up as a date that stops moving.
+      - name: Insider trades (promoter buying)
+        run: python data/insider.py recent --days 10 || echo "insider feed degraded (non-fatal)"
+
       - name: Multibagger radar (whole market)
         run: python scripts/multibagger_radar.py || echo "multibagger radar degraded (non-fatal)"
 
@@ -398,7 +407,7 @@ jobs:
                    state/surveillance.json state/gate.json \
                    state/momentum_core.json \
                    state/multibagger_radar.json state/multibagger_sleeve.json \
-                   state/value_breakout_sleeve.json \
+                   state/value_breakout_sleeve.json insider_archive.csv \
                    state/telegram_sent.json state/trigger_state.json \
                    daily_alerts.md \
                    announcements_archive.csv news_archive.csv deals_archive.csv \

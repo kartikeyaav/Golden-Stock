@@ -1,0 +1,1765 @@
+{
+ "discovery_end": "2020-12-31",
+ "results": {
+  "H0 every universe stock (2015-06 on)": {
+   "all": {
+    "n": 14893,
+    "MB2_1y": {
+     "rate": 13.4,
+     "base": 12.96,
+     "lift": 1.03,
+     "n": 12847
+    },
+    "MB3_1y": {
+     "rate": 3.28,
+     "base": 3.14,
+     "lift": 1.05,
+     "n": 12847
+    },
+    "MB5_2y": {
+     "rate": 3.04,
+     "base": 2.85,
+     "lift": 1.07,
+     "n": 10959
+    },
+    "MB10_3y": {
+     "rate": 1.32,
+     "base": 1.3,
+     "lift": 1.01,
+     "n": 9034
+    },
+    "r63": {
+     "median": 0.5,
+     "mean": 3.9,
+     "excess_median": -3.1,
+     "excess_mean": -0.1,
+     "share_2x": 0.6
+    },
+    "r126": {
+     "median": 2.0,
+     "mean": 8.5,
+     "excess_median": -4.9,
+     "excess_mean": 0.0,
+     "share_2x": 2.4
+    },
+    "r252": {
+     "median": 5.1,
+     "mean": 18.8,
+     "excess_median": -9.3,
+     "excess_mean": 0.3,
+     "share_2x": 8.0
+    },
+    "exit": {
+     "median": 0.988,
+     "mean": 1.031,
+     "geo_mean": 1.013,
+     "share_2x": 1.0,
+     "share_3x": 0.2,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.72
+   },
+   "discovery": {
+    "n": 5168,
+    "MB2_1y": {
+     "rate": 12.58,
+     "base": 12.23,
+     "lift": 1.03,
+     "n": 5168
+    },
+    "MB3_1y": {
+     "rate": 3.62,
+     "base": 3.24,
+     "lift": 1.12,
+     "n": 5168
+    },
+    "MB5_2y": {
+     "rate": 2.79,
+     "base": 2.49,
+     "lift": 1.12,
+     "n": 5168
+    },
+    "MB10_3y": {
+     "rate": 1.03,
+     "base": 0.91,
+     "lift": 1.13,
+     "n": 5168
+    },
+    "r63": {
+     "median": 0.1,
+     "mean": 2.4,
+     "excess_median": -2.1,
+     "excess_mean": -0.1,
+     "share_2x": 0.5
+    },
+    "r126": {
+     "median": 0.6,
+     "mean": 6.5,
+     "excess_median": -3.4,
+     "excess_mean": 0.2,
+     "share_2x": 2.5
+    },
+    "r252": {
+     "median": 2.5,
+     "mean": 17.9,
+     "excess_median": -8.0,
+     "excess_mean": 1.1,
+     "share_2x": 8.2
+    },
+    "exit": {
+     "median": 0.988,
+     "mean": 1.029,
+     "geo_mean": 1.009,
+     "share_2x": 1.0,
+     "share_3x": 0.2,
+     "share_5x": 0.1,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.75
+   },
+   "confirmation": {
+    "n": 9725,
+    "MB2_1y": {
+     "rate": 13.95,
+     "base": 13.45,
+     "lift": 1.04,
+     "n": 7679
+    },
+    "MB3_1y": {
+     "rate": 3.06,
+     "base": 3.07,
+     "lift": 1.0,
+     "n": 7679
+    },
+    "MB5_2y": {
+     "rate": 3.26,
+     "base": 3.16,
+     "lift": 1.03,
+     "n": 5791
+    },
+    "MB10_3y": {
+     "rate": 1.71,
+     "base": 1.83,
+     "lift": 0.93,
+     "n": 3866
+    },
+    "r63": {
+     "median": 0.8,
+     "mean": 4.7,
+     "excess_median": -3.7,
+     "excess_mean": -0.1,
+     "share_2x": 0.6
+    },
+    "r126": {
+     "median": 2.6,
+     "mean": 9.7,
+     "excess_median": -5.8,
+     "excess_mean": -0.1,
+     "share_2x": 2.3
+    },
+    "r252": {
+     "median": 6.4,
+     "mean": 19.4,
+     "excess_median": -10.1,
+     "excess_mean": -0.2,
+     "share_2x": 7.8
+    },
+    "exit": {
+     "median": 0.988,
+     "mean": 1.033,
+     "geo_mean": 1.015,
+     "share_2x": 0.9,
+     "share_3x": 0.2,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.68
+   }
+  },
+  "H21 promoter market purchase >= Rs 10 lakh": {
+   "all": {
+    "n": 1728,
+    "MB2_1y": {
+     "rate": 18.68,
+     "base": 15.03,
+     "lift": 1.24,
+     "n": 1558
+    },
+    "MB3_1y": {
+     "rate": 5.01,
+     "base": 4.01,
+     "lift": 1.25,
+     "n": 1558
+    },
+    "MB5_2y": {
+     "rate": 5.73,
+     "base": 3.7,
+     "lift": 1.55,
+     "n": 1395
+    },
+    "MB10_3y": {
+     "rate": 2.61,
+     "base": 1.54,
+     "lift": 1.7,
+     "n": 1262
+    },
+    "r63": {
+     "median": 4.5,
+     "mean": 8.0,
+     "excess_median": -0.7,
+     "excess_mean": 2.5,
+     "share_2x": 1.1
+    },
+    "r126": {
+     "median": 5.8,
+     "mean": 14.9,
+     "excess_median": -2.3,
+     "excess_mean": 3.4,
+     "share_2x": 4.5
+    },
+    "r252": {
+     "median": 9.9,
+     "mean": 30.0,
+     "excess_median": -5.2,
+     "excess_mean": 7.4,
+     "share_2x": 13.5
+    },
+    "exit": {
+     "median": 1.003,
+     "mean": 1.057,
+     "geo_mean": 1.033,
+     "share_2x": 1.9,
+     "share_3x": 0.3,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.74
+   },
+   "discovery": {
+    "n": 833,
+    "MB2_1y": {
+     "rate": 18.73,
+     "base": 15.72,
+     "lift": 1.19,
+     "n": 833
+    },
+    "MB3_1y": {
+     "rate": 5.4,
+     "base": 4.62,
+     "lift": 1.17,
+     "n": 833
+    },
+    "MB5_2y": {
+     "rate": 5.52,
+     "base": 3.64,
+     "lift": 1.52,
+     "n": 833
+    },
+    "MB10_3y": {
+     "rate": 2.16,
+     "base": 1.3,
+     "lift": 1.66,
+     "n": 833
+    },
+    "r63": {
+     "median": 3.9,
+     "mean": 7.2,
+     "excess_median": 0.2,
+     "excess_mean": 2.5,
+     "share_2x": 1.2
+    },
+    "r126": {
+     "median": 5.6,
+     "mean": 14.9,
+     "excess_median": -0.7,
+     "excess_mean": 4.0,
+     "share_2x": 4.9
+    },
+    "r252": {
+     "median": 10.0,
+     "mean": 31.9,
+     "excess_median": -2.5,
+     "excess_mean": 8.1,
+     "share_2x": 14.9
+    },
+    "exit": {
+     "median": 1.002,
+     "mean": 1.053,
+     "geo_mean": 1.026,
+     "share_2x": 1.9,
+     "share_3x": 0.5,
+     "share_5x": 0.0,
+     "held_median": 21.0
+    },
+    "earliness_mb3": 0.76
+   },
+   "confirmation": {
+    "n": 895,
+    "MB2_1y": {
+     "rate": 18.62,
+     "base": 14.24,
+     "lift": 1.31,
+     "n": 725
+    },
+    "MB3_1y": {
+     "rate": 4.55,
+     "base": 3.3,
+     "lift": 1.38,
+     "n": 725
+    },
+    "MB5_2y": {
+     "rate": 6.05,
+     "base": 3.79,
+     "lift": 1.6,
+     "n": 562
+    },
+    "MB10_3y": {
+     "rate": 3.5,
+     "base": 2.0,
+     "lift": 1.75,
+     "n": 429
+    },
+    "r63": {
+     "median": 4.9,
+     "mean": 8.8,
+     "excess_median": -1.7,
+     "excess_mean": 2.5,
+     "share_2x": 1.0
+    },
+    "r126": {
+     "median": 6.0,
+     "mean": 14.9,
+     "excess_median": -4.3,
+     "excess_mean": 2.7,
+     "share_2x": 4.0
+    },
+    "r252": {
+     "median": 9.7,
+     "mean": 27.8,
+     "excess_median": -8.1,
+     "excess_mean": 6.5,
+     "share_2x": 12.0
+    },
+    "exit": {
+     "median": 1.005,
+     "mean": 1.061,
+     "geo_mean": 1.04,
+     "share_2x": 1.8,
+     "share_3x": 0.1,
+     "share_5x": 0.0,
+     "held_median": 23.0
+    },
+    "earliness_mb3": 0.7
+   }
+  },
+  "H22 promoter market purchase >= Rs 1 crore": {
+   "all": {
+    "n": 1146,
+    "MB2_1y": {
+     "rate": 18.65,
+     "base": 15.07,
+     "lift": 1.24,
+     "n": 1024
+    },
+    "MB3_1y": {
+     "rate": 5.47,
+     "base": 3.99,
+     "lift": 1.37,
+     "n": 1024
+    },
+    "MB5_2y": {
+     "rate": 5.71,
+     "base": 3.56,
+     "lift": 1.6,
+     "n": 928
+    },
+    "MB10_3y": {
+     "rate": 2.5,
+     "base": 1.47,
+     "lift": 1.71,
+     "n": 839
+    },
+    "r63": {
+     "median": 3.6,
+     "mean": 7.4,
+     "excess_median": -1.2,
+     "excess_mean": 1.8,
+     "share_2x": 1.0
+    },
+    "r126": {
+     "median": 5.1,
+     "mean": 14.4,
+     "excess_median": -2.5,
+     "excess_mean": 3.1,
+     "share_2x": 4.8
+    },
+    "r252": {
+     "median": 9.4,
+     "mean": 30.4,
+     "excess_median": -4.4,
+     "excess_mean": 7.9,
+     "share_2x": 13.7
+    },
+    "exit": {
+     "median": 0.997,
+     "mean": 1.055,
+     "geo_mean": 1.03,
+     "share_2x": 1.9,
+     "share_3x": 0.3,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.79
+   },
+   "discovery": {
+    "n": 568,
+    "MB2_1y": {
+     "rate": 19.72,
+     "base": 15.54,
+     "lift": 1.27,
+     "n": 568
+    },
+    "MB3_1y": {
+     "rate": 6.34,
+     "base": 4.48,
+     "lift": 1.41,
+     "n": 568
+    },
+    "MB5_2y": {
+     "rate": 5.11,
+     "base": 3.48,
+     "lift": 1.47,
+     "n": 568
+    },
+    "MB10_3y": {
+     "rate": 1.94,
+     "base": 1.22,
+     "lift": 1.59,
+     "n": 568
+    },
+    "r63": {
+     "median": 3.7,
+     "mean": 8.1,
+     "excess_median": 0.1,
+     "excess_mean": 3.0,
+     "share_2x": 1.4
+    },
+    "r126": {
+     "median": 4.9,
+     "mean": 16.0,
+     "excess_median": -0.7,
+     "excess_mean": 5.5,
+     "share_2x": 5.8
+    },
+    "r252": {
+     "median": 9.6,
+     "mean": 33.2,
+     "excess_median": -0.6,
+     "excess_mean": 10.0,
+     "share_2x": 15.3
+    },
+    "exit": {
+     "median": 0.999,
+     "mean": 1.056,
+     "geo_mean": 1.029,
+     "share_2x": 1.8,
+     "share_3x": 0.5,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.81
+   },
+   "confirmation": {
+    "n": 578,
+    "MB2_1y": {
+     "rate": 17.32,
+     "base": 14.48,
+     "lift": 1.2,
+     "n": 456
+    },
+    "MB3_1y": {
+     "rate": 4.39,
+     "base": 3.37,
+     "lift": 1.3,
+     "n": 456
+    },
+    "MB5_2y": {
+     "rate": 6.67,
+     "base": 3.7,
+     "lift": 1.8,
+     "n": 360
+    },
+    "MB10_3y": {
+     "rate": 3.69,
+     "base": 1.99,
+     "lift": 1.86,
+     "n": 271
+    },
+    "r63": {
+     "median": 3.0,
+     "mean": 6.6,
+     "excess_median": -2.5,
+     "excess_mean": 0.6,
+     "share_2x": 0.5
+    },
+    "r126": {
+     "median": 5.1,
+     "mean": 12.7,
+     "excess_median": -5.5,
+     "excess_mean": 0.7,
+     "share_2x": 3.6
+    },
+    "r252": {
+     "median": 9.3,
+     "mean": 26.9,
+     "excess_median": -8.5,
+     "excess_mean": 5.3,
+     "share_2x": 11.6
+    },
+    "exit": {
+     "median": 0.996,
+     "mean": 1.053,
+     "geo_mean": 1.031,
+     "share_2x": 2.1,
+     "share_3x": 0.2,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.74
+   }
+  },
+  "H23 promoter purchase cluster (2+ in 30 days)": {
+   "all": {
+    "n": 1257,
+    "MB2_1y": {
+     "rate": 19.88,
+     "base": 15.62,
+     "lift": 1.27,
+     "n": 1127
+    },
+    "MB3_1y": {
+     "rate": 5.77,
+     "base": 4.22,
+     "lift": 1.37,
+     "n": 1127
+    },
+    "MB5_2y": {
+     "rate": 7.65,
+     "base": 3.99,
+     "lift": 1.92,
+     "n": 1007
+    },
+    "MB10_3y": {
+     "rate": 2.82,
+     "base": 1.61,
+     "lift": 1.75,
+     "n": 923
+    },
+    "r63": {
+     "median": 3.5,
+     "mean": 8.2,
+     "excess_median": -1.0,
+     "excess_mean": 2.5,
+     "share_2x": 1.0
+    },
+    "r126": {
+     "median": 6.4,
+     "mean": 16.2,
+     "excess_median": -2.0,
+     "excess_mean": 4.2,
+     "share_2x": 5.2
+    },
+    "r252": {
+     "median": 10.8,
+     "mean": 33.6,
+     "excess_median": -3.5,
+     "excess_mean": 9.4,
+     "share_2x": 15.2
+    },
+    "exit": {
+     "median": 1.001,
+     "mean": 1.061,
+     "geo_mean": 1.033,
+     "share_2x": 2.2,
+     "share_3x": 0.4,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.73
+   },
+   "discovery": {
+    "n": 611,
+    "MB2_1y": {
+     "rate": 20.79,
+     "base": 16.72,
+     "lift": 1.24,
+     "n": 611
+    },
+    "MB3_1y": {
+     "rate": 6.22,
+     "base": 4.97,
+     "lift": 1.25,
+     "n": 611
+    },
+    "MB5_2y": {
+     "rate": 7.53,
+     "base": 4.02,
+     "lift": 1.87,
+     "n": 611
+    },
+    "MB10_3y": {
+     "rate": 1.96,
+     "base": 1.41,
+     "lift": 1.4,
+     "n": 611
+    },
+    "r63": {
+     "median": 3.4,
+     "mean": 8.3,
+     "excess_median": 0.2,
+     "excess_mean": 3.3,
+     "share_2x": 1.5
+    },
+    "r126": {
+     "median": 8.5,
+     "mean": 17.2,
+     "excess_median": 0.0,
+     "excess_mean": 5.5,
+     "share_2x": 6.1
+    },
+    "r252": {
+     "median": 13.5,
+     "mean": 36.4,
+     "excess_median": -0.1,
+     "excess_mean": 10.0,
+     "share_2x": 16.5
+    },
+    "exit": {
+     "median": 0.995,
+     "mean": 1.053,
+     "geo_mean": 1.024,
+     "share_2x": 2.1,
+     "share_3x": 0.5,
+     "share_5x": 0.0,
+     "held_median": 21.0
+    },
+    "earliness_mb3": 0.79
+   },
+   "confirmation": {
+    "n": 646,
+    "MB2_1y": {
+     "rate": 18.8,
+     "base": 14.33,
+     "lift": 1.31,
+     "n": 516
+    },
+    "MB3_1y": {
+     "rate": 5.23,
+     "base": 3.33,
+     "lift": 1.57,
+     "n": 516
+    },
+    "MB5_2y": {
+     "rate": 7.83,
+     "base": 3.94,
+     "lift": 1.99,
+     "n": 396
+    },
+    "MB10_3y": {
+     "rate": 4.49,
+     "base": 2.0,
+     "lift": 2.25,
+     "n": 312
+    },
+    "r63": {
+     "median": 3.6,
+     "mean": 8.1,
+     "excess_median": -2.1,
+     "excess_mean": 1.6,
+     "share_2x": 0.5
+    },
+    "r126": {
+     "median": 5.0,
+     "mean": 15.2,
+     "excess_median": -5.4,
+     "excess_mean": 2.7,
+     "share_2x": 4.3
+    },
+    "r252": {
+     "median": 8.9,
+     "mean": 30.3,
+     "excess_median": -7.3,
+     "excess_mean": 8.7,
+     "share_2x": 13.6
+    },
+    "exit": {
+     "median": 1.004,
+     "mean": 1.068,
+     "geo_mean": 1.042,
+     "share_2x": 2.3,
+     "share_3x": 0.3,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.66
+   }
+  },
+  "H24 promoter stake increase >= 0.10 pp": {
+   "all": {
+    "n": 766,
+    "MB2_1y": {
+     "rate": 20.26,
+     "base": 15.21,
+     "lift": 1.33,
+     "n": 696
+    },
+    "MB3_1y": {
+     "rate": 5.89,
+     "base": 4.01,
+     "lift": 1.47,
+     "n": 696
+    },
+    "MB5_2y": {
+     "rate": 7.32,
+     "base": 3.51,
+     "lift": 2.09,
+     "n": 642
+    },
+    "MB10_3y": {
+     "rate": 3.59,
+     "base": 1.43,
+     "lift": 2.52,
+     "n": 585
+    },
+    "r63": {
+     "median": 3.5,
+     "mean": 7.6,
+     "excess_median": -1.1,
+     "excess_mean": 2.0,
+     "share_2x": 1.1
+    },
+    "r126": {
+     "median": 4.0,
+     "mean": 15.2,
+     "excess_median": -3.0,
+     "excess_mean": 3.9,
+     "share_2x": 4.9
+    },
+    "r252": {
+     "median": 6.0,
+     "mean": 32.5,
+     "excess_median": -5.5,
+     "excess_mean": 9.6,
+     "share_2x": 15.5
+    },
+    "exit": {
+     "median": 0.995,
+     "mean": 1.059,
+     "geo_mean": 1.03,
+     "share_2x": 2.0,
+     "share_3x": 0.4,
+     "share_5x": 0.0,
+     "held_median": 23.0
+    },
+    "earliness_mb3": 0.74
+   },
+   "discovery": {
+    "n": 404,
+    "MB2_1y": {
+     "rate": 21.53,
+     "base": 15.54,
+     "lift": 1.39,
+     "n": 404
+    },
+    "MB3_1y": {
+     "rate": 7.18,
+     "base": 4.41,
+     "lift": 1.63,
+     "n": 404
+    },
+    "MB5_2y": {
+     "rate": 6.93,
+     "base": 3.41,
+     "lift": 2.03,
+     "n": 404
+    },
+    "MB10_3y": {
+     "rate": 3.22,
+     "base": 1.17,
+     "lift": 2.74,
+     "n": 404
+    },
+    "r63": {
+     "median": 3.6,
+     "mean": 8.1,
+     "excess_median": -0.3,
+     "excess_mean": 3.1,
+     "share_2x": 1.7
+    },
+    "r126": {
+     "median": 3.9,
+     "mean": 16.7,
+     "excess_median": -1.1,
+     "excess_mean": 6.2,
+     "share_2x": 6.4
+    },
+    "r252": {
+     "median": 4.3,
+     "mean": 34.9,
+     "excess_median": -3.3,
+     "excess_mean": 11.4,
+     "share_2x": 17.8
+    },
+    "exit": {
+     "median": 0.997,
+     "mean": 1.055,
+     "geo_mean": 1.024,
+     "share_2x": 1.5,
+     "share_3x": 0.7,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.73
+   },
+   "confirmation": {
+    "n": 362,
+    "MB2_1y": {
+     "rate": 18.49,
+     "base": 14.75,
+     "lift": 1.25,
+     "n": 292
+    },
+    "MB3_1y": {
+     "rate": 4.11,
+     "base": 3.45,
+     "lift": 1.19,
+     "n": 292
+    },
+    "MB5_2y": {
+     "rate": 7.98,
+     "base": 3.68,
+     "lift": 2.17,
+     "n": 238
+    },
+    "MB10_3y": {
+     "rate": 4.42,
+     "base": 1.99,
+     "lift": 2.22,
+     "n": 181
+    },
+    "r63": {
+     "median": 3.5,
+     "mean": 6.9,
+     "excess_median": -2.5,
+     "excess_mean": 0.7,
+     "share_2x": 0.3
+    },
+    "r126": {
+     "median": 4.5,
+     "mean": 13.4,
+     "excess_median": -6.3,
+     "excess_mean": 1.0,
+     "share_2x": 3.1
+    },
+    "r252": {
+     "median": 8.9,
+     "mean": 29.1,
+     "excess_median": -8.7,
+     "excess_mean": 7.1,
+     "share_2x": 12.3
+    },
+    "exit": {
+     "median": 0.991,
+     "mean": 1.064,
+     "geo_mean": 1.037,
+     "share_2x": 2.5,
+     "share_3x": 0.0,
+     "share_5x": 0.0,
+     "held_median": 24.0
+    },
+    "earliness_mb3": 0.74
+   }
+  },
+  "H26 director/KMP market purchase >= Rs 10 lakh": {
+   "all": {
+    "n": 457,
+    "MB2_1y": {
+     "rate": 17.45,
+     "base": 14.27,
+     "lift": 1.22,
+     "n": 424
+    },
+    "MB3_1y": {
+     "rate": 6.84,
+     "base": 3.74,
+     "lift": 1.83,
+     "n": 424
+    },
+    "MB5_2y": {
+     "rate": 5.63,
+     "base": 3.48,
+     "lift": 1.62,
+     "n": 391
+    },
+    "MB10_3y": {
+     "rate": 1.91,
+     "base": 1.46,
+     "lift": 1.31,
+     "n": 366
+    },
+    "r63": {
+     "median": 5.3,
+     "mean": 10.0,
+     "excess_median": 0.7,
+     "excess_mean": 4.4,
+     "share_2x": 1.6
+    },
+    "r126": {
+     "median": 5.6,
+     "mean": 16.6,
+     "excess_median": -1.6,
+     "excess_mean": 5.9,
+     "share_2x": 4.8
+    },
+    "r252": {
+     "median": 10.7,
+     "mean": 34.6,
+     "excess_median": -5.9,
+     "excess_mean": 14.2,
+     "share_2x": 13.4
+    },
+    "exit": {
+     "median": 1.008,
+     "mean": 1.067,
+     "geo_mean": 1.042,
+     "share_2x": 1.8,
+     "share_3x": 0.4,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.76
+   },
+   "discovery": {
+    "n": 265,
+    "MB2_1y": {
+     "rate": 17.74,
+     "base": 14.92,
+     "lift": 1.19,
+     "n": 265
+    },
+    "MB3_1y": {
+     "rate": 8.3,
+     "base": 4.18,
+     "lift": 1.99,
+     "n": 265
+    },
+    "MB5_2y": {
+     "rate": 5.66,
+     "base": 3.42,
+     "lift": 1.66,
+     "n": 265
+    },
+    "MB10_3y": {
+     "rate": 1.13,
+     "base": 1.18,
+     "lift": 0.96,
+     "n": 265
+    },
+    "r63": {
+     "median": 4.5,
+     "mean": 9.8,
+     "excess_median": 1.8,
+     "excess_mean": 4.8,
+     "share_2x": 1.5
+    },
+    "r126": {
+     "median": 4.8,
+     "mean": 15.5,
+     "excess_median": -1.8,
+     "excess_mean": 5.4,
+     "share_2x": 5.3
+    },
+    "r252": {
+     "median": 13.1,
+     "mean": 39.7,
+     "excess_median": -0.4,
+     "excess_mean": 18.0,
+     "share_2x": 15.1
+    },
+    "exit": {
+     "median": 1.007,
+     "mean": 1.056,
+     "geo_mean": 1.033,
+     "share_2x": 1.5,
+     "share_3x": 0.4,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.83
+   },
+   "confirmation": {
+    "n": 192,
+    "MB2_1y": {
+     "rate": 16.98,
+     "base": 13.19,
+     "lift": 1.29,
+     "n": 159
+    },
+    "MB3_1y": {
+     "rate": 4.4,
+     "base": 3.02,
+     "lift": 1.46,
+     "n": 159
+    },
+    "MB5_2y": {
+     "rate": 5.56,
+     "base": 3.61,
+     "lift": 1.54,
+     "n": 126
+    },
+    "MB10_3y": {
+     "rate": 3.96,
+     "base": 2.18,
+     "lift": 1.82,
+     "n": 101
+    },
+    "r63": {
+     "median": 6.7,
+     "mean": 10.3,
+     "excess_median": -0.8,
+     "excess_mean": 3.8,
+     "share_2x": 1.6
+    },
+    "r126": {
+     "median": 6.4,
+     "mean": 18.2,
+     "excess_median": -1.2,
+     "excess_mean": 6.7,
+     "share_2x": 4.0
+    },
+    "r252": {
+     "median": 3.7,
+     "mean": 26.1,
+     "excess_median": -11.0,
+     "excess_mean": 7.8,
+     "share_2x": 10.7
+    },
+    "exit": {
+     "median": 1.013,
+     "mean": 1.083,
+     "geo_mean": 1.055,
+     "share_2x": 2.1,
+     "share_3x": 0.5,
+     "share_5x": 0.0,
+     "held_median": 24.0
+    },
+    "earliness_mb3": 0.6
+   }
+  },
+  "H27 promoter market sale >= Rs 1 crore (negative control)": {
+   "all": {
+    "n": 1245,
+    "MB2_1y": {
+     "rate": 10.7,
+     "base": 12.96,
+     "lift": 0.83,
+     "n": 1149
+    },
+    "MB3_1y": {
+     "rate": 2.44,
+     "base": 3.14,
+     "lift": 0.78,
+     "n": 1149
+    },
+    "MB5_2y": {
+     "rate": 2.41,
+     "base": 2.61,
+     "lift": 0.92,
+     "n": 1037
+    },
+    "MB10_3y": {
+     "rate": 1.36,
+     "base": 1.23,
+     "lift": 1.11,
+     "n": 881
+    },
+    "r63": {
+     "median": -0.2,
+     "mean": 2.2,
+     "excess_median": -3.4,
+     "excess_mean": -1.3,
+     "share_2x": 0.3
+    },
+    "r126": {
+     "median": 0.8,
+     "mean": 5.5,
+     "excess_median": -5.2,
+     "excess_mean": -2.0,
+     "share_2x": 1.9
+    },
+    "r252": {
+     "median": 2.2,
+     "mean": 13.2,
+     "excess_median": -11.3,
+     "excess_mean": -4.0,
+     "share_2x": 6.7
+    },
+    "exit": {
+     "median": 0.987,
+     "mean": 1.023,
+     "geo_mean": 1.005,
+     "share_2x": 0.6,
+     "share_3x": 0.2,
+     "share_5x": 0.1,
+     "held_median": 23.0
+    },
+    "earliness_mb3": 0.66
+   },
+   "discovery": {
+    "n": 576,
+    "MB2_1y": {
+     "rate": 11.11,
+     "base": 12.44,
+     "lift": 0.89,
+     "n": 576
+    },
+    "MB3_1y": {
+     "rate": 2.95,
+     "base": 3.27,
+     "lift": 0.9,
+     "n": 576
+    },
+    "MB5_2y": {
+     "rate": 2.26,
+     "base": 2.35,
+     "lift": 0.96,
+     "n": 576
+    },
+    "MB10_3y": {
+     "rate": 1.04,
+     "base": 0.88,
+     "lift": 1.19,
+     "n": 576
+    },
+    "r63": {
+     "median": -1.3,
+     "mean": 1.0,
+     "excess_median": -0.8,
+     "excess_mean": -0.5,
+     "share_2x": 0.3
+    },
+    "r126": {
+     "median": 1.9,
+     "mean": 5.6,
+     "excess_median": -2.7,
+     "excess_mean": -0.1,
+     "share_2x": 1.7
+    },
+    "r252": {
+     "median": 2.1,
+     "mean": 13.2,
+     "excess_median": -8.3,
+     "excess_mean": -2.4,
+     "share_2x": 7.5
+    },
+    "exit": {
+     "median": 0.984,
+     "mean": 1.015,
+     "geo_mean": 0.996,
+     "share_2x": 0.5,
+     "share_3x": 0.3,
+     "share_5x": 0.2,
+     "held_median": 23.0
+    },
+    "earliness_mb3": 0.7
+   },
+   "confirmation": {
+    "n": 669,
+    "MB2_1y": {
+     "rate": 10.3,
+     "base": 13.49,
+     "lift": 0.76,
+     "n": 573
+    },
+    "MB3_1y": {
+     "rate": 1.92,
+     "base": 3.01,
+     "lift": 0.64,
+     "n": 573
+    },
+    "MB5_2y": {
+     "rate": 2.6,
+     "base": 2.93,
+     "lift": 0.89,
+     "n": 461
+    },
+    "MB10_3y": {
+     "rate": 1.97,
+     "base": 1.9,
+     "lift": 1.03,
+     "n": 305
+    },
+    "r63": {
+     "median": 0.6,
+     "mean": 3.3,
+     "excess_median": -4.8,
+     "excess_mean": -2.0,
+     "share_2x": 0.3
+    },
+    "r126": {
+     "median": 0.3,
+     "mean": 5.5,
+     "excess_median": -7.8,
+     "excess_mean": -3.8,
+     "share_2x": 2.1
+    },
+    "r252": {
+     "median": 2.2,
+     "mean": 13.1,
+     "excess_median": -13.5,
+     "excess_mean": -5.7,
+     "share_2x": 5.9
+    },
+    "exit": {
+     "median": 0.987,
+     "mean": 1.029,
+     "geo_mean": 1.013,
+     "share_2x": 0.7,
+     "share_3x": 0.1,
+     "share_5x": 0.0,
+     "held_median": 24.0
+    },
+    "earliness_mb3": 0.57
+   }
+  },
+  "H28 promoter pledge creation (negative control)": {
+   "all": {
+    "n": 903,
+    "MB2_1y": {
+     "rate": 14.55,
+     "base": 12.64,
+     "lift": 1.15,
+     "n": 852
+    },
+    "MB3_1y": {
+     "rate": 4.58,
+     "base": 3.11,
+     "lift": 1.47,
+     "n": 852
+    },
+    "MB5_2y": {
+     "rate": 4.37,
+     "base": 2.63,
+     "lift": 1.66,
+     "n": 800
+    },
+    "MB10_3y": {
+     "rate": 2.34,
+     "base": 1.22,
+     "lift": 1.91,
+     "n": 728
+    },
+    "r63": {
+     "median": 1.1,
+     "mean": 3.4,
+     "excess_median": -2.5,
+     "excess_mean": -0.1,
+     "share_2x": 0.8
+    },
+    "r126": {
+     "median": 0.7,
+     "mean": 7.6,
+     "excess_median": -6.4,
+     "excess_mean": -0.7,
+     "share_2x": 3.6
+    },
+    "r252": {
+     "median": 0.8,
+     "mean": 17.0,
+     "excess_median": -10.1,
+     "excess_mean": 0.8,
+     "share_2x": 9.9
+    },
+    "exit": {
+     "median": 0.989,
+     "mean": 1.032,
+     "geo_mean": 1.011,
+     "share_2x": 0.9,
+     "share_3x": 0.2,
+     "share_5x": 0.0,
+     "held_median": 21.0
+    },
+    "earliness_mb3": 0.74
+   },
+   "discovery": {
+    "n": 527,
+    "MB2_1y": {
+     "rate": 14.07,
+     "base": 11.45,
+     "lift": 1.23,
+     "n": 526
+    },
+    "MB3_1y": {
+     "rate": 4.94,
+     "base": 3.0,
+     "lift": 1.65,
+     "n": 526
+    },
+    "MB5_2y": {
+     "rate": 4.37,
+     "base": 2.37,
+     "lift": 1.85,
+     "n": 526
+    },
+    "MB10_3y": {
+     "rate": 2.85,
+     "base": 0.92,
+     "lift": 3.11,
+     "n": 526
+    },
+    "r63": {
+     "median": -1.0,
+     "mean": 1.5,
+     "excess_median": -2.1,
+     "excess_mean": -0.2,
+     "share_2x": 1.0
+    },
+    "r126": {
+     "median": -1.1,
+     "mean": 4.3,
+     "excess_median": -7.0,
+     "excess_mean": -1.6,
+     "share_2x": 3.6
+    },
+    "r252": {
+     "median": -8.9,
+     "mean": 13.1,
+     "excess_median": -11.5,
+     "excess_mean": -0.2,
+     "share_2x": 10.1
+    },
+    "exit": {
+     "median": 0.985,
+     "mean": 1.025,
+     "geo_mean": 1.003,
+     "share_2x": 1.1,
+     "share_3x": 0.2,
+     "share_5x": 0.0,
+     "held_median": 21.0
+    },
+    "earliness_mb3": 0.74
+   },
+   "confirmation": {
+    "n": 376,
+    "MB2_1y": {
+     "rate": 15.34,
+     "base": 14.56,
+     "lift": 1.05,
+     "n": 326
+    },
+    "MB3_1y": {
+     "rate": 3.99,
+     "base": 3.27,
+     "lift": 1.22,
+     "n": 326
+    },
+    "MB5_2y": {
+     "rate": 4.38,
+     "base": 3.14,
+     "lift": 1.39,
+     "n": 274
+    },
+    "MB10_3y": {
+     "rate": 0.99,
+     "base": 2.02,
+     "lift": 0.49,
+     "n": 202
+    },
+    "r63": {
+     "median": 4.0,
+     "mean": 6.1,
+     "excess_median": -2.8,
+     "excess_mean": 0.0,
+     "share_2x": 0.5
+    },
+    "r126": {
+     "median": 4.6,
+     "mean": 12.6,
+     "excess_median": -6.0,
+     "excess_mean": 0.6,
+     "share_2x": 3.5
+    },
+    "r252": {
+     "median": 8.6,
+     "mean": 23.2,
+     "excess_median": -8.2,
+     "excess_mean": 2.3,
+     "share_2x": 9.5
+    },
+    "exit": {
+     "median": 0.993,
+     "mean": 1.041,
+     "geo_mean": 1.022,
+     "share_2x": 0.5,
+     "share_3x": 0.3,
+     "share_5x": 0.0,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.7
+   }
+  },
+  "H29 promoter pledge revocation": {
+   "all": {
+    "n": 787,
+    "MB2_1y": {
+     "rate": 14.0,
+     "base": 13.49,
+     "lift": 1.04,
+     "n": 757
+    },
+    "MB3_1y": {
+     "rate": 4.62,
+     "base": 3.4,
+     "lift": 1.36,
+     "n": 757
+    },
+    "MB5_2y": {
+     "rate": 4.31,
+     "base": 2.74,
+     "lift": 1.57,
+     "n": 719
+    },
+    "MB10_3y": {
+     "rate": 2.99,
+     "base": 1.23,
+     "lift": 2.42,
+     "n": 668
+    },
+    "r63": {
+     "median": 2.0,
+     "mean": 3.6,
+     "excess_median": -3.0,
+     "excess_mean": -0.7,
+     "share_2x": 0.8
+    },
+    "r126": {
+     "median": 2.1,
+     "mean": 8.9,
+     "excess_median": -6.7,
+     "excess_mean": -0.2,
+     "share_2x": 2.7
+    },
+    "r252": {
+     "median": 3.7,
+     "mean": 21.9,
+     "excess_median": -10.1,
+     "excess_mean": 3.4,
+     "share_2x": 9.5
+    },
+    "exit": {
+     "median": 0.988,
+     "mean": 1.043,
+     "geo_mean": 1.016,
+     "share_2x": 1.4,
+     "share_3x": 0.6,
+     "share_5x": 0.1,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.71
+   },
+   "discovery": {
+    "n": 480,
+    "MB2_1y": {
+     "rate": 13.75,
+     "base": 12.33,
+     "lift": 1.11,
+     "n": 480
+    },
+    "MB3_1y": {
+     "rate": 5.0,
+     "base": 3.26,
+     "lift": 1.53,
+     "n": 480
+    },
+    "MB5_2y": {
+     "rate": 4.37,
+     "base": 2.48,
+     "lift": 1.76,
+     "n": 480
+    },
+    "MB10_3y": {
+     "rate": 3.12,
+     "base": 0.95,
+     "lift": 3.3,
+     "n": 480
+    },
+    "r63": {
+     "median": 1.7,
+     "mean": 2.8,
+     "excess_median": -2.5,
+     "excess_mean": -0.2,
+     "share_2x": 0.8
+    },
+    "r126": {
+     "median": 0.5,
+     "mean": 6.9,
+     "excess_median": -5.1,
+     "excess_mean": 0.5,
+     "share_2x": 2.7
+    },
+    "r252": {
+     "median": 0.9,
+     "mean": 21.3,
+     "excess_median": -9.2,
+     "excess_mean": 5.9,
+     "share_2x": 9.8
+    },
+    "exit": {
+     "median": 0.988,
+     "mean": 1.041,
+     "geo_mean": 1.012,
+     "share_2x": 1.5,
+     "share_3x": 0.8,
+     "share_5x": 0.2,
+     "held_median": 22.0
+    },
+    "earliness_mb3": 0.74
+   },
+   "confirmation": {
+    "n": 307,
+    "MB2_1y": {
+     "rate": 14.44,
+     "base": 15.49,
+     "lift": 0.93,
+     "n": 277
+    },
+    "MB3_1y": {
+     "rate": 3.97,
+     "base": 3.64,
+     "lift": 1.09,
+     "n": 277
+    },
+    "MB5_2y": {
+     "rate": 4.18,
+     "base": 3.27,
+     "lift": 1.28,
+     "n": 239
+    },
+    "MB10_3y": {
+     "rate": 2.66,
+     "base": 1.97,
+     "lift": 1.35,
+     "n": 188
+    },
+    "r63": {
+     "median": 2.2,
+     "mean": 4.9,
+     "excess_median": -4.3,
+     "excess_mean": -1.4,
+     "share_2x": 0.7
+    },
+    "r126": {
+     "median": 4.5,
+     "mean": 12.2,
+     "excess_median": -8.5,
+     "excess_mean": -1.3,
+     "share_2x": 2.8
+    },
+    "r252": {
+     "median": 10.5,
+     "mean": 22.8,
+     "excess_median": -11.6,
+     "excess_mean": -0.8,
+     "share_2x": 9.0
+    },
+    "exit": {
+     "median": 0.988,
+     "mean": 1.044,
+     "geo_mean": 1.023,
+     "share_2x": 1.3,
+     "share_3x": 0.3,
+     "share_5x": 0.0,
+     "held_median": 23.0
+    },
+    "earliness_mb3": 0.61
+   }
+  },
+  "H25 promoter purchase (60d) + RS leader or trend template": {
+   "all": {
+    "n": 767,
+    "MB2_1y": {
+     "rate": 26.2,
+     "base": 15.43,
+     "lift": 1.7,
+     "n": 710
+    },
+    "MB3_1y": {
+     "rate": 9.01,
+     "base": 3.83,
+     "lift": 2.36,
+     "n": 710
+    },
+    "MB5_2y": {
+     "rate": 6.28,
+     "base": 2.76,
+     "lift": 2.27,
+     "n": 669
+    },
+    "MB10_3y": {
+     "rate": 4.07,
+     "base": 1.37,
+     "lift": 2.96,
+     "n": 590
+    },
+    "r63": {
+     "median": 4.9,
+     "mean": 11.5,
+     "excess_median": -0.2,
+     "excess_mean": 5.8,
+     "share_2x": 2.0
+    },
+    "r126": {
+     "median": 9.3,
+     "mean": 21.8,
+     "excess_median": 0.8,
+     "excess_mean": 9.8,
+     "share_2x": 7.5
+    },
+    "r252": {
+     "median": 17.6,
+     "mean": 43.5,
+     "excess_median": -0.6,
+     "excess_mean": 20.2,
+     "share_2x": 16.1
+    },
+    "exit": {
+     "median": 0.998,
+     "mean": 1.114,
+     "geo_mean": 1.072,
+     "share_2x": 2.9,
+     "share_3x": 1.2,
+     "share_5x": 0.0,
+     "held_median": 32.0
+    },
+    "earliness_mb3": 0.62
+   },
+   "discovery": {
+    "n": 323,
+    "MB2_1y": {
+     "rate": 23.53,
+     "base": 14.79,
+     "lift": 1.59,
+     "n": 323
+    },
+    "MB3_1y": {
+     "rate": 9.29,
+     "base": 3.98,
+     "lift": 2.33,
+     "n": 323
+    },
+    "MB5_2y": {
+     "rate": 5.26,
+     "base": 2.33,
+     "lift": 2.26,
+     "n": 323
+    },
+    "MB10_3y": {
+     "rate": 2.48,
+     "base": 0.86,
+     "lift": 2.86,
+     "n": 323
+    },
+    "r63": {
+     "median": 4.7,
+     "mean": 11.4,
+     "excess_median": -0.2,
+     "excess_mean": 6.3,
+     "share_2x": 2.2
+    },
+    "r126": {
+     "median": 6.7,
+     "mean": 21.9,
+     "excess_median": -1.3,
+     "excess_mean": 11.2,
+     "share_2x": 8.4
+    },
+    "r252": {
+     "median": 15.5,
+     "mean": 43.3,
+     "excess_median": 3.2,
+     "excess_mean": 22.2,
+     "share_2x": 13.6
+    },
+    "exit": {
+     "median": 1.003,
+     "mean": 1.121,
+     "geo_mean": 1.078,
+     "share_2x": 2.5,
+     "share_3x": 1.5,
+     "share_5x": 0.0,
+     "held_median": 33.0
+    },
+    "earliness_mb3": 0.63
+   },
+   "confirmation": {
+    "n": 444,
+    "MB2_1y": {
+     "rate": 28.42,
+     "base": 15.96,
+     "lift": 1.78,
+     "n": 387
+    },
+    "MB3_1y": {
+     "rate": 8.79,
+     "base": 3.69,
+     "lift": 2.38,
+     "n": 387
+    },
+    "MB5_2y": {
+     "rate": 7.23,
+     "base": 3.17,
+     "lift": 2.28,
+     "n": 346
+    },
+    "MB10_3y": {
+     "rate": 5.99,
+     "base": 1.99,
+     "lift": 3.01,
+     "n": 267
+    },
+    "r63": {
+     "median": 5.2,
+     "mean": 11.5,
+     "excess_median": -0.1,
+     "excess_mean": 5.5,
+     "share_2x": 1.8
+    },
+    "r126": {
+     "median": 11.8,
+     "mean": 21.8,
+     "excess_median": 2.0,
+     "excess_mean": 8.7,
+     "share_2x": 6.8
+    },
+    "r252": {
+     "median": 19.0,
+     "mean": 43.7,
+     "excess_median": -2.6,
+     "excess_mean": 18.6,
+     "share_2x": 18.1
+    },
+    "exit": {
+     "median": 0.997,
+     "mean": 1.11,
+     "geo_mean": 1.069,
+     "share_2x": 3.2,
+     "share_3x": 0.9,
+     "share_5x": 0.0,
+     "held_median": 31.5
+    },
+    "earliness_mb3": 0.61
+   }
+  }
+ }
+}

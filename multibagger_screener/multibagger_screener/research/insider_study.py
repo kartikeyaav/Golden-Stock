@@ -51,6 +51,22 @@ def grid_of(g, rows: pd.DataFrame) -> np.ndarray:
     return m
 
 
+def promoter_purchases(tr: pd.DataFrame, min_value: float = 10e5) -> pd.DataFrame:
+    """H21's rows: promoter / promoter-group MARKET purchases worth >= min_value."""
+    mode = tr["mode"].fillna("").str.lower() if "mode_l" not in tr else tr["mode_l"]
+    return tr[tr["category"].isin(PROMOTER) & (tr["txn"] == "buy")
+              & mode.str.contains("market purchase") & (tr["value"].fillna(0) >= min_value)]
+
+
+def h25_grid(g, tr: pd.DataFrame, window: int = 60) -> np.ndarray:
+    """H25 (the survivor of PREREG_2026-09-27_promoter_buying.md): an H21
+    purchase disclosed in the prior `window` sessions AND the stock is an RS
+    leader or passes the trend template today. The radar calls this."""
+    h21 = grid_of(g, signal_rows(g, promoter_purchases(tr)))
+    recent = roll(h21.astype("float32"), window, "max", minp=1) > 0
+    return recent & (h9_rs_leader(g) | h4_trend_template(g))
+
+
 def hypotheses(g, tr: pd.DataFrame) -> dict[str, np.ndarray]:
     buy = (tr["txn"] == "buy") & tr["mode_l"].str.contains("market purchase")
     sell = (tr["txn"] == "sell") & tr["mode_l"].str.contains("market sale")
