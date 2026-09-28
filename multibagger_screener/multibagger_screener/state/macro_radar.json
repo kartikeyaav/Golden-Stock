@@ -1,44 +1,113 @@
 {
  "ok": true,
- "generated": "2026-09-25T15:23:04",
+ "generated": "2026-09-28T18:17:46",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 10156,
- "policy_hits": 17,
- "stories": 16,
+ "headlines_read": 9544,
+ "policy_hits": 14,
+ "stories": 14,
  "themes": {
-  "capex": {
-   "pressure": 0.078,
-   "pos_flow": 0.06,
+  "defence": {
+   "pressure": 0.177,
+   "pos_flow": 0.1443,
    "neg_flow": 0.0,
-   "n_scored": 1,
-   "n_attn": 1,
+   "n_scored": 3,
+   "n_attn": 0,
    "top": [
     {
-     "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
-     "date": "2026-08-14T05:35:56",
-     "source": "Livemint",
-     "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
+     "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
+     "date": "2026-08-28T20:41:02",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
      "themes": [
-      "capex",
-      "ev"
+      "defence"
      ],
      "polarity": "pos",
-     "event": "scheme/mission",
+     "event": "policy/norms",
      "amount_cr": null,
      "tier": 1,
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.06
+     "weight": 0.0557
+    },
+    {
+     "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
+     "date": "2026-09-28T13:24:16",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/markets/ipos/fpos/tonbo-imaging-india-gets-sebi-nod-for-ipo-defence-electronics-maker-offers-over-1-8-crore-shares/articleshow/134535883.cms",
+     "themes": [
+      "defence",
+      "defelec"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 1.8,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0522
+    },
+    {
+     "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
+     "date": "2026-08-25T19:28:06",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/companies/defence-ministry-opens-drdos-conventional-missile-tech-to-private-companies/article71388809.ece",
+     "themes": [
+      "defence"
+     ],
+     "polarity": "pos",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0363
     }
    ]
   },
-  "railways": {
-   "pressure": 0.291,
-   "pos_flow": 0.2549,
+  "defelec": {
+   "pressure": 0.068,
+   "pos_flow": 0.0522,
    "neg_flow": 0.0,
-   "n_scored": 4,
+   "n_scored": 1,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
+     "date": "2026-09-28T13:24:16",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/markets/ipos/fpos/tonbo-imaging-india-gets-sebi-nod-for-ipo-defence-electronics-maker-offers-over-1-8-crore-shares/articleshow/134535883.cms",
+     "themes": [
+      "defence",
+      "defelec"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 1.8,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0522
+    }
+   ]
+  },
+  "capex": {
+   "pressure": 0.0,
+   "pos_flow": 0.0,
+   "neg_flow": 0.0,
+   "n_scored": 0,
+   "n_attn": 1,
+   "top": []
+  },
+  "railways": {
+   "pressure": 0.233,
+   "pos_flow": 0.1967,
+   "neg_flow": 0.0,
+   "n_scored": 3,
    "n_attn": 1,
    "top": [
     {
@@ -56,7 +125,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1272
+     "weight": 0.1152
     },
     {
      "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -73,7 +142,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0457
+     "weight": 0.0414
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -90,7 +159,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0457
+     "weight": 0.0401
     }
    ]
   },
@@ -110,52 +179,9 @@
    "n_attn": 2,
    "top": []
   },
-  "defence": {
-   "pressure": 0.128,
-   "pos_flow": 0.1016,
-   "neg_flow": 0.0,
-   "n_scored": 2,
-   "n_attn": 0,
-   "top": [
-    {
-     "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
-     "date": "2026-08-28T20:41:02",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
-     "themes": [
-      "defence"
-     ],
-     "polarity": "pos",
-     "event": "policy/norms",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0615
-    },
-    {
-     "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
-     "date": "2026-08-25T19:28:06",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/companies/defence-ministry-opens-drdos-conventional-missile-tech-to-private-companies/article71388809.ece",
-     "themes": [
-      "defence"
-     ],
-     "polarity": "pos",
-     "event": "",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0401
-    }
-   ]
-  },
   "hospital": {
-   "pressure": 0.049,
-   "pos_flow": 0.0376,
+   "pressure": 0.045,
+   "pos_flow": 0.034,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -175,13 +201,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0376
+     "weight": 0.034
     }
    ]
   },
   "semis": {
-   "pressure": 0.06,
-   "pos_flow": 0.0457,
+   "pressure": 0.053,
+   "pos_flow": 0.0401,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -201,13 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0457
+     "weight": 0.0401
     }
    ]
   },
   "ems": {
-   "pressure": 0.118,
-   "pos_flow": 0.0932,
+   "pressure": 0.104,
+   "pos_flow": 0.0817,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -227,51 +253,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0932
-    }
-   ]
-  },
-  "ev": {
-   "pressure": 0.149,
-   "pos_flow": 0.1195,
-   "neg_flow": 0.0,
-   "n_scored": 2,
-   "n_attn": 0,
-   "top": [
-    {
-     "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
-     "date": "2026-08-14T05:35:56",
-     "source": "Livemint",
-     "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
-     "themes": [
-      "capex",
-      "ev"
-     ],
-     "polarity": "pos",
-     "event": "scheme/mission",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.06
-    },
-    {
-     "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
-     "date": "2026-08-12T00:42:59",
-     "source": "The Economic Times",
-     "link": "https://economictimes.indiatimes.com/industry/auto/two-wheelers-three-wheelers/centre-extends-e2w-subsidies-under-pm-e-drive-till-march-2028-boosts-outlay-to-rs-11900-crore/articleshow/133164465.cms",
-     "themes": [
-      "ev"
-     ],
-     "polarity": "pos",
-     "event": "allocation",
-     "amount_cr": 11900.0,
-     "tier": 1,
-     "hedged": false,
-     "sources": 2,
-     "retellings": 2,
-     "weight": 0.0595
+     "weight": 0.0817
     }
    ]
   }
@@ -292,7 +274,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.2247
+   "weight": 0.2035
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -309,7 +291,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1272
+   "weight": 0.1152
   },
   {
    "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
@@ -326,7 +308,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0932
+   "weight": 0.0817
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -343,7 +325,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0857
+   "weight": 0.0751
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -361,7 +343,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0776
+   "weight": 0.0703
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -378,42 +360,25 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0615
+   "weight": 0.0557
   },
   {
-   "title": "Centre extends battery PLI deadline for Ola, Reliance; Rajesh Exports left out",
-   "date": "2026-08-14T05:35:56",
-   "source": "Livemint",
-   "link": "https://www.livemint.com/companies/news/centre-extends-battery-pli-deadline-for-ola-reliance-rajesh-exports-left-out-11786619850460.html",
+   "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
+   "date": "2026-09-28T13:24:16",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/markets/ipos/fpos/tonbo-imaging-india-gets-sebi-nod-for-ipo-defence-electronics-maker-offers-over-1-8-crore-shares/articleshow/134535883.cms",
    "themes": [
-    "capex",
-    "ev"
+    "defence",
+    "defelec"
    ],
    "polarity": "pos",
-   "event": "scheme/mission",
-   "amount_cr": null,
+   "event": "approval",
+   "amount_cr": 1.8,
    "tier": 1,
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.06
-  },
-  {
-   "title": "Centre extends e2w subsidies under PM E-DRIVE till March 2028, boosts outlay to Rs 11,900 crore",
-   "date": "2026-08-12T00:42:59",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/auto/two-wheelers-three-wheelers/centre-extends-e2w-subsidies-under-pm-e-drive-till-march-2028-boosts-outlay-to-rs-11900-crore/articleshow/133164465.cms",
-   "themes": [
-    "ev"
-   ],
-   "polarity": "pos",
-   "event": "allocation",
-   "amount_cr": 11900.0,
-   "tier": 1,
-   "hedged": false,
-   "sources": 2,
-   "retellings": 2,
-   "weight": 0.0595
+   "weight": 0.0522
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -430,7 +395,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.056
+   "weight": 0.0508
   },
   {
    "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -447,7 +412,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0457
+   "weight": 0.0414
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -464,7 +429,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0457
+   "weight": 0.0401
   },
   {
    "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
@@ -481,7 +446,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0457
+   "weight": 0.0401
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -498,7 +463,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0363
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -515,7 +480,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0376
+   "weight": 0.034
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -532,24 +497,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0366
-  },
-  {
-   "title": "Indian Railways big update: 3 new trains, 4 route extensions and 7 additional halts approved; check routes, timings and stations",
-   "date": "2026-08-12T22:32:21",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/indian-railways-big-update-2-new-trains-3-route-extensions-and-7-additional-halts-approved-check-routes-timings-and-stations/articleshow/133188624.cms",
-   "themes": [
-    "railways"
-   ],
-   "polarity": "pos",
-   "event": "approval",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0363
+   "weight": 0.0331
   }
  ]
 }

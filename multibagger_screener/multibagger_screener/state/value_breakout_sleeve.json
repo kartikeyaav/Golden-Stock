@@ -1,0 +1,32 @@
+{
+ "registered": "2026-09-27",
+ "capital": 1000000.0,
+ "nav": [
+  [
+   "2026-09-28",
+   1000000.0
+  ]
+ ],
+ "last_session": "2026-09-28",
+ "book": {
+  "cash": 1000000.0,
+  "pos": {},
+  "pending_buys": [
+   "RANEHOLDIN",
+   "UDS",
+   "KAMATHOTEL",
+   "GIPCL",
+   "ALEMBICLTD",
+   "GEOJITFSL",
+   "HINDOILEXP",
+   "CYIENT",
+   "MOL",
+   "UTTAMSUGAR"
+  ],
+  "pending_sells": [],
+  "last_px": {}
+ },
+ "risk_on": true,
+ "asof": "2026-09-28",
+ "generated": "2026-09-28 18:32"
+}

@@ -1,0 +1,17 @@
+{
+ "registered": "2026-09-28",
+ "capital": 1000000.0,
+ "nav": [],
+ "last_session": null,
+ "book": {
+  "cash": 1000000.0,
+  "pos": {},
+  "pending_buys": [],
+  "pending_sells": [],
+  "last_px": {}
+ },
+ "insider_asof": "2026-09-28 22:05",
+ "risk_on": true,
+ "asof": "2026-09-28",
+ "generated": "2026-09-28 18:32"
+}

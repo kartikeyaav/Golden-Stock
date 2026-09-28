@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-27 10:46",
+ "generated": "2026-09-28 18:32",
  "n_checked": 1027,
  "n_flagged": 95,
- "asm_total": 215,
+ "asm_total": 209,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -144,18 +144,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "KIRLOSENG": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "THELEELA": {
    "flags": [
     {
@@ -239,6 +227,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "POLICYBZR": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": null,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "AXISCADES": {
    "flags": [
@@ -341,6 +341,18 @@
     {
      "code": "ASM",
      "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "CAPILLARY": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],
@@ -570,11 +582,6 @@
   "PARAS": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -582,7 +589,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "PARKHOSPS": {
    "flags": [
@@ -980,18 +987,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "EMUDHRA": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "RAYMOND": {
    "flags": [
