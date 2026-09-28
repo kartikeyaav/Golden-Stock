@@ -10,11 +10,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script>
-  /* theme before first paint; a saved choice from the toggle wins */
+  /* theme before first paint: the computer's setting until the toggle is used */
   (function () {
     var t = null;
     try { t = localStorage.getItem("gs-theme"); } catch (e) {}
-    if (!t) t = "dark";                    /* dark by default, like the classic terminal */
+    if (!t) t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", t);
   })();
 </script>
