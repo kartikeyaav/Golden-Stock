@@ -155,6 +155,67 @@ async function copyText(text, label) {
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } return null; }
 function closesOf(sym) { return (D.closes || {})[sym] || []; }
 function riskShare(plan) { return plan && isNum(plan.risk) ? plan.risk / CAPITAL * 100 : null; }
+/* ---- v8 (2026-09-28): the classic dashboard's visual language inside the v7
+   layout. Bars for every score, a ring for the market, sparklines in lists and
+   mini charts for the business; measurements only where a decision needs them. */
+function scoreCol(v) { return !isNum(v) ? "var(--faint)" : v >= 70 ? "var(--buy)" : v >= 50 ? "var(--info)" : v >= 40 ? "var(--watch)" : "var(--risk)"; }
+function dimCol(s) { return s == null ? "var(--faint)" : s >= 0.7 ? "var(--buy)" : s >= 0.4 ? "var(--watch)" : "var(--risk)"; }
+function rsCol(v) { return !isNum(v) ? "var(--faint)" : v >= 90 ? "var(--buy)" : v >= 70 ? "var(--info)" : "var(--faint)"; }
+function cbar(v, col, tip) {
+  if (!isNum(v)) return `<span class="faint">—</span>`;
+  const p = Math.max(0, Math.min(100, v));
+  return `<span class="cbar"${tip ? ` data-tip="${esc(tip)}"` : ""}><span class="track"><i style="width:${p.toFixed(0)}%;background:${col}"></i></span><b>${Math.round(v)}</b></span>`;
+}
+function scoreCell(v) { return cbar(v, scoreCol(v)); }
+function rsCell(v) { return cbar(v, rsCol(v)); }
+function ring(frac, big, small, col, size) {
+  size = size || 86;
+  const r = size / 2 - 6, c = 2 * Math.PI * r, p = Math.max(0, Math.min(1, frac || 0)), m = size / 2;
+  return `<div class="ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+    <circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="var(--surface-3)" stroke-width="7"/>
+    <circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(c * p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${m} ${m})"/></svg>
+    <div class="c"><b>${big}</b>${small ? `<span>${small}</span>` : ""}</div></div>`;
+}
+/* the eight weighted questions as bars — the classic drawer's "Why this score" */
+function scoreBars(sym, compact) {
+  const d = detailOf(sym);
+  if (!d || !(d.dims || []).length) return `<div class="muted" style="font-size:12.5px">No score breakdown yet: the eight questions are scored for names in an uptrend or basing, and this one re-enters scoring when its chart qualifies.</div>`;
+  const dims = d.dims.slice().sort((a, b) => (b.w || 0) - (a.w || 0));
+  const dark = dims.filter(x => !x.live);
+  return `${dark.length ? `<div class="warn" style="font-size:12px;margin-bottom:10px">Not scored: ${dark.map(x => esc(DIM_LABEL[x.k] || x.k)).join(", ")} (${num(dark.reduce((a, x) => a + (x.w || 0), 0))} of 100 points); the rest were re-weighted.</div>` : ""}
+    <div class="sbars">${dims.map(x => {
+      const s = x.live && isNum(x.s) ? x.s : null, p = s == null ? 0 : Math.round(s * 100);
+      return `<div class="sbar"><div class="top"><span>${esc(DIM_LABEL[x.k] || x.k)}<span class="w">weight ${num(x.w)}</span></span><b style="color:${dimCol(s)}">${s == null ? "no data" : p}</b></div>
+        <div class="track"><i style="width:${p}%;background:${dimCol(s)}"></i></div>${compact ? "" : `<div class="n">${esc(x.n || "")}</div>`}</div>`;
+    }).join("")}</div>`;
+}
+function scoreCard(sym) {
+  const d = detailOf(sym) || {};
+  return `<div class="card"><div class="card-head"><h3>Why this score</h3>${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}">${d.score.toFixed(0)} / 100</span>` : ""}${info("Eight weighted questions: technicals, earnings, balance sheet, catalysts, smart money, theme, governance and valuation. Each bar is how well this stock answers one of them. In the forward record, names under 50 (and vetoed ones) lagged the market; above 50 the score does not pick winners, so use it to rule names out.")}
+      <span class="hint">${d.dims_as_of || d.scored_at ? "read of " + esc(String(d.dims_as_of || d.scored_at).slice(0, 10)) : ""}${isNum(d.coverage) && d.coverage < 100 ? " · " + d.coverage.toFixed(0) + "% answered" : ""}</span></div>
+    ${(d.veto_reasons || []).length ? `<div class="callout risk" style="margin-bottom:12px"><b>Vetoed.</b> ${d.veto_reasons.map(esc).join("; ")}</div>` : ""}
+    ${scoreBars(sym)}</div>`;
+}
+/* what each layer says about one name — the classic drawer's convergence panel */
+function voicesCard(sym) {
+  const r = rowBy[sym] || {}, d = detailOf(sym) || {}, v = verdictBy[sym], pk = pickBy[sym], st = setupBy[sym];
+  const reviewed = (D.reviewed || []).includes(sym);
+  const hit = ((D.radar || {}).hits || []).find(h => h.sym === sym);
+  const nm = newsMem[sym];
+  const rows = [
+    ["Machine", "var(--info)", (isNum(d.score) ? "score " + d.score.toFixed(0) + " · " : "") + stageWord(r.tag) + (st ? " · " + (SETUP_WORD[st.status] || st.status) : "")],
+    ["Analyst", "var(--ai)", v ? v.verdict + (v.conv ? " · " + v.conv : "") + (v.stamp ? " (" + dateLabel(v.stamp) + ")" : "") : "no verdict in the last 10 days"],
+    ["Committee", "var(--buy)", pk ? "weekly pick · " + (pk.conviction || "") : reviewed ? "reviewed this week, passed over" : "not in this week's review"],
+    ["News", "var(--watch)", hit ? hit.event + (hit.date ? " (" + dateLabel(hit.date) + ")" : "") : nm && nm.n_neg ? nm.n_neg + " negative filing(s) in 90 days" : "quiet since the last scan"],
+  ];
+  return `<div class="card"><div class="card-head"><h3>What each layer says</h3></div>
+    <div class="voices">${rows.map(([k, c, t]) => `<div class="k" style="color:${c}">${k}</div><div>${esc(t)}</div>`).join("")}</div>
+    <div class="muted" style="font-size:11.5px;margin-top:10px">The layers inform attention; entries and sizing stay mechanical.</div></div>`;
+}
+function howItWorks(text, pre) {
+  return `<details class="more" style="margin-top:14px"><summary>How it works, and how it was chosen</summary><div class="card"><div class="memo"><p>${esc(text)}</p>
+    ${(pre || []).length ? `<h4>Backtest</h4><ul>${pre.map(([l, v, n]) => `<li><b>${esc(l)}:</b> ${esc(v)}, ${esc(n)}</li>`).join("")}</ul>` : ""}</div></div></details>`;
+}
 
 /* ===================================================================== icons */
 const I = {
@@ -192,6 +253,7 @@ const S = {
   stock: null, sheetTab: "chart", ctx: [],
   screener: { q: "", view: "all", ind: "", tier: "", sort: "setup", dir: -1, limit: 150, map: false, hideVeto: false },
   setups: { view: "ready", sel: 0 },
+  book: "breakout",
   research: "analyst",
   record: "gate",
   penny: { q: "", arm: "", showVeto: false, sort: "score", dir: -1 },
@@ -326,40 +388,42 @@ function afterRender() { while (AFTER.length) { try { AFTER.shift()(); } catch (
 /* ------------------------------------------------------------------- TODAY */
 function pageToday() {
   const rg = regime(), gate = D.gate || {}, coh = gate.cohort || {}, req = gate.required || {};
-  const buys = buySignals(), att = attention(), ready = readySetups();
-  const breadthHist = ((X.market || {}).breadth || []).slice(-130);
-  const session = priceSession();
-  const pv = MC.preview || {}, mcNav = MC.nav || [], cmp = MC.compare || {};
+  const buys = buySignals(), ready = readySetups(), trig = recentTriggers(), att = attention();
+  const session = priceSession(), P = D.paper || {};
+  const need = req.min_signals || 40, have = coh.n_qualifying || 0;
+  const bcol = rg.defensive ? "var(--watch)" : "var(--buy)";
+  const hu = headsUpCard();
   return `
   <div class="page-head"><div>
     <h2>What to do today</h2>
     <div class="sub">Prices as of the ${esc(dayName(session))} close · last scan ${esc(D.scan_date || "—")}</div>
   </div></div>
 
-  <div class="kpis" style="margin-bottom:18px">
-    <div class="kpi" data-tip="The breadth rule sizes every trade: risk halves when fewer than 50% of the watched stocks close above their 200-day average. Tested and adopted 2026-07-19.">
+  <div class="kpis hero" style="margin-bottom:18px">
+    <div class="kpi" data-tip="The breadth rule sizes every trade: risk halves when fewer than half of the watched stocks close above their own 200-day average.">
       <div class="label"><span class="dot ${rg.defensive ? "warn" : "ok"}"></span>Market</div>
-      <div class="value text">${esc(rg.word)} · ${esc(rg.size)}</div>
-      <div class="note">${isNum(rg.breadth) ? rg.breadth.toFixed(0) + "% of stocks above their 200-DMA" : "breadth unavailable"}</div>
-      <div style="margin-top:8px">${areaSpark(breadthHist, 260, 34, rg.defensive ? css("--watch") : css("--buy"))}</div>
+      <div class="ring-wrap">${ring((rg.breadth || 0) / 100, isNum(rg.breadth) ? rg.breadth.toFixed(0) + "%" : "—", "above 200-DMA", bcol)}
+        <div><div class="value text" style="margin-top:0">${esc(rg.size)}</div><div class="note">${rg.defensive ? "defensive: half-size positions" : "normal: full-size positions"}</div></div></div>
     </div>
-    <div class="kpi" data-tip="Breakout triggers and gap-up episodic pivots from the last 7 days that are still valid. This is what the system is built to act on.">
+    <div class="kpi" data-tip="Breakout triggers and gap-up pivots from the last 7 days that are still valid: what the system is built to act on.">
       <div class="label">Buy signals</div>
-      <div class="value ${buys.length ? "pos" : ""}">${buys.length}</div>
-      <div class="note">${buys.length ? "valid now — plans below" : "none valid right now (normal)"}</div>
+      <div class="value ${buys.length ? "pos" : ""}">${buys.length}<span class="muted" style="font:500 12.5px var(--font);margin-left:8px">${buys.length ? "valid now" : "none valid (normal)"}</span></div>
+      <div class="counters">
+        <button class="counter" data-go="setups" data-sub="ready"><i style="background:var(--buy)"></i><b>${ready.length}</b><span>ready to break out</span></button>
+        <button class="counter" data-go="setups" data-sub="triggered"><i style="background:var(--watch)"></i><b>${trig.length}</b><span>triggered this week</span></button>
+        <div class="counter"><i style="background:var(--ai)"></i><b>${(RD.rows || []).length}</b><span>on the radar</span></div>
+      </div>
     </div>
-    <div class="kpi" data-tip="The momentum core: the top 20 stocks by volatility-adjusted 6- and 12-month momentum, rebalanced monthly at the next open. Pre-registered 2026-09-25 as the core of one book with the breakout trades; tracked forward on paper.">
-      <div class="label">Momentum core</div>
-      ${mcNav.length ? `<div class="value ${cls(cmp.sleeve)}">${pct(cmp.sleeve)}</div>
-        <div class="note">since ${esc(dateLabel(mcNav[0][0]))} · universe ${pct(cmp.universe_ew)}</div>`
-      : `<div class="value text">Starts ${esc(nextRebalanceLabel().replace("the first session of ", "1 "))}</div>
-        <div class="note">${(pv.targets || []).length} names at ${Math.round((pv.exposure || 1) * 100)}% invested, if it rebalanced tonight</div>`}
+    <div class="kpi" data-tip="The breakout paper book: every AI-analyst BUY, entered at the next open and run by the two-lot plan. Notional ₹10L, no real money.">
+      <div class="label">Breakout paper book</div>
+      <div class="value ${cls(P.net)}">${inrShort(P.net)}</div>
+      <div class="note">${pct(P.net_pct)} on ₹10L · ${(POS.paper || []).length} open${att.length ? ` · <span class="warn">${att.length} need attention</span>` : ""}</div>
     </div>
-    <div class="kpi" data-tip="The pre-registered capital gate: 40 qualifying signals at ≥50% of the backtest's age-matched expectancy, beating the momentum-quality ETF, by 2026-12-31. Real money waits for it.">
+    <div class="kpi" data-tip="The pre-registered test that decides whether real money is ever used: 40 qualifying signals that beat the benchmark by 2026-12-31.">
       <div class="label">Capital gate</div>
-      <div class="value">${num(coh.n_qualifying)}<span class="muted" style="font-size:15px">/${num(req.min_signals || 40)}</span></div>
-      <div class="note">${isNum(coh.expectancy_r) ? rr(coh.expectancy_r) + " vs " + rr(coh.required_expectancy_r) + " needed" : "accruing"}</div>
-      <div style="margin-top:8px">${meter((coh.n_qualifying || 0) / (req.min_signals || 40), "info")}</div>
+      <div class="value">${num(have)}<span class="muted" style="font-size:15px">/${num(need)}</span></div>
+      <div style="margin:9px 0 6px">${meter(have / need, "info")}</div>
+      <div class="note">real money waits for ${num(need)} qualifying signals</div>
     </div>
   </div>
 
@@ -369,25 +433,23 @@ function pageToday() {
       ${buys.length ? `<div class="action-list">${buys.map(buyCard).join("")}</div>` : emptyBuys()}
     </div>
     <div>
-      <div class="section-title">Paper portfolio<span class="line"></span></div>
+      <div class="section-title">Paper portfolio<span class="line"></span><button class="btn link" data-go="portfolio" style="font-size:12px;text-transform:none;letter-spacing:0">open →</button></div>
       ${paperPortfolioCard()}
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:28px">Ready to break out <span class="chip sm watch">${ready.length}</span>${info("Uptrend names with a live volatility-contraction base. The validated entry is a CLOSE above the pivot on at least 1.5× average volume. Set a price alert at the pivot, and if it trips, check the volume near 3:15 PM — buying on the breakout day's close is what the backtest measured; waiting for the next morning cost about 10 points of CAGR in the 2026-09-25 re-run.")}<span class="line"></span>
+  <div class="section-title" style="margin-top:28px">Ready to break out <span class="chip sm watch">${ready.length}</span>${info("Uptrend names with a live volatility-contraction base. The validated entry is a CLOSE above the pivot on at least 1.5× average volume. Set a price alert at the pivot; if it trips, check the volume near 3:15 PM.")}<span class="line"></span>
     <button class="btn sm" data-copy-alerts="today">${I.copy}Copy alert list</button></div>
   ${readyTable(ready.slice(0, 10), false)}
   ${ready.length > 10 ? `<div style="margin-top:8px"><button class="btn link" data-go="setups">All ${ready.length} ready setups →</button></div>` : ""}
 
   ${radarSection()}
 
-  <div class="grid grid-2" style="margin-top:28px">
-    <div>
-      <div class="section-title">Market pulse<span class="line"></span></div>
-      ${marketPulseCard()}
-    </div>
-    <div>${headsUpCard() || `<div class="section-title">Heads-up<span class="line"></span></div><div class="empty">No negative filing or exchange-surveillance flag on anything in the paper portfolio or about to be bought.</div>`}</div>
-  </div>`;
+  <div class="section-title" style="margin-top:28px">Market<span class="line"></span></div>
+  <div class="grid grid-2">${marketPulseCard()}${themesCard()}</div>
+  <div style="margin-top:16px">${universeMap(ROWS)}</div>
+
+  ${hu ? `<div style="margin-top:28px">${hu}</div>` : ""}`;
 }
 /* The whole-market multibagger radar (scripts/multibagger_radar.py): the three
    signals that raised the odds of a stock tripling within a year in BOTH halves
@@ -405,17 +467,22 @@ function radarSection() {
   const rows = RD.rows || [];
   if (!RD.asof) return "";
   const R = RD.research || {};
-  const odds = Object.entries(RADAR_WORD).filter(([k]) => R[k] && isNum(R[k].tripled_within_1y_pct))
-    .map(([k, w]) => `${w}: <b>${num(R[k].tripled_within_1y_pct, 1)}%</b> tripled within a year (all liquid stocks ${num(R[k].universe_pct, 1)}%)` + ((k === "H20" || k === "H25") && isNum(R[k].median_12m_pct) ? `, median 12-month return <b>${pct(R[k].median_12m_pct, 1)}</b>` : "")).join(" · ");
-  const body = rows.length ? `<div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th>Signal</th><th class="r">6 months</th><th class="r">12 months</th><th class="r hide-sm" data-tip="6-month return percentile in the liquid market (100 = strongest).">RS</th><th class="r hide-sm">From 52-wk high</th><th class="r hide-sm" data-tip="Median daily traded value, last 20 sessions.">Traded / day</th></tr></thead>
-    <tbody>${rows.slice(0, 15).map(r => `<tr ${rowBy[r.sym] ? `data-sym="${esc(r.sym)}"` : ""}><td><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "outside the scanned universe")}</span></div></td>
-      <td>${Object.entries(r.signals || {}).map(([k, d]) => `<span class="chip sm ${k === "H7" || k === "H25" ? "buy" : k === "H14" ? "ai" : k === "H20" ? "info" : "watch"}" data-tip="${esc(RADAR_TIP[k] + " Fired " + d + ".")}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ")}</td>
+  const chipCls = k => k === "H7" ? "buy" : k === "H25" ? "teal" : k === "H14" ? "ai" : k === "H20" ? "info" : "watch";
+  const feed = RD.insider_asof ? " Promoter disclosures up to " + dateLabel(RD.insider_asof) + "." : "";
+  const tipOf = k => (RADAR_TIP[k] || "") + (k === "H25" ? feed : "");
+  const odds = Object.entries(RADAR_WORD).filter(([k]) => R[k] && isNum(R[k].tripled_within_1y_pct) && R[k].universe_pct > 0)
+    .map(([k, w]) => ({ k, w, x: R[k].tripled_within_1y_pct / R[k].universe_pct, r: R[k] })).sort((a, b) => b.x - a.x);
+  const body = rows.length ? `<div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th>Signal</th><th class="r">6 months</th><th class="r">12 months</th><th class="r hide-sm" data-tip="6-month return percentile in the liquid market (100 = strongest).">RS</th><th class="hide-sm">120 days</th><th class="r hide-sm">From 52-wk high</th><th class="r hide-sm" data-tip="Median daily traded value, last 20 sessions.">Traded / day</th></tr></thead>
+    <tbody>${rows.slice(0, 15).map(r => `<tr ${rowBy[r.sym] ? `data-sym="${esc(r.sym)}"` : `style="cursor:default"`}><td><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "outside the scanned universe")}</span></div></td>
+      <td>${Object.entries(r.signals || {}).map(([k, d]) => `<span class="chip sm ${chipCls(k)}" data-tip="${esc(tipOf(k) + " Fired " + d + ".")}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ")}</td>
       <td class="r num ${cls(r.ret_6m_pct)}">${pct(r.ret_6m_pct, 0)}</td><td class="r num ${cls(r.ret_12m_pct)}">${pct(r.ret_12m_pct, 0)}</td>
-      <td class="r num hide-sm">${num(r.rs_pct, 0)}</td><td class="r num hide-sm">${pct(r.off_52w_high_pct, 1)}</td><td class="r num hide-sm">₹${num(r.traded_value_cr, 1)} Cr</td></tr>`).join("")}</tbody></table></div></div>`
-    : `<div class="empty">No power play, new RS leader or discovery signal in the last ${num(RD.window_sessions)} sessions.</div>`;
-  return `<div class="section-title" style="margin-top:28px">Multibagger radar <span class="chip sm">${rows.length}</span>${info("The whole NSE market (" + num(RD.universe_size) + " liquid stocks, not just the scanned universe), rebuilt nightly from the exchange's own files. These three signals raised the chance of a stock tripling within a year in BOTH 2005–2015 and 2016–2026 on a survivorship-free panel; the system's own VCP breakout barely did. Even the best was followed by a triple only about 1 time in 10 — a list to research, not to buy blindly.")}<span class="line"></span><span class="hint">as of ${esc(RD.asof)}</span></div>
-    ${body}
-    ${odds ? `<div class="hint" style="margin-top:8px">Measured 2016–2026 (promoter buying: 2021–2026): ${odds}.${RD.insider_asof ? ` Promoter disclosures up to ${esc(RD.insider_asof)}.` : ""}</div>` : ""}`;
+      <td class="r hide-sm">${rsCell(r.rs_pct)}</td>
+      <td class="hide-sm">${closesOf(r.sym).length ? spark(closesOf(r.sym), 90, 24) : `<span class="faint">—</span>`}</td>
+      <td class="r num hide-sm">${pct(r.off_52w_high_pct, 1)}</td><td class="r num hide-sm">₹${num(r.traded_value_cr, 1)} Cr</td></tr>`).join("")}</tbody></table></div></div>`
+    : `<div class="empty">No radar signal in the last ${num(RD.window_sessions)} sessions.</div>`;
+  return `<div class="section-title" style="margin-top:28px">Multibagger radar <span class="chip sm">${rows.length}</span>${info("The whole NSE market, rebuilt nightly from the exchange's own files. Each signal raised the chance of a stock tripling within a year in the research. Even the best is followed by a triple only about 1 time in 10: a list to research, not to buy blindly.")}<span class="line"></span><span class="hint">as of ${esc(RD.asof)}</span></div>
+    ${odds.length ? `<div class="odds"><span class="muted">How much likelier to triple within a year than an average stock:</span>${odds.map(o => `<span class="chip sm ${chipCls(o.k)}" data-tip="${esc(o.w + ": " + num(o.r.tripled_within_1y_pct, 1) + "% of these tripled within a year, against " + num(o.r.universe_pct, 1) + "% of all liquid stocks.")}">${esc(o.w)} ${o.x.toFixed(1)}×</span>`).join("")}</div>` : ""}
+    ${body}`;
 }
 function emptyBuys() {
   const recent = recentTriggers().filter(a => !(a.dokind === "act" || a.dokind === "ep") || a.status !== "ACTIONABLE");
@@ -466,17 +533,18 @@ function readyTable(list, compact) {
   if (!list.length) return `<div class="empty">No uptrend name has a live base right now. Bases take weeks to form; this list refills as they do.</div>`;
   return `<div class="card flush"><div class="table-wrap"><table class="t">
     <thead><tr><th>Stock</th><th class="r">Price</th><th class="r">Pivot</th><th class="r" data-tip="How far price must rise to close above the pivot. Negative = already above it, waiting for volume.">To pivot</th>
-    <th class="r hide-sm" data-tip="Shares that must trade on the breakout day (1.5× the 50-day average) — and today's volume as a multiple of that average.">Volume needed</th>
-    <th class="r hide-sm">Stop</th><th class="r hide-sm">Qty</th><th class="r">RS</th>${compact ? "" : `<th class="hide-sm">Stage</th><th class="r hide-sm">Score</th>`}</tr></thead>
+    <th class="r hide-sm" data-tip="Shares that must trade on the breakout day (1.5× the 50-day average), and today's volume as a multiple of that average.">Volume needed</th>
+    <th class="r hide-sm">Stop</th><th class="r hide-sm">Qty</th><th class="hide-sm">120 days</th><th class="r" data-tip="Relative strength percentile: 6- and 12-month return ranked against the whole universe.">RS</th>${compact ? "" : `<th class="r hide-sm" data-tip="Research score out of 100 from eight weighted questions; open a stock for the breakdown. Names under 50 have lagged the market.">Score</th>`}</tr></thead>
     <tbody>${list.map(s => `<tr data-sym="${esc(s.sym)}" data-ctx="ready">
       <td><div class="cell-sym"><span class="sym">${esc(s.sym)} ${verdictBy[s.sym] ? verdictChip(verdictBy[s.sym]) : ""} ${pickBy[s.sym] ? '<span class="chip sm ai">Committee pick</span>' : ""} ${corePreview.has(s.sym) ? '<span class="chip sm ghost" data-tip="Also in the momentum top 20.">momentum</span>' : ""} ${dealChip(s.sym)}</span><span class="co">${esc(s.company || "")}</span></div></td>
       <td class="r num">${px(s.px)}</td><td class="r num">${px(s.pivot)}</td>
       <td class="r num ${isNum(s.dist) && s.dist <= 2 ? "pos" : ""}">${pct(s.dist)}</td>
-      <td class="r num hide-sm">${volFmt(s.vneed)} <span class="muted">· today ${isNum(s.vr) ? s.vr.toFixed(1) + "×" : "—"}</span></td>
+      <td class="r num hide-sm">${volFmt(s.vneed)}<div class="muted" style="font-size:11px">today ${isNum(s.vr) ? s.vr.toFixed(1) + "×" : "—"}</div></td>
       <td class="r num hide-sm">${s.plan && !s.plan.skip ? px(s.plan.stop) + ` <span class="muted">${pct(-s.plan.stop_pct)}</span>` : `<span class="warn" data-tip="${esc((s.plan || {}).why || "")}">too wide</span>`}</td>
       <td class="r num hide-sm">${s.plan && !s.plan.skip ? num(s.plan.shares) : "—"}</td>
-      <td class="r num">${isNum(s.rs) ? s.rs.toFixed(0) : "—"}</td>
-      ${compact ? "" : `<td class="hide-sm">${stageChip(s.tag)}</td><td class="r num hide-sm">${isNum(s.score) ? s.score.toFixed(0) : "—"}</td>`}
+      <td class="hide-sm">${spark(closesOf(s.sym), 72, 24)}</td>
+      <td class="r">${rsCell(s.rs)}</td>
+      ${compact ? "" : `<td class="r hide-sm">${scoreCell(s.score)}</td>`}
     </tr>`).join("")}</tbody></table></div></div>`;
 }
 function alertText(list) {
@@ -486,31 +554,13 @@ function alertText(list) {
   return `Golden Stock — pivot alerts (prices to ${day})\n` + lines.join("\n") + `\n\nThe validated entry is a CLOSE above the pivot on ≥1.5× average volume. A price alert is a prompt to check, not an order.`;
 }
 function paperPortfolioCard() {
-  const paper = POS.paper || [], att = attention(), paperSum = D.paper || {};
-  const pv = MC.preview || {}, nav = MC.nav || [], cmp = MC.compare || {};
-  let html = `<div class="card">`;
-  // 1. the momentum core: what it holds, or what it will buy at the next rebalance
-  html += `<div class="lrow" data-go="portfolio"><div><div><span class="sym">Momentum core</span> <span class="chip sm ai">monthly</span></div>`;
-  if (nav.length) {
-    html += `<div class="meta">${coreHeld.size} names · ${pct(cmp.sleeve)} since ${esc(dateLabel(nav[0][0]))} (universe ${pct(cmp.universe_ew)}, MIDSMALL ${pct(cmp.midsmall)})</div>
-      <div class="act">Next rebalance: ${esc(nextRebalanceLabel())}${(pv.adds || []).length ? ` · tonight's ranking would add ${pv.adds.length}, drop ${(pv.drops || []).length}` : ""}</div>`;
-  } else {
-    html += `<div class="meta">First rebalance at ${esc(nextRebalanceLabel())}'s open — ${(pv.targets || []).length} names at ${Math.round((pv.exposure || 1) * 100)}% invested if the month ended tonight</div>
-      <div class="act muted">Top of tonight's ranking: ${(pv.targets || []).slice(0, 5).map(t => esc(t.sym)).join(", ")}…</div>`;
-  }
-  html += `</div><div class="muted" style="font-size:12px">view →</div></div>`;
-  // 2. the breakout paper book: anything a rule is about to act on
-  html += `<div class="lrow" data-go="portfolio" style="border-bottom:0"><div><div><span class="sym">Breakout book</span> <span class="chip sm ghost">analyst BUYs</span></div>
-      <div class="meta">${paper.length} open · <span class="${cls(paperSum.net)}">${inrShort(paperSum.net)}</span> net (${pct(paperSum.net_pct)})</div></div>
-      <div class="muted" style="font-size:12px">view →</div></div>`;
-  if (att.length) {
-    html += att.slice(0, 5).map(p => `<div class="lrow" data-sym="${esc(p.sym)}">
-      <div><div><span class="sym">${esc(p.sym)}</span> <span class="chip sm ghost">paper</span></div>
-      <div class="act warn">${esc(p.urgent[0])}</div>
-      <div class="meta">stop ${px(p.stop)} · last ${px(p.last)}</div></div>
-      <div class="r num ${cls(p.r_now)}" style="text-align:right">${rr(p.r_now)}<div class="meta">${pct(p.pnl_pct)}</div></div></div>`).join("");
-  }
-  return html + `</div>`;
+  const att = attention();
+  return `<div class="card">${books().map(b => `<div class="lrow" data-go="portfolio" data-sub="${b.id}">
+      <div><div><i class="bdot" style="background:var(${b.color})"></i><span class="sym">${esc(b.name)}</span></div>
+        <div class="meta">${b.started ? num(b.held) + " held · since " + esc(dateLabel(b.started)) : "starts " + esc(b.startsLabel)}</div></div>
+      <div style="display:flex;align-items:center;gap:10px">${b.nav.length > 2 ? spark(b.nav.map(p => p[1]), 70, 24) : ""}<span class="num ${cls(b.ret)}" style="min-width:58px;text-align:right">${b.started && isNum(b.ret) ? pct(b.ret) : "—"}</span></div></div>`).join("")}
+    ${att.length ? `<div class="callout watch" style="margin-top:10px;font-size:12.5px">${att.slice(0, 4).map(p => `<div data-sym="${esc(p.sym)}" style="cursor:pointer"><b>${esc(p.sym)}</b>: ${esc(p.urgent[0])}</div>`).join("")}</div>` : ""}
+  </div>`;
 }
 function marketPulseCard() {
   const m = X.market || {};
@@ -519,18 +569,23 @@ function marketPulseCard() {
   function chg(series, n) { if (series.length <= n) return null; const a = series[series.length - 1 - n][1], b = series[series.length - 1][1]; return (b / a - 1) * 100; }
   const t = D.tags || {}, tot = Object.values(t).reduce((a, b) => a + b, 0) || 1;
   const segs = [["CONFIRMED", "--buy"], ["EXTENDED", "--watch"], ["ANTICIPATION", "--info"], ["WATCH", "--faint"], ["BROKEN", "--risk"]];
-  const themes = ((D.themes || {}).themes || []).filter(x => !x.thin).slice().sort((a, b) => (b.heat || 0) - (a.heat || 0)).slice(0, 4);
-  return `<div class="card">
+  return `<div class="card"><div class="card-head"><h3>Market pulse</h3><span class="hint">the last six months</span></div>
     <div class="pulse" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-      <div><div class="k">Small &amp; mid caps ${info("An equal-weight index of every stock this system watches — the market it actually trades, rather than the NIFTY 50.")}</div>
+      <div><div class="k">Small &amp; mid caps ${info("An equal-weight index of every stock this system watches: the market it actually trades, rather than the NIFTY 50.")}</div>
         <div class="v ${cls(chg(ew, 21))}">${pct(chg(ew, 21))}</div><div class="s">1 month · ${pct(chg(ew, 63))} 3 months</div></div>
       <div><div class="k">NIFTY 50</div><div class="v ${cls(chg(nf, 21))}">${pct(chg(nf, 21))}</div><div class="s">1 month · ${pct(chg(nf, 63))} 3 months</div></div>
     </div>
-    <div style="margin-top:14px">${areaSpark(ew.slice(-130), 300, 54, css("--info"))}</div>
-    <div class="stagebar" style="margin-top:12px">${segs.map(([k, c]) => `<i style="width:${((t[k] || 0) / tot * 100).toFixed(1)}%;background:var(${c})" data-tip="${esc(stageWord(k))}: ${t[k] || 0}"></i>`).join("")}</div>
+    <div style="margin-top:14px">${areaSpark(ew.slice(-130), 300, 64, css("--info"))}</div>
+    <div class="muted" style="font-size:12px;margin-top:12px">Where the ${num(tot)} watched stocks stand</div>
+    <div class="stagebar" style="margin-top:6px">${segs.map(([k, c]) => `<i style="width:${((t[k] || 0) / tot * 100).toFixed(1)}%;background:var(${c})" data-tip="${esc(stageWord(k))}: ${t[k] || 0}"></i>`).join("")}</div>
     <div class="legend">${segs.map(([k, c]) => `<span><i style="background:var(${c})"></i>${esc(stageWord(k))} ${t[k] || 0}</span>`).join("")}</div>
-    ${themes.length ? `<div style="margin-top:14px;font-size:12px" class="muted">Hottest themes ${info("Relative heat across 18 cross-industry themes (3-month move, chart breadth, news). A research ranking — tested as an entry filter and rejected, so it changes no trade.")}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${themes.map(x => `<button class="chip" data-go="research" data-sub="themes">${esc(x.name)} <span class="muted">${num(x.heat)}</span></button>`).join("")}</div>` : ""}
+  </div>`;
+}
+function themesCard() {
+  const th = ((D.themes || {}).themes || []).filter(x => !x.thin).slice().sort((a, b) => (b.heat || 0) - (a.heat || 0)).slice(0, 8);
+  if (!th.length) return "";
+  return `<div class="card"><div class="card-head"><h3>Hottest themes</h3>${info("Relative heat across cross-industry themes, from the 3-month move, chart breadth and news. A research ranking: tested as an entry filter and rejected, so it changes no trade.")}<span class="right"><button class="btn link" data-go="research" data-sub="themes">all themes →</button></span></div>
+    <div class="hbars">${th.map(x => `<div class="hbar" data-go="research" data-sub="themes"><span class="nm">${esc(x.name)}</span><span class="track"><i style="width:${Math.min(100, x.heat || 0).toFixed(0)}%;background:${(x.heat || 0) >= 60 ? "var(--buy)" : "var(--watch)"}"></i></span><b>${num(x.heat)}</b></div>`).join("")}</div>
   </div>`;
 }
 function headsUpCard() {
@@ -581,14 +636,14 @@ function pageSetups() {
 }
 function setupsTable(list) {
   if (!list.length) return `<div class="empty" style="margin:14px">Nothing here right now.</div>`;
-  return `<div class="table-wrap max"><table class="t" id="setuptbl"><thead><tr><th>Stock</th><th class="r">Price</th><th class="r">Pivot</th><th class="r">To pivot</th><th class="r hide-sm">Vol today</th><th class="r">RS</th><th class="hide-sm">Stage</th><th class="r hide-sm">Score</th></tr></thead>
+  return `<div class="table-wrap max"><table class="t" id="setuptbl"><thead><tr><th>Stock</th><th class="r">Price</th><th class="r">Pivot</th><th class="r">To pivot</th><th class="hide-sm">120 days</th><th class="r">RS</th><th class="r hide-sm">Score</th></tr></thead>
   <tbody>${list.map((s, i) => `<tr data-idx="${i}" class="${i === S.setups.sel ? "sel" : ""}">
     <td><div class="cell-sym"><span class="sym">${esc(s.sym)}</span><span class="co">${esc(s.company || "")}</span></div></td>
     <td class="r num">${px(s.px)}</td><td class="r num">${px(s.pivot)}</td>
     <td class="r num ${isNum(s.dist) && s.dist <= 2 ? "pos" : ""}">${pct(s.dist)}</td>
-    <td class="r num hide-sm">${isNum(s.vr) ? s.vr.toFixed(1) + "×" : "—"}</td>
-    <td class="r num">${isNum(s.rs) ? s.rs.toFixed(0) : "—"}</td><td class="hide-sm">${stageChip(s.tag)}</td>
-    <td class="r num hide-sm">${isNum(s.score) ? s.score.toFixed(0) : "—"}</td></tr>`).join("")}</tbody></table></div>`;
+    <td class="hide-sm">${spark(closesOf(s.sym), 80, 22)}</td>
+    <td class="r">${rsCell(s.rs)}</td>
+    <td class="r hide-sm">${scoreCell(s.score)}</td></tr>`).join("")}</tbody></table></div>`;
 }
 function triggeredTable(list) {
   if (!list.length) return `<div class="empty" style="margin:14px">No trigger in the last 7 days.</div>`;
@@ -623,6 +678,8 @@ function drawSetupPreview() {
     </div>` : st && st.plan && st.plan.skip ? `<div class="callout watch" style="margin-top:12px">No sized plan: ${esc(st.plan.why)}</div>` : ""}
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">${stageChip(r.tag)} ${setupChip(r.trig)} ${survChips(sym)} ${(themeBy[sym] || []).slice(0, 2).map(t => `<span class="chip sm ghost">${esc(t)}</span>`).join("")}</div>
     ${v ? `<div class="why" style="margin-top:10px;font-size:13px;color:var(--text-2)"><span class="muted">AI analyst:</span> ${esc(v.why)}</div>` : ""}
+    <div class="card-head" style="margin:16px 0 10px"><h3 style="font-size:13.5px">Why this score</h3>${isNum((detailOf(sym) || {}).score) ? `<span class="chip sm" style="color:${scoreCol(detailOf(sym).score)};border-color:${scoreCol(detailOf(sym).score)}">${detailOf(sym).score.toFixed(0)} / 100</span>` : ""}<span class="hint">open the stock for the evidence</span></div>
+    ${scoreBars(sym, true)}
   </div>`;
   drawCandles($("#prevchart"), sym, { range: "6M", compact: true, bucket: _prevCharts, pivot: st ? st.pivot : null, stop: plan ? plan.stop : null });
 }
@@ -678,17 +735,16 @@ function pageScreener() {
     <span class="right">${rows.length} match</span></div>
   ${f.map ? universeMap(rows) : `<div class="card flush"><div class="table-wrap max"><table class="t" id="stbl">
     <thead><tr>${th("sym", "Stock")}${th("tag", "Stage")}${th("setup", "Setup", "", "Fired breakout > live base > none. The base is where the forward record shows the edge.")}${th("dist", "To pivot", "r hide-sm", "How far below its pivot a base-ready name sits.")}
-      ${th("rs", "RS", "r", "Relative strength percentile: 6- and 12-month return ranked against the whole universe.")}${th("close", "Price", "r")}<th class="hide-sm">120 days</th>
-      ${th("tier", "Size", "hide-sm")}${th("ind", "Industry", "hide-sm")}${th("score", "Score", "r hide-sm", "Research score (0–100) from the eight weighted questions. Useful to rule out the worst (vetoed and under-50 names lag the universe); it does not rank the rest — see Track record.")}
+      ${th("rs", "RS", "r", "Relative strength percentile: 6- and 12-month return ranked against the whole universe.")}${th("score", "Score", "r hide-sm", "Research score (0–100) from the eight weighted questions. Useful to rule out the worst (vetoed and under-50 names lag the universe); it does not rank the rest — see Track record.")}${th("close", "Price", "r")}<th class="hide-sm">120 days</th>
+      ${th("tier", "Size", "hide-sm")}${th("ind", "Industry", "hide-sm")}
       ${th("roce", "ROCE", "r hide-sm")}${th("pe", "P/E", "r hide-sm")}${th("pgttm", "Profit TTM", "r hide-sm")}</tr></thead>
     <tbody>${shown.map(r => { const s = setupBy[r.sym]; return `<tr data-sym="${esc(r.sym)}" data-ctx="screener" class="${r.veto ? "dim" : ""}">
       <td><div class="cell-sym"><span class="sym">${esc(r.sym)}${r.veto ? ' <span class="chip sm risk" data-tip="Vetoed: governance or leverage red flag. Research score capped at 25.">veto</span>' : ""}</span><span class="co">${esc(r.company || "")}</span></div></td>
       <td>${stageChip(r.tag)}</td><td>${setupChip(r.trig)}</td>
       <td class="r num hide-sm">${s && isNum(s.dist) ? pct(s.dist) : ""}</td>
-      <td class="r num">${isNum(r.rs) ? r.rs.toFixed(0) : "—"}</td><td class="r num">${px(r.close)}</td>
+      <td class="r">${rsCell(r.rs)}</td><td class="r hide-sm">${scoreCell(r.score)}</td><td class="r num">${px(r.close)}</td>
       <td class="hide-sm">${spark(closesOf(r.sym), 90, 24)}</td>
       <td class="hide-sm muted">${esc(r.tier || "")}</td><td class="hide-sm muted" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.ind || "")}</td>
-      <td class="r num hide-sm">${isNum(r.score) ? r.score.toFixed(0) : "—"}</td>
       <td class="r num hide-sm">${isNum(r.roce) ? r.roce.toFixed(0) + "%" : "—"}</td><td class="r num hide-sm">${isNum(r.pe) ? r.pe.toFixed(0) : "—"}</td>
       <td class="r num hide-sm ${cls(r.pgttm)}">${isNum(r.pgttm) ? pct(r.pgttm, 0) : "—"}</td></tr>`; }).join("")}</tbody></table></div>
     ${rows.length > shown.length ? `<div style="padding:12px 16px"><button class="btn" id="smore">Show ${Math.min(200, rows.length - shown.length)} more of ${rows.length - shown.length}</button></div>` : ""}</div>`}`;
@@ -707,113 +763,141 @@ function bindMap() { }
 function momentumSection() {
   const pv = MC.preview || {}, nav = MC.nav || [], cmp = MC.compare || {}, book = MC.book || {};
   const targets = pv.targets || [];
-  if (nav.length) AFTER.push(() => drawCoreNav());
-  const kpis = nav.length ? `
-    <div class="kpi"><div class="label">Since ${esc(dateLabel(nav[0][0]))}</div><div class="value ${cls(cmp.sleeve)}">${pct(cmp.sleeve)}</div><div class="note">NAV ${inrShort(nav[nav.length - 1][1])} on a ₹10L paper book</div></div>
-    <div class="kpi"><div class="label">Own the universe</div><div class="value sm ${cls(cmp.universe_ew)}">${pct(cmp.universe_ew)}</div><div class="note">equal weight, same dates</div></div>
-    <div class="kpi"><div class="label">MIDSMALL ETF</div><div class="value sm ${cls(cmp.midsmall)}">${pct(cmp.midsmall)}</div><div class="note">the investable alternative</div></div>
-    <div class="kpi"><div class="label">Invested</div><div class="value sm">${Math.round(((MC_LAST || {}).exposure || 1) * 100)}%</div><div class="note">${coreHeld.size} names · breadth ${num((MC_LAST || {}).breadth)}% at the signal</div></div>`
-    : `
-    <div class="kpi"><div class="label">First rebalance</div><div class="value text">${esc(nextRebalanceLabel().replace("the first session of ", "1 "))}</div><div class="note">at the open, from the 30 Sep month-end ranking</div></div>
-    <div class="kpi"><div class="label">If it rebalanced tonight</div><div class="value sm">${targets.length} names</div><div class="note">${Math.round((pv.exposure || 1) * 100)}% invested · breadth ${num(pv.breadth)}%</div></div>
-    <div class="kpi"><div class="label">Eligible</div><div class="value sm">${num(pv.eligible)}</div><div class="note">index names with ≥₹2 Cr daily turnover</div></div>
-    <div class="kpi"><div class="label">Backtest, 2020 → 2026</div><div class="value sm pos">+43.6%/yr</div><div class="note">−23.4% worst drawdown, at 0.25% costs</div></div>`;
-  const tbl = `<div class="card flush"><div class="card-head"><h3>${nav.length ? "Next rebalance, if the month ended tonight" : "The list the rules would buy tonight"}</h3>
-      <span class="hint">as of ${esc(pv.asof || "")}${nav.length ? ` · adds ${(pv.adds || []).length}, drops ${(pv.drops || []).length}` : ""}</span></div>
-    <div class="table-wrap"><table class="t"><thead><tr><th class="r">Rank</th><th>Stock</th><th class="r">6 months</th><th class="r">12 months</th><th class="r hide-sm" data-tip="Annualised volatility of daily returns — the score divides by it, so steady strength outranks wild swings.">Volatility</th><th class="r">Price</th><th>Status</th></tr></thead>
+  const when = nextRebalanceLabel().replace("the first session of ", "1 ");
+  const head = nav.length ? `<div class="kpis" style="margin-bottom:14px">
+      <div class="kpi"><div class="label">Since ${esc(dateLabel(nav[0][0]))}</div><div class="value ${cls(cmp.sleeve)}">${pct(cmp.sleeve)}</div><div class="note">NAV ${inrShort(nav[nav.length - 1][1])} on ₹10L</div></div>
+      <div class="kpi"><div class="label">MIDSMALL ETF</div><div class="value sm ${cls(cmp.midsmall)}">${pct(cmp.midsmall)}</div><div class="note">same dates: the bar it is judged by</div></div>
+      <div class="kpi"><div class="label">Invested</div><div class="value sm">${Math.round(((MC_LAST || {}).exposure || 1) * 100)}%</div><div class="note">${coreHeld.size} names</div></div>
+      <div class="kpi"><div class="label">Next rebalance</div><div class="value text">${esc(when)}</div><div class="note">${(pv.adds || []).length} adds and ${(pv.drops || []).length} drops if it were tonight</div></div></div>`
+    : `<div class="callout info" style="margin-bottom:14px">First rebalance at the open on <b>${esc(when)}</b>. If the month ended tonight, it would buy these ${targets.length} names, ${Math.round((pv.exposure || 1) * 100)}% invested.</div>`;
+  const tbl = `<div class="card flush"><div class="card-head"><h3>${nav.length ? "Next rebalance, if the month ended tonight" : "What the rules would buy tonight"}</h3>
+      <span class="hint">as of ${esc(pv.asof || "")}</span></div>
+    <div class="table-wrap"><table class="t"><thead><tr><th class="r">Rank</th><th>Stock</th><th class="r">6 months</th><th class="r">12 months</th><th class="hide-sm">120 days</th><th class="r hide-sm" data-tip="Annualised volatility of daily returns. The score divides by it, so steady strength outranks wild swings.">Volatility</th><th class="r">Price</th><th>Status</th></tr></thead>
     <tbody>${targets.map(t => `<tr data-sym="${esc(t.sym)}" data-ctx="core"><td class="r num">${num(t.rank)}</td>
       <td><div class="cell-sym"><span class="sym">${esc(t.sym)}</span><span class="co">${esc((rowBy[t.sym] || {}).company || "")}</span></div></td>
-      <td class="r num ${cls(t.r6)}">${pct(t.r6, 0)}</td><td class="r num ${cls(t.r12)}">${pct(t.r12, 0)}</td><td class="r num hide-sm">${num(t.vol)}%</td>
+      <td class="r num ${cls(t.r6)}">${pct(t.r6, 0)}</td><td class="r num ${cls(t.r12)}">${pct(t.r12, 0)}</td>
+      <td class="hide-sm">${closesOf(t.sym).length ? spark(closesOf(t.sym), 80, 22) : `<span class="faint">—</span>`}</td><td class="r num hide-sm">${num(t.vol)}%</td>
       <td class="r num">${px(t.close)}</td><td>${t.held ? '<span class="chip sm ghost">held</span>' : nav.length ? '<span class="chip sm buy">add</span>' : '<span class="chip sm ghost">new</span>'}</td></tr>`).join("")}
-      ${(pv.drops || []).map(s => `<tr data-sym="${esc(s)}"><td class="r faint">—</td><td class="sym">${esc(s)}</td><td colspan="4" class="muted">fell below rank 40</td><td><span class="chip sm risk">drop</span></td></tr>`).join("")}</tbody></table></div></div>`;
+      ${(pv.drops || []).map(s => `<tr data-sym="${esc(s)}"><td class="r faint">—</td><td class="sym">${esc(s)}</td><td colspan="5" class="muted">fell below rank 40</td><td><span class="chip sm risk">drop</span></td></tr>`).join("")}</tbody></table></div></div>`;
   const held = nav.length && (book.rows || []).length ? `<div class="card flush" style="margin-top:16px"><div class="card-head"><h3>Holdings</h3><span class="hint">cash ${inrShort(book.cash)}</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Weight</th><th class="r">Since</th><th class="r">Return</th><th class="r">Price</th></tr></thead>
     <tbody>${book.rows.map(r => `<tr data-sym="${esc(r.sym)}" data-ctx="coreheld"><td class="sym">${esc(r.sym)}</td><td class="r num">${num(r.weight, 1)}%</td><td class="r">${esc(dateLabel(r.since))}</td><td class="r num ${cls(r.ret)}">${pct(r.ret)}</td><td class="r num">${px(r.close)}</td></tr>`).join("")}</tbody></table></div></div>` : "";
-  return `<div class="section-title">Momentum core ${info("The top 20 stocks by volatility-adjusted 6- and 12-month momentum (NSE's momentum-index method), liquid names only, rebalanced on the first session of each month at the open; a holding stays while it ranks in the top 40; half invested when market breadth is under 50%. Pre-registered 2026-09-25 (PREREG_2026-09-25_momentum_core.md) and judged forward against the MIDSMALL ETF and the universe.")}<span class="chip sm ai">pre-registered · paper</span><span class="line"></span></div>
-    <div class="kpis" style="margin-bottom:14px">${kpis}</div>
-    ${nav.length ? `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Growth of the paper book</h3></div><div class="chart-box" id="corenav" style="height:220px"></div></div>` : `<div class="callout info" style="margin-bottom:14px">Why this exists: over 2020–2026 this rotation made about as much as the breakout system with ideal fills, and it catches the fast V-shaped recoveries a base-breakout system cannot enter. Run as <b>one book</b> with the breakout trades — 50/50 had the best risk-adjusted result of everything tested. It starts forward on ${esc(nextRebalanceLabel())}; the pass bar was fixed before any forward data.</div>`}
-    ${tbl}${held}`;
-}
-function drawCoreNav() {
-  const box = $("#corenav"), nav = MC.nav || [];
-  if (!box || !nav.length || !window.LightweightCharts) return;
-  const ch = makeChart(box, { bucket: _pageCharts });
-  const s = ch.addAreaSeries({ lineColor: css("--ai"), topColor: css("--ai") + "33", bottomColor: css("--ai") + "05", lineWidth: 2, priceLineVisible: false });
-  s.setData(nav.map(p => ({ time: p[0], value: p[1] })));
-  ch.timeScale().fitContent();
+  return head + (nav.length ? held + `<div style="margin-top:16px">${tbl}</div>` : tbl) +
+    howItWorks("The top 20 stocks by volatility-adjusted 6- and 12-month momentum (NSE's momentum-index method), liquid names only, rebalanced on the first session of each month at the open. A holding stays while it ranks in the top 40, and the book is half invested when market breadth is under 50%. It is meant to run as one book with the breakout trades, and it catches the fast V-shaped recoveries a base-breakout system cannot enter.",
+      [["2020–2026 backtest", "+43.6% a year", "−23.4% worst drawdown, at 0.25% costs"]]);
 }
 const SLEEVES = {
-  mb: { title: "Multibagger sleeve", chart: "mbnav", color: "--buy", slots: 5,
-        info: "The configuration the multibagger research chose on 2006–2015 alone: RS leaders (6- and 12-month return both in the top 10% of the whole liquid NSE market), 5 slots, bought at the next open, sold on a close under the 30-week average (after 20 sessions) or 20% below entry, and everything to cash while under half the market is above its 200-day average. It is run by the research simulator's own code. It is registered with its weak 2016–2026 result, because choosing with hindsight is what the process forbids (PREREG_2026-09-27_multibagger_sleeve.md).",
-        pre: [["2006–2015 (chosen here)", "+29.9%/yr", "−31.9% worst drawdown, survivorship-free"], ["2016–2026 (read once)", "+18.2%/yr", "−50.9% worst drawdown (the 2022 momentum crash)"]] },
-  vb: { title: "Value-breakout sleeve", chart: "vbnav", color: "--info", slots: 10,
-        info: "Cheap + new uptrend: companies in the market's cheapest 30% on BOTH free-cash-flow yield and book value (cash flow positive), bought when they break out of a 2-year base or start a new stage-2 uptrend. 10 slots, the same exits and breadth rule as the multibagger sleeve. The best typical outcome of everything the research tested (+18.6% median 12-month return), but fundamentals only reach back to 2016, so this is the least-proven of the forward tests (PREREG_2026-09-27_value_breakout.md).",
-        pre: [["2016–2020 (chosen here)", "+6.6%/yr", "−45.3% worst drawdown; the market made 4.7%"], ["2021–2026 (read once)", "+31.1%/yr", "−30.8% worst drawdown; the market made 22.1%"]] },
-  pm: { title: "Promoter-buying sleeve", chart: "pmnav", color: "--watch", slots: 5,
-        info: "Promoter buying + momentum: a promoter or promoter-group entity bought the company's own shares in the open market (worth at least ₹10 lakh, as disclosed to NSE) within the last 60 sessions, AND the stock is already a price leader (RS leader or trend template). The strongest combination the research found: about 2.3× the market's odds of tripling within a year, in both 2015–2020 and 2021–2026. 5 slots, bought at the next open; sold on a close 20% below entry or, after 20 sessions, 3×ATR below the highest close since entry; everything to cash while under half the market is above its 200-day average (PREREG_2026-09-28_promoter_momentum.md).",
-        pre: [["2016–2020 (chosen here)", "+51.5%/yr", "−26.3% worst drawdown; the market made 4.7%"], ["2021–2026 (read once)", "+23.5%/yr", "−43.4% worst drawdown; the market made 22.1%; momentum alone 14.3%"]] },
+  mb: { title: "Multibagger", what: "RS leaders: 6- and 12-month return both in the market's top 10%", color: "--buy", slots: 5,
+        info: "RS leaders from the whole liquid NSE market: the 6- and 12-month returns both in the top 10%. 5 slots, bought at the next open; sold on a close 20% below entry or, after 20 sessions, a close under the 30-week average; everything goes to cash while fewer than half of stocks are above their 200-day average. Chosen on 2006–2015 alone and registered with its weaker 2016–2026 result, because choosing with hindsight is what the process forbids.",
+        pre: [["2006–2015 (chosen here)", "+29.9% a year", "−31.9% worst drawdown"], ["2016–2026 (run once)", "+18.2% a year", "−50.9% worst drawdown"]] },
+  vb: { title: "Value breakout", what: "Cheap on cash flow and book value, starting a new uptrend", color: "--ep", slots: 10,
+        info: "Companies in the market's cheapest 30% on both free-cash-flow yield and book value (cash flow positive), bought when they break out of a 2-year base or start a new stage-2 uptrend. 10 slots, with the same exits and breadth rule as the multibagger sleeve. Fundamentals only reach back to 2016, so this is the least-proven of the forward tests.",
+        pre: [["2016–2020 (chosen here)", "+6.6% a year", "−45.3% worst drawdown; the market made 4.7%"], ["2021–2026 (run once)", "+31.1% a year", "−30.8% worst drawdown; the market made 22.1%"]] },
+  pm: { title: "Promoter buying", what: "A promoter bought in the last 60 sessions, and the stock is a price leader", color: "--teal", slots: 5,
+        info: "A promoter or promoter-group entity bought the company's shares in the open market (at least ₹10 lakh, as disclosed to NSE) within the last 60 sessions, and the stock is already a price leader (RS leader or trend template). 5 slots, bought at the next open; sold on a close 20% below entry or, after 20 sessions, 3×ATR below the highest close since entry; everything goes to cash while fewer than half of stocks are above their 200-day average.",
+        pre: [["2016–2020 (chosen here)", "+51.5% a year", "−26.3% worst drawdown; the market made 4.7%"], ["2021–2026 (run once)", "+23.5% a year", "−43.4% worst drawdown; the market made 22.1%, momentum alone 14.3%"]] },
 };
-function mbSleeveSection() { return sleeveSection(MB, SLEEVES.mb) + sleeveSection(VB, SLEEVES.vb) + sleeveSection(PM, SLEEVES.pm); }
-function sleeveSection(S, o) {
-  if (!S.registered) return "";
-  const MB = S;
-  const nav = MB.nav || [], hold = MB.holdings || [];
-  if (nav.length) AFTER.push(() => drawNav(o.chart, nav, o.color));
-  // a sleeve fed by NSE's insider disclosures shows how fresh they are: a
-  // blocked feed is a date that stops moving (PREREG_2026-09-28 §5)
-  const feed = MB.insider_asof ? `
-    <div class="kpi"><div class="label">Promoter data</div><div class="value sm">${esc(dateLabel(MB.insider_asof))}</div><div class="note">latest disclosure it trades on; if this stops moving, the feed is blocked</div></div>` : "";
-  const kpis = nav.length ? `
-    <div class="kpi"><div class="label">Since ${esc(dateLabel(nav[0][0]))}</div><div class="value ${cls(MB.since_pct)}">${pct(MB.since_pct)}</div><div class="note">NAV ${inrShort(nav[nav.length - 1][1])} on a ₹10L paper book</div></div>
-    <div class="kpi"><div class="label">MIDSMALL ETF</div><div class="value sm ${cls(MB.midsmall_pct)}">${pct(MB.midsmall_pct)}</div><div class="note">same dates — the bar it is judged by</div></div>
-    <div class="kpi"><div class="label">Holdings</div><div class="value sm">${hold.length} / ${o.slots}</div><div class="note">cash ${inrShort(MB.cash)}</div></div>
-    ${MB.breadth_exit === false
-      ? `<div class="kpi"><div class="label">Regime exit</div><div class="value sm">None</div><div class="note">stays invested; every exit is per stock</div></div>`
-      : `<div class="kpi"><div class="label">Regime</div><div class="value sm ${MB.risk_on ? "pos" : "neg"}">${MB.risk_on ? "On" : "Off — in cash"}</div><div class="note">off while under 50% of stocks are above their 200-day average</div></div>`}${feed}`
-    : `
-    <div class="kpi"><div class="label">Starts</div><div class="value text">First session after ${esc(dateLabel(MB.registered))}</div><div class="note">buys at the next open after a signal close</div></div>
-    ${o.pre.map(([l, v, n]) => `<div class="kpi"><div class="label">${esc(l)}</div><div class="value sm pos">${esc(v)}</div><div class="note">${esc(n)}</div></div>`).join("")}
-    <div class="kpi"><div class="label">Own the market</div><div class="value sm">+13.8%/yr</div><div class="note">equal weight, 2016–2026, −62% drawdown</div></div>${feed}`;
-  const tbl = hold.length ? `<div class="card flush"><div class="card-head"><h3>Holdings</h3><span class="hint">${(MB.pending_sells || []).length ? "selling at the next open: " + esc(MB.pending_sells.join(", ")) : ""}</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Since</th><th class="r">Entry</th><th class="r">Last</th><th class="r">Return</th></tr></thead>
-    <tbody>${hold.map(h => `<tr ${rowBy[h.sym] ? `data-sym="${esc(h.sym)}"` : ""}><td class="sym">${esc(h.sym)}</td><td class="r">${esc(dateLabel(h.since))}</td><td class="r num">${px(h.entry)}</td><td class="r num">${px(h.last)}</td><td class="r num ${cls(h.ret_pct)}">${pct(h.ret_pct)}</td></tr>`).join("")}</tbody></table></div></div>`
-    : `<div class="empty">${(MB.pending_buys || []).length ? "Buying at the next open: <b>" + esc(MB.pending_buys.join(", ")) + "</b>." : "No holdings yet."}</div>`;
-  return `<div class="section-title" style="margin-top:28px">${esc(o.title)} ${info(o.info)}<span class="chip sm ai">pre-registered · paper</span><span class="line"></span></div>
-    <div class="kpis" style="margin-bottom:14px">${kpis}</div>
-    ${nav.length ? `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Growth of the paper book</h3></div><div class="chart-box" id="${o.chart}" style="height:200px"></div></div>` : ""}
-    ${tbl}`;
+function sleeveSection(Sx, o) {
+  if (!Sx || !Sx.registered) return "";
+  const nav = Sx.nav || [], hold = Sx.holdings || [];
+  const regimeTxt = Sx.breadth_exit === false ? "no regime exit" : Sx.risk_on === false ? "regime off: in cash" : "regime on";
+  const head = nav.length ? `<div class="kpis" style="margin-bottom:14px">
+      <div class="kpi"><div class="label">Since ${esc(dateLabel(nav[0][0]))}</div><div class="value ${cls(Sx.since_pct)}">${pct(Sx.since_pct)}</div><div class="note">NAV ${inrShort(nav[nav.length - 1][1])} on ₹10L</div></div>
+      <div class="kpi"><div class="label">MIDSMALL ETF</div><div class="value sm ${cls(Sx.midsmall_pct)}">${pct(Sx.midsmall_pct)}</div><div class="note">same dates: the bar it is judged by</div></div>
+      <div class="kpi"><div class="label">Holdings</div><div class="value sm">${hold.length} / ${o.slots}</div><div class="note">cash ${inrShort(Sx.cash)} · ${esc(regimeTxt)}</div></div></div>`
+    : `<div class="callout info" style="margin-bottom:14px">Starts on the first session after <b>${esc(dateLabel(Sx.registered))}</b> and buys at the next open after a signal close${(Sx.pending_buys || []).length ? `, starting with <b>${esc(Sx.pending_buys.join(", "))}</b>` : ""}.</div>`;
+  const feed = Sx.insider_asof ? `<div class="muted" style="font-size:12px;margin:-4px 0 12px">Promoter disclosures up to <b>${esc(dateLabel(Sx.insider_asof))}</b>. If this date stops moving, NSE's feed is blocked.</div>` : "";
+  const tbl = hold.length ? `<div class="card flush"><div class="card-head"><h3>Holdings</h3><span class="hint">${(Sx.pending_sells || []).length ? "selling at the next open: " + esc(Sx.pending_sells.join(", ")) : ""}</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Since</th><th class="r">Entry</th><th class="r">Last</th><th class="r">Return</th><th class="hide-sm">120 days</th></tr></thead>
+    <tbody>${hold.map(h => `<tr ${rowBy[h.sym] ? `data-sym="${esc(h.sym)}"` : `style="cursor:default"`}><td class="sym">${esc(h.sym)}</td><td class="r">${esc(dateLabel(h.since))}</td><td class="r num">${px(h.entry)}</td><td class="r num">${px(h.last)}</td><td class="r num ${cls(h.ret_pct)}">${pct(h.ret_pct)}</td><td class="hide-sm">${closesOf(h.sym).length ? spark(closesOf(h.sym), 80, 22) : `<span class="faint">—</span>`}</td></tr>`).join("")}</tbody></table></div></div>`
+    : nav.length ? `<div class="empty">${(Sx.pending_buys || []).length ? "Buying at the next open: <b>" + esc(Sx.pending_buys.join(", ")) + "</b>." : "In cash: nothing qualifies right now."}</div>` : "";
+  return head + feed + tbl + howItWorks(o.info, o.pre);
 }
-function drawNav(id, nav, colorVar) {
-  const box = $("#" + id);
-  if (!box || !nav.length || !window.LightweightCharts) return;
-  const ch = makeChart(box, { bucket: _pageCharts });
-  const s = ch.addAreaSeries({ lineColor: css(colorVar), topColor: css(colorVar) + "33", bottomColor: css(colorVar) + "05", lineWidth: 2, priceLineVisible: false });
-  s.setData(nav.map(p => ({ time: p[0], value: p[1] })));
-  ch.timeScale().fitContent();
+/* The paper books as ONE table: what each buys, whether it has started, and
+   how it is doing against the MIDSMALL ETF. The backtests that chose each
+   book's rules sit behind "How it works" — they are the hypothesis, not the
+   result, and six sets of them on one screen read as noise (user, 2026-09-28). */
+function books() {
+  const P = D.paper || {}, paper = POS.paper || [];
+  const dates = [...(P.ledger || []).map(l => String(l.d || "")), ...paper.map(p => String(p.entered || ""))].filter(Boolean).sort();
+  const mcNav = MC.nav || [], cmp = MC.compare || {};
+  const out = [
+    { id: "breakout", name: "Breakout book", what: "Every AI-analyst BUY, run by the two-lot plan", color: "--info",
+      started: dates[0] || null, ret: P.net_pct, mid: null, nav: [], held: paper.length, slots: null },
+    { id: "core", name: "Momentum core", what: "Top 20 by 6- and 12-month momentum, rebalanced monthly", color: "--ai",
+      started: mcNav.length ? mcNav[0][0] : null, startsLabel: nextRebalanceLabel().replace("the first session of ", "1 "),
+      ret: mcNav.length ? cmp.sleeve : null, mid: mcNav.length ? cmp.midsmall : null, nav: mcNav, held: coreHeld.size, slots: 20 },
+  ];
+  [["mb", MB], ["vb", VB], ["pm", PM]].forEach(([id, Sx]) => {
+    const o = SLEEVES[id];
+    if (!Sx || !Sx.registered) return;
+    const nav = Sx.nav || [];
+    out.push({ id, name: o.title, what: o.what, color: o.color, started: nav.length ? nav[0][0] : null,
+      startsLabel: "after " + dateLabel(Sx.registered), ret: Sx.since_pct, mid: Sx.midsmall_pct, nav,
+      held: (Sx.holdings || []).length, slots: o.slots, sleeve: Sx, o });
+  });
+  return out;
 }
 function pagePortfolio() {
-  const paper = POS.paper || [], P = D.paper || {};
-  const led = P.ledger || [];
+  const B = books();
+  if (S.sub && B.some(b => b.id === S.sub)) S.book = S.sub;
+  if (!B.some(b => b.id === S.book)) S.book = B[0].id;
+  const live = B.filter(b => b.nav.length > 1);
+  if (live.length) AFTER.push(() => drawBooks(live));
+  const b = B.find(x => x.id === S.book);
   return `
-  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">One book in five parts, all run on paper by rules alone: the momentum core (monthly); three daily, pre-registered sleeves — multibagger (RS leaders), value breakout (cheap + new uptrend) and promoter buying + momentum; and the breakout book (every analyst BUY, managed by the two-lot plan).</div></div></div>
-  ${momentumSection()}
-  ${mbSleeveSection()}
-  <div class="section-title" style="margin-top:28px">Breakout book ${info("Every AI-analyst BUY verdict auto-entered at the next session's open, sized by the mechanical plan and exited by the same two-lot rules. It is the running test of whether the analyst layer adds money. Notional ₹10L book.")}<span class="line"></span></div>
-  <div class="kpis" style="margin-bottom:14px">
-    <div class="kpi"><div class="label">Net result</div><div class="value ${cls(P.net)}">${inrShort(P.net)}</div><div class="note">${pct(P.net_pct, 1)} of the ₹10L notional book</div></div>
-    <div class="kpi"><div class="label">Realised</div><div class="value sm ${cls(P.realized)}">${inrShort(P.realized)}</div><div class="note">${num(P.n_closed)} positions closed</div></div>
-    <div class="kpi"><div class="label">Open, marked to market</div><div class="value sm ${cls(P.unrealized)}">${inrShort(P.unrealized)}</div><div class="note">${paper.length} positions open</div></div>
-    <div class="kpi"><div class="label">Waiting to fill</div><div class="value sm">${(P.pending || []).length}</div><div class="note">${(P.pending || []).map(p => esc(p.sym)).join(", ") || "none"}</div></div>
-  </div>
-  ${paper.length ? positionsTable(paper) : `<div class="empty">The paper book has no open positions.</div>`}
-  ${led.length ? `<details class="more" style="margin-top:14px"><summary>Recent paper fills (${led.length})</summary><div class="card flush" style="margin-top:8px"><div class="table-wrap"><table class="t"><thead><tr><th>Date</th><th>Stock</th><th>Action</th><th class="r">Shares</th><th class="r">Price</th><th class="r">P&amp;L</th><th class="hide-sm">Reason</th></tr></thead>
+  <div class="page-head"><div><h2>Paper portfolio</h2><div class="sub">${B.length} books run on paper by fixed rules; nothing here is real money. Each is judged against the MIDSMALL ETF over the same dates.</div></div></div>
+  <div class="card flush"><div class="table-wrap"><table class="t" id="booktbl"><thead><tr><th>Book</th><th class="hide-sm">Status</th><th class="r">Return</th><th class="r hide-sm" data-tip="The MIDSMALL ETF over the same dates: the bar each book is judged by.">MIDSMALL</th><th class="r">Holdings</th><th class="hide-sm">Trend</th></tr></thead>
+    <tbody>${B.map(x => `<tr data-book="${x.id}" class="${x.id === S.book ? "sel" : ""}">
+      <td><div class="cell-sym"><span class="sym"><i class="bdot" style="background:var(${x.color})"></i>${esc(x.name)}</span><span class="co" style="max-width:420px">${esc(x.what)}</span></div></td>
+      <td class="hide-sm">${x.started ? `<span class="chip sm buy">live</span> <span class="muted" style="font-size:12px">since ${esc(dateLabel(x.started))}</span>` : `<span class="chip sm ghost">starts ${esc(x.startsLabel)}</span>`}</td>
+      <td class="r num ${cls(x.ret)}">${x.started && isNum(x.ret) ? pct(x.ret) : "—"}</td>
+      <td class="r num hide-sm ${cls(x.mid)}">${isNum(x.mid) ? pct(x.mid) : "—"}</td>
+      <td class="r num">${num(x.held)}${x.slots ? `<span class="faint">/${x.slots}</span>` : ""}</td>
+      <td class="hide-sm">${x.nav.length > 2 ? spark(x.nav.map(p => p[1]), 110, 26) : `<span class="faint">—</span>`}</td></tr>`).join("")}</tbody></table></div></div>
+  ${live.length ? `<div class="card" style="margin-top:16px"><div class="card-head"><h3>Growth of ₹100</h3><span class="hint">each book from its own first day</span></div><div class="chart-box" id="bookchart" style="height:240px"></div></div>` : ""}
+  <div class="toolbar" style="margin-top:22px"><div class="seg" style="flex-wrap:wrap">${B.map(x => `<button data-book="${x.id}" class="${x.id === S.book ? "on" : ""}"><i class="bdot" style="background:var(${x.color})"></i>${esc(x.name)}</button>`).join("")}</div></div>
+  ${bookDetail(b)}`;
+}
+function drawBooks(list) {
+  const box = $("#bookchart");
+  if (!box || !window.LightweightCharts) return;
+  const ch = makeChart(box, { bucket: _pageCharts });
+  const leg = [];
+  list.forEach(b => {
+    const base = b.nav[0][1] || 1;
+    const s = ch.addLineSeries({ color: css(b.color), lineWidth: 2, priceLineVisible: false, lastValueVisible: false });
+    s.setData(b.nav.map(p => ({ time: p[0], value: p[1] / base * 100 })));
+    leg.push(`<span><i style="background:${css(b.color)}"></i>${esc(b.name)}</span>`);
+  });
+  ch.timeScale().fitContent();
+  const l = document.createElement("div"); l.className = "chart-legend"; l.innerHTML = leg.join(""); box.appendChild(l);
+}
+function bookDetail(b) {
+  if (!b) return "";
+  if (b.id === "breakout") return breakoutDetail();
+  if (b.id === "core") return momentumSection();
+  return sleeveSection(b.sleeve, b.o);
+}
+function breakoutDetail() {
+  const paper = POS.paper || [], P = D.paper || {}, led = P.ledger || [];
+  return `<div class="kpis" style="margin-bottom:14px">
+      <div class="kpi"><div class="label">Net result</div><div class="value ${cls(P.net)}">${inrShort(P.net)}</div><div class="note">${pct(P.net_pct, 1)} of the ₹10L book</div></div>
+      <div class="kpi"><div class="label">Realised</div><div class="value sm ${cls(P.realized)}">${inrShort(P.realized)}</div><div class="note">${num(P.n_closed)} positions closed</div></div>
+      <div class="kpi"><div class="label">Open, marked to market</div><div class="value sm ${cls(P.unrealized)}">${inrShort(P.unrealized)}</div><div class="note">${paper.length} positions open</div></div>
+      <div class="kpi"><div class="label">Waiting to fill</div><div class="value sm">${(P.pending || []).length}</div><div class="note">${(P.pending || []).map(p => esc(p.sym)).join(", ") || "none"}</div></div>
+    </div>
+    ${paper.length ? positionsTable(paper) : `<div class="empty">The breakout book has no open positions.</div>`}
+    ${led.length ? `<details class="more" style="margin-top:14px"><summary>Recent fills (${led.length})</summary><div class="card flush" style="margin-top:8px"><div class="table-wrap"><table class="t"><thead><tr><th>Date</th><th>Stock</th><th>Action</th><th class="r">Shares</th><th class="r">Price</th><th class="r">P&amp;L</th><th class="hide-sm">Reason</th></tr></thead>
     <tbody>${led.map(l => `<tr data-sym="${esc(l.sym)}"><td class="num">${esc(l.d)}</td><td class="sym">${esc(l.sym)}</td><td>${l.action === "BUY" ? '<span class="chip sm buy">Buy</span>' : l.action === "SELL" ? '<span class="chip sm">Sell ' + esc(l.lot) + "</span>" : '<span class="chip sm ghost">' + esc(l.action) + "</span>"}</td>
-      <td class="r num">${esc(l.shares)}</td><td class="r num">${isNum(+l.price) && l.price !== "" ? px(+l.price) : "—"}</td><td class="r num ${cls(+l.pnl)}">${l.pnl !== "" && isNum(+l.pnl) ? inr(+l.pnl) : ""}</td><td class="hide-sm muted" style="max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.reason)}</td></tr>`).join("")}</tbody></table></div></div></details>` : ""}`;
+      <td class="r num">${esc(l.shares)}</td><td class="r num">${isNum(+l.price) && l.price !== "" ? px(+l.price) : "—"}</td><td class="r num ${cls(+l.pnl)}">${l.pnl !== "" && isNum(+l.pnl) ? inr(+l.pnl) : ""}</td><td class="hide-sm muted" style="max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.reason)}</td></tr>`).join("")}</tbody></table></div></div></details>` : ""}
+    ${howItWorks("Every AI-analyst BUY verdict is entered at the next session's open, sized by the mechanical plan, and managed by the two-lot rules: a third of the trading half is sold at +2.5R, both halves move to breakeven at +1.5R, the trading half trails the 50-day average, and the core half leaves only on a weekly close under the 30-week average. It is the running test of whether the analyst layer adds money.", [])}`;
 }
 function positionsTable(list) {
-  return `<div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Entry</th><th class="r">Last</th><th class="r">Result</th><th class="r hide-sm">Shares</th><th>Next rules</th></tr></thead>
+  return `<div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Stock</th><th class="r">Entry</th><th class="r">Last</th><th class="r">Result</th><th class="hide-sm">60 days</th><th class="r hide-sm">Shares</th><th>Next rules</th></tr></thead>
     <tbody>${list.map(p => `<tr data-sym="${esc(p.sym)}" data-ctx="positions">
       <td><div class="cell-sym"><span class="sym">${esc(p.sym)}</span><span class="co">since ${esc(dateLabel(p.entered))}${p.verdict ? " · " + esc(p.verdict) : ""}</span></div></td>
       <td class="r num">${px(p.entry)}</td><td class="r num">${px(p.last)}</td>
       <td class="r num ${cls(p.r_now)}">${rr(p.r_now)}<div class="muted" style="font-size:11.5px">${pct(p.pnl_pct)} · ${inrShort(p.pnl)}</div></td>
+      <td class="hide-sm">${spark(closesOf(p.sym).slice(-60), 80, 22)}</td>
       <td class="r num hide-sm">${num(p.shares)}</td>
       <td style="min-width:260px">${p.urgent && p.urgent.length ? `<div class="warn" style="font-size:12.5px;font-weight:600">⚠ ${esc(p.urgent.join(" · "))}</div>` : ""}
         ${(p.rules || []).map(r => `<div style="font-size:12px;display:flex;gap:8px;justify-content:space-between"><span class="muted">${esc(r.label)}</span><span class="num">${px(r.px)} <span class="faint">${isNum(r.gap) ? pct(r.gap) : ""}</span></span></div>`).join("")}</td></tr>`).join("")}</tbody></table></div></div>`;
@@ -867,12 +951,14 @@ function researchThemes() {
   return `<div class="callout" style="margin-bottom:14px">Themes group stocks the way markets trade them (grid capex, defence, EMS…), across NSE's accounting categories. <b>Heat</b> ranks themes against each other from 3-month move, chart breadth and news. Sector heat was tested as an entry filter and <b>rejected</b> (it cut expectancy from +1.27R to +0.22R), so it is context only.</div>
     <div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Theme</th><th class="r">Heat</th><th class="r">3 months</th><th class="r hide-sm">In uptrend</th><th class="r hide-sm">Names</th><th>Leaders</th></tr></thead>
     <tbody>${th.map(t => `<tr style="cursor:default"><td><div class="cell-sym"><span class="sym">${esc(t.name)}</span><span class="co" style="max-width:300px">${esc(t.blurb || "")}</span></div></td>
-      <td class="r num"><span class="bar-inline" style="width:${Math.max(4, (t.heat || 0) * .6)}px;background:var(--watch);opacity:.7"></span> ${num(t.heat)}</td>
+      <td class="r">${cbar(t.heat, (t.heat || 0) >= 60 ? "var(--buy)" : "var(--watch)")}</td>
       <td class="r num ${cls(t.ret3m)}">${pct(t.ret3m)}</td><td class="r num hide-sm">${num(t.breadth)}%</td><td class="r num hide-sm">${num(t.n)}${t.thin ? ' <span class="faint">thin</span>' : ""}</td>
       <td>${(t.leaders || []).filter(l => l.tag === "CONFIRMED" || l.tag === "EXTENDED").slice(0, 5).map(l => `<button class="chip sm" data-sym="${esc(l.sym)}">${esc(l.sym)}</button>`).join(" ")}</td></tr>`).join("")}</tbody></table></div></div>
     ${intel.summary ? `<div class="card accent-ai" style="margin-top:16px"><div class="card-head"><h3>This week's thematic research</h3><span class="chip sm ai">AI · weekly</span><span class="hint">${esc(intel.generated || "")}</span></div><div class="memo">${esc(intel.summary)}</div>
       ${(intel.themes || []).slice(0, 8).map(x => `<details class="more"><summary><b>${esc(x.name || x.key)}</b> — ${esc(x.direction || "")}${x.strength ? " · strength " + esc(x.strength) : ""}</summary><div class="memo">${esc(x.thesis || x.summary || "")}
         ${(x.calls || x.beneficiaries || []).length ? `<ul>${(x.calls || x.beneficiaries || []).slice(0, 8).map(c => `<li><b>${esc(c.symbol || c.sym || "")}</b> ${esc(c.effect || "")} — ${esc(c.mechanism || c.why || "")}</li>`).join("")}</ul>` : ""}</div></details>`).join("")}</div>` : ""}
+    ${(D.heat || []).length ? `<div class="card" style="margin-top:16px"><div class="card-head"><h3>By NSE industry</h3><span class="hint">average relative strength of the stocks watched in each</span></div>
+      <div class="hbars">${D.heat.slice(0, 24).map(h => `<div class="hbar" style="cursor:default"><span class="nm">${esc(h.ind)} <span class="faint">· ${num(h.n)}</span></span><span class="track"><i style="width:${Math.min(100, h.rs || 0).toFixed(0)}%;background:${rsCol(h.rs)}"></i></span><b>${num(h.rs)}</b></div>`).join("")}</div></div>` : ""}
     ${T.read ? `<details class="more" style="margin-top:12px"><summary>The committee's theme read</summary><div class="card"><div class="memo">${esc(T.read)}</div></div></details>` : ""}`;
 }
 function researchNews() {
@@ -960,9 +1046,10 @@ function recordSignals() {
   return `<div class="callout info" style="margin-bottom:14px">Each buy alert is measured from the <b>next session's open</b> against an <b>equal-weight basket of the whole universe</b> over the same days, at fixed horizons. So a rising market cannot flatter a label and old and young alerts are not mixed. Measured to ${esc(es.as_of || "")}.</div>
     <div class="card flush"><div class="card-head"><h3>By setup</h3><span class="hint">excess return over the universe</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Alert type</th><th class="r">Alerts</th><th class="r">10 sessions</th><th class="r">20 sessions</th><th class="r">40 sessions</th></tr></thead>
       <tbody>${es.by_status.map(esRow).join("")}</tbody></table></div></div>
-    <div class="card flush" style="margin-top:16px"><div class="card-head"><h3>By research score at the alert</h3><span class="hint">does the 0–100 score sort outcomes?</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Score band</th><th class="r">Alerts</th><th class="r">10 sessions</th><th class="r">20 sessions</th><th class="r">40 sessions</th></tr></thead>
-      <tbody>${(es.by_conv || []).map(esRow).join("")}</tbody></table></div></div>
-    <div class="callout" style="margin-top:14px"><b>Reading it.</b> The setup matters most: live-base and trigger alerts beat the universe, uptrend-only alerts barely do. The research score separates the <b>bottom</b> (under 50, including vetoes, lags the universe) but does not rank the rest — which is why this interface sorts by setup first and uses the score only as a tie-breaker.</div>
+    <div class="callout" style="margin-top:14px"><b>Reading it.</b> The setup matters most: live-base and trigger alerts beat the universe, uptrend-only alerts barely do. The research score separates the <b>bottom</b> (under 50, including vetoes, lags the universe) but does not rank the rest, so lists sort by setup first and use the score only to rule names out.</div>
+    <details class="more" style="margin-top:14px"><summary>More detail: by research score at the alert</summary>
+    <div class="card flush" style="margin-top:8px"><div class="table-wrap"><table class="t"><thead><tr><th>Score band</th><th class="r">Alerts</th><th class="r">10 sessions</th><th class="r">20 sessions</th><th class="r">40 sessions</th></tr></thead>
+      <tbody>${(es.by_conv || []).map(esRow).join("")}</tbody></table></div></div></details>
     ${(D.forensics || {}).sections ? `<details class="more" style="margin-top:14px"><summary>Plan-followed forensics (older ruler, by cohort)</summary>${D.forensics.sections.map(sec => `<div class="card flush" style="margin-top:10px"><div class="card-head"><h3>${esc(sec.title)}</h3></div><div class="table-wrap"><table class="t"><thead><tr><th>Cohort</th><th class="r">n</th><th class="r">Open</th><th class="r">Plan R</th><th class="r">Median R</th><th class="r">Stopped</th><th class="r">Avg best R</th></tr></thead>
       <tbody>${sec.rows.map(r => `<tr style="cursor:default"><td>${esc(r.cohort)}</td><td class="r num">${num(r.n)}</td><td class="r num">${num(r.open)}</td><td class="r num ${cls(r.plan_r)}">${rr(r.plan_r)}</td><td class="r num ${cls(r.med_r)}">${rr(r.med_r)}</td><td class="r num">${num(r.hit_stop_pct)}%</td><td class="r num">${rr(r.avg_mfe)}</td></tr>`).join("")}</tbody></table></div></div>`).join("")}</details>` : ""}`;
 }
@@ -987,10 +1074,8 @@ function recordBacktest() {
   AFTER.push(() => drawCurves());
   return `<div class="callout watch" style="margin-bottom:14px"><b>Read this first.</b> Every figure here uses today's index members, so it carries survivorship bias: simply owning the whole universe returned 33% a year since 2020, while the real, investable Midcap-100 ETF returned 21%. Compare rows with each other, never with a bank deposit.</div>
     <div class="card"><div class="card-head"><h3>Growth of ₹100 since 2020</h3><span class="hint">weekly, log scale</span></div><div class="chart-box" id="curvebox" style="height:340px"></div></div>
-    <div class="grid grid-2" style="margin-top:16px">
-      <div class="card flush"><div class="card-head"><h3>Full history, 2020 → today</h3></div><div class="table-wrap">${tbl(full)}</div></div>
-      <div class="card flush"><div class="card-head"><h3>The headline window, 2023-08 → today</h3></div><div class="table-wrap">${tbl(recent)}</div></div>
-    </div>
+    <div class="card flush" style="margin-top:16px"><div class="card-head"><h3>Full history, 2020 → today</h3></div><div class="table-wrap">${tbl(full)}</div></div>
+    <details class="more" style="margin-top:12px"><summary>The headline window, 2023-08 → today</summary><div class="card flush" style="margin-top:8px"><div class="table-wrap">${tbl(recent)}</div></div></details>
     <div class="card" style="margin-top:16px"><h3 style="font-size:15px;margin-bottom:8px">What this says</h3><div class="memo"><ul>
       <li>The published 54.5% a year came from the strongest three-year window, with costs left out of the equity curve. Measured honestly, the live rules earned <b>45% a year with ideal fills and 30% with realistic execution</b> since 2020, with drawdowns of 21–25%.</li>
       <li>Execution is the biggest lever: filling on the morning after the signal instead of at the breakout-day close cost about <b>10 points a year</b> by itself.</li>
@@ -1108,7 +1193,7 @@ function renderSheet() {
   const last = o.length ? o[o.length - 1] : null, prev = o.length > 1 ? o[o.length - 2] : null;
   const price = last ? last[4] : r.close, chg = last && prev ? (last[4] / prev[4] - 1) * 100 : null;
   const ctx = S.ctx || [], idx = ctx.indexOf(sym);
-  const tabs = [["chart", "Chart & plan"], ["business", "Business"], ["news", "News"], ["research", "AI research"], ["history", "History"]];
+  const tabs = [["chart", "Overview"], ["business", "Fundamentals"], ["news", "News"], ["research", "AI research"], ["history", "History"]];
   $("#sheet").innerHTML = `
     <div class="sheet-head">
       <div class="sheet-title">
@@ -1116,7 +1201,7 @@ function renderSheet() {
         <div class="px"><div class="p">${px(price)}</div><div class="${cls(chg)} num nowrap" style="font-size:12.5px">${pct(chg, 2)}<span class="hide-sm"> last session</span></div></div>
         <div class="sheet-nav">${idx >= 0 && ctx.length > 1 ? `<button class="icon-btn" id="shprev" aria-label="Previous stock" data-tip="Previous (←)">${I.left}</button><button class="icon-btn" id="shnext" aria-label="Next stock" data-tip="Next (→)">${I.right}</button>` : ""}<button class="icon-btn" id="shclose" aria-label="Close">${I.close}</button></div>
       </div>
-      <div class="sheet-chips">${stageChip(r.tag)} ${setupChip(r.trig || (st && st.status))} ${isNum(r.rs) ? `<span class="chip sm ghost" data-tip="Relative strength percentile vs the whole universe.">RS ${r.rs.toFixed(0)}</span>` : ""} ${verdictChip(v, true)} ${pk ? `<span class="chip sm ai">Committee pick · ${esc(pk.conviction || "")}</span>` : ""} ${survChips(sym)} ${r.veto ? '<span class="chip sm risk">Vetoed</span>' : ""} ${(posBy[sym] || []).length ? `<span class="chip sm info">In breakout paper book</span>` : ""} ${coreHeld.has(sym) ? `<span class="chip sm ai">In momentum core</span>` : corePreview.has(sym) ? `<span class="chip sm ghost" data-tip="In the top 20 of the latest momentum ranking: the list the next monthly rebalance would buy.">Momentum top 20</span>` : ""} ${(themeBy[sym] || []).slice(0, 3).map(t => `<span class="chip sm ghost">${esc(t)}</span>`).join("")}</div>
+      <div class="sheet-chips">${stageChip(r.tag)} ${setupChip(r.trig || (st && st.status))} ${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}" data-tip="Research score out of 100: the breakdown is on Overview.">Score ${d.score.toFixed(0)}</span>` : ""} ${isNum(r.rs) ? `<span class="chip sm ghost" data-tip="Relative strength percentile vs the whole universe.">RS ${r.rs.toFixed(0)}</span>` : ""} ${verdictChip(v, true)} ${pk ? `<span class="chip sm ai">Committee pick · ${esc(pk.conviction || "")}</span>` : ""} ${survChips(sym)} ${r.veto ? '<span class="chip sm risk">Vetoed</span>' : ""} ${(posBy[sym] || []).length ? `<span class="chip sm info">In breakout paper book</span>` : ""} ${coreHeld.has(sym) ? `<span class="chip sm ai">In momentum core</span>` : corePreview.has(sym) ? `<span class="chip sm ghost" data-tip="In the top 20 of the latest momentum ranking: the list the next monthly rebalance would buy.">Momentum top 20</span>` : ""} ${(themeBy[sym] || []).slice(0, 3).map(t => `<span class="chip sm ghost">${esc(t)}</span>`).join("")}</div>
       <div class="tabs">${tabs.map(([k, l]) => `<button data-shtab="${k}" class="${S.sheetTab === k ? "on" : ""}">${l}</button>`).join("")}</div>
     </div>
     <div class="sheet-body" id="shbody"></div>`;
@@ -1140,24 +1225,26 @@ function sheetChart(sym) {
   });
   let planHtml = "";
   if (pos) {
-    planHtml = `<div class="card accent-${pos.urgent && pos.urgent.length ? "watch" : "buy"}" style="margin-top:14px"><div class="card-head"><h3>Paper position</h3><span class="hint">since ${esc(dateLabel(pos.entered))}</span><span class="right num ${cls(pos.r_now)}">${rr(pos.r_now)} · ${pct(pos.pnl_pct)}</span></div>
+    planHtml = `<div class="card accent-${pos.urgent && pos.urgent.length ? "watch" : "buy"}"><div class="card-head"><h3>Paper position</h3><span class="hint">since ${esc(dateLabel(pos.entered))}</span><span class="right num ${cls(pos.r_now)}">${rr(pos.r_now)} · ${pct(pos.pnl_pct)}</span></div>
       ${pos.urgent && pos.urgent.length ? `<div class="callout watch" style="margin-bottom:10px">⚠ ${esc(pos.urgent.join(" · "))}</div>` : ""}
       <div class="plan-grid"><div class="plan-cell"><div class="k">Entry</div><div class="v">${px(pos.entry)}</div><div class="s">${num(pos.shares)} shares open</div></div>
       ${(pos.rules || []).slice(0, 3).map(x => `<div class="plan-cell"><div class="k">${esc(x.label)}</div><div class="v">${px(x.px)}</div><div class="s">${isNum(x.gap) ? pct(x.gap) + " from here" : ""}</div></div>`).join("")}</div></div>`;
   } else if (st) {
-    planHtml = `<div class="card" style="margin-top:14px"><div class="card-head"><h3>Breakout plan</h3>${setupChip(st.status)}<span class="hint">entry on a close above the pivot with ≥1.5× average volume</span>
+    planHtml = `<div class="card"><div class="card-head"><h3>Breakout plan</h3>${setupChip(st.status)}
       ${sp ? `<span class="right"><button class="btn sm" data-copy-one="${esc(sym)}">${I.copy}Copy alert</button></span>` : ""}</div>
       ${sp ? `<div class="plan-grid">
         <div class="plan-cell"><div class="k">Buy above</div><div class="v">${px(st.pivot)}</div><div class="s">zone to ${px(st.zone_top)} (+5%)</div></div>
         <div class="plan-cell"><div class="k">Volume to confirm</div><div class="v">${volFmt(st.vneed)}</div><div class="s">today ${isNum(st.vr) ? st.vr.toFixed(1) + "× average" : "—"}</div></div>
         <div class="plan-cell"><div class="k">Stop</div><div class="v neg">${px(sp.stop)}</div><div class="s">${pct(-sp.stop_pct)} · 2.5 × ATR</div></div>
         <div class="plan-cell"><div class="k">Quantity · risk</div><div class="v">${num(sp.shares)}</div><div class="s">${inr(sp.risk)} (${(sp.risk / CAPITAL * 100).toFixed(2)}%)</div></div>
-      </div><div class="muted" style="font-size:12.5px;margin-top:10px">Then: sell a third of the trading half at ${px(sp.partial)} (+2.5R); both halves' stops to breakeven on a close above ${px(sp.be)} (+1.5R); the trading half trails the 50-day average; the core half leaves only on a weekly close under the 30-week average.</div>`
+      </div><div class="muted" style="font-size:12.5px;margin-top:10px">Entry on a close above the pivot with at least 1.5× average volume. Then: sell a third of the trading half at ${px(sp.partial)} (+2.5R); both halves' stops go to breakeven on a close above ${px(sp.be)} (+1.5R); the trading half trails the 50-day average; the core half leaves only on a weekly close under the 30-week average.</div>`
         : `<div class="callout watch">${esc(st.plan && st.plan.why || "No sized plan.")}</div>`}</div>`;
   } else if (plan && !plan.skip) {
-    planHtml = `<div class="card" style="margin-top:14px"><div class="card-head"><h3>Plan at the last alert</h3><span class="hint">${esc(a ? "signalled " + a.d : "")}</span></div>
+    planHtml = `<div class="card"><div class="card-head"><h3>Plan at the last alert</h3><span class="hint">${esc(a ? "signalled " + a.d : "")}</span></div>
       <div class="plan-grid"><div class="plan-cell"><div class="k">Entry ≈</div><div class="v">${px(plan.entry)}</div></div><div class="plan-cell"><div class="k">Stop</div><div class="v neg">${px(plan.stop)}</div><div class="s">${pct(-plan.stop_pct)}</div></div>
       <div class="plan-cell"><div class="k">Quantity</div><div class="v">${num(plan.shares)}</div></div><div class="plan-cell"><div class="k">Risk</div><div class="v">${inr(plan.risk)}</div></div></div></div>`;
+  } else {
+    planHtml = `<div class="card"><div class="card-head"><h3>Plan</h3></div><div class="muted" style="font-size:12.5px">No live setup. A sized plan appears here when a base forms or a trigger fires.</div></div>`;
   }
   const facts = [
     ["Stage", esc(d.stage_name || stageWord(r.tag))],
@@ -1169,57 +1256,66 @@ function sheetChart(sym) {
       <span class="muted" style="font-size:12px;margin-left:8px">Candles with 50- and 150-day averages · volume · dashed lines: pivot, stop, entry</span></div>
     <div class="chart-box" id="mainchart"></div>
     <div class="chart-box small" id="rschart"></div>
-    ${planHtml}
     <div class="grid grid-4" style="margin-top:14px">${facts.map(([k, v]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v" style="font-size:14px;font-family:var(--font)">${v}</div></div>`).join("")}</div>
+    <div class="grid grid-2 sheet-cols" style="margin-top:14px">
+      <div class="stack">${planHtml}${voicesCard(sym)}</div>
+      <div>${scoreCard(sym)}</div>
+    </div>
     ${(d.reasons || []).length ? `<div class="muted" style="font-size:12.5px;margin-top:10px">${d.reasons.map(esc).join(" · ")}</div>` : ""}`;
 }
 const DIM_LABEL = {
-  earnings_inflection: "Earnings inflection", rs_and_stage: "Relative strength & stage", theme_tailwind: "Theme tailwind",
-  smart_money: "Institutional ownership", financial_strength_trend: "Financial strength", catalyst: "Catalyst (news)",
+  rs_and_stage: "Technicals: relative strength & stage", earnings_inflection: "Earnings inflection",
+  financial_strength_trend: "Balance-sheet strength", catalyst: "Catalysts (news & filings)",
+  smart_money: "Smart money (FII / DII)", theme_tailwind: "Theme tailwind",
   governance: "Governance", valuation_sanity: "Valuation sanity",
 };
 function sheetBusiness(sym) {
-  const d = detailOf(sym) || {}, r = rowBy[sym] || {}, dims = d.dims || [];
+  const d = detailOf(sym) || {}, r = rowBy[sym] || {};
   AFTER.push(() => drawFund(sym));
-  const icon = s => s == null ? ["na", "–"] : s >= 0.65 ? ["ok", "✓"] : s >= 0.4 ? ["mid", "~"] : ["bad", "✕"];
-  return `<div class="grid grid-main">
-    <div>
-      <div class="card"><div class="card-head"><h3>Business checklist</h3>${isNum(d.score) ? `<span class="chip sm ${d.score >= 60 ? "buy" : d.score >= 50 ? "info" : "watch"}">Score ${d.score.toFixed(0)}</span>` : ""}<span class="hint">${isNum(d.coverage) ? d.coverage.toFixed(0) + "% of the eight questions answered" : ""}${d.dims_as_of || d.scored_at ? " · " + esc(d.dims_as_of || d.scored_at) : ""}</span></div>
-        ${(d.veto_reasons || []).length ? `<div class="callout risk" style="margin-bottom:10px"><b>Vetoed.</b> ${d.veto_reasons.map(esc).join("; ")}</div>` : ""}
-        <div class="checklist">${dims.length ? dims.map(x => { const [c, t] = icon(x.live ? x.s : null); return `<div class="check"><div class="ico ${c}">${t}</div><div><div class="t">${esc(DIM_LABEL[x.k] || x.k)}</div><div class="n">${esc(x.n || (x.live ? "" : "no data"))}</div></div><div class="w">${x.live ? Math.round(x.s * 100) + "/100" : "—"} · wt ${num(x.w)}</div></div>`; }).join("") : `<div class="muted">No fundamental read for this name yet.</div>`}</div>
-        <div class="muted" style="font-size:12px;margin-top:10px">What the score is for: in the forward record, names scoring under 50 (and vetoed names) lagged the universe; above 50 the score did not sort outcomes. Use it to rule things out, not to choose between good setups.</div>
-      </div>
+  return `${(d.veto_reasons || []).length ? `<div class="callout risk" style="margin-bottom:14px"><b>Vetoed.</b> ${d.veto_reasons.map(esc).join("; ")}</div>` : ""}
+    <div class="grid grid-3" style="gap:10px;margin-bottom:14px">
+      ${[["ROCE", isNum(r.roce) ? r.roce.toFixed(1) + "%" : "—"], ["P/E", isNum(r.pe) ? r.pe.toFixed(1) : "—"], ["Profit growth (TTM)", isNum(r.pgttm) ? pct(r.pgttm, 0) : "—"], ["Market cap", isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : "—"], ["Traded a day", isNum(r.turn) ? "₹" + r.turn.toFixed(1) + " Cr" : "—"], ["Archetype", esc(r.arch || "—")]].map(([k, v]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v" style="font-size:15px">${v}</div></div>`).join("")}</div>
+    <div class="mini-grid">
+      <div class="card mini"><h4>Net profit <span>₹ Cr · quarterly</span></h4><div id="fund-np"></div></div>
+      <div class="card mini"><h4>Operating margin <span>% · quarterly</span></h4><div id="fund-opm"></div></div>
+      <div class="card mini"><h4>Borrowings <span>₹ Cr · yearly · falling means deleveraging</span></h4><div id="fund-debt"></div></div>
+      <div class="card mini"><h4>Who owns it <span>% held · quarterly</span></h4><div id="fund-own"></div></div>
     </div>
-    <div class="stack">
-      <div class="card"><div class="card-head"><h3>Key numbers</h3></div>
-        <div class="grid grid-2" style="gap:10px">
-          ${[["ROCE", isNum(r.roce) ? r.roce.toFixed(1) + "%" : "—"], ["P/E", isNum(r.pe) ? r.pe.toFixed(1) : "—"], ["Profit growth (TTM)", isNum(r.pgttm) ? pct(r.pgttm, 0) : "—"], ["Market cap", isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : "—"], ["Turnover", isNum(r.turn) ? "₹" + r.turn.toFixed(1) + " Cr/day" : "—"], ["Archetype", esc(r.arch || "—")]].map(([k, v]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v" style="font-size:14px">${v}</div></div>`).join("")}</div></div>
-      <div class="card"><div class="card-head"><h3>Quarterly profit</h3><span class="hint">₹ Cr</span></div><div id="fund-np"></div></div>
-      <div class="card"><div class="card-head"><h3>Who owns it</h3><span class="hint">% held</span></div><div id="fund-own"></div></div>
-    </div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:12px">From the company's filings via screener.in. The score's eight questions, with their evidence, are on Overview.</div>`;
 }
 function bars(labels, vals, h = 90) {
-  const v = vals.map(x => isNum(x) ? x : 0), mx = Math.max(...v.map(Math.abs), 1), w = 100 / v.length;
-  return `<svg width="100%" height="${h + 18}" viewBox="0 0 100 ${h + 18}" preserveAspectRatio="none">${v.map((x, i) => {
-    const bh = Math.abs(x) / mx * (h / 2 - 2), y = x >= 0 ? h / 2 - bh : h / 2;
-    return `<rect x="${(i * w + w * .15).toFixed(2)}" y="${y.toFixed(2)}" width="${(w * .7).toFixed(2)}" height="${Math.max(.6, bh).toFixed(2)}" fill="${x >= 0 ? css("--buy") : css("--risk")}" opacity=".8"><title>${esc(labels[i] || "")}: ${num(x)}</title></rect>`;
-  }).join("")}<line x1="0" x2="100" y1="${h / 2}" y2="${h / 2}" stroke="${css("--border-strong")}" stroke-width=".3"/></svg>
+  // zero sits where the data puts it: at the bottom when every quarter is a
+  // profit (as in the classic's mini charts), mid-chart only when losses exist
+  const v = vals.map(x => isNum(x) ? x : 0), w = 100 / v.length;
+  const hi = Math.max(0, ...v), lo = Math.min(0, ...v), rg = (hi - lo) || 1;
+  const zero = 2 + (hi / rg) * (h - 4);
+  const last = [...vals].reverse().find(isNum);
+  return `<div style="display:flex;justify-content:space-between;font-size:10.5px" class="faint"><span>peak ${num(hi)}</span>${lo < 0 ? `<span class="neg">low ${num(lo)}</span>` : ""}<span>latest <b style="color:var(--text-2)">${isNum(last) ? num(last) : "—"}</b></span></div>
+  <svg width="100%" height="${h}" viewBox="0 0 100 ${h}" preserveAspectRatio="none">${v.map((x, i) => {
+    const bh = Math.abs(x) / rg * (h - 4), y = x >= 0 ? zero - bh : zero;
+    return `<rect x="${(i * w + w * .15).toFixed(2)}" y="${y.toFixed(2)}" width="${(w * .7).toFixed(2)}" height="${Math.max(.6, bh).toFixed(2)}" rx=".6" fill="${x >= 0 ? css("--buy") : css("--risk")}" opacity=".85"><title>${esc(labels[i] || "")}: ${num(x)}</title></rect>`;
+  }).join("")}<line x1="0" x2="100" y1="${zero.toFixed(2)}" y2="${zero.toFixed(2)}" stroke="${css("--border-strong")}" stroke-width=".3"/></svg>
   <div style="display:flex;justify-content:space-between;font-size:10.5px" class="faint"><span>${esc(labels[0] || "")}</span><span>${esc(labels[labels.length - 1] || "")}</span></div>`;
 }
-function lines(labels, series, h = 90) {
+function lines(labels, series, h = 90, unit = "%") {
   const all = series.flatMap(s => s.v.filter(isNum));
   if (!all.length) return `<div class="muted">No data.</div>`;
   const mn = Math.min(...all), mx = Math.max(...all), rg = (mx - mn) || 1;
   const n = labels.length;
-  return `<svg width="100%" height="${h}" viewBox="0 0 100 ${h}" preserveAspectRatio="none">${series.map(s => `<polyline fill="none" stroke="${s.c}" stroke-width="1.6" vector-effect="non-scaling-stroke" points="${s.v.map((x, i) => isNum(x) ? `${(i / Math.max(1, n - 1) * 100).toFixed(2)},${(h - 4 - (x - mn) / rg * (h - 8)).toFixed(2)}` : "").filter(Boolean).join(" ")}"/>`).join("")}</svg>
-  <div class="legend">${series.map(s => `<span><i style="background:${s.c}"></i>${esc(s.l)} ${isNum(s.v[s.v.length - 1]) ? s.v[s.v.length - 1].toFixed(1) + "%" : ""}</span>`).join("")}</div>`;
+  const fmt = x => unit === "%" ? x.toFixed(1) + "%" : nf0.format(x) + unit;
+  return `<svg width="100%" height="${h}" viewBox="0 0 100 ${h}" preserveAspectRatio="none">${series.map(s => `<polyline fill="none" stroke="${s.c}" stroke-width="1.8" vector-effect="non-scaling-stroke" points="${s.v.map((x, i) => isNum(x) ? `${(i / Math.max(1, n - 1) * 100).toFixed(2)},${(h - 4 - (x - mn) / rg * (h - 8)).toFixed(2)}` : "").filter(Boolean).join(" ")}"/>`).join("")}</svg>
+  <div style="display:flex;justify-content:space-between;font-size:10.5px" class="faint"><span>${esc(labels[0] || "")}</span><span>${esc(labels[labels.length - 1] || "")}</span></div>
+  <div class="legend">${series.map(s => { const last = [...s.v].reverse().find(isNum); return `<span><i style="background:${s.c}"></i>${esc(s.l)} ${isNum(last) ? fmt(last) : ""}</span>`; }).join("")}</div>`;
 }
 function drawFund(sym) {
   const f = fundOf(sym);
-  const a = $("#fund-np"), b = $("#fund-own");
-  if (!f) { if (a) a.innerHTML = `<div class="muted">No filings read.</div>`; if (b) b.innerHTML = ""; return; }
-  if (a) a.innerHTML = (f.np || []).length ? bars(f.q_labels || [], f.np) : `<div class="muted">No quarterly data.</div>`;
-  if (b) b.innerHTML = (f.prom || []).length ? lines(f.sh_labels || [], [{ l: "Promoters", c: css("--info"), v: f.prom || [] }, { l: "FII", c: css("--ai"), v: f.fii || [] }, { l: "DII", c: css("--buy"), v: f.dii || [] }]) : `<div class="muted">No shareholding data.</div>`;
+  const put = (id, html) => { const el = $("#" + id); if (el) el.innerHTML = html; };
+  if (!f) { ["fund-np", "fund-opm", "fund-debt", "fund-own"].forEach(id => put(id, `<div class="muted">No filings read for this name.</div>`)); return; }
+  const num1 = v => v.map(x => (x === "" || x == null) ? null : +x);
+  put("fund-np", (f.np || []).length ? bars(f.q_labels || [], num1(f.np)) : `<div class="muted">No quarterly data.</div>`);
+  put("fund-opm", (f.opm || []).length ? lines(f.q_labels || [], [{ l: "Operating margin", c: css("--info"), v: num1(f.opm) }]) : `<div class="muted">No margin data.</div>`);
+  put("fund-debt", (f.debt || []).length ? lines(f.bs_labels || [], [{ l: "Borrowings", c: css("--watch"), v: num1(f.debt) }], 90, " Cr") : `<div class="muted">No balance-sheet data.</div>`);
+  put("fund-own", (f.prom || []).length ? lines(f.sh_labels || [], [{ l: "Promoters", c: css("--info"), v: num1(f.prom || []) }, { l: "FII", c: css("--ai"), v: num1(f.fii || []) }, { l: "DII", c: css("--buy"), v: num1(f.dii || []) }]) : `<div class="muted">No shareholding data.</div>`);
 }
 function sheetNews(sym) {
   const d = detailOf(sym) || {}, nm = newsMem[sym], arch = archiveNewsOf(sym);
@@ -1408,6 +1504,7 @@ document.addEventListener("click", e => {
     fetch("/api/run/" + run.dataset.run, { method: "POST" }).then(r => r.json()).then(j => { toast(j.error || ("Started " + j.started)); setTimeout(probeRunPanel, 600); }).catch(() => toast("Run panel unavailable"));
     return;
   }
+  const bk = t.closest("[data-book]"); if (bk) { S.book = S.sub = bk.dataset.book; history.replaceState(null, "", "#/portfolio/" + S.book); renderPage(); return; }
   const symEl = t.closest("[data-sym]");
   if (symEl && !t.closest("a")) {
     const row = symEl.closest("tr[data-ctx]");
