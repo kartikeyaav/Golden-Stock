@@ -135,3 +135,4 @@ Changes compare the latest known year with the one before it.
 | date | change | reason |
 |---|---|---|
 | 2026-09-29 | registration | before the tests |
+| 2026-09-29 | added a timing sensitivity check: fiscal year Y known from 1 June Y (SEBI's 60-day deadline for audited annual results), reported beside the registered 1 October rule. The survival rule stays on 1 October; a factor that passes only on 1 June is reported as timing-dependent. Added quarterly results (CAN SLIM's C: the latest quarter's profit up ≥ 25% on the same quarter a year before, and sales up ≥ 20%, known 45 days after quarter end) as family Q, from NSE's filed results, same judging rule | registered after a dry run on partial shareholding data showed annual growth factors failing in 2021-26; the annual 1 October timing is 4 months later than the data were public |
