@@ -36,6 +36,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 CSV = os.path.join(ROOT, "value_fundamentals.csv")
+# the same pages carry shareholding and the last 13 quarters: kept too, for the
+# multibagger factors (PREREG_2026-09-29) and the stock view (2026-09-29)
+SHP_CSV = os.path.join(ROOT, "shareholding.csv")
+QTR_CSV = os.path.join(ROOT, "quarterly_results.csv")
+SHP_COLS = ["symbol", "kind", "period", "prom", "fii", "dii", "nsh", "fetched_at"]
+QTR_COLS = ["symbol", "qend", "sales", "op", "np", "eps", "fetched_at"]
+_MON = {m: i for i, m in enumerate(("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1)}
 RADAR_STATE = os.path.join(ROOT, "state", "multibagger_radar.json")
 COLS = ["symbol", "fy", "cfo", "cfi", "eq", "sales", "np", "mcap_now", "price_now", "fetched_at"]
 STALE_DAYS = 28
@@ -59,6 +66,62 @@ def rows_from_page(sym: str, d: dict) -> list[dict]:
                     "sales": sales.get(y), "np": npf.get(y), "mcap_now": tr.get("Market Cap"),
                     "price_now": tr.get("Current Price"), "fetched_at": fetched})
     return out
+
+
+def _period(col: str) -> str | None:
+    parts = str(col).split()
+    if len(parts) != 2 or parts[0] not in _MON or not parts[1].isdigit():
+        return None
+    return f"{parts[1]}-{_MON[parts[0]]:02d}"
+
+
+def shp_rows_from_page(sym: str, d: dict) -> list[dict]:
+    fetched = str(d.get("fetched_at") or datetime.now().isoformat(timespec="seconds"))[:10]
+    out = []
+    for kind in ("yearly", "quarterly"):
+        tbl = (d.get("shareholding") or {}).get(kind) or {}
+        cols, R = tbl.get("columns") or [], tbl.get("rows") or {}
+        for i, c in enumerate(cols):
+            per = _period(c)
+            if not per:
+                continue
+            at = lambda k: (R.get(k) or [None] * (i + 1))[i] if i < len(R.get(k) or []) else None
+            out.append({"symbol": sym, "kind": kind, "period": per, "prom": at("Promoters"), "fii": at("FIIs"),
+                        "dii": at("DIIs"), "nsh": at("No. of Shareholders"), "fetched_at": fetched})
+    return out
+
+
+def q_rows_from_page(sym: str, d: dict) -> list[dict]:
+    fetched = str(d.get("fetched_at") or datetime.now().isoformat(timespec="seconds"))[:10]
+    tbl = d.get("quarters") or {}
+    cols, R = tbl.get("columns") or [], tbl.get("rows") or {}
+    sales = R.get("Sales") or R.get("Revenue") or []
+    out = []
+    for i, c in enumerate(cols):
+        per = _period(c)
+        if not per:
+            continue
+        end = (pd.Timestamp(per + "-01") + pd.offsets.MonthEnd(0)).date()
+        at = lambda v: v[i] if i < len(v) else None
+        out.append({"symbol": sym, "qend": str(end), "sales": at(sales), "op": at(R.get("Operating Profit") or []),
+                    "np": at(R.get("Net Profit") or []), "eps": at(R.get("EPS in Rs") or []), "fetched_at": fetched})
+    return out
+
+
+def _save_table(rows_by_sym: dict, path: str, cols: list[str], keys: list[str]) -> None:
+    """Replace each fetched symbol's rows in a committed table."""
+    try:
+        old = pd.read_csv(path)
+    except (OSError, ValueError):
+        old = pd.DataFrame(columns=cols)
+    fresh = pd.DataFrame([r for rows in rows_by_sym.values() for r in rows], columns=cols)
+    if fresh.empty:
+        return
+    df = pd.concat([old[~old["symbol"].isin(list(rows_by_sym))], fresh], ignore_index=True)
+    df = df[cols].sort_values(keys).reset_index(drop=True)
+    tmp = path + ".tmp"
+    df.to_csv(tmp, index=False)
+    os.replace(tmp, path)
 
 
 def load() -> pd.DataFrame:
@@ -86,7 +149,27 @@ def seed_from_cache() -> pd.DataFrame:
     df = pd.DataFrame(rows, columns=COLS)
     save(df)
     print(f"seeded {df['symbol'].nunique():,} companies, {len(df):,} company-years -> {CSV}")
+    seed_tables()
     return df
+
+
+def seed_tables() -> None:
+    """Only the two newer tables, from the research caches: the committed
+    annual table keeps the cloud's newer rolling refreshes."""
+    from research.fundamentals_fetch import OUT
+    qrows = {}
+    for p in sorted(Path(OUT).glob("*.json")):
+        if not p.name.startswith("_"):
+            qrows[p.stem.split("~")[0]] = q_rows_from_page(p.stem.split("~")[0], json.loads(p.read_text(encoding="utf-8")))
+    _save_table(qrows, QTR_CSV, QTR_COLS, ["symbol", "qend"])
+    from research.shareholding_fetch import OUT as SHP_DIR
+    srows = {}
+    for p in sorted(Path(SHP_DIR).glob("*.json")) if Path(SHP_DIR).exists() else []:
+        if not p.name.startswith("_"):
+            d = json.loads(p.read_text(encoding="utf-8"))
+            srows[p.stem.split("~")[0]] = shp_rows_from_page(p.stem.split("~")[0], d)
+    _save_table(srows, SHP_CSV, SHP_COLS, ["symbol", "kind", "period"])
+    print(f"seeded quarters for {len(qrows):,} and shareholding for {len(srows):,} companies")
 
 
 def universe() -> list[str]:
@@ -108,14 +191,19 @@ def refresh(per_run: int = PER_RUN, pause: float = 2.0) -> pd.DataFrame:
     todo = [s for s in sorted(uni, key=lambda s: -age[s]) if age[s] >= STALE_DAYS][:per_run]
     print(f"{len(uni):,} companies in the universe; {len(todo)} stale to refresh this run", flush=True)
     new_rows, ok = [], 0
+    shp_new, q_new = {}, {}
     for i, s in enumerate(todo, 1):
         d = fetch(s)
         if d:
             new_rows += rows_from_page(s, d)
+            shp_new[s] = shp_rows_from_page(s, d)
+            q_new[s] = q_rows_from_page(s, d)
             ok += 1
         if i % 50 == 0:
             print(f"  {i}/{len(todo)} fetched {ok}", flush=True)
         time.sleep(pause)
+    _save_table(shp_new, SHP_CSV, SHP_COLS, ["symbol", "kind", "period"])
+    _save_table(q_new, QTR_CSV, QTR_COLS, ["symbol", "qend"])
     if new_rows:
         fresh = pd.DataFrame(new_rows, columns=COLS)
         df = pd.concat([df[~df["symbol"].isin(fresh["symbol"].unique())], fresh], ignore_index=True)
@@ -127,9 +215,12 @@ def refresh(per_run: int = PER_RUN, pause: float = 2.0) -> pd.DataFrame:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed-from-cache", action="store_true")
+    ap.add_argument("--seed-tables", action="store_true", help="seed shareholding.csv and quarterly_results.csv only")
     ap.add_argument("--per-run", type=int, default=PER_RUN)
     a = ap.parse_args()
-    if a.seed_from_cache:
+    if a.seed_tables:
+        seed_tables()
+    elif a.seed_from_cache:
         seed_from_cache()
     else:
         refresh(a.per_run)

@@ -48,7 +48,16 @@ def parse(html: str) -> dict:
         "quarters": SF._parse_data_table(html, "quarters",
                                          ["Sales", "Revenue", "Operating Profit", "Net Profit",
                                           "EPS in Rs"]),
+        "shareholding": _shareholding(html),
     }
+
+
+def _shareholding(html: str) -> dict:
+    from research.shareholding_fetch import parse_shareholding
+    try:
+        return parse_shareholding(html)
+    except Exception:  # noqa: BLE001 — a layout change must not cost the statements
+        return {}
 
 
 def fetch(symbol: str) -> dict | None:

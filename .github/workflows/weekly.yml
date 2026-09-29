@@ -149,7 +149,8 @@ jobs:
                    penny_excluded.csv state/penny_details.json \
                    state/penny_meta.json \
                    state/surveillance.json state/gate.json \
-                   state/parser_health.json value_fundamentals.csv; do
+                   state/parser_health.json value_fundamentals.csv \
+                   shareholding.csv quarterly_results.csv; do
             git add -f -- "$p" 2>/dev/null || echo "skip $p (absent)"
           done
           if git diff --cached --quiet; then
