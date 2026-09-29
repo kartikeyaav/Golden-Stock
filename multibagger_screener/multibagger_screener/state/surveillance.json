@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-28 18:32",
+ "generated": "2026-09-29 16:47",
  "n_checked": 1027,
- "n_flagged": 95,
- "asm_total": 209,
+ "n_flagged": 97,
+ "asm_total": 218,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -156,18 +156,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "TATACHEM": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "TRAVELFOOD": {
    "flags": [
     {
@@ -185,6 +173,18 @@
     {
      "code": "ASM",
      "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "WHIRLPOOL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],
@@ -890,14 +890,14 @@
   "SUNFLAG": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "AEROFLEX": {
    "flags": [
@@ -987,6 +987,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "MANINDS": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "RAYMOND": {
    "flags": [
@@ -1161,6 +1173,18 @@
     }
    ],
    "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "SHANTIGOLD": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },

@@ -1,6 +1,6 @@
 {
- "asof": "2026-09-28",
- "universe_size": 1445,
+ "asof": "2026-09-29",
+ "universe_size": 1448,
  "rows": [
   {
    "sym": "RAYMOND",
@@ -9,11 +9,11 @@
     "H9": "2026-09-21"
    },
    "fresh": false,
-   "close": 1179.95,
-   "ret_6m_pct": 236.3,
-   "ret_12m_pct": 88.9,
-   "rs_pct": 99.4,
-   "off_52w_high_pct": -2.0,
+   "close": 1185.75,
+   "ret_6m_pct": 234.5,
+   "ret_12m_pct": 91.6,
+   "rs_pct": 99.3,
+   "off_52w_high_pct": -1.5,
    "traded_value_cr": 467.09
   },
   {
@@ -23,40 +23,12 @@
     "H25": "2026-09-17"
    },
    "fresh": false,
-   "close": 100.8,
-   "ret_6m_pct": 221.0,
-   "ret_12m_pct": 83.1,
-   "rs_pct": 99.0,
-   "off_52w_high_pct": -5.4,
-   "traded_value_cr": 15.53
-  },
-  {
-   "sym": "STLNETWORK",
-   "signals": {
-    "H7": "2026-09-22",
-    "H9": "2026-09-16"
-   },
-   "fresh": false,
-   "close": 52.06,
-   "ret_6m_pct": 187.5,
-   "ret_12m_pct": 70.5,
-   "rs_pct": 98.4,
-   "off_52w_high_pct": -4.7,
-   "traded_value_cr": 20.24
-  },
-  {
-   "sym": "BHAGERIA",
-   "signals": {
-    "H9": "2026-09-21",
-    "H25": "2026-09-21"
-   },
-   "fresh": false,
-   "close": 380.85,
-   "ret_6m_pct": 173.7,
-   "ret_12m_pct": 112.0,
-   "rs_pct": 97.9,
-   "off_52w_high_pct": -3.5,
-   "traded_value_cr": 6.1
+   "close": 103.44,
+   "ret_6m_pct": 217.5,
+   "ret_12m_pct": 89.9,
+   "rs_pct": 99.2,
+   "off_52w_high_pct": -2.9,
+   "traded_value_cr": 15.84
   },
   {
    "sym": "AHCL",
@@ -65,12 +37,40 @@
     "H9": "2026-09-21"
    },
    "fresh": false,
-   "close": 34.66,
-   "ret_6m_pct": 170.0,
-   "ret_12m_pct": 115.8,
-   "rs_pct": 97.8,
+   "close": 36.39,
+   "ret_6m_pct": 174.1,
+   "ret_12m_pct": 127.1,
+   "rs_pct": 98.1,
    "off_52w_high_pct": 0.0,
    "traded_value_cr": 86.01
+  },
+  {
+   "sym": "STLNETWORK",
+   "signals": {
+    "H7": "2026-09-22",
+    "H9": "2026-09-16"
+   },
+   "fresh": false,
+   "close": 49.46,
+   "ret_6m_pct": 173.1,
+   "ret_12m_pct": 49.7,
+   "rs_pct": 97.9,
+   "off_52w_high_pct": -9.4,
+   "traded_value_cr": 21.97
+  },
+  {
+   "sym": "BHAGERIA",
+   "signals": {
+    "H9": "2026-09-21",
+    "H25": "2026-09-21"
+   },
+   "fresh": false,
+   "close": 377.85,
+   "ret_6m_pct": 164.4,
+   "ret_12m_pct": 116.4,
+   "rs_pct": 97.7,
+   "off_52w_high_pct": -4.2,
+   "traded_value_cr": 6.1
   },
   {
    "sym": "DOLPHIN",
@@ -79,12 +79,12 @@
     "H9": "2026-09-22"
    },
    "fresh": false,
-   "close": 648.0,
-   "ret_6m_pct": 71.2,
-   "ret_12m_pct": 62.6,
-   "rs_pct": 87.3,
-   "off_52w_high_pct": -10.5,
-   "traded_value_cr": 3.93
+   "close": 650.75,
+   "ret_6m_pct": 61.1,
+   "ret_12m_pct": 66.5,
+   "rs_pct": 84.9,
+   "off_52w_high_pct": -10.2,
+   "traded_value_cr": 3.58
   },
   {
    "sym": "NRL",
@@ -92,12 +92,12 @@
     "H9": "2026-09-23"
    },
    "fresh": false,
-   "close": 158.47,
-   "ret_6m_pct": 232.4,
-   "ret_12m_pct": 112.0,
-   "rs_pct": 99.3,
-   "off_52w_high_pct": -4.7,
-   "traded_value_cr": 1.42
+   "close": 160.0,
+   "ret_6m_pct": 236.1,
+   "ret_12m_pct": 108.2,
+   "rs_pct": 99.4,
+   "off_52w_high_pct": -3.8,
+   "traded_value_cr": 1.5
   },
   {
    "sym": "FILATEX",
@@ -105,12 +105,38 @@
     "H9": "2026-09-21"
    },
    "fresh": false,
-   "close": 110.75,
-   "ret_6m_pct": 177.9,
-   "ret_12m_pct": 104.2,
-   "rs_pct": 98.0,
+   "close": 112.0,
+   "ret_6m_pct": 175.5,
+   "ret_12m_pct": 107.0,
+   "rs_pct": 98.2,
    "off_52w_high_pct": 0.0,
-   "traded_value_cr": 45.83
+   "traded_value_cr": 51.32
+  },
+  {
+   "sym": "LLOYDSENGG",
+   "signals": {
+    "H9": "2026-09-29"
+   },
+   "fresh": true,
+   "close": 102.19,
+   "ret_6m_pct": 144.0,
+   "ret_12m_pct": 69.1,
+   "rs_pct": 96.8,
+   "off_52w_high_pct": 0.0,
+   "traded_value_cr": 40.4
+  },
+  {
+   "sym": "SOTL",
+   "signals": {
+    "H25": "2026-09-28"
+   },
+   "fresh": false,
+   "close": 717.0,
+   "ret_6m_pct": 121.2,
+   "ret_12m_pct": 77.6,
+   "rs_pct": 95.9,
+   "off_52w_high_pct": -8.3,
+   "traded_value_cr": 19.02
   },
   {
    "sym": "VENUSPIPES",
@@ -118,51 +144,25 @@
     "H9": "2026-09-18"
    },
    "fresh": false,
-   "close": 2132.6,
-   "ret_6m_pct": 124.6,
-   "ret_12m_pct": 50.6,
-   "rs_pct": 95.8,
-   "off_52w_high_pct": -6.6,
-   "traded_value_cr": 38.57
+   "close": 2195.8,
+   "ret_6m_pct": 122.1,
+   "ret_12m_pct": 59.0,
+   "rs_pct": 95.9,
+   "off_52w_high_pct": -3.8,
+   "traded_value_cr": 38.67
   },
   {
-   "sym": "MMP",
+   "sym": "SSWL",
    "signals": {
-    "H9": "2026-09-15"
-   },
-   "fresh": false,
-   "close": 452.25,
-   "ret_6m_pct": 119.2,
-   "ret_12m_pct": 61.1,
-   "rs_pct": 95.4,
-   "off_52w_high_pct": -5.5,
-   "traded_value_cr": 3.79
-  },
-  {
-   "sym": "SOTL",
-   "signals": {
-    "H25": "2026-09-28"
+    "H9": "2026-09-29"
    },
    "fresh": true,
-   "close": 699.3,
-   "ret_6m_pct": 112.4,
-   "ret_12m_pct": 72.8,
-   "rs_pct": 94.8,
-   "off_52w_high_pct": -10.6,
-   "traded_value_cr": 19.02
-  },
-  {
-   "sym": "GCSL",
-   "signals": {
-    "H9": "2026-09-15"
-   },
-   "fresh": false,
-   "close": 667.35,
-   "ret_6m_pct": 95.4,
-   "ret_12m_pct": 153.5,
-   "rs_pct": 93.2,
+   "close": 400.65,
+   "ret_6m_pct": 115.6,
+   "ret_12m_pct": 68.6,
+   "rs_pct": 95.5,
    "off_52w_high_pct": 0.0,
-   "traded_value_cr": 37.36
+   "traded_value_cr": 56.6
   },
   {
    "sym": "KAMATHOTEL",
@@ -170,12 +170,12 @@
     "H20": "2026-09-22"
    },
    "fresh": false,
-   "close": 233.18,
-   "ret_6m_pct": 45.3,
-   "ret_12m_pct": -27.4,
-   "rs_pct": 76.6,
-   "off_52w_high_pct": -28.4,
-   "traded_value_cr": 2.04
+   "close": 236.71,
+   "ret_6m_pct": 42.1,
+   "ret_12m_pct": -26.1,
+   "rs_pct": 75.9,
+   "off_52w_high_pct": -27.4,
+   "traded_value_cr": 1.71
   },
   {
    "sym": "SOUTHBANK",
@@ -183,25 +183,12 @@
     "H20": "2026-09-24"
    },
    "fresh": false,
-   "close": 48.64,
-   "ret_6m_pct": 40.0,
-   "ret_12m_pct": 62.3,
-   "rs_pct": 73.7,
-   "off_52w_high_pct": -2.6,
+   "close": 48.71,
+   "ret_6m_pct": 31.7,
+   "ret_12m_pct": 63.0,
+   "rs_pct": 69.5,
+   "off_52w_high_pct": -2.5,
    "traded_value_cr": 43.41
-  },
-  {
-   "sym": "EXPLEOSOL",
-   "signals": {
-    "H20": "2026-09-23"
-   },
-   "fresh": false,
-   "close": 870.35,
-   "ret_6m_pct": 22.5,
-   "ret_12m_pct": -12.1,
-   "rs_pct": 57.9,
-   "off_52w_high_pct": -22.2,
-   "traded_value_cr": 1.69
   },
   {
    "sym": "SUNDROP",
@@ -209,25 +196,25 @@
     "H20": "2026-09-24"
    },
    "fresh": false,
-   "close": 740.2,
-   "ret_6m_pct": 22.3,
-   "ret_12m_pct": -9.6,
-   "rs_pct": 57.3,
-   "off_52w_high_pct": -9.4,
+   "close": 750.75,
+   "ret_6m_pct": 21.9,
+   "ret_12m_pct": -8.2,
+   "rs_pct": 60.1,
+   "off_52w_high_pct": -7.3,
    "traded_value_cr": 0.55
   },
   {
-   "sym": "EPIGRAL",
+   "sym": "EXPLEOSOL",
    "signals": {
-    "H20": "2026-09-15"
+    "H20": "2026-09-23"
    },
    "fresh": false,
-   "close": 1038.0,
-   "ret_6m_pct": 20.3,
-   "ret_12m_pct": -40.2,
-   "rs_pct": 55.1,
-   "off_52w_high_pct": -40.8,
-   "traded_value_cr": 3.57
+   "close": 858.3,
+   "ret_6m_pct": 21.9,
+   "ret_12m_pct": -13.8,
+   "rs_pct": 59.8,
+   "off_52w_high_pct": -23.3,
+   "traded_value_cr": 1.69
   }
  ],
  "universe": [
@@ -871,6 +858,7 @@
   "ITETF",
   "ITI",
   "ITIETF",
+  "IVALUE",
   "IXIGO",
   "IZMO",
   "J&KBANK",
@@ -1381,6 +1369,7 @@
   "SEAMECLTD",
   "SENCO",
   "SENORES",
+  "SEPC",
   "SERVOTECH",
   "SETFGOLD",
   "SETFNIF50",
@@ -1392,6 +1381,7 @@
   "SGMART",
   "SHAILY",
   "SHAKTIPUMP",
+  "SHALPAINTS",
   "SHANKARA",
   "SHANTIGEAR",
   "SHANTIGOLD",
@@ -1677,8 +1667,8 @@
   "ZYDUSLIFE",
   "ZYDUSWELL"
  ],
- "insider_asof": "2026-09-28 22:05",
- "generated": "2026-09-28 18:32",
+ "insider_asof": "2026-09-29 20:24",
+ "generated": "2026-09-29 16:47",
  "signals": {
   "H7": "power play",
   "H9": "RS leader",

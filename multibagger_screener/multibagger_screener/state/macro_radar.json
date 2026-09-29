@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-09-28T18:17:46",
+ "generated": "2026-09-29T16:38:32",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9544,
+ "headlines_read": 9769,
  "policy_hits": 14,
  "stories": 14,
  "themes": {
   "defence": {
-   "pressure": 0.177,
-   "pos_flow": 0.1443,
+   "pressure": 0.172,
+   "pos_flow": 0.1396,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -29,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0557
+     "weight": 0.0539
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -47,7 +47,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0522
+     "weight": 0.0506
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -64,13 +64,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0363
+     "weight": 0.0352
     }
    ]
   },
   "defelec": {
-   "pressure": 0.068,
-   "pos_flow": 0.0522,
+   "pressure": 0.066,
+   "pos_flow": 0.0506,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -91,7 +91,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0522
+     "weight": 0.0506
     }
    ]
   },
@@ -104,8 +104,8 @@
    "top": []
   },
   "railways": {
-   "pressure": 0.233,
-   "pos_flow": 0.1967,
+   "pressure": 0.228,
+   "pos_flow": 0.1916,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 1,
@@ -125,7 +125,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1152
+     "weight": 0.1114
     },
     {
      "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -142,7 +142,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0414
+     "weight": 0.0401
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -180,8 +180,8 @@
    "top": []
   },
   "hospital": {
-   "pressure": 0.045,
-   "pos_flow": 0.034,
+   "pressure": 0.043,
+   "pos_flow": 0.0329,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -201,13 +201,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.034
+     "weight": 0.0329
     }
    ]
   },
   "semis": {
-   "pressure": 0.053,
-   "pos_flow": 0.0401,
+   "pressure": 0.051,
+   "pos_flow": 0.0388,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -227,13 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0401
+     "weight": 0.0388
     }
    ]
   },
   "ems": {
-   "pressure": 0.104,
-   "pos_flow": 0.0817,
+   "pressure": 0.101,
+   "pos_flow": 0.079,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -253,7 +253,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0817
+     "weight": 0.079
     }
    ]
   }
@@ -274,7 +274,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.2035
+   "weight": 0.1969
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -291,7 +291,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1152
+   "weight": 0.1114
   },
   {
    "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
@@ -308,7 +308,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0817
+   "weight": 0.079
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -343,7 +343,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0703
+   "weight": 0.068
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -360,7 +360,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0557
+   "weight": 0.0539
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -378,7 +378,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0506
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -395,7 +395,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0508
+   "weight": 0.0491
   },
   {
    "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -412,7 +412,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0414
+   "weight": 0.0401
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -446,7 +446,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0388
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -463,7 +463,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0363
+   "weight": 0.0352
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -480,7 +480,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.034
+   "weight": 0.0329
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -497,7 +497,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0331
+   "weight": 0.0321
   }
  ]
 }

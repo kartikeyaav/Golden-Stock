@@ -1,17 +1,28 @@
 {
  "registered": "2026-09-28",
  "capital": 1000000.0,
- "nav": [],
- "last_session": null,
+ "nav": [
+  [
+   "2026-09-29",
+   1000000.0
+  ]
+ ],
+ "last_session": "2026-09-29",
  "book": {
   "cash": 1000000.0,
   "pos": {},
-  "pending_buys": [],
+  "pending_buys": [
+   "STLTECH",
+   "INDORAMA",
+   "BHAGERIA",
+   "CONFIPET",
+   "PAISALO"
+  ],
   "pending_sells": [],
   "last_px": {}
  },
- "insider_asof": "2026-09-28 22:05",
+ "insider_asof": "2026-09-29 20:24",
  "risk_on": true,
- "asof": "2026-09-28",
- "generated": "2026-09-28 18:32"
+ "asof": "2026-09-29",
+ "generated": "2026-09-29 16:47"
 }

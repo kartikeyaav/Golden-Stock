@@ -101,3 +101,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-25,BALAMINES,BUY,entry,28,2237.0,,[BALAMINES@2026-09-24 21:33] analyst BUY/LOW/HALF PLAN
 2026-09-25,WABAG,SELL,all,69,1992.9,0.0,stop hit
 2026-09-28,SPORTKING,BUY,entry,538,213.62,,[SPORTKING@2026-09-27 22:30] analyst BUY/MEDIUM/FULL PLAN
+2026-09-29,MCX,BUY,entry,46,3248.0,,[MCX@2026-09-28 21:32] analyst BUY/HIGH/FULL PLAN
+2026-09-29,GRANULES,SKIP,entry,0,,,[GRANULES@2026-09-28 21:33] slot limit 12 reached (30 open) — the backtested edge was measured with this cap in force
