@@ -1,0 +1,135 @@
+{
+ "items": {
+  "LAURUSLABS": {
+   "symbol": "LAURUSLABS",
+   "conviction": 2,
+   "horizon": "long term",
+   "thesis": "Laurus is transforming from a commoditized ARV/API generics maker into a diversified CDMO platform (small molecule, peptides, biologics, ADC, gene therapy), with CDMO now ~42-44% of revenue growing 69-76% YoY and management targeting 50%+ by FY30. Execution has clearly turned: EBITDA margin hit a record 31.8% in Q1 FY27, ROCE recovered from a 7% trough (FY24) to 19.3%, and operating cash flow rebounded to ₹1,624 Cr in FY26 after two weak years. The problem is price: at ~₹2,000-2,020/share the stock already trades above even the most bullish post-results broker targets (MOFSL ₹1,980, InCred ₹1,990), on a trailing P/E near 100-120x, meaning the market has already priced in several years of flawless CDMO/Bio/ADC ramp-up. For this to be a multibagger from here, the newer platforms (Bio fermentation, gene therapy/ADC, GLP-1 peptides) — all pre-revenue or early-stage — must scale into meaningfully larger, higher-margin businesses than currently modeled, not just meet existing guidance.",
+   "triggers": [
+    {
+     "what": "Bio division Phase-1 fermentation capacity (400+ KL) commissioning",
+     "when": "Dec 2026",
+     "source": "presentation"
+    },
+    {
+     "what": "KRKA JV oncology FDF facility ready",
+     "when": "early 2027 (Phase-I)",
+     "source": "transcript"
+    },
+    {
+     "what": "KRKA JV solid-oral facility",
+     "when": "H2 CY2027",
+     "source": "transcript"
+    },
+    {
+     "what": "FY27 capex raised from ₹1,000 Cr to ₹2,000 Cr guidance, driven by customer-specific capacity commitments",
+     "when": "guided Jul 2026, confirmed at AGM",
+     "source": "transcript"
+    },
+    {
+     "what": "CDMO revenue share target of at least 50% of total revenue",
+     "when": "by FY30",
+     "source": "transcript"
+    },
+    {
+     "what": "Aarvik Therapeutics in-licensed ADC assets moving to preclinical/GLP tox, IND filing",
+     "when": "3-4 years to any revenue per management",
+     "source": "transcript"
+    },
+    {
+     "what": "Cell therapy (ImmunoACT/NexCar19-linked) manufacturing facility qualification",
+     "when": "end of 2027",
+     "source": "presentation"
+    }
+   ],
+   "guidance": "Q1 FY27 concall (Jul 24, 2026): FY27 capex guidance raised to ~₹2,000 Cr (from ₹1,500 Cr, originally ₹1,000 Cr); FY27+FY28 combined capex guided at 'more than ₹3,000 Cr' (revised up from a prior ₹3,000 Cr two-year number, exact new figure not given); CDMO to reach at least 50% of revenue by FY30; long-term asset turnover target ~1.1x and ROCE target ~25%; EBITDA margins expected to hold near Q1 FY27 levels (31.8%) into coming quarters.",
+   "delivered_vs_guidance": "Management has hit its qualitative CDMO-mix trajectory (from a low base to ~42-44% of revenue in Q1 FY27, on track for the FY30 50% target) and its margin recovery call — EBITDA margin guidance of sustained expansion has been delivered (24.8% in Q1 FY26 to 31.8% in Q1 FY27). However, capex guidance for FY27 has been revised upward twice within about six months (₹1,000 Cr → ₹1,500 Cr → ₹2,000 Cr), which management attributes to new customer commitments rather than poor planning, but which nonetheless shows limited multi-year forecasting precision. Operating cash flow disclosure was also inconsistent on the Q1 FY27 call — the CFO could not immediately answer a direct question on quarterly OCF, a minor transparency gap.",
+   "scores": {
+    "size_runway": {
+     "score": 3,
+     "why": "Company market cap is now ~₹1,08,640 Cr (Sep 2026) — no longer small — but its Bio/ADC/gene-therapy/peptide platforms are early-stage within a large CDMO/biologics TAM (India CDMO market ~USD 8.4bn in 2024 growing to USD 15.4bn by 2029 per Expert Market Research); runway exists in the new segments, not in overall company size."
+    },
+    "business_quality": {
+     "score": 3,
+     "why": "Gross margin 62.7% and EBITDA margin 31.8% in Q1 FY27 are the best on record, and CDMO is diversified across customers/products/therapies per management; but the business showed real cyclicality as recently as FY24 (OPM crashed to 15%, net profit fell to ₹162 Cr), showing the core API/generics base still lacks durable pricing power."
+    },
+    "management": {
+     "score": 3,
+     "why": "Founder-CEO led since inception with consistent execution on CDMO-mix strategy and margin recovery, no promoter pledge currently and steady ~27.5% promoter holding; but capex guidance was revised up twice in six months and management could not give a clear OCF figure on the Q1 FY27 call, both minor credibility dents."
+    },
+    "growth_visibility": {
+     "score": 4,
+     "why": "Concrete near-term triggers: Bio fermentation Phase-1 (Dec 2026), KRKA JV facilities (2027), continued CDMO commercial ramp (Q1 FY27 CDMO sales +69% YoY to ₹835 Cr), R&D spend up 70% YoY funding gene therapy/ADC infrastructure."
+    },
+    "longevity": {
+     "score": 4,
+     "why": "CDMO structural tailwind (China+1, India CDMO CAGR ~13% per Expert Market Research) plus optionality in peptides/GLP-1, ADC and cell/gene therapy gives multi-year runway, though management itself says 'real growth' from new-modality investment comes only after FY30 (4-5 year gestation cited on the call)."
+    },
+    "valuation": {
+     "score": 1,
+     "why": "Stock trades at ~₹2,000-2,020 (Sep 2026) against a TTM EPS of ₹20.2 (P/E ~99-124x), already above the most bullish recently revised broker targets — Motilal Oswal ₹1,980 and InCred Equities ₹1,990, both set at 65x FY28F EPS — leaving essentially no headroom versus even optimistic sell-side numbers."
+    },
+    "red_flags": {
+     "score": 4,
+     "why": "No auditor resignation, no SEBI order, and no promoter pledge found (pledge history from 2020-21 was resolved via a 1.3% promoter stake sale in March 2021); OCF has recovered strongly (₹1,624 Cr FY26 vs ₹1,070 Cr capex); minor flag only for inconsistent disclosure on constant-currency growth and OCF during the Q1 FY27 call."
+    }
+   },
+   "analyst_views": [
+    {
+     "broker": "Motilal Oswal Financial Services",
+     "date": "2026-07",
+     "view": "Buy",
+     "target": "₹1,980 (65x FY28F EPS, post Q1 FY27 results)",
+     "url": "https://id.tradingview.com/news/moneycontrol%3A148814371094b%3A0-buy-laurus-labs-target-of-rs-1110-motilal-oswal"
+    },
+    {
+     "broker": "InCred Equities",
+     "date": "2026-07",
+     "view": "Upgraded to ADD from HOLD",
+     "target": "₹1,990 (raised from ₹1,020, 65x FY28F EPS)",
+     "url": "https://www.business-standard.com/amp/markets/news/pharma-shares-shine-divi-s-laurus-hit-new-highs-zoom-up-to-91-in-fy27-126082600280_1.html"
+    },
+    {
+     "broker": "ICICI Securities",
+     "date": "2026-01",
+     "view": "Buy",
+     "target": "₹1,170 (pre-rally, now stale versus current price)",
+     "url": "https://www.icicidirect.com/mailcontent/idirect_laurus_q3fy26.pdf"
+    },
+    {
+     "broker": "Jefferies",
+     "date": "2026-01",
+     "view": "Underperform (pre Q1 FY27 results; flagged weak API business and uncertain growth sustainability)",
+     "target": "₹480 (likely stale — no post-Q1 FY27 update found)",
+     "url": "https://www.business-standard.com/management/news/laurus-labs-plunges-15-as-analysts-warn-of-overvaluation-buy-sell-hold-125012700374_1.html"
+    }
+   ],
+   "industry": "India's CDMO market is estimated at ~USD 8.4 billion in 2024, projected to reach USD 15.4 billion by 2029 (CAGR ~13.4%, Expert Market Research), driven by China+1 diversification, India's regulatory/cost advantages, and rising complex-molecule (peptide, ADC, biologics) demand. Laurus's CDMO segment grew 69-76% YoY in recent quarters, outpacing the broader market, but company-specific TAM figures for its own CDMO pipeline were explicitly not disclosed by management (\"we don't want to confuse investors by giving a certain number\").",
+   "risks": [
+    "Valuation risk: stock priced above even the most bullish current broker targets, leaving little margin for execution slippage",
+    "New-modality platforms (Bio, ADC, gene therapy, cell therapy) are pre-revenue or sub-scale (~₹250 Cr combined per management) and could take 18-24+ months to show if the bet pays off, per management's own timeline",
+    "Capex guidance volatility (doubled within six months) could signal weaker long-range planning or simply lumpy customer-driven capex; either way it raises execution/funding risk given net debt/EBITDA already at 1.28x",
+    "Core generics/API/ARV business remains cyclical, as shown by the FY24 margin collapse (OPM to 15%, PAT to ₹162 Cr)",
+    "High customer/geopolitical concentration risk typical of export-oriented CDMO models (global regulated markets, Middle East/West Asia conflict cited as a margin pressure this quarter)"
+   ],
+   "change_my_mind": "A meaningful pullback in valuation (P/E toward the 40-60x range broker models assume) without a deterioration in CDMO growth or margins would make the risk-reward far more attractive; conversely, evidence that the Bio/ADC/gene-therapy investments are converting into disclosed, scaling revenue (not just capacity announcements) ahead of the 18-24 month management timeline would support paying up further.",
+   "sources": [
+    "https://www.screener.in/company/LAURUSLABS/consolidated/",
+    "https://id.tradingview.com/news/moneycontrol%3A148814371094b%3A0-buy-laurus-labs-target-of-rs-1110-motilal-oswal",
+    "https://www.business-standard.com/amp/markets/news/pharma-shares-shine-divi-s-laurus-hit-new-highs-zoom-up-to-91-in-fy27-126082600280_1.html",
+    "https://www.icicidirect.com/mailcontent/idirect_laurus_q3fy26.pdf",
+    "https://www.business-standard.com/management/news/laurus-labs-plunges-15-as-analysts-warn-of-overvaluation-buy-sell-hold-125012700374_1.html",
+    "https://www.expertmarketresearch.com/reports/india-contract-development-and-manufacturing-organization-cdmo-market",
+    "https://www.business-standard.com/markets/news/laurus-labs-share-price-joins-1-trillion-market-cap-club-as-stock-zooms-120-in-1-year-126080600619_1.html",
+    "https://stockanalysis.com/quote/nse/LAURUSLABS/statistics/"
+   ],
+   "date": "2026-09-29",
+   "model": "claude-sonnet-5",
+   "concall": "Jul 2026",
+   "ppt": "Sep 2026",
+   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=e4a19b33-9fe2-4bd0-a9a5-6e92fce415d9.pdf",
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=0902c622-2b24-4754-9131-a5c73d7020d4.pdf"
+  }
+ },
+ "generated": "2026-09-29 08:28"
+}

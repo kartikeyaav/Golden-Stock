@@ -48,23 +48,36 @@ INTEL_PATHS = ("multibagger_screener/multibagger_screener/state/theme_intel.json
                "multibagger_screener/multibagger_screener/theme_intel.md",
                "multibagger_screener/multibagger_screener/journal/theme_intel_journal.csv")
 
+# The multibagger report analyst's outputs (scripts/ai_multibagger.py), committed
+# by this wrapper right after the reading runs (the user's phase 3, 2026-09-29).
+MB_RESEARCH_PATHS = ("multibagger_screener/multibagger_screener/state/multibagger_research.json",
+                     "multibagger_screener/multibagger_screener/journal/multibagger_research_journal.csv")
+
 # What this wrapper owns, and what a healed rebase restores for it.
 RECORD_PATHS = ("multibagger_screener/multibagger_screener/ai_picks.json",
                 "multibagger_screener/multibagger_screener/ai_picks.md",
                 "multibagger_screener/multibagger_screener/journal/ai_picks_journal.csv"
-                ) + INTEL_PATHS
+                ) + INTEL_PATHS + MB_RESEARCH_PATHS
 
 # THE BUDGET, nested so the innermost limit always bites first and the wrapper
 # survives to log and push (inverting it is what stranded the 19-Jul picks):
 #
 #   theme_intel.TIMEOUT_S 40m  <  INTEL_TIMEOUT_S 45m
 #   ai_picks.TIMEOUT_S    3h   <  COMMITTEE_TIMEOUT_S 3h20m
-#   45m + 3h20m + git     ~4h10m  <  the task's ExecutionTimeLimit (PT5H)
+#   ai_multibagger        ~50m  <  MB_RESEARCH_TIMEOUT_S 55m
+#   45m + 3h20m + 55m + git  ~5h  ~  the task's ExecutionTimeLimit (PT5H)
+#
+# The multibagger reading runs LAST, so a slow week can cut only it short: it
+# is resumable (companies read in the last 21 days are skipped), still due at
+# the next logon, and the every-logon trigger finishes it then.
 #
 # The task limit was PT4H until the research step was added in front of the
 # committee (2026-09-19); at PT4H a slow week would have killed the wrapper
 # mid-committee with its picks unpushed.
 INTEL_TIMEOUT_S = 2700        # 45m
+MB_RESEARCH_TIMEOUT_S = 3300  # 55m
+MB_RESEARCH_MAX_AGE_DAYS = 6.0
+MB_RESEARCH_N = 8             # companies per run, one bounded Claude call each
 COMMITTEE_TIMEOUT_S = 12000   # 3h20m
 
 # Weekly research: due when its last read is this old. Six days, not seven, so
@@ -177,7 +190,68 @@ def _run() -> int:
     # Its failure does not stop the committee — but it does fail the task, so
     # Task Scheduler cannot record a clean run over a layer that did not run.
     intel_rc = _maybe_run_theme_intel()
-    return max(_committee(synced, force), intel_rc)
+    committee_rc = _committee(synced, force)
+    # 3. the multibagger report analyst: reads concall transcripts, investor
+    # presentations and analyst/industry reports for the radar's top names
+    return max(committee_rc, intel_rc, _maybe_run_multibagger_research())
+
+
+def _mb_research_age_days() -> float | None:
+    try:
+        with open(os.path.join(ROOT, "state", "multibagger_research.json"), encoding="utf-8") as f:
+            g = json.load(f).get("generated", "")
+        return (datetime.now() - datetime.strptime(g, "%Y-%m-%d %H:%M")).total_seconds() / 86400
+    except (OSError, ValueError, KeyError):
+        return None
+
+
+def _maybe_run_multibagger_research() -> int:
+    """scripts/ai_multibagger.py when its last run is MB_RESEARCH_MAX_AGE_DAYS
+    old or absent. 0 = not due, or done and pushed; 1 = failed (logged why)."""
+    age = _mb_research_age_days()
+    if age is not None and age < MB_RESEARCH_MAX_AGE_DAYS and "--force-mb" not in sys.argv:
+        log(f"multibagger research is {age:.1f}d old (< {MB_RESEARCH_MAX_AGE_DAYS:.0f}d) — not due")
+        return 0
+    log("multibagger research " + ("has never run" if age is None else f"is {age:.1f}d old")
+        + f" — reading reports for up to {MB_RESEARCH_N} radar names")
+    env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
+    env["PYTHONIOENCODING"] = "utf-8"
+    from _stay_awake import stay_awake
+    with stay_awake(log):
+        try:
+            proc = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "ai_multibagger.py"), "--n", str(MB_RESEARCH_N)],
+                                  capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", timeout=MB_RESEARCH_TIMEOUT_S, cwd=ROOT, env=env)
+        except subprocess.TimeoutExpired:
+            log(f"ai_multibagger.py timed out after {MB_RESEARCH_TIMEOUT_S}s — what it finished is saved; the rest runs next time")
+            return _commit_paths(MB_RESEARCH_PATHS, "multibagger research")
+    tail = "\n".join((proc.stdout or "").strip().splitlines()[-2:])
+    log(f"ai_multibagger.py exit {proc.returncode}: {tail[:300]}")
+    rc = _commit_paths(MB_RESEARCH_PATHS, "multibagger research")
+    return max(rc, 1 if proc.returncode != 0 else 0)
+
+
+def _commit_paths(paths, label: str) -> int:
+    gr = git_root()
+    for rel in paths:
+        run(["git", "add", "-f", "--", rel], cwd=gr)
+    c = run(["git", "commit", "-m", f"local {label} {datetime.now():%Y-%m-%d} (subscription run)"], cwd=gr)
+    if c.returncode != 0:
+        why = commit_blocked(c)
+        if why is None:
+            log(f"{label}: nothing new to commit")
+            return 0
+        log(f"{label} COMMIT BLOCKED, not pushed: {why[:200]}")
+        return 1
+    if not git_pull_retry(gr, attempts=2, delay=10):
+        log(f"{label.upper()} COMMITTED BUT THE PULL FAILED — the next run heals it and pushes then")
+        return 1
+    p = run(["git", "push", "origin", "master"], cwd=gr, timeout=180)
+    if p.returncode != 0:
+        log(f"{label} push FAILED: {(p.stderr or '')[:150]}")
+        return 1
+    log(f"{label} committed + pushed")
+    return 0
 
 
 def _maybe_run_theme_intel() -> int:

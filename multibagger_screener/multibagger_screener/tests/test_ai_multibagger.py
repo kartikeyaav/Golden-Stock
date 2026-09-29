@@ -1,0 +1,65 @@
+"""
+The multibagger report analyst's plumbing (scripts/ai_multibagger.py): the
+parts that decide WHAT is read and HOW the answer is kept. No network, no
+Claude call.
+
+What must hold:
+- the JSON answer is recovered from a fenced block, or from bare JSON;
+- a long transcript keeps its opening (the guidance) and its end (the Q&A),
+  with a visible cut between them;
+- candidates come best first (the multibagger score, then the number of
+  signals) and a company read within 21 days is not read again;
+- the markdown tables drop empty cells instead of printing "None".
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+from datetime import datetime, timedelta
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+
+import ai_multibagger as A  # noqa: E402
+
+
+def test_json_answer_is_recovered_fenced_or_bare():
+    fenced = 'Here you go:\n```json\n{"symbol": "ABC", "conviction": 4}\n```\nthanks'
+    assert A.parse_json(fenced) == {"symbol": "ABC", "conviction": 4}
+    bare = 'noise {"symbol": "XYZ", "conviction": 2, "scores": {"valuation": {"score": 1}}}'
+    assert A.parse_json(bare)["scores"]["valuation"]["score"] == 1
+    assert A.parse_json("no json here") is None
+
+
+def test_trim_keeps_opening_and_end_with_a_visible_cut():
+    text = "GUIDANCE " * 1000 + "MIDDLE " * 5000 + "PUSHBACK " * 1000
+    t = A._trim(text, 4000)
+    assert len(t) <= 4000 + 10
+    assert t.startswith("GUIDANCE") and t.rstrip().endswith("PUSHBACK")
+    assert "[...]" in t
+    assert A._trim("short", 4000) == "short"
+
+
+def test_candidates_best_first_and_recent_reads_skipped(tmp_path, monkeypatch):
+    radar = {"rows": [{"sym": "LOW", "signals": {"H9": "d"}, "rs_pct": 99},
+                      {"sym": "TWO", "signals": {"H9": "d", "H25": "d"}, "rs_pct": 90},
+                      {"sym": "SCORED", "signals": {"H9": "d"}, "mb_score": 5},
+                      {"sym": "READ", "signals": {"H7": "d", "H9": "d", "H25": "d"}}]}
+    p = tmp_path / "radar.json"
+    p.write_text(json.dumps(radar), encoding="utf-8")
+    monkeypatch.setattr(A, "RADAR", str(p))
+    recent = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+    st = {"items": {"READ": {"date": recent}}}
+    got = [r["sym"] for r in A.candidates(10, st, force=False)]
+    assert got == ["SCORED", "TWO", "LOW"]                     # READ was read 3 days ago
+    assert "READ" in [r["sym"] for r in A.candidates(10, st, force=True)]
+
+
+def test_tables_leave_empty_cells_empty():
+    tbl = {"columns": ["Mar 2025", "Mar 2026"], "rows": {"Sales": [100.0, None], "Net Profit": [12.5, 20.0]}}
+    out = A._table(tbl, 6)
+    assert "None" not in out and "| Sales | 100 |  |" in out and "12.5" in out
+    assert A._table({}, 6) == "(not available)"

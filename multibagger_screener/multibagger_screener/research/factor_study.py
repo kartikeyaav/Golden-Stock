@@ -138,6 +138,70 @@ def mcap_grid(g, tab: pd.DataFrame) -> np.ndarray:
     return mc
 
 
+
+RES_DIR = Path(SHP_DIR).parent / "results"
+_MON = {m: i for i, m in enumerate(("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1)}
+
+
+def quarterly_table() -> pd.DataFrame:
+    """Quarterly revenue and profit (Rs crore): NSE's filed results (XBRL,
+    2017-2024; known from the exchange broadcast) and screener.in's last 13
+    quarters (known 45 days after quarter end, SEBI's deadline). Where both
+    have a quarter, NSE's exact filing time wins."""
+    rows = []
+    for fp in sorted(RES_DIR.glob("*.json")) if RES_DIR.exists() else []:
+        if fp.name.startswith("_"):
+            continue
+        for q in json.loads(fp.read_text(encoding="utf-8")).get("quarters") or []:
+            if q.get("revenue") is None or q.get("profit") is None:
+                continue
+            rows.append({"symbol": fp.stem, "qend": q["end"][:10], "known": q["filed"][:10],
+                         "rev": q["revenue"] / 1e7, "pat": q["profit"] / 1e7, "src": 0})
+    for fp in sorted(Path(F.FUND_DIR).glob("*.json")):
+        if fp.name.startswith("_"):
+            continue
+        qt = json.loads(fp.read_text(encoding="utf-8")).get("quarters") or {}
+        cols, R = qt.get("columns") or [], qt.get("rows") or {}
+        rev, pat = R.get("Sales") or R.get("Revenue") or [], R.get("Net Profit") or []
+        for i, c in enumerate(cols):
+            parts = str(c).split()
+            if len(parts) != 2 or parts[0] not in _MON or i >= len(rev) or i >= len(pat) or rev[i] is None or pat[i] is None:
+                continue
+            end = (pd.Timestamp(int(parts[1]), _MON[parts[0]], 1) + pd.offsets.MonthEnd(0))
+            rows.append({"symbol": fp.stem, "qend": str(end.date()), "known": str((end + pd.Timedelta(days=45)).date()),
+                         "rev": rev[i], "pat": pat[i], "src": 1})
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    return df.sort_values("src").drop_duplicates(["symbol", "qend"], keep="first").sort_values(["symbol", "qend"])
+
+
+def q_grid(g, qt: pd.DataFrame) -> np.ndarray:
+    """Q1 (PREREG amendment 2026-09-29): the latest KNOWN quarter's profit up
+    >= 25% on the same quarter a year before (which was a profit) and its
+    sales up >= 20%; on from the day it became known until the next quarter's."""
+    T, N = g.T, g.N
+    out = np.zeros((T, N), bool)
+    col = _latest_col(g)
+    for sym, grp in qt.groupby("symbol"):
+        j = col.get(str(sym))
+        if j is None:
+            continue
+        grp = grp.sort_values("qend")
+        by = {r.qend: r for r in grp.itertuples()}
+        ends = list(by)
+        for k, e in enumerate(ends):
+            r = by[e]
+            prev = by.get(str((pd.Timestamp(e) - pd.DateOffset(years=1) + pd.offsets.MonthEnd(0)).date()))
+            a = int(np.searchsorted(g.dates.values, np.datetime64(r.known), side="right"))
+            b = int(np.searchsorted(g.dates.values, np.datetime64(by[ends[k + 1]].known), side="right")) if k + 1 < len(ends) else T
+            if prev is None or a >= T or b <= a:
+                continue
+            if prev.pat > 0 and r.pat >= 1.25 * prev.pat and prev.rev > 0 and r.rev >= 1.20 * prev.rev:
+                out[a:b, j] = True
+    return out
+
+
 # --------------------------------------------------------------- factors
 def factors(g, fy: dict, sh: dict, mc: np.ndarray, promo60: np.ndarray) -> dict[str, np.ndarray]:
     U = g.universe()
@@ -226,15 +290,25 @@ def main() -> int:
              "companies_annual": int(at["symbol"].nunique()), "companies_shareholding": int(st["symbol"].nunique()) if len(st) else 0}
     print(f"grids ready ({time.time() - t0:.0f}s); coverage of universe cells since 2016: {cover}", flush=True)
     rng = np.random.default_rng(7)
+    qt = quarterly_table()
+    q1 = q_grid(g, qt) if len(qt) else np.zeros_like(U)
+    have_q = int(qt["symbol"].nunique()) if len(qt) else 0
+    print(f"quarterly results: {have_q} companies, {len(qt):,} company-quarters", flush=True)
     tests = {"H0 random universe stock with fundamentals": U & era & have_f & (rng.random(U.shape) < 1 / 60),
-             **{k: v & era for k, v in factors(g, fy, sh, mc, promo60).items()}}
+             **{k: v & era for k, v in factors(g, fy, sh, mc, promo60).items()},
+             "Q1 quarterly: profit +25%, sales +20% on the same quarter last year": q1 & era}
+    # the 1 June timing sensitivity (PREREG amendment 2026-09-29): the same
+    # annual-statement factors, with fiscal year Y known from 1 June Y
+    fy_jun = dated_grids(g, at, "fy", ("sales", "op", "np", "cfo", "cfi", "eq", "borrow", "assets", "roce"), "06-01", backs=(0, 1))
+    annual_keys = [k for k in tests if k[:2] in ("A1", "A2", "A3", "A4", "A5", "A6", "B1", "B2", "K1", "K3", "K4", "K5")]
+    sens = {k: v & era for k, v in factors(g, fy_jun, sh, mc, promo60).items() if k in annual_keys}
     lab = {k: g.mb(m, w) for k, (m, w) in LABELS.items()}
     base = {k: np.nanmean(np.where(U, v, np.nan), axis=1) for k, v in lab.items()}
     fr = {h: g.fwd_ret(h) for h in HORIZONS}
     fr_base = {h: np.nanmean(np.where(U, v, np.nan), axis=1) for h, v in fr.items()}
     lo250, pk = roll(g.c, 250, "min", minp=60), fwd_max(g.c, 252)
-    res = {}
-    for name, sig in tests.items():
+    res, res_jun = {}, {}
+    for block, name, sig in [("reg", k, v) for k, v in tests.items()] + [("jun", k, v) for k, v in sens.items()]:
         t, j = dedupe(sig & U)
         ev = pd.DataFrame({"t": t, "j": j})
         ev["date"] = g.dates[t]
@@ -249,13 +323,16 @@ def main() -> int:
             ev["early"] = np.log(pk[t, j] / e) / np.log(pk[t, j] / lo250[t, j])
         ev["mult"], ev["held"] = mechanical_exit(g, t, j)
         disc, conf = ev[ev["date"] <= SPLIT], ev[ev["date"] > SPLIT]
-        res[name] = {"all": summarise(ev), "discovery": summarise(disc), "confirmation": summarise(conf)}
-        d, c = res[name]["discovery"].get("MB3_1y", {}), res[name]["confirmation"].get("MB3_1y", {})
-        m12 = res[name]["confirmation"].get("r252", {}).get("median")
-        print(f"{name:66} n {len(disc):5}/{len(conf):5}  lift {d.get('lift')} / {c.get('lift')}  12m median (21-26) {m12}", flush=True)
+        out = res if block == "reg" else res_jun
+        out[name] = {"all": summarise(ev), "discovery": summarise(disc), "confirmation": summarise(conf)}
+        d, c = out[name]["discovery"].get("MB3_1y", {}), out[name]["confirmation"].get("MB3_1y", {})
+        m12 = out[name]["confirmation"].get("r252", {}).get("median")
+        tag = "" if block == "reg" else "[1 June] "
+        print(f"{tag}{name:66} n {len(disc):5}/{len(conf):5}  lift {d.get('lift')} / {c.get('lift')}  12m median (21-26) {m12}", flush=True)
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(os.path.join(OUT_DIR, "factor_study.json"), "w", encoding="utf-8") as f:
-        json.dump({"split": str(SPLIT.date()), "coverage": cover, "results": res}, f, indent=1, default=str)
+        json.dump({"split": str(SPLIT.date()), "coverage": {**cover, "companies_quarterly": have_q},
+                   "results": res, "sensitivity_1_june": res_jun}, f, indent=1, default=str)
     print(f"done in {(time.time() - t0) / 60:.1f}m")
     return 0
 
