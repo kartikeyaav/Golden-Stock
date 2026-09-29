@@ -407,6 +407,7 @@ def build_all(payload: dict) -> dict:
                     ("honest", build_honest),
                     ("momentum", build_momentum),
                     ("radar", lambda: _load_json("state", "multibagger_radar.json")),
+                    ("mbresearch", lambda: _load_json("state", "multibagger_research.json")),
                     ("mbsleeve", build_multibagger_sleeve),
                     ("vbsleeve", lambda: build_multibagger_sleeve("value_breakout")),
                     ("pmsleeve", lambda: build_multibagger_sleeve("promoter_momentum")),

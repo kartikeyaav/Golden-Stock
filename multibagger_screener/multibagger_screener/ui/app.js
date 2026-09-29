@@ -52,6 +52,7 @@ const RD = X.radar || {};                          // whole-market multibagger r
 const MB = X.mbsleeve || {};                       // multibagger sleeve (paper, pre-registered)
 const VB = X.vbsleeve || {};                       // value-breakout sleeve (paper, pre-registered)
 const PM = X.pmsleeve || {};                       // promoter-buying sleeve (paper, pre-registered)
+const MRS = (X.mbresearch || {}).items || {};      // the report analyst's reads (scripts/ai_multibagger.py)
 const posBy = {};
 (POS.paper || []).forEach(p => { (posBy[p.sym] = posBy[p.sym] || []).push(p); });
 const MC_LAST = (MC.rebalances || []).slice(-1)[0] || null;
@@ -1151,7 +1152,7 @@ function radarBlock(list) {
     const best = Object.keys(r.signals || {}).map(radarOdds).filter(isNum).reduce((a, b) => Math.max(a, b), 0);
     return `<div class="arow" data-sym="${esc(r.sym)}" data-ctx="radar">
       <div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "outside the nightly scan")}</span></div>
-      <div class="a-main">${Object.entries(r.signals || {}).map(([k, d]) => radarChip(k, d)).join(" ")}
+      <div class="a-main">${Object.entries(r.signals || {}).map(([k, d]) => radarChip(k, d)).join(" ")} ${convChip(r.sym)}
         <div class="a-sub"><span class="${cls(r.ret_6m_pct)}">${pct(r.ret_6m_pct, 0)}</span> in 6 months${best ? ` · ${best.toFixed(1)}× the usual odds of tripling` : ""}</div></div>
       <div class="a-spark">${closesOf(r.sym).length ? spark(closesOf(r.sym), 84, 26) : ""}</div>
       <div class="a-score" data-tip="Relative strength percentile (100 = strongest).">${rsCell(r.rs_pct)}</div>
@@ -1208,7 +1209,7 @@ function watchRow(tab, it) {
     right = a.status === "ACTIONABLE" ? '<span class="chip sm buy">valid</span>' : a.status === "RAN AWAY" ? '<span class="chip sm watch">ran away</span>' : a.status === "VETOED" ? '<span class="chip sm risk">vetoed</span>' : '<span class="chip sm ghost">faded</span>';
   } else if (it.r) {
     const x = it.r;
-    mid = Object.keys(x.signals || {}).map(k => `<span class="chip sm ${radarCls(k)}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ");
+    mid = Object.keys(x.signals || {}).map(k => `<span class="chip sm ${radarCls(k)}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ") + " " + convChip(it.sym);
     right = `<span class="num ${cls(x.ret_6m_pct)}">${pct(x.ret_6m_pct, 0)}</span>`;
   }
   return `<div class="wrow ${it.sym === S.watch.sel ? "sel" : ""}" data-wsel="${esc(it.sym)}">
@@ -1243,7 +1244,7 @@ function stockHead(sym, nav) {
     <div class="shead-top"><div style="min-width:0"><h2>${esc(sym)}</h2><div class="co">${esc(r.company || (rr0 ? "Outside the nightly scan" : ""))}${r.ind ? " · " + esc(r.ind) : ""}${r.tier ? " · " + esc(r.tier) + " cap" : ""}</div></div>
       ${isNum(price) ? `<div class="px"><div class="p">${px(price)}</div>${isNum(chg) ? `<div class="${cls(chg)} num" style="font-size:12.5px">${pct(chg, 2)} last session</div>` : ""}</div>` : `<div class="px"></div>`}
       ${nav || ""}</div>
-    <div class="sheet-chips">${r.tag ? stageChip(r.tag) : ""} ${r.trig || st ? setupChip(r.trig || (st && st.status)) : ""} ${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}" data-tip="Research score out of 100: the breakdown is below.">Score ${d.score.toFixed(0)}</span>` : ""} ${isNum(r.rs) ? `<span class="chip sm ghost" data-tip="Relative strength percentile against the whole universe.">RS ${r.rs.toFixed(0)}</span>` : ""} ${verdictChip(v, true)} ${pk ? `<span class="chip sm ai">Committee pick</span>` : ""} ${rr0 ? Object.entries(rr0.signals || {}).map(([k, dd]) => radarChip(k, dd)).join(" ") : ""} ${survChips(sym)} ${r.veto ? '<span class="chip sm risk">Vetoed</span>' : ""} ${(themeBy[sym] || []).slice(0, 2).map(t => `<span class="chip sm ghost">${esc(t)}</span>`).join(" ")}</div>
+    <div class="sheet-chips">${r.tag ? stageChip(r.tag) : ""} ${r.trig || st ? setupChip(r.trig || (st && st.status)) : ""} ${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}" data-tip="Research score out of 100: the breakdown is below.">Score ${d.score.toFixed(0)}</span>` : ""} ${isNum(r.rs) ? `<span class="chip sm ghost" data-tip="Relative strength percentile against the whole universe.">RS ${r.rs.toFixed(0)}</span>` : ""} ${verdictChip(v, true)} ${convChip(sym)} ${pk ? `<span class="chip sm ai">Committee pick</span>` : ""} ${rr0 ? Object.entries(rr0.signals || {}).map(([k, dd]) => radarChip(k, dd)).join(" ") : ""} ${survChips(sym)} ${r.veto ? '<span class="chip sm risk">Vetoed</span>' : ""} ${(themeBy[sym] || []).slice(0, 2).map(t => `<span class="chip sm ghost">${esc(t)}</span>`).join(" ")}</div>
   </div>`;
 }
 function todoBox(sym) {
@@ -1258,7 +1259,7 @@ function todoBox(sym) {
     ${cells([["Entry ≈", px(plan.entry)], ["Stop", px(plan.stop), "neg", isNum(plan.stop_pct) ? pct(-plan.stop_pct) : ""], ["Quantity", num(plan.shares)], ["Risk", inr(plan.risk), "", isNum(riskShare(plan)) ? riskShare(plan).toFixed(2) + "% of capital" : ""]])}</div>`;
   if (st && st.status === "AWAITING TRIGGER") return `<div class="todo watch"><div class="todo-head"><span class="todo-tag">Set an alert</span><span class="todo-text">Buy only on a close above <b>${px(st.pivot)}</b> with at least <b>${volFmt(st.vneed)}</b> shares traded (today: ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "—"} normal volume).</span>${sp ? `<button class="btn sm" data-copy-one="${esc(sym)}" style="margin-left:auto">${I.copy}Copy alert</button>` : ""}</div>
     ${sp ? cells([["Alert price", px(st.pivot), "", "buy zone to " + px(st.zone_top)], ["Stop", px(sp.stop), "neg", pct(-sp.stop_pct) + " · 2.5 × ATR"], ["Quantity", num(sp.shares), "", inrShort(sp.value) + " position"], ["Risk", inr(sp.risk), "", (sp.risk / CAPITAL * 100).toFixed(2) + "% of capital"]]) + tail(sp) : `<div class="muted" style="font-size:12.5px">${esc(st.plan && st.plan.why || "No sized plan: the stop would be wider than the 12% cap.")}</div>`}</div>`;
-  if (rr0) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">Flagged as a possible multibagger (${Object.keys(rr0.signals || {}).map(k => esc(RADAR_WORD[k] || k)).join(", ")}). Not a buy signal: read the business and the news below first.</span></div></div>`;
+  if (rr0) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">Flagged as a possible multibagger (${Object.keys(rr0.signals || {}).map(k => esc(RADAR_WORD[k] || k)).join(", ")}). ${MRS[sym] ? `The report analyst read its filings: <b>conviction ${esc(MRS[sym].conviction)} of 5</b> (${esc(MRS[sym].horizon || "")}), below.` : "Not a buy signal: read the business and the news below first."}</span></div></div>`;
   if (st && st.status) return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">Watch</span><span class="todo-text">${esc(SETUP_WORD[st.status] || st.status)}. Nothing to do until a fresh base forms.</span></div></div>`;
   return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">No setup</span><span class="todo-text">${esc(stageWord(r.tag))}. Nothing to do until a base forms; it will appear in the watchlist when one does.</span></div></div>`;
 }
@@ -1275,6 +1276,7 @@ function stockDetail(sym, p) {
       <span class="muted" style="font-size:12px;margin-left:8px">50- and 150-day averages · dashed lines: alert price, stop, entry</span></div>
       <div class="chart-box" id="${p}-main"></div><div class="chart-box small" id="${p}-rs"></div></div>
     <div class="grid grid-2 dsec" style="align-items:start"><div>${scoreCard(sym)}</div><div class="stack">${voicesCard(sym)}${factsCard(sym)}</div></div>
+    ${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Report analyst</div>${researchCard(sym)}</div>` : ""}
     <div class="dsec"><div class="dsec-title">Business</div>${bizSection(sym, p)}</div>
     <div class="dsec"><div class="dsec-title">News and filings</div>${sheetNews(sym)}</div>
     ${verdictBy[sym] || pickBy[sym] ? `<div class="dsec"><div class="dsec-title">AI research</div>${sheetResearch(sym)}</div>` : ""}
@@ -1370,10 +1372,58 @@ function exploreMarket() {
 }
 
 /* ================================================================== RESEARCH */
-const RTABS = [["analyst", "AI analyst"], ["committee", "Committee picks"], ["news", "News and filings"], ["deals", "Bulk and block deals"], ["policy", "Policy radar"]];
+/* ============================================================ REPORT ANALYST
+   What the weekly reading of each company's filings concluded
+   (scripts/ai_multibagger.py, analyst/MULTIBAGGER_PROTOCOL.md): the concall
+   and presentation read, guidance checked against delivery, broker and
+   industry reports found, an SQGLP-style scorecard and a 1-5 conviction. */
+const MR_LABEL = { size_runway: "Size and runway", business_quality: "Business quality", management: "Management",
+  growth_visibility: "Growth visibility", longevity: "Longevity", valuation: "Valuation (room to re-rate)", red_flags: "Red flags (5 = none)" };
+function convCol(c) { return c >= 4 ? "var(--buy)" : c >= 3 ? "var(--info)" : c >= 2 ? "var(--watch)" : "var(--risk)"; }
+function convChip(sym) {
+  const m = MRS[sym];
+  if (!m || !isNum(+m.conviction)) return "";
+  return `<span class="chip sm" style="color:${convCol(+m.conviction)};border-color:${convCol(+m.conviction)}" data-tip="${esc("Report analyst, " + dateLabel(m.date) + ": " + String(m.thesis || "").slice(0, 220))}">AI ${esc(m.conviction)}/5</span>`;
+}
+function researchCard(sym) {
+  const m = MRS[sym] || {}, sc = m.scores || {}, c = +m.conviction;
+  const link = (u, t) => u && /^https?:/.test(u) ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>` : esc(t);
+  return `<div class="card accent-ai">
+    <div class="card-head"><h3>Conviction</h3><span class="chip" style="color:${convCol(c)};border-color:${convCol(c)};font-size:13px">${esc(m.conviction)} of 5</span>
+      <span class="chip sm ghost">${esc(m.horizon || "")}</span>
+      <span class="hint">read ${esc(dateLabel(m.date))}${m.concall ? " · " + link(m.transcript_url, m.concall + " concall") : ""}${m.ppt ? " · " + link(m.ppt_url, m.ppt + " presentation") : ""}</span></div>
+    <div class="memo" style="margin-bottom:14px">${esc(m.thesis || "")}</div>
+    <div class="grid grid-2" style="align-items:start;gap:20px">
+      <div><div class="sbars">${Object.keys(MR_LABEL).filter(k => sc[k]).map(k => { const v = +sc[k].score, pctv = isNum(v) ? v / 5 * 100 : 0, col = isNum(v) ? (v >= 4 ? "var(--buy)" : v >= 3 ? "var(--info)" : v >= 2 ? "var(--watch)" : "var(--risk)") : "var(--faint)";
+        return `<div class="sbar"><div class="top"><span>${esc(MR_LABEL[k])}</span><b style="color:${col}">${isNum(v) ? v + "/5" : "—"}</b></div><div class="track"><i style="width:${pctv}%;background:${col}"></i></div><div class="n">${esc(sc[k].why || "")}</div></div>`; }).join("")}</div></div>
+      <div class="memo">
+        ${(m.triggers || []).length ? `<h4>Growth triggers</h4><ul>${m.triggers.map(t => `<li><b>${esc(t.when || "")}</b> ${esc(t.what || "")} <span class="faint">(${esc(t.source || "")})</span></li>`).join("")}</ul>` : ""}
+        ${m.guidance ? `<h4>Guidance</h4><p>${esc(m.guidance)}</p>` : ""}
+        ${m.delivered_vs_guidance ? `<h4>Said versus done</h4><p>${esc(m.delivered_vs_guidance)}</p>` : ""}
+        ${m.industry ? `<h4>Industry</h4><p>${esc(m.industry)}</p>` : ""}
+      </div>
+    </div>
+    ${(m.analyst_views || []).length ? `<div class="dsec-title" style="margin-top:16px">Analyst reports</div><div class="table-wrap"><table class="t"><thead><tr><th>Broker</th><th>When</th><th>View</th><th>Target</th></tr></thead>
+      <tbody>${m.analyst_views.map(a => `<tr style="cursor:default"><td>${link(a.url, a.broker || "")}</td><td class="num">${esc(a.date || "")}</td><td>${esc(a.view || "")}</td><td class="num">${esc(a.target || "")}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    <div class="grid grid-2" style="margin-top:14px;align-items:start;gap:20px"><div class="memo">${(m.risks || []).length ? `<h4>Risks</h4><ul>${m.risks.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>
+      <div class="memo">${m.change_my_mind ? `<h4>What would change the view</h4><p>${esc(m.change_my_mind)}</p>` : ""}</div></div>
+    ${(m.sources || []).length ? `<details class="more" style="margin-top:8px"><summary>Sources (${m.sources.length})</summary><div class="memo"><ul>${m.sources.map(u => `<li>${link(u, u)}</li>`).join("")}</ul></div></details>` : ""}
+    <div class="muted" style="font-size:11.5px;margin-top:8px">Research, not a trade instruction: entries, stops and sizes stay mechanical. Every read is logged and measured against what the stock does next.</div>
+  </div>`;
+}
+function researchReports() {
+  const items = Object.entries(MRS).map(([sym, m]) => ({ sym, ...m })).sort((a, b) => (+b.conviction || 0) - (+a.conviction || 0) || String(b.date).localeCompare(String(a.date)));
+  if (!items.length) return `<div class="empty">No company has been read yet. The report analyst reads the radar's top names each week on the laptop.</div>`;
+  return `<div class="callout" style="margin-bottom:14px">Each week the report analyst reads the top radar names' latest concall transcript and investor presentation, checks management's past guidance against what was delivered, and looks for broker, industry and governance reports. Open a stock for the full read.</div>
+    <div class="grid grid-2">${items.map(m => `<div class="vcard" data-sym="${esc(m.sym)}" style="cursor:pointer">
+      <div class="top"><span class="sym" style="font-size:15px">${esc(m.sym)}</span>${convChip(m.sym)}<span class="chip sm ghost">${esc(m.horizon || "")}</span><span class="muted" style="margin-left:auto;font-size:12px">${esc(dateLabel(m.date))}</span></div>
+      <div class="why">${esc(String(m.thesis || "").slice(0, 320))}${String(m.thesis || "").length > 320 ? "…" : ""}</div></div>`).join("")}</div>`;
+}
+
+const RTABS = [["reports", "Report analyst"], ["analyst", "AI analyst"], ["committee", "Committee picks"], ["news", "News and filings"], ["deals", "Bulk and block deals"], ["policy", "Policy radar"]];
 function pageResearch() {
-  if (!RTABS.some(t => t[0] === S.research)) S.research = "analyst";
-  const body = { analyst: researchAnalyst, committee: researchCommittee, news: researchNews, deals: researchDeals, policy: researchPolicy }[S.research];
+  if (!RTABS.some(t => t[0] === S.research)) S.research = "reports";
+  const body = { reports: researchReports, analyst: researchAnalyst, committee: researchCommittee, news: researchNews, deals: researchDeals, policy: researchPolicy }[S.research];
   return `<div class="toolbar"><div class="seg" style="flex-wrap:wrap">${RTABS.map(([k, l]) => `<button data-research="${k}" class="${S.research === k ? "on" : ""}">${l}</button>`).join("")}</div></div>
     <div class="page-intro">The context behind the signals. Nothing here changes an entry, a stop or a size.</div>${body()}`;
 }
