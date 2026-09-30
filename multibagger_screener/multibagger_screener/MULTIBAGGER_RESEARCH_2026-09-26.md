@@ -5,6 +5,11 @@ multibaggers early, with multifold returns**; the aspiration is **more than
 100% a year**. Research smart money, ICT and the methods of proven stock
 pickers; backtest properly; fetch whatever data is missing.
 
+**Follow-up, 2026-09-29/30:** the user asked for multibaggers to be found by
+fundamentals, institutions, management and volume, not technicals alone. The
+answer is the last three parts of §2: which of those parameters preceded
+multibaggers, the score rebuilt from them, and the report analyst.
+
 What was measured is fixed in `PREREG_2026-09-26_multibagger_research.md`
 (written before any result, with one dated amendment). Everything below comes
 from the scripts in `research/`; the numbers are in `research/out/`.
@@ -254,6 +259,211 @@ What it shows:
 It runs forward on paper from 29 September 2026
 (`scripts/multibagger_sleeve.py --sleeve promoter_momentum`).
 
+### Fundamentals, institutions, promoters and volume (2026-09-29/30)
+
+The user, 2026-09-29: identifying multibaggers should not be technical
+analysis alone. It should look at the company "fundamentally, volume wise,
+institutional investment wise, management wise"; that is what the conviction
+score was meant to do. Quarterly results, analyst reports and consultant
+reports should be read too, and the methods of proven investors applied. They
+chose three phases, in order:
+
+1. measure which of those parameters preceded Indian multibaggers;
+2. rebuild the conviction score from the survivors and test it as a
+   portfolio;
+3. add an AI analyst that reads the reports.
+
+**The methods, turned into testable factors.** The methods agree on one arc:
+- a small, cheap, undiscovered company;
+- then something changes: a turnaround, new capacity, a product, a tailwind;
+- earnings inflect, institutions arrive, and the P/E re-rates.
+
+The sources:
+- Motilal Oswal's wealth-creation studies (SQGLP);
+- Christopher Mayer's twin engines;
+- Vijay Kedia's SMILE;
+- O'Neil's CAN SLIM;
+- Marcellus's forensic consistency;
+- Yartseva's 2025 study of multibaggers.
+
+`PREREG_2026-09-29_multibagger_factors.md` froze 21 factors in six families, five
+combinations and a random control before any test. It has two dated
+amendments, each committed before its results. Code: `research/factor_study.py`.
+
+**New data, point in time:**
+- **Shareholding:** every March since 2017 for 1,981 companies
+  (`research/shareholding_fetch.py`). The March snapshot is known from 1 May.
+- **Quarterly results:** NSE's own filed results for 1,869 companies
+  (`research/results_fetch.py`), known from the exchange broadcast time, plus
+  screener.in's last 13 quarters, known 45 days after quarter end.
+- **Annual statements:** the research cache as before, FY2015 on, known from
+  1 October.
+- **Coverage** of universe stock-days since 2016: 77% have annual statements,
+  79% shareholding.
+
+The lift of tripling within a year, against the same-date universe. A factor
+survives at 1.3 or more in **both** halves:
+
+| factor | 2016–20 | 2021–26 | median 12-month return, 2021–26 | verdict |
+|---|---|---|---|---|
+| Random stock with fundamentals (control) | 1.18 | 1.04 | +6.6% | control |
+| **Turnaround:** profit after a loss year, sales up | 1.75 | 1.93 | +13.1% | **survives** |
+| **Value:** FCF yield and book/market both in the top 30% | 1.64 | 1.42 | +11.1% | **survives** |
+| **Small:** market cap under ₹2,000 Cr | 1.95 | 1.70 | +5.0% | **survives** |
+| **Undiscovered:** FII + DII under 5% | 1.79 | 1.73 | +1.0% | **survives** |
+| **Promoter raising stake** by 1 point or more | 1.63 | 1.74 | +11.0% | **survives** |
+| **Volume expansion:** traded value 2× its 6-month average | 1.36 | 1.35 | +6.4% | **survives** |
+| **Momentum:** RS leader or trend template | 1.58 | 1.47 | +9.4% | **survives** |
+| **Quarterly surge:** profit +25% and sales +20% on a year before | 1.37 | 1.36 | +9.4% | **survives** |
+| Growth: sales and profit up 20%+ | 1.25 | 0.78 | +9.8% | fails |
+| Operating leverage | 0.87 | 0.61 | +2.0% | fails |
+| ROCE rising 5 points to 15%+ | 1.16 | 0.93 | +4.8% | fails |
+| Deleveraging | 1.19 | 0.73 | +4.5% | fails |
+| Capacity coming on stream | 1.97 | 0.50 | +10.9% | fails |
+| Cheap for its growth: P/E ≤ 20, profit +20% | 1.24 | 0.77 | +12.0% | fails |
+| Institutions arriving: +2 points from under 10% | 0.99 | 1.47 | +2.0% | fails |
+| Institutions adding 3 points | 0.99 | 0.81 | +7.2% | fails |
+| Shareholder base up 25% | 0.79 | 1.01 | +3.2% | fails |
+| Promoter holding 50%+ | 0.96 | 1.08 | +5.6% | fails |
+| Promoter cutting stake by 3 points (negative control, expected < 1) | 0.79 | 1.04 | +1.0% | below 1 only in 2016–20 |
+| Delivery accumulation | 1.39 | 0.76 | +11.4% | fails |
+| Up-day volume 1.5× down-day volume | 1.23 | 1.12 | +6.8% | fails |
+| Twin engines: growth + cheap for its growth | 1.56 | 0.66 | | fails |
+| Institutions arriving + momentum | 1.49 | 2.02 | | fails: below momentum alone in 2016–20 |
+| Inflection + institutions | 1.15 | 0.84 | | fails |
+| **The full stack:** inflection + ownership + volume + momentum | 1.53 | 1.04 | | fails |
+| Family count 3+ / 4+ / 5+ | 1.41 / 1.55 / 2.78 | 1.21 / 1.22 / 1.08 | | fails |
+
+What it shows:
+
+- **The recipe's starting conditions preceded multibaggers; its growth story
+  did not.** These held in both halves:
+  - small, cheap and undiscovered;
+  - turning round;
+  - the promoter adding.
+
+  These faded in 2021–26:
+  - growth of 20%+ (1.25, then 0.78);
+  - cheap for its growth (1.24, then 0.77);
+  - rising ROCE and deleveraging;
+  - new capacity (1.97, then 0.50).
+- **The 1 June timing check rules out the obvious excuse.** With the annual
+  numbers known four months earlier, growth still fails (1.21 / 0.98), and so
+  does cheap for its growth (1.17 / 0.96). Turnaround (1.65 / 1.74) and value
+  (1.80 / 1.36) pass under either timing. The family count of 4+ passes only
+  under 1 June, and is still below momentum alone.
+- **Institutions arriving did not precede triples; their absence did.** Under
+  5% institutional ownership: 1.79 and 1.73. Institutions adding 3 points:
+  0.99 and 0.81. By the time a March shareholding shows them arriving, the
+  move has usually been made.
+- **The management signal that works is the promoter's own money.**
+  - A promoter stake up a point in a year: 1.63 and 1.74.
+  - Market purchases plus momentum (H25, above): 2.32 and 2.38.
+  - A promoter holding 50% or more says nothing.
+  - A promoter cutting its stake was a mild warning only in 2016–20.
+- **Raising the odds of a triple is not the same as raising the typical
+  return.** Undiscovered names tripled 1.7 times as often as the market, yet
+  their median 12-month return in 2021–26 was +1.0%. The random control made
+  +6.6%, and small caps +5.0%. These are lottery-ticket factors: more big
+  winners and a weaker middle. Turnaround (+13.1%), value (+11.1%) and the
+  promoter adding (+11.0%) improved both.
+- **The full stack did not hold.** This was the user's conviction idea:
+  inflection, ownership, volume and momentum all at once. It scored 1.53,
+  then 1.04. Counting families is no better than momentum alone. What
+  survives is a set of specific ingredients, several of them unglamorous.
+- **Survivorship caveat:** statements and shareholding exist only for
+  companies with a screener.in page today. The random control has a lift of
+  1.18 and 1.04, so part of every fundamental lift is survival itself. Read
+  each factor against the control, not against 1.0.
+
+### The rebuilt multibagger score as a portfolio (2026-09-30)
+
+The score was rebuilt from the survivors only. Each factor's weight is the
+natural log of its lower half-lift, registered on 09-29 before the full
+results. The score sums the weights of the factors present, scaled so that all
+present = 100. Its share of the maximum:
+
+| promoter buying + momentum | turnaround | undiscovered | small | promoter raising stake | momentum | value | quarterly surge | volume expansion |
+|---|---|---|---|---|---|---|---|---|
+| 19.5% | 13.0% | 12.7% | 12.3% | 11.3% | 8.9% | 8.1% | 7.1% | 7.0% |
+
+**The registered portfolio test:**
+- **Entry:** the top 10% of the universe by score each day, about 90 names
+  a session.
+- **Rules:** the same 8-cell grid and choice rule as the other sleeves, so the
+  cell was chosen on 2016–2020 and read once on 2021–2026.
+- **Code:** `research/mb_portfolio.py`.
+
+The rule chose 10 slots, a 3×ATR chandelier exit and the breadth exit:
+
+| CAGR / worst drawdown | 2016–2020 (chosen here) | 2021–2026 (read once) | 2016–2026 |
+|---|---|---|---|
+| **The rebuilt score** | **29.9% / −29.7%** | **26.1% / −30.5%** | **26.9% / −32.2%** |
+| Momentum alone, same cell | 24.3% / −30.2% | 19.2% / −49.8% | 16.9% / −49.8% |
+| Promoter buying + momentum alone, same cell | 34.0% / −24.8% | 35.8% / −33.6% | 32.1% / −32.9% |
+| Equal-weight universe | 4.7% / −62.2% | 22.1% / −26.8% | 13.8% / −62.2% |
+
+| 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 to Sep |
+|---|---|---|---|---|---|---|---|---|---|---|
+| +25% | +153% | −14% | −9% | +50% | +105% | −18% | +82% | +24% | −5% | −4% |
+
+What it shows:
+
+- **Against momentum alone, the score is a better ranking** in both halves.
+  It made +5.6 and +6.9 points a year more, and its 2021–26 drawdown was far
+  shallower (−30.5% against −49.8%). In 2022 it lost 18%; momentum lost 39%.
+- **Against the market in the held-out years:** it made +4 points a year more
+  than the equal-weight universe, with a slightly deeper drawdown.
+- **It does not beat its own strongest ingredient.** Promoter buying plus
+  momentum alone, on the same cell, made 35.8% on 2021–26. Mixing in the other
+  eight ingredients widens the net from about 10 names a session to about 90,
+  and dilutes the edge. The promoter-buying paper sleeve (above) therefore
+  stays the book to follow. The score is for deciding what to research across
+  the whole market.
+- **Win rate 45%, best trade 4.4×:** the returns come from a few large winners,
+  as in every book in this record.
+
+**Live:** the radar computes the score nightly for every liquid stock
+(`research/mb_live.py`). It uses the same flag and weight code as the test
+(`research/mb_score.py`), on committed weekly tables:
+- `value_fundamentals.csv`;
+- `shareholding.csv`;
+- `quarterly_results.csv`.
+
+Each factor comes with one line of evidence, such as "promoter holding 48.4%
+→ 53.2%" or "Jun 2026 quarter: profit +209%, sales +82% on a year before".
+On 25 September, 878 of 1,443 liquid stocks had at least one ingredient.
+
+A mechanical score cannot tell a one-off from a trend. RELINFRA's
+"turnaround" is a ₹9,177 Cr exceptional gain, and SUMEETINDS's promoter
+"0% → 89.8%" is an insolvency resolution. Reading the filings is the report
+analyst's job.
+
+### The report analyst (2026-09-29)
+
+`scripts/ai_multibagger.py` runs weekly on the laptop, after the committee.
+It takes the eight best-scored names not read in 21 days.
+
+For each name it reads:
+- the latest concall transcript and investor presentation (BSE PDFs);
+- six years of statements, eight quarters and the shareholding;
+- promoter trades and exchange filings.
+
+It then searches the web for broker and industry reports. It scores the
+company on the rubric in `analyst/MULTIBAGGER_PROTOCOL.md`, which draws on
+SQGLP, SMILE, CAN SLIM and forensic accounting:
+- size of runway;
+- business quality;
+- management;
+- growth visibility;
+- longevity;
+- valuation;
+- red flags.
+
+It must also say what would change its mind. It has no forward record yet.
+`journal/multibagger_research_journal.csv` records each read with the price at
+the time, so its conviction can be judged later.
+
 ## 3. How many multibaggers can be caught at all (recall)
 
 `research/capture.py` found **5,324 episodes of an NSE stock tripling within a
@@ -450,6 +660,13 @@ of any fix for them is forward data, because 2016–2026 has now been seen.
   - promoter buying + momentum.
 
   Each is judged at 6 and 12 months against the MIDSMALL ETF.
+- **The rebuilt multibagger score** (2026-09-30), computed nightly by the
+  radar on every liquid stock. The stock page shows it as four pillars and a
+  checklist of the proven ingredients, each with its evidence. Home's
+  "Research these" step and the Watchlist's "Multibagger candidates" tab rank
+  the whole market by it.
+- **The report analyst** (2026-09-29), weekly on the laptop: it reads the top
+  names' concalls, presentations, broker and industry reports.
 
 ## Sources
 
