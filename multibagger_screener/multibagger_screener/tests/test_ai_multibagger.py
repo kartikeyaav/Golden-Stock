@@ -7,8 +7,10 @@ What must hold:
 - the JSON answer is recovered from a fenced block, or from bare JSON;
 - a long transcript keeps its opening (the guidance) and its end (the Q&A),
   with a visible cut between them;
-- candidates come best first (the multibagger score, then the number of
-  signals) and a company read within 21 days is not read again;
+- candidates are the whole market's best multibagger scores, including
+  names with no radar signal, each with its factor evidence; before the
+  score exists, the radar's names by their number of signals; a company
+  read within 21 days is not read again;
 - the markdown tables drop empty cells instead of printing "None".
 """
 
@@ -44,18 +46,27 @@ def test_trim_keeps_opening_and_end_with_a_visible_cut():
 
 
 def test_candidates_best_first_and_recent_reads_skipped(tmp_path, monkeypatch):
-    radar = {"rows": [{"sym": "LOW", "signals": {"H9": "d"}, "rs_pct": 99},
-                      {"sym": "TWO", "signals": {"H9": "d", "H25": "d"}, "rs_pct": 90},
-                      {"sym": "SCORED", "signals": {"H9": "d"}, "mb_score": 5},
-                      {"sym": "READ", "signals": {"H7": "d", "H9": "d", "H25": "d"}}]}
+    rows = [{"sym": "LOW", "signals": {"H9": "d"}, "rs_pct": 99, "close": 50.0},
+            {"sym": "TWO", "signals": {"H9": "d", "H25": "d"}, "rs_pct": 90},
+            {"sym": "READ", "signals": {"H7": "d", "H9": "d", "H25": "d"}}]
     p = tmp_path / "radar.json"
-    p.write_text(json.dumps(radar), encoding="utf-8")
     monkeypatch.setattr(A, "RADAR", str(p))
     recent = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
     st = {"items": {"READ": {"date": recent}}}
-    got = [r["sym"] for r in A.candidates(10, st, force=False)]
-    assert got == ["SCORED", "TWO", "LOW"]                     # READ was read 3 days ago
+
+    p.write_text(json.dumps({"rows": rows}), encoding="utf-8")                 # before the score
+    assert [r["sym"] for r in A.candidates(10, st, force=False)] == ["TWO", "LOW"]   # READ was read 3 days ago
     assert "READ" in [r["sym"] for r in A.candidates(10, st, force=True)]
+
+    mb = {"stocks": {"LOW": {"score": 40.0, "factors": ["B3 small"], "evidence": {"B3 small": "market cap ₹500 Cr"}},
+                     "OUTSIDE": {"score": 70.0, "factors": ["A3 turnaround"], "evidence": {"A3 turnaround": "profit after a loss"},
+                                 "close": 12.5},
+                     "READ": {"score": 90.0, "factors": [], "evidence": {}}}}
+    p.write_text(json.dumps({"rows": rows, "mb": mb}), encoding="utf-8")
+    got = A.candidates(10, st, force=False)
+    assert [r["sym"] for r in got] == ["OUTSIDE", "LOW"]        # no radar signal needed; TWO scored nothing
+    assert got[0]["mb_factors"] == {"A3 turnaround": "profit after a loss"} and got[0]["close"] == 12.5
+    assert got[1]["close"] == 50.0 and got[1]["signals"] == {"H9": "d"}   # the radar's row rides along
 
 
 def test_tables_leave_empty_cells_empty():

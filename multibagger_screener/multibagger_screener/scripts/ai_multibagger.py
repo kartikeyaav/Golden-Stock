@@ -254,18 +254,28 @@ def journal(row: dict) -> None:
 
 
 def candidates(n: int, st: dict, force: bool) -> list[dict]:
-    """The radar's names, best first (the multibagger score once phase 2 adds
-    it, else the number of signals), skipping ones read in FRESH_DAYS."""
+    """The whole market's best multibagger scores (the radar's nightly `mb`
+    block, research/mb_live.py), each with its factor evidence and the
+    radar's own row where it has one. Most top-scored names carry no radar
+    signal, so reading only the radar's rows would never reach them. Before
+    the score exists: the radar's names by their number of signals. Names
+    read within FRESH_DAYS are skipped."""
     try:
         with open(RADAR, encoding="utf-8") as f:
-            rows = json.load(f).get("rows") or []
+            radar = json.load(f)
     except (OSError, ValueError):
-        rows = []
+        radar = {}
+    rows = {r["sym"]: r for r in radar.get("rows") or []}
+    mb = (radar.get("mb") or {}).get("stocks") or {}
+    if mb:
+        todo = [{**rows.get(s, {}), "sym": s, "close": (rows.get(s) or {}).get("close", mb[s].get("close")),
+                 "mb_score": mb[s]["score"], "mb_factors": {k: (mb[s].get("evidence") or {}).get(k, "") for k in mb[s]["factors"]}}
+                for s in sorted(mb, key=lambda s: -mb[s]["score"])]
+    else:
+        todo = sorted(rows.values(), key=lambda r: (-len(r.get("signals") or {}), -(r.get("rs_pct") or 0)))
     cutoff = (datetime.now() - timedelta(days=FRESH_DAYS)).strftime("%Y-%m-%d")
     fresh = {s for s, v in (st.get("items") or {}).items() if str(v.get("date", "")) >= cutoff}
-    rows = [r for r in rows if force or r["sym"] not in fresh]
-    rows.sort(key=lambda r: (-(r.get("mb_score") or 0), -len(r.get("signals") or {}), -(r.get("rs_pct") or 0)))
-    return rows[:n]
+    return [r for r in todo if force or r["sym"] not in fresh][:n]
 
 
 def main() -> int:
