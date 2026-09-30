@@ -114,6 +114,10 @@ def heal_stuck_rebase(git_root: str, run, log, restore_paths=()) -> bool:
 CLOUD_OWNED = (
     "multibagger_screener/multibagger_screener/daily_alerts.md",
     "multibagger_screener/multibagger_screener/state/themes.json",
+    # a local `scripts/multibagger_radar.py` run (research checks) writes it; on
+    # 2026-09-30 that leftover met the cloud's nightly rewrite in the 09:31
+    # analyst's autostash, left the file unmerged and blocked its verdicts
+    "multibagger_screener/multibagger_screener/state/multibagger_radar.json",
 )
 
 

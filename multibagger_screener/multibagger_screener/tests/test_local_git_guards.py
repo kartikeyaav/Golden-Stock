@@ -252,6 +252,19 @@ def test_an_unmerged_cloud_file_is_resolved_not_refused():
     assert ["git", "checkout", "HEAD", "--", themes] in fake.calls
 
 
+def test_a_local_radar_run_cannot_wedge_the_pull():
+    """2026-09-30: a research session's local radar run left
+    state/multibagger_radar.json modified; the 09:31 analyst's autostash put it
+    back on top of the cloud's nightly rewrite and the file came out unmerged,
+    so the verdicts could not be committed."""
+    from _local_git import CLOUD_OWNED, discard_cloud_owned_edits
+    radar = "multibagger_screener/multibagger_screener/state/multibagger_radar.json"
+    assert radar in CLOUD_OWNED
+    fake = StatusFake({radar: "UU"})
+    assert discard_cloud_owned_edits("/repo", fake, lambda m: None) == [radar]
+    assert ["git", "checkout", "HEAD", "--", radar] in fake.calls
+
+
 def test_the_owners_own_uncommitted_work_is_never_touched():
     """The safety property. This repo is also where the owner develops; a
     cleanup that discarded whatever happened to be modified would eventually
