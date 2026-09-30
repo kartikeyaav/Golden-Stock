@@ -144,6 +144,7 @@ def scan(g, extras: bool = True) -> dict:
     # trend-template pass (PREREG_2026-09-27_promoter_buying.md, the survivor):
     # the research function itself, on the committed insider archive
     insider_asof = None
+    trades = None
     if extras and os.path.exists(INSIDER_ARCHIVE):
         try:
             import pandas as pd
@@ -155,6 +156,7 @@ def scan(g, extras: bool = True) -> dict:
                 tr["symbol"] = tr["symbol"].astype(str).str.strip().map(lambda s: chain.get(s, s))
                 raw["H25"] = h25_grid(g, tr) & U
                 insider_asof = str(tr["disclosed_at"].max())[:16]
+                trades = tr
         except Exception as e:  # noqa: BLE001
             print(f"promoter-buying signal skipped: {type(e).__name__}: {str(e)[:120]}")
     # the research EVENT: the first firing per stock per 120 sessions
@@ -189,12 +191,28 @@ def scan(g, extras: bool = True) -> dict:
             "off_52w_high_pct": round((c / float(hi52[j]) - 1) * 100, 1) if np.isfinite(hi52[j]) else None,
             "traded_value_cr": round(float(np.nanmedian(g.tv[max(0, t - 19):t + 1, j])) / 1e7, 2),
         })
+    # the rebuilt multibagger score (phase 2, PREREG_2026-09-29): the surviving
+    # fundamental, ownership, volume and price factors, weighted by their
+    # measured edge. Non-fatal like every extra.
+    mb = None
+    if extras:
+        try:
+            from research import mb_live
+            mb = mb_live.live(g, ROOT, trades=trades)
+            for r in rows:
+                s = mb["stocks"].get(r["sym"])
+                r["mb_score"] = s["score"] if s else None
+        except Exception as e:  # noqa: BLE001
+            # kept in the state, so the stock page says why instead of quietly
+            # falling back to the radar's own list
+            mb = {"error": f"{type(e).__name__}: {str(e)[:160]}"}
+            print(f"multibagger score skipped: {mb['error']}")
     rows.sort(key=lambda r: (-len(r["signals"]), -(r["rs_pct"] or 0)))
     # the liquid universe tonight: the weekly fundamentals refresh
     # (scripts/value_fundamentals.py) keeps exactly these companies current
     uni = sorted({g.symbols[j].split("~")[0] for j in np.nonzero(U[t])[0]})
     return {"asof": str(g.dates[t].date()), "universe_size": int(U[t].sum()), "rows": rows,
-            "universe": uni, "insider_asof": insider_asof}
+            "universe": uni, "insider_asof": insider_asof, "mb": mb}
 
 
 def main() -> int:

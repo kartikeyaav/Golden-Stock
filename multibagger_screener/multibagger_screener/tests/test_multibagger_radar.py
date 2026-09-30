@@ -76,6 +76,23 @@ def test_a_persistent_rs_leader_is_one_event_not_a_daily_signal():
     assert row is None or "H9" not in row["signals"]
 
 
+def test_a_failed_multibagger_score_says_why(monkeypatch, tmp_path):
+    """The score is non-fatal like every extra, but a failure must reach the
+    state (and the stock page), not only the Actions log: otherwise Home
+    quietly falls back to the radar's own list and nobody notices."""
+    from research import mb_live
+
+    def boom(*a, **k):
+        raise FileNotFoundError("research/out/factor_study.json")
+    monkeypatch.setattr(mb_live, "live", boom)
+    monkeypatch.setattr(MR, "VALUE_TABLE", str(tmp_path / "none.csv"))
+    monkeypatch.setattr(MR, "INSIDER_ARCHIVE", str(tmp_path / "none.csv"))
+    T, N = 320, 30
+    c = 100 * np.exp(np.cumsum(np.random.default_rng(3).normal(0, 0.004, (T, N)), axis=0))
+    out = MR.scan(_grid(c), extras=True)
+    assert out["mb"] == {"error": "FileNotFoundError: research/out/factor_study.json"}
+
+
 def test_digest_shows_only_todays_radar_signals():
     radar = {"rows": [{"sym": "NEWONE", "signals": {"H7": "2026-09-25"}, "fresh": True, "ret_6m_pct": 140.0},
                       {"sym": "OLDONE", "signals": {"H9": "2026-09-18"}, "fresh": False, "ret_6m_pct": 90.0}]}

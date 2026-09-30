@@ -53,6 +53,8 @@ const MB = X.mbsleeve || {};                       // multibagger sleeve (paper,
 const VB = X.vbsleeve || {};                       // value-breakout sleeve (paper, pre-registered)
 const PM = X.pmsleeve || {};                       // promoter-buying sleeve (paper, pre-registered)
 const MRS = (X.mbresearch || {}).items || {};      // the report analyst's reads (scripts/ai_multibagger.py)
+const MBX = (X.radar || {}).mb || {};              // the rebuilt multibagger score (research/mb_live.py)
+const MBS = MBX.stocks || {}, MBCFG = MBX.config || {};
 const posBy = {};
 (POS.paper || []).forEach(p => { (posBy[p.sym] = posBy[p.sym] || []).push(p); });
 const MC_LAST = (MC.rebalances || []).slice(-1)[0] || null;
@@ -190,7 +192,7 @@ function scoreBars(sym, compact) {
 }
 function scoreCard(sym) {
   const d = detailOf(sym) || {};
-  return `<div class="card"><div class="card-head"><h3>Why this score</h3>${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}">${d.score.toFixed(0)} / 100</span>` : ""}${info("Eight weighted questions: technicals, earnings, balance sheet, catalysts, smart money, theme, governance and valuation. Each bar is how well this stock answers one of them. In the forward record, names under 50 (and vetoed ones) lagged the market; above 50 the score does not pick winners, so use it to rule names out.")}
+  return `<div class="card"><div class="card-head"><h3>Health check</h3>${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}">${d.score.toFixed(0)} / 100</span>` : ""}${info("Eight weighted questions: technicals, earnings, balance sheet, catalysts, smart money, theme, governance and valuation. Each bar is how well this stock answers one of them. What it is good for, measured: names under 50 (and vetoed ones) lagged the market, so it rules weak or risky companies OUT. It does not pick winners; the multibagger score above does that job.")}
       <span class="hint">${d.dims_as_of || d.scored_at ? "read of " + esc(String(d.dims_as_of || d.scored_at).slice(0, 10)) : ""}${isNum(d.coverage) && d.coverage < 100 ? " · " + d.coverage.toFixed(0) + "% answered" : ""}</span></div>
     ${(d.veto_reasons || []).length ? `<div class="callout risk" style="margin-bottom:12px"><b>Vetoed.</b> ${d.veto_reasons.map(esc).join("; ")}</div>` : ""}
     ${scoreBars(sym)}</div>`;
@@ -1112,9 +1114,9 @@ function headsUp(syms) {
 }
 function pageHome() {
   const rg = regime(), buys = buySignals(), ready = readySetups(), session = priceSession();
-  const alerts = homeAlerts(), radar = radarRecent(6);
+  const alerts = homeAlerts(), radar = radarRecent(6), mbtop = mbTop(6);
   const faded = recentTriggers().filter(a => !buys.some(b => b.sym === a.sym));
-  const heads = headsUp(new Set([...buys.map(a => a.sym), ...alerts.map(s => s.sym), ...radar.map(r => r.sym)]));
+  const heads = headsUp(new Set([...buys.map(a => a.sym), ...alerts.map(s => s.sym), ...(mbtop.length ? mbtop.map(m => m.sym) : radar.map(r => r.sym))]));
   let n = 0;
   return `
   <div class="today-top">
@@ -1128,7 +1130,8 @@ function pageHome() {
     buys.length ? `<div class="action-list">${buys.map(buyCard).join("")}</div>`
       : `<div class="step-empty"><b>Nothing to buy today.</b> That's normal: the system averages 2–3 entries a month, with gaps of weeks.${faded.length ? ` <a href="#/watchlist/triggered">${faded.length} stock${faded.length > 1 ? "s" : ""} triggered this week</a> but ran away or faded.` : ""}</div>`)}
   ${step(++n, "Set price alerts", alerts.length ? "the " + alerts.length + " stocks closest to a breakout" : "", alertsBlock(alerts, ready.length))}
-  ${radar.length ? step(++n, "Research these", "possible multibaggers from the whole market", radarBlock(radar)) : ""}
+  ${mbtop.length ? step(++n, "Research these", "the most proven multibagger ingredients at once, whole market", mbBlock(mbtop))
+      : radar.length ? step(++n, "Research these", "possible multibaggers from the whole market", radarBlock(radar)) : ""}
   ${heads.length ? step(++n, "Heads-up", "risk news on the stocks above", `<div class="card">${heads.slice(0, 8).map(i => `<div class="lrow" data-sym="${esc(i.sym)}"><div><span class="sym">${esc(i.sym)}</span><div class="act ${i.kind === "risk" ? "neg" : "warn"}">${esc(i.text)}</div></div><span class="muted" style="font-size:12px">read it before acting</span></div>`).join("")}</div>`) : ""}`;
 }
 function alertsBlock(list, total) {
@@ -1164,17 +1167,17 @@ function radarBlock(list) {
 /* ================================================================= WATCHLIST
    A terminal: the list on the left, everything about the selected stock on
    the right. ↑ ↓ move through the list. On a phone a tap opens the stock. */
-const WTABS = [["buy", "Buy now"], ["ready", "Ready to break out"], ["radar", "Multibagger radar"], ["triggered", "Triggered this week"], ["forming", "Base forming"]];
+const WTABS = [["buy", "Buy now"], ["ready", "Ready to break out"], ["radar", "Multibagger candidates"], ["triggered", "Triggered this week"], ["forming", "Base forming"]];
 const WHINT = {
   buy: "Valid signals with a sized plan.",
   ready: "A close above the alert price on 1.5× volume makes it a buy.",
-  radar: "Possible multibaggers from the whole market: research, then decide.",
+  radar: "The whole market ranked by the multibagger score: the proven ingredients present at once. Research, then decide.",
   triggered: "Signals from the last 7 days, including ones that ran away or faded.",
   forming: "A base is forming but the uptrend isn't confirmed yet. Watch only.",
 };
 function watchItems(tab) {
   if (tab === "buy") return buySignals().map(a => ({ sym: a.sym, a }));
-  if (tab === "radar") return (RD.rows || []).map(r => ({ sym: r.sym, r }));
+  if (tab === "radar") return Object.keys(MBS).length ? mbTop(120).map(m => ({ sym: m.sym, m })) : (RD.rows || []).map(r => ({ sym: r.sym, r }));
   if (tab === "triggered") return recentTriggers().map(a => ({ sym: a.sym, a }));
   if (tab === "forming") return formingSetups().map(s => ({ sym: s.sym, s }));
   const d = s => isNum(s.dist) ? Math.abs(s.dist) : 99;
@@ -1198,7 +1201,7 @@ function pageWatchlist() {
 }
 function watchRow(tab, it) {
   const r = rowBy[it.sym] || {};
-  let mid = "", right = "";
+  let mid = "", right = "", sub = "";
   if (it.s) {
     const s = it.s;
     mid = `<span class="num ${!isNum(s.dist) ? "" : s.dist < 0 ? "warn" : s.dist <= 2 ? "pos" : ""}">${isNum(s.dist) ? (s.dist >= 0 ? pct(s.dist) + " to go" : "above, needs volume") : ""}</span>`;
@@ -1207,13 +1210,16 @@ function watchRow(tab, it) {
     const a = it.a;
     mid = `<span class="num ${cls(a.chg)}">${pct(a.chg)}</span> <span class="muted">since ${esc(dateLabel(a.d))}</span>`;
     right = a.status === "ACTIONABLE" ? '<span class="chip sm buy">valid</span>' : a.status === "RAN AWAY" ? '<span class="chip sm watch">ran away</span>' : a.status === "VETOED" ? '<span class="chip sm risk">vetoed</span>' : '<span class="chip sm ghost">faded</span>';
+  } else if (it.m) {
+    sub = it.m.factors.map(n => `<span class="chip sm ghost">${esc(fShort(n))}</span>`).join("") + convChip(it.sym);
+    right = scoreCell(it.m.score);
   } else if (it.r) {
     const x = it.r;
     mid = Object.keys(x.signals || {}).map(k => `<span class="chip sm ${radarCls(k)}">${esc(RADAR_WORD[k] || k)}</span>`).join(" ") + " " + convChip(it.sym);
     right = `<span class="num ${cls(x.ret_6m_pct)}">${pct(x.ret_6m_pct, 0)}</span>`;
   }
   return `<div class="wrow ${it.sym === S.watch.sel ? "sel" : ""}" data-wsel="${esc(it.sym)}">
-    <div class="cell-sym"><span class="sym">${esc(it.sym)}</span><span class="co">${esc(r.company || (it.r ? "outside the nightly scan" : ""))}</span></div>
+    <div class="cell-sym"><span class="sym">${esc(it.sym)}</span><span class="co">${esc(r.company || (it.r || it.m ? "outside the nightly scan" : ""))}</span>${sub ? `<div class="wchips">${sub}</div>` : ""}</div>
     <div class="wmid">${mid}</div>
     <div class="wspark">${closesOf(it.sym).length ? spark(closesOf(it.sym).slice(-60), 60, 22) : ""}</div>
     <div class="wright">${right}</div></div>`;
@@ -1275,7 +1281,7 @@ function stockDetail(sym, p) {
     <div class="dsec"><div class="chart-range">${["3M", "6M", "1Y"].map(k => `<button class="btn sm ${S.chartRange === k ? "primary" : ""}" data-range="${k}">${k}</button>`).join("")}
       <span class="muted" style="font-size:12px;margin-left:8px">50- and 150-day averages · dashed lines: alert price, stop, entry</span></div>
       <div class="chart-box" id="${p}-main"></div><div class="chart-box small" id="${p}-rs"></div></div>
-    <div class="grid grid-2 dsec" style="align-items:start"><div>${scoreCard(sym)}</div><div class="stack">${voicesCard(sym)}${factsCard(sym)}</div></div>
+    <div class="grid grid-2 dsec" style="align-items:start"><div class="stack">${mbCard(sym)}${voicesCard(sym)}</div><div class="stack">${scoreCard(sym)}${factsCard(sym)}</div></div>
     ${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Report analyst</div>${researchCard(sym)}</div>` : ""}
     <div class="dsec"><div class="dsec-title">Business</div>${bizSection(sym, p)}</div>
     <div class="dsec"><div class="dsec-title">News and filings</div>${sheetNews(sym)}</div>
@@ -1310,6 +1316,9 @@ function drawFundInto(sym, p) {
 }
 function outsideDetail(sym) {
   const x = (RD.rows || []).find(r => r.sym === sym);
+  if (!x && MBS[sym]) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">A multibagger candidate from the whole market, outside the nightly scan, so there's no chart or plan here yet.</span></div></div>
+    <div class="dsec">${mbCard(sym)}</div>${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Report analyst</div>${researchCard(sym)}</div>` : ""}
+    <div class="dsec" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="https://www.screener.in/company/${encodeURIComponent(sym)}/" target="_blank" rel="noopener">Screener.in ↗</a><a class="btn sm" href="https://www.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(sym)}" target="_blank" rel="noopener">Chart ↗</a></div>`;
   if (!x) return `<div class="empty" style="margin-top:14px">No data on this build for ${esc(sym)}.</div>`;
   return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">A possible multibagger from the whole-market radar. It's outside the nightly scan, so there's no chart, plan or score here yet.</span></div>
       <div class="plan-grid"><div class="plan-cell"><div class="k">6 months</div><div class="v ${cls(x.ret_6m_pct)}">${pct(x.ret_6m_pct, 0)}</div></div><div class="plan-cell"><div class="k">12 months</div><div class="v ${cls(x.ret_12m_pct)}">${pct(x.ret_12m_pct, 0)}</div></div>
@@ -1372,6 +1381,47 @@ function exploreMarket() {
 }
 
 /* ================================================================== RESEARCH */
+/* ========================================================= MULTIBAGGER SCORE
+   The rebuilt score (phase 2, PREREG_2026-09-29): only the factors that
+   preceded Indian multibaggers in BOTH 2016-20 and 2021-26, each weighted by
+   how much it raised the odds of tripling within a year. Drawn as four
+   pillars plus a checklist: what the company has, and what it lacks. */
+const FSHORT = { A1: "Growth", A2: "Operating leverage", A3: "Turnaround", A4: "Returns rising", A5: "Deleveraging", A6: "Capacity on stream",
+  B1: "Cheap for its growth", B2: "Value (cash flow and book)", B3: "Small cap", C1: "Institutions arriving", C2: "Undiscovered", C3: "Institutions adding",
+  C4: "Shareholders broadening", D1: "Promoter raising stake", D2: "Promoter holds 50%+", E1: "Delivery accumulation", E2: "Up-volume", E3: "Volume surge",
+  F: "Price leader", Q1: "Quarterly surge", P: "Promoter buying" };
+function fKey(name) { return name.startsWith("P ") ? "P" : name.startsWith("F ") ? "F" : name.slice(0, 2); }
+function fShort(name) { return FSHORT[fKey(name)] || name; }
+function mbTop(n) { return Object.entries(MBS).map(([sym, m]) => ({ sym, ...m })).sort((a, b) => b.score - a.score).slice(0, n); }
+function mbCard(sym) {
+  const names = Object.keys(MBCFG);
+  if (!names.length) return MBX.error ? `<div class="card"><div class="card-head"><h3>Multibagger score</h3><span class="chip sm risk">not computed</span></div>
+    <div class="muted" style="font-size:13px">The nightly run could not compute it: ${esc(MBX.error)}</div></div>` : "";
+  const m = MBS[sym], on = new Set((m || {}).factors || []);
+  if (!m && !(RD.universe || []).includes(sym)) return `<div class="card"><div class="card-head"><h3>Multibagger score</h3><span class="chip sm ghost">not scored</span></div>
+    <div class="muted" style="font-size:13px">Outside the ${num(MBX.universe)} liquid stocks the score covers (it needs a year of history and enough daily trading), so its ingredients were not checked.</div></div>`;
+  const pil = {};
+  names.forEach(n => { const v = MBCFG[n], p = v.pillar; pil[p] = pil[p] || { max: 0, got: 0 }; pil[p].max += v.weight; if (on.has(n)) pil[p].got += v.weight; });
+  const order = ["Business inflection", "Room to re-rate", "Ownership", "Price and volume"].filter(p => pil[p]);
+  const sc = m ? m.score : 0;
+  return `<div class="card"><div class="card-head"><h3>Multibagger score</h3><span class="chip sm" style="color:${scoreCol(sc)};border-color:${scoreCol(sc)}">${Math.round(sc)} / 100</span>${info("Built only from the factors that preceded Indian multibaggers in both 2016–20 and 2021–26, each weighted by how much it raised the odds of tripling within a year. More of the proven ingredients at once means a higher score. Tested as a 10-stock portfolio, the top 10% by this score made 27% a year over 2016–2026, against 17% for momentum alone and 14% for the market; promoter buying + momentum on its own made 32%. So use it to decide what to research, not what to buy.")}</div>
+    <div class="sbars">${order.map(p => { const v = pil[p], pc = v.max ? v.got / v.max * 100 : 0, col = pc >= 50 ? "var(--buy)" : pc > 0 ? "var(--watch)" : "var(--faint)";
+      return `<div class="sbar"><div class="top"><span>${esc(p)}</span><b style="color:${col}">${Math.round(pc)}%</b></div><div class="track"><i style="width:${pc}%;background:${col}"></i></div></div>`; }).join("")}</div>
+    <div class="flist">${names.sort((a, b) => MBCFG[b].weight - MBCFG[a].weight).map(n => { const hit = on.has(n);
+      return `<div class="fitem ${hit ? "on" : ""}"><span class="fico">${hit ? "✓" : "·"}</span><div><div class="ft">${esc(fShort(n))} <span class="faint">${Math.exp(MBCFG[n].weight).toFixed(1)}× odds</span></div>${hit && m.evidence && m.evidence[n] ? `<div class="fn">${esc(m.evidence[n])}</div>` : ""}</div></div>`; }).join("")}</div>
+    <div class="muted" style="font-size:11.5px;margin-top:10px">Scored ${esc(dateLabel(MBX.asof))} across ${num(MBX.universe)} liquid stocks. "Odds" is how much more often stocks with that ingredient tripled within a year than the average stock, in the weaker of the two halves tested.</div></div>`;
+}
+function mbBlock(list) {
+  return `<div class="card flush"><div class="alist">${list.map(m => `<div class="arow" data-sym="${esc(m.sym)}" data-ctx="mbtop">
+      <div class="cell-sym"><span class="sym">${esc(m.sym)}</span><span class="co">${esc((rowBy[m.sym] || {}).company || "outside the nightly scan")}</span></div>
+      <div class="a-main">${m.factors.map(n => `<span class="chip sm ghost" data-tip="${esc((m.evidence || {})[n] || "")}">${esc(fShort(n))}</span>`).join(" ")} ${convChip(m.sym)}
+        <div class="a-sub">${esc((m.evidence || {})[m.factors[0]] || "")}</div></div>
+      <div class="a-spark">${closesOf(m.sym).length ? spark(closesOf(m.sym), 84, 26) : ""}</div>
+      <div class="a-score" data-tip="Multibagger score out of 100">${scoreCell(m.score)}</div></div>`).join("")}</div></div>
+    <div class="step-actions"><button class="btn sm" data-go="watchlist" data-sub="radar">All candidates</button>
+      <span class="muted" style="font-size:12px">Ideas to research, not buy signals. The report analyst reads the top names' concalls and reports each week.</span></div>`;
+}
+
 /* ============================================================ REPORT ANALYST
    What the weekly reading of each company's filings concluded
    (scripts/ai_multibagger.py, analyst/MULTIBAGGER_PROTOCOL.md): the concall

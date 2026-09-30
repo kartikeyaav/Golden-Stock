@@ -607,6 +607,7 @@ button.counter:hover span { color: var(--text-2); }
 .wrow.sel { background: var(--surface-3); box-shadow: inset 3px 0 0 var(--info); }
 .wmid { font-size: 12px; text-align: right; white-space: nowrap; }
 .wright { text-align: right; }
+.wchips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
 .detail-card { padding: 18px 20px 22px; }
 
 .shead h2 { font-size: 22px; }
@@ -652,3 +653,11 @@ button.counter:hover span { color: var(--text-2); }
   .step-n { display: none; }
   .bottom-nav { grid-template-columns: repeat(5, 1fr); }
 }
+/* the multibagger score's checklist: what the company has, and what it lacks */
+.flist { display: grid; gap: 8px; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; }
+.fitem { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: start; color: var(--faint); }
+.fitem .fico { font-weight: 700; text-align: center; }
+.fitem .ft { font-size: 13px; }
+.fitem .fn { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.fitem.on { color: var(--text); }
+.fitem.on .fico { color: var(--buy); }
