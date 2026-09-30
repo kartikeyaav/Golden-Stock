@@ -1,6 +1,6 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-09-28** (a third pre-registered paper sleeve: PROMOTER BUYING + MOMENTUM, 32% a year over 2016-2026 in the backtest, forward from 29 Sep; see the end of §3AC.) **Previous header, 2026-09-27:** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
+**Last updated: 2026-09-30** (MULTIBAGGERS BY FUNDAMENTALS, INSTITUTIONS, PROMOTERS AND VOLUME. A pre-registered factor study on 10 years of shareholding and NSE's filed quarterly results. Eight factors survived both halves: turnaround, value, small, undiscovered, promoter raising stake, volume expansion, momentum and quarterly surge. Growth, ROCE, institutions arriving and the full stack did not. The conviction score was rebuilt from the survivors: nightly on every liquid stock, 27% a year as a portfolio over 2016-2026 against 17% for momentum alone. A weekly AI analyst reads the top names' concalls and reports. See §3AD.) **Previous header, 2026-09-28:** (a third pre-registered paper sleeve: PROMOTER BUYING + MOMENTUM, 32% a year over 2016-2026 in the backtest, forward from 29 Sep; see the end of §3AC.) **Header before that, 2026-09-27:** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
 
 **Superseded header, kept for the trail: 2026-09-25** (FULL REVIEW + v7 INTERFACE. The strategy was re-measured honestly — the live config is 45% a year with ideal fills and 30% with realistic execution over 2020→2026, not 54.5% — the gate's ruler and benchmark were corrected, the conviction weights moved to v2, and the dashboard was rebuilt. Read `REVIEW_2026-09-25.md`, then §3AB.)
 
@@ -2601,6 +2601,118 @@ sleeve too").**
 - **Gotcha:** `scripts/build_dashboard.py` rewrites the cloud-owned
   `state/themes.json` locally. Run `git checkout -- state/themes.json` after
   a local build, or the 21:30 analyst's `pull --rebase` meets a dirty tree.
+
+---
+
+## 3AD. Multibaggers by fundamentals, institutions, promoters and volume (2026-09-29/30)
+
+The user (2026-09-29): identify multibaggers "fundamentally and technically
+... fundamentally, volume wise, institutional investment wise, management
+wise". That is what the conviction score was meant to do. Read quarterly,
+analyst and consultant reports too, and apply the methods of proven
+investors. They chose all three phases, in order. The record is in the last
+three parts of §2 of `MULTIBAGGER_RESEARCH_2026-09-26.md`.
+
+**Phase 1: measured** (`PREREG_2026-09-29_multibagger_factors.md`,
+`research/factor_study.py`, `research/out/factor_study.json`).
+- **Data:**
+  - `research/shareholding_fetch.py`: every March since 2017, 1,981
+    companies, in `~/golden_stock_data/screener_shp`;
+  - `research/results_fetch.py`: NSE's filed quarterly results, 1,869
+    companies, in `~/golden_stock_data/results`.
+- **Survived** (lift of tripling within a year ≥ 1.3 in both halves):
+  - turnaround (1.75 / 1.93);
+  - value, FCF yield plus book/market (1.64 / 1.42);
+  - small cap (1.95 / 1.70);
+  - undiscovered, FII + DII under 5% (1.79 / 1.73);
+  - promoter raising stake (1.63 / 1.74);
+  - volume expansion (1.36 / 1.35);
+  - momentum (1.58 / 1.47);
+  - quarterly surge (1.37 / 1.36).
+- **Failed:**
+  - growth, cheap for its growth, ROCE, deleveraging and capacity: all
+    faded in 2021–26, under the 1 June timing too;
+  - institutions arriving or adding;
+  - shareholder base, promoter ≥ 50%, delivery accumulation, up/down volume;
+  - every combination, including the user's "full stack" (1.53 / 1.04).
+- **Caveats:**
+  - The random control with fundamentals itself scores 1.18 / 1.04
+    (survivorship).
+  - "Undiscovered" raises the odds of a triple but its median 12-month
+    return was +1.0% (a lottery-ticket factor).
+
+**Phase 2: the rebuilt score.**
+- **Weights:** `research/mb_score.py`. The survivors plus H25, weighted by
+  ln(lower half-lift) as registered.
+- **Live:** `research/mb_live.py` runs nightly inside
+  `scripts/multibagger_radar.py`. It writes the `mb` block of
+  `state/multibagger_radar.json`: every scored name, its factors, and one
+  evidence line each.
+- **Portfolio test:** `research/mb_portfolio.py`, results in
+  `research/out/mb_portfolio.json`.
+  - Chosen cell: 10 slots, 3×ATR, breadth exit.
+  - It made 29.9% / 26.1% / 26.9% (2016-20 / 2021-26 / 2016-26) with a −32%
+    worst drawdown.
+  - Momentum alone made 16.9% over 2016–26, the market 13.8%.
+  - Promoter buying + momentum alone made 32.1%, so the promoter sleeve stays
+    the book and the score is the research ranking.
+- **UI:**
+  - the stock page's "Multibagger score" card: pillars, checklist, evidence,
+    and a tooltip with the portfolio result;
+  - Home's step 3, "Research these";
+  - the Watchlist tab "Multibagger candidates".
+  - The old 8-question card is now titled "Health check": it rules names out;
+    it does not pick them.
+
+**Phase 3: the report analyst** (`scripts/ai_multibagger.py`,
+`analyst/MULTIBAGGER_PROTOCOL.md`).
+- It runs weekly from `weekly_committee_local.py` after the committee, when
+  the last read is at least 6 days old. It takes the 8 best-scored names not
+  read in 21 days.
+- It reads concall transcripts and investor presentations (BSE PDFs, text via
+  pypdf, cached in `~/golden_stock_data/docs`) and searches the web for broker
+  and industry reports.
+- Outputs:
+  - `state/multibagger_research.json`, shown on the stock page, Home and
+    Research;
+  - `journal/multibagger_research_journal.csv`, which records the price at
+    each read so conviction can be judged later.
+- **Fixed 09-30:** it picked only names that were also radar rows, so
+  top-scored names with no radar signal (RELINFRA, AWFIS) could never be
+  read. It now reads the score's whole-market ranking and passes each name's
+  factor evidence to the model.
+
+**Incident 2026-09-30: this session wedged the laptop's analyst.**
+- A local `multibagger_radar.py --no-build` run (a research check) left the
+  cloud-owned `state/multibagger_radar.json` modified.
+- The 21:30 analyst missed its slot and caught up at 09:31. Its
+  `pull --rebase --autostash` re-applied that file on top of the cloud's
+  nightly rewrite, and it came out UNMERGED.
+- The verdicts were logged as "COMMIT BLOCKED", and the 11:00 committee's
+  pull failed the same way.
+- **Repair:** the file was reset to HEAD by hand, and the verdicts were
+  committed and pushed (246e359).
+- **Guard:** `state/multibagger_radar.json` is now in `_local_git.CLOUD_OWNED`
+  (test in `tests/test_local_git_guards.py`), so the wrappers reset it before
+  every pull.
+- The 09:31 autostash is left in the stash list. It duplicates work that was
+  committed since, and dropping it needs the user's OK.
+
+**Notes for the next editor:**
+- `research/out/factor_study.json` is READ by the live radar, through
+  `mb_score.config()`. Re-running the study changes the live weights, and the
+  file must be committed or the cloud radar prints "multibagger score
+  skipped".
+- The live annual table (`value_fundamentals.csv`) lacks op, borrowings,
+  assets and ROCE. A2, A4, A5 and A6 therefore cannot fire live. All four
+  failed, so the score is unaffected, but a future study that promotes one
+  must extend `rows_from_page` first.
+- `shareholding.csv` and `quarterly_results.csv` were seeded on 09-30
+  (`value_fundamentals.py --seed-tables`). The weekly cloud refresh keeps them
+  current: it is in `weekly.yml`'s commit list.
+- A mechanical score cannot tell a one-off from a trend. Examples: RELINFRA's
+  "turnaround" is a ₹9,177 Cr exceptional gain; SUMEETINDS's promoter
+  "0% → 89.8%" is an insolvency resolution. The analyst reads for these.
 
 ---
 
