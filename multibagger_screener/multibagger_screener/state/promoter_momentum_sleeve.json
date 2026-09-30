@@ -5,24 +5,75 @@
   [
    "2026-09-29",
    1000000.0
+  ],
+  [
+   "2026-09-30",
+   998467.43
   ]
  ],
- "last_session": "2026-09-29",
+ "last_session": "2026-09-30",
  "book": {
-  "cash": 1000000.0,
-  "pos": {},
-  "pending_buys": [
+  "cash": 42.43777801527176,
+  "pos": {
+   "STLTECH": {
+    "j": 553,
+    "entry_t": 544,
+    "px": 909.9000244140625,
+    "sh": 219,
+    "peak": 909.9000244140625,
+    "entry_date": "2026-09-30"
+   },
+   "INDORAMA": {
+    "j": 1376,
+    "entry_t": 544,
+    "px": 105.8499984741211,
+    "sh": 1888,
+    "peak": 105.8499984741211,
+    "entry_date": "2026-09-30"
+   },
+   "BHAGERIA": {
+    "j": 589,
+    "entry_t": 544,
+    "px": 382.0,
+    "sh": 523,
+    "peak": 382.0,
+    "entry_date": "2026-09-30"
+   },
+   "CONFIPET": {
+    "j": 1384,
+    "entry_t": 544,
+    "px": 87.0,
+    "sh": 2295,
+    "peak": 87.0,
+    "entry_date": "2026-09-30"
+   },
+   "PAISALO": {
+    "j": 8,
+    "entry_t": 544,
+    "px": 78.0,
+    "sh": 2550,
+    "peak": 78.0,
+    "entry_date": "2026-09-30"
+   }
+  },
+  "pending_buys": [],
+  "pending_sells": [
    "STLTECH",
    "INDORAMA",
    "BHAGERIA",
    "CONFIPET",
    "PAISALO"
   ],
-  "pending_sells": [],
-  "last_px": {}
+  "last_px": {
+   "STLTECH": 909.9000244140625,
+   "INDORAMA": 100.36000061035156,
+   "BHAGERIA": 406.45001220703125,
+   "CONFIPET": 88.12999725341797,
+   "PAISALO": 76.41000366210938
+  }
  },
- "insider_asof": "2026-09-29 20:24",
- "risk_on": true,
- "asof": "2026-09-29",
- "generated": "2026-09-29 16:47"
+ "insider_asof": "2026-09-30 22:04",
+ "risk_on": false,
+ "asof": "2026-09-30",
+ "generated": "2026-09-30 16:49"
 }

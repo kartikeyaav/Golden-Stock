@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-29 16:47",
+ "generated": "2026-09-30 16:49",
  "n_checked": 1027,
- "n_flagged": 97,
- "asm_total": 218,
+ "n_flagged": 96,
+ "asm_total": 229,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -890,6 +890,11 @@
   "SUNFLAG": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -897,7 +902,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
   },
   "AEROFLEX": {
    "flags": [
@@ -1069,18 +1074,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "PRABHA": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "ANTELOPUS": {
    "flags": [

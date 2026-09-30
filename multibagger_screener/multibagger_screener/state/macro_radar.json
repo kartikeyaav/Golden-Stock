@@ -1,15 +1,67 @@
 {
  "ok": true,
- "generated": "2026-09-29T16:38:32",
+ "generated": "2026-09-30T16:33:00",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9769,
- "policy_hits": 14,
- "stories": 14,
+ "headlines_read": 10041,
+ "policy_hits": 17,
+ "stories": 16,
  "themes": {
+  "renewables": {
+   "pressure": 0.286,
+   "pos_flow": 0.25,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 2,
+   "top": [
+    {
+     "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
+     "date": "2026-09-30T20:01:24",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/news/cabinet-approves-green-energy-corridor-phase-iii-scheme/article71527880.ece",
+     "themes": [
+      "renewables"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 186000.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 2,
+     "retellings": 2,
+     "weight": 0.25
+    }
+   ]
+  },
+  "textiles": {
+   "pressure": 0.258,
+   "pos_flow": 0.221,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
+     "date": "2026-09-30T18:17:28",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/cons-products/garments-/-textiles/karnataka-approves-rs-4000-crore-textile-policy-to-attract-rs-20000-crore-investment/articleshow/134594772.cms",
+     "themes": [
+      "textiles"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 20000.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.221
+    }
+   ]
+  },
   "defence": {
-   "pressure": 0.172,
-   "pos_flow": 0.1396,
+   "pressure": 0.167,
+   "pos_flow": 0.1351,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -29,7 +81,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0539
+     "weight": 0.0522
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -47,7 +99,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0506
+     "weight": 0.0489
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -64,13 +116,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0352
+     "weight": 0.034
     }
    ]
   },
   "defelec": {
-   "pressure": 0.066,
-   "pos_flow": 0.0506,
+   "pressure": 0.064,
+   "pos_flow": 0.0489,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -91,7 +143,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0506
+     "weight": 0.0489
     }
    ]
   },
@@ -104,8 +156,8 @@
    "top": []
   },
   "railways": {
-   "pressure": 0.228,
-   "pos_flow": 0.1916,
+   "pressure": 0.221,
+   "pos_flow": 0.1853,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 1,
@@ -125,7 +177,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1114
+     "weight": 0.1078
     },
     {
      "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -142,7 +194,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0401
+     "weight": 0.0388
     },
     {
      "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -159,17 +211,9 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0401
+     "weight": 0.0388
     }
    ]
-  },
-  "renewables": {
-   "pressure": 0.0,
-   "pos_flow": 0.0,
-   "neg_flow": 0.0,
-   "n_scored": 0,
-   "n_attn": 2,
-   "top": []
   },
   "datacentre": {
    "pressure": 0.0,
@@ -180,8 +224,8 @@
    "top": []
   },
   "hospital": {
-   "pressure": 0.043,
-   "pos_flow": 0.0329,
+   "pressure": 0.042,
+   "pos_flow": 0.0318,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -201,13 +245,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0329
+     "weight": 0.0318
     }
    ]
   },
   "semis": {
-   "pressure": 0.051,
-   "pos_flow": 0.0388,
+   "pressure": 0.049,
+   "pos_flow": 0.0375,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -227,13 +271,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0388
+     "weight": 0.0375
     }
    ]
   },
   "ems": {
-   "pressure": 0.101,
-   "pos_flow": 0.079,
+   "pressure": 0.098,
+   "pos_flow": 0.0765,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -253,12 +297,46 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.079
+     "weight": 0.0765
     }
    ]
   }
  },
  "events": [
+  {
+   "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
+   "date": "2026-09-30T20:01:24",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/news/cabinet-approves-green-energy-corridor-phase-iii-scheme/article71527880.ece",
+   "themes": [
+    "renewables"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": 186000.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 2,
+   "retellings": 2,
+   "weight": 0.25
+  },
+  {
+   "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
+   "date": "2026-09-30T18:17:28",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/cons-products/garments-/-textiles/karnataka-approves-rs-4000-crore-textile-policy-to-attract-rs-20000-crore-investment/articleshow/134594772.cms",
+   "themes": [
+    "textiles"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": 20000.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.221
+  },
   {
    "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
    "date": "2026-09-23T05:30:00",
@@ -274,7 +352,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1969
+   "weight": 0.1905
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -291,7 +369,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1114
+   "weight": 0.1078
   },
   {
    "title": "Govt approves 31 proposals worth Rs 7,877 crore under electronics component scheme",
@@ -308,7 +386,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.079
+   "weight": 0.0765
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -325,7 +403,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0751
+   "weight": 0.0727
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -343,7 +421,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.068
+   "weight": 0.0658
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -360,7 +438,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0539
+   "weight": 0.0522
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -378,7 +456,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0506
+   "weight": 0.0489
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -395,7 +473,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0491
+   "weight": 0.0475
   },
   {
    "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
@@ -412,7 +490,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0388
   },
   {
    "title": "Cabinet approves one highway and four railway multi-tracking projects",
@@ -429,7 +507,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0388
   },
   {
    "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
@@ -446,7 +524,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0388
+   "weight": 0.0375
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -463,7 +541,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0352
+   "weight": 0.034
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -480,7 +558,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0329
+   "weight": 0.0318
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -497,7 +575,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0321
+   "weight": 0.031
   }
  ]
 }
