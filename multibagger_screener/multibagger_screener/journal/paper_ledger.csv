@@ -103,3 +103,7 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-09-28,SPORTKING,BUY,entry,538,213.62,,[SPORTKING@2026-09-27 22:30] analyst BUY/MEDIUM/FULL PLAN
 2026-09-29,MCX,BUY,entry,46,3248.0,,[MCX@2026-09-28 21:32] analyst BUY/HIGH/FULL PLAN
 2026-09-29,GRANULES,SKIP,entry,0,,,[GRANULES@2026-09-28 21:33] slot limit 12 reached (30 open) — the backtested edge was measured with this cap in force
+2026-10-01,NILKAMAL,SKIP,entry,0,,,[NILKAMAL@2026-09-30 21:32] slot limit 12 reached (30 open) — the backtested edge was measured with this cap in force
+2026-10-01,CHENNPETRO,SELL,trading,23,1346.4,4961.1,trading-lot trail: close < 50-DMA
+2026-10-01,SAIL,SELL,all,821,172.31,-8530.19,stop hit
+2026-10-01,BALAMINES,SELL,all,28,2016.24,-6181.28,stop hit

@@ -9,3 +9,13 @@ date,symbol,action,shares,price,value,reason
 2026-09-29,RANEHOLDIN,BUY,63,1565.6,98632.8,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-09-29,UDS,BUY,481,207.84,99971.04,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-09-29,UTTAMSUGAR,BUY,339,293.65,99547.35,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-10-01,RANEHOLDIN,SELL,63,1530.1,96396.3,regime exit or stop / 30-week trail; x0.98 since 2026-09-29
+2026-10-01,UDS,SELL,481,208.57,100322.17,regime exit or stop / 30-week trail; x1.00 since 2026-09-29
+2026-10-01,KAMATHOTEL,SELL,423,233.95,98960.85,regime exit or stop / 30-week trail; x0.99 since 2026-09-29
+2026-10-01,GIPCL,SELL,546,179.0,97734.0,regime exit or stop / 30-week trail; x0.98 since 2026-09-29
+2026-10-01,ALEMBICLTD,SELL,934,107.23,100152.82,regime exit or stop / 30-week trail; x1.00 since 2026-09-29
+2026-10-01,GEOJITFSL,SELL,1293,76.71,99186.03,regime exit or stop / 30-week trail; x0.99 since 2026-09-29
+2026-10-01,HINDOILEXP,SELL,576,171.27,98651.52,regime exit or stop / 30-week trail; x0.99 since 2026-09-29
+2026-10-01,CYIENT,SELL,92,1100.0,101200.0,regime exit or stop / 30-week trail; x1.02 since 2026-09-29
+2026-10-01,MOL,SELL,1753,55.97,98115.41,regime exit or stop / 30-week trail; x0.98 since 2026-09-29
+2026-10-01,UTTAMSUGAR,SELL,339,287.95,97615.05,regime exit or stop / 30-week trail; x0.98 since 2026-09-29

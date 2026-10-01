@@ -1,8 +1,8 @@
 {
- "generated": "2026-09-30 16:49",
+ "generated": "2026-10-01 17:18",
  "n_checked": 1027,
- "n_flagged": 96,
- "asm_total": 229,
+ "n_flagged": 95,
+ "asm_total": 223,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -809,18 +809,6 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
-  },
-  "WELENT": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "VENTIVE": {
    "flags": [

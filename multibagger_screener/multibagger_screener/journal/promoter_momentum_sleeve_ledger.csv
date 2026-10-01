@@ -4,3 +4,8 @@ date,symbol,action,shares,price,value,reason
 2026-09-30,INDORAMA,BUY,1888,105.85,199844.8,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
 2026-09-30,PAISALO,BUY,2550,78.0,198900.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
 2026-09-30,STLTECH,BUY,219,909.9,199268.11,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-10-01,STLTECH,SELL,219,955.35,209221.64,regime exit or stop / 3xATR trail; x1.05 since 2026-09-30
+2026-10-01,INDORAMA,SELL,1888,98.0,185024.0,regime exit or stop / 3xATR trail; x0.93 since 2026-09-30
+2026-10-01,BHAGERIA,SELL,523,415.8,217463.39,regime exit or stop / 3xATR trail; x1.09 since 2026-09-30
+2026-10-01,CONFIPET,SELL,2295,87.9,201730.5,regime exit or stop / 3xATR trail; x1.01 since 2026-09-30
+2026-10-01,PAISALO,SELL,2550,77.0,196350.0,regime exit or stop / 3xATR trail; x0.99 since 2026-09-30
