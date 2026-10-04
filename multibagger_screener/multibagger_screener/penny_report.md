@@ -1,4 +1,4 @@
-# Penny / nano-cap screen — 2026-10-01 11:32
+# Penny / nano-cap screen — 2026-10-04 11:39
 
 **Research surface. Zero capital. Not backtested.** The main system's
 evidence (+1.67R, walk-forward, 13 rejected overlays) says nothing about
@@ -6,7 +6,7 @@ this screen. Every name below is journaled to `journal/penny_journal.csv`
 so the question 'does this add anything?' gets an out-of-sample answer
 instead of an argument.
 
-Universe: 190 names that survived the hard tradability gates
+Universe: 192 names that survived the hard tradability gates
 (EQ series only · no GSM/ASM · band >= 10% · liquidity + circuit floors ·
 listed >= 1 year). Rejects and their reasons: `penny_excluded.csv`.
 
@@ -21,28 +21,28 @@ the one that means genuinely small. Read the MCAP rows first.
 
 | # | Symbol | Arm | Score | Cov | Stage | RS | Turnover | Cap | Archetype | Risk flags |
 |--:|--------|-----|------:|----:|-------|---:|---------:|----:|-----------|-----------|
-| 1 | **PASUPTAC** | PRICE+MCAP | 82 | 100% | CONFIRMED | 90 | Rs1.66 Cr | Rs623 Cr | Hyper-growth + Momentum | — |
-| 2 | **AVTNPL** | PRICE | 78 | 100% | CONFIRMED | 88 | Rs2.25 Cr | Rs1305 Cr | Hyper-growth + Momentum | — |
-| 3 | **PREMIERPOL** | PRICE+MCAP | 76 | 100% | CONFIRMED | 93 | Rs2.53 Cr | Rs950 Cr | Momentum | — |
+| 1 | **PASUPTAC** | PRICE+MCAP | 82 | 100% | CONFIRMED | 91 | Rs1.66 Cr | Rs623 Cr | Hyper-growth + Momentum | — |
+| 2 | **AVTNPL** | PRICE | 78 | 100% | CONFIRMED | 88 | Rs2.25 Cr | Rs1338 Cr | Hyper-growth + Momentum | — |
+| 3 | **PREMIERPOL** | PRICE+MCAP | 76 | 100% | CONFIRMED | 94 | Rs2.53 Cr | Rs950 Cr | Momentum | — |
 | 4 | **VETO** | MCAP | 76 | 100% | CONFIRMED | 87 | Rs1.71 Cr | Rs265 Cr | Hyper-growth + Deleveraging + Momentum | — |
-| 5 | **DMCC** | MCAP | 76 | 100% | CONFIRMED | 81 | Rs2.29 Cr | Rs761 Cr | Hyper-growth + Momentum | — |
-| 6 | **PONNIERODE** | MCAP | 74 | 100% | CONFIRMED | 82 | Rs1.40 Cr | Rs342 Cr | Momentum | — |
-| 7 | **ANDHRSUGAR** | PRICE | 72 | 100% | WATCH | 77 | Rs3.50 Cr | Rs1293 Cr | Deleveraging | — |
-| 8 | **SYNCOMF** | PRICE | 72 | 100% | EXTENDED | 97 | Rs22.74 Cr | Rs1887 Cr | Deleveraging | — |
-| 9 | **MANALIPETC** | PRICE | 72 | 100% | CONFIRMED | 92 | Rs14.14 Cr | Rs1346 Cr | Momentum | — |
-| 10 | **MGEL** | PRICE+MCAP | 72 | 100% | CONFIRMED | 70 | Rs1.34 Cr | Rs528 Cr | Hyper-growth + Momentum | — |
-| 11 | **UNIDT** | MCAP | 70 | 100% | CONFIRMED | 87 | Rs0.96 Cr | Rs487 Cr | Hyper-growth + Momentum | — |
-| 12 | **LAXMIINDIA** | MCAP | 70 | 100% | WATCH | 73 | Rs1.74 Cr | Rs665 Cr | Hyper-growth | — |
-| 13 | **KANPRPLA** | MCAP | 69 | 100% | CONFIRMED | 85 | Rs0.58 Cr | Rs622 Cr | Deleveraging + Momentum | — |
-| 14 | **ORIENTBELL** | MCAP | 69 | 100% | CONFIRMED | 88 | Rs1.40 Cr | Rs580 Cr | Turnaround (margin-confirmed) + Momentum | — |
-| 15 | **HMAAGRO** | PRICE | 68 | 100% | WATCH | 33 | Rs4.54 Cr | Rs1178 Cr | Hyper-growth | 1 |
-| 16 | **MAWANASUG** | MCAP | 68 | 100% | CONFIRMED | 89 | Rs3.65 Cr | Rs502 Cr | Momentum | — |
-| 17 | **INDOAMIN** | MCAP | 68 | 100% | CONFIRMED | 83 | Rs6.58 Cr | Rs998 Cr | Momentum | — |
-| 18 | **GLOBAL** | MCAP | 68 | 100% | EXTENDED | 94 | Rs2.23 Cr | Rs680 Cr | Hyper-growth | — |
-| 19 | **SUBEXLTD** | PRICE | 68 | 100% | CONFIRMED | 100 | Rs20.43 Cr | Rs1096 Cr | Momentum | — |
-| 20 | **NIITLTD** | PRICE | 67 | 100% | WATCH | 80 | Rs1.66 Cr | Rs1193 Cr | Deleveraging | — |
+| 5 | **DMCC** | MCAP | 76 | 100% | CONFIRMED | 82 | Rs2.29 Cr | Rs761 Cr | Hyper-growth + Momentum | — |
+| 6 | **PONNIERODE** | MCAP | 74 | 100% | CONFIRMED | 83 | Rs1.40 Cr | Rs342 Cr | Momentum | — |
+| 7 | **ANDHRSUGAR** | PRICE | 72 | 100% | WATCH | 78 | Rs3.50 Cr | Rs1234 Cr | Deleveraging | — |
+| 8 | **MANALIPETC** | PRICE | 72 | 100% | CONFIRMED | 92 | Rs14.14 Cr | Rs1346 Cr | Momentum | — |
+| 9 | **MGEL** | PRICE+MCAP | 72 | 100% | CONFIRMED | 70 | Rs1.34 Cr | Rs528 Cr | Hyper-growth + Momentum | — |
+| 10 | **UNIDT** | MCAP | 70 | 100% | CONFIRMED | 88 | Rs0.96 Cr | Rs487 Cr | Hyper-growth + Momentum | — |
+| 11 | **LAXMIINDIA** | MCAP | 70 | 100% | WATCH | 74 | Rs1.74 Cr | Rs624 Cr | Hyper-growth | — |
+| 12 | **KANPRPLA** | MCAP | 69 | 100% | CONFIRMED | 86 | Rs0.58 Cr | Rs622 Cr | Deleveraging + Momentum | — |
+| 13 | **ORIENTBELL** | MCAP | 69 | 100% | CONFIRMED | 89 | Rs1.40 Cr | Rs580 Cr | Turnaround (margin-confirmed) + Momentum | — |
+| 14 | **HMAAGRO** | PRICE | 68 | 100% | WATCH | 33 | Rs4.54 Cr | Rs1178 Cr | Hyper-growth | 1 |
+| 15 | **MAWANASUG** | MCAP | 68 | 100% | CONFIRMED | 90 | Rs3.65 Cr | Rs543 Cr | Momentum | — |
+| 16 | **INDOAMIN** | MCAP | 68 | 100% | CONFIRMED | 84 | Rs6.58 Cr | Rs998 Cr | Momentum | — |
+| 17 | **GLOBAL** | MCAP | 68 | 100% | EXTENDED | 94 | Rs2.23 Cr | Rs680 Cr | Hyper-growth | — |
+| 18 | **SUBEXLTD** | PRICE | 68 | 100% | CONFIRMED | 100 | Rs20.43 Cr | Rs1096 Cr | Momentum | — |
+| 19 | **NIITLTD** | PRICE | 67 | 100% | WATCH | 81 | Rs1.66 Cr | Rs1193 Cr | Deleveraging | — |
+| 20 | **KAMDHENU** | PRICE | 66 | 100% | CONFIRMED | 96 | Rs3.56 Cr | Rs1165 Cr | Hyper-growth + Momentum | — |
 
-## Vetoed (55) — capped at 25, momentum cannot outvote these
+## Vetoed (56) — capped at 25, momentum cannot outvote these
 
 | Symbol | Reason |
 |--------|--------|
