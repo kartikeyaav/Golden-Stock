@@ -1,19 +1,19 @@
 {
- "generated": "2026-10-01 17:18",
+ "generated": "2026-10-04 11:21",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 27.5,
  "deadline": "2026-12-31",
  "observation": {
   "window_start": "2026-07-25",
-  "eligible_weekdays": 49,
+  "eligible_weekdays": 50,
   "sessions_scanned": 46,
-  "sessions_missed": 3,
-  "observed_pct": 93.9,
+  "sessions_missed": 4,
+  "observed_pct": 92.0,
   "degraded_scans": 1,
   "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"
  },
- "days_to_deadline": 90,
+ "days_to_deadline": 87,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -87,21 +87,21 @@
   "last": "2026-09-29"
  },
  "legacy": {
-  "n": 724,
-  "n_qualifying": 598,
-  "n_unsized": 100,
-  "expectancy_r": -0.048,
+  "n": 737,
+  "n_qualifying": 605,
+  "n_unsized": 104,
+  "expectancy_r": -0.043,
   "median_age_days": 40,
-  "age_matched_reference_r": 0.601,
-  "required_expectancy_r": 0.3005,
-  "median_r": -0.448,
-  "sum_r": -28.85,
-  "win_rate_pct": 34.8,
-  "hit_stop_pct": 37.7,
+  "age_matched_reference_r": 0.6,
+  "required_expectancy_r": 0.3,
+  "median_r": -0.447,
+  "sum_r": -25.93,
+  "win_rate_pct": 35.0,
+  "hit_stop_pct": 37.3,
   "best_trade_share_pct": 2.9,
   "best_r": 8.0,
   "worst_r": -6.34,
-  "signal_basis_return_pct": -36.06,
+  "signal_basis_return_pct": -32.41,
   "first": "2026-07-07",
   "last": "2026-10-01"
  },
@@ -152,8 +152,8 @@
   "first": 51.07,
   "last": 49.41,
   "from": "2026-07-29",
-  "to": "2026-10-01",
-  "sessions": 47,
+  "to": "2026-10-02",
+  "sessions": 48,
   "label": "Momentum-quality ETF (MidSmall 400)",
   "note": "Mirae Nifty MidSmallcap400 Momentum Quality 100 ETF (NSE: MIDSMALL) \u2014 the investable alternative to running this system."
  },
@@ -171,41 +171,41 @@
   "3m": {
    "bench": {
     "sym": "MIDSMALL",
-    "ret_pct": -2.98,
-    "first": 50.93,
+    "ret_pct": -2.95,
+    "first": 50.91,
     "last": 49.41,
-    "from": "2026-07-02",
-    "to": "2026-10-01",
-    "sessions": 66
+    "from": "2026-07-06",
+    "to": "2026-10-02",
+    "sessions": 65
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -7.25,
-    "first": 24175.7,
+    "ret_pct": -8.22,
+    "first": 24430.35,
     "last": 22421.95,
-    "from": "2026-07-02",
+    "from": "2026-07-06",
     "to": "2026-10-01",
-    "sessions": 65
+    "sessions": 63
    }
   },
   "12m": {
    "bench": {
     "sym": "MIDSMALL",
-    "ret_pct": 4.11,
-    "first": 47.46,
+    "ret_pct": 2.36,
+    "first": 48.27,
     "last": 49.41,
-    "from": "2025-10-01",
-    "to": "2026-10-01",
-    "sessions": 249
+    "from": "2025-10-06",
+    "to": "2026-10-02",
+    "sessions": 248
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -9.72,
-    "first": 24836.3,
+    "ret_pct": -10.59,
+    "first": 25077.65,
     "last": 22421.95,
-    "from": "2025-10-01",
+    "from": "2025-10-06",
     "to": "2026-10-01",
-    "sessions": 247
+    "sessions": 245
    }
   }
  },

@@ -1,16 +1,11 @@
 {
- "generated": "2026-10-01 17:18",
- "n_checked": 1027,
- "n_flagged": 95,
- "asm_total": 223,
+ "generated": "2026-10-04 11:21",
+ "n_checked": 1003,
+ "n_flagged": 92,
+ "asm_total": 194,
  "syms": {
   "CPPLUS": {
    "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
     {
      "code": "BAND 5%",
      "detail": "5% circuit band",
@@ -19,15 +14,10 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "AEGISLOG": {
    "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
     {
      "code": "BAND 10%",
      "detail": "10% circuit band",
@@ -36,7 +26,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "AEGISVOPAK": {
    "flags": [
@@ -62,6 +52,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "BBOX": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
   "CEMPRO": {
    "flags": [
     {
@@ -73,6 +75,18 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
+  },
+  "CUPID": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "EMCURE": {
    "flags": [
@@ -144,29 +158,102 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "THELEELA": {
+  "MTARTECH": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "ASM",
+     "detail": "LT Stage IV",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
+   "band": 5.0,
+   "series": "BE",
+   "worst": "ASM"
   },
-  "TRAVELFOOD": {
+  "RUBICON": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "SANSERA": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "STLTECH": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage IV",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "ASM"
+  },
+  "THANGAMAYL": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
+  },
+  "VISL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "WELCORP": {
    "flags": [
@@ -264,6 +351,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "AEROFLEX": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
   "AKUMS": {
    "flags": [
     {
@@ -275,30 +374,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "ALOKINDS": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
-  "ASTRAMICRO": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "ATLANTAELE": {
    "flags": [
@@ -324,18 +399,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "BBOX": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
   "BLUESTONE": {
    "flags": [
     {
@@ -347,6 +410,18 @@
    "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
+  },
+  "CMRGREEN": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
   },
   "CAPILLARY": {
    "flags": [
@@ -360,7 +435,7 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "CRIZAC": {
+  "CEIGALL": {
    "flags": [
     {
      "code": "BAND 10%",
@@ -372,11 +447,11 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "CUPID": {
+  "CENTUM": {
    "flags": [
     {
      "code": "ASM",
-     "detail": "LT Stage I",
+     "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],
@@ -385,6 +460,23 @@
    "worst": "ASM"
   },
   "DIACABS": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
+  "E2E": {
    "flags": [
     {
      "code": "BAND 5%",
@@ -437,17 +529,29 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "GMMPFAUDLR": {
+  "EBGNG": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 20.0,
+   "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
+  },
+  "HAPPYFORGE": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
   },
   "JAIBALAJI": {
    "flags": [
@@ -497,7 +601,7 @@
    "series": "EQ",
    "worst": "BAND 5%"
   },
-  "MSTCLTD": {
+  "THELEELA": {
    "flags": [
     {
      "code": "BAND 10%",
@@ -509,39 +613,17 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "MTARTECH": {
+  "MSTCLTD": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage IV",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 5.0,
-   "series": "BE",
-   "worst": "ASM"
-  },
-  "OPTIEMUS": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
+   "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "OSWALPUMPS": {
    "flags": [
@@ -579,6 +661,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "PAISALO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "PARAS": {
    "flags": [
     {
@@ -592,6 +686,18 @@
    "worst": "BAND 10%"
   },
   "PARKHOSPS": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
+  },
+  "POWERICA": {
    "flags": [
     {
      "code": "BAND 10%",
@@ -627,16 +733,26 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "RUBICON": {
+  "SIGMAADV": {
    "flags": [
     {
      "code": "ASM",
-     "detail": "LT Stage I",
+     "detail": "LT Stage IV",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 20.0,
-   "series": "EQ",
+   "band": 5.0,
+   "series": "BE",
    "worst": "ASM"
   },
   "SKYGOLD": {
@@ -680,42 +796,6 @@
    "series": "BE",
    "worst": "BAND 5%"
   },
-  "SAATVIKGL": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
-  "SANSERA": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "STYL": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
   "SHILPAMED": {
    "flags": [
     {
@@ -728,26 +808,21 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "STLTECH": {
+  "SHREEJISPG": {
    "flags": [
     {
      "code": "ASM",
-     "detail": "LT Stage IV",
+     "detail": "LT Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     },
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 5.0,
-   "series": "BE",
+   "band": 10.0,
+   "series": "EQ",
    "worst": "ASM"
   },
   "SUDEEPPHRM": {
@@ -774,8 +849,13 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "THANGAMAYL": {
+  "SUNFLAG": {
    "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
     {
      "code": "BAND 5%",
      "detail": "5% circuit band",
@@ -784,7 +864,19 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
+  },
+  "UNIMECH": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
   },
   "DBREALTY": {
    "flags": [
@@ -822,89 +914,7 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "SHREEJISPG": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "UNIMECH": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
   "AJAXENGG": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
-  "PAISALO": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "SUNFLAG": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 5.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "AEROFLEX": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
-  "EBGNG": {
    "flags": [
     {
      "code": "BAND 10%",
@@ -942,30 +952,6 @@
     }
    ],
    "band": 10.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "CEIGALL": {
-   "flags": [
-    {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    }
-   ],
-   "band": 10.0,
-   "series": "EQ",
-   "worst": "BAND 10%"
-  },
-  "CENTUM": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },
@@ -1075,18 +1061,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "KIRIINDUS": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "FLAIR": {
    "flags": [
     {
@@ -1126,11 +1100,6 @@
   "PROTEAN": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -1138,7 +1107,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "HLEGLAS": {
    "flags": [
