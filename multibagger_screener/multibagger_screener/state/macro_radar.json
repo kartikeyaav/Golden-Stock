@@ -1,11 +1,11 @@
 {
  "ok": true,
- "generated": "2026-10-01T17:09:38",
+ "generated": "2026-10-05T20:21:26",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 10116,
- "policy_hits": 18,
- "stories": 16,
+ "headlines_read": 9250,
+ "policy_hits": 15,
+ "stories": 13,
  "themes": {
   "ev": {
    "pressure": 0.0,
@@ -16,8 +16,8 @@
    "top": []
   },
   "renewables": {
-   "pressure": 0.286,
-   "pos_flow": 0.25,
+   "pressure": 0.249,
+   "pos_flow": 0.212,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 2,
@@ -37,13 +37,13 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.25
+     "weight": 0.212
     }
    ]
   },
   "textiles": {
-   "pressure": 0.258,
-   "pos_flow": 0.221,
+   "pressure": 0.224,
+   "pos_flow": 0.1874,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -63,13 +63,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.221
+     "weight": 0.1874
     }
    ]
   },
   "defence": {
-   "pressure": 0.162,
-   "pos_flow": 0.1307,
+   "pressure": 0.142,
+   "pos_flow": 0.1136,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -89,7 +89,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0505
+     "weight": 0.0442
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -107,7 +107,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0473
+     "weight": 0.0415
     },
     {
      "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -124,13 +124,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0329
+     "weight": 0.0279
     }
    ]
   },
   "defelec": {
-   "pressure": 0.062,
-   "pos_flow": 0.0473,
+   "pressure": 0.054,
+   "pos_flow": 0.0415,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -151,7 +151,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0473
+     "weight": 0.0415
     }
    ]
   },
@@ -164,10 +164,10 @@
    "top": []
   },
   "railways": {
-   "pressure": 0.214,
-   "pos_flow": 0.1781,
+   "pressure": 0.116,
+   "pos_flow": 0.0914,
    "neg_flow": 0.0,
-   "n_scored": 3,
+   "n_scored": 1,
    "n_attn": 1,
    "top": [
     {
@@ -185,41 +185,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1043
-    },
-    {
-     "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
-     "date": "2026-08-20T11:30:45",
-     "source": "The Economic Times",
-     "link": "https://economictimes.indiatimes.com/industry/transportation/railways/railway-ministry-approves-raising-train-speed-limit-to-100-kmph-on-katra-banihal-section/articleshow/133365944.cms",
-     "themes": [
-      "railways"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0375
-    },
-    {
-     "title": "Cabinet approves one highway and four railway multi-tracking projects",
-     "date": "2026-08-19T17:01:35",
-     "source": "The Economic Times",
-     "link": "https://economictimes.indiatimes.com/industry/transportation/railways/cabinet-approves-one-highway-and-four-railway-multi-tracking-projects/articleshow/133346848.cms",
-     "themes": [
-      "railways"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0363
+     "weight": 0.0914
     }
    ]
   },
@@ -232,8 +198,8 @@
    "top": []
   },
   "hospital": {
-   "pressure": 0.041,
-   "pos_flow": 0.0308,
+   "pressure": 0.036,
+   "pos_flow": 0.027,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -253,33 +219,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0308
-    }
-   ]
-  },
-  "semis": {
-   "pressure": 0.048,
-   "pos_flow": 0.0363,
-   "neg_flow": 0.0,
-   "n_scored": 1,
-   "n_attn": 0,
-   "top": [
-    {
-     "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
-     "date": "2026-08-19T15:32:26",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/companies/microns-semiconductor-plant-at-sanand-gets-gujarat-govts-first-approval-for-12-hour-work-shift/article71363567.ece",
-     "themes": [
-      "semis"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0363
+     "weight": 0.027
     }
    ]
   }
@@ -300,7 +240,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.25
+   "weight": 0.212
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -317,7 +257,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.221
+   "weight": 0.1874
   },
   {
    "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
@@ -334,7 +274,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1843
+   "weight": 0.1615
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -351,7 +291,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.15
+   "weight": 0.1314
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -368,7 +308,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1043
+   "weight": 0.0914
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -385,7 +325,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0703
+   "weight": 0.0596
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -403,7 +343,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0637
+   "weight": 0.0558
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -420,7 +360,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0505
+   "weight": 0.0442
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -438,7 +378,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0473
+   "weight": 0.0415
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -455,58 +395,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.046
-  },
-  {
-   "title": "Railway Ministry approves raising train speed limit to 100 kmph on Katra-Banihal section",
-   "date": "2026-08-20T11:30:45",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/railway-ministry-approves-raising-train-speed-limit-to-100-kmph-on-katra-banihal-section/articleshow/133365944.cms",
-   "themes": [
-    "railways"
-   ],
-   "polarity": "pos",
-   "event": "approval",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0375
-  },
-  {
-   "title": "Cabinet approves one highway and four railway multi-tracking projects",
-   "date": "2026-08-19T17:01:35",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/cabinet-approves-one-highway-and-four-railway-multi-tracking-projects/articleshow/133346848.cms",
-   "themes": [
-    "railways"
-   ],
-   "polarity": "pos",
-   "event": "approval",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0363
-  },
-  {
-   "title": "Micron?s semiconductor plant at Sanand gets Gujarat govt?s first approval for 12-hour work shift",
-   "date": "2026-08-19T15:32:26",
-   "source": "BusinessLine",
-   "link": "https://www.thehindubusinessline.com/companies/microns-semiconductor-plant-at-sanand-gets-gujarat-govts-first-approval-for-12-hour-work-shift/article71363567.ece",
-   "themes": [
-    "semis"
-   ],
-   "polarity": "pos",
-   "event": "approval",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0363
+   "weight": 0.039
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -523,7 +412,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0329
+   "weight": 0.0279
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -540,7 +429,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0308
+   "weight": 0.027
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -557,7 +446,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.03
+   "weight": 0.0254
   }
  ]
 }

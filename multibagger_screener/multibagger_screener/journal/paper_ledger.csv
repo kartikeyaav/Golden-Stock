@@ -107,3 +107,6 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-01,CHENNPETRO,SELL,trading,23,1346.4,4961.1,trading-lot trail: close < 50-DMA
 2026-10-01,SAIL,SELL,all,821,172.31,-8530.19,stop hit
 2026-10-01,BALAMINES,SELL,all,28,2016.24,-6181.28,stop hit
+2026-10-05,MUNJALAU,BUY,entry,1416,105.9,,[MUNJALAU@2026-10-01 15:02] analyst BUY/MEDIUM/HALF PLAN
+2026-10-05,ELGIEQUIP,BUY,entry,256,585.4,,[ELGIEQUIP@2026-10-01 15:06] analyst BUY/MEDIUM/FULL PLAN
+2026-10-01,GOKULAGRO,SELL,core,293,210.1,-4482.9,core exit: weekly close < 30-week MA

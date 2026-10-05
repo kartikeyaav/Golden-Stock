@@ -1,7 +1,7 @@
 {
- "generated": "2026-10-04 11:21",
+ "generated": "2026-10-05 20:30",
  "n_checked": 1003,
- "n_flagged": 92,
+ "n_flagged": 93,
  "asm_total": 194,
  "syms": {
   "CPPLUS": {
@@ -1096,6 +1096,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "VERANDA": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
   },
   "PROTEAN": {
    "flags": [
