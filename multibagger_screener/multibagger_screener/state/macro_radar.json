@@ -1,12 +1,73 @@
 {
  "ok": true,
- "generated": "2026-10-05T20:21:26",
+ "generated": "2026-10-06T16:56:45",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9250,
- "policy_hits": 15,
- "stories": 13,
+ "headlines_read": 9531,
+ "policy_hits": 16,
+ "stories": 14,
  "themes": {
+  "defence": {
+   "pressure": 0.256,
+   "pos_flow": 0.2188,
+   "neg_flow": 0.0,
+   "n_scored": 4,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
+     "date": "2026-10-06T12:02:12",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/logistics/defence-minister-launches-fleet-support-ship-1-at-hsl-in-vizag/article71550150.ece",
+     "themes": [
+      "defence"
+     ],
+     "polarity": "pos",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.108
+    },
+    {
+     "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
+     "date": "2026-08-28T20:41:02",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
+     "themes": [
+      "defence"
+     ],
+     "polarity": "pos",
+     "event": "policy/norms",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0428
+    },
+    {
+     "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
+     "date": "2026-09-28T13:24:16",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/markets/ipos/fpos/tonbo-imaging-india-gets-sebi-nod-for-ipo-defence-electronics-maker-offers-over-1-8-crore-shares/articleshow/134535883.cms",
+     "themes": [
+      "defence",
+      "defelec"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 1.8,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0401
+    }
+   ]
+  },
   "ev": {
    "pressure": 0.0,
    "pos_flow": 0.0,
@@ -67,70 +128,9 @@
     }
    ]
   },
-  "defence": {
-   "pressure": 0.142,
-   "pos_flow": 0.1136,
-   "neg_flow": 0.0,
-   "n_scored": 3,
-   "n_attn": 0,
-   "top": [
-    {
-     "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
-     "date": "2026-08-28T20:41:02",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/economy/govt-eases-defence-export-rules-simplifies-sop-and-ogel-framework-to-boost-global-reach/article71400000.ece",
-     "themes": [
-      "defence"
-     ],
-     "polarity": "pos",
-     "event": "policy/norms",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0442
-    },
-    {
-     "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
-     "date": "2026-09-28T13:24:16",
-     "source": "The Economic Times",
-     "link": "https://economictimes.indiatimes.com/markets/ipos/fpos/tonbo-imaging-india-gets-sebi-nod-for-ipo-defence-electronics-maker-offers-over-1-8-crore-shares/articleshow/134535883.cms",
-     "themes": [
-      "defence",
-      "defelec"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": 1.8,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0415
-    },
-    {
-     "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
-     "date": "2026-08-25T19:28:06",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/companies/defence-ministry-opens-drdos-conventional-missile-tech-to-private-companies/article71388809.ece",
-     "themes": [
-      "defence"
-     ],
-     "polarity": "pos",
-     "event": "",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0279
-    }
-   ]
-  },
   "defelec": {
-   "pressure": 0.054,
-   "pos_flow": 0.0415,
+   "pressure": 0.053,
+   "pos_flow": 0.0401,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -151,7 +151,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0415
+     "weight": 0.0401
     }
    ]
   },
@@ -164,8 +164,8 @@
    "top": []
   },
   "railways": {
-   "pressure": 0.116,
-   "pos_flow": 0.0914,
+   "pressure": 0.113,
+   "pos_flow": 0.0885,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -185,7 +185,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0914
+     "weight": 0.0885
     }
    ]
   },
@@ -198,8 +198,8 @@
    "top": []
   },
   "hospital": {
-   "pressure": 0.036,
-   "pos_flow": 0.027,
+   "pressure": 0.035,
+   "pos_flow": 0.0261,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -219,7 +219,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.027
+     "weight": 0.0261
     }
    ]
   }
@@ -274,7 +274,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1615
+   "weight": 0.1563
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -291,7 +291,24 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.1314
+   "weight": 0.1272
+  },
+  {
+   "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
+   "date": "2026-10-06T12:02:12",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/logistics/defence-minister-launches-fleet-support-ship-1-at-hsl-in-vizag/article71550150.ece",
+   "themes": [
+    "defence"
+   ],
+   "polarity": "pos",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.108
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -308,7 +325,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0914
+   "weight": 0.0885
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -343,7 +360,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0558
+   "weight": 0.054
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -360,7 +377,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0442
+   "weight": 0.0428
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -378,7 +395,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0415
+   "weight": 0.0401
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -429,7 +446,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.027
+   "weight": 0.0261
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
