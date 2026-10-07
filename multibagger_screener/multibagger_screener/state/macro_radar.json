@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-10-06T16:56:45",
+ "generated": "2026-10-07T17:33:53",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9531,
+ "headlines_read": 9799,
  "policy_hits": 16,
  "stories": 14,
  "themes": {
   "defence": {
-   "pressure": 0.256,
-   "pos_flow": 0.2188,
+   "pressure": 0.249,
+   "pos_flow": 0.2117,
    "neg_flow": 0.0,
    "n_scored": 4,
    "n_attn": 0,
@@ -29,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.108
+     "weight": 0.1045
     },
     {
      "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0428
+     "weight": 0.0414
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -64,7 +64,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0401
+     "weight": 0.0388
     }
    ]
   },
@@ -77,8 +77,8 @@
    "top": []
   },
   "renewables": {
-   "pressure": 0.249,
-   "pos_flow": 0.212,
+   "pressure": 0.242,
+   "pos_flow": 0.2051,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 2,
@@ -98,13 +98,13 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.212
+     "weight": 0.2051
     }
    ]
   },
   "textiles": {
-   "pressure": 0.224,
-   "pos_flow": 0.1874,
+   "pressure": 0.217,
+   "pos_flow": 0.1813,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -124,13 +124,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1874
+     "weight": 0.1813
     }
    ]
   },
   "defelec": {
-   "pressure": 0.053,
-   "pos_flow": 0.0401,
+   "pressure": 0.051,
+   "pos_flow": 0.0388,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -151,7 +151,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0401
+     "weight": 0.0388
     }
    ]
   },
@@ -164,8 +164,8 @@
    "top": []
   },
   "railways": {
-   "pressure": 0.113,
-   "pos_flow": 0.0885,
+   "pressure": 0.109,
+   "pos_flow": 0.0856,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -185,7 +185,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0885
+     "weight": 0.0856
     }
    ]
   },
@@ -198,8 +198,8 @@
    "top": []
   },
   "hospital": {
-   "pressure": 0.035,
-   "pos_flow": 0.0261,
+   "pressure": 0.034,
+   "pos_flow": 0.0253,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -219,7 +219,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0261
+     "weight": 0.0253
     }
    ]
   }
@@ -240,7 +240,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.212
+   "weight": 0.2051
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -257,7 +257,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1874
+   "weight": 0.1813
   },
   {
    "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
@@ -274,7 +274,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1563
+   "weight": 0.1512
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -291,7 +291,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.1272
+   "weight": 0.1231
   },
   {
    "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -308,7 +308,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.108
+   "weight": 0.1045
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -325,7 +325,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0885
+   "weight": 0.0856
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -342,7 +342,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0596
+   "weight": 0.0577
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -360,7 +360,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.054
+   "weight": 0.0522
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -377,7 +377,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0428
+   "weight": 0.0414
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -395,7 +395,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0388
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -412,7 +412,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.039
+   "weight": 0.0377
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -429,7 +429,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0279
+   "weight": 0.027
   },
   {
    "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
@@ -446,7 +446,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0261
+   "weight": 0.0253
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -463,7 +463,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0254
+   "weight": 0.0246
   }
  ]
 }

@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-06 17:06",
+ "generated": "2026-10-07 17:42",
  "n_checked": 1003,
- "n_flagged": 93,
- "asm_total": 194,
+ "n_flagged": 91,
+ "asm_total": 197,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -423,18 +423,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "CAPILLARY": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "CEIGALL": {
    "flags": [
     {
@@ -576,18 +564,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "KPIGREEN": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "KRN": {
    "flags": [
@@ -1103,10 +1079,15 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "EQ",
+   "series": "BE",
    "worst": "BAND 5%"
   },
   "PROTEAN": {

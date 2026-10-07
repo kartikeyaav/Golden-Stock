@@ -112,3 +112,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-01,GOKULAGRO,SELL,core,293,210.1,-4482.9,core exit: weekly close < 30-week MA
 2026-10-06,KPIL,SKIP,entry,0,,,[KPIL@2026-10-05 22:06] slot limit 12 reached (30 open) — the backtested edge was measured with this cap in force
 2026-10-06,BELRISE,SELL,all,293,225.64,-6229.18,stop hit
+2026-10-07,RRKABEL,BUY,entry,18,2785.0,,[RRKABEL@2026-10-06 21:33] analyst BUY/MEDIUM/HALF PLAN
+2026-10-07,FINCABLES,SKIP,entry,0,,,[FINCABLES@2026-10-06 21:35] slot limit 12 reached (30 open) — the backtested edge was measured with this cap in force
