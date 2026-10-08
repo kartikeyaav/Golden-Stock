@@ -99,217 +99,221 @@
   [
    "2026-10-07",
    1016466.01
+  ],
+  [
+   "2026-10-08",
+   1003651.22
   ]
  ],
  "preview": {
-  "asof": "2026-10-07",
+  "asof": "2026-10-08",
   "exposure": 0.5,
-  "breadth": 44.2,
+  "breadth": 40.6,
   "eligible": 609,
   "targets": [
    {
     "sym": "STLTECH",
     "rank": 2,
-    "score": 6.925,
-    "r6": 318.8,
-    "r12": 751.2,
+    "score": 7.079,
+    "r6": 296.8,
+    "r12": 758.3,
     "vol": 60.3,
     "held": true,
-    "close": 1016.8
+    "close": 1011.55
    },
    {
     "sym": "CUPID",
     "rank": 3,
-    "score": 6.318,
-    "r6": 272.0,
-    "r12": 700.0,
-    "vol": 59.3,
+    "score": 6.875,
+    "r6": 281.9,
+    "r12": 730.1,
+    "vol": 59.4,
     "held": true,
-    "close": 343.95
+    "close": 356.65
    },
    {
     "sym": "WELCORP",
     "rank": 5,
-    "score": 3.549,
-    "r6": 169.0,
-    "r12": 210.3,
+    "score": 3.564,
+    "r6": 151.9,
+    "r12": 210.1,
     "vol": 43.0,
     "held": true,
-    "close": 2704.6
+    "close": 2651.3
    },
    {
     "sym": "HFCL",
     "rank": 4,
-    "score": 3.872,
-    "r6": 216.2,
-    "r12": 265.2,
-    "vol": 50.4,
+    "score": 3.76,
+    "r6": 193.1,
+    "r12": 252.8,
+    "vol": 50.7,
     "held": true,
-    "close": 271.9
+    "close": 258.31
    },
    {
     "sym": "SHILPAMED",
     "rank": 7,
-    "score": 3.371,
-    "r6": 157.6,
-    "r12": 191.2,
-    "vol": 41.6,
+    "score": 3.422,
+    "r6": 147.5,
+    "r12": 187.1,
+    "vol": 41.8,
     "held": true,
-    "close": 1071.2
+    "close": 1025.3
    },
    {
     "sym": "SANSERA",
     "rank": 12,
-    "score": 2.424,
-    "r6": 81.6,
-    "r12": 193.2,
-    "vol": 41.5,
+    "score": 2.471,
+    "r6": 76.4,
+    "r12": 187.0,
+    "vol": 41.6,
     "held": true,
-    "close": 4261.7
+    "close": 4129.4
    },
    {
     "sym": "LAURUSLABS",
     "rank": 8,
-    "score": 3.115,
-    "r6": 88.7,
-    "r12": 137.8,
-    "vol": 28.3,
+    "score": 3.072,
+    "r6": 78.8,
+    "r12": 134.0,
+    "vol": 28.5,
     "held": true,
-    "close": 2052.8
+    "close": 1997.9
    },
    {
     "sym": "CPPLUS",
     "rank": 10,
-    "score": 2.592,
-    "r6": 108.0,
-    "r12": 185.7,
+    "score": 2.558,
+    "r6": 92.2,
+    "r12": 183.4,
     "vol": 43.1,
     "held": true,
-    "close": 4064.9
+    "close": 3972.2
    },
    {
     "sym": "DIACABS",
     "rank": 9,
-    "score": 2.847,
-    "r6": 167.8,
-    "r12": 157.4,
+    "score": 3.036,
+    "r6": 163.3,
+    "r12": 159.9,
     "vol": 46.6,
     "held": true,
-    "close": 369.15
+    "close": 371.9
    },
    {
     "sym": "SKYGOLD",
     "rank": 11,
-    "score": 2.576,
-    "r6": 125.1,
-    "r12": 194.9,
-    "vol": 47.7,
+    "score": 2.525,
+    "r6": 110.8,
+    "r12": 182.5,
+    "vol": 47.4,
     "held": true,
-    "close": 876.95
+    "close": 884.5
    },
    {
     "sym": "MTARTECH",
-    "rank": 13,
-    "score": 2.187,
-    "r6": 78.8,
-    "r12": 300.0,
+    "rank": 15,
+    "score": 2.168,
+    "r6": 58.9,
+    "r12": 301.1,
     "vol": 60.2,
     "held": true,
-    "close": 7864.5
+    "close": 7849.5
    },
    {
     "sym": "SYRMA",
     "rank": 19,
-    "score": 1.85,
-    "r6": 102.8,
-    "r12": 105.0,
-    "vol": 43.5,
+    "score": 1.776,
+    "r6": 87.8,
+    "r12": 98.4,
+    "vol": 43.7,
     "held": true,
-    "close": 1746.7
+    "close": 1680.9
    },
    {
     "sym": "SONACOMS",
-    "rank": 30,
-    "score": 1.553,
-    "r6": 42.4,
+    "rank": 27,
+    "score": 1.579,
+    "r6": 35.4,
     "r12": 95.7,
     "vol": 31.0,
     "held": true,
-    "close": 810.5
+    "close": 793.0
    },
    {
     "sym": "RRKABEL",
-    "rank": 16,
-    "score": 2.116,
-    "r6": 98.8,
-    "r12": 114.7,
+    "rank": 13,
+    "score": 2.23,
+    "r6": 93.7,
+    "r12": 114.4,
     "vol": 39.1,
     "held": true,
-    "close": 2722.5
+    "close": 2696.4
    },
    {
     "sym": "AVALON",
-    "rank": 21,
-    "score": 1.693,
-    "r6": 132.6,
-    "r12": 93.9,
-    "vol": 53.2,
+    "rank": 24,
+    "score": 1.644,
+    "r6": 115.7,
+    "r12": 87.3,
+    "vol": 53.4,
     "held": true,
-    "close": 2429.7
+    "close": 2302.0
    },
    {
     "sym": "AEGISLOG",
-    "rank": 17,
-    "score": 1.956,
-    "r6": 136.3,
-    "r12": 78.0,
-    "vol": 45.2,
+    "rank": 21,
+    "score": 1.757,
+    "r6": 109.8,
+    "r12": 71.2,
+    "vol": 45.5,
     "held": true,
-    "close": 1460.2
+    "close": 1382.3
    },
    {
     "sym": "ATHERENERG",
-    "rank": 40,
-    "score": 1.4,
-    "r6": 60.3,
-    "r12": 130.9,
-    "vol": 47.1,
+    "rank": 33,
+    "score": 1.476,
+    "r6": 61.4,
+    "r12": 120.0,
+    "vol": 47.3,
     "held": true,
-    "close": 1455.0
+    "close": 1406.0
    },
    {
     "sym": "AKUMS",
-    "rank": 27,
-    "score": 1.605,
-    "r6": 56.9,
-    "r12": 87.0,
-    "vol": 32.7,
+    "rank": 34,
+    "score": 1.444,
+    "r6": 44.3,
+    "r12": 78.6,
+    "vol": 33.0,
     "held": true,
-    "close": 822.55
+    "close": 786.7
    },
    {
     "sym": "MARKSANS",
-    "rank": 26,
-    "score": 1.605,
-    "r6": 84.8,
-    "r12": 97.2,
-    "vol": 42.6,
+    "rank": 31,
+    "score": 1.509,
+    "r6": 72.0,
+    "r12": 87.4,
+    "vol": 43.0,
     "held": true,
-    "close": 325.45
+    "close": 307.8
    },
    {
     "sym": "WELSPUNLIV",
-    "rank": 23,
-    "score": 1.668,
-    "r6": 92.1,
-    "r12": 104.1,
-    "vol": 44.5,
+    "rank": 25,
+    "score": 1.6,
+    "r6": 80.4,
+    "r12": 93.8,
+    "vol": 44.7,
     "held": true,
-    "close": 235.86
+    "close": 225.07
    }
   ],
   "adds": [],
   "drops": []
  },
- "updated": "2026-10-07 17:38"
+ "updated": "2026-10-08 17:38"
 }

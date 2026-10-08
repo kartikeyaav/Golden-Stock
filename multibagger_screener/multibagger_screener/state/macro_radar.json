@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-10-07T17:33:53",
+ "generated": "2026-10-08T17:32:50",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9799,
- "policy_hits": 16,
- "stories": 14,
+ "headlines_read": 9844,
+ "policy_hits": 15,
+ "stories": 13,
  "themes": {
   "defence": {
-   "pressure": 0.249,
-   "pos_flow": 0.2117,
+   "pressure": 0.242,
+   "pos_flow": 0.2048,
    "neg_flow": 0.0,
    "n_scored": 4,
    "n_attn": 0,
@@ -29,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1045
+     "weight": 0.1011
     },
     {
      "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0414
+     "weight": 0.0401
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -64,7 +64,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0388
+     "weight": 0.0376
     }
    ]
   },
@@ -77,8 +77,8 @@
    "top": []
   },
   "renewables": {
-   "pressure": 0.242,
-   "pos_flow": 0.2051,
+   "pressure": 0.235,
+   "pos_flow": 0.1984,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 2,
@@ -98,13 +98,13 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.2051
+     "weight": 0.1984
     }
    ]
   },
   "textiles": {
-   "pressure": 0.217,
-   "pos_flow": 0.1813,
+   "pressure": 0.211,
+   "pos_flow": 0.1754,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -124,13 +124,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1813
+     "weight": 0.1754
     }
    ]
   },
   "defelec": {
-   "pressure": 0.051,
-   "pos_flow": 0.0388,
+   "pressure": 0.049,
+   "pos_flow": 0.0376,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -151,7 +151,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0388
+     "weight": 0.0376
     }
    ]
   },
@@ -164,8 +164,8 @@
    "top": []
   },
   "railways": {
-   "pressure": 0.109,
-   "pos_flow": 0.0856,
+   "pressure": 0.106,
+   "pos_flow": 0.0828,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -185,7 +185,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0856
+     "weight": 0.0828
     }
    ]
   },
@@ -196,32 +196,6 @@
    "n_scored": 0,
    "n_attn": 2,
    "top": []
-  },
-  "hospital": {
-   "pressure": 0.034,
-   "pos_flow": 0.0253,
-   "neg_flow": 0.0,
-   "n_scored": 1,
-   "n_attn": 0,
-   "top": [
-    {
-     "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
-     "date": "2026-08-24T14:10:11",
-     "source": "The Economic Times",
-     "link": "https://economictimes.indiatimes.com/industry/healthcare/biotech/healthcare/health-ministry-announces-medical-device-regulatory-reforms-for-ease-of-doing-business/articleshow/133458124.cms",
-     "themes": [
-      "hospital"
-     ],
-     "polarity": "pos",
-     "event": "",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0253
-    }
-   ]
   }
  },
  "events": [
@@ -240,7 +214,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.2051
+   "weight": 0.1984
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -257,7 +231,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1813
+   "weight": 0.1754
   },
   {
    "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
@@ -274,7 +248,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1512
+   "weight": 0.1463
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -291,7 +265,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.1231
+   "weight": 0.1191
   },
   {
    "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -308,7 +282,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1045
+   "weight": 0.1011
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -325,7 +299,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0856
+   "weight": 0.0828
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -342,7 +316,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0577
+   "weight": 0.0558
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -360,7 +334,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0506
   },
   {
    "title": "Govt eases defence export rules, simplifies SOP and OGEL framework to boost global reach",
@@ -377,7 +351,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0414
+   "weight": 0.0401
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -395,7 +369,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0388
+   "weight": 0.0376
   },
   {
    "title": "AP Minister Nara Lokesh inaugurates Suzlon wind energy projects worth ?10,500 crore",
@@ -412,7 +386,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0377
+   "weight": 0.0365
   },
   {
    "title": "Defence Ministry opens DRDO?s conventional missile tech to private companies",
@@ -429,24 +403,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.027
-  },
-  {
-   "title": "Health Ministry announces medical device regulatory reforms for ease of doing business",
-   "date": "2026-08-24T14:10:11",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/healthcare/biotech/healthcare/health-ministry-announces-medical-device-regulatory-reforms-for-ease-of-doing-business/articleshow/133458124.cms",
-   "themes": [
-    "hospital"
-   ],
-   "polarity": "pos",
-   "event": "",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0253
+   "weight": 0.0261
   },
   {
    "title": "Missing Data Centres: SEBI Opens Varanium Cloud's Rs 190 Crore Financial Mirage, Orders Disgorgement",
@@ -463,7 +420,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0246
+   "weight": 0.0238
   }
  ]
 }
