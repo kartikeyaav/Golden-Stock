@@ -233,6 +233,7 @@ const I = {
   screener: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>',
   portfolio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>',
   research: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>',
+  stories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M14 3v5h5"/><path d="M8 13h8M8 17h5"/></svg>',
   record: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',
   penny: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10h4a1.8 1.8 0 010 3.6h-4"/></svg>',
   system: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>',
@@ -1000,6 +1001,7 @@ const PAGES = [
   { id: "watchlist", label: "Watchlist" },
   { id: "explore", label: "Explore" },
   { id: "research", label: "Research" },
+  { id: "stories", label: "Stories" },
   { id: "performance", label: "Performance" },
 ];
 /* the v7 routes still resolve (bookmarks, old digests) */
@@ -1042,6 +1044,7 @@ function onRoute() {
   if (id === "watchlist" && S.sub) S.watch.tab = S.sub;
   if (id === "explore" && S.sub) S.explore = S.sub;
   if (id === "research" && S.sub) S.research = S.sub;
+  if (id === "stories") S.story = S.sub ? String(S.sub).toUpperCase() : null;
   if (id === "performance" && S.sub) S.perf = S.sub;
   renderShell();
   renderPage();
@@ -1075,7 +1078,7 @@ function renderPage() {
   const m = $("#main");
   m.dataset.rendered = "1";
   [_pageCharts, _detailCharts].forEach(b => { b.forEach(c => { try { c.remove(); } catch (e) { } }); b.length = 0; });
-  const fn = { home: pageHome, watchlist: pageWatchlist, explore: pageExplore, research: pageResearch, performance: pagePerformance, system: pageSystem }[S.page] || pageHome;
+  const fn = { home: pageHome, watchlist: pageWatchlist, explore: pageExplore, research: pageResearch, stories: pageStories, performance: pagePerformance, system: pageSystem }[S.page] || pageHome;
   m.innerHTML = `<div class="fade-in">${fn()}</div>` + footer();
   afterRender();
 }
@@ -1293,7 +1296,7 @@ function stockDetail(sym, p) {
     <div class="dsec"><div class="dsec-title">Business</div>${bizCharts(p)}</div>
     <div class="dsec"><div class="dsec-title">News and filings</div>${sheetNews(sym)}</div>
     ${verdictBy[sym] || pickBy[sym] ? `<div class="dsec"><div class="dsec-title">AI research</div>${sheetResearch(sym)}</div>` : ""}
-    ${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Company deep-dive</div>${researchCard(sym)}</div>` : ""}
+    ${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Company deep-dive <button class="btn sm" data-go="stories" data-sub="${esc(sym)}" style="margin-left:8px;text-transform:none;letter-spacing:0">Read it as a story</button></div>${researchCard(sym)}</div>` : ""}
     ${Object.keys(MBCFG).length || MBX.error ? fold("Multibagger score", m ? `${Math.round(m.score)} / 100 · ${m.factors.map(fShort).join(", ")}` : "none of the proven ingredients today", mbCard(sym, true)) : ""}
     ${fold("Alert history", nAlerts ? nAlerts + " buy alert" + (nAlerts > 1 ? "s" : "") + " in the journal" : "never alerted", sheetHistory(sym))}`;
 }
@@ -1490,7 +1493,7 @@ function researchReports() {
   const items = Object.entries(MRS).map(([sym, m]) => ({ sym, ...m })).sort((a, b) => (+b.conviction || 0) - (+a.conviction || 0) || String(b.date).localeCompare(String(a.date)));
   if (!items.length) return `<div class="empty">No company has been read yet. Each week an AI reads the top multibagger candidates on the laptop.</div>`;
   return `<div class="callout" style="margin-bottom:14px">Each week an AI reads the top multibagger candidates' latest concall and investor presentation, checks what management promised against what it delivered, and looks for broker, industry and governance reports. Open a stock for the full read.</div>
-    <div class="grid grid-2">${items.map(m => `<div class="vcard" data-sym="${esc(m.sym)}" style="cursor:pointer">
+    <div class="grid grid-2">${items.map(m => `<div class="vcard" data-go="stories" data-sub="${esc(m.sym)}" style="cursor:pointer">
       <div class="top"><span class="sym" style="font-size:15px">${esc(m.sym)}</span>${convChip(m.sym)}<span class="chip sm ghost">${esc(m.horizon || "")}</span><span class="muted" style="margin-left:auto;font-size:12px">${esc(dateLabel(m.date))}</span></div>
       <div class="why">${esc(clip(m.thesis, 320))}</div></div>`).join("")}</div>`;
 }
@@ -1501,6 +1504,91 @@ function pageResearch() {
   const body = { reports: researchReports, analyst: researchAnalyst, committee: researchCommittee, news: researchNews, deals: researchDeals, policy: researchPolicy }[S.research];
   return `<div class="toolbar"><div class="seg" style="flex-wrap:wrap">${RTABS.map(([k, l]) => `<button data-research="${k}" class="${S.research === k ? "on" : ""}">${l}</button>`).join("")}</div></div>
     <div class="page-intro">The context behind the signals. Nothing here changes an entry, a stop or a size.</div>${body()}`;
+}
+
+/* =================================================================== STORIES
+   The weekly AI deep-dives (scripts/ai_multibagger.py) as readable research
+   notes on the multibagger candidates: the story, the founder, what could move
+   it, what could go wrong, and how the price has done since it was written.
+   Public by the user's choice (2026-10-09), so every post carries the
+   disclaimer and the protocol forbids recommendation language. */
+const STORY_NOTE = "A research note written by an AI from company filings, concall transcripts and public reports, and published automatically. It is not investment advice or a recommendation to buy or sell, and it can be wrong: check every fact before acting on it.";
+function storyNow(sym) {
+  const o = ohlcOf(sym) || [];
+  return MBS[sym] && isNum(MBS[sym].close) ? MBS[sym].close : o.length ? o[o.length - 1][4] : (rowBy[sym] || {}).close;
+}
+function storyOf(sym) {
+  const m = MRS[sym] || {}, now = storyNow(sym), p0 = +m.price;
+  const words = [m.story, m.founder, m.thesis, m.industry, m.delivered_vs_guidance, ...(m.risks || [])].join(" ").split(/\s+/).length;
+  // "since" starts with the first session after the note: it was written at the close before it
+  return { sym, m, company: m.company || (rowBy[sym] || {}).company || sym, now, since: isNum(now) && p0 > 0 && String(priceSession() || "") >= String(m.date || "9") ? (now / p0 - 1) * 100 : null,
+    headline: m.headline || m.company || (rowBy[sym] || {}).company || sym, mins: Math.max(2, Math.round(words / 200)) };
+}
+function storyKicker(st) {
+  const m = st.m;
+  return `<div class="kicker">AI deep-dive · ${esc(dateLabel(m.date))}${m.sector ? " · " + esc(m.sector) : ""}</div>`;
+}
+function storyStats(st) {
+  const m = st.m, c = +m.conviction, mbNow = MBS[st.sym] ? MBS[st.sym].score : null;
+  return `<span class="chip sm" style="color:${convCol(c)};border-color:${convCol(c)}" data-tip="How strongly the AI rates it as a multibagger candidate, 1 to 5">conviction ${esc(m.conviction)}/5</span>
+    <span class="chip sm ghost">${esc(m.horizon || "")}</span>
+    ${isNum(st.since) ? `<span class="num ${cls(st.since)}" data-tip="Price change since the note was written">${pct(st.since)} since</span>` : ""}
+    ${isNum(mbNow) ? `<span class="muted" data-tip="The multibagger score today, out of 100">score ${Math.round(mbNow)}</span>` : ""}
+    <span class="faint">${st.mins} min read</span>`;
+}
+function pageStories() {
+  if (S.story && MRS[S.story]) return storyPost(S.story);
+  const all = Object.keys(MRS).map(storyOf);
+  if (!all.length) return `<div class="empty">No stories yet. Each week an AI reads the top multibagger candidates' concalls and reports, and writes each one up here.</div>`;
+  const order = S.storyOrder || "new";
+  all.sort(order === "conv" ? (a, b) => (+b.m.conviction || 0) - (+a.m.conviction || 0) || String(b.m.date).localeCompare(String(a.m.date))
+    : (a, b) => String(b.m.date).localeCompare(String(a.m.date)) || (+b.m.conviction || 0) - (+a.m.conviction || 0));
+  return `<div class="toolbar"><div class="seg">${[["new", "Newest"], ["conv", "Highest conviction"]].map(([k, l]) => `<button data-storyorder="${k}" class="${order === k ? "on" : ""}">${l}</button>`).join("")}</div></div>
+    <div class="page-intro">Research notes on the companies the multibagger score ranks highest. Each week an AI reads their concalls, presentations and reports and writes one up. ${info(STORY_NOTE)}</div>
+    <div class="story-list">${all.map(st => `<article class="story-card" data-go="stories" data-sub="${esc(st.sym)}">
+      ${storyKicker(st)}<h3>${esc(st.headline)}</h3>
+      ${st.m.headline ? `<div class="story-co">${esc(st.company)} · ${esc(st.sym)}</div>` : `<div class="story-co">${esc(st.sym)}</div>`}
+      <p class="dek">${esc(clip(st.m.thesis, 260))}</p>
+      <div class="story-meta">${storyStats(st)}</div></article>`).join("")}</div>
+    <div class="muted" style="font-size:12px;margin-top:14px">${esc(STORY_NOTE)}</div>`;
+}
+function storyPost(sym) {
+  const st = storyOf(sym), m = st.m, sc = m.scores || {}, mb = MBS[sym];
+  const link = (u, t) => u && /^https?:/.test(u) ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>` : esc(t);
+  const paras = t => String(t || "").split(/\n\s*\n/).map(x => x.trim()).filter(Boolean).map(x => `<p>${esc(x)}</p>`).join("");
+  const sec = (title, body) => body ? `<h2>${esc(title)}</h2>${body}` : "";
+  const founder = m.founder ? paras(m.founder) : sc.management && sc.management.why ? `<p>${esc(sc.management.why)}</p><p class="faint">From the AI's management score (${esc(sc.management.score)}/5). Notes from the next weekly run on carry a fuller founder section.</p>` : "";
+  return `<div class="post">
+    <button class="btn sm ghost" data-go="stories">${I.left}All stories</button>
+    ${storyKicker(st)}
+    <h1>${esc(st.headline)}</h1>
+    <div class="story-co">${m.headline ? esc(st.company) + " · " : ""}${esc(sym)}</div>
+    <div class="post-facts">
+      <div><div class="k">AI conviction</div><div class="v" style="color:${convCol(+m.conviction)}">${esc(m.conviction)}/5</div><div class="s">${esc(m.horizon || "")}</div></div>
+      <div><div class="k">Price</div><div class="v">${isNum(st.now) ? px(st.now) : "—"}</div><div class="s">${+m.price > 0 ? px(+m.price) + " when written" : "not recorded when written"}${isNum(st.since) ? ` · <span class="${cls(st.since)}">${pct(st.since)}</span>` : ""}</div></div>
+      <div><div class="k">Multibagger score</div><div class="v">${mb ? Math.round(mb.score) : "—"}</div><div class="s">${isNum(+m.mb_score) && m.mb_score !== null ? Math.round(+m.mb_score) + " when written" : "today, out of 100"}</div></div>
+      <div><div class="k">Read</div><div class="v">${st.mins} min</div><div class="s">${esc(dateLabel(m.date))}</div></div>
+    </div>
+    <div class="callout post-note">${esc(STORY_NOTE)}</div>
+    <div class="post-body">
+      ${m.story ? paras(m.story) : `<p class="lead">${esc(m.thesis || "")}</p>`}
+      ${sec("Who runs it", founder)}
+      ${sec("What could move it", (m.triggers || []).length ? `<ul>${m.triggers.map(t => `<li>${t.when ? `<b>${esc(t.when)}:</b> ` : ""}${esc(t.what || "")}${t.source ? ` <span class="faint">(${esc(t.source)})</span>` : ""}</li>`).join("")}</ul>` : "")}
+      ${sec("What management promised, and what it delivered", (m.guidance ? `<p>${esc(m.guidance)}</p>` : "") + (m.delivered_vs_guidance ? `<p>${esc(m.delivered_vs_guidance)}</p>` : ""))}
+      ${sec("The industry", m.industry ? `<p>${esc(m.industry)}</p>` : "")}
+      ${sec("Why the system flagged it", mb ? `<ul class="checks">${mb.factors.map(n => `<li><b>${esc(fShort(n))}</b>${(mb.evidence || {})[n] ? ": " + esc(mb.evidence[n]) : ""}</li>`).join("")}</ul><p class="faint">The multibagger score today: ${Math.round(mb.score)} of 100, from the ingredients that preceded Indian multibaggers in both 2016–20 and 2021–26.</p>` : "")}
+      ${sec("The AI's scorecard", Object.keys(MR_LABEL).some(k => sc[k]) ? `<div class="sbars">${Object.keys(MR_LABEL).filter(k => sc[k]).map(k => { const v = +sc[k].score, col = v >= 4 ? "var(--buy)" : v >= 3 ? "var(--info)" : v >= 2 ? "var(--watch)" : "var(--risk)";
+        return `<div class="sbar"><div class="top"><span>${esc(MR_LABEL[k])}</span><b style="color:${col}">${isNum(v) ? v + "/5" : "—"}</b></div><div class="track"><i style="width:${isNum(v) ? v / 5 * 100 : 0}%;background:${col}"></i></div><div class="n" style="white-space:normal">${esc(sc[k].why || "")}</div></div>`; }).join("")}</div>` : "")}
+      ${sec("What brokers say", (m.analyst_views || []).length ? `<ul>${m.analyst_views.map(a => `<li>${link(a.url, a.broker || "")}${a.date ? " (" + esc(a.date) + ")" : ""}: ${esc(a.view || "")}${a.target ? ", target " + esc(a.target) : ""}</li>`).join("")}</ul>` : "")}
+      ${sec("What could go wrong", (m.risks || []).length ? `<ul>${m.risks.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "")}
+      ${sec("What would change the view", m.change_my_mind ? `<p>${esc(m.change_my_mind)}</p>` : "")}
+      ${sec("Sources", `<ul class="sources">${m.transcript_url ? `<li>${link(m.transcript_url, (m.concall || "Latest") + " concall transcript (BSE)")}</li>` : ""}${m.ppt_url ? `<li>${link(m.ppt_url, (m.ppt || "Latest") + " investor presentation (BSE)")}</li>` : ""}${(m.sources || []).map(u => `<li>${link(u, u.replace(/^https?:\/\/(www\.)?/, "").slice(0, 90))}</li>`).join("")}</ul>`)}
+    </div>
+    <div class="callout post-note">${esc(STORY_NOTE)} Written by ${esc(m.model || "an AI model")} on ${esc(dateLabel(m.date))}.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="btn sm" data-sym="${esc(sym)}">Open the stock</button>
+      <a class="btn sm" href="https://www.screener.in/company/${encodeURIComponent(sym)}/" target="_blank" rel="noopener">Screener.in ↗</a>
+      <button class="btn sm ghost" data-go="stories">${I.left}All stories</button></div>
+  </div>`;
 }
 
 /* =============================================================== PERFORMANCE
@@ -1591,6 +1679,7 @@ document.addEventListener("click", e => {
   const bk = t.closest("[data-book]");
   if (bk) { S.book = bk.dataset.book; S.perf = "books"; history.replaceState(null, "", "#/performance/books"); renderPage(); return; }
   const pf = t.closest("[data-perf]"); if (pf) { S.perf = S.sub = pf.dataset.perf; history.replaceState(null, "", "#/performance/" + S.perf); renderPage(); return; }
+  const so = t.closest("[data-storyorder]"); if (so) { S.storyOrder = so.dataset.storyorder; renderPage(); return; }
   const rs = t.closest("[data-research]"); if (rs) { S.research = S.sub = rs.dataset.research; history.replaceState(null, "", "#/research/" + S.research); renderPage(); return; }
   const sview = t.closest("[data-sview]"); if (sview) { S.screener.view = sview.dataset.sview; S.screener.limit = 150; renderPage(); return; }
   const smap = t.closest("[data-map]"); if (smap) { S.screener.map = smap.dataset.map === "1"; renderPage(); return; }

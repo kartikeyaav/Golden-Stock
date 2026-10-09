@@ -97,8 +97,17 @@ def company_page(sym: str) -> dict:
         d = FF.parse(html)
         if (d.get("profit_loss") or {}).get("rows"):
             return {**d, "shareholding": SH.parse_shareholding(html), "documents": SH.parse_documents(html),
-                    "sector": SF._parse_sector(html), "url": url}
+                    "sector": SF._parse_sector(html), "name": _page_name(html), "url": url}
     return {}
+
+
+def _page_name(html: str) -> str | None:
+    """The company's name, from the page's <h1> (the Stories page needs it for
+    names outside the nightly scan, which carry no company name anywhere else)."""
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", html or "", re.S)
+    name = re.sub(r"<[^>]+>", " ", m.group(1)) if m else ""
+    name = re.sub(r"\s+", " ", name).strip()
+    return name or None
 
 
 def _table(tbl: dict, keep: int) -> str:
@@ -179,7 +188,7 @@ LATEST INVESTOR PRESENTATION ({ppt['date'] if ppt else '-'}):
 """
     meta = {"concall": latest["date"] if latest else None, "ppt": ppt["date"] if ppt else None,
             "transcript_url": (latest or {}).get("transcript"), "ppt_url": (ppt or {}).get("ppt"),
-            "chars": len(text)}
+            "company": page.get("name"), "sector": page.get("sector"), "chars": len(text)}
     return text, meta
 
 
@@ -312,7 +321,12 @@ def main() -> int:
             print(f"{sym}: research failed — {err or 'no JSON in the reply'}", flush=True)
             failed += 1
             continue
-        res.update({"date": datetime.now().strftime("%Y-%m-%d"), "model": a.model, **{k: meta[k] for k in ("concall", "ppt", "transcript_url", "ppt_url")}})
+        res.update({"date": datetime.now().strftime("%Y-%m-%d"), "model": a.model,
+                    **{k: meta[k] for k in ("concall", "ppt", "transcript_url", "ppt_url", "company", "sector")},
+                    # what the Stories page measures the post against: the price
+                    # and the multibagger score on the day it was written
+                    "price": r.get("close"), "mb_score": r.get("mb_score"),
+                    "mb_factors": list((r.get("mb_factors") or {}).keys())})
         st.setdefault("items", {})[sym] = res
         st["generated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
         save_state(st)

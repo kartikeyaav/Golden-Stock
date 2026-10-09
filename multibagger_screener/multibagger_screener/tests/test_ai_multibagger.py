@@ -74,3 +74,11 @@ def test_tables_leave_empty_cells_empty():
     out = A._table(tbl, 6)
     assert "None" not in out and "| Sales | 100 |  |" in out and "12.5" in out
     assert A._table({}, 6) == "(not available)"
+
+
+def test_the_company_name_comes_from_the_page_heading():
+    """Stories needs a name for companies outside the nightly scan, which carry
+    none anywhere else; screener.in puts it in the page's only <h1>."""
+    html = '<div><h1 class="h2 shrink-text" style="margin: 0">\n  Visaka <span>Industries</span> Ltd\n</h1></div>'
+    assert A._page_name(html) == "Visaka Industries Ltd"
+    assert A._page_name("<p>no heading</p>") is None

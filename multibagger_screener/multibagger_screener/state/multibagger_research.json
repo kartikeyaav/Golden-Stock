@@ -128,7 +128,9 @@
    "concall": "Jul 2026",
    "ppt": "Sep 2026",
    "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=e4a19b33-9fe2-4bd0-a9a5-6e92fce415d9.pdf",
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=0902c622-2b24-4754-9131-a5c73d7020d4.pdf"
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=0902c622-2b24-4754-9131-a5c73d7020d4.pdf",
+   "company": "Laurus Labs Ltd",
+   "sector": "Healthcare"
   },
   "BHAGERIA": {
    "symbol": "BHAGERIA",
@@ -227,7 +229,11 @@
    "concall": "Oct 2025",
    "ppt": "Nov 2021",
    "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=97f6136a-4f33-459b-a082-e6d6624337a7.pdf",
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=1b59a725-210f-4315-b579-07e0b604d123.pdf"
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=1b59a725-210f-4315-b579-07e0b604d123.pdf",
+   "price": 367.0,
+   "mb_score": 67.6,
+   "company": "Bhageria Industries Ltd",
+   "sector": "Chemicals"
   },
   "VISAKAIND": {
    "symbol": "VISAKAIND",
@@ -313,7 +319,11 @@
    "concall": "Aug 2023",
    "ppt": "Aug 2023",
    "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=ad25e68f-df7c-41a3-b3de-1cd68697791e.pdf",
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=07689066-a02d-48c2-8f21-943927099ff7.pdf"
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=07689066-a02d-48c2-8f21-943927099ff7.pdf",
+   "price": 80.55,
+   "mb_score": 57.5,
+   "company": "Visaka Industries Ltd",
+   "sector": "Construction Materials"
   },
   "VALIANTORG": {
    "symbol": "VALIANTORG",
@@ -398,7 +408,11 @@
    "concall": "Feb 2024",
    "ppt": "Aug 2026",
    "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=0fcbe522-0063-46c7-831e-ba555b27df78.pdf",
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=c9ace807-b8f6-40c5-8441-58aa62b341b3.pdf"
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=c9ace807-b8f6-40c5-8441-58aa62b341b3.pdf",
+   "price": 450.6,
+   "mb_score": 53.9,
+   "company": "Valiant Organics Ltd",
+   "sector": "Chemicals"
   },
   "AURUM": {
    "symbol": "AURUM",
@@ -490,7 +504,11 @@
    "concall": "Jul 2026",
    "ppt": "Jul 2026",
    "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=e693c668-2b9c-4ab3-bdbd-fd0d9b983b43.pdf",
-   "ppt_url": "https://strapi.aurumproptech.in/uploads/APT_Investor_Presentation_Q1_FY_27_vf_497b6daea6.pdf"
+   "ppt_url": "https://strapi.aurumproptech.in/uploads/APT_Investor_Presentation_Q1_FY_27_vf_497b6daea6.pdf",
+   "price": 227.39,
+   "mb_score": 53.5,
+   "company": "Aurum Proptech Ltd",
+   "sector": "Information Technology"
   },
   "GLOBAL": {
    "symbol": "GLOBAL",
@@ -562,7 +580,11 @@
    "concall": null,
    "ppt": null,
    "transcript_url": null,
-   "ppt_url": null
+   "ppt_url": null,
+   "price": 141.41,
+   "mb_score": 52.2,
+   "company": "Global Education Ltd",
+   "sector": "Consumer Services"
   },
   "YUKEN": {
    "symbol": "YUKEN",
@@ -651,7 +673,11 @@
    "concall": null,
    "ppt": null,
    "transcript_url": null,
-   "ppt_url": null
+   "ppt_url": null,
+   "price": 1135.3,
+   "mb_score": 50.4,
+   "company": "Yuken India Ltd",
+   "sector": "Capital Goods"
   },
   "NITCO": {
    "symbol": "NITCO",
@@ -741,7 +767,11 @@
    "concall": null,
    "ppt": "May 2026",
    "transcript_url": null,
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=c0bbe873-82d8-429f-b65d-8b315a58abdd.pdf"
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=c0bbe873-82d8-429f-b65d-8b315a58abdd.pdf",
+   "price": 78.9,
+   "mb_score": 49.3,
+   "company": "Nitco Ltd",
+   "sector": "Consumer Durables"
   }
  },
  "generated": "2026-10-09 14:36"

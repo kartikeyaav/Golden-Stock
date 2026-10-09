@@ -46,6 +46,9 @@ The method follows what has worked for India's best multibagger investors:
      or industry data quoted in DRHPs.
    - Governance: auditor changes, SEBI orders, pledges, related-party issues,
      and the promoter's track record.
+   - The founder and promoters: who they are, their background and other
+     businesses, how their stake has moved, any market buying or selling, and
+     any past governance trouble.
 4. **Score each item from 1 to 5,** with one line of evidence each.
    - `size_runway`: small today against a large addressable market.
    - `business_quality`: moat, returns on capital, pricing power.
@@ -62,6 +65,22 @@ The method follows what has worked for India's best multibagger investors:
    - `conviction` from 1 to 5: 5 is a strong multibagger candidate, 1 is avoid.
    - `horizon`: "short term" if a trigger lands within 12 months, "long term"
      if it is multi-year compounding.
+6. **Write it up for the Stories page.** This is published as a research note
+   on a public page, read by someone who is not a specialist.
+   - `headline`: at most 90 characters, plain and specific, no hype. For
+     example, "A roofing maker climbing out of a raw-material shock".
+   - `story`: 350 to 500 words in short paragraphs, separated by a blank line.
+     Cover what the company does, what changed, why it might matter now and
+     what the numbers say. Use plain English and explain any term a newcomer
+     would not know. It must stay as balanced as your scores: name the
+     doubts as well as the case.
+   - `founder`: 80 to 200 words on who runs and controls the company, their
+     track record, the promoter stake and its trend, recent market buying or
+     selling, pledges, and any governance history. Write "not found" for
+     anything you could not establish.
+   - **No recommendation language.** Never write "buy", "sell", "target
+     price", "multibagger" as a promise, or any return forecast of your own.
+     Reporting a broker's view, with its name and date, is fine.
 
 ## Rules
 
@@ -74,6 +93,9 @@ The method follows what has worked for India's best multibagger investors:
 ```json
 {
   "symbol": "TICKER",
+  "headline": "At most 90 characters, plain and specific.",
+  "story": "350-500 words for a non-specialist, paragraphs separated by a blank line.",
+  "founder": "80-200 words on who runs and controls it.",
   "conviction": 3,
   "horizon": "long term",
   "thesis": "Three to five sentences: why this could multiply, what has to go right.",
