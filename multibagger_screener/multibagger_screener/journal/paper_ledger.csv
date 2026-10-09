@@ -117,3 +117,6 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-08,MARKSANS,SELL,trading,70,307.8,3087.0,trading-lot trail: close < 50-DMA
 2026-10-08,ARVIND,SELL,all,156,507.58,-6227.52,stop hit
 2026-10-08,MUNJALAU,SELL,all,1416,102.61,-4658.64,stop hit
+2026-10-09,GLAND,BUY,entry,32,3059.1,,[GLAND@2026-10-08 21:31] analyst BUY/MEDIUM/FULL PLAN
+2026-10-09,PANAMAPET,SKIP,entry,0,,,[PANAMAPET@2026-10-08 21:33] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-10-09,METROPOLIS,SELL,core,68,529.25,-1638.8,core exit: weekly close < 30-week MA
