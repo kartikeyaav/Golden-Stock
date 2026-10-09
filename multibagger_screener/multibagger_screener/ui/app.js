@@ -124,6 +124,12 @@ function survChips(sym) {
   if (!s || !s.flags) return "";
   return s.flags.map(f => `<span class="chip sm risk" data-tip="${esc(f.detail + " — " + f.why)}">${esc(f.code)}</span>`).join("");
 }
+function clip(t, n) {
+  t = String(t || "").trim();
+  if (t.length <= n) return t;
+  const cut = t.slice(0, n), sp = cut.lastIndexOf(" ");
+  return (sp > n * 0.6 ? cut.slice(0, sp) : cut).replace(/[\s,;:(—-]+$/, "") + "…";
+}
 function info(tip) { return `<span class="info-i" data-tip="${esc(tip)}">?</span>`; }
 function spark(vals, w = 96, h = 28, forceColor) {
   const v = (vals || []).filter(isNum);
@@ -187,12 +193,12 @@ function scoreBars(sym, compact) {
     <div class="sbars">${dims.map(x => {
       const s = x.live && isNum(x.s) ? x.s : null, p = s == null ? 0 : Math.round(s * 100);
       return `<div class="sbar"><div class="top"><span>${esc(DIM_LABEL[x.k] || x.k)}<span class="w">weight ${num(x.w)}</span></span><b style="color:${dimCol(s)}">${s == null ? "no data" : p}</b></div>
-        <div class="track"><i style="width:${p}%;background:${dimCol(s)}"></i></div>${compact ? "" : `<div class="n">${esc(x.n || "")}</div>`}</div>`;
+        <div class="track"><i style="width:${p}%;background:${dimCol(s)}"></i></div>${compact || !x.n ? "" : `<div class="n" data-tip="${esc(x.n)}">${esc(x.n)}</div>`}</div>`;
     }).join("")}</div>`;
 }
 function scoreCard(sym) {
   const d = detailOf(sym) || {};
-  return `<div class="card"><div class="card-head"><h3>Health check</h3>${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}">${d.score.toFixed(0)} / 100</span>` : ""}${info("Eight weighted questions: technicals, earnings, balance sheet, catalysts, smart money, theme, governance and valuation. Each bar is how well this stock answers one of them. What it is good for, measured: names under 50 (and vetoed ones) lagged the market, so it rules weak or risky companies OUT. It does not pick winners; the multibagger score above does that job.")}
+  return `<div class="card"><div class="card-head"><h3>Health check</h3>${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}">${d.score.toFixed(0)} / 100</span>` : ""}${info("Eight weighted questions: technicals, earnings, balance sheet, catalysts, smart money, theme, governance and valuation. Each bar is how well this stock answers one of them. What it is good for, measured: names under 50 (and vetoed ones) lagged the market, so it rules weak or risky companies OUT. It does not pick winners. Hover a line for its full reasoning.")}
       <span class="hint">${d.dims_as_of || d.scored_at ? "read of " + esc(String(d.dims_as_of || d.scored_at).slice(0, 10)) : ""}${isNum(d.coverage) && d.coverage < 100 ? " · " + d.coverage.toFixed(0) + "% answered" : ""}</span></div>
     ${(d.veto_reasons || []).length ? `<div class="callout risk" style="margin-bottom:12px"><b>Vetoed.</b> ${d.veto_reasons.map(esc).join("; ")}</div>` : ""}
     ${scoreBars(sym)}</div>`;
@@ -204,14 +210,12 @@ function voicesCard(sym) {
   const hit = ((D.radar || {}).hits || []).find(h => h.sym === sym);
   const nm = newsMem[sym];
   const rows = [
-    ["Machine", "var(--info)", (isNum(d.score) ? "score " + d.score.toFixed(0) + " · " : "") + stageWord(r.tag) + (st ? " · " + (SETUP_WORD[st.status] || st.status) : "")],
     ["Analyst", "var(--ai)", v ? v.verdict + (v.conv ? " · " + v.conv : "") + (v.stamp ? " (" + dateLabel(v.stamp) + ")" : "") : "no verdict in the last 10 days"],
     ["Committee", "var(--buy)", pk ? "weekly pick · " + (pk.conviction || "") : reviewed ? "reviewed this week, passed over" : "not in this week's review"],
     ["News", "var(--watch)", hit ? hit.event + (hit.date ? " (" + dateLabel(hit.date) + ")" : "") : nm && nm.n_neg ? nm.n_neg + " negative filing(s) in 90 days" : "quiet since the last scan"],
   ];
-  return `<div class="card"><div class="card-head"><h3>What each layer says</h3></div>
-    <div class="voices">${rows.map(([k, c, t]) => `<div class="k" style="color:${c}">${k}</div><div>${esc(t)}</div>`).join("")}</div>
-    <div class="muted" style="font-size:11.5px;margin-top:10px">The layers inform attention; entries and sizing stay mechanical.</div></div>`;
+  return `<div class="card"><div class="card-head"><h3>What the analysts say</h3>${info("The nightly analyst, the weekly committee and the news layer. They inform attention; entries and sizing stay mechanical.")}</div>
+    <div class="voices">${rows.map(([k, c, t]) => `<div class="k" style="color:${c}">${k}</div><div>${esc(t)}</div>`).join("")}</div></div>`;
 }
 function howItWorks(text, pre) {
   return `<details class="more" style="margin-top:14px"><summary>How it works, and how it was chosen</summary><div class="card"><div class="memo"><p>${esc(text)}</p>
@@ -323,7 +327,8 @@ function buyCard(a) {
       : `<span class="chip sm buy">Near the gap-day close ${px(a.alert_px)}</span>`;
   } else if (st && isNum(st.pivot) && isNum(a.now_px)) {
     const ext = (a.now_px / st.pivot - 1) * 100;
-    zone = ext <= 5 ? `<span class="chip sm buy">In the buy zone (≤5% above pivot ${px(st.pivot)})</span>` : `<span class="chip sm watch">${pct(ext)} above the pivot — past the buy zone</span>`;
+    zone = ext < -2 ? `<span class="chip sm watch">${pct(ext)} back below the pivot ${px(st.pivot)}: the breakout is failing</span>`
+      : ext <= 5 ? `<span class="chip sm buy">In the buy zone (≤5% above pivot ${px(st.pivot)})</span>` : `<span class="chip sm watch">${pct(ext)} above the pivot — past the buy zone</span>`;
   }
   const ch = closesOf(a.sym).slice(-60);
   return `<div class="acard ${isEP ? "ep" : "buy"}" data-sym="${esc(a.sym)}">
@@ -339,7 +344,9 @@ function buyCard(a) {
         <div><div class="k">Quantity</div><div class="v">${num(plan.shares)}</div></div>
         <div><div class="k">Risk</div><div class="v">${inr(plan.risk)} <span class="muted" style="font-size:11px">${isNum(riskShare(plan)) ? riskShare(plan).toFixed(2) + "%" : ""}</span></div></div>
       </div>` : plan && plan.skip ? `<div class="why warn">No sized plan: ${esc(plan.skip_reason || "stop wider than the 12% cap")}</div>` : ""}
-      ${v && v.why ? `<div class="why"><span class="muted">AI:</span> ${esc(v.why).slice(0, 220)}${v.why.length > 220 ? "…" : ""}</div>` : ""}
+      ${plan && !plan.skip && isNum(a.now_px) && isNum(plan.stop) && a.now_px <= plan.stop ? `<div class="why neg"><b>Below the stop.</b> Now ${px(a.now_px)}, under the ${px(plan.stop)} stop: the setup has failed. Don't buy it.</div>`
+        : plan && !plan.skip && isNum(a.now_px) && isNum(plan.stop) && a.now_px < plan.entry * 0.97 ? `<div class="why warn">Now ${px(a.now_px)}: ${Math.abs((a.now_px / plan.entry - 1) * 100).toFixed(1)}% under the signal price and only ${((a.now_px / plan.stop - 1) * 100).toFixed(1)}% above the stop.</div>` : ""}
+      ${v && v.why ? `<div class="why"><span class="muted">AI:</span> ${esc(clip(v.why, 220))}</div>` : ""}
     </div>
     <div class="side">${spark(ch, 120, 40)}<button class="btn sm" data-sym="${esc(a.sym)}">Open</button></div>
   </div>`;
@@ -492,11 +499,11 @@ function momentumSection() {
       [["2020–2026 backtest", "+43.6% a year", "−23.4% worst drawdown, at 0.25% costs"]]);
 }
 const SLEEVES = {
-  mb: { title: "Multibagger", what: "RS leaders: 6- and 12-month return both in the market's top 10%", color: "--buy", slots: 5,
+  mb: { title: "RS leaders", what: "6- and 12-month return both in the market's top 10%", color: "--buy", slots: 5,
         info: "RS leaders from the whole liquid NSE market: the 6- and 12-month returns both in the top 10%. 5 slots, bought at the next open; sold on a close 20% below entry or, after 20 sessions, a close under the 30-week average; everything goes to cash while fewer than half of stocks are above their 200-day average. Chosen on 2006–2015 alone and registered with its weaker 2016–2026 result, because choosing with hindsight is what the process forbids.",
         pre: [["2006–2015 (chosen here)", "+29.9% a year", "−31.9% worst drawdown"], ["2016–2026 (run once)", "+18.2% a year", "−50.9% worst drawdown"]] },
   vb: { title: "Value breakout", what: "Cheap on cash flow and book value, starting a new uptrend", color: "--ep", slots: 10,
-        info: "Companies in the market's cheapest 30% on both free-cash-flow yield and book value (cash flow positive), bought when they break out of a 2-year base or start a new stage-2 uptrend. 10 slots, with the same exits and breadth rule as the multibagger sleeve. Fundamentals only reach back to 2016, so this is the least-proven of the forward tests.",
+        info: "Companies in the market's cheapest 30% on both free-cash-flow yield and book value (cash flow positive), bought when they break out of a 2-year base or start a new stage-2 uptrend. 10 slots, with the same exits and breadth rule as the RS-leaders book. Fundamentals only reach back to 2016, so this is the least-proven of the forward tests.",
         pre: [["2016–2020 (chosen here)", "+6.6% a year", "−45.3% worst drawdown; the market made 4.7%"], ["2021–2026 (run once)", "+31.1% a year", "−30.8% worst drawdown; the market made 22.1%"]] },
   pm: { title: "Promoter buying", what: "A promoter bought in the last 60 sessions, and the stock is a price leader", color: "--teal", slots: 5,
         info: "A promoter or promoter-group entity bought the company's shares in the open market (at least ₹10 lakh, as disclosed to NSE) within the last 60 sessions, and the stock is already a price leader (RS leader or trend template). 5 slots, bought at the next open; sold on a close 20% below entry or, after 20 sessions, 3×ATR below the highest close since entry; everything goes to cash while fewer than half of stocks are above their 200-day average.",
@@ -591,7 +598,7 @@ function researchAnalyst() {
   const items = D.verdict_items || [];
   if (!items.length) return `<div class="empty">No analyst verdicts in the last 10 days.</div>`;
   const es = X.event_study || {};
-  return `<div class="callout" style="margin-bottom:14px">The nightly analyst web-researches the top buy alerts and returns <b>take, halve or skip</b> — it can only be more cautious than the machine, never less. Its forward record so far: BUY calls ran slightly ahead of WAIT calls, and SKIPs did not underperform, so treat a verdict as research, not as a filter.</div>
+  return `<div class="callout" style="margin-bottom:14px">Each night an AI analyst researches the top buy alerts and returns <b>take, halve or skip</b>. Treat a verdict as research, not a filter. ${info("It can only be more cautious than the machine, never less. Its forward record so far: BUY calls ran slightly ahead of WAIT calls, and SKIPs did not underperform.")}</div>
     <div class="grid grid-2">${items.map(v => `<div class="vcard" data-sym="${esc(v.sym)}" style="cursor:pointer">
       <div class="top"><span class="sym" style="font-size:15px">${esc(v.sym)}</span>${verdictChip(v)}${v.size ? `<span class="chip sm ghost">${esc(v.size)}</span>` : ""}<span class="muted" style="margin-left:auto;font-size:12px">${esc(dateLabel(v.stamp))}</span></div>
       <div class="why">${esc(v.why)}</div>
@@ -623,7 +630,7 @@ function researchCommittee() {
 function researchThemes() {
   const T = D.themes || {}, th = (T.themes || []).slice().sort((a, b) => (b.heat || 0) - (a.heat || 0));
   const intel = T.intel || {};
-  return `<div class="callout" style="margin-bottom:14px">Themes group stocks the way markets trade them (grid capex, defence, EMS…), across NSE's accounting categories. <b>Heat</b> ranks themes against each other from 3-month move, chart breadth and news. Sector heat was tested as an entry filter and <b>rejected</b> (it cut expectancy from +1.27R to +0.22R), so it is context only.</div>
+  return `<div class="callout" style="margin-bottom:14px">Themes group stocks the way markets trade them (grid capex, defence, EMS…). <b>Heat</b> ranks them by 3-month move, chart breadth and news: context only. ${info("Sector heat was tested as an entry filter and rejected: it cut expectancy from +1.27R to +0.22R.")}</div>
     <div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Theme</th><th class="r">Heat</th><th class="r">3 months</th><th class="r hide-sm">In uptrend</th><th class="r hide-sm">Names</th><th>Leaders</th></tr></thead>
     <tbody>${th.map(t => `<tr style="cursor:default"><td><div class="cell-sym"><span class="sym">${esc(t.name)}</span><span class="co" style="max-width:300px">${esc(t.blurb || "")}</span></div></td>
       <td class="r">${cbar(t.heat, (t.heat || 0) >= 60 ? "var(--buy)" : "var(--watch)")}</td>
@@ -646,7 +653,7 @@ function researchNews() {
   });
   building.sort((a, b) => (b.m.p || 0) - (a.m.p || 0));
   const hits = (D.radar || {}).hits || [];
-  return `<div class="callout" style="margin-bottom:14px">Measured on this system's own archive, positive news did <b>not</b> lead the technical trigger (names with a positive filing alerted 7.3% of the time vs a 16.6% base rate). So news here is a <b>risk watch and a dossier</b>, not a buy list.</div>
+  return `<div class="callout" style="margin-bottom:14px">News here is a <b>risk watch and a dossier</b>, not a buy list. ${info("Measured on this system's own archive, positive news did not lead the technical trigger: names with a positive filing alerted 7.3% of the time against a 16.6% base rate.")}</div>
     <div class="grid grid-2">
       <div class="card accent-risk"><div class="card-head"><h3>Risk on paper-portfolio and alerted names</h3></div>
         ${risk.length ? risk.slice(0, 20).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(x.m.summary || "")}</div></div><span class="chip sm risk">${x.m.n_neg} negative</span></div>`).join("") : `<div class="muted">No negative filings on paper-portfolio or alerted names.</div>`}</div>
@@ -659,7 +666,7 @@ function researchNews() {
 }
 function researchDeals() {
   const rec = DEALS.recent || [];
-  const intro = `<div class="callout" style="margin-bottom:14px">Bulk and block deals on the names this system watches, as NSE publishes them each evening. Most bulk-deal rows in small caps are trading desks <b>buying and selling the same stock in the same session</b>${isNum(DEALS.churn_pct) ? ` (${DEALS.churn_pct}% of rows so far)` : ""} — those net to nothing and are left out here. What remains is someone ending the day holding more or less. Archived from ${esc(dateLabel(DEALS.since))}, so the history grows nightly; context only, never an entry filter.</div>`;
+  const intro = `<div class="callout" style="margin-bottom:14px">Bulk and block deals on the names this system watches: who ended the day holding more, or less. Context only. ${info(`Most bulk-deal rows in small caps are trading desks buying and selling the same stock in the same session${isNum(DEALS.churn_pct) ? ` (${DEALS.churn_pct}% of rows so far)` : ""}; those net to nothing and are left out. Archived from ${dateLabel(DEALS.since)}, so the history grows nightly.`)}</div>`;
   if (!rec.length) return intro + `<div class="empty">No named deal of ₹1 crore or more on a watched name in the last 30 days.</div>`;
   return intro + `<div class="card flush"><div class="card-head"><h3>Named deals, last 30 days</h3><span class="hint">₹1 crore and above</span></div><div class="table-wrap max"><table class="t"><thead><tr><th>Date</th><th>Stock</th><th>Side</th><th>Client</th><th class="r">Shares</th><th class="r">Price</th><th class="r">Value</th><th class="hide-sm">Type</th></tr></thead>
     <tbody>${rec.map(r => `<tr data-sym="${esc(r.sym)}"><td class="num">${esc(dateLabel(r.d))}</td><td class="sym">${esc(r.sym)} ${stageChip((rowBy[r.sym] || {}).tag)}</td>
@@ -672,7 +679,7 @@ function researchPolicy() {
   const list = Object.entries(M.themes || {}).map(([k, v]) => ({ key: k, ...v }))
     .sort((a, b) => Math.abs(b.pressure || 0) - Math.abs(a.pressure || 0));
   if (!list.length) return `<div class="empty">No policy event in the last ${num(M.window_days)} days.</div>`;
-  return `<div class="callout" style="margin-bottom:14px">Government and regulator decisions that move a whole theme, read from <b>${num(M.headlines_read)}</b> headlines that name no company (${num(M.policy_hits)} qualified in the last ${num(M.window_days)} days). Bounded on purpose: it can move a stock's catalyst dimension by at most 0.12 and moves nothing else.</div>
+  return `<div class="callout" style="margin-bottom:14px">Government and regulator decisions that move a whole theme, read from <b>${num(M.headlines_read)}</b> headlines that name no company (${num(M.policy_hits)} qualified in the last ${num(M.window_days)} days). ${info("Bounded on purpose: it can move a stock's catalyst score by at most 0.12 and moves nothing else.")}</div>
     <div class="grid grid-2">${list.map(t => { const meta = themeMeta[t.key] || {}; const names = (meta.leaders || []).filter(l => ["CONFIRMED", "EXTENDED"].includes(l.tag)).slice(0, 8);
       return `<div class="vcard"><div class="top"><span class="sym" style="font-size:15px">${esc(meta.name || t.key)}</span>
       <span class="chip sm ${(t.pressure || 0) >= 0 ? "buy" : "risk"}" data-tip="Decayed policy pressure on this theme (half-life ${num(M.half_life_days)} days).">${(t.pressure || 0) >= 0 ? "+" : ""}${(t.pressure || 0).toFixed(2)}</span></div>
@@ -837,7 +844,7 @@ function sheetNews(sym) {
   return `${dealsHtml}${nm ? `<div class="card" style="margin-bottom:14px"><div class="card-head"><h3>90-day story memory</h3>${nm.primed ? '<span class="chip sm info">news-primed</span>' : ""}${nm.n_neg ? `<span class="chip sm risk">${nm.n_neg} negative</span>` : ""}</div>
       <div class="memo">${esc(nm.summary || "")}</div>
       <div style="margin-top:8px">${(nm.events || []).slice(-12).reverse().map(e => `<div class="news-item"><div class="d">${esc(String(e[2]).slice(0, 10))}</div><div class="h"><span class="${e[1] === "neg" ? "neg" : e[1] === "pos" ? "pos" : "muted"}">${e[1] === "neg" ? "▼" : e[1] === "pos" ? "▲" : "·"}</span> ${esc(e[0])}</div></div>`).join("")}</div></div>` : ""}
-    ${n.count ? `<div class="muted" style="font-size:12.5px;margin-bottom:8px">At the last scoring: ${num(n.stories)} stories from ${num(n.count)} articles (${num(n.trusted)} from tier-1 sources), net tone ${isNum(n.sentiment) ? n.sentiment.toFixed(2) : "—"}.</div>` : ""}
+    ${n.count ? `<div class="muted" style="font-size:12.5px;margin-bottom:8px">When it was last scored: ${num(n.stories)} news ${n.stories === 1 ? "story" : "stories"} from ${num(n.count)} articles, ${!isNum(n.sentiment) ? "tone unknown" : n.sentiment > 0.2 ? "positive" : n.sentiment > 0.05 ? "mildly positive" : n.sentiment < -0.2 ? "negative" : n.sentiment < -0.05 ? "mildly negative" : "neutral"} in tone.</div>` : ""}
     <div class="card"><div class="card-head"><h3>Filings and headlines</h3><span class="hint">last 30 days</span></div>
       ${arch.length ? arch.map(x => `<div class="news-item"><div class="d">${esc(x.d)}</div><div><div class="h">${x.u && /^https?:/.test(x.u) ? `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a>` : esc(x.t)}</div><div class="src">${esc(x.src || "")}</div></div></div>`).join("") : `<div class="muted">No filings or matched headlines in the archive for the last 30 days.</div>`}</div>`;
 }
@@ -1120,7 +1127,7 @@ function pageHome() {
   let n = 0;
   return `
   <div class="today-top">
-    <div><h2>Your to-do list</h2><div class="sub">Prices as of the ${esc(dayName(session))} close</div></div>
+    <div><h2>Your to-do list</h2><div class="sub">Prices as of the close on ${esc(dayName(session))}</div></div>
     <div class="regime-card ${rg.defensive ? "warn" : ""}" data-tip="The breadth rule sizes every trade: positions are half size while fewer than half of the watched stocks close above their own 200-day average.">
       ${ring((rg.breadth || 0) / 100, isNum(rg.breadth) ? rg.breadth.toFixed(0) + "%" : "—", "above 200-DMA", rg.defensive ? "var(--watch)" : "var(--buy)", 60)}
       <div><div class="t">${rg.defensive ? "Market weak" : "Market healthy"}</div><div class="s">${rg.defensive ? "Use half-size positions" : "Full-size positions"}</div></div>
@@ -1132,7 +1139,7 @@ function pageHome() {
   ${step(++n, "Set price alerts", alerts.length ? "the " + alerts.length + " stocks closest to a breakout" : "", alertsBlock(alerts, ready.length))}
   ${mbtop.length ? step(++n, "Research these", "the most proven multibagger ingredients at once, whole market", mbBlock(mbtop))
       : radar.length ? step(++n, "Research these", "possible multibaggers from the whole market", radarBlock(radar)) : ""}
-  ${heads.length ? step(++n, "Heads-up", "risk news on the stocks above", `<div class="card">${heads.slice(0, 8).map(i => `<div class="lrow" data-sym="${esc(i.sym)}"><div><span class="sym">${esc(i.sym)}</span><div class="act ${i.kind === "risk" ? "neg" : "warn"}">${esc(i.text)}</div></div><span class="muted" style="font-size:12px">read it before acting</span></div>`).join("")}</div>`) : ""}`;
+  ${heads.length ? step(++n, "Heads-up", "risk news on the stocks above: read it before acting", `<div class="card">${heads.slice(0, 8).map(i => `<div class="lrow" data-sym="${esc(i.sym)}"><div><span class="sym">${esc(i.sym)}</span><div class="act ${i.kind === "risk" ? "neg" : "warn"}">${esc(i.text)}</div></div></div>`).join("")}</div>`) : ""}`;
 }
 function alertsBlock(list, total) {
   if (!list.length) return `<div class="step-empty">No stock has a ready base right now. Bases take weeks to form; this list refills as they do.</div>`;
@@ -1140,21 +1147,21 @@ function alertsBlock(list, total) {
     const p = s.plan && !s.plan.skip ? s.plan : null;
     return `<div class="arow" data-sym="${esc(s.sym)}" data-ctx="alerts">
       <div class="cell-sym"><span class="sym">${esc(s.sym)}</span><span class="co">${esc(s.company || "")}</span></div>
-      <div class="a-main">Alert above <b class="num">${px(s.pivot)}</b> <span class="num ${!isNum(s.dist) ? "muted" : s.dist < 0 ? "warn" : s.dist <= 2 ? "pos" : "muted"}">${isNum(s.dist) ? (s.dist >= 0 ? pct(s.dist) + " away" : "already above, needs volume") : ""}</span>
-        <div class="a-sub">${p ? `stop <span class="num">${px(p.stop)}</span> · ${num(p.shares)} shares · risk ${inr(p.risk)}` : `<span class="warn">stop too wide to size</span>`}</div></div>
+      <div class="a-main">Alert above <b class="num">${px(s.pivot)}</b> <span class="num ${!isNum(s.dist) ? "muted" : s.dist < 0 ? "warn" : s.dist <= 2 ? "pos" : "muted"}">${isNum(s.dist) ? (s.dist >= 0 ? pct(s.dist) + " away" : "above it: buy on a close with 1.5× volume") : ""}</span>
+        <div class="a-sub">${p ? `stop <span class="num">${px(p.stop)}</span> · ${num(p.shares)} shares · risk ${inr(p.risk)}` : `<span class="warn">no plan: the stop would be more than 12% away</span>`}</div></div>
       <div class="a-spark">${spark(closesOf(s.sym), 84, 26)}</div>
-      <div class="a-score" data-tip="Research score out of 100: open the stock for the breakdown.">${scoreCell(s.score)}</div>
+      <div class="a-score" data-tip="Health check out of 100: open the stock for the breakdown.">${scoreCell(s.score)}<div class="a-lab">health</div></div>
     </div>`; }).join("")}</div></div>
     <div class="step-actions"><button class="btn sm" data-copy-alerts="home">${I.copy}Copy these alerts</button>
       <button class="btn sm" data-go="watchlist" data-sub="ready">All ${total} in the watchlist</button>
-      <span class="muted" style="font-size:12px">It becomes a buy when it closes above the alert price on at least 1.5× normal volume.</span></div>`;
+      <span class="muted" style="font-size:12px">A close above the alert price on 1.5× normal volume makes it a buy.</span></div>`;
 }
 function radarBlock(list) {
   return `<div class="card flush"><div class="alist">${list.map(r => {
     const inU = !!rowBy[r.sym];
     const best = Object.keys(r.signals || {}).map(radarOdds).filter(isNum).reduce((a, b) => Math.max(a, b), 0);
     return `<div class="arow" data-sym="${esc(r.sym)}" data-ctx="radar">
-      <div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "outside the nightly scan")}</span></div>
+      <div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc((rowBy[r.sym] || {}).company || "")}</span></div>
       <div class="a-main">${Object.entries(r.signals || {}).map(([k, d]) => radarChip(k, d)).join(" ")} ${convChip(r.sym)}
         <div class="a-sub"><span class="${cls(r.ret_6m_pct)}">${pct(r.ret_6m_pct, 0)}</span> in 6 months${best ? ` · ${best.toFixed(1)}× the usual odds of tripling` : ""}</div></div>
       <div class="a-spark">${closesOf(r.sym).length ? spark(closesOf(r.sym), 84, 26) : ""}</div>
@@ -1219,7 +1226,7 @@ function watchRow(tab, it) {
     right = `<span class="num ${cls(x.ret_6m_pct)}">${pct(x.ret_6m_pct, 0)}</span>`;
   }
   return `<div class="wrow ${it.sym === S.watch.sel ? "sel" : ""}" data-wsel="${esc(it.sym)}">
-    <div class="cell-sym"><span class="sym">${esc(it.sym)}</span><span class="co">${esc(r.company || (it.r || it.m ? "outside the nightly scan" : ""))}</span>${sub ? `<div class="wchips">${sub}</div>` : ""}</div>
+    <div class="cell-sym"><span class="sym">${esc(it.sym)}</span><span class="co">${esc(r.company || "")}</span>${sub ? `<div class="wchips">${sub}</div>` : ""}</div>
     <div class="wmid">${mid}</div>
     <div class="wspark">${closesOf(it.sym).length ? spark(closesOf(it.sym).slice(-60), 60, 22) : ""}</div>
     <div class="wright">${right}</div></div>`;
@@ -1250,7 +1257,7 @@ function stockHead(sym, nav) {
     <div class="shead-top"><div style="min-width:0"><h2>${esc(sym)}</h2><div class="co">${esc(r.company || (rr0 ? "Outside the nightly scan" : ""))}${r.ind ? " · " + esc(r.ind) : ""}${r.tier ? " · " + esc(r.tier) + " cap" : ""}</div></div>
       ${isNum(price) ? `<div class="px"><div class="p">${px(price)}</div>${isNum(chg) ? `<div class="${cls(chg)} num" style="font-size:12.5px">${pct(chg, 2)} last session</div>` : ""}</div>` : `<div class="px"></div>`}
       ${nav || ""}</div>
-    <div class="sheet-chips">${r.tag ? stageChip(r.tag) : ""} ${r.trig || st ? setupChip(r.trig || (st && st.status)) : ""} ${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}" data-tip="Research score out of 100: the breakdown is below.">Score ${d.score.toFixed(0)}</span>` : ""} ${isNum(r.rs) ? `<span class="chip sm ghost" data-tip="Relative strength percentile against the whole universe.">RS ${r.rs.toFixed(0)}</span>` : ""} ${verdictChip(v, true)} ${convChip(sym)} ${pk ? `<span class="chip sm ai">Committee pick</span>` : ""} ${rr0 ? Object.entries(rr0.signals || {}).map(([k, dd]) => radarChip(k, dd)).join(" ") : ""} ${survChips(sym)} ${r.veto ? '<span class="chip sm risk">Vetoed</span>' : ""} ${(themeBy[sym] || []).slice(0, 2).map(t => `<span class="chip sm ghost">${esc(t)}</span>`).join(" ")}</div>
+    <div class="sheet-chips">${r.tag ? stageChip(r.tag) : ""} ${r.trig || st ? setupChip(r.trig || (st && st.status)) : ""} ${isNum(d.score) ? `<span class="chip sm" style="color:${scoreCol(d.score)};border-color:${scoreCol(d.score)}" data-tip="Health check out of 100: it rules weak or risky companies out. The breakdown is below.">Health ${d.score.toFixed(0)}</span>` : ""} ${isNum(r.rs) ? `<span class="chip sm ghost" data-tip="Relative strength percentile against the whole universe.">RS ${r.rs.toFixed(0)}</span>` : ""} ${verdictChip(v, true)} ${convChip(sym)} ${pk ? `<span class="chip sm ai">Committee pick</span>` : ""} ${rr0 ? Object.entries(rr0.signals || {}).map(([k, dd]) => radarChip(k, dd)).join(" ") : ""} ${survChips(sym)} ${r.veto ? '<span class="chip sm risk">Vetoed</span>' : ""} ${(themeBy[sym] || []).slice(0, 2).map(t => `<span class="chip sm ghost">${esc(t)}</span>`).join(" ")}</div>
   </div>`;
 }
 function todoBox(sym) {
@@ -1259,13 +1266,13 @@ function todoBox(sym) {
   const sp = st && st.plan && !st.plan.skip ? st.plan : null;
   const rr0 = (RD.rows || []).find(x => x.sym === sym);
   const cells = list => `<div class="plan-grid">${list.map(([k, v, c, s]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v ${c || ""}">${v}</div>${s ? `<div class="s">${s}</div>` : ""}</div>`).join("")}</div>`;
-  const tail = p => `<div class="muted" style="font-size:12.5px;margin-top:10px">Then: sell a third of the trading half at ${px(p.partial)} (+2.5R); both halves' stops go to breakeven on a close above ${px(p.be)} (+1.5R); the trading half trails the 50-day average; the core half leaves only on a weekly close under the 30-week average.</div>`;
+  const tail = p => `<details class="more" style="margin-top:8px"><summary>Exit plan</summary><div class="muted" style="font-size:12.5px">Sell a third of the trading half at ${px(p.partial)} (+2.5R). Both halves' stops go to breakeven on a close above ${px(p.be)} (+1.5R). The trading half then trails the 50-day average; the core half leaves only on a weekly close under the 30-week average.</div></details>`;
   if (r.veto) return `<div class="todo risk"><div class="todo-head"><span class="todo-tag">Avoid</span><span class="todo-text">Vetoed: ${esc((d.veto_reasons || []).join("; ") || "a governance or leverage red flag")}.</span></div></div>`;
   if (a && plan && !plan.skip) return `<div class="todo buy"><div class="todo-head"><span class="todo-tag">Buy signal</span><span class="todo-text">${a.dokind === "ep" ? "Gap-up" : "Breakout"} on ${esc(dateLabel(a.d))} at ${px(a.alert_px)}; now ${px(a.now_px)} <span class="${cls(a.chg)}">${pct(a.chg)}</span>.</span></div>
     ${cells([["Entry ≈", px(plan.entry)], ["Stop", px(plan.stop), "neg", isNum(plan.stop_pct) ? pct(-plan.stop_pct) : ""], ["Quantity", num(plan.shares)], ["Risk", inr(plan.risk), "", isNum(riskShare(plan)) ? riskShare(plan).toFixed(2) + "% of capital" : ""]])}</div>`;
   if (st && st.status === "AWAITING TRIGGER") return `<div class="todo watch"><div class="todo-head"><span class="todo-tag">Set an alert</span><span class="todo-text">Buy only on a close above <b>${px(st.pivot)}</b> with at least <b>${volFmt(st.vneed)}</b> shares traded (today: ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "—"} normal volume).</span>${sp ? `<button class="btn sm" data-copy-one="${esc(sym)}" style="margin-left:auto">${I.copy}Copy alert</button>` : ""}</div>
     ${sp ? cells([["Alert price", px(st.pivot), "", "buy zone to " + px(st.zone_top)], ["Stop", px(sp.stop), "neg", pct(-sp.stop_pct) + " · 2.5 × ATR"], ["Quantity", num(sp.shares), "", inrShort(sp.value) + " position"], ["Risk", inr(sp.risk), "", (sp.risk / CAPITAL * 100).toFixed(2) + "% of capital"]]) + tail(sp) : `<div class="muted" style="font-size:12.5px">${esc(st.plan && st.plan.why || "No sized plan: the stop would be wider than the 12% cap.")}</div>`}</div>`;
-  if (rr0) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">Flagged as a possible multibagger (${Object.keys(rr0.signals || {}).map(k => esc(RADAR_WORD[k] || k)).join(", ")}). ${MRS[sym] ? `The report analyst read its filings: <b>conviction ${esc(MRS[sym].conviction)} of 5</b> (${esc(MRS[sym].horizon || "")}), below.` : "Not a buy signal: read the business and the news below first."}</span></div></div>`;
+  if (rr0) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">Flagged as a possible multibagger (${Object.keys(rr0.signals || {}).map(k => esc(RADAR_WORD[k] || k)).join(", ")}). ${MRS[sym] ? `An AI deep-dive read its filings: <b>conviction ${esc(MRS[sym].conviction)} of 5</b> (${esc(MRS[sym].horizon || "")}), below.` : "Not a buy signal: read the business and the news below first."}</span></div></div>`;
   if (st && st.status) return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">Watch</span><span class="todo-text">${esc(SETUP_WORD[st.status] || st.status)}. Nothing to do until a fresh base forms.</span></div></div>`;
   return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">No setup</span><span class="todo-text">${esc(stageWord(r.tag))}. Nothing to do until a base forms; it will appear in the watchlist when one does.</span></div></div>`;
 }
@@ -1277,22 +1284,40 @@ function factsCard(sym) {
     ${(d.reasons || []).length ? `<div class="muted" style="font-size:12px;margin-top:10px">${d.reasons.map(esc).join(" · ")}</div>` : ""}</div>`;
 }
 function stockDetail(sym, p) {
+  const nAlerts = (D.scorecard || []).filter(r => r.sym === sym).length, m = MBS[sym];
   return `${todoBox(sym)}
     <div class="dsec"><div class="chart-range">${["3M", "6M", "1Y"].map(k => `<button class="btn sm ${S.chartRange === k ? "primary" : ""}" data-range="${k}">${k}</button>`).join("")}
       <span class="muted" style="font-size:12px;margin-left:8px">50- and 150-day averages · dashed lines: alert price, stop, entry</span></div>
-      <div class="chart-box" id="${p}-main"></div><div class="chart-box small" id="${p}-rs"></div></div>
-    <div class="grid grid-2 dsec" style="align-items:start"><div class="stack">${mbCard(sym)}${voicesCard(sym)}</div><div class="stack">${scoreCard(sym)}${factsCard(sym)}</div></div>
-    ${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Report analyst</div>${researchCard(sym)}</div>` : ""}
-    <div class="dsec"><div class="dsec-title">Business</div>${bizSection(sym, p)}</div>
+      <div class="chart-box" id="${p}-main"></div><div class="chart-box small" id="${p}-rs"></div>${chartWords(sym)}</div>
+    <div class="grid grid-2 dsec" style="align-items:start"><div>${scoreCard(sym)}</div><div class="stack">${keyNumbers(sym)}${voicesCard(sym)}</div></div>
+    <div class="dsec"><div class="dsec-title">Business</div>${bizCharts(p)}</div>
     <div class="dsec"><div class="dsec-title">News and filings</div>${sheetNews(sym)}</div>
     ${verdictBy[sym] || pickBy[sym] ? `<div class="dsec"><div class="dsec-title">AI research</div>${sheetResearch(sym)}</div>` : ""}
-    <div class="dsec"><div class="dsec-title">Alert history</div>${sheetHistory(sym)}</div>`;
+    ${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Company deep-dive</div>${researchCard(sym)}</div>` : ""}
+    ${Object.keys(MBCFG).length || MBX.error ? fold("Multibagger score", m ? `${Math.round(m.score)} / 100 · ${m.factors.map(fShort).join(", ")}` : "none of the proven ingredients today", mbCard(sym, true)) : ""}
+    ${fold("Alert history", nAlerts ? nAlerts + " buy alert" + (nAlerts > 1 ? "s" : "") + " in the journal" : "never alerted", sheetHistory(sym))}`;
 }
-function bizSection(sym, p) {
+/* a section that starts folded: the title and a one-line summary, open on click */
+function fold(title, summary, body) {
+  return `<details class="fold dsec"><summary><span class="fold-t">${esc(title)}</span><span class="fold-s">${esc(summary)}</span></summary><div class="fold-b">${body}</div></details>`;
+}
+/* the chart in words, as one caption under the chart rather than a card that
+   repeated the header chips and the to-do box */
+function chartWords(sym) {
+  const r = rowBy[sym] || {}, d = detailOf(sym) || {}, st = setupBy[sym];
+  const bits = [d.stage_name || stageWord(r.tag), isNum(d.tt_checks) ? "trend checks " + d.tt_checks + " of 8" : "",
+    st ? "base live, pivot " + px(st.pivot) : d.vcp ? "base live" : "no base", st && isNum(st.atr_pct) ? "moves " + st.atr_pct + "% a day (ATR)" : ""].filter(Boolean);
+  return bits.length ? `<div class="muted" style="font-size:12.5px;margin-top:8px">${bits.map(esc).join(" · ")}</div>` : "";
+}
+function keyNumbers(sym) {
   const r = rowBy[sym] || {};
-  return `<div class="grid grid-3" style="gap:10px;margin-bottom:12px">
-      ${[["ROCE", isNum(r.roce) ? r.roce.toFixed(1) + "%" : "—"], ["P/E", isNum(r.pe) ? r.pe.toFixed(1) : "—"], ["Profit growth (TTM)", isNum(r.pgttm) ? pct(r.pgttm, 0) : "—"], ["Market cap", isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : "—"], ["Traded a day", isNum(r.turn) ? "₹" + r.turn.toFixed(1) + " Cr" : "—"], ["Type", esc(r.arch || "—")]].map(([k, v]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v" style="font-size:15px">${v}</div></div>`).join("")}</div>
-    <div class="mini-grid">
+  const cells = [["ROCE", isNum(r.roce) ? r.roce.toFixed(1) + "%" : null], ["P/E", isNum(r.pe) ? r.pe.toFixed(1) : null], ["Profit growth (TTM)", isNum(r.pgttm) ? pct(r.pgttm, 0) : null],
+    ["Market cap", isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : null], ["Traded a day", isNum(r.turn) ? "₹" + r.turn.toFixed(1) + " Cr" : null], ["Type", r.arch ? esc(r.arch) : null]].filter(c => c[1] != null);
+  return cells.length ? `<div class="card"><div class="card-head"><h3>Key numbers</h3></div><div class="grid grid-3" style="gap:10px">
+      ${cells.map(([k, v]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v" style="font-size:15px">${v}</div></div>`).join("")}</div></div>` : "";
+}
+function bizCharts(p) {
+  return `<div class="mini-grid">
       <div class="card mini"><h4>Net profit <span>₹ Cr · quarterly</span></h4><div id="${p}-np"></div></div>
       <div class="card mini"><h4>Operating margin <span>% · quarterly</span></h4><div id="${p}-opm"></div></div>
       <div class="card mini"><h4>Borrowings <span>₹ Cr · yearly · falling means deleveraging</span></h4><div id="${p}-debt"></div></div>
@@ -1317,7 +1342,7 @@ function drawFundInto(sym, p) {
 function outsideDetail(sym) {
   const x = (RD.rows || []).find(r => r.sym === sym);
   if (!x && MBS[sym]) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">A multibagger candidate from the whole market, outside the nightly scan, so there's no chart or plan here yet.</span></div></div>
-    <div class="dsec">${mbCard(sym)}</div>${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Report analyst</div>${researchCard(sym)}</div>` : ""}
+    <div class="dsec">${mbCard(sym)}</div>${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Company deep-dive</div>${researchCard(sym)}</div>` : ""}
     <div class="dsec" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="https://www.screener.in/company/${encodeURIComponent(sym)}/" target="_blank" rel="noopener">Screener.in ↗</a><a class="btn sm" href="https://www.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(sym)}" target="_blank" rel="noopener">Chart ↗</a></div>`;
   if (!x) return `<div class="empty" style="margin-top:14px">No data on this build for ${esc(sym)}.</div>`;
   return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">A possible multibagger from the whole-market radar. It's outside the nightly scan, so there's no chart, plan or score here yet.</span></div>
@@ -1393,7 +1418,7 @@ const FSHORT = { A1: "Growth", A2: "Operating leverage", A3: "Turnaround", A4: "
 function fKey(name) { return name.startsWith("P ") ? "P" : name.startsWith("F ") ? "F" : name.slice(0, 2); }
 function fShort(name) { return FSHORT[fKey(name)] || name; }
 function mbTop(n) { return Object.entries(MBS).map(([sym, m]) => ({ sym, ...m })).sort((a, b) => b.score - a.score).slice(0, n); }
-function mbCard(sym) {
+function mbCard(sym, inFold) {
   const names = Object.keys(MBCFG);
   if (!names.length) return MBX.error ? `<div class="card"><div class="card-head"><h3>Multibagger score</h3><span class="chip sm risk">not computed</span></div>
     <div class="muted" style="font-size:13px">The nightly run could not compute it: ${esc(MBX.error)}</div></div>` : "";
@@ -1404,7 +1429,7 @@ function mbCard(sym) {
   names.forEach(n => { const v = MBCFG[n], p = v.pillar; pil[p] = pil[p] || { max: 0, got: 0 }; pil[p].max += v.weight; if (on.has(n)) pil[p].got += v.weight; });
   const order = ["Business inflection", "Room to re-rate", "Ownership", "Price and volume"].filter(p => pil[p]);
   const sc = m ? m.score : 0;
-  return `<div class="card"><div class="card-head"><h3>Multibagger score</h3><span class="chip sm" style="color:${scoreCol(sc)};border-color:${scoreCol(sc)}">${Math.round(sc)} / 100</span>${info("Built only from the factors that preceded Indian multibaggers in both 2016–20 and 2021–26, each weighted by how much it raised the odds of tripling within a year. More of the proven ingredients at once means a higher score. Tested as a 10-stock portfolio, the top 10% by this score made 27% a year over 2016–2026, against 17% for momentum alone and 14% for the market; promoter buying + momentum on its own made 32%. So use it to decide what to research, not what to buy.")}</div>
+  return `<div class="card"><div class="card-head"><h3>${inFold ? "The proven ingredients" : "Multibagger score"}</h3><span class="chip sm" style="color:${scoreCol(sc)};border-color:${scoreCol(sc)}">${Math.round(sc)} / 100</span>${info("Built only from the factors that preceded Indian multibaggers in both 2016–20 and 2021–26, each weighted by how much it raised the odds of tripling within a year. More of the proven ingredients at once means a higher score. Tested as a 10-stock portfolio, the top 10% by this score made 27% a year over 2016–2026, against 17% for momentum alone and 14% for the market; promoter buying + momentum on its own made 32%. So use it to decide what to research, not what to buy.")}</div>
     <div class="sbars">${order.map(p => { const v = pil[p], pc = v.max ? v.got / v.max * 100 : 0, col = pc >= 50 ? "var(--buy)" : pc > 0 ? "var(--watch)" : "var(--faint)";
       return `<div class="sbar"><div class="top"><span>${esc(p)}</span><b style="color:${col}">${Math.round(pc)}%</b></div><div class="track"><i style="width:${pc}%;background:${col}"></i></div></div>`; }).join("")}</div>
     <div class="flist">${names.sort((a, b) => MBCFG[b].weight - MBCFG[a].weight).map(n => { const hit = on.has(n);
@@ -1413,13 +1438,13 @@ function mbCard(sym) {
 }
 function mbBlock(list) {
   return `<div class="card flush"><div class="alist">${list.map(m => `<div class="arow" data-sym="${esc(m.sym)}" data-ctx="mbtop">
-      <div class="cell-sym"><span class="sym">${esc(m.sym)}</span><span class="co">${esc((rowBy[m.sym] || {}).company || "outside the nightly scan")}</span></div>
+      <div class="cell-sym"><span class="sym">${esc(m.sym)}</span><span class="co">${esc((rowBy[m.sym] || {}).company || "")}</span></div>
       <div class="a-main">${m.factors.map(n => `<span class="chip sm ghost" data-tip="${esc((m.evidence || {})[n] || "")}">${esc(fShort(n))}</span>`).join(" ")} ${convChip(m.sym)}
         <div class="a-sub">${esc((m.evidence || {})[m.factors[0]] || "")}</div></div>
       <div class="a-spark">${closesOf(m.sym).length ? spark(closesOf(m.sym), 84, 26) : ""}</div>
-      <div class="a-score" data-tip="Multibagger score out of 100">${scoreCell(m.score)}</div></div>`).join("")}</div></div>
+      <div class="a-score" data-tip="Multibagger score out of 100: how many of the proven ingredients it has, weighted by their measured edge.">${scoreCell(m.score)}<div class="a-lab">multibagger</div></div></div>`).join("")}</div></div>
     <div class="step-actions"><button class="btn sm" data-go="watchlist" data-sub="radar">All candidates</button>
-      <span class="muted" style="font-size:12px">Ideas to research, not buy signals. The report analyst reads the top names' concalls and reports each week.</span></div>`;
+      <span class="muted" style="font-size:12px">Ideas to research, not buy signals. Each week an AI reads the top names' concalls and reports: see Research.</span></div>`;
 }
 
 /* ============================================================ REPORT ANALYST
@@ -1433,7 +1458,7 @@ function convCol(c) { return c >= 4 ? "var(--buy)" : c >= 3 ? "var(--info)" : c 
 function convChip(sym) {
   const m = MRS[sym];
   if (!m || !isNum(+m.conviction)) return "";
-  return `<span class="chip sm" style="color:${convCol(+m.conviction)};border-color:${convCol(+m.conviction)}" data-tip="${esc("Report analyst, " + dateLabel(m.date) + ": " + String(m.thesis || "").slice(0, 220))}">AI ${esc(m.conviction)}/5</span>`;
+  return `<span class="chip sm" style="color:${convCol(+m.conviction)};border-color:${convCol(+m.conviction)}" data-tip="${esc("AI deep-dive, " + dateLabel(m.date) + ": " + clip(m.thesis, 220))}">AI ${esc(m.conviction)}/5</span>`;
 }
 function researchCard(sym) {
   const m = MRS[sym] || {}, sc = m.scores || {}, c = +m.conviction;
@@ -1463,14 +1488,14 @@ function researchCard(sym) {
 }
 function researchReports() {
   const items = Object.entries(MRS).map(([sym, m]) => ({ sym, ...m })).sort((a, b) => (+b.conviction || 0) - (+a.conviction || 0) || String(b.date).localeCompare(String(a.date)));
-  if (!items.length) return `<div class="empty">No company has been read yet. The report analyst reads the radar's top names each week on the laptop.</div>`;
-  return `<div class="callout" style="margin-bottom:14px">Each week the report analyst reads the top radar names' latest concall transcript and investor presentation, checks management's past guidance against what was delivered, and looks for broker, industry and governance reports. Open a stock for the full read.</div>
+  if (!items.length) return `<div class="empty">No company has been read yet. Each week an AI reads the top multibagger candidates on the laptop.</div>`;
+  return `<div class="callout" style="margin-bottom:14px">Each week an AI reads the top multibagger candidates' latest concall and investor presentation, checks what management promised against what it delivered, and looks for broker, industry and governance reports. Open a stock for the full read.</div>
     <div class="grid grid-2">${items.map(m => `<div class="vcard" data-sym="${esc(m.sym)}" style="cursor:pointer">
       <div class="top"><span class="sym" style="font-size:15px">${esc(m.sym)}</span>${convChip(m.sym)}<span class="chip sm ghost">${esc(m.horizon || "")}</span><span class="muted" style="margin-left:auto;font-size:12px">${esc(dateLabel(m.date))}</span></div>
-      <div class="why">${esc(String(m.thesis || "").slice(0, 320))}${String(m.thesis || "").length > 320 ? "…" : ""}</div></div>`).join("")}</div>`;
+      <div class="why">${esc(clip(m.thesis, 320))}</div></div>`).join("")}</div>`;
 }
 
-const RTABS = [["reports", "Report analyst"], ["analyst", "AI analyst"], ["committee", "Committee picks"], ["news", "News and filings"], ["deals", "Bulk and block deals"], ["policy", "Policy radar"]];
+const RTABS = [["reports", "Company deep-dives"], ["analyst", "Buy-alert checks"], ["committee", "Weekly picks"], ["news", "News and filings"], ["deals", "Bulk and block deals"], ["policy", "Policy radar"]];
 function pageResearch() {
   if (!RTABS.some(t => t[0] === S.research)) S.research = "reports";
   const body = { reports: researchReports, analyst: researchAnalyst, committee: researchCommittee, news: researchNews, deals: researchDeals, policy: researchPolicy }[S.research];
@@ -1517,7 +1542,7 @@ function perfBooks() {
       <td class="hide-sm">${x.started ? `<span class="chip sm buy">live</span> <span class="muted" style="font-size:12px">since ${esc(dateLabel(x.started))}</span>` : `<span class="chip sm ghost">starts ${esc(x.startsLabel)}</span>`}</td>
       <td class="r num ${cls(x.ret)}">${x.started && isNum(x.ret) ? pct(x.ret) : "—"}</td>
       <td class="r num hide-sm ${cls(x.mid)}">${isNum(x.mid) ? pct(x.mid) : "—"}</td>
-      <td class="r num">${num(x.held)}${x.slots ? `<span class="faint">/${x.slots}</span>` : ""}</td>
+      <td class="r num">${x.sleeve && x.sleeve.risk_on === false && !x.held ? `<span class="chip sm ghost" data-tip="The breadth exit is on: fewer than half of stocks are above their 200-day average, so this book holds cash until that recovers.">in cash</span>` : num(x.held) + (x.slots ? `<span class="faint">/${x.slots}</span>` : "")}</td>
       <td class="hide-sm">${x.nav.length > 2 ? spark(x.nav.map(q => q[1]), 110, 26) : `<span class="faint">—</span>`}</td></tr>`).join("")}</tbody></table></div></div>
   ${live.length ? `<div class="card" style="margin-top:16px"><div class="card-head"><h3>Growth of ₹100</h3><span class="hint">each book from its own first day</span></div><div class="chart-box" id="bookchart" style="height:240px"></div></div>` : ""}
   <div class="toolbar" style="margin-top:22px"><div class="seg" style="flex-wrap:wrap">${B.map(x => `<button data-book="${x.id}" class="${x.id === S.book ? "on" : ""}"><i class="bdot" style="background:var(${x.color})"></i>${esc(x.name)}</button>`).join("")}</div></div>

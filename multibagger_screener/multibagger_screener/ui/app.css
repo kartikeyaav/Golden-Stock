@@ -661,3 +661,17 @@ button.counter:hover span { color: var(--text-2); }
 .fitem .fn { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .fitem.on { color: var(--text); }
 .fitem.on .fico { color: var(--buy); }
+/* a section that starts folded (stock view: multibagger score, alert history) */
+details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary::before { content: "▸"; color: var(--muted); font-size: 12px; }
+details.fold[open] > summary::before { content: "▾"; }
+details.fold > summary:hover { background: var(--surface-2); }
+.fold-t { font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.fold-s { font-size: 13px; color: var(--text); min-width: 0; }
+.fold-b { margin-top: 10px; }
+/* the health check's reasoning: one line each, the full text on hover */
+.sbar .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* what a list's number is */
+.a-lab { font-size: 10.5px; color: var(--faint); text-align: right; margin-top: 2px; }

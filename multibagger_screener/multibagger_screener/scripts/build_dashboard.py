@@ -825,6 +825,17 @@ def _build_health(scan_date, bench_age, tags, ai_picks, radar, penny,
     return rows
 
 
+def _clip(text: str, n: int) -> str:
+    """At most n characters, cut at a word and marked with an ellipsis: a hard
+    slice left the analyst's notes ending mid-word on the page ("bigger tha")."""
+    text = (text or "").strip()
+    if len(text) <= n:
+        return text
+    cut = text[:n]
+    sp = cut.rfind(" ")
+    return (cut[:sp] if sp > n * 0.6 else cut).rstrip(" ,;:(-—") + "…"
+
+
 def _verdict_card(sym: str, memo: str) -> dict:
     """One analyst verdict, parsed out of its memo text.
 
@@ -837,7 +848,7 @@ def _verdict_card(sym: str, memo: str) -> dict:
                        memo, re.S)
         if not bm:
             return []
-        return [ln.strip().lstrip("-").strip()[:220]
+        return [_clip(ln.strip().lstrip("-").strip(), 220)
                 for ln in bm.group(1).splitlines()
                 if ln.strip().startswith("-")]
 
@@ -851,7 +862,7 @@ def _verdict_card(sym: str, memo: str) -> dict:
             "size": s.group(1).strip() if s else "",
             "why": whys[0] if whys else "",
             "whys": whys[1:3], "risks": risks[:2],
-            "flip": (fm.group(1).strip().replace("\n", " ")[:220] if fm else "")}
+            "flip": (_clip(fm.group(1).strip().replace("\n", " "), 220) if fm else "")}
 
 
 def build_payload() -> dict:
