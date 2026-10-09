@@ -1,6 +1,6 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-09-30** (MULTIBAGGERS BY FUNDAMENTALS, INSTITUTIONS, PROMOTERS AND VOLUME. A pre-registered factor study on 10 years of shareholding and NSE's filed quarterly results. Eight factors survived both halves: turnaround, value, small, undiscovered, promoter raising stake, volume expansion, momentum and quarterly surge. Growth, ROCE, institutions arriving and the full stack did not. The conviction score was rebuilt from the survivors: nightly on every liquid stock, 27% a year as a portfolio over 2016-2026 against 17% for momentum alone. A weekly AI analyst reads the top names' concalls and reports. See §3AD.) **Previous header, 2026-09-28:** (a third pre-registered paper sleeve: PROMOTER BUYING + MOMENTUM, 32% a year over 2016-2026 in the backtest, forward from 29 Sep; see the end of §3AC.) **Header before that, 2026-09-27:** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
+**Last updated: 2026-10-09** (UI audit and a public STORIES tab of AI research notes on the multibagger candidates; see §3AE.) **Previous header, 2026-09-30:** (MULTIBAGGERS BY FUNDAMENTALS, INSTITUTIONS, PROMOTERS AND VOLUME. A pre-registered factor study on 10 years of shareholding and NSE's filed quarterly results. Eight factors survived both halves: turnaround, value, small, undiscovered, promoter raising stake, volume expansion, momentum and quarterly surge. Growth, ROCE, institutions arriving and the full stack did not. The conviction score was rebuilt from the survivors: nightly on every liquid stock, 27% a year as a portfolio over 2016-2026 against 17% for momentum alone. A weekly AI analyst reads the top names' concalls and reports. See §3AD.) **Previous header, 2026-09-28:** (a third pre-registered paper sleeve: PROMOTER BUYING + MOMENTUM, 32% a year over 2016-2026 in the backtest, forward from 29 Sep; see the end of §3AC.) **Header before that, 2026-09-27:** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
 
 **Superseded header, kept for the trail: 2026-09-25** (FULL REVIEW + v7 INTERFACE. The strategy was re-measured honestly — the live config is 45% a year with ideal fills and 30% with realistic execution over 2020→2026, not 54.5% — the gate's ruler and benchmark were corrected, the conviction weights moved to v2, and the dashboard was rebuilt. Read `REVIEW_2026-09-25.md`, then §3AB.)
 
@@ -2713,6 +2713,57 @@ three parts of §2 of `MULTIBAGGER_RESEARCH_2026-09-26.md`.
 - A mechanical score cannot tell a one-off from a trend. Examples: RELINFRA's
   "turnaround" is a ₹9,177 Cr exceptional gain; SUMEETINDS's promoter
   "0% → 89.8%" is an insolvency resolution. The analyst reads for these.
+
+---
+
+## 3AE. UI audit and the Stories tab (2026-10-09)
+
+The user asked for three things:
+- a blog tab of possible multibaggers, with founders;
+- an audit: is everything intuitive, what can collapse, is the story right,
+  is there extra text or missing information;
+- the multibagger score pushed to the bottom of the stock view, collapsed.
+
+**Audit fixes** (commit c07461a):
+- **Stock view order:** to-do, chart with a one-line summary, health check
+  beside key numbers and the analysts, business, news, then two folded
+  sections (multibagger score, alert history).
+- **Labels:** the header chip says Health, not Score.
+- **Home:**
+  - the two lists label their numbers;
+  - a buy card already under its stop says "don't buy it";
+  - a breakout back under its pivot no longer reads "in the buy zone".
+- **Truncation:** the analyst's notes were cut mid-word at 220 characters.
+  `_clip` in `build_dashboard.py` and `clip()` in `app.js` now cut at a word.
+- **Research tabs:** renamed Company deep-dives, Buy-alert checks and Weekly
+  picks, with the caveats moved into ? tooltips.
+- **Performance:** the "Multibagger" paper book is now "RS leaders", and a
+  book in cash says so instead of 0/5.
+
+**Stories** (`pageStories` / `storyPost` in `ui/app.js`, route
+`#/stories/SYM`). The user chose:
+- its own tab;
+- candidate posts only, with the founder inside each post;
+- **published publicly, with a disclaimer.** SEBI's limits on unregistered
+  recommendations were raised with them first.
+
+How it works:
+- **Source:** posts are the weekly deep-dives in
+  `state/multibagger_research.json`.
+- **Protocol:** `analyst/MULTIBAGGER_PROTOCOL.md` step 6 now asks for a
+  `headline`, a 350–500 word `story` and a `founder` section, and forbids
+  recommendation language.
+- **Measurement:** `ai_multibagger.py` stores the company name (from the
+  page's h1), the sector, and the price and multibagger score on the day of
+  writing, so each post shows its price since.
+- **The first 8 posts** (09-29 and 10-09) predate step 6. They show the
+  thesis and the management score instead of a story and a founder section.
+  Names and prices were backfilled from the page and the journal.
+- **Note:** "since" starts from the first session after the note.
+
+**Test isolation fixed:** `test_scan_freshness_guards.py` drove the
+committee wrapper against the real `logs/local_git.lock`. It failed whenever
+a laptop job was running.
 
 ---
 
