@@ -27,6 +27,7 @@ Run:  python -m pytest tests/test_scan_freshness_guards.py -q
 
 from __future__ import annotations
 
+import contextlib
 import os
 import re
 import sys
@@ -84,6 +85,16 @@ def committee(monkeypatch):
     # is its own I/O edge with its own guard — tested in test_theme_intel.py.
     # Stubbed here so "a subprocess ran" keeps meaning "the COMMITTEE ran".
     monkeypatch.setattr(wc, "_maybe_run_theme_intel", lambda: 0)
+    # likewise the weekly report analyst after it (2026-09-29): once the real
+    # state/multibagger_research.json was 6 days old it came due and ran here
+    monkeypatch.setattr(wc, "_maybe_run_multibagger_research", lambda: 0)
+    # the REAL lock lives in logs/: a live laptop job holding it made main()
+    # stand down and these four tests fail (2026-10-09, committee mid-run), and
+    # a free lock was being taken and released for real under a running system
+    monkeypatch.setattr(wc, "runner_is_cloud", lambda *a, **k: False)
+    monkeypatch.setattr(wc, "acquire_lock", lambda *a, **k: True)
+    monkeypatch.setattr(wc, "release_lock", lambda *a, **k: None)
+    monkeypatch.setattr(wc, "lock_heartbeat", lambda *a, **k: contextlib.nullcontext())
 
     def setup(synced: bool, picks_age_days: float | None, shortlist_age_days: float):
         monkeypatch.setattr(wc, "git_pull_retry", lambda *a, **k: synced)
