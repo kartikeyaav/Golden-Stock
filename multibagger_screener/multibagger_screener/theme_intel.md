@@ -1,184 +1,171 @@
-# Thematic intelligence — week of 2026-09-30
-_generated 2026-09-30 11:07 · claude-sonnet-5 · 47 calls accepted, 0 rejected, hallucination rate 0%_
+# Thematic intelligence — week of 2026-10-09
+_generated 2026-10-09 14:11 · claude-sonnet-5 · 35 calls accepted, 0 rejected, hallucination rate 0%_
 
-A crude-oil and rupee shock (Brent >$106, fuel rationing starting at Reliance/Nayara pumps, RBI draining ~$20bn in forex defence) dominated the tape, but the durable moves are policy-driven: a draft National Steel Policy targeting 600MT capacity, a Cabinet-approved ₹17,167cr port expansion, a fast-progressing NTPC-EDF/Rosatom nuclear push, and a US tariff carve-out plus China anti-dumping shield for Indian pharma API makers. India-UAE trade diplomacy also put a number on gem & jewellery export ambitions for the first time this cycle.
+RBI's first hawkish rate hike in four years landed alongside a sharp Hormuz/Houthi-driven oil shock and a US Labor Department crackdown on IT-services green-card filings, while hard capex approvals (Green Energy Corridor-III, Integrated Transport & Logistics Authority), a 40-ship Cochin Shipyard export breakthrough, a ₹50,000cr Shyam Metalics steel MoU and a cancer-drug margin cap gave five sectors concrete, dated catalysts. Nuclear, CDMO, defence electronics, textiles, semis and gems & jewellery carried no fresh decided driver this week and should be read as fading on silence rather than reversed.
 
-## Steel capacity & import protection (steel) — tailwind, strength 4/5, long horizon, strengthening
+## Shipbuilding & marine (shipbuilding) — tailwind, strength 4/5, medium horizon, strengthening
+_existing theme_
+
+Confirmed Western export orders and naval capacity milestones move the theme from port-capex sentiment to actual shipbuilding order flow.
+
+**Drivers**
+- 2026-10-08 India: Cochin Shipyard confirmed orders to build 40+ ships for buyers in the US, Germany, Norway and other nations — https://www.dailyexcelsior.com/cochin-shipyard-gets-order-to-build-40-ships-from-us-germany-norway-other-nations-sonowal/
+- 2026-10-08 India: Cochin Shipyard cuts steel for 70T Bollard Pull tugs for Svitzer A/S, Denmark — headline: Cochin Shipyard cuts steel for 70 T Bollard Pull tugs for Svitzer A/S, Denmark
+- 2026-10-06 India: Defence Minister launches Fleet Support Ship-1 at Hindustan Shipyard Ltd, Vizag — policy event: Defence Minister launches Fleet Support Ship-1 at HSL in Vizag
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| COCHINSHIP | 1 | benefit | high | Direct recipient of the 40-ship export order book and the Svitzer tug contract |
+| GRSE | 1 | benefit | medium | Sentiment and order-pipeline tailwind as India's state shipbuilding capacity (alongside HSL) draws fresh foreign and naval orders |
+| KMEW | 2 | benefit | low | Marine engineering/dredging services demand scales with shipyard throughput and port-adjacent activity |
+
+## Power transmission & grid capex (grid) — tailwind, strength 4/5, medium horizon, strengthening
+_existing theme_
+
+A fully costed, Cabinet-approved transmission-plus-storage scheme converts the renewables evacuation bottleneck into orders for cable, tower, transformer and conductor makers.
+
+**Drivers**
+- 2026-09-30 India: Cabinet approved Green Energy Corridor-III: Rs 1,86,405cr outlay (Rs 1,36,378cr intra-state transmission + Rs 50,000cr for 50GWh battery storage) to evacuate 135GW renewable power by FY32-33 — https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| KEI | 1 | benefit | high | Direct cable/conductor demand from the intra-state transmission buildout |
+| SKIPPER | 1 | benefit | high | Transmission tower fabrication order book expands with new InSTS lines |
+| TARIL | 1 | benefit | medium | Power transformer demand scales with new substation capacity under GEC-III |
+| APARINDS | 1 | benefit | medium | Conductor supply tied to new intra-state transmission corridors |
+
+## Renewables, solar & storage (renewables) — tailwind, strength 3/5, medium horizon, steady
+_existing theme_
+
+A government push to repower ~25GW of ageing wind capacity is a replacement-demand driver for turbine OEMs, distinct from and additive to new-capacity additions.
+
+**Drivers**
+- 2026-10-08 India: Renewable Energy Minister Pralhad Joshi said government is working on strategies to repower ~25GW of old wind projects, seeking industry input at Windergy India 2026 — https://www.deccanchronicle.com/nation/govt-working-to-re-power-around-25-gw-of-old-wind-projects-joshi-1994094
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| SUZLON | 1 | benefit | medium | Leading wind OEM positioned to supply repowering turbines replacing decades-old installed base |
+| INOXWIND | 1 | benefit | medium | Wind turbine manufacturer with direct exposure to replacement-cycle demand |
+
+## Data centres & digital infrastructure (datacentre) — tailwind, strength 4/5, medium horizon, strengthening
+_existing theme_
+
+A quantified CBRE report confirms the capex cycle is real and compounding, with hyperscale/AI-linked demand now the majority of committed investment.
+
+**Drivers**
+- 2026-10-06 India: CBRE: India data centre sector attracted $173bn in investment commitments since 2021; capacity on track to reach 2GW by end-2026 (130MW added H1, 200MW+ expected H2); hyperscale/colo ~62% of commitments, 15%+ AI-linked — https://www.deccanherald.com/amp/story/india/data-centre-sector-draws-173-billion-in-investment-commitments-since-2021-cbre-says-4172448
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| NETWEB | 1 | benefit | high | Server/AI-infrastructure maker scales directly with hyperscale and AI-linked data centre buildout |
+| BLUESTARCO | 2 | benefit | medium | Precision cooling demand scales with new data centre capacity additions |
+| WAAREERTL | 2 | benefit | low | Renewable EPC/power-supply partner to data centre campuses seeking captive clean power |
+
+**Map corrections applied:** WAAREERTL
+
+## Financial market infrastructure (finfra) — tailwind, strength 3/5, near horizon, steady
+_existing theme_
+
+RBI/SEBI opened new data-sharing and issuance plumbing this week, and speculation on F&O settlement-rule changes directly repriced trading-linked fintech and capital-market stocks.
+
+**Drivers**
+- 2026-10-07 India: RBI allows Account Aggregator interoperability, expanding customer financial-data sharing — headline: RBI allows Account Aggregator interoperability, expanding customer choice
+- 2026-10-07 India: SEBI relaxes private placement norms, allowing up to 17 ISINs to mature in a year — headline: SEBI relaxes private placement norms, allows up to 17 ISINs to mature in a year
+- 2026-10-07 India: Pine Labs, CAMS and other fintech stocks rally up to 11% after RBI MPC move; capital-market stocks jump up to 4% on buzz around SEBI tweaking F&O settlement rules — headline: Pine Labs, CAMS, Moneyview, other fintech stocks rally up to 11% after RBI MPC move
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| PINELABS | 1 | benefit | medium | Payments/fintech infrastructure named directly in the post-MPC rally on easier liquidity and data-sharing rules |
+| CAMS | 1 | benefit | medium | RTA/data-infrastructure beneficiary of expanded Account Aggregator interoperability |
+| GROWW | 1 | benefit | low | Discount broker named in the capital-market rally tied to speculated F&O settlement rule changes |
+
+**Map corrections applied:** GROWW, PINELABS
+
+## US immigration crackdown on IT services (itvisa) — headwind, strength 4/5, near horizon, new
 _NEW THEME — promote to scoring/themes.py to score it_
 
-The draft National Steel Policy 2047 commits to 600MT capacity and 500MT consumption with explicit safeguard/anti-dumping tools against cheap imports, on top of steel output already running +4.6% YoY and elevated domestic prices.
+The US Labor Department's suspension of PERM green-card filings for major Indian IT firms, layered on the pending $100k H-1B fee, raises the structural cost of the onsite-delivery model that mid-cap IT services peers also run, even though the named firms sit outside this universe.
 
 **Drivers**
-- 2026-09-29 India: Steel Secretary confirms draft National Steel Policy 2047 targets 600MT capacity, 500MT consumption, 700MT iron-ore demand, ₹5,000cr scheme for small producers — https://www.business-standard.com/industry/news/draft-national-steel-policy-2047-capacity-consumption-viksit-bharat-ispat-126092900565_1.html
-- 2026-09-25 India: India's steel output rises 4.6% in August even as global production declines; high input costs and policy support seen keeping steel prices above 2025 levels — BusinessLine headline, 2026-09-25
+- 2026-10-08 US: US Labor Secretary Sonderling suspends PERM green-card processing for Cognizant, Infosys, TCS, Wipro, HCL and Capgemini, citing displacement of American workers — https://www.theweek.in/news/biz-tech/2026/10/08/us-labour-department-halts-green-cards-for-tcs-infosys.html
+- 2026-10-06 US: Trump's proposed $100,000 H-1B fee hits a legal hurdle but remains a live cost overhang — headline: Trump's $100,000 H-1B fee hits legal hurdle
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| SAIL | 1 | benefit | medium | Integrated producer directly scales into the 600MT 2047 capacity target |
-| JSL | 1 | benefit | medium | Stainless/specialty steel capacity add benefits from capacity-expansion policy push |
-| GPIL | 1 | benefit | medium | Integrated steel+power producer scales with sector capacity build-out |
-| SHYAMMETL | 1 | benefit | medium | Secondary steel producer benefits from safeguard/anti-dumping tools against cheap imports |
-| KSL | 1 | benefit | medium | Alloy/special steel producer benefits from higher protected domestic pricing |
-| SARDAEN | 1 | benefit | low | Ferro-alloys/steel producer rides capacity-expansion demand |
-| JAIBALAJI | 1 | benefit | low | Sponge iron/steel producer benefits from import-protection tools in the draft policy |
-| NMDC | 2 | benefit | high | Iron-ore miner directly supplies the raw material the policy says India needs 700MT of by 2047 |
-| WELCORP | 2 | benefit | medium | Steel pipe/plate maker is a downstream value-add beneficiary of higher domestic steel volumes |
-| JINDALSAW | 2 | benefit | medium | Pipe maker benefits from steel availability and infra-linked demand under the capacity push |
-| RATNAMANI | 2 | benefit | medium | Specialty steel tube maker benefits from higher-grade steel availability and industrial capex tied to the policy |
-| MAHSEAMLES | 2 | benefit | low | Seamless tube maker rides broader steel-sector capacity and pricing tailwind |
+| COFORGE | 2 | hurt | medium | Meaningful US onsite/H-1B-dependent delivery model shares the same immigration cost and scrutiny exposure as the suspended large caps |
+| PERSISTENT | 2 | hurt | medium | US-heavy revenue mix with onsite staffing exposed to the same visa-cost pressure |
+| MPHASIS | 2 | hurt | medium | BFSI-heavy US delivery model carries comparable H-1B/onsite cost exposure |
+| HEXT | 2 | hurt | medium | Named alongside TCS in the same day's 'stocks to watch' coverage of the visa action, reflecting shared sector exposure |
+| LTTS | 2 | hurt | low | Engineering-services onsite delivery carries secondary exposure to tightening US work-visa policy |
+| CYIENT | 2 | hurt | low | Onsite engineering-services delivery model carries secondary visa-policy exposure |
 
-## Crude oil shock & energy security (energysecurity) — mixed, strength 4/5, near horizon, strengthening
+## Crude oil supply shock & energy security (energysecurity) — mixed, strength 4/5, near horizon, strengthening
 _NEW THEME — promote to scoring/themes.py to score it_
 
-Iran's rejection of a peace proposal pushed Brent above $106 and triggered actual fuel rationing at Reliance/Nayara pumps plus a ~$20bn RBI forex defence of the rupee — a decided escalation from last week's tariff-risk framing, squeezing import-dependent refiners while lifting realizations for domestic upstream producers.
+Hormuz tanker attacks hit a new weekly record and Houthi missiles struck Saudi airports this week, pushing Brent above $104 — escalating last week's energysecurity read and widening the gap between upstream realizations and downstream marketing-margin pressure.
 
 **Drivers**
-- 2026-09-29 India/Global: Fuel rationing begins at India's Reliance, Nayara pumps as crude prices surge; Brent crosses $106 after Trump rejects Iran's proposal — BusinessLine headlines, 2026-09-28/29
-- 2026-09-29 India: RBI drains nearly $20 billion from forex reserves defending the rupee, which breached 96/USD — Livemint/BusinessLine headlines, 2026-09-29
-- 2026-09-27 India/US: US trade deal could shield India from 100% tariff under the Russian sanctions law, per sources ahead of Goyal's 7-day US visit — BusinessLine headline, 2026-09-27
+- 2026-10-08 Middle East / Gulf: Record 10 tanker attacks in the Strait of Hormuz in the week to Oct 4 (prior high was 6); a crude tanker was struck again on Oct 6; Brent rose 4% to $104.28 on Oct 8 after Houthi missile strikes on Riyadh and Abha airports — https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html
+- 2026-10-08 India: India cuts back on costly Russian crude as West Asia flows recover; RBI intervenes to defend the rupee amid oil-driven outflows — headline: India cuts back on costly Russian crude as West Asia flows recover
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| OIL | 1 | benefit | high | Upstream E&P realizations rise directly with crude price |
-| HINDOILEXP | 1 | benefit | medium | Domestic crude producer benefits from higher realized prices |
-| JINDRILL | 2 | benefit | medium | Drilling contractor benefits as higher crude prices support E&P activity |
-| ANTELOPUS | 1 | benefit | low | Small E&P player benefits from higher crude realizations |
-| HINDPETRO | 1 | hurt | high | Refiner facing rationing and higher import crude costs squeezes marketing margins |
-| MRPL | 1 | hurt | medium | Refiner margin pressure from crude cost spike and Russian-crude sourcing uncertainty |
-| CHENNPETRO | 1 | hurt | medium | Refiner margin pressure from crude cost spike and sourcing diversification costs |
-| CASTROLIND | 2 | hurt | low | Lubricant maker faces higher base-oil/crude-derivative input costs |
-| GULFOILLUB | 2 | hurt | low | Lubricant maker faces higher crude-derivative input costs |
+| OIL | 1 | benefit | high | Upstream E&P realizations rise directly with Brent |
+| HINDOILEXP | 1 | benefit | medium | Domestic upstream producer benefits from higher crude realizations |
+| JINDRILL | 2 | benefit | low | Higher crude prices support E&P capex and drilling-rig dayrate demand |
+| HINDPETRO | 1 | hurt | high | Refining/marketing margins compress when crude input costs spike faster than regulated retail pump prices |
+| MRPL | 1 | hurt | medium | Refiner margin squeeze from crude cost spike |
+| CHENNPETRO | 1 | hurt | medium | Refiner margin squeeze from crude cost spike |
 
-## Nuclear & new energy (nuclear) — tailwind, strength 4/5, long horizon, strengthening
-_existing theme_
-
-NTPC has now formalized a 50:50 clean-energy JV with EDF and holds parallel nuclear NDAs with EDF and Rosatom, while Rosatom courts Adani, Reliance and JSW toward a 100GW-by-2047 target — a step up from exploratory talk to signed structures, expanding the pipeline of India's specialty-alloy and precision-component nuclear suppliers.
-
-**Drivers**
-- 2026-09-26 India/France: NTPC and EDF Power Solutions India form a 50:50 JV to develop clean-energy projects, including pumped storage and hydropower, alongside nuclear NDAs — https://news.webindia123.com/news/Articles/Business/20260926/4503658.html
-- 2026-09-29 India/Russia: Rosatom in talks with Adani Group, RIL, NTPC for a nuclear power push in India, targeting 100GW capacity including SMRs — https://www.business-standard.com/world-news/russia-s-rosatom-offers-nuclear-power-plants-to-india-for-100-gw-target-126091101383_1.html
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| MTARTECH | 2 | benefit | medium | Precision-engineering supplier to India's nuclear and space programs scales with an expanding nuclear buildout pipeline |
-| PTCIL | 2 | benefit | medium | Titanium/superalloy precision component maker is a qualified supplier to nuclear-grade equipment programs |
-| MIDHANI | 2 | benefit | medium | Special-metals and superalloy producer with a history of supplying nuclear-grade materials benefits as the reactor pipeline expands |
-
-**Map corrections applied:** MIDHANI
-
-## Pharma CDMO & API (cdmo) — tailwind, strength 4/5, medium horizon, strengthening
-_existing theme_
-
-A US tariff exemption for select Indian specialty drugs removes a near-term export overhang, while DGTR's anti-dumping probes into Chinese Penicillin G, 6-APA, Amoxycillin Trihydrate and Montelukast Sodium directly protect the new domestic KSM/API capacity built under the government's critical-drug PLI scheme.
-
-**Drivers**
-- 2026-09-29 India/US: US exempts select Indian specialty drugs from the 100% tariff — BusinessLine headline, 2026-09-29
-- 2026-09-28 India/China: DGTR opens anti-dumping probes into seven Chinese products including Penicillin G salts, 6-APA, Amoxycillin Trihydrate and Montelukast Sodium — https://www.tribuneindia.com/news/business/india-opens-anti-dumping-probes-into-seven-chinese-products-across-pharma-rubber-elevators
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| AUROPHARMA | 1 | benefit | high | US tariff exemption protects its US-bound specialty generics revenue, and the antidumping probes shield its new PLI-backed 15,000 TPA Penicillin-G/6-APA/Amoxycillin KSM capacity at Kakinada from Chinese underpricing |
-| GRANULES | 1 | benefit | medium | US-exposed API/formulations exporter benefits from the tariff exemption |
-| LAURUSLABS | 1 | benefit | medium | US-exposed CDMO/API exporter benefits from the tariff exemption |
-| NEULANDLAB | 2 | benefit | low | CDMO supplier to global innovators benefits from reduced US tariff overhang on the broader API/CDMO export chain |
-
-**Map corrections applied:** AUROPHARMA
-
-## Gems & jewellery exports (gemsjewellery) — tailwind, strength 3/5, long horizon, new
+## Multimodal transport & logistics planning (logistics) — tailwind, strength 3/5, long horizon, new
 _NEW THEME — promote to scoring/themes.py to score it_
 
-India-UAE trade diplomacy this week reaffirmed a $200bn-by-2032 bilateral target and the industry put a first hard number on gem & jewellery ambitions — $100bn exports by 2047 — building on UAE already absorbing $8.7bn of Indian jewellery exports in FY26 under CEPA tariff preference.
+A new apex transport-planning authority tasked with a 10-year National Transport Master Plan and project appraisal above Rs 500cr should improve multimodal pipeline visibility and reduce logistics costs over time, a coordination tailwind rather than immediate capex.
 
 **Drivers**
-- 2026-09-28 India/UAE: UAE plans another $25 billion investment in India; India-UAE trade target set at $200 billion by 2032 — BusinessLine headline, 2026-09-28
-- 2026-09-28 India: Gem & jewellery sector targets $100 billion in exports by 2047, per industry/WGC estimates, as India's gold-export ecosystem scales up for a $55bn FTA jewellery market — https://www.deccanherald.com/amp/story/business%2Findias-gem-jewellery-sector-targets-to-surpass-usd-100-billion-in-exports-by-2047-3856255
+- 2026-10-06 India: Cabinet approved the Integrated Transport & Logistics Authority (ITLA), an SPV to prepare a 10-year National Transport Master Plan across roads, rail, ports, aviation, inland waterways and urban mobility, and to appraise projects of Rs 500c — https://www.pmindia.gov.in/en/news_updates/cabinet-approves-setting-up-of-integrated-transport-logistics-authority/
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| GOLDIAM | 1 | benefit | high | Diamond/gold jewellery exporter with direct UAE/US export exposure benefits from expanding FTA-linked trade volumes |
-| RGL | 1 | benefit | high | Jewellery export house benefits directly from CEPA tariff preference into the UAE and the broader $100bn export target |
-| KALYANKJIL | 2 | benefit | medium | Large jewellery retailer benefits from a sector-wide export/demand tailwind and gold-sourcing cost advantages under CEPA |
-| PNGJL | 2 | benefit | medium | Jewellery retailer benefits from sector-wide gold-trade tailwind |
-| SENCO | 2 | benefit | low | Jewellery retailer benefits from sector-wide gold-trade tailwind |
-| SKYGOLD | 3 | benefit | low | Jewellery manufacturer benefits indirectly from sector export ambition and gold-sourcing environment |
+| CONCOR | 1 | benefit | low | Rail-linked container logistics gains from improved multimodal planning and reduced logistics-cost friction |
+| TCI | 2 | benefit | low | Multimodal surface-logistics operator benefits from streamlined national transport planning |
+| JSWINFRA | 3 | benefit | low | Port infrastructure operator benefits from coordinated long-horizon national logistics planning |
 
-## Shipbuilding & marine (shipbuilding) — tailwind, strength 3/5, medium horizon, strengthening
-_existing theme_
+## Steel capacity & demand cycle (steel) — tailwind, strength 4/5, medium horizon, strengthening
+_NEW THEME — promote to scoring/themes.py to score it_
 
-The Cabinet's ₹17,167cr approval for a new outer harbour and container terminal at VOC Port (Thoothukudi) is a decided, large port-capex commitment that flows to dredging, marine-EPC and port-operating names in and around the existing shipbuilding/marine theme.
+A large, dated greenfield capex commitment plus confirmed output/demand growth data extend last week's National Steel Policy thesis from a draft framework into company-level capital allocation.
 
 **Drivers**
-- 2026-09-26 India: CCEA approves a ₹17,167-crore outer harbour and container terminal expansion at V.O. Chidambaranar Port, Thoothukudi, funded via Hybrid Annuity and DBFOT models — https://www.theweek.in/news/maritime/2026/09/27/big-developments-at-voc-port-indian-rupee17167-crore-outer-harbour-project-approved-40000-sqm-earmarked-for-container-cargo-handling.html
+- 2026-10-05 India: Shyam Metalics signs Rs 50,000cr MoU with Maharashtra government for a 9 MTPA integrated steel complex at Chandrapur, in two phases (3.75MTPA + 5.25MTPA) — https://www.business-standard.com/companies/news/shyam-metalics-rs-50000-crore-integrated-steel-complex-chandrapur-maharashtra-126100500246_1.html
+- 2026-10-05 India: SAIL H1 hot metal output rose 2% YoY to 10.2 MT — headline: SAIL H1 hot metal output 10.2 MT, up 2% on year
+- 2026-10-06 India: Tata Steel CEO flags domestic steel demand growth of 8-10% in H2 and NINL capacity expansion to 5 MTPA — headline: Steel demand to grow 8-10% in H2: T V Narendran
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| DREDGECORP | 2 | benefit | medium | National dredging PSU is a direct contractor for new harbour construction |
-| GPPL | 1 | benefit | low | Port operator benefits from the broader government push to expand India's container-handling capacity and cut dependence on transshipment via Colombo |
-| AFCONS | 2 | benefit | medium | Marine and port EPC specialist is a natural bidder for the Hybrid Annuity-funded outer harbour works |
-| JSWINFRA | 1 | benefit | low | Port developer/operator benefits from the broader government port-capacity expansion push and potential DBFOT bidding opportunities |
+| SHYAMMETL | 1 | benefit | high | Direct party to the Rs 50,000cr Maharashtra capacity-expansion MoU |
+| SAIL | 1 | benefit | medium | Rising hot metal output and sector-wide H2 demand growth support realizations and volumes |
+| JSL | 1 | benefit | low | General beneficiary of the 8-10% H2 domestic steel demand growth guidance |
 
-**Map corrections applied:** AFCONS, JSWINFRA
+## Anti-cancer drug margin cap (oncopricing) — headwind, strength 3/5, near horizon, new
+_NEW THEME — promote to scoring/themes.py to score it_
 
-## Power transmission & grid capex (grid) — tailwind, strength 3/5, near horizon, steady
-_existing theme_
-
-A new Centre directive forcing company-run (captive) power plants to sell surplus electricity into the market pushes more volume onto exchanges, a direct near-term tailwind for power-trading infrastructure alongside the sector's ongoing transmission capex cycle.
+A decided government price intervention caps trade margins on all non-scheduled anti-cancer drugs, directly compressing realized pricing for domestic oncology-focused formulators even as it does not touch manufacturing cost structure.
 
 **Drivers**
-- 2026-09-27 India: Govt directs company-run power plants to supply surplus electricity in the market — BusinessLine headline, 2026-09-27
+- 2026-10-08 India: Government caps trade margins at 30% of MRP for all non-scheduled anti-cancer drugs (110 drugs, including 35 patented), expected to cut MRPs by up to 70% and save patients Rs 2,500cr annually — https://www.businesstoday.in/industry/pharma/story/cancer-drugs-may-get-cheaper-as-govt-set-to-cap-trade-margins-at-30-560489-2026-10-08
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| IEX | 1 | benefit | medium | Power exchange captures higher traded volumes as captive plants are directed to sell surplus power in the market |
-
-**Map corrections applied:** IEX
-
-## Defence electronics & space (defelec) — tailwind, strength 3/5, medium horizon, steady
-_existing theme_
-
-Tonbo Imaging's SEBI IPO clearance is the clearest signal yet of investor appetite for listed defence-electronics plays, a sentiment tailwind for existing names even though no new procurement decision landed this week beyond last week's DRDO/export-SOP liberalisation.
-
-**Drivers**
-- 2026-09-28 India: Tonbo Imaging India, a defence electronics maker, gets SEBI nod for its IPO — BusinessLine/policy-radar headline, 2026-09-28
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| DATAPATTNS | 1 | benefit | low | Listed defence-electronics peer benefits from improved capital-market sentiment and comparable-company re-rating around Tonbo's IPO |
-| CENTUM | 1 | benefit | low | Listed defence-electronics peer benefits from improved sector sentiment around the Tonbo IPO |
-| ZENTEC | 1 | benefit | low | Listed defence-electronics peer benefits from improved sector sentiment around the Tonbo IPO |
-
-## Textiles & apparel PLI (textiles) — mixed, strength 2/5, near horizon, fading
-_existing theme_
-
-Last week's tariff-fear selloff shows early signs of fading: Piyush Goyal's week-long US visit and active BTA talks with USTR are reported as a possible shield against the 100% secondary tariff under the Russian-sanctions law that had spooked US-exposed exporters.
-
-**Drivers**
-- 2026-09-27 India/US: A US trade deal could shield India from the 100% tariff under the Russian sanctions law, sources say, ahead of Goyal's week-long US visit for BTA talks — BusinessLine headline, 2026-09-27
-- 2026-09-28 India/US: Goyal-Greer meeting likely to focus on the India-US BTA and an interim trade deal — BusinessLine headline, 2026-09-28
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| KPRMILL | 1 | benefit | medium | US-exposed apparel/yarn exporter benefits if active BTA talks reduce the risk of a 100% secondary tariff materializing |
-| GOKEX | 1 | benefit | medium | US-exposed garment exporter benefits from reduced tariff-escalation risk as BTA talks progress |
-| ICIL | 1 | benefit | medium | US-exposed home-textiles exporter benefits from reduced tariff-escalation risk as BTA talks progress |
-
-## Semiconductors & OSAT (semis) — tailwind, strength 3/5, medium horizon, steady
-_existing theme_
-
-No fresh decided driver landed this week beyond continuing evidence that the domestic fab ecosystem is materializing — equipment vendors now see a genuine India opportunity and Micron's Sanand plant secured an operational shift-timing approval.
-
-**Drivers**
-- 2026-09-28 India: Canon India sees a semiconductor equipment opportunity as India fabs take shape — BusinessLine headline, 2026-09-28
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| KAYNES | 1 | benefit | medium | OSAT player benefits as equipment vendors confirm the India fab ecosystem is scaling |
-| MOSCHIP | 1 | benefit | low | Chip design services firm benefits from the broader semiconductor ecosystem build-out |
+| NATCOPHARM | 1 | hurt | medium | Major oncology-generics revenue base sees realized pricing compressed by the new MRP-linked trade margin cap |
+| BIOCON | 1 | hurt | low | Oncology biosimilar portfolio carries partial exposure to the new trade-margin ceiling |
 
 ## Beneficiaries the universe does not hold
 
-- Midwest Advanced Materials (Midwest Energy) (cdmo): Sets up India's first sintered NdFeB rare-earth magnet plant in Hyderabad (Rs250cr), a critical EV/wind/defence supply-chain input; unlisted, not in universe
-- NTPC Ltd (nuclear): The actual signatory of the EDF JV and Rosatom NDAs driving India's nuclear pipeline; only its subsidiary NTPCGREEN is in the universe
-- Tata Steel (steel): Largest direct beneficiary of the National Steel Policy 2047 capacity push and its own Dutch green-steel pact extension; not in universe
-- Tonbo Imaging (defelec): The defence-electronics maker whose IPO clearance is driving this week's sector sentiment; not yet listed/not in universe
-- Essar Group / Mesabi Metallics (steel): Announced an $18bn US steel investment (Iowa) demonstrating parent-group confidence in steel capex; not a listed entity in our universe
+- TCS (itvisa): Directly named in the PERM green-card suspension; large US onsite workforce, not in this universe
+- Infosys (itvisa): Directly named in the PERM green-card suspension; not in this universe
+- Wipro (itvisa): Directly named in the PERM green-card suspension; not in this universe
+- HCLTech (itvisa): Directly named in the PERM green-card suspension; not in this universe
+- Hindustan Shipyard Limited (shipbuilding): State shipyard that launched Fleet Support Ship-1; not listed/not in this universe
+- Tata Steel (steel): Source of H2 demand guidance and NINL capacity expansion; large-cap not in this universe
+- ONGC (energysecurity): Largest domestic upstream beneficiary of the crude price spike and new MRPL/OPaL petrochemicals JV; not in this universe
