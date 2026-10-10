@@ -1,4 +1,4 @@
-# Penny / nano-cap screen — 2026-10-07 11:38
+# Penny / nano-cap screen — 2026-10-10 11:05
 
 **Research surface. Zero capital. Not backtested.** The main system's
 evidence (+1.67R, walk-forward, 13 rejected overlays) says nothing about
@@ -6,7 +6,7 @@ this screen. Every name below is journaled to `journal/penny_journal.csv`
 so the question 'does this add anything?' gets an out-of-sample answer
 instead of an argument.
 
-Universe: 189 names that survived the hard tradability gates
+Universe: 199 names that survived the hard tradability gates
 (EQ series only · no GSM/ASM · band >= 10% · liquidity + circuit floors ·
 listed >= 1 year). Rejects and their reasons: `penny_excluded.csv`.
 
@@ -21,28 +21,28 @@ the one that means genuinely small. Read the MCAP rows first.
 
 | # | Symbol | Arm | Score | Cov | Stage | RS | Turnover | Cap | Archetype | Risk flags |
 |--:|--------|-----|------:|----:|-------|---:|---------:|----:|-----------|-----------|
-| 1 | **PASUPTAC** | PRICE+MCAP | 84 | 100% | CONFIRMED | 92 | Rs1.61 Cr | Rs623 Cr | Hyper-growth + Momentum | — |
-| 2 | **DMCC** | MCAP | 80 | 100% | CONFIRMED | 90 | Rs2.73 Cr | Rs761 Cr | Hyper-growth + Momentum | — |
-| 3 | **PREMIERPOL** | MCAP | 78 | 100% | CONFIRMED | 98 | Rs2.53 Cr | Rs950 Cr | Momentum | — |
-| 4 | **AVTNPL** | PRICE | 78 | 100% | CONFIRMED | 88 | Rs2.13 Cr | Rs1338 Cr | Hyper-growth + Momentum | — |
-| 5 | **VETO** | MCAP | 76 | 100% | CONFIRMED | 86 | Rs1.52 Cr | Rs263 Cr | Hyper-growth + Deleveraging + Momentum | — |
-| 6 | **MANALIPETC** | PRICE | 75 | 100% | CONFIRMED | 97 | Rs18.30 Cr | Rs1346 Cr | Momentum | — |
-| 7 | **PONNIERODE** | MCAP | 74 | 100% | CONFIRMED | 83 | Rs1.40 Cr | Rs342 Cr | Momentum | — |
-| 8 | **ANDHRSUGAR** | PRICE | 73 | 100% | WATCH | 82 | Rs3.05 Cr | Rs1234 Cr | Deleveraging | — |
-| 9 | **INDOAMIN** | MCAP | 72 | 100% | CONFIRMED | 89 | Rs9.09 Cr | Rs998 Cr | Momentum | — |
-| 10 | **HMAAGRO** | PRICE | 71 | 100% | WATCH | 53 | Rs4.54 Cr | Rs1178 Cr | Hyper-growth | 1 |
-| 11 | **MGEL** | PRICE+MCAP | 70 | 100% | CONFIRMED | 76 | Rs0.91 Cr | Rs528 Cr | Hyper-growth + Momentum | — |
-| 12 | **MAWANASUG** | MCAP | 70 | 100% | CONFIRMED | 94 | Rs3.65 Cr | Rs543 Cr | Momentum | — |
-| 13 | **KANPRPLA** | MCAP | 69 | 100% | CONFIRMED | 85 | Rs0.52 Cr | Rs622 Cr | Deleveraging + Momentum | — |
-| 14 | **KAMATHOTEL** | MCAP | 69 | 100% | EXTENDED | 84 | Rs1.79 Cr | Rs693 Cr | Deleveraging | — |
-| 15 | **GLOBAL** | MCAP | 68 | 100% | EXTENDED | 96 | Rs2.73 Cr | Rs680 Cr | Hyper-growth | — |
-| 16 | **ORIENTBELL** | MCAP | 68 | 100% | CONFIRMED | 93 | Rs1.18 Cr | Rs580 Cr | Turnaround (margin-confirmed) + Momentum | — |
-| 17 | **SUBEXLTD** | PRICE | 67 | 100% | CONFIRMED | 100 | Rs20.43 Cr | Rs1096 Cr | Momentum | — |
-| 18 | **DBOL** | MCAP | 67 | 100% | CONFIRMED | 90 | Rs2.63 Cr | Rs807 Cr | Turnaround (unconfirmed) + Momentum | — |
-| 19 | **NIITLTD** | PRICE | 66 | 100% | WATCH | 74 | Rs1.41 Cr | Rs1193 Cr | Deleveraging | — |
-| 20 | **KAMDHENU** | PRICE | 66 | 100% | CONFIRMED | 95 | Rs3.38 Cr | Rs1076 Cr | Hyper-growth + Momentum | — |
+| 1 | **PASUPTAC** | PRICE+MCAP | 85 | 100% | CONFIRMED | 94 | Rs1.61 Cr | Rs623 Cr | Hyper-growth + Momentum | — |
+| 2 | **DMCC** | MCAP | 79 | 100% | CONFIRMED | 89 | Rs3.21 Cr | Rs830 Cr | Hyper-growth + Momentum | — |
+| 3 | **PREMIERPOL** | MCAP | 79 | 100% | CONFIRMED | 98 | Rs2.82 Cr | Rs950 Cr | Momentum | — |
+| 4 | **AVTNPL** | PRICE | 78 | 100% | CONFIRMED | 92 | Rs2.13 Cr | Rs1338 Cr | Hyper-growth + Momentum | — |
+| 5 | **VETO** | MCAP | 76 | 100% | CONFIRMED | 86 | Rs1.37 Cr | Rs263 Cr | Hyper-growth + Deleveraging + Momentum | — |
+| 6 | **MANALIPETC** | PRICE | 74 | 100% | CONFIRMED | 95 | Rs18.18 Cr | Rs1346 Cr | Momentum | — |
+| 7 | **ANDHRSUGAR** | PRICE | 72 | 100% | WATCH | 81 | Rs2.88 Cr | Rs1234 Cr | Deleveraging | — |
+| 8 | **INDOAMIN** | MCAP | 72 | 100% | CONFIRMED | 88 | Rs8.85 Cr | Rs998 Cr | Momentum | — |
+| 9 | **MGEL** | PRICE+MCAP | 70 | 100% | CONFIRMED | 84 | Rs0.68 Cr | Rs521 Cr | Hyper-growth + Deleveraging + Momentum | 1 |
+| 10 | **MAWANASUG** | MCAP | 69 | 100% | CONFIRMED | 93 | Rs3.65 Cr | Rs543 Cr | Momentum | — |
+| 11 | **KAMATHOTEL** | MCAP | 69 | 100% | EXTENDED | 84 | Rs1.79 Cr | Rs693 Cr | Deleveraging | — |
+| 12 | **HMAAGRO** | PRICE | 69 | 100% | WATCH | 41 | Rs4.06 Cr | Rs1178 Cr | Hyper-growth | 1 |
+| 13 | **GLOBAL** | MCAP | 68 | 100% | EXTENDED | 97 | Rs2.27 Cr | Rs680 Cr | Hyper-growth | — |
+| 14 | **DBOL** | MCAP | 68 | 100% | CONFIRMED | 91 | Rs2.64 Cr | Rs807 Cr | Turnaround (unconfirmed) + Momentum | — |
+| 15 | **ORIENTBELL** | MCAP | 68 | 100% | CONFIRMED | 92 | Rs1.18 Cr | Rs580 Cr | Turnaround (margin-confirmed) + Momentum | — |
+| 16 | **SUBEXLTD** | PRICE | 67 | 100% | CONFIRMED | 99 | Rs20.52 Cr | Rs1096 Cr | Momentum | — |
+| 17 | **LAXMIINDIA** | MCAP | 65 | 100% | WATCH | 70 | Rs1.69 Cr | Rs624 Cr | Hyper-growth | — |
+| 18 | **KANPRPLA** | MCAP | 65 | 100% | WATCH | 86 | Rs0.58 Cr | Rs622 Cr | Deleveraging | — |
+| 19 | **UNIDT** | MCAP | 65 | 100% | WATCH | 71 | Rs0.77 Cr | Rs487 Cr | Hyper-growth | — |
+| 20 | **CHEMCON** | MCAP | 64 | 100% | WATCH | 80 | Rs0.92 Cr | Rs803 Cr | — | — |
 
-## Not assessed (5)
+## Not assessed (45)
 
 Their screener.in page carried no readable financials, so **none of
 the survival vetoes could run** — no pledge check, no dilution check,
@@ -52,13 +52,33 @@ They heal automatically once the page parses (`scripts/heal_fundamentals_cache.p
 
 | Symbol | Arm | Stage | RS | What is missing |
 |--------|-----|-------|---:|-----------------|
-| PYRAMID | MCAP | WATCH | 58 | fundamentals unreadable |
-| APTECHT | PRICE+MCAP | WATCH | 54 | fundamentals unreadable |
-| DJML | PRICE+MCAP | BROKEN | 28 | fundamentals unreadable |
-| JITFINFRA | MCAP | BROKEN | 39 | fundamentals unreadable |
-| CENTRUM | PRICE | BROKEN | 5 | fundamentals unreadable |
+| ZIMLAB | MCAP | CONFIRMED | 100 | fundamentals unreadable |
+| MANOMAY | MCAP | WATCH | 83 | fundamentals unreadable |
+| DCI | MCAP | WATCH | 72 | fundamentals unreadable |
+| UNITEDPOLY | PRICE | EXTENDED | 93 | fundamentals unreadable |
+| OMAXAUTO | MCAP | CONFIRMED | 98 | fundamentals unreadable |
+| REMSONSIND | MCAP | WATCH | 62 | fundamentals unreadable |
+| AUTOIND | PRICE+MCAP | WATCH | 85 | fundamentals unreadable |
+| MANBA | MCAP | WATCH | 82 | fundamentals unreadable |
+| MAGADSUGAR | MCAP | WATCH | 72 | fundamentals unreadable |
+| TEXMOPIPES | PRICE+MCAP | WATCH | 77 | fundamentals unreadable |
+| PONNIERODE | MCAP | WATCH | 85 | fundamentals unreadable |
+| IMAGICAA | PRICE | ANTICIPATION | 61 | fundamentals unreadable |
+| ANUHPHR | PRICE+MCAP | WATCH | 69 | fundamentals unreadable |
+| JAIBALAJI | PRICE | WATCH | 59 | fundamentals unreadable |
+| KESORAMIND | PRICE | BROKEN | 91 | fundamentals unreadable |
+| SOUTHWEST | MCAP | WATCH | 73 | fundamentals unreadable |
+| EMKAY | MCAP | WATCH | 74 | fundamentals unreadable |
+| ONIDA | PRICE | WATCH | 68 | fundamentals unreadable |
+| TRACXN | PRICE+MCAP | WATCH | 58 | fundamentals unreadable |
+| SWELECTES | MCAP | WATCH | 62 | fundamentals unreadable |
+| MSPL | PRICE | WATCH | 44 | fundamentals unreadable |
+| NITCO | PRICE | WATCH | 29 | fundamentals unreadable |
+| ADSL | MCAP | BROKEN | 36 | fundamentals unreadable |
+| TVSELECT | MCAP | WATCH | 36 | fundamentals unreadable |
+| KOTHARIPET | MCAP | WATCH | 57 | fundamentals unreadable |
 
-## Vetoed (56) — capped at 25, momentum cannot outvote these
+## Vetoed (51) — capped at 25, momentum cannot outvote these
 
 | Symbol | Reason |
 |--------|--------|
@@ -69,24 +89,24 @@ They heal automatically once the page parses (`scripts/heal_fundamentals_cache.p
 | CONFIPET | promoter pledge 41.4% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
 | ONEPOINT | promoter pledge 36.0% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
 | ASIANTILES | share capital up 133% in 3 years — serial issuance dilutes every rupee of future earnings |
-| PARACABLES | share capital up 56% in 3 years — serial issuance dilutes every rupee of future earnings |
 | GRMOVER | share capital up 242% in 3 years — serial issuance dilutes every rupee of future earnings |
 | UTKARSHBNK | share capital up 99% in 3 years — serial issuance dilutes every rupee of future earnings |
-| EASEMYTRIP | share capital up 109% in 3 years — serial issuance dilutes every rupee of future earnings |
+| DBREALTY | promoter pledge 44.7% (> 10%) — the lender, not the promoter, decides when this stock gets sold; share capital up 54% in 3 years — serial issuance dil |
+| PARACABLES | share capital up 56% in 3 years — serial issuance dilutes every rupee of future earnings |
 | STEELXIND | promoter pledge 100.0% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
+| EASEMYTRIP | share capital up 109% in 3 years — serial issuance dilutes every rupee of future earnings |
+| JISLJALEQS | promoter pledge 40.8% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
+| RAJOOENG | share capital up 200% in 3 years — serial issuance dilutes every rupee of future earnings |
 | TEMBO | promoter pledge 40.6% (> 10%) — the lender, not the promoter, decides when this stock gets sold; share capital up 73% in 3 years — serial issuance dil |
 | PATELENG | promoter pledge 86.6% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
-| RAJOOENG | share capital up 200% in 3 years — serial issuance dilutes every rupee of future earnings |
-| JISLJALEQS | promoter pledge 40.8% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
 | JYOTISTRUC | share capital up 88% in 3 years — serial issuance dilutes every rupee of future earnings |
-| NITCO | promoter pledge 67.1% (> 10%) — the lender, not the promoter, decides when this stock gets sold; share capital up 235% in 3 years — serial issuance di |
 | HITECH | share capital up 54% in 3 years — serial issuance dilutes every rupee of future earnings |
+| WANBURY | promoter pledge 62.2% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
 | SEPC | promoter pledge 79.4% (> 10%) — the lender, not the promoter, decides when this stock gets sold; promoter holding only 11.67% and institutions hold ju |
 | IRISDOREME | share capital up 138% in 3 years — serial issuance dilutes every rupee of future earnings |
-| MSPL | promoter pledge 63.5% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
-| WANBURY | promoter pledge 62.2% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
-| MCLOUD | promoter pledge 46.8% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
 | SCODATUBES | share capital up 5900% in 3 years — serial issuance dilutes every rupee of future earnings |
+| MCLOUD | promoter pledge 46.8% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
+| BLKASHYAP | promoter pledge 94.4% (> 10%) — the lender, not the promoter, decides when this stock gets sold |
 
 ---
 
