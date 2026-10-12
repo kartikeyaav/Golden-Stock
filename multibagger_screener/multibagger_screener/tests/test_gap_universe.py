@@ -49,8 +49,28 @@ def test_universe_contains_the_cohort_and_keeps_the_index_names():
         "universe.csv schema changed — every downstream reader assumes these four"
     gap_rows = u[u["index_source"] == "nse_gap"]
     assert len(gap_rows) > 0, "the cohort is not in universe.csv"
+    # A BAND, NOT AN EXACT COUNT (2026-10-12). This asserted each index's
+    # nominal size exactly, and NSE's own constituent files do not hold still:
+    #   * 2026-08-16 microcap250 arrived with 252 rows, two of them DUMMY
+    #     corporate-action shells that build_universe drops -> 250;
+    #   * 2026-10-11 it arrived with 251 real names (TRIVENIPT added with no
+    #     removal), which turned the WHOLE suite red for two days while
+    #     nothing whatsoever was wrong.
+    # It can also legitimately land BELOW nominal: a name NSE publishes in two
+    # index files keeps only its first label (indices are concatenated in
+    # order), so a rebalance promotion shows up as one fewer microcap.
+    # What this test exists to catch is a frame that silently VANISHED -- a
+    # failed index download leaves build_universe printing [FAIL] and
+    # continuing, so that index's rows become 0 and the universe looks normal
+    # at a glance. A band still catches that, and the uniqueness assertion
+    # below still catches duplicated rows.
     for src, n in (("midcap150", 150), ("smallcap250", 250), ("microcap250", 250)):
-        assert (u["index_source"] == src).sum() == n, f"{src} should still be {n}"
+        got = int((u["index_source"] == src).sum())
+        assert n - 3 <= got <= n + 3, (
+            f"{src} has {got} names, nominal {n}: more than 3 off. Either an "
+            f"index download failed (check the weekly log for [FAIL]) or NSE "
+            f"has genuinely changed the index size -- confirm against the "
+            f"published constituent file before widening this band.")
     assert u["symbol"].is_unique
 
 
