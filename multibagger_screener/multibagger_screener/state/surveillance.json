@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-11 11:38",
+ "generated": "2026-10-12 20:06",
  "n_checked": 1004,
- "n_flagged": 75,
- "asm_total": 195,
+ "n_flagged": 76,
+ "asm_total": 198,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -205,11 +205,6 @@
   "VISL": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -217,7 +212,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "WELCORP": {
    "flags": [
@@ -290,18 +285,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "AEQUS": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "AKUMS": {
    "flags": [
@@ -716,10 +699,15 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": null,
+   "series": "BE",
    "worst": "BAND 5%"
   },
   "UNIMECH": {
@@ -733,6 +721,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "V2RETAIL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "DBREALTY": {
    "flags": [
@@ -960,6 +960,18 @@
     }
    ],
    "band": 5.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "SHANTIGOLD": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },
