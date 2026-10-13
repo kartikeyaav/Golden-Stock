@@ -124,3 +124,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-12,ANANTRAJ,SKIP,entry,0,,,[ANANTRAJ@2026-10-09 21:35] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
 2026-10-12,AVL,SKIP,entry,0,,,[AVL@2026-10-11 21:34] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
 2026-10-12,RADICO,SKIP,entry,0,,,[RADICO@2026-10-12 21:32] already open in paper book
+2026-10-13,KINGFA,SKIP,entry,0,,,[KINGFA@2026-10-12 21:34] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
+2026-10-13,GOKULAGRO,SELL,all,292,204.04,-6237.12,stop hit
