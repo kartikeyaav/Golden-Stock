@@ -2868,6 +2868,24 @@ machine words. Fixed:
 ("starts 1 October" beside 20 holdings), while the published page, built from
 the latest cloud commit, had it (+1.5% since 1 Oct). Pull first, or check live.
 
+
+**Third pass, same day (user: "check it as a first-time user").** Walked the
+whole journey at 390px from the landing page. The app explained nothing to a
+newcomer and contradicted itself in places. Added: a first-visit welcome card
+on Home, a Guide page (`#/guide`: what it does, five steps, the glossary in
+six folds, the reader's account size) reached from a "?" in the top bar, the
+rail and the footer; a star on every stock page and Watchlist › Saved (this
+browser only, `gs.saved`); account size (`gs.capital`) scaling every
+quantity and rupee risk through `sized()`. Fixed: "still valid" on a signal
+that had hit its stop (PANAMAPET, while Buy now said 0); "stocks you follow"
+(now "tracked", one `trackedSyms()`); the heads-up hint naming stocks that
+were not above it; copy-alerts copying six when three showed and saying
+"pivot"; search covering only the 963-stock scan (now the multibagger table,
+radar and penny screen too); a penny stock opening with no penny score; the
+news memory's "19d (2x M&A/JV) since 2026-09-18". DESIGN.md §3, §5.3, §7.1,
+§7.3a and the third-pass table in §11 carry the rules. Tests:
+`tests/test_ui_v10.py` (20), each new guard canaried red.
+
 ---
 
 ## 4. Live production state (as of 2026-07-19)

@@ -306,6 +306,74 @@ def test_landing_page_tells_the_story_in_plain_words():
     assert "How to read these numbers" in page, "the honest comparisons must stay on the page"
 
 
+# ------------------------------------------- first-time reader pass, 10-14
+def test_a_newcomer_can_find_out_what_every_word_means():
+    """Walked as a first-time user on 2026-10-14: no introduction anywhere and
+    no place that says what Conviction, RS or "Base ready" mean."""
+    src = _js()
+    assert "welcomeCard()" in _fn_source(src, "pageHome"), "Home lost its first-visit introduction"
+    assert 'h[0] === "guide"' in _fn_source(src, "onRoute"), "the Guide route no longer resolves"
+    assert 'data-go="guide"' in _fn_source(src, "renderShell"), "no way into the Guide from the top bar"
+    gl = _fn_source(src, "glossary")
+    for word in ("Conviction", "RS", "Multibagger score", "Penny score", "AI rating", "AI check", "Weekly pick",
+                 "Uptrend", "Extended", "Basing", "Neutral", "Downtrend", "Base ready", "Near breakout",
+                 "Buy now", "Triggered", "Forming", "Stop", "Paper books", "Capital gate", "Tracked stocks"):
+        assert f'["{word}", ' in gl, f"the Guide no longer explains {word!r}"
+
+
+def test_quantities_follow_the_readers_account_size():
+    """'72 shares' meant nothing without the account it was sized for."""
+    src = _js()
+    js = ("const isNum = v => typeof v === 'number' && isFinite(v);\nconst CAPITAL = 1000000;\nlet stored = null;\n"
+          "const localStorage = { getItem: () => stored };\n"
+          + _fn_source(src, "myCapital") + _fn_source(src, "sized") + """
+const p = { shares: 72, risk: 8420, value: 148000, stop: 1938, skip: false };
+const same = sized(p);
+stored = "250000";
+const quarter = sized(p);
+stored = "500";
+const tiny = sized(p);
+console.log(JSON.stringify({ same, quarter, tiny, skip: sized({ skip: true }) }));
+""")
+    o = _node(js)
+    assert o["same"]["shares"] == 72, "the default account must leave the plan alone"
+    assert o["quarter"]["shares"] == 18 and abs(o["quarter"]["risk"] - 2105) < 1 and o["quarter"]["stop"] == 1938
+    assert o["tiny"]["shares"] == 72, "an implausible account size must fall back to the default"
+    assert o["skip"] == {"skip": True}
+    for fn in ("planLine", "buyCard", "todoBox", "alertText"):
+        assert "sized(" in _fn_source(src, fn), f"{fn} shows the unscaled quantity"
+
+
+def test_a_signal_that_hit_its_stop_never_reads_still_valid():
+    """PANAMAPET read "still valid" on Triggered while Buy now said 0: its low
+    had touched the stop after the signal, so buySignals had dropped it."""
+    sc = _fn_source(_js(), "statusChip")
+    assert "stoppedSince(a)" in sc and "buySignals()" in sc, "statusChip can contradict Buy now again"
+
+
+def test_search_reaches_every_list():
+    """A penny name searched by name returned "No match"."""
+    src = _js()
+    u = _fn_source(src, "searchUniverse")
+    for source in ("ROWS.forEach", "Object.entries(MBS)", "RD.rows", 'lazy("penny")'):
+        assert source in u, f"search no longer covers {source}"
+    assert "searchUniverse()" in _fn_source(src, "palSearch")
+
+
+def test_the_news_memory_and_copied_alerts_speak_plainly():
+    src = _js()
+    js = _fn_source(src, "dateLabel").replace("esc(s)", "s") + _fn_source(src, "memWords") + """
+console.log(JSON.stringify({ a: memWords("2 positive developments over 19d (2x M&A/JV); 1 negative filing; since 2026-09-18"),
+  b: memWords("7 positive developments over 69d (5x M&A/JV, 2x approval); 1 negative filing; on 2026-07-24") }));
+"""
+    o = _node(js)
+    assert "19 days" in o["a"] and "M&A/JV ×2" in o["a"] and "2026-" not in o["a"], o["a"]
+    assert "M&A/JV ×5, approval ×2" in o["b"], o["b"]
+    at = re.sub(r"\w+\.pivot\b", "", _fn_source(src, "alertText"))  # the field name is fine; the word on screen is not
+    assert "pivot" not in at.lower() and "broker" in at, "the copied alerts say 'pivot' or no longer say where they go"
+    assert "the stocks above" not in _fn_source(src, "pageHome"), "the heads-up hint names stocks that are not above it"
+
+
 if __name__ == "__main__":
     failures = 0
     for name, fn in sorted(globals().items()):

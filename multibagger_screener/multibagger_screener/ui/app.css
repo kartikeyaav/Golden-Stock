@@ -1006,3 +1006,45 @@ details.fold > .fold-b > .card.flush { margin: -12px -14px -14px; }
 .news-item.routine .h, .news-item.routine .h a { color: var(--muted); }
 .cvb.teal b { color: var(--teal); }
 .cvb.teal .cvb-t { margin-top: 3px; }
+
+/* v10.6: the first-time reader. A welcome card on Home until dismissed, the
+   Guide (glossary + account size), the save star, no keyboard hints on phones */
+.welcome { border: 1px solid color-mix(in srgb, var(--brand) 45%, var(--border)); background: color-mix(in srgb, var(--brand) 7%, var(--surface)); border-radius: var(--radius); padding: 14px 16px; margin: 0 0 16px; display: grid; gap: 9px; }
+.welcome-head { display: flex; align-items: center; gap: 10px; }
+.welcome-head h2 { font-size: 18px; margin: 0; flex: 1; }
+.welcome p { margin: 0; color: var(--text-2); font-size: 13.5px; line-height: 1.5; }
+.welcome .welcome-steps { font-size: 13px; gap: 6px; line-height: 1.45; }
+.welcome-steps, .guide-steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
+.welcome-steps b, .guide-steps b { color: var(--text); }
+.welcome-actions, .guide-foot { display: flex; gap: 8px; flex-wrap: wrap; }
+.guide { display: grid; gap: 14px; max-width: 760px; }
+.guide-lead h2 { font-size: 21px; margin: 0 0 10px; text-wrap: balance; }
+.guide-lead p { margin: 0 0 10px; line-height: 1.6; font-size: 14.5px; }
+.guide-lead p:last-child { margin-bottom: 0; }
+.gloss { margin: 0; }
+.gloss dt { font-weight: 650; color: var(--text); margin-top: 12px; }
+.gloss dt:first-child { margin-top: 0; }
+.gloss dd { margin: 3px 0 0; color: var(--text-2); font-size: 13.5px; line-height: 1.55; }
+.acct-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.acct-row .field { width: 160px; max-width: 100%; }
+.save-btn { flex: none; }
+.save-btn.on { color: var(--brand); }
+.save-btn.on svg { fill: currentColor; }
+.rail-foot .row svg { width: 15px; height: 15px; flex: none; }
+@media (max-width: 720px), (hover: none) { .pal-foot { display: none; } }
+/* the "?" button made the phone top bar 397px wide at 360 when the data pill
+   shows: tighter gaps, and a long page title gives way before the page scrolls */
+@media (max-width: 480px) {
+  .topbar { gap: 6px; }
+  .topbar h1 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 17px; }
+  .topbar .pill { padding-inline: 8px; flex: none; }
+  .topbar .icon-btn { flex: none; }
+}
+/* with the data pill showing, the decorative G mark gives up its 30px so the
+   page title stays whole ("Performance" was cut at 360px) */
+@media (max-width: 400px) {
+  .topbar:has(.pill) .brand-mark { display: none; }
+  .topbar h1 { font-size: 16px; }
+  .topbar { gap: 5px; }
+  .topbar .pill { padding-inline: 7px; }
+}

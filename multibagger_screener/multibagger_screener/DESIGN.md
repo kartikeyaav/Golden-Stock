@@ -110,10 +110,28 @@ A "What to do" box may use only these verbs: **Buy**, **Set an alert**,
 A signal whose latest close is at or under its own stop is never a buy: it
 leaves "Buy now" and reads "under its stop" wherever it is listed.
 
+### Words a reader brings
+
+- **Tracked stocks**: saved, the watchlist, this week's signals and the 30
+  highest multibagger scores. One function (`trackedSyms`) decides it for the
+  Home news tile and Research › News; never "stocks you follow" (the reader
+  follows nothing until they save something).
+- **Saved**: the reader's own list, starred on a stock's page, kept in their
+  browser only (Watchlist › Saved).
+- **Account size**: plans are sized for the paper account (₹10 L at up to
+  1.25% risk a trade). A reader can set their own in the Guide; every
+  quantity, position and rupee risk scales, percentages do not. Wherever a
+  quantity shows, the basis is one tap away ("sized for ₹10 L").
+
 ### Status words
 
-Data: **Fresh**, **Late**, **Failing**. Market: **Healthy** (full-size
-positions), **Weak** (half-size positions).
+Data: **Fresh**, **Late**, **Failing**. Market: **Healthy** (buys are full
+size), **Weak** (buys are half size).
+
+Triggered signals: **still valid** (only when it is in Buy now), **opened too
+high**, **faded**, **under its stop** (closed below it), **hit its stop** (a
+low touched it after the signal), **watch only** (open, but not a confirmed
+breakout). A status chip may never contradict the Buy now count.
 
 ---
 
@@ -166,7 +184,7 @@ not used.
 |---|---|---|
 | **Home** | — | Act |
 | **Screener** | All stocks · Multibaggers · Penny · Themes & market | Find |
-| **Watchlist** | Buy now · Base ready · Triggered · Forming | Act |
+| **Watchlist** | Buy now · Base ready · Triggered · Forming · Saved | Act |
 | **Research** | Deep-dives · Buy checks · Weekly picks · News | Understand |
 | **Performance** | Overview · Paper books · Capital gate · Evidence · Log · System | Track |
 
@@ -196,7 +214,12 @@ Old links keep working: `#/explore/*` → `#/screener/*`, `#/stories/SYM` →
   fact and is not a data warning (today it shows as "1 stale" on every page).
 - **Sub-tabs:** one row that scrolls sideways. Never wraps (the Watchlist tabs
   wrap onto three lines today). Sticky under the top bar.
-- **Search:** on every page; finds a stock or a page.
+- **Search:** on every page; finds a stock in any list (the scan, the
+  multibagger table, the radar, the penny screen) or a page and sub-page. A
+  miss says what the app covers, not just "No match".
+- **Guide** (`#/guide`, not in the bottom bar): reached from the "?" in the
+  top bar, "How it works" in the side rail and the footer, and the welcome
+  card. It holds the glossary (every word in §3) and the account size.
 
 ---
 
@@ -340,8 +363,12 @@ month." plus a link to the nearest useful list.
 ## 7. Screens
 
 ### 7.1 Home
-Banner (§6.1), then the to-do list capped at three rows per section. No
-market ring, no paper books, no backtest numbers. Target: two phone screens.
+On a first visit, a welcome card above the banner: one paragraph on what the
+app does, the four steps as links, "Read the 2-minute guide" and "Got it".
+Dismissed once, gone for good (`gs.welcomed`). Then the banner (§6.1) and the
+to-do list capped at three rows per section. No market ring, no paper books,
+no backtest numbers. Target: two phone screens. "Copy these alerts" copies
+the rows shown and says where to paste them (the broker's price alerts).
 
 ### 7.2 Screener
 Sub-tabs, search, Filter, sort, then the table (§6.3). **Multibaggers** ranks
@@ -350,8 +377,16 @@ the whole market by the Multibagger score and shows the ingredients present.
 holds the market pulse, theme heat and the universe map.
 
 ### 7.3 Watchlist
-Four sub-tabs, cards (§6.2) with the list's own line 4. Copy-all-alerts stays
-on Near breakout.
+Five sub-tabs, cards (§6.2) with the list's own line 4. Copy-all-alerts stays
+on Base ready. **Saved** lists the reader's starred stocks with whatever
+applies to each (a buy, its alert price, its stage, or "outside the nightly
+scan").
+
+### 7.3a Guide
+What Golden Stock does (one paragraph, no performance claims), "Your first
+five minutes" as numbered steps with links, the glossary in six folds
+(Scores, The AI, Price stages, Signals, The plan, The record), the account
+size, and a link to the landing page.
 
 ### 7.4 Research
 **Deep-dives** is the Stories format (headline, story, founder, price since
@@ -420,6 +455,8 @@ evidence, the log, and System (data freshness for every part).
 - [ ] Belongs to one of the four steps (§1) and appears in one place.
 - [ ] `tests/test_dashboard_v7.py` passes; new behaviour gets a test.
 - [ ] After a local `build_dashboard.py`, `state/themes.json` restored.
+- [ ] A first-time reader can say what every new word means: it is in the
+      Guide's glossary, or it is a plain word.
 
 ---
 
@@ -458,3 +495,28 @@ Measured on the live site in a 390 × 844 viewport.
 | Deals | Every bulk deal listed twice (bulk and block) | One row a trade |
 | Company names | Cut at 40 characters ("Holdings Limite") | Full names |
 | Landing page | Twelve screens, R multiples, a breadth ticker | Rebuilt (§7.6) |
+
+### Third pass: a first-time reader (same day)
+
+Walked as a newcomer at 390px: landing page, Open the app, every Home tile, a
+watchlist stock, Research, the Screener's four tabs (opening a penny and a
+multibagger name), Performance, search and the back button.
+
+| Where | Finding | Fix |
+|---|---|---|
+| Everywhere | No introduction and nowhere to learn what Conviction, RS or "Base ready" mean | Welcome card on Home; Guide with the glossary (§7.3a); "?" in the top bar |
+| Plans | "72 shares · risk ₹8,420" with no account behind it | "sized for ₹10 L"; account size in the Guide scales every plan |
+| Triggered | PANAMAPET "still valid" while Buy now said 0 (its low had touched the stop) | "hit its stop"; a chip may not contradict Buy now |
+| Home | "Heads-up: risk news on the stocks above" listed stocks that were not above | Hint says which stocks it covers |
+| Home, News | "stocks you follow": the reader follows nothing | "Tracked stocks", one definition, saved stocks included |
+| Health tile | "Full-size positions" | "50% of stocks are above their 200-day average, so buys are full size" |
+| Copy alerts | Copied six when three showed, said "pivot", and stopped at "Alerts copied" | Copies what shows; toast and text say to set them in the broker's app |
+| Stock view | "Set an alert" for a stock already above its alert price on thin volume | Says it closed above on 0.5× volume, so not a buy yet |
+| Stock view | AI 2/5 next to "Weekly pick" with no date to tell them apart | "Rated 29 Sept" under the rating |
+| Penny | A penny stock opened as "a possible multibagger" with no penny score | Penny card (score, turnover, sell capacity, flags) in the sheet |
+| Search | "zim" (a penny name) and every multibagger outside the scan: "No match." | Searches every list; a miss says what is covered |
+| Screener | HFCL and RAYMOND showed their industry where the company name goes | Full name when it matches the symbol |
+| Multibaggers | Conviction "—" on every top name, unexplained | "not scanned" with the reason |
+| News | "over 19d (2x M&A/JV); since 2026-09-18" | "over 19 days (M&A/JV ×2); since 18 Sept" |
+| AI text, buy cards, chart | "card's veto checks", "pivot", "Gap-up (EP)", "+2.5R" | "the alert's red-flag checks", "alert price", "Gap-up", "sell part" |
+| Performance | Paper-book returns with no market beside them; "Real money waits … 2026-12-31" | "market +x%" beside each; "No real money until 40 signals qualify, by 31 Dec" |

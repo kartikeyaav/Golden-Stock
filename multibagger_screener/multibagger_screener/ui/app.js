@@ -79,6 +79,29 @@ const themeBy = {};
 ((D.themes || {}).themes || []).forEach(t => (t.leaders || []).forEach(l => { (themeBy[l.sym] = themeBy[l.sym] || []).push(t.name); }));
 const VOC = D.vocab || { tags: {}, tagtips: {} };
 const CAPITAL = D.capital || 1000000;
+/* Plans are sized for the system's paper account (D.capital, Rs 10 L) at up to
+   D.risk_pct a trade. A reader can set their own account size in the Guide; it
+   stays in this browser, and every quantity, position value and rupee risk
+   scales with it. The percentages do not change. */
+function myCapital() { try { const v = +localStorage.getItem("gs.capital"); return v >= 10000 ? v : CAPITAL; } catch (e) { return CAPITAL; } }
+function sized(p) {
+  if (!p || p.skip || !isNum(p.shares)) return p;
+  const f = myCapital() / CAPITAL; if (f === 1) return p;
+  const sh = Math.floor(p.shares * f), k = p.shares ? sh / p.shares : f;
+  return Object.assign({}, p, { shares: sh, risk: isNum(p.risk) ? p.risk * k : p.risk, value: isNum(p.value) ? p.value * k : p.value });
+}
+function capWord() { return inrShort(myCapital()).replace(".00 L", " L").replace(".00 Cr", " Cr"); }
+/* Saved stocks: the reader's own list, in this browser only (Watchlist > Saved). */
+const SAVED = (function () { let s = []; try { s = JSON.parse(localStorage.getItem("gs.saved") || "[]"); } catch (e) { } return new Set(Array.isArray(s) ? s : []); })();
+function toggleSaved(sym) {
+  if (SAVED.has(sym)) SAVED.delete(sym); else SAVED.add(sym);
+  try { localStorage.setItem("gs.saved", JSON.stringify([...SAVED])); } catch (e) { }
+  return SAVED.has(sym);
+}
+function saveBtn(sym) {
+  const on = SAVED.has(sym);
+  return `<button class="icon-btn save-btn ${on ? "on" : ""}" data-save="${esc(sym)}" aria-pressed="${on}" aria-label="${on ? "Remove from saved stocks" : "Save this stock"}">${I.star}</button>`;
+}
 
 /* ===================================================================== utils */
 const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -118,7 +141,7 @@ function css(name) { return getComputedStyle(document.documentElement).getProper
 function sentenceCase(w) { w = String(w || ""); return w && w === w.toUpperCase() ? w.charAt(0) + w.slice(1).toLowerCase() : w; }
 function stageWord(t) { const w = VOC.tags && VOC.tags[t] || t || "—"; return w === "—" ? w : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }
 function stageChip(t) { return t ? `<span class="tag-stage stage-${esc(t)}" data-tip="${esc(VOC.tagtips && VOC.tagtips[t] || "")}">${esc(stageWord(t))}</span>` : `<span class="faint">—</span>`; }
-const SETUP_WORD = { "VALIDATED": "Breakout", "VALIDATED (EXTENDED)": "Breakout · extended", "AWAITING TRIGGER": "Base ready", "NO VCP BASE": "No base", "EP EVENT": "Gap-up (EP)" };
+const SETUP_WORD = { "VALIDATED": "Breakout", "VALIDATED (EXTENDED)": "Breakout · extended", "AWAITING TRIGGER": "Base ready", "NO VCP BASE": "No base", "EP EVENT": "Gap-up" };
 function setupChip(st) {
   const c = st === "VALIDATED" ? "buy" : st === "EP EVENT" ? "ep" : st === "AWAITING TRIGGER" ? "watch" : st === "VALIDATED (EXTENDED)" ? "watch" : "ghost";
   return st ? `<span class="chip sm ${c}">${esc(SETUP_WORD[st] || st)}</span>` : `<span class="faint">—</span>`;
@@ -180,7 +203,7 @@ function areaSpark(pairs, w = 260, h = 56, color) {
     <polygon points="0,${h} ${line} ${w},${h}" fill="${col}" opacity=".10"/><polyline points="${line}" fill="none" stroke="${col}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;
 }
 function meter(frac, kind = "") { const p = Math.max(0, Math.min(1, frac || 0)) * 100; return `<div class="meter ${kind}"><i style="width:${p.toFixed(1)}%"></i></div>`; }
-function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), 2200); }
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), Math.max(2200, String(msg).length * 55)); }
 async function copyText(text, label) {
   try { await navigator.clipboard.writeText(text); toast(label || "Copied"); }
   catch (e) {
@@ -191,7 +214,7 @@ async function copyText(text, label) {
 }
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } return null; }
 function closesOf(sym) { return (D.closes || {})[sym] || []; }
-function riskShare(plan) { return plan && isNum(plan.risk) ? plan.risk / CAPITAL * 100 : null; }
+function riskShare(plan) { return plan && isNum(plan.risk) ? plan.risk / myCapital() * 100 : null; }
 /* ---- v8 (2026-09-28): the classic dashboard's visual language inside the v7
    layout. Bars for every score, a ring for the market, sparklines in lists and
    mini charts for the business; measurements only where a decision needs them. */
@@ -228,7 +251,7 @@ const PLAIN_DIM = [
 ];
 const PLAIN_AI = [
   [/\bStage 2\s*\/\s*VCP base\b/g, "rising-stage base"], [/\bVCP base\b/g, "base"], [/\bVCP\b/g, "base"],
-  [/\bAWAITING TRIGGER\b/g, "waiting for a breakout"], [/\bpivot\b/g, "alert price"], [/\bthe card's own read\b/g, "the system's own read"],
+  [/\bAWAITING TRIGGER\b/g, "waiting for a breakout"], [/\bpivot\b/g, "alert price"], [/\bthe card's own read\b/g, "the system's own read"], [/\b(?:the )?card's\b/g, "the alert's"], [/\bveto checks\b/g, "red-flag checks"],
   [/\bthe card\b/g, "the alert"], [/\bATR stop\b/g, "The stop"], [/\bEP\b/g, "gap-up"], [/(\d)pp\b/g, "$1 points"],
 ];
 function plainAI(t) { let s = String(t || ""); PLAIN_AI.forEach(([re, w]) => { s = s.replace(re, w); }); return s; }
@@ -362,6 +385,8 @@ const I = {
   news: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h12.5a2 2 0 012 2V19a1.5 1.5 0 003 0V9h-3"/><path d="M4 4.5V19a2 2 0 002 2h14.5"/><path d="M7.5 8.5h7M7.5 12.5h7M7.5 16.5h4"/></svg>',
   pulse: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12h4l2.5-6.5 4.5 13 2.5-6.5h5.5"/></svg>',
   filter: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h17l-6.5 8v6l-4 1.5V13z"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>',
+  help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 014.8 1c0 1.7-2.4 2.2-2.4 3.7"/><path d="M12 17.2h.01"/></svg>',
   back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12h-15M10.5 18l-6-6 6-6"/></svg>',
 };
 
@@ -450,7 +475,7 @@ function planOf(sym) {
            stop_pct: isNum(p.entry_price) && isNum(p.stop_loss_price) ? (1 - p.stop_loss_price / p.entry_price) * 100 : null };
 }
 function buyCard(a) {
-  const r = rowBy[a.sym] || {}, v = verdictBy[a.sym], plan = planOf(a.sym), st = setupBy[a.sym];
+  const r = rowBy[a.sym] || {}, v = verdictBy[a.sym], plan = sized(planOf(a.sym)), st = setupBy[a.sym];
   const isEP = a.dokind === "ep";
   let zone = "";
   if (isEP && isNum(a.alert_px) && isNum(a.now_px)) {
@@ -460,14 +485,14 @@ function buyCard(a) {
       : `<span class="chip sm buy">Near the gap-day close ${px(a.alert_px)}</span>`;
   } else if (st && isNum(st.pivot) && isNum(a.now_px)) {
     const ext = (a.now_px / st.pivot - 1) * 100;
-    zone = ext < -2 ? `<span class="chip sm watch">${pct(ext)} back below the pivot ${px(st.pivot)}: the breakout is failing</span>`
-      : ext <= 5 ? `<span class="chip sm buy">In the buy zone (≤5% above pivot ${px(st.pivot)})</span>` : `<span class="chip sm watch">${pct(ext)} above the pivot — past the buy zone</span>`;
+    zone = ext < -2 ? `<span class="chip sm watch">${pct(ext)} back below the alert price ${px(st.pivot)}: the breakout is failing</span>`
+      : ext <= 5 ? `<span class="chip sm buy">In the buy zone (up to 5% above the alert price ${px(st.pivot)})</span>` : `<span class="chip sm watch">${pct(ext)} above the alert price, past the buy zone</span>`;
   }
   const ch = closesOf(a.sym).slice(-60);
   return `<div class="acard ${isEP ? "ep" : "buy"}" data-sym="${esc(a.sym)}">
     <div>
       <div class="top"><span class="title">${esc(a.sym)}</span>
-        <span class="chip sm ${isEP ? "ep" : "buy"}">${isEP ? "Gap-up (EP)" : "Breakout"}</span>
+        <span class="chip sm ${isEP ? "ep" : "buy"}">${isEP ? "Gap-up" : "Breakout"}</span>
         ${verdictChip(v)} ${survChips(a.sym)} ${a.n > 1 ? `<span class="chip sm ghost">alerted ${a.n}×</span>` : ""}</div>
       <div class="desc">${esc(r.company || "")}${r.ind ? " · " + esc(r.ind) : ""} · signalled ${esc(a.d)} at ${px(a.alert_px)} · now ${px(a.now_px)} <span class="${cls(a.chg)}">${pct(a.chg)}</span></div>
       ${zone ? `<div style="margin-top:8px">${zone}</div>` : ""}
@@ -486,9 +511,9 @@ function buyCard(a) {
 }
 function alertText(list) {
   const day = dayName(priceSession());
-  const lines = list.filter(s => s.plan && !s.plan.skip).map(s =>
-    `${s.sym}: alert above ${px(s.pivot)} · buy only on a close above it with volume ≥ ${volFmt(s.vneed)} · stop ${px(s.plan.stop)} · qty ${s.plan.shares} (risk ${inr(s.plan.risk)})`);
-  return `Golden Stock — pivot alerts (prices to ${day})\n` + lines.join("\n") + `\n\nThe validated entry is a CLOSE above the pivot on ≥1.5× average volume. A price alert is a prompt to check, not an order.`;
+  const lines = list.filter(s => s.plan && !s.plan.skip).map(s => { const p = sized(s.plan);
+    return `${s.sym}: alert at ${px(s.pivot)} · buy only on a close above it with at least ${volFmt(s.vneed)} shares traded · stop ${px(p.stop)} · ${p.shares} shares (risk ${inr(p.risk)} on a ${capWord()} account)`; });
+  return `Golden Stock price alerts (prices to ${day})\n` + lines.join("\n") + `\n\nSet each one as a price alert in your broker's app. An alert is a prompt to check, not an order: buy only if the day CLOSES above the alert price on at least 1.5× normal volume.`;
 }
 function marketPulseCard() {
   const m = X.market || {};
@@ -589,7 +614,7 @@ function screenStocks() {
       ${th("tag", "Stage")}${th("setup", "Setup", "", "Fired breakout, then live base, then none. The base is where the forward record shows the edge.")}${th("dist", "To alert", "r", "How far below its alert price a base-ready stock sits.")}<th>120 days</th>
       ${th("tier", "Size")}${th("ind", "Industry")}${th("roce", "ROCE", "r")}${th("pe", "P/E", "r")}${th("pgttm", "Profit 1y", "r")}</tr></thead>
     <tbody>${shown.map(r => { const s = setupBy[r.sym], q = quoteOf(r.sym); return `<tr data-sym="${esc(r.sym)}" data-ctx="screener" class="${r.veto ? "dim" : ""}">
-      <td class="c1"><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc(coName(r.sym) || r.ind || "")}</span></div></td>
+      <td class="c1"><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc(coName(r.sym) || nameOf(r.sym) || r.ind || "")}</span></div></td>
       <td class="c2">${convCell(r.score, r.veto)}</td>
       <td class="r num">${px(q.price)}${isNum(q.chg) ? `<div class="chg ${cls(q.chg)}">${movePct(q.chg)}</div>` : ""}</td>
       <td class="r">${rsCell(r.rs)}</td><td>${stageChip(r.tag)}</td><td>${setupChip(r.trig)}</td>
@@ -617,7 +642,7 @@ function screenMultibaggers() {
     <tbody>${shown.map(m => { const r = rowBy[m.sym] || {}, q2 = quoteOf(m.sym), mr = MRS[m.sym]; return `<tr data-sym="${esc(m.sym)}" data-ctx="mb">
       <td class="c1"><div class="cell-sym"><span class="sym">${esc(m.sym)}</span><span class="co">${esc(shortCo(nameOf(m.sym)) || "outside the scan")}</span></div></td>
       <td class="c2">${cbar(m.score, "var(--teal)")}</td>
-      <td class="r">${isNum(r.score) ? convCell(r.score, r.veto) : `<span class="faint">—</span>`}</td>
+      <td class="r">${isNum(r.score) ? convCell(r.score, r.veto) : `<span class="faint" style="font-size:12px" data-tip="Outside the nightly scan, so it has no conviction check yet.">not scanned</span>`}</td>
       <td class="r num">${isNum(q2.price) ? px(q2.price) : "—"}${isNum(q2.chg) ? `<div class="chg ${cls(q2.chg)}">${movePct(q2.chg)}</div>` : ""}</td>
       <td class="r num">${mr && isNum(+mr.conviction) ? `<span style="color:${convCol(+mr.conviction)}">${esc(mr.conviction)}/5</span>` : `<span class="faint">—</span>`}</td>
       <td class="ingr-cell">${(m.factors || []).map(n => `<span class="chip sm ghost" data-tip="${esc((m.evidence || {})[n] || "")}">${esc(fShort(n))}</span>`).join(" ")}</td></tr>`; }).join("")}</tbody></table></div>
@@ -630,17 +655,17 @@ function explorePenny() {
   let rows = (P.rows || []).filter(r => (!q || r.sym.toLowerCase().includes(q) || (r.company || "").toLowerCase().includes(q)) && (f.showVeto || !r.veto) && (!f.arm || (r.arm || "").includes(f.arm)));
   rows.sort((a, b) => f.dir * (((a[f.sort] ?? -1e9) > (b[f.sort] ?? -1e9)) ? 1 : -1));
   S.ctx = rows.map(r => r.sym);
-  return `<div class="page-intro">A separate research screen for nano-caps, never backtested. In this class you lose by not being able to get out, so it excludes first and scores only the survivors. Keep it to 5% of the book and 1% a name. ${info("The penny score is the penny screen's own formula, not the conviction check: it weighs momentum, growth and tradability for stocks under ₹100 or ₹1,000 Cr.")}</div>
+  return `<div class="page-intro">A separate research screen for very small companies, never backtested. The danger here is not being able to sell, so it first removes stocks that are hard to exit, then scores the rest. Keep penny stocks to 5% of your portfolio and 1% in any one name. ${info("The penny score is the penny screen's own formula, not the conviction check: it weighs momentum, growth and tradability for stocks under ₹100 or ₹1,000 Cr.")}</div>
     <div class="sc-tools"><div class="searchbox">${I.search}<input class="field" id="pq" placeholder="Symbol or company" value="${esc(f.q)}" autocomplete="off" spellcheck="false" aria-label="Search penny stocks"></div></div>
     <div class="toolbar"><div class="seg">${[["", "Both"], ["price", "Under ₹100"], ["mcap", "Under ₹1,000 Cr"]].map(([k, l]) => `<button data-parm="${k}" class="${f.arm === k ? "on" : ""}">${l}</button>`).join("")}</div>
       <label class="muted" style="font-size:12.5px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="pveto" ${f.showVeto ? "checked" : ""}>Show vetoed</label></div>
-    <div class="meta-line"><span><b>${rows.length}</b> names · as of ${esc(P.as_of || "")}</span><span class="swipe-hint">Swipe for more →</span></div>
-    <div class="card flush"><div class="table-wrap max"><table class="t freeze2"><thead><tr><th class="c1">Stock</th><th class="c2" data-tip="The penny screen's own score out of 100, not the conviction check.">Penny score</th><th class="r">Price</th><th>Stage</th><th class="r">RS</th><th>Flags</th><th class="r" data-tip="Median daily traded value: whether an exit exists at all.">Turnover</th><th class="r" data-tip="10% of median daily value: roughly what you could sell in one session without moving the price.">Max position</th><th class="r">3 months</th><th class="r">Size</th></tr></thead>
+    <div class="meta-line"><span><b>${rows.length}</b> names · as of ${esc(dateLabel(P.as_of))}</span><span class="swipe-hint">Swipe for more →</span></div>
+    <div class="card flush"><div class="table-wrap max"><table class="t freeze2"><thead><tr><th class="c1">Stock</th><th class="c2" data-tip="The penny screen's own score out of 100, not the conviction check.">Penny score</th><th class="r">Price</th><th>Stage</th><th class="r">RS</th><th>Flags</th><th class="r" data-tip="Median daily traded value: whether an exit exists at all.">Turnover</th><th class="r" data-tip="10% of median daily value: roughly what you could sell in one session without moving the price.">Max position</th><th class="r">3 months</th><th class="r">Market cap</th></tr></thead>
       <tbody>${rows.map(r => `<tr class="${r.veto ? "dim" : ""}" data-sym="${esc(r.sym)}" data-ctx="penny"><td class="c1"><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc(shortCo(r.company))}</span></div></td>
         <td class="c2">${isNum(r.score) ? cbar(r.score, scoreCol(r.score)) : "—"}</td><td class="r num">${px(r.close)}</td><td>${stageChip(r.tag)}</td><td class="r num">${isNum(r.rs) ? r.rs.toFixed(0) : "—"}</td>
-        <td>${r.veto ? `<span class="chip sm risk" data-tip="${esc(r.vetowhy)}">vetoed</span> ` : ""}${(r.flags || []).slice(0, 3).map(x => `<span class="chip sm watch">${esc(typeof x === "string" ? x : x.code || "")}</span>`).join(" ") || (r.veto ? "" : '<span class="faint">none</span>')}</td>
+        <td>${r.veto ? `<span class="chip sm risk" data-tip="${esc(r.vetowhy)}">vetoed</span> ` : ""}${(r.flags || []).slice(0, 3).map(x => `<span class="chip sm watch" data-tip="${esc(survText([typeof x === "string" ? { code: x, detail: "" } : x]))}">${esc(typeof x === "string" ? x : x.code || "")}</span>`).join(" ") || (r.veto ? "" : '<span class="faint">none</span>')}</td>
         <td class="r num">${isNum(r.turn) ? "₹" + r.turn.toFixed(2) + " Cr" : "—"}</td><td class="r num">${isNum(r.turn) ? inrShort(r.turn * 1e7 * 0.1) : "—"}</td><td class="r num ${cls(r.run3m)}">${pct(r.run3m, 0)}</td>
-        <td class="r num">${isNum(r.mcap) ? nf0.format(r.mcap) + " Cr" : "—"}</td></tr>`).join("")}</tbody></table></div></div>
+        <td class="r num">${isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : "—"}</td></tr>`).join("")}</tbody></table></div></div>
     ${(P.funnel || []).length ? `<details class="more" style="margin-top:14px"><summary>What the gates excluded</summary><div class="card">${P.funnel.map(x => `<div class="lrow" style="cursor:default"><span>${esc(x.why)}</span><span class="num">${num(x.n)}</span></div>`).join("")}</div></details>` : ""}`;
 }
 function momentumSection() {
@@ -813,21 +838,21 @@ function researchThemes() {
     ${T.read ? `<details class="more" style="margin-top:12px"><summary>The committee's theme read</summary><div class="card"><div class="memo">${esc(T.read)}</div></div></details>` : ""}`;
 }
 function researchNews() {
-  const held = heldSyms(), buy = new Set(buySignals().map(a => a.sym));
+  const tracked = trackedSyms();
   const risk = [], building = [];
   Object.entries(newsMem).forEach(([sym, m]) => {
     const tag = (rowBy[sym] || {}).tag;
-    if (m.n_neg && (held.has(sym) || buy.has(sym) || actBy[sym])) risk.push({ sym, m, tag });
+    if (m.n_neg && (tracked.has(sym) || actBy[sym])) risk.push({ sym, m, tag });
     if (m.primed && !["CONFIRMED", "EXTENDED"].includes(tag)) building.push({ sym, m, tag });
   });
   building.sort((a, b) => (b.m.p || 0) - (a.m.p || 0));
   const hits = (D.radar || {}).hits || [];
   return `<div class="callout" style="margin-bottom:14px">News here warns you about risks. It is not a list of things to buy. ${info("Measured on this system's own archive, positive news did not lead the technical trigger: names with a positive filing alerted 7.3% of the time against a 16.6% base rate.")}</div>
     <div class="grid grid-2">
-      <div class="card accent-risk"><div class="card-head"><h3>Negative filings on stocks you follow</h3></div>
-        ${risk.length ? risk.slice(0, 20).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(x.m.summary || "")}</div></div><span class="chip sm risk">${x.m.n_neg} negative</span></div>`).join("") : `<div class="muted">No negative filings on stocks you follow.</div>`}</div>
+      <div class="card accent-risk"><div class="card-head"><h3>Negative filings on tracked stocks</h3>${info("Tracked: your saved stocks, the watchlist, this week's signals and the 30 highest multibagger scores.")}</div>
+        ${risk.length ? risk.slice(0, 20).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(memWords(x.m.summary))}</div></div><span class="chip sm risk">${x.m.n_neg} negative</span></div>`).join("") : `<div class="muted">No negative filings on tracked stocks.</div>`}</div>
       <div>${fold("Good news building, chart not ready yet", building.length ? building.length + " stocks" : "none", `<div>
-        ${building.length ? building.slice(0, 15).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(x.m.summary || "")}</div></div><span class="muted num" style="font-size:12px" data-tip="News pressure: how strongly recent filings lean positive, 0 to 1.">${(x.m.p || 0).toFixed(2)}</span></div>`).join("") : `<div class="muted">Nothing building.</div>`}</div>`)}</div>
+        ${building.length ? building.slice(0, 15).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(memWords(x.m.summary))}</div></div><span class="muted num" style="font-size:12px" data-tip="News pressure: how strongly recent filings lean positive, 0 to 1.">${(x.m.p || 0).toFixed(2)}</span></div>`).join("") : `<div class="muted">Nothing building.</div>`}</div>`)}</div>
     </div>
     <div class="card flush" style="margin-top:16px"><div class="card-head"><h3>Filings since the last scan</h3><span class="hint">${hits.length} classified</span></div><div class="table-wrap"><table class="t"><thead><tr><th></th><th>Stock</th><th>Chart</th><th class="r">RS</th><th>Event</th><th class="">Filing</th></tr></thead>
       <tbody>${hits.map(h => `<tr data-sym="${esc(h.sym)}"><td>${h.cls === "neg" ? '<span class="neg">▼</span>' : h.cls === "pos" ? '<span class="pos">▲</span>' : "·"}</td><td class="sym">${esc(h.sym)}</td><td>${stageChip(h.tag)}</td><td class="r num">${isNum(h.rs) ? h.rs.toFixed(0) : "—"}</td>
@@ -1040,8 +1065,13 @@ function newsList(items) {
   return items.map(x => `<div class="news-item${x.routine ? " routine" : ""}"><div class="d">${esc(/^\d{4}-\d{2}-\d{2}/.test(x.d) ? dateLabel(x.d) : x.d)}</div><div><div class="h">${x.u && /^https?:/.test(x.u) ? `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a>` : esc(x.t)}</div>${x.src || x.routine ? `<div class="src">${esc(x.src || "")}${x.routine ? " · routine paperwork" : ""}</div>` : ""}</div></div>`).join("");
 }
 function toneWord(s) { return !isNum(s) ? "unknown" : s > 0.2 ? "positive" : s > 0.05 ? "mildly positive" : s < -0.2 ? "negative" : s < -0.05 ? "mildly negative" : "neutral"; }
+function memWords(t) {
+  return String(t || "").replace(/\b(\d+)d\b/g, (m, n) => n + (n === "1" ? " day" : " days"))
+    .replace(/\b(\d+)x ([^,;)]+)/g, "$2 ×$1")
+    .replace(/\b(\d{4}-\d{2}-\d{2})\b/g, (m, d) => dateLabel(d));
+}
 function memoryBody(nm) {
-  return `${nm.summary ? `<div class="memo" style="margin-bottom:6px">${esc(nm.summary)}</div>` : ""}${(nm.events || []).slice(-12).reverse().map(e => `<div class="news-item"><div class="d">${esc(dateLabel(String(e[2]).slice(0, 10)))}</div><div class="h"><span class="${e[1] === "neg" ? "neg" : e[1] === "pos" ? "pos" : "muted"}">${e[1] === "neg" ? "▼" : e[1] === "pos" ? "▲" : "·"}</span> ${esc(e[0])}</div></div>`).join("")}`;
+  return `${nm.summary ? `<div class="memo" style="margin-bottom:6px">${esc(memWords(nm.summary))}</div>` : ""}${(nm.events || []).slice(-12).reverse().map(e => `<div class="news-item"><div class="d">${esc(dateLabel(String(e[2]).slice(0, 10)))}</div><div class="h"><span class="${e[1] === "neg" ? "neg" : e[1] === "pos" ? "pos" : "muted"}">${e[1] === "neg" ? "▼" : e[1] === "pos" ? "▲" : "·"}</span> ${esc(e[0])}</div></div>`).join("")}`;
 }
 function dealsBody(dl) {
   return dedupeDeals(dl).map(r => `<div class="news-item"><div class="d">${esc(dateLabel(r.d))}</div><div><div class="h"><span class="${r.side === "BUY" ? "pos" : "neg"}">${r.side === "BUY" ? "▲ bought" : "▼ sold"}</span> ${num(r.qty)} shares at ${px(r.price)} · ${inrShort(r.qty * r.price)}</div><div class="src">${esc(r.client)} · ${esc(r.kind)} deal</div></div></div>`).join("")
@@ -1057,7 +1087,7 @@ function sheetHistory(sym) {
   const sc = (D.scorecard || []).filter(r => r.sym === sym);
   const led = ((D.paper || {}).ledger || []).filter(l => l.sym === sym);
   return `<div class="card flush"><div class="card-head"><h3>Buy alerts on ${esc(sym)}</h3><span class="hint">${sc.length} in the journal</span></div>
-    ${sc.length ? `<div class="table-wrap"><table class="t"><thead><tr><th>When</th><th>Type</th><th class="r">Conviction</th><th class="r">Alert ₹</th><th class="r">Return</th><th class="r">Plan R</th><th>Status</th></tr></thead><tbody>${sc.map(r => `<tr style="cursor:default"><td class="num">${esc(String(r.d).slice(0, 10))}</td><td>${esc(sentenceCase((VOC.kinds || {})[r.kind] || r.kind))}</td><td class="r num">${isNum(r.conv) ? r.conv.toFixed(0) : "—"}</td><td class="r num">${px(r.entry)}</td><td class="r num ${cls(r.ret)}">${pct(r.ret)}</td><td class="r num ${cls(r.planr)}">${rr(r.planr)}</td><td class="muted">${esc(r.status)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="muted" style="padding:0 18px 16px">Never alerted.</div>`}</div>
+    ${sc.length ? `<div class="table-wrap"><table class="t"><thead><tr><th>When</th><th>Type</th><th class="r">Conviction</th><th class="r">Alert ₹</th><th class="r">Return</th><th class="r" data-tip="What following the plan made, as a multiple of what it risked: +2R made twice the risk, −1R lost it.">Plan result</th><th>Status</th></tr></thead><tbody>${sc.map(r => `<tr style="cursor:default"><td class="num">${esc(dateLabel(r.d))}</td><td>${esc(sentenceCase((VOC.kinds || {})[r.kind] || r.kind))}</td><td class="r num">${isNum(r.conv) ? r.conv.toFixed(0) : "—"}</td><td class="r num">${px(r.entry)}</td><td class="r num ${cls(r.ret)}">${pct(r.ret)}</td><td class="r num ${cls(r.planr)}">${rr(r.planr)}</td><td class="muted">${esc(r.status)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="muted" style="padding:0 18px 16px">Never alerted.</div>`}</div>
     ${led.length ? `<div class="card" style="margin-top:14px"><div class="card-head"><h3>Paper book fills</h3></div>${led.map(l => `<div class="lrow" style="cursor:default"><span>${esc(l.d)} · ${esc(l.action)} ${esc(l.lot)} · ${esc(l.shares)} @ ${esc(l.price)}</span><span class="num ${cls(+l.pnl)}">${l.pnl !== "" ? inr(+l.pnl) : ""}</span></div>`).join("")}</div>` : ""}`;
 }
 function makeChart(el, opt = {}) {
@@ -1098,11 +1128,11 @@ function drawCandles(el, sym, o = {}) {
     legend.push(`<span><i style="background:${col}"></i>${l}</span>`);
   });
   const line = (price, color, title) => { if (isNum(price)) c.createPriceLine({ price, color, lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title }); };
-  line(o.pivot, css("--watch"), "pivot");
-  if (isNum(o.pivot)) line(o.pivot * 1.05, css("--faint"), "+5%");
+  line(o.pivot, css("--watch"), "alert");
+  if (isNum(o.pivot)) line(o.pivot * 1.05, css("--faint"), "buy zone");
   line(o.stop, css("--risk"), "stop");
   line(o.entry, css("--info"), "entry");
-  line(o.partial, css("--buy"), "+2.5R");
+  line(o.partial, css("--buy"), "sell part");
   const alerts = (D.scorecard || []).filter(r => r.sym === sym).map(r => String(r.d).slice(0, 10));
   const dates = new Set(data.map(r => r[0]));
   const marks = [...new Set(alerts)].map(d => { let t = d; if (!dates.has(t)) { const nx = data.find(r => r[0] >= d); t = nx ? nx[0] : null; } return t; }).filter(Boolean).sort().map(t => ({ time: t, position: "belowBar", color: css("--ai"), shape: "arrowUp", text: o.compact ? "" : "alert" }));
@@ -1141,24 +1171,47 @@ function openPalette() { $("#pal").classList.add("on"); const q = $("#palq"); q.
 function closePalette() { $("#pal").classList.remove("on"); }
 function palSearch(q) {
   q = q.trim().toLowerCase();
-  const pages = PAGES.filter(p => !(p.hidden && p.hidden())).map(p => ({ type: "page", id: p.id, label: p.label }));
+  const pages = PAGES.filter(p => !(p.hidden && p.hidden())).map(p => ({ type: "page", id: p.id, label: p.label }))
+    .concat(PAL_PLACES.map(([label, id, sub]) => ({ type: "page", id, sub, label })));
   let items = [];
   if (!q) items = [...pages, ...buySignals().map(a => ({ type: "stock", sym: a.sym })), ...readySetups().slice(0, 8).map(s => ({ type: "stock", sym: s.sym }))];
   else {
     items = pages.filter(p => p.label.toLowerCase().includes(q));
-    const scored = ROWS.map(r => {
-      const s = r.sym.toLowerCase(), c = (r.company || "").toLowerCase();
+    const scored = searchUniverse().map(u => {
+      const s = u.sym.toLowerCase(), c = u.co.toLowerCase();
       const k = s === q ? 0 : s.startsWith(q) ? 1 : c.startsWith(q) ? 2 : s.includes(q) ? 3 : c.includes(q) ? 4 : 9;
-      return [k, r];
-    }).filter(x => x[0] < 9).sort((a, b) => a[0] - b[0] || (b[1].rs || 0) - (a[1].rs || 0)).slice(0, 40);
-    items = items.concat(scored.map(x => ({ type: "stock", sym: x[1].sym })));
+      return [k, u];
+    }).filter(x => x[0] < 9).sort((a, b) => a[0] - b[0] || b[1].rank - a[1].rank).slice(0, 40);
+    items = items.concat(scored.map(x => ({ type: "stock", sym: x[1].sym, u: x[1] })));
   }
   _pal = { items, i: 0 };
   $("#pallist").innerHTML = items.map((it, i) => {
     if (it.type === "page") return `<div class="pal-item ${i === 0 ? "on" : ""}" data-pi="${i}"><span class="muted">Go to</span><span><b>${esc(it.label)}</b></span><span class="kbd">page</span></div>`;
-    const r = rowBy[it.sym] || {};
-    return `<div class="pal-item ${i === 0 ? "on" : ""}" data-pi="${i}"><span class="sym">${esc(it.sym)}</span><span class="co" style="max-width:none">${esc(r.company || "")}</span><span>${stageChip(r.tag)}</span></div>`;
-  }).join("") || `<div class="muted" style="padding:14px">No match.</div>`;
+    const r = rowBy[it.sym], u = it.u || {};
+    const where = r ? stageChip(r.tag) : MBS[it.sym] ? `<span class="chip sm teal">Multibagger ${Math.round(MBS[it.sym].score)}</span>` : u.where === "penny" ? '<span class="chip sm ghost">Penny</span>' : '<span class="chip sm ghost">Radar</span>';
+    return `<div class="pal-item ${i === 0 ? "on" : ""}" data-pi="${i}"><span class="sym">${esc(it.sym)}</span><span class="co" style="max-width:none">${esc((r && r.company) || u.co || nameOf(it.sym))}</span><span>${where}</span></div>`;
+  }).join("") || `<div class="muted" style="padding:14px">No stock matches “${esc(q)}”. Golden Stock covers ${num(searchUniverse().length)} NSE stocks, mostly small and mid caps, so many large caps are not here. Try the NSE symbol.</div>`;
+}
+/* everything a reader can open: the scan, the multibagger table, the radar
+   and the penny screen (a penny name searched by name was "No match") */
+const PAL_PLACES = [["Multibaggers", "screener", "multibaggers"], ["Penny stocks", "screener", "penny"], ["Themes & market", "screener", "themes"],
+  ["Base ready", "watchlist", "ready"], ["Saved stocks", "watchlist", "saved"], ["Deep-dives", "research", "deepdives"], ["Buy checks", "research", "checks"],
+  ["Weekly picks", "research", "picks"], ["News", "research", "news"], ["Paper books", "performance", "books"], ["Capital gate", "performance", "gate"], ["Guide", "guide", ""]];
+function searchUniverse() {
+  if (searchUniverse._u) return searchUniverse._u;
+  const u = new Map();
+  const add = (sym, co, where, rank) => {
+    if (!sym) return;
+    const k = String(sym).toUpperCase(), e = u.get(k);
+    if (e) { if (!e.co && co) e.co = co; return; }
+    u.set(k, { sym: k, co: co || "", where, rank: isNum(rank) ? rank : 0 });
+  };
+  ROWS.forEach(r => add(r.sym, r.company, "scan", 100 + (r.rs || 0)));
+  Object.entries(MBS).forEach(([s, m]) => add(s, nameOf(s), "mb", m.score));
+  (RD.rows || []).forEach(r => add(r.sym, nameOf(r.sym), "radar", 0));
+  const P = lazy("penny") || D.penny;
+  ((P && P.rows) || []).forEach(r => add(r.sym, r.company, "penny", 0));
+  return (searchUniverse._u = [...u.values()]);
 }
 function palMove(d) {
   if (!_pal.items.length) return;
@@ -1169,7 +1222,7 @@ function palMove(d) {
 function palPick(i) {
   const it = _pal.items[i == null ? _pal.i : i]; if (!it) return;
   closePalette();
-  if (it.type === "page") go(it.id); else openStock(it.sym, ROWS.map(r => r.sym));
+  if (it.type === "page") go(it.id, it.sub); else openStock(it.sym, _pal.items.filter(x => x.type === "stock").map(x => x.sym));
 }
 let _deb = null; function debounce(fn, ms) { clearTimeout(_deb); _deb = setTimeout(fn, ms); }
 
@@ -1259,7 +1312,7 @@ function onRoute() {
   }
   closeSheet(true);
   h = canonRoute(h);
-  const id = PAGES.some(p => p.id === h[0]) ? h[0] : "home";
+  const id = PAGES.some(p => p.id === h[0]) || h[0] === "guide" ? h[0] : "home";
   S.page = id; S.sub = h[1] || null;
   if (id === "watchlist" && S.sub) S.watch.tab = S.sub;
   if (id === "screener" && S.sub) S.sc = S.sub;
@@ -1268,6 +1321,76 @@ function onRoute() {
   renderShell();
   renderPage();
   window.scrollTo(0, 0);
+  if (id === "guide" && S.sub) setTimeout(() => { const el = document.getElementById("g-" + S.sub); if (el) el.scrollIntoView({ block: "start" }); }, 60);
+}
+/* ===================================================================== guide
+   One page a first-time reader can finish in two minutes: what this is, the
+   four steps, every word the app uses (DESIGN.md §3) and their account size. */
+function glossary() {
+  const rp = isNum(D.risk_pct) ? D.risk_pct : 1.25;
+  return [
+    ["Scores", [
+      ["Conviction", "0 to 100. An eight-question check of a stock: trend, earnings, money flow, balance sheet, news, governance, valuation and theme. 70 and above is Strong, 50 to 69 Moderate, under 50 Weak. Avoid means a red flag vetoed it. It separates weak stocks from the rest; it does not rank good ones against each other."],
+      ["RS", "Relative strength, 0 to 100: how the stock's 6- and 12-month return ranks against the others. 98 means stronger than 98% of them."],
+      ["Multibagger score", "0 to 100: how many of the nine ingredients that came before past Indian multibaggers are present at once, such as a turnaround, a low valuation, few institutions, promoters buying, a volume surge or price leadership. A research idea, not a buy signal: even the best signal is followed by a triple about 1 time in 10."],
+      ["Penny score", "0 to 100, the penny screen's own formula for very small companies: momentum, growth and whether you could sell. It is not the conviction check."],
+    ]],
+    ["The AI", [
+      ["AI rating", "1 to 5. Each week an AI reads the filings, results calls and reports of the top multibagger names and writes a deep-dive. 5 is its strongest long-term view."],
+      ["AI check", "Buy, Wait or Skip. Each night an AI analyst reads the top buy alerts and looks for reasons not to buy: results due, red flags, governance. Research, not a filter."],
+      ["Weekly pick", "Five stocks a panel of AI analysts picks each week from everything above."],
+    ]],
+    ["Price stages", [
+      ["Uptrend", "All eight trend checks pass. A good backdrop, not a buy by itself."],
+      ["Extended", "Ran far above its trend. Don't chase it; wait for it to rest."],
+      ["Basing", "A base is forming but the uptrend isn't confirmed yet."],
+      ["Neutral", "No clear trend."],
+      ["Downtrend", "Falling. Avoid it."],
+    ]],
+    ["Signals", [
+      ["Base", "A stretch where the price moves sideways in tighter and tighter swings after a rise. Breakouts from bases are what the system buys."],
+      ["Alert price", "The top of the base. A close above it on at least 1.5 times normal volume is the buy signal."],
+      ["Base ready", "A stock in an uptrend with a live base, at any distance from its alert price."],
+      ["Near breakout", "A base within 5% of its alert price, or above it and waiting for volume."],
+      ["Buy now", "A signal that fired and is still valid. Buy at the next open, unless the price opens more than 5% above the alert price (past the buy zone)."],
+      ["Triggered", "Signals from the last 7 days. Opened too high: it gapped past the buy zone, so the plan skipped it. Faded: it fell back under the alert price. Hit its stop: the setup failed."],
+      ["Forming", "A base in a stock whose uptrend isn't confirmed yet. Watch only."],
+      ["Gap-up", "A stock that jumped on big news with heavy volume. A separate kind of signal, with its own stop."],
+      ["Vetoed", "A governance, debt or exchange-surveillance red flag. The system will not buy it, whatever the chart says."],
+    ]],
+    ["The plan", [
+      ["Stop", "The price at which you sell to cap the loss. Place it with your broker as soon as you buy."],
+      ["Quantity and risk", `How many shares to buy so that hitting the stop loses at most ${rp}% of your account. Worked out for ${capWord()}; set your own below.`],
+      ["Exit plan", "How a winner is sold: part of it at 2.5 times the amount risked, the stop raised to the buy price at 1.5 times, and the rest on a close under the 50-day or 30-week average."],
+    ]],
+    ["The record", [
+      ["Paper books", "Simulated portfolios that follow each set of rules exactly, costs included, so anyone can see whether the rules make money before real money is used."],
+      ["Capital gate", "The rule for real money: the system stays on paper until enough signals have qualified and their results clear a bar set in advance. Progress is on Performance."],
+      ["Tracked stocks", "Your saved stocks, the watchlist, this week's signals and the 30 highest multibagger scores. Breaking news warns you about these first."],
+    ]],
+  ];
+}
+function pageGuide() {
+  const groups = glossary();
+  return `<div class="guide">
+    <section class="card guide-lead"><h2 class="display">How Golden Stock works</h2>
+      <p>Every night after the market closes, Golden Stock checks ${num(ROWS.length)} NSE stocks, mostly small and mid caps, and scores the whole market for multibagger ingredients. It looks for one pattern: a strong stock that rests in a tight base, then breaks out on heavy volume. When one is close, it gives you the price to set an alert at, where to put the stop and how many shares to buy.</p>
+      <p class="muted">It is decision support, not advice. It places no orders and holds no money: you decide, and you place every trade in your own broker account.</p></section>
+    <section class="card" id="g-start"><div class="card-head"><h3>Your first five minutes</h3></div>
+      <ol class="guide-steps">
+        <li><b>Home</b> answers "anything to do today?" Each tile opens the page behind it. Most days nothing is a buy: the system averages 2 to 3 entries a month.</li>
+        <li><b>Find</b> in the <a href="#/screener/stocks">Screener</a>: all stocks by conviction, the <a href="#/screener/multibaggers">multibagger</a> ranking, <a href="#/screener/penny">penny stocks</a> and themes. Tap a column name to sort.</li>
+        <li><b>Understand</b> a stock by tapping it. Overview says what the company does and what to do; Chart, Scores, Business and News &amp; AI hold the detail. The star saves it to your list.</li>
+        <li><b>Act</b> from the <a href="#/watchlist/ready">Watchlist</a>. Copy the alerts into your broker's price alerts. When one fires, buy only if the day closes above the alert price on heavy volume, then place the stop.</li>
+        <li><b>Track</b> on <a href="#/performance/overview">Performance</a>: paper portfolios that follow the rules, compared with the market over the same dates.</li></ol></section>
+    ${groups.map(([g, rows], i) => fold(g, rows.length + " terms", `<dl class="gloss">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`, i === 0)).join("")}
+    <section class="card" id="g-account"><div class="card-head"><h3>Your account size</h3></div>
+      <p class="muted" style="font-size:13px;margin:0 0 10px">Every plan's quantity and rupee risk is worked out for this amount. It is kept in this browser only.</p>
+      <div class="acct-row"><label for="gcap" class="muted">₹</label><input class="field" id="gcap" inputmode="numeric" autocomplete="off" value="${esc(String(Math.round(myCapital())))}" aria-label="Account size in rupees">
+        <button class="btn sm primary" id="gcapset">Use this</button>${myCapital() !== CAPITAL ? `<button class="btn sm" id="gcapreset">Back to ${esc(inrShort(CAPITAL).replace(".00 L", " L"))}</button>` : ""}</div>
+      <div class="muted" style="font-size:12.5px;margin-top:8px">Plans are sized for <b>${esc(capWord())}</b> now.</div></section>
+    <div class="guide-foot"><a class="btn sm" href="./">About Golden Stock</a><button class="btn sm" data-go="home">Go to Home</button></div>
+  </div>`;
 }
 /* ===================================================================== shell */
 function renderShell() {
@@ -1280,13 +1403,15 @@ function renderShell() {
       ${counts[p.id] ? `<span class="badge-count chip sm ${p.id === "home" ? "buy" : "ghost"}">${counts[p.id]}</span>` : ""}</button>`).join("")}
     <div class="rail-foot">
       <button class="row linkish" data-go="performance" data-sub="system" data-tip="Data freshness for every part of the system."><span class="dot ${dh.state}"></span><span>Prices to ${esc(dateLabel(priceSession()))}</span></button>
+      <button class="row linkish" data-go="guide">${I.help}<span>How it works</span></button>
       <div class="row faint">Updated ${esc(D.generated || "")}</div>
     </div>`;
-  const title = (PAGES.find(p => p.id === S.page) || {}).label || "";
+  const title = (PAGES.find(p => p.id === S.page) || {}).label || (S.page === "guide" ? "Guide" : "");
   $("#topbar").innerHTML = `
     <div class="brand-mark sm show-sm" aria-hidden="true">G</div><h1 class="display">${esc(title)}</h1>
     <span class="spacer"></span>
     ${dh.state !== "ok" ? `<button class="pill" data-go="performance" data-sub="system" data-tip="Some data is older than it should be, or a job failed. Open System for the details."><span class="dot ${dh.state}"></span>Data ${dh.word}</button>` : ""}
+    <button class="icon-btn" data-go="guide" aria-label="How Golden Stock works" data-tip="How Golden Stock works, and what every word means.">${I.help}</button>
     <button class="icon-btn" id="searchbtn" aria-label="Search stocks">${I.search}</button>
     <button class="icon-btn" id="themebtn" aria-label="Switch between light and dark">${document.documentElement.dataset.theme === "light" ? I.moon : I.sun}</button>`;
   $("#bottomnav").innerHTML = PAGES.map(p => `<button data-go="${p.id}" class="${S.page === p.id ? "on" : ""}" aria-current="${S.page === p.id ? "page" : "false"}"><span class="bn-ic">${I[p.icon]}${p.id === "home" && nb ? `<i class="bn-badge">${nb}</i>` : ""}</span><span class="bn-l">${p.label}</span></button>`).join("");
@@ -1295,12 +1420,12 @@ function renderPage() {
   const m = $("#main");
   m.dataset.rendered = "1";
   [_pageCharts, _detailCharts].forEach(b => { b.forEach(c => { try { c.remove(); } catch (e) { } }); b.length = 0; });
-  const fn = { home: pageHome, screener: pageScreener, watchlist: pageWatchlist, research: pageResearch, performance: pagePerformance }[S.page] || pageHome;
+  const fn = { home: pageHome, screener: pageScreener, watchlist: pageWatchlist, research: pageResearch, performance: pagePerformance, guide: pageGuide }[S.page] || pageHome;
   m.innerHTML = `<div class="fade-in">${fn()}</div>` + footer();
   afterRender();
 }
 function footer() {
-  return `<div class="foot"><span>Decision support only, not investment advice. You place every order yourself.</span>
+  return `<div class="foot"><span>Decision support only, not investment advice. You place every order yourself. <a href="#/guide">How it works</a></span>
     <span>Prices: Yahoo daily and NSE bhavcopy · Fundamentals: screener.in · Filings: NSE</span></div>`;
 }
 const AFTER = [];
@@ -1342,9 +1467,14 @@ function headsUp(syms) {
 /* The banner (DESIGN.md §6.1): one tile per question you open the app with,
    each a button to the page that answers it. Then the to-do list, three rows a
    section. Nothing that runs by itself (books, the gate) appears here. */
+/* "Tracked" stocks, one definition everywhere (the Guide says it in words):
+   saved, the watchlist, this week's signals and the 30 top multibagger scores. */
+function trackedSyms() {
+  return new Set([...SAVED, ...buySignals().map(a => a.sym), ...readySetups().map(s => s.sym), ...recentTriggers().map(a => a.sym), ...mbTop(30).map(m => m.sym), ...heldSyms()]);
+}
 function breakingNews() {
   const hits = (D.radar || {}).hits || [];
-  const follow = new Set([...buySignals().map(a => a.sym), ...readySetups().map(s => s.sym), ...recentTriggers().map(a => a.sym), ...mbTop(30).map(m => m.sym), ...heldSyms()]);
+  const follow = trackedSyms();
   const negF = hits.filter(h => h.cls === "neg" && follow.has(h.sym));
   const surv = [...follow].filter(s => survBy[s] && (survBy[s].flags || []).length);
   return { hits, negF, surv };
@@ -1364,8 +1494,8 @@ function bannerTiles() {
   const top = mbTop(1)[0], nMB = Object.keys(MBS).length;
   const bn = breakingNews(), ai = aiLatest(), rg = regime(), dh = dataHealth();
   const newsNote = bn.negF.length
-    ? `${bn.negF.length} negative on stocks you follow: ${bn.negF.slice(0, 2).map(h => h.sym).join(", ")}${bn.negF.length > 2 ? " +" + (bn.negF.length - 2) : ""}`
-    : bn.hits.length ? "Filings since the last scan. None negative on stocks you follow." : "No new filings since the last scan.";
+    ? `${bn.negF.length} negative on ${bn.negF.length === 1 ? "a tracked stock" : "tracked stocks"}: ${bn.negF.slice(0, 2).map(h => h.sym).join(", ")}${bn.negF.length > 2 ? " +" + (bn.negF.length - 2) : ""}`
+    : bn.hits.length ? "Filings since the last scan. None negative on tracked stocks." : "No new filings since the last scan.";
   return [
     { label: "Buy now", icon: I.bolt, s: buys.length ? "buy" : "", val: String(buys.length),
       note: buys.length ? buys.slice(0, 3).map(a => a.sym).join(", ") + (buys.length > 3 ? " +" + (buys.length - 3) : "") : "None today" + (faded.length ? `. ${faded.length} triggered this week` : ""),
@@ -1382,8 +1512,8 @@ function bannerTiles() {
     { label: "Health", icon: I.pulse, s: dh.state === "fail" ? "risk" : dh.state === "warn" || rg.defensive ? "warn" : "ok",
       val: dh.state !== "ok" ? "Data " + dh.word : rg.defensive ? "Market weak" : "Healthy", word: true,
       note: dh.state !== "ok"
-        ? `${dh.bad.concat(dh.warn).map(x => x.label).join(", ")} ${dh.bad.length + dh.warn.length > 1 ? "are" : "is"} ${dh.word}. Market ${rg.defensive ? "weak" : "healthy"}, ${rg.defensive ? "half" : "full"}-size positions.`
-        : `${isNum(rg.breadth) ? rg.breadth.toFixed(0) + "% of stocks above their 200-day average. " : ""}${rg.defensive ? "Half" : "Full"}-size positions. Data fresh.`,
+        ? `${dh.bad.concat(dh.warn).map(x => x.label).join(", ")} ${dh.bad.length + dh.warn.length > 1 ? "are" : "is"} ${dh.word}. Market ${rg.defensive ? "weak, so buys are half" : "healthy, so buys are full"} size.`
+        : `${isNum(rg.breadth) ? rg.breadth.toFixed(0) + "% of stocks are above their 200-day average, so buys are " : "Buys are "}${rg.defensive ? "half" : "full"} size. Data fresh.`,
       go: "performance", sub: "system" },
   ];
 }
@@ -1396,17 +1526,29 @@ function tileHtml(t) {
 function pageHome() {
   const buys = buySignals(), ready = readySetups(), alerts = homeAlerts().slice(0, 3), mbt = mbTop(3);
   const faded = recentTriggers().filter(a => !buys.some(b => b.sym === a.sym));
-  const heads = headsUp(new Set([...buys.map(a => a.sym), ...homeAlerts().map(s => s.sym), ...mbTop(6).map(m => m.sym)]));
+  const heads = headsUp(new Set([...buys.map(a => a.sym), ...homeAlerts().map(s => s.sym), ...mbTop(6).map(m => m.sym), ...SAVED]));
   let n = 0;
   return `
-  <div class="home-asof">Prices to the close on ${esc(dayName(priceSession()))}</div>
+  ${welcomeCard()}<div class="home-asof">Prices to the close on ${esc(dayName(priceSession()))}</div>
   <div class="board">${bannerTiles().map(tileHtml).join("")}</div>
   ${step(++n, "Buy today", buys.length ? buys.length + " valid signal" + (buys.length > 1 ? "s" : "") + " with a sized plan" : "",
     buys.length ? `<div class="action-list">${buys.slice(0, 3).map(buyCard).join("")}</div>${buys.length > 3 ? `<div class="step-actions">${seeAll("watchlist", "buy", "See all " + buys.length)}</div>` : ""}`
       : `<div class="step-empty"><b>Nothing to buy today.</b> That's normal: the system averages 2–3 entries a month, with gaps of weeks.${faded.length ? ` <a href="#/watchlist/triggered">${faded.length} stock${faded.length > 1 ? "s" : ""} triggered this week</a> but opened too high or faded back.` : ""}</div>`)}
-  ${step(++n, "Set price alerts", ready.length ? `the ${alerts.length} closest of ${ready.length}` : "", alertsBlock(alerts, ready.length))}
+  ${step(++n, "Set price alerts", ready.length ? `the ${alerts.length} closest of ${ready.length} · sized for ${capWord()}` : "", alertsBlock(alerts, ready.length))}
   ${mbt.length ? step(++n, "Research these", "the highest multibagger scores, whole market", mbBlock(mbt)) : ""}
-  ${heads.length ? step(++n, "Heads-up", "risk news on the stocks above", headsBlock(heads)) : ""}`;
+  ${heads.length ? step(++n, "Heads-up", "risk flags on stocks near a buy, saved, or high on the multibagger list", headsBlock(heads)) : ""}`;
+}
+/* First visit: what this is and the four steps, until dismissed (Guide has the rest). */
+function welcomeCard() {
+  if (store("gs.welcomed") === "1") return "";
+  return `<section class="welcome" id="welcome"><div class="welcome-head"><h2 class="display">New here? Start with this.</h2><button class="icon-btn" data-welcome="close" aria-label="Hide this introduction">${I.close}</button></div>
+    <p>Golden Stock checks ${num(ROWS.length)} NSE stocks every night, mostly small and mid caps. It finds the few setting up to rise, gives the exact price to buy at with a stop and a quantity, and keeps a public record of how its signals did.</p>
+    <ol class="welcome-steps">
+      <li><b>Find.</b> The <a href="#/screener/stocks">Screener</a> ranks stocks by conviction, and the whole market by multibagger score.</li>
+      <li><b>Understand.</b> Tap any stock for what the company does, its scores, the AI's notes and the latest news.</li>
+      <li><b>Act.</b> The <a href="#/watchlist/ready">Watchlist</a> gives alert prices. Set them in your broker's app and buy only on a close above.</li>
+      <li><b>Track.</b> <a href="#/performance/overview">Performance</a> shows, on paper and in public, whether the system makes money.</li></ol>
+    <div class="welcome-actions"><a class="btn sm primary" href="#/guide">Read the 2-minute guide</a><button class="btn sm" data-welcome="close">Got it</button></div></section>`;
 }
 function alertLine(s, forming) {
   if (!isNum(s.dist)) return `Alert <b class="num">${px(s.pivot)}</b>`;
@@ -1414,7 +1556,7 @@ function alertLine(s, forming) {
   return `Alert <b class="num">${px(s.pivot)}</b> · <span class="warn">${forming ? "price is above it, but the uptrend isn't confirmed yet" : "price is above it: a close here on 1.5× normal volume makes it a buy"}</span>`;
 }
 function planLine(s) {
-  const p = s.plan && !s.plan.skip ? s.plan : null;
+  const p = s.plan && !s.plan.skip ? sized(s.plan) : null;
   return p ? `Stop <span class="num">${px(p.stop)}</span> · <span class="num">${num(p.shares)}</span> shares · risk <span class="num">${inr(p.risk)}</span>`
     : `<span class="warn">No sized plan: the stop would be more than 12% away</span>`;
 }
@@ -1445,17 +1587,19 @@ function radarBlock(list) {
 /* ================================================================= WATCHLIST
    A terminal: the list on the left, everything about the selected stock on
    the right. ↑ ↓ move through the list. On a phone a tap opens the stock. */
-const WTABS = [["buy", "Buy now"], ["ready", "Base ready"], ["triggered", "Triggered"], ["forming", "Forming"]];
+const WTABS = [["buy", "Buy now"], ["ready", "Base ready"], ["triggered", "Triggered"], ["forming", "Forming"], ["saved", "Saved"]];
 const WHINT = {
   buy: "Valid signals with a sized plan. Buy at the next open, or skip it if the price has run more than 5% past the alert.",
   ready: "Stocks in an uptrend with a base ready, closest to their alert price first; vetoed names are left out. A close above the alert price on 1.5× normal volume makes it a buy.",
   triggered: "Signals from the last 7 days, including ones that opened too high or faded back.",
   forming: "A base is forming but the uptrend isn't confirmed yet. Watch only.",
+  saved: "Stocks you saved with the star on their page. They stay in this browser only.",
 };
 function watchItems(tab) {
   if (tab === "buy") return buySignals().map(a => ({ sym: a.sym, a }));
   if (tab === "triggered") return recentTriggers().map(a => ({ sym: a.sym, a }));
   if (tab === "forming") return formingSetups().map(s => ({ sym: s.sym, s }));
+  if (tab === "saved") return [...SAVED].map(sym => ({ sym, saved: true }));
   const d = s => isNum(s.dist) ? Math.abs(s.dist) : 99;
   return readySetups().slice().sort((x, y) => d(x) - d(y)).map(s => ({ sym: s.sym, s }));
 }
@@ -1471,21 +1615,24 @@ function pageWatchlist() {
   AFTER.push(() => drawWatchDetail());
   const counts = Object.fromEntries(WTABS.map(([k]) => [k, watchItems(k).length]));
   return `${subtabs(WTABS, tab, "data-wtab", counts)}
-  <div class="page-intro">${esc(WHINT[tab])}${tab === "ready" && items.length ? ` <button class="btn sm" data-copy-alerts="watch" style="margin-left:6px">${I.copy}Copy all alerts</button>` : ""}</div>
+  <div class="page-intro">${esc(WHINT[tab])}${tab === "buy" || tab === "ready" ? ` Quantities are for a ${capWord()} account (<a href="#/guide/account">change</a>).` : ""}${tab === "ready" && items.length ? ` <button class="btn sm" data-copy-alerts="watch" style="margin-left:6px">${I.copy}Copy all alerts</button>` : ""}</div>
   <div class="wl-grid">
-    <div class="wl-list" id="wllist">${items.length ? `<div class="slist">${items.slice(0, S.watch.limit || 30).map(it => watchCard(tab, it)).join("")}</div>${items.length > (S.watch.limit || 30) ? `<div style="padding:12px 0"><button class="btn" id="wmore">Show ${Math.min(30, items.length - (S.watch.limit || 30))} more of ${items.length - (S.watch.limit || 30)}</button></div>` : ""}` : `<div class="empty">${tab === "buy" ? "<b>Nothing to buy today.</b> That's normal: the system averages 2–3 entries a month." : "Nothing here right now."}</div>`}</div>
+    <div class="wl-list" id="wllist">${items.length ? `<div class="slist">${items.slice(0, S.watch.limit || 30).map(it => watchCard(tab, it)).join("")}</div>${items.length > (S.watch.limit || 30) ? `<div style="padding:12px 0"><button class="btn" id="wmore">Show ${Math.min(30, items.length - (S.watch.limit || 30))} more of ${items.length - (S.watch.limit || 30)}</button></div>` : ""}` : `<div class="empty">${tab === "buy" ? "<b>Nothing to buy today.</b> That's normal: the system averages 2–3 entries a month." : tab === "saved" ? "<b>Nothing saved yet.</b> Open any stock and tap the star next to its price to keep it here." : "Nothing here right now."}</div>`}</div>
     <div class="wl-detail" id="wldetail"></div>
   </div>`;
 }
 function statusChip(st, a) {
   if (a && st === "ACTIONABLE" && underStop(a)) return '<span class="chip sm risk" data-tip="The price closed under the plan\'s stop: the setup failed.">under its stop</span>';
-  return st === "ACTIONABLE" ? '<span class="chip sm buy">still valid</span>'
+  if (a && st === "ACTIONABLE" && stoppedSince(a)) return '<span class="chip sm risk" data-tip="The price fell to the plan\'s stop after the signal, so the setup failed. It is not a buy, even if the price has come back.">hit its stop</span>';
+  if (a && st === "ACTIONABLE" && !buySignals().some(b => b.sym === a.sym)) return '<span class="chip sm ghost" data-tip="The signal is open, but the chart is not a confirmed breakout, so the plan does not buy it.">watch only</span>';
+  return st === "ACTIONABLE" ? '<span class="chip sm buy" data-tip="Still a buy: it is in Buy now with a sized plan.">still valid</span>'
     : st === "RAN AWAY" ? '<span class="chip sm watch" data-tip="It opened more than 5% above the alert price, past the buy zone, so the plan skipped it.">opened too high</span>'
     : st === "VETOED" ? '<span class="chip sm risk">vetoed</span>'
     : '<span class="chip sm ghost" data-tip="The breakout fell back below the alert price.">faded</span>';
 }
 function watchCard(tab, it) {
   const o = { ctx: "watch", wsel: true, sel: it.sym === S.watch.sel };
+  if (it.saved) { o.line = savedLine(it.sym); return stockCard(it.sym, o); }
   if (it.s) { o.line = alertLine(it.s, tab === "forming"); o.sub = tab === "forming" ? "Watch only until the uptrend is confirmed" : planLine(it.s); }
   else if (it.a) {
     const a = it.a;
@@ -1493,6 +1640,14 @@ function watchCard(tab, it) {
     o.line = `${a.dokind === "ep" ? "Gap-up" : "Breakout"} on ${esc(dateLabel(a.d))} at <b class="num">${px(a.alert_px)}</b> · <span class="${cls(a.chg)}">${pct(a.chg)}</span> since`;
   }
   return stockCard(it.sym, o);
+}
+function savedLine(sym) {
+  const a = buySignals().find(x => x.sym === sym);
+  if (a) return `<span class="pos">Buy signal</span> · ${a.dokind === "ep" ? "gap-up" : "breakout"} on ${esc(dateLabel(a.d))}`;
+  const st = setupBy[sym], r = rowBy[sym];
+  if (st && st.status === "AWAITING TRIGGER") return alertLine(st, !r || r.tag !== "CONFIRMED");
+  if (r) return `${esc(stageWord(r.tag))} · no base yet`;
+  return MBS[sym] ? `Multibagger score ${Math.round(MBS[sym].score)} · outside the nightly scan` : "Outside the nightly scan";
 }
 function drawWatchDetail() {
   const box = $("#wldetail");
@@ -1517,7 +1672,7 @@ function stockHead(sym, nav) {
   const chips = [r.tag ? stageChip(r.tag) : "", (r.trig || (st && st.status)) && ["VALIDATED", "AWAITING TRIGGER", "EP EVENT"].includes(r.trig || st.status) ? setupChip(r.trig || st.status) : "", r.veto ? '<span class="chip sm risk">Vetoed</span>' : "", survChips(sym)].filter(Boolean).join(" ");
   return `<div class="shead">
     <div class="shead-row">${nav && nav.back ? nav.back : ""}<h2 class="display">${esc(sym)}</h2>
-      <span class="shead-px">${isNum(price) ? `<b>${px(price)}</b>` : ""}${isNum(chg) ? `<span class="${cls(chg)}">${movePct(chg)}</span>` : ""}</span></div>
+      <span class="shead-px">${isNum(price) ? `<b>${px(price)}</b>` : ""}${isNum(chg) ? `<span class="${cls(chg)}">${movePct(chg)}</span>` : ""}</span>${saveBtn(sym)}</div>
     <div class="shead-co"><span class="shead-coname">${esc(coLine(sym))}</span>${chips ? `<span class="shead-chips">${chips}</span>` : ""}${nav && nav.right ? nav.right : ""}</div>
   </div>`;
 }
@@ -1527,16 +1682,16 @@ function exitWords(p) {
 }
 function todoBox(sym) {
   const r = rowBy[sym] || {}, st = setupBy[sym], d = detailOf(sym) || {};
-  const a = buySignals().find(x => x.sym === sym), plan = planOf(sym);
-  const sp = st && st.plan && !st.plan.skip ? st.plan : null;
+  const a = buySignals().find(x => x.sym === sym), plan = sized(planOf(sym));
+  const sp = st && st.plan && !st.plan.skip ? sized(st.plan) : null;
   const rr0 = (RD.rows || []).find(x => x.sym === sym);
   const cells = list => `<div class="plan-grid">${list.map(([k, v, c, s]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v ${c || ""}">${v}</div>${s ? `<div class="s">${s}</div>` : ""}</div>`).join("")}</div>`;
   const tail = p => `<details class="more" style="margin-top:8px"><summary>Exit plan</summary><div class="muted" style="font-size:12.5px">${exitWords(p)}</div></details>`;
   if (r.veto) return `<div class="todo risk"><div class="todo-head"><span class="todo-tag">Avoid</span><span class="todo-text">Vetoed: ${esc((d.veto_reasons || []).join("; ") || "a governance or leverage red flag")}.</span></div></div>`;
   if (a && plan && !plan.skip) return `<div class="todo buy"><div class="todo-head"><span class="todo-tag">Buy signal</span><span class="todo-text">${a.dokind === "ep" ? "Gap-up" : "Breakout"} on ${esc(dateLabel(a.d))} at ${px(a.alert_px)}; now ${px(a.now_px)} <span class="${cls(a.chg)}">${pct(a.chg)}</span>.</span></div>
-    ${cells([["Entry ≈", px(plan.entry)], ["Stop", px(plan.stop), "neg", isNum(plan.stop_pct) ? pct(-plan.stop_pct) : ""], ["Quantity", num(plan.shares)], ["Risk", inr(plan.risk), "", isNum(riskShare(plan)) ? riskShare(plan).toFixed(2) + "% of capital" : ""]])}</div>`;
-  if (st && st.status === "AWAITING TRIGGER") return `<div class="todo watch"><div class="todo-head"><span class="todo-tag">Set an alert</span><span class="todo-text">Buy only on a close above <b>${px(st.pivot)}</b> with at least <b>${volFmt(st.vneed)}</b> shares traded (today: ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "—"} normal volume).</span>${sp ? `<button class="btn sm" data-copy-one="${esc(sym)}" style="margin-left:auto">${I.copy}Copy alert</button>` : ""}</div>
-    ${sp ? cells([["Alert price", px(st.pivot), "", "buy zone to " + px(st.zone_top)], ["Stop", px(sp.stop), "neg", Math.abs(sp.stop_pct).toFixed(1) + "% below the alert"], ["Quantity", num(sp.shares), "", inrShort(sp.value) + " position"], ["Risk", inr(sp.risk), "", (sp.risk / CAPITAL * 100).toFixed(2) + "% of capital"]]) + tail(sp) : `<div class="muted" style="font-size:12.5px">${esc(plainAI(st.plan && st.plan.why || "No sized plan: the stop would be wider than the 12% cap."))}</div>`}</div>`;
+    ${cells([["Entry ≈", px(plan.entry)], ["Stop", px(plan.stop), "neg", isNum(plan.stop_pct) ? pct(-plan.stop_pct) : ""], ["Quantity", num(plan.shares)], ["Risk", inr(plan.risk), "", isNum(riskShare(plan)) ? riskShare(plan).toFixed(2) + "% of " + capWord() : ""]])}</div>`;
+  if (st && st.status === "AWAITING TRIGGER") return `<div class="todo watch"><div class="todo-head"><span class="todo-tag">Set an alert</span><span class="todo-text">${isNum(st.dist) && st.dist < 0 ? `It closed above its alert price of <b>${px(st.pivot)}</b>, but on ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "less than"} normal volume, so it is not a buy yet. A close above it with at least <b>${volFmt(st.vneed)}</b> shares traded makes it one.` : `Buy only on a close above <b>${px(st.pivot)}</b> with at least <b>${volFmt(st.vneed)}</b> shares traded (today: ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "—"} normal volume).`}</span>${sp ? `<button class="btn sm" data-copy-one="${esc(sym)}" style="margin-left:auto">${I.copy}Copy alert</button>` : ""}</div>
+    ${sp ? cells([["Alert price", px(st.pivot), "", "buy zone to " + px(st.zone_top)], ["Stop", px(sp.stop), "neg", Math.abs(sp.stop_pct).toFixed(1) + "% below the alert"], ["Quantity", num(sp.shares), "", inrShort(sp.value) + " position"], ["Risk", inr(sp.risk), "", (sp.risk / myCapital() * 100).toFixed(2) + "% of " + capWord()]]) + tail(sp) : `<div class="muted" style="font-size:12.5px">${esc(plainAI(st.plan && st.plan.why || "No sized plan: the stop would be wider than the 12% cap."))}</div>`}</div>`;
   if (rr0) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">Flagged as a possible multibagger (${Object.keys(rr0.signals || {}).map(k => esc(RADAR_WORD[k] || k)).join(", ")}). ${MRS[sym] ? `An AI deep-dive read its filings: <b>AI rating ${esc(MRS[sym].conviction)} of 5</b> (${esc(MRS[sym].horizon || "")}), below.` : "Not a buy signal: read the business and the news below first."}</span></div></div>`;
   if (st && st.status) return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">Watch</span><span class="todo-text">${esc(SETUP_WORD[st.status] || st.status)}. Nothing to do until a fresh base forms.</span></div></div>`;
   return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">No setup</span><span class="todo-text">${esc(stageWord(r.tag))}. Nothing to do until a base forms; it will appear in the watchlist when one does.</span></div></div>`;
@@ -1576,7 +1731,7 @@ function scoreTiles(sym) {
     <button class="stile" data-stab="scores"><span class="k">Conviction</span><span class="row"><span class="v ${b.cls}">${isNum(r.score) ? Math.round(r.score) : "—"}</span><span class="w ${b.cls}">${b.word}</span></span>${isNum(r.score) ? meter(r.score / 100, kindOf(b.cls)) : ""}<span class="s">8 questions · tap for the reasons</span></button>
     <div class="stile" data-tip="Relative strength: the 6- and 12-month return ranked against the whole universe. 98 means stronger than 98% of stocks."><span class="k">RS</span><span class="row"><span class="v">${isNum(r.rs) ? Math.round(r.rs) : "—"}</span><span class="w muted">of 100</span></span>${isNum(r.rs) ? meter(r.rs / 100, "info") : ""}<span class="s">${isNum(r.rs) ? "Stronger than " + Math.round(r.rs) + "% of stocks" : "Not ranked"}</span></div>
     <button class="stile" data-stab="scores"><span class="k">Multibagger</span><span class="row"><span class="v">${m ? Math.round(m.score) : "—"}</span><span class="w muted">of 100</span></span>${m ? meter(m.score / 100, "teal") : ""}<span class="s">${m ? m.factors.length + " of " + nIng + " ingredients" : nIng ? "None of the ingredients today" : "Not computed"}</span></button>
-    <button class="stile" data-stab="news"><span class="k">AI</span><span class="row">${aiVal}</span>${pk ? `<span class="chips"><span class="chip sm ai">Weekly pick · ${esc(dateLabel((D.ai_picks || {}).generated))}</span></span>` : ""}<span class="s">${mr && v ? "AI check: " + esc(VERDICT_WORD[v.verdict] || v.verdict) : !mr && !v && !pk ? "No AI research yet" : "Tap for the notes"}</span></button>
+    <button class="stile" data-stab="news"><span class="k">AI</span><span class="row">${aiVal}</span>${pk ? `<span class="chips"><span class="chip sm ai">Weekly pick · ${esc(dateLabel((D.ai_picks || {}).generated))}</span></span>` : ""}<span class="s">${mr ? "Rated " + esc(dateLabel(mr.date)) + (v ? " · AI check: " + esc(VERDICT_WORD[v.verdict] || v.verdict) : "") : !v && !pk ? "No AI research yet" : "Tap for the notes"}</span></button>
   </div>`;
 }
 function headsFor(sym) {
@@ -1615,7 +1770,7 @@ function newsPeek(sym) {
   return `<div class="card list-card">${head}<div class="lc-body">${newsList(real.slice(0, 3))}</div></div>`;
 }
 function tabOverview(sym) {
-  return `${briefBlock(sym)}${todoBox(sym)}${scoreTiles(sym)}${priceFacts(sym)}${aiSays(sym)}${newsPeek(sym)}${headsFor(sym)}`;
+  return `${briefBlock(sym)}${todoBox(sym)}${pennyCard(sym)}${scoreTiles(sym)}${priceFacts(sym)}${aiSays(sym)}${newsPeek(sym)}${headsFor(sym)}`;
 }
 function tabChart(sym, p) {
   const st = setupBy[sym], sp = st && st.plan && !st.plan.skip ? st.plan : null;
@@ -1697,13 +1852,28 @@ function drawFundInto(sym, p) {
   put("debt", (f.debt || []).length ? lines(f.bs_labels || [], [{ l: "Borrowings", c: css("--watch"), v: n1(f.debt) }], 90, " Cr") : `<div class="muted">No balance-sheet data.</div>`);
   put("own", (f.prom || []).length ? lines(f.sh_labels || [], [{ l: "Promoters", c: css("--info"), v: n1(f.prom || []) }, { l: "FII", c: css("--ai"), v: n1(f.fii || []) }, { l: "DII", c: css("--buy"), v: n1(f.dii || []) }]) : `<div class="muted">No shareholding data.</div>`);
 }
+function pennyRow(sym) { const P = lazy("penny") || D.penny; return P ? (P.rows || []).find(r => r.sym === sym) || null : null; }
+function pennyCard(sym) {
+  const r = pennyRow(sym); if (!r) return "";
+  const flags = (r.flags || []).map(x => typeof x === "string" ? { code: x, detail: "" } : x);
+  return `<div class="todo ${r.veto ? "risk" : "watch"}"><div class="todo-head"><span class="todo-tag">Penny stock</span><span class="todo-text">${r.veto ? "Vetoed by the penny screen: " + esc(r.vetowhy || "a red flag") + "." : `Penny score <b>${Math.round(r.score)}</b> of 100. A research idea from the penny screen, never backtested: keep it to 1% of your portfolio.`}</span></div>
+    <div class="plan-grid"><div class="plan-cell"><div class="k">Traded a day</div><div class="v">${isNum(r.turn) ? "₹" + r.turn.toFixed(2) + " Cr" : "—"}</div></div>
+      <div class="plan-cell"><div class="k">Most you could sell in a day</div><div class="v">${isNum(r.turn) ? inrShort(r.turn * 1e7 * 0.1) : "—"}</div></div>
+      <div class="plan-cell"><div class="k">3 months</div><div class="v ${cls(r.run3m)}">${pct(r.run3m, 0)}</div></div>
+      <div class="plan-cell"><div class="k">Exchange flags</div><div class="v" style="font-size:13px">${flags.length ? esc(survText(flags)) : "none"}</div></div></div></div>`;
+}
 function outsideDetail(sym) {
+  const pc = pennyCard(sym), body = outsideDetail0(sym);
+  if (!pc) return body;
+  return /No data on this build/.test(body) ? pc + `<div class="dsec" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="https://www.nseindia.com/get-quotes/equity?symbol=${encodeURIComponent(sym)}" target="_blank" rel="noopener">NSE quote ↗</a><a class="btn sm" href="https://www.screener.in/company/${encodeURIComponent(sym)}/" target="_blank" rel="noopener">Screener.in ↗</a><a class="btn sm" href="https://www.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(sym)}" target="_blank" rel="noopener">Chart ↗</a></div>` : pc + body;
+}
+function outsideDetail0(sym) {
   const x = (RD.rows || []).find(r => r.sym === sym);
   if (!x && MBS[sym]) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">A multibagger candidate from the whole market, outside the nightly scan, so there's no chart or plan here yet.</span></div></div>
     <div class="dsec">${mbCard(sym)}</div>${MRS[sym] ? `<div class="dsec"><div class="dsec-title">Company deep-dive <button class="btn sm" data-story="${esc(sym)}" style="margin-left:8px;text-transform:none;letter-spacing:0">Read the full note</button></div>${researchCard(sym)}</div>` : ""}
     <div class="dsec" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="https://www.screener.in/company/${encodeURIComponent(sym)}/" target="_blank" rel="noopener">Screener.in ↗</a><a class="btn sm" href="https://www.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(sym)}" target="_blank" rel="noopener">Chart ↗</a></div>`;
   if (!x) return `<div class="empty" style="margin-top:14px">No data on this build for ${esc(sym)}.</div>`;
-  return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">A possible multibagger from the whole-market radar. It's outside the nightly scan, so there's no chart, plan or score here yet.</span></div>
+  return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">A possible multibagger from the whole-market radar. It's outside the nightly scan, so there's no chart or buy plan here yet.</span></div>
       <div class="plan-grid"><div class="plan-cell"><div class="k">6 months</div><div class="v ${cls(x.ret_6m_pct)}">${pct(x.ret_6m_pct, 0)}</div></div><div class="plan-cell"><div class="k">12 months</div><div class="v ${cls(x.ret_12m_pct)}">${pct(x.ret_12m_pct, 0)}</div></div>
       <div class="plan-cell"><div class="k">From 52-week high</div><div class="v">${pct(x.off_52w_high_pct, 1)}</div></div><div class="plan-cell"><div class="k">Traded a day</div><div class="v">₹${num(x.traded_value_cr, 1)} Cr</div></div></div></div>
     <div class="dsec"><div class="dsec-title">Signals</div><div class="card">${Object.entries(x.signals || {}).map(([k, d]) => `<div class="lrow" style="cursor:default"><div>${radarChip(k, d)}<div class="meta">${esc(RADAR_TIP[k] || "")}</div></div><span class="muted num" style="font-size:12px">${esc(dateLabel(d))}</span></div>`).join("")}</div></div>
@@ -1967,11 +2137,11 @@ function perfOverview() {
   return `<div class="grid grid-3" style="align-items:start">
     <div class="card"><div class="card-head"><h3>Capital gate</h3><span class="chip sm ${g.verdict === "PASS" ? "buy" : g.verdict === "FAIL" ? "risk" : "info"}">${esc(gateWord(g.verdict))}</span></div>
       <div class="big num">${num(have)}<span class="muted">/${num(need)}</span></div>${meter(have / need, "info")}
-      <div class="muted" style="font-size:12.5px;margin-top:10px">Real money waits for ${num(need)} qualifying signals by ${esc(g.deadline || "the deadline")}. <a href="#/performance/gate">The details</a></div></div>
+      <div class="muted" style="font-size:12.5px;margin-top:10px">No real money until ${num(need)} signals qualify${g.deadline ? ", by " + esc(dateLabel(g.deadline)) : ""}. <a href="#/performance/gate">The details</a></div></div>
     <div class="card"><div class="card-head"><h3>Forward record</h3></div>
       ${base ? `<div class="big num ${cls(base.x40)}">${pct(base.x40)}</div><div class="muted" style="font-size:12.5px">How much alerts with a live base beat the market over 40 sessions; ${num(base.b40)}% of them did. Uptrend-only alerts: ${pct(noBase && noBase.x40)}. <a href="#/performance/evidence">The details</a></div>` : `<div class="muted">Not measured on this build.</div>`}</div>
     <div class="card"><div class="card-head"><h3>Paper books</h3><span class="right"><a href="#/performance/books">open</a></span></div>
-      ${B.map(b => `<div class="lrow" data-book="${b.id}"><div><i class="bdot" style="background:var(${b.color})"></i><span class="sym">${esc(b.name)}</span><div class="meta">${b.started ? "since " + esc(dateLabel(b.started)) : "starts " + esc(b.startsLabel)}</div></div><span class="num ${cls(b.ret)}">${b.started && isNum(b.ret) ? pct(b.ret) : "—"}</span></div>`).join("")}</div>
+      ${B.map(b => `<div class="lrow" data-book="${b.id}"><div><i class="bdot" style="background:var(${b.color})"></i><span class="sym">${esc(b.name)}</span><div class="meta">${b.started ? "since " + esc(dateLabel(b.started)) + (isNum(b.mid) ? " · market " + pct(b.mid) : "") : "starts " + esc(b.startsLabel)}</div></div><span class="num ${cls(b.ret)}">${b.started && isNum(b.ret) ? pct(b.ret) : "—"}</span></div>`).join("")}</div>
   </div>`;
 }
 function perfBooks() {
@@ -2002,6 +2172,23 @@ function setSheetTab(k) {
 document.addEventListener("click", e => {
   const t = e.target;
   const st = t.closest("[data-stab]"); if (st) { setSheetTab(st.dataset.stab); return; }
+  const sv = t.closest("[data-save]");
+  if (sv) {
+    const sym = sv.dataset.save, on = toggleSaved(sym);
+    $$(`[data-save="${sym}"]`).forEach(b => { b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", on ? "Remove from saved stocks" : "Save this stock"); });
+    toast(on ? `${sym} saved. Find it under Watchlist, Saved.` : `${sym} removed from saved stocks.`);
+    if (S.page === "watchlist" && S.watch.tab === "saved" && !(S.stock && $("#sheet").classList.contains("on"))) renderPage();
+    return;
+  }
+  const wc = t.closest("[data-welcome]");
+  if (wc) { store("gs.welcomed", "1"); const w = $("#welcome"); if (w) w.remove(); return; }
+  if (t.closest("#gcapset")) {
+    const v = +String(($("#gcap") || {}).value || "").replace(/[^0-9]/g, "");
+    if (v >= 10000) { store("gs.capital", String(v)); toast(`Plans are now sized for ${capWord()}.`); renderPage(); }
+    else toast("Enter an amount of at least ₹10,000.");
+    return;
+  }
+  if (t.closest("#gcapreset")) { try { localStorage.removeItem("gs.capital"); } catch (e) { } toast(`Plans are sized for ${capWord()} again.`); renderPage(); return; }
   const story = t.closest("[data-story]");
   if (story) { const s = story.dataset.story; location.hash = "#/research/deepdives" + (s ? "/" + encodeURIComponent(s) : ""); return; }
   const goEl = t.closest("[data-go]");
@@ -2028,8 +2215,11 @@ document.addEventListener("click", e => {
   const pi = t.closest("[data-pi]"); if (pi) { palPick(+pi.dataset.pi); return; }
   if (t.closest("#pal") && !t.closest(".pal-box")) { closePalette(); return; }
   const ca = t.closest("[data-copy-alerts]");
-  if (ca) { const list = ca.dataset.copyAlerts === "home" ? homeAlerts() : watchItems("ready").map(i => i.s); copyText(alertText(list.filter(s => s.pivot)), "Alerts copied"); return; }
-  const c1 = t.closest("[data-copy-one]"); if (c1) { const s = setupBy[c1.dataset.copyOne]; if (s) copyText(alertText([s]), "Alert copied"); return; }
+  if (ca) {
+    const list = (ca.dataset.copyAlerts === "home" ? homeAlerts().slice(0, 3) : watchItems("ready").map(i => i.s)).filter(s => s.pivot && s.plan && !s.plan.skip);
+    copyText(alertText(list), `${list.length} alert${list.length === 1 ? "" : "s"} copied. Paste them into your broker's price alerts.`); return;
+  }
+  const c1 = t.closest("[data-copy-one]"); if (c1) { const s = setupBy[c1.dataset.copyOne]; if (s) copyText(alertText([s]), "Alert copied. Set it as a price alert in your broker's app."); return; }
   const wt = t.closest("[data-wtab]");
   if (wt) { S.watch.tab = S.sub = wt.dataset.wtab; S.watch.sel = null; S.watch.limit = 30; history.replaceState(null, "", "#/watchlist/" + S.watch.tab); renderPage(); return; }
   const ws = t.closest("[data-wsel]");
