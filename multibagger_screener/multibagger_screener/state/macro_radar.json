@@ -1,19 +1,107 @@
 {
  "ok": true,
- "generated": "2026-10-13T17:43:33",
+ "generated": "2026-10-14T15:16:44",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9482,
- "policy_hits": 12,
- "stories": 10,
+ "headlines_read": 9766,
+ "policy_hits": 16,
+ "stories": 12,
  "themes": {
-  "ev": {
-   "pressure": 0.136,
-   "pos_flow": 0.108,
+  "railways": {
+   "pressure": 0.284,
+   "pos_flow": 0.2474,
+   "neg_flow": 0.0,
+   "n_scored": 2,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
+     "date": "2026-10-14T20:10:30",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/cabinet-approves-2010-cr-bonus-for-over-11-lakh-railway-employees/article71583806.ece",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 2010.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 2,
+     "retellings": 3,
+     "weight": 0.1795
+    },
+    {
+     "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
+     "date": "2026-09-20T09:39:35",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/logistics/indian-railways-approves-multiple-infrastructure-safety-projects-to-enhance-operational-efficiency/article71486995.ece",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0679
+    }
+   ]
+  },
+  "capex": {
+   "pressure": 0.277,
+   "pos_flow": 0.24,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
    "top": [
+    {
+     "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
+     "date": "2026-10-14T15:34:19",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/energy/centre-extends-bid-deadline-for-advanced-chemistry-cell-battery-pli-scheme-to-november-10/articleshow/134938625.cms",
+     "themes": [
+      "capex",
+      "ev"
+     ],
+     "polarity": "pos",
+     "event": "scheme/mission",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.24
+    }
+   ]
+  },
+  "ev": {
+   "pressure": 0.372,
+   "pos_flow": 0.3445,
+   "neg_flow": 0.0,
+   "n_scored": 2,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
+     "date": "2026-10-14T15:34:19",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/energy/centre-extends-bid-deadline-for-advanced-chemistry-cell-battery-pli-scheme-to-november-10/articleshow/134938625.cms",
+     "themes": [
+      "capex",
+      "ev"
+     ],
+     "polarity": "pos",
+     "event": "scheme/mission",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.24
+    },
     {
      "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
      "date": "2026-10-13T14:26:14",
@@ -29,13 +117,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.108
+     "weight": 0.1045
     }
    ]
   },
   "defence": {
-   "pressure": 0.147,
-   "pos_flow": 0.1176,
+   "pressure": 0.142,
+   "pos_flow": 0.1137,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 0,
@@ -55,7 +143,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0857
+     "weight": 0.0829
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -73,13 +161,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0318
+     "weight": 0.0308
     }
    ]
   },
   "renewables": {
-   "pressure": 0.203,
-   "pos_flow": 0.1682,
+   "pressure": 0.197,
+   "pos_flow": 0.1628,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -99,13 +187,13 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.1682
+     "weight": 0.1628
     }
    ]
   },
   "textiles": {
-   "pressure": 0.182,
-   "pos_flow": 0.1487,
+   "pressure": 0.177,
+   "pos_flow": 0.1439,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -125,13 +213,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1487
+     "weight": 0.1439
     }
    ]
   },
   "defelec": {
-   "pressure": 0.042,
-   "pos_flow": 0.0318,
+   "pressure": 0.041,
+   "pos_flow": 0.0308,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -152,41 +240,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0318
-    }
-   ]
-  },
-  "capex": {
-   "pressure": 0.0,
-   "pos_flow": 0.0,
-   "neg_flow": 0.0,
-   "n_scored": 0,
-   "n_attn": 1,
-   "top": []
-  },
-  "railways": {
-   "pressure": 0.09,
-   "pos_flow": 0.0702,
-   "neg_flow": 0.0,
-   "n_scored": 1,
-   "n_attn": 1,
-   "top": [
-    {
-     "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
-     "date": "2026-09-20T09:39:35",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/economy/logistics/indian-railways-approves-multiple-infrastructure-safety-projects-to-enhance-operational-efficiency/article71486995.ece",
-     "themes": [
-      "railways"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0702
+     "weight": 0.0308
     }
    ]
   },
@@ -200,6 +254,41 @@
   }
  },
  "events": [
+  {
+   "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
+   "date": "2026-10-14T15:34:19",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/energy/centre-extends-bid-deadline-for-advanced-chemistry-cell-battery-pli-scheme-to-november-10/articleshow/134938625.cms",
+   "themes": [
+    "capex",
+    "ev"
+   ],
+   "polarity": "pos",
+   "event": "scheme/mission",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.24
+  },
+  {
+   "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
+   "date": "2026-10-14T20:10:30",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/cabinet-approves-2010-cr-bonus-for-over-11-lakh-railway-employees/article71583806.ece",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": 2010.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 2,
+   "retellings": 3,
+   "weight": 0.1795
+  },
   {
    "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
    "date": "2026-09-30T20:01:24",
@@ -215,7 +304,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.1682
+   "weight": 0.1628
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -232,7 +321,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1487
+   "weight": 0.1439
   },
   {
    "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
@@ -249,7 +338,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.124
+   "weight": 0.12
   },
   {
    "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -266,7 +355,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.108
+   "weight": 0.1045
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -300,7 +389,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0857
+   "weight": 0.0829
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -317,7 +406,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0702
+   "weight": 0.0679
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -334,7 +423,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0473
+   "weight": 0.0458
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -352,7 +441,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0429
+   "weight": 0.0415
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -370,7 +459,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0318
+   "weight": 0.0308
   }
  ]
 }
