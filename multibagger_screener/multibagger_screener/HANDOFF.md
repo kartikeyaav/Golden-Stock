@@ -2863,6 +2863,21 @@ machine words. Fixed:
 - The laptop job-runner probe (`/api/status`) runs only on localhost; on the
   public site it was a console 404 on every System visit.
 
+**Numbers audit, same day (user: "one solid check of all the numbers").**
+Every figure on the live page was recomputed from its own data islands. The
+arithmetic held everywhere it is computed in one place (131 setup plans, the
+multibagger sums to 0.05, theme medians, breadth 49.9% vs 50.1%). What failed
+were figures carried across time or definitions: market cap and P/E from
+screener.in reads up to three months old (now re-priced to tonight's close in
+`build_dashboard._reprice`, tiers re-cut to AMFI-style lines after it); the
+momentum book measured from its first close instead of its ₹10 L
+(`momentum_core.snapshot`, live after the next nightly); the conviction read
+(weekly, 11 Oct) beside tonight's stage; landing counts that included vetoed
+names; "Heat 0" on thin themes. The multibagger score was right; the page now
+shows its sum and rank and keeps it off the Overview unless top 25%. Tests:
+`tests/test_numbers_audit.py` (4) and four more in `test_ui_v10.py`, each
+canaried red.
+
 **Audit the published page, not a local build.** A local build reads the local
 `state/` as of the last pull; it showed Momentum core with no value series
 ("starts 1 October" beside 20 holdings), while the published page, built from

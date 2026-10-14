@@ -86,6 +86,15 @@ two. From v10, each idea has exactly one name.
 | **Weekly pick** | yes / no | Chosen by the weekly AI committee | "Committee pick", HIGH/MEDIUM |
 | **Penny score** | 0–100 | The penny screen's own formula (momentum, growth, tradability). Not the conviction check | "Score" |
 
+**Multibagger score, read correctly.** It is the points of the ingredients a
+stock has, out of 100 for all nine (each worth its measured edge: promoter
+buying with momentum 19.5, turnaround 13, … volume surge 7). Most scan stocks
+score low by design (median 13, and 381 of 963 have none), so a low score is
+not a verdict. Wherever the number shows, its sum, rank and the market's scale
+are one tap away ("1 of 9 ingredients · 9 of 100 points · rank 597 of 868;
+the top 10% start at 33"). It is a headline tile on a stock's Overview only
+when the stock is in the top 25% of the ranking; otherwise it lives on Scores.
+
 **Conviction bands.** 70 and above: **Strong** (green). 50–69: **Moderate**
 (neutral). Below 50: **Weak** (amber). Vetoed: **Avoid** (red). The band is
 taken from the whole number shown, so "70" never reads "Moderate". ("Passes"
@@ -109,6 +118,20 @@ A "What to do" box may use only these verbs: **Buy**, **Set an alert**,
 
 A signal whose latest close is at or under its own stop is never a buy: it
 leaves "Buy now" and reads "under its stop" wherever it is listed.
+
+### Numbers carry their date and their basis
+
+- A figure read on another day than tonight's prices says so: the conviction
+  read ("read 11 Oct"), results ("results as read on 8 Oct"). When the stage
+  has turned since the read, the Scores tab says it in a line.
+- Market cap and P/E are re-priced to tonight's close (shares and earnings
+  change only at results). Size bands: Large over ₹1 lakh Cr, Mid over
+  ₹33,000 Cr, Small over ₹2,000 Cr, Micro below.
+- A veto shows what it capped: "caps the score at 25 whatever the eight
+  answers add up to (here 44)", with the reason in words.
+- A paper book's return is measured from the money that went in, and its
+  benchmark from the close before.
+- A count on the landing page means the same as the count in the app.
 
 ### Words a reader brings
 
@@ -520,3 +543,25 @@ multibagger name), Performance, search and the back button.
 | News | "over 19d (2x M&A/JV); since 2026-09-18" | "over 19 days (M&A/JV ×2); since 18 Sept" |
 | AI text, buy cards, chart | "card's veto checks", "pivot", "Gap-up (EP)", "+2.5R" | "the alert's red-flag checks", "alert price", "Gap-up", "sell part" |
 | Performance | Paper-book returns with no market beside them; "Real money waits … 2026-12-31" | "market +x%" beside each; "No real money until 40 signals qualify, by 31 Dec" |
+
+### Numbers audit (same day)
+
+Every figure on the live page was recomputed from the page's own data: plan
+arithmetic for all 131 setups (stop %, risk, position, buy zone, the exit
+levels, volume needed, daily range), prices against the last bar, the score
+sums, trend checks, breadth, themes, market pulse, paper books, the gate.
+
+| Where | Finding | Fix |
+|---|---|---|
+| Multibagger score | Correct (HFCL: one ingredient, 8.9 points), but nothing said how 9/100 is made, and a 9 sat beside Conviction 69 on every scan stock | Sum, rank and scale in the card and its "?"; Overview tile only for the top 25% |
+| Market cap, P/E | screener.in's figures on the day read; 884 of ~950 cache files from July (STLTECH's cap read ₹29,000 Cr after a 70% rise) | Re-priced to tonight's close; "results as read on" date |
+| Size bands | ₹50,000 / ₹12,000 Cr lines: 85 sub-lakh-crore names "Large", 231 small caps "Mid" | AMFI-style ₹1 lakh / ₹33,000 Cr |
+| Conviction | Vetoed 25 beside bars adding to 44–58; "promoter_pledge: …" | The cap and the reason in words |
+| Conviction | Read of 11 Oct beside 13 Oct's stage (ASHIANA "8 of 8 trend checks" and "Neutral") | Date on the score; a line when the trend has turned; chart words use tonight's stage |
+| Momentum book | "+1.5%" beside "NAV ₹10.10 L on ₹10L": measured from the first close, after the first day's buying | From ₹10 L, benchmarks from the close before (cloud script) |
+| Landing | "197 penny stocks that passed the safety screens" included 43 vetoed; base ready 41 vs the app's 38 | Same rules as the app |
+| Themes | Two- and three-stock themes showed "Heat 0" (nuclear: +30% in 3 months); the AI read quoted heat from another day | "too few"; heat numbers dropped from the prose |
+| Chart | A months-old alert's stop drawn as "stop" | Only a live signal's stop |
+| Stock header | Three stocks' last trade predates "Prices to 13 Oct" | "last traded 9 Oct" |
+| Score evidence | "Stronger than 100% of stocks", CONFIRMED, OPM, "(legs disagree…)", "bulk/block deals no" | Plain words |
+| Gate | "13/40, In progress" while the signals averaged a loss | "a loss of 16% of what each risked; the bar is a gain of 32%" |

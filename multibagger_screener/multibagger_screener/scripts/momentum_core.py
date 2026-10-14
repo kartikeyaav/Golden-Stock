@@ -249,16 +249,24 @@ def snapshot() -> dict:
     finish(st, C, momentum.panels(C, C * V))
     nav = st.get("nav") or []
     if nav:
+        # The money went in at the first rebalance's OPEN, and nav[0] is that
+        # day's close, after the costs and the day's move. So the sleeve is
+        # measured from its starting capital and every benchmark from the close
+        # before (the card read "+1.5%" beside "NAV Rs 10.10 L on Rs 10L").
         start = pd.Timestamp(nav[0][0])
-        rets = C[C.index >= start].pct_change(fill_method=None).clip(-0.5, 1.0)
+        before = C.index[C.index < start]
+        base = before[-1] if len(before) else start
+        rets = C[C.index >= base].pct_change(fill_method=None).clip(-0.5, 1.0)
         ew = (1 + rets.mean(axis=1, skipna=True).fillna(0)).cumprod()
-        cmp = {"sleeve": round((nav[-1][1] / nav[0][1] - 1) * 100, 2),
+        cap0 = float(st.get("capital") or CAPITAL)
+        cmp = {"sleeve": round((nav[-1][1] / cap0 - 1) * 100, 2),
                "universe_ew": round((float(ew.iloc[-1]) - 1) * 100, 2)}
         for key, sym in (("midsmall", "MIDSMALL"), ("nifty", "NIFTY50")):
             b = load_ohlcv(sym)
             if b is not None and len(b):
                 b = b.set_index("date")["close"]
-                b = b[b.index >= start]
+                prior = b[b.index < start]
+                b = pd.concat([prior.iloc[-1:], b[b.index >= start]]) if len(prior) else b[b.index >= start]
                 if len(b) > 1:
                     cmp[key] = round((float(b.iloc[-1]) / float(b.iloc[0]) - 1) * 100, 2)
         st["compare"] = cmp

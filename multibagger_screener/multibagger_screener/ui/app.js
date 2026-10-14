@@ -238,8 +238,12 @@ function ring(frac, big, small, col, size) {
 }
 /* the eight weighted questions as bars — the classic drawer's "Why this score" */
 const PLAIN_DIM = [
-  [/\bVCP none\b/g, "no base"], [/\bVCP\b/g, "base"],
-  [/\bRS percentile (\d+)/g, "stronger than $1% of stocks"], [/\bTT (\d)\/8\b/g, "$1 of 8 trend checks pass"],
+  [/\bVCP none\b/g, "no base"], [/\bVCP live\b/g, "a base is forming"], [/\bVCP\b/g, "base"],
+  [/\bRS percentile 100\b/g, "among the very strongest stocks"],
+  [/\bRS percentile (\d+)/g, "stronger than $1% of stocks"],
+  [/\bCONFIRMED\b/g, "confirmed"], [/\bNOT\b/g, "not"], [/\bWHY\b/g, "why"], [/\bMARGIN-LED\b/g, "margin-led"], [/\bOPM\b/g, "operating margin"],
+  [/\bforeign accumulation into domestic distribution\b/g, "foreign investors buying while domestic funds sell"], [/\bdomestic accumulation into foreign distribution\b/g, "domestic funds buying while foreign investors sell"],
+  [/\s*\(legs disagree[^)]*\)/g, ""], [/;\s*bulk\/block deals[^;]*$/g, ""], [/ > /g, " above "], [/ < /g, " below "], [/\bRs ?(\d)/g, "₹$1"], [/\bTT (\d)\/8\b/g, "$1 of 8 trend checks pass"],
   [/\bstage 2\b/gi, "in a rising stage"], [/\bVCP live\b/g, "a base is forming"], [/\bqtr PAT YoY\b/g, "quarterly profit vs a year ago"],
   [/\bPAT\b/g, "profit"], [/\bTTM\b/g, "last 12 months"], [/\b(\d+)y\b/g, "$1 years"], [/\bYoY\b/g, "on a year ago"],
   [/(\d)pp\b/g, "$1 points"], [/->/g, " to "], [/\s*\(news-based v\d+\)/g, ""], [/\bscoreable\b/g, "usable"],
@@ -268,11 +272,30 @@ function scoreBars(sym, compact) {
         <div class="track"><i style="width:${p}%;background:${dimCol(s)}"></i></div>${compact || !x.n ? "" : `<div class="n">${esc(plainDim(x.n))}</div>`}</div>`;
     }).join("")}</div>`;
 }
+const VETO_WORDS = { promoter_pledge: "Promoters have pledged their shares", leverage_plus_froth: "Heavy debt with a very high P/E" };
+function vetoWords(v) {
+  const s = String(v || ""), i = s.indexOf(":"), k = i > 0 ? s.slice(0, i).trim() : s.trim(), d = i > 0 ? s.slice(i + 1).trim() : "";
+  const dd = d.replace(/^D\/E ([\d.]+) with P\/E ([\d.]+)$/, "debt is $1 times equity, P/E $2").replace(/% of promoter holding pledged$/, "% of their holding");
+  return (VETO_WORDS[k] || sentenceCase(k.replace(/_/g, " "))) + (dd ? ": " + dd : "");
+}
+/* the eight answers before a veto's cap */
+function rawConviction(d) {
+  const live = (d.dims || []).filter(x => x.live !== false && isNum(x.w) && isNum(x.s)), w = live.reduce((a, x) => a + x.w, 0);
+  return w ? live.reduce((a, x) => a + x.w * x.s, 0) / w * 100 : null;
+}
+/* The conviction read is dated (weekly for most names); the stage chip is
+   tonight's. When the uptrend has turned since, say so beside the score. */
+function convMoved(sym) {
+  const d = detailOf(sym) || {}, r = rowBy[sym] || {}, day = String(d.dims_as_of || d.scored_at || "").slice(0, 10);
+  if (!day || !(day < String(priceSession() || "").slice(0, 10)) || !isNum(d.tt_checks) || !r.tag) return null;
+  return (d.tt_checks === 8) !== ["CONFIRMED", "EXTENDED"].includes(r.tag) ? day : null;
+}
 function scoreCard(sym) {
   const d = detailOf(sym) || {}, r = rowBy[sym] || {}, b = convBand(d.score, r.veto);
   return `<div class="card"><div class="card-head"><h3>Conviction</h3>${isNum(d.score) ? `<span class="chip sm ${b.cls === "buy" ? "buy" : b.cls === "watch" ? "watch" : b.cls === "risk" ? "risk" : ""}">${d.score.toFixed(0)} · ${b.word}</span>` : ""}${info("Eight weighted questions: trend and strength, earnings, balance sheet, news and catalysts, big investors, theme, governance and valuation. Each bar is how well this stock answers one of them. Measured on this system's own alerts: names under 50, and vetoed ones, lagged the market, so the score rules weak or risky companies out. Above 50 it does not rank stocks against each other.")}
-      <span class="hint">${d.dims_as_of || d.scored_at ? "read of " + esc(String(d.dims_as_of || d.scored_at).slice(0, 10)) : ""}${isNum(d.coverage) && d.coverage < 100 ? " · " + d.coverage.toFixed(0) + "% answered" : ""}</span></div>
-    ${(d.veto_reasons || []).length ? `<div class="callout risk" style="margin-bottom:12px"><b>Vetoed.</b> ${d.veto_reasons.map(esc).join("; ")}</div>` : ""}
+      <span class="hint">${d.dims_as_of || d.scored_at ? "read " + esc(dateLabel(d.dims_as_of || d.scored_at)) : ""}${isNum(d.coverage) && d.coverage < 100 ? " · " + d.coverage.toFixed(0) + "% answered" : ""}</span></div>
+    ${(d.veto_reasons || []).length ? `<div class="callout risk" style="margin-bottom:12px"><b>Vetoed.</b> ${d.veto_reasons.map(v => esc(vetoWords(v))).join("; ")}. A veto caps the score at 25 whatever the eight answers add up to${isNum(rawConviction(d)) ? ` (here ${Math.round(rawConviction(d))})` : ""}.</div>` : ""}
+    ${convMoved(sym) ? `<div class="callout" style="margin-bottom:12px">The chart has changed since this read on ${esc(dateLabel(convMoved(sym)))}: tonight it is <b>${esc(stageWord(r.tag))}</b>. The trend answer below is from the read and catches up at the next one.</div>` : ""}
     ${scoreBars(sym)}</div>`;
 }
 /* what each layer says about one name — the classic drawer's convergence panel */
@@ -612,7 +635,7 @@ function screenStocks() {
     <div class="card flush"><div class="table-wrap max"><table class="t freeze2" id="stbl">
     <thead><tr>${th("sym", "Stock", "c1")}${th("score", "Conviction", "c2", "Conviction (0–100): the eight-question check. Under 50 and vetoed names have lagged the market; above 50 it does not rank.")}${th("close", "Price", "r")}${th("rs", "RS", "r", "Relative strength: 6- and 12-month return ranked against the whole universe (100 = strongest).")}
       ${th("tag", "Stage")}${th("setup", "Setup", "", "Fired breakout, then live base, then none. The base is where the forward record shows the edge.")}${th("dist", "To alert", "r", "How far below its alert price a base-ready stock sits.")}<th>120 days</th>
-      ${th("tier", "Size")}${th("ind", "Industry")}${th("roce", "ROCE", "r")}${th("pe", "P/E", "r")}${th("pgttm", "Profit 1y", "r")}</tr></thead>
+      ${th("tier", "Size", "", "Market cap at tonight's price: Large over ₹1 lakh Cr, Mid over ₹33,000 Cr, Small over ₹2,000 Cr, Micro below.")}${th("ind", "Industry")}${th("roce", "ROCE", "r")}${th("pe", "P/E", "r", "Price over the last 12 months' earnings, at tonight's price.")}${th("pgttm", "Profit growth", "r", "Profit over the last 12 months against the 12 before.")}</tr></thead>
     <tbody>${shown.map(r => { const s = setupBy[r.sym], q = quoteOf(r.sym); return `<tr data-sym="${esc(r.sym)}" data-ctx="screener" class="${r.veto ? "dim" : ""}">
       <td class="c1"><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc(coName(r.sym) || nameOf(r.sym) || r.ind || "")}</span></div></td>
       <td class="c2">${convCell(r.score, r.veto)}</td>
@@ -634,11 +657,11 @@ function screenMultibaggers() {
   const shown = rows.slice(0, f.limit);
   const th = (k, l, extra = "", tip = "") => `<th class="sortable ${extra}" data-mbsort="${k}"${tip ? ` data-tip="${esc(tip)}"` : ""}>${l}${f.sort === k ? `<span class="arrow">${f.dir > 0 ? "▲" : "▼"}</span>` : ""}</th>`;
   if (!rows.length && !q) return `<div class="empty">The multibagger score was not computed on this build.</div>`;
-  return `<div class="page-intro">The whole liquid market ranked by the proven multibagger ingredients present at once. Research ideas, not buy signals: even the best signal is followed by a triple about 1 time in 10. ${info("Built only from factors that preceded Indian multibaggers in both 2016–20 and 2021–26, each weighted by how much it raised the odds of tripling within a year. The top 10% by this score made 27% a year over 2016–2026 as a 10-stock portfolio, against 17% for momentum alone.")}</div>
+  return `<div class="page-intro">The whole liquid market ranked by the proven multibagger ingredients present at once. Research ideas, not buy signals: even the best signal is followed by a triple about 1 time in 10. ${info(mbExplain(null) + " The top 10% by this score made 27% a year over 2016–2026 as a 10-stock portfolio, against 17% for momentum alone.")}</div>
     <div class="sc-tools"><div class="searchbox">${I.search}<input class="field" id="mq" placeholder="Symbol or company" value="${esc(f.q)}" autocomplete="off" spellcheck="false" aria-label="Search multibaggers"></div></div>
     <div class="meta-line"><span><b>${num(rows.length)}</b> stocks · scored ${esc(dateLabel(MBX.asof))}</span><span class="swipe-hint">Swipe for more →</span></div>
     <div class="card flush"><div class="table-wrap max"><table class="t freeze2">
-    <thead><tr><th class="c1">Stock</th>${th("score", "Multibagger", "c2", "Multibagger score (0–100): the proven ingredients present, weighted by their measured edge.")}${th("conv", "Conviction", "r", "The eight-question check. Only stocks in the nightly scan have one.")}<th class="r">Price</th>${th("ai", "AI rating", "r", "The weekly AI deep-dive's 1–5 view, where one exists.")}${th("n", "Ingredients", "", "Which of the proven ingredients it has today.")}</tr></thead>
+    <thead><tr><th class="c1">Stock</th>${th("score", "Multibagger", "c2", "Points for the proven ingredients present; all nine make 100. Open a stock's Scores tab for its sum.")}${th("conv", "Conviction", "r", "The eight-question check. Only stocks in the nightly scan have one.")}<th class="r">Price</th>${th("ai", "AI rating", "r", "The weekly AI deep-dive's 1–5 view, where one exists.")}${th("n", "Ingredients", "", "Which of the proven ingredients it has today.")}</tr></thead>
     <tbody>${shown.map(m => { const r = rowBy[m.sym] || {}, q2 = quoteOf(m.sym), mr = MRS[m.sym]; return `<tr data-sym="${esc(m.sym)}" data-ctx="mb">
       <td class="c1"><div class="cell-sym"><span class="sym">${esc(m.sym)}</span><span class="co">${esc(shortCo(nameOf(m.sym)) || "outside the scan")}</span></div></td>
       <td class="c2">${cbar(m.score, "var(--teal)")}</td>
@@ -822,20 +845,23 @@ function researchCommittee() {
         ${isNum(pl.entry_price) ? `<h4>Mechanical plan</h4><p class="num">entry ${px(pl.entry_price)} · stop ${px(pl.stop_loss_price)} · ${num(pl.shares_total)} shares · risk ${inr(pl.capital_at_risk)}</p>` : ""}</div></details>
     </div>`; }).join("")}</div>`;
 }
+/* AI prose quotes heat as it was when written ("heat 79.0"); the table beside
+   it shows tonight's. The number goes; the words stay. */
+function noHeat(t) { return String(t || "").replace(/\s*\(heat \d+(?:\.\d+)?\)/gi, ""); }
 function researchThemes() {
-  const T = D.themes || {}, th = (T.themes || []).slice().sort((a, b) => (b.heat || 0) - (a.heat || 0));
+  const T = D.themes || {}, th = (T.themes || []).slice().sort((a, b) => (a.thin - b.thin) || (b.heat || 0) - (a.heat || 0));
   const intel = T.intel || {};
   return `<div class="callout" style="margin-bottom:14px">Themes group stocks the way markets trade them (grid capex, defence, EMS…). <b>Heat</b> ranks them by 3-month move, chart breadth and news: context only. ${info("Sector heat was tested as an entry filter and rejected: it cut expectancy from +1.27R to +0.22R.")}</div>
     <div class="card flush"><div class="table-wrap"><table class="t"><thead><tr><th>Theme</th><th class="r">Heat</th><th class="r">3 months</th><th class="r">In uptrend</th><th class="r">Names</th><th>Leaders</th></tr></thead>
     <tbody>${th.map(t => `<tr style="cursor:default"><td><div class="cell-sym"><span class="sym">${esc(t.name)}</span><span class="co" style="max-width:300px">${esc(t.blurb || "")}</span></div></td>
-      <td class="r">${cbar(t.heat, (t.heat || 0) >= 60 ? "var(--buy)" : "var(--watch)")}</td>
-      <td class="r num ${cls(t.ret3m)}">${pct(t.ret3m)}</td><td class="r num">${num(t.breadth)}%</td><td class="r num">${num(t.n)}${t.thin ? ' <span class="faint">thin</span>' : ""}</td>
+      <td class="r">${t.thin ? `<span class="faint" style="font-size:12px" data-tip="Too few stocks in this theme to rank its heat.">too few</span>` : cbar(t.heat, (t.heat || 0) >= 60 ? "var(--buy)" : "var(--watch)")}</td>
+      <td class="r num ${cls(t.ret3m)}">${pct(t.ret3m)}</td><td class="r num">${num(t.breadth)}%</td><td class="r num">${num(t.n)}</td>
       <td>${(t.leaders || []).filter(l => l.tag === "CONFIRMED" || l.tag === "EXTENDED").slice(0, 5).map(l => `<button class="chip sm" data-sym="${esc(l.sym)}">${esc(l.sym)}</button>`).join(" ")}</td></tr>`).join("")}</tbody></table></div></div>
-    ${intel.summary ? `<div class="card accent-ai" style="margin-top:16px"><div class="card-head"><h3>This week's thematic research</h3><span class="chip sm ai">AI · weekly</span><span class="hint">${esc(intel.generated || "")}</span></div><div class="memo">${esc(intel.summary)}</div>
+    ${intel.summary ? `<div class="card accent-ai" style="margin-top:16px"><div class="card-head"><h3>This week's thematic research</h3><span class="chip sm ai">AI · weekly</span><span class="hint">${esc(intel.generated || "")}</span></div><div class="memo">${esc(noHeat(intel.summary))}</div>
       ${(intel.themes || []).slice(0, 8).map(x => `<details class="more"><summary><b>${esc(x.name || x.key)}</b> — ${esc(x.direction || "")}${x.strength ? " · strength " + esc(x.strength) : ""}</summary><div class="memo">${esc(x.thesis || x.summary || "")}
         ${(x.calls || x.beneficiaries || []).length ? `<ul>${(x.calls || x.beneficiaries || []).slice(0, 8).map(c => `<li><b>${esc(c.symbol || c.sym || "")}</b> ${esc(c.effect || "")} — ${esc(c.mechanism || c.why || "")}</li>`).join("")}</ul>` : ""}</div></details>`).join("")}</div>` : ""}
     ${(D.heat || []).length ? `<div style="margin-top:16px">${fold("By NSE industry", "average strength of the stocks watched in each", `<div class="hbars">${D.heat.slice(0, 24).map(h => `<div class="hbar" style="cursor:default"><span class="nm">${esc(h.ind)} <span class="faint">· ${num(h.n)}</span></span><span class="track"><i style="width:${Math.min(100, h.rs || 0).toFixed(0)}%;background:${rsCol(h.rs)}"></i></span><b>${num(h.rs)}</b></div>`).join("")}</div>`)}</div>` : ""}
-    ${T.read ? `<details class="more" style="margin-top:12px"><summary>The committee's theme read</summary><div class="card"><div class="memo">${esc(T.read)}</div></div></details>` : ""}`;
+    ${T.read ? `<details class="more" style="margin-top:12px"><summary>The committee's theme read</summary><div class="card"><div class="memo">${esc(noHeat(T.read))}</div></div></details>` : ""}`;
 }
 function researchNews() {
   const tracked = trackedSyms();
@@ -1669,10 +1695,11 @@ function stockHead(sym, nav) {
   const o = ohlcOf(sym) || [];
   const price = o.length ? o[o.length - 1][4] : q.price;
   const chg = o.length > 1 ? (o[o.length - 1][4] / o[o.length - 2][4] - 1) * 100 : q.chg;
+  const lastDay = o.length ? o[o.length - 1][0] : null, stale = lastDay && lastDay < String(priceSession() || "").slice(0, 10);
   const chips = [r.tag ? stageChip(r.tag) : "", (r.trig || (st && st.status)) && ["VALIDATED", "AWAITING TRIGGER", "EP EVENT"].includes(r.trig || st.status) ? setupChip(r.trig || st.status) : "", r.veto ? '<span class="chip sm risk">Vetoed</span>' : "", survChips(sym)].filter(Boolean).join(" ");
   return `<div class="shead">
     <div class="shead-row">${nav && nav.back ? nav.back : ""}<h2 class="display">${esc(sym)}</h2>
-      <span class="shead-px">${isNum(price) ? `<b>${px(price)}</b>` : ""}${isNum(chg) ? `<span class="${cls(chg)}">${movePct(chg)}</span>` : ""}</span>${saveBtn(sym)}</div>
+      <span class="shead-px">${isNum(price) ? `<b>${px(price)}</b>` : ""}${isNum(chg) ? `<span class="${cls(chg)}">${movePct(chg)}</span>` : ""}${stale ? `<span class="faint stale-px" data-tip="No trade on the exchange since then.">last traded ${esc(dateLabel(lastDay))}</span>` : ""}</span>${saveBtn(sym)}</div>
     <div class="shead-co"><span class="shead-coname">${esc(coLine(sym))}</span>${chips ? `<span class="shead-chips">${chips}</span>` : ""}${nav && nav.right ? nav.right : ""}</div>
   </div>`;
 }
@@ -1687,7 +1714,7 @@ function todoBox(sym) {
   const rr0 = (RD.rows || []).find(x => x.sym === sym);
   const cells = list => `<div class="plan-grid">${list.map(([k, v, c, s]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v ${c || ""}">${v}</div>${s ? `<div class="s">${s}</div>` : ""}</div>`).join("")}</div>`;
   const tail = p => `<details class="more" style="margin-top:8px"><summary>Exit plan</summary><div class="muted" style="font-size:12.5px">${exitWords(p)}</div></details>`;
-  if (r.veto) return `<div class="todo risk"><div class="todo-head"><span class="todo-tag">Avoid</span><span class="todo-text">Vetoed: ${esc((d.veto_reasons || []).join("; ") || "a governance or leverage red flag")}.</span></div></div>`;
+  if (r.veto) return `<div class="todo risk"><div class="todo-head"><span class="todo-tag">Avoid</span><span class="todo-text">Vetoed: ${esc((d.veto_reasons || []).map(vetoWords).join("; ") || "a governance or leverage red flag")}.</span></div></div>`;
   if (a && plan && !plan.skip) return `<div class="todo buy"><div class="todo-head"><span class="todo-tag">Buy signal</span><span class="todo-text">${a.dokind === "ep" ? "Gap-up" : "Breakout"} on ${esc(dateLabel(a.d))} at ${px(a.alert_px)}; now ${px(a.now_px)} <span class="${cls(a.chg)}">${pct(a.chg)}</span>.</span></div>
     ${cells([["Entry ≈", px(plan.entry)], ["Stop", px(plan.stop), "neg", isNum(plan.stop_pct) ? pct(-plan.stop_pct) : ""], ["Quantity", num(plan.shares)], ["Risk", inr(plan.risk), "", isNum(riskShare(plan)) ? riskShare(plan).toFixed(2) + "% of " + capWord() : ""]])}</div>`;
   if (st && st.status === "AWAITING TRIGGER") return `<div class="todo watch"><div class="todo-head"><span class="todo-tag">Set an alert</span><span class="todo-text">${isNum(st.dist) && st.dist < 0 ? `It closed above its alert price of <b>${px(st.pivot)}</b>, but on ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "less than"} normal volume, so it is not a buy yet. A close above it with at least <b>${volFmt(st.vneed)}</b> shares traded makes it one.` : `Buy only on a close above <b>${px(st.pivot)}</b> with at least <b>${volFmt(st.vneed)}</b> shares traded (today: ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "—"} normal volume).`}</span>${sp ? `<button class="btn sm" data-copy-one="${esc(sym)}" style="margin-left:auto">${I.copy}Copy alert</button>` : ""}</div>
@@ -1727,10 +1754,11 @@ function scoreTiles(sym) {
   const aiVal = mr && isNum(+mr.conviction) ? `<span class="v ai">${esc(mr.conviction)}/5</span><span class="w ai">AI rating</span>`
     : v ? `<span class="v ${v.verdict === "BUY" ? "buy" : v.verdict === "SKIP" ? "risk" : "watch"}">${esc(VERDICT_WORD[v.verdict] || v.verdict)}</span><span class="w muted">AI check</span>`
     : pk ? `<span class="v ai">Pick</span>` : `<span class="v faint">—</span>`;
-  return `<div class="stiles">
-    <button class="stile" data-stab="scores"><span class="k">Conviction</span><span class="row"><span class="v ${b.cls}">${isNum(r.score) ? Math.round(r.score) : "—"}</span><span class="w ${b.cls}">${b.word}</span></span>${isNum(r.score) ? meter(r.score / 100, kindOf(b.cls)) : ""}<span class="s">8 questions · tap for the reasons</span></button>
-    <div class="stile" data-tip="Relative strength: the 6- and 12-month return ranked against the whole universe. 98 means stronger than 98% of stocks."><span class="k">RS</span><span class="row"><span class="v">${isNum(r.rs) ? Math.round(r.rs) : "—"}</span><span class="w muted">of 100</span></span>${isNum(r.rs) ? meter(r.rs / 100, "info") : ""}<span class="s">${isNum(r.rs) ? "Stronger than " + Math.round(r.rs) + "% of stocks" : "Not ranked"}</span></div>
-    <button class="stile" data-stab="scores"><span class="k">Multibagger</span><span class="row"><span class="v">${m ? Math.round(m.score) : "—"}</span><span class="w muted">of 100</span></span>${m ? meter(m.score / 100, "teal") : ""}<span class="s">${m ? m.factors.length + " of " + nIng + " ingredients" : nIng ? "None of the ingredients today" : "Not computed"}</span></button>
+  const mbShow = m && m.score >= mbStats().top25, mbTopPct = m ? Math.max(1, Math.ceil(mbRank(sym) / mbStats().all.length * 100)) : null;
+  return `<div class="stiles ${mbShow ? "" : "n3"}">
+    <button class="stile" data-stab="scores"><span class="k">Conviction</span><span class="row"><span class="v ${b.cls}">${isNum(r.score) ? Math.round(r.score) : "—"}</span><span class="w ${b.cls}">${b.word}</span></span>${isNum(r.score) ? meter(r.score / 100, kindOf(b.cls)) : ""}<span class="s">${(detailOf(sym) || {}).dims_as_of || (detailOf(sym) || {}).scored_at ? "read " + esc(dateLabel((detailOf(sym) || {}).dims_as_of || (detailOf(sym) || {}).scored_at)) + " · " : ""}tap for the reasons</span></button>
+    <div class="stile" data-tip="Relative strength: the 6- and 12-month return ranked against the whole universe. 98 means stronger than 98% of stocks."><span class="k">RS</span><span class="row"><span class="v">${isNum(r.rs) ? Math.round(r.rs) : "—"}</span><span class="w muted">of 100</span></span>${isNum(r.rs) ? meter(r.rs / 100, "info") : ""}<span class="s">${isNum(r.rs) ? (r.rs >= 99.5 ? "Among the very strongest stocks" : "Stronger than " + Math.round(r.rs) + "% of stocks") : "Not ranked"}</span></div>
+    ${mbShow ? `<button class="stile" data-stab="scores"><span class="k">Multibagger</span><span class="row"><span class="v">${Math.round(m.score)}</span><span class="w" style="color:var(--teal)">top ${mbTopPct}%</span></span>${meter(m.score / mbStats().max, "teal")}<span class="s">${m.factors.length} of ${nIng} ingredients · tap for how</span></button>` : ""}
     <button class="stile" data-stab="news"><span class="k">AI</span><span class="row">${aiVal}</span>${pk ? `<span class="chips"><span class="chip sm ai">Weekly pick · ${esc(dateLabel((D.ai_picks || {}).generated))}</span></span>` : ""}<span class="s">${mr ? "Rated " + esc(dateLabel(mr.date)) + (v ? " · AI check: " + esc(VERDICT_WORD[v.verdict] || v.verdict) : "") : !v && !pk ? "No AI research yet" : "Tap for the notes"}</span></button>
   </div>`;
 }
@@ -1815,17 +1843,17 @@ function fold(title, summary, body, open) {
    repeated the header chips and the to-do box */
 function chartWords(sym) {
   const r = rowBy[sym] || {}, d = detailOf(sym) || {}, st = setupBy[sym];
-  const bits = [d.stage_name ? String(d.stage_name).replace("(advancing)", "(rising)") : stageWord(r.tag),
-    isNum(d.tt_checks) ? d.tt_checks + " of 8 trend checks pass" : "",
+  const bits = [r.tag ? stageWord(r.tag) : d.stage_name ? String(d.stage_name).replace("(advancing)", "(rising)") : "",
+    isNum(d.tt_checks) && !convMoved(sym) ? d.tt_checks + " of 8 trend checks pass" : "",
     st ? "base ready, alert price " + px(st.pivot) : d.vcp ? "a base is forming" : "no base",
     st && isNum(st.atr_pct) ? "typical daily move " + st.atr_pct + "%" : ""].filter(Boolean);
   return bits.length ? `<div class="muted" style="font-size:12.5px;margin-top:8px">${bits.map(esc).join(" · ")}</div>` : "";
 }
 function keyNumbers(sym) {
   const r = rowBy[sym] || {};
-  const cells = [["ROCE", isNum(r.roce) ? r.roce.toFixed(1) + "%" : null], ["P/E", isNum(r.pe) ? r.pe.toFixed(1) : null], ["Profit growth (TTM)", isNum(r.pgttm) ? pct(r.pgttm, 0) : null],
+  const cells = [["ROCE", isNum(r.roce) ? r.roce.toFixed(1) + "%" : null], ["P/E", isNum(r.pe) ? r.pe.toFixed(1) : null], ["Profit growth", isNum(r.pgttm) ? pct(r.pgttm, 0) : null],
     ["Market cap", isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : null], ["Traded a day", isNum(r.turn) ? "₹" + r.turn.toFixed(1) + " Cr" : null], ["Type", r.arch ? esc(r.arch) : null]].filter(c => c[1] != null);
-  return cells.length ? `<div class="card"><div class="card-head"><h3>Key numbers</h3></div><div class="grid grid-3" style="gap:10px">
+  return cells.length ? `<div class="card"><div class="card-head"><h3>Key numbers</h3><span class="hint">${r.fasof ? "results as read on " + esc(dateLabel(r.fasof)) + "; market cap and P/E at tonight's price" : "market cap and P/E at tonight's price"}</span></div><div class="grid grid-3" style="gap:10px">
       ${cells.map(([k, v]) => `<div class="plan-cell"><div class="k">${k}</div><div class="v" style="font-size:15px">${v}</div></div>`).join("")}</div></div>` : "";
 }
 function bizCharts(p) {
@@ -1838,7 +1866,9 @@ function bizCharts(p) {
 }
 function drawStockTab(sym, p, bucket) {
   const st = setupBy[sym], plan = planOf(sym), sp = st && st.plan && !st.plan.skip ? st.plan : null;
-  const lines = { pivot: st ? st.pivot : null, stop: sp ? sp.stop : plan && !plan.skip ? plan.stop : null };
+  // an old alert's stop is not a level anyone holds: only a live signal's
+  const live = buySignals().some(a => a.sym === sym) || recentTriggers().some(a => a.sym === sym);
+  const lines = { pivot: st ? st.pivot : null, stop: sp ? sp.stop : live && plan && !plan.skip ? plan.stop : null };
   if (S.sheetTab === "chart") drawCandles($("#" + p + "-main"), sym, Object.assign({ range: S.chartRange, bucket, rsBox: $("#" + p + "-rs") }, lines));
   if (S.sheetTab === "business") drawFundInto(sym, p);
 }
@@ -1952,6 +1982,27 @@ const FSHORT = { A1: "Growth", A2: "Operating leverage", A3: "Turnaround", A4: "
 function fKey(name) { return name.startsWith("P ") ? "P" : name.startsWith("F ") ? "F" : name.slice(0, 2); }
 function fShort(name) { return FSHORT[fKey(name)] || name; }
 function mbTop(n) { return Object.entries(MBS).map(([sym, m]) => ({ sym, ...m })).sort((a, b) => b.score - a.score).slice(0, n); }
+/* The multibagger score in words (user, 2026-10-14: "HFCL has 9/100, I don't
+   know if it's right"). It is right: the score is the points of the
+   ingredients present, out of 100 for all nine, and HFCL has one (price
+   leader, 8.9 points). What was missing was the arithmetic and the scale. */
+function mbStats() {
+  if (mbStats._s) return mbStats._s;
+  const all = Object.values(MBS).map(m => m.score).sort((a, b) => b - a);
+  const total = Object.values(MBCFG).reduce((a, v) => a + v.weight, 0) || 1;
+  return (mbStats._s = { all, total, max: all[0] || 0, top10: all[Math.floor(all.length * 0.1)] || 0, top25: all[Math.floor(all.length * 0.25)] || 0 });
+}
+function mbPoints(name) { return ((MBCFG[name] || {}).weight || 0) / mbStats().total * 100; }
+function mbRank(sym) { const m = MBS[sym]; return m ? mbStats().all.findIndex(x => x <= m.score) + 1 : null; }
+function mbExplain(sym) {
+  const m = sym && MBS[sym], s = mbStats(), n = Object.keys(MBCFG).length;
+  const how = `The score adds up the ingredients that came before past Indian multibaggers. Each is worth points by how much it raised the odds of tripling within a year; all ${n} together make 100.`;
+  const scale = ` Across the ${num(s.all.length)} stocks that have any, the highest today is ${Math.round(s.max)} and the top 10% start at ${Math.round(s.top10)}.`;
+  if (!m) return how + scale;
+  const parts = (m.factors || []).map(f => `${fShort(f)} ${mbPoints(f).toFixed(1)}`).join(" + ");
+  return how + ` ${sym} has ${m.factors.length}: ${parts} = ${Math.round(m.score)}, rank ${num(mbRank(sym))} of ${num(s.all.length)}.` + scale
+    + " A low score is not a verdict on the company: it means the stock does not look like a typical multibagger. Larger, widely owned companies score low by design.";
+}
 function mbCard(sym, inFold) {
   const names = Object.keys(MBCFG);
   if (!names.length) return MBX.error ? `<div class="card"><div class="card-head"><h3>Multibagger score</h3><span class="chip sm risk">not computed</span></div>
@@ -1963,12 +2014,13 @@ function mbCard(sym, inFold) {
   names.forEach(n => { const v = MBCFG[n], p = v.pillar; pil[p] = pil[p] || { max: 0, got: 0 }; pil[p].max += v.weight; if (on.has(n)) pil[p].got += v.weight; });
   const order = ["Business inflection", "Room to re-rate", "Ownership", "Price and volume"].filter(p => pil[p]);
   const sc = m ? m.score : 0;
-  return `<div class="card"><div class="card-head"><h3>${inFold ? "The proven ingredients" : "Multibagger score"}</h3><span class="chip sm" style="color:${scoreCol(sc)};border-color:${scoreCol(sc)}">${Math.round(sc)} / 100</span>${info("Built only from the factors that preceded Indian multibaggers in both 2016–20 and 2021–26, each weighted by how much it raised the odds of tripling within a year. More of the proven ingredients at once means a higher score. Tested as a 10-stock portfolio, the top 10% by this score made 27% a year over 2016–2026, against 17% for momentum alone and 14% for the market; promoter buying + momentum on its own made 32%. So use it to decide what to research, not what to buy.")}</div>
+  return `<div class="card"><div class="card-head"><h3>${inFold ? "The proven ingredients" : "Multibagger score"}</h3><span class="chip sm" style="color:${scoreCol(sc)};border-color:${scoreCol(sc)}">${Math.round(sc)} / 100</span>${info(mbExplain(sym) + " Built only from factors that held in both 2016–20 and 2021–26. Tested as a 10-stock portfolio, the top 10% by this score made 27% a year over 2016–2026, against 17% for momentum alone and 14% for the market; promoter buying + momentum on its own made 32%. So use it to decide what to research, not what to buy.")}</div>
+    <div class="mb-sum">${m ? `<b>${m.factors.length} of ${names.length}</b> ingredients · <b>${Math.round(sc)}</b> of 100 points · rank <b>${num(mbRank(sym))}</b> of ${num(mbStats().all.length)}. The top 10% start at ${Math.round(mbStats().top10)}.` : `None of the ${names.length} ingredients today, so no score.`}</div>
     <div class="sbars">${order.map(p => { const v = pil[p], pc = v.max ? v.got / v.max * 100 : 0, col = pc >= 50 ? "var(--buy)" : pc > 0 ? "var(--watch)" : "var(--faint)";
       return `<div class="sbar"><div class="top"><span>${esc(p)}</span><b style="color:${col}">${Math.round(pc)}%</b></div><div class="track"><i style="width:${pc}%;background:${col}"></i></div></div>`; }).join("")}</div>
     ${on.size ? `<div class="has-line"><span class="muted">Has:</span> ${[...on].map(n => `<span class="chip sm teal">${esc(fShort(n))}</span>`).join(" ")}</div>` : ""}
     <details class="more"><summary>All ${names.length} ingredients and what each is worth</summary><div class="flist">${names.sort((a, b) => MBCFG[b].weight - MBCFG[a].weight).map(n => { const hit = on.has(n);
-      return `<div class="fitem ${hit ? "on" : ""}"><span class="fico">${hit ? "✓" : "·"}</span><div><div class="ft">${esc(fShort(n))} <span class="faint">${Math.exp(MBCFG[n].weight).toFixed(1)}× odds</span></div>${hit && m.evidence && m.evidence[n] ? `<div class="fn">${esc(m.evidence[n])}</div>` : ""}</div></div>`; }).join("")}</div></details>
+      return `<div class="fitem ${hit ? "on" : ""}"><span class="fico">${hit ? "✓" : "·"}</span><div><div class="ft">${esc(fShort(n))} <span class="faint">${mbPoints(n).toFixed(1)} points · ${Math.exp(MBCFG[n].weight).toFixed(1)}× odds</span></div>${hit && m.evidence && m.evidence[n] ? `<div class="fn">${esc(m.evidence[n])}</div>` : ""}</div></div>`; }).join("")}</div></details>
     <div class="muted" style="font-size:11.5px;margin-top:10px">Scored ${esc(dateLabel(MBX.asof))} across ${num(MBX.universe)} liquid stocks. "Odds" is how much more often stocks with that ingredient tripled within a year than the average stock, in the weaker of the two halves tested.</div></div>`;
 }
 function ingredientsLine(m, n = 3) {
@@ -2058,7 +2110,7 @@ function storyKicker(st) {
 function storyStats(st) {
   const m = st.m, c = +m.conviction, mbNow = MBS[st.sym] ? MBS[st.sym].score : null;
   return `<span class="chip sm" style="color:${convCol(c)};border-color:${convCol(c)}" data-tip="How strongly the AI rates it as a multibagger candidate, 1 to 5">AI rating ${esc(m.conviction)}/5</span>
-    <span class="chip sm ghost">${esc(m.horizon || "")}</span>
+    ${m.horizon ? `<span class="chip sm ghost" data-tip="When the AI expects the story to play out, if it does.">${esc(m.horizon)}</span>` : ""}
     ${isNum(st.since) ? `<span class="num ${cls(st.since)}" data-tip="Price change since the note was written">${pct(st.since)} since</span>` : ""}
     ${isNum(mbNow) ? `<span class="muted" data-tip="The multibagger score today, out of 100">multibagger ${Math.round(mbNow)}</span>` : ""}
     <span class="faint">${st.mins} min read</span>`;
@@ -2137,7 +2189,7 @@ function perfOverview() {
   return `<div class="grid grid-3" style="align-items:start">
     <div class="card"><div class="card-head"><h3>Capital gate</h3><span class="chip sm ${g.verdict === "PASS" ? "buy" : g.verdict === "FAIL" ? "risk" : "info"}">${esc(gateWord(g.verdict))}</span></div>
       <div class="big num">${num(have)}<span class="muted">/${num(need)}</span></div>${meter(have / need, "info")}
-      <div class="muted" style="font-size:12.5px;margin-top:10px">No real money until ${num(need)} signals qualify${g.deadline ? ", by " + esc(dateLabel(g.deadline)) : ""}. <a href="#/performance/gate">The details</a></div></div>
+      <div class="muted" style="font-size:12.5px;margin-top:10px">No real money until ${num(need)} signals qualify${g.deadline ? ", by " + esc(dateLabel(g.deadline)) : ""}. <a href="#/performance/gate">The details</a></div>${isNum(c.expectancy_r) && isNum(req.expectancy_r) ? `<div class="muted" style="font-size:12.5px;margin-top:6px">So far the signals average ${c.expectancy_r >= 0 ? "a gain" : "a loss"} of <b class="${cls(c.expectancy_r)}">${Math.abs(c.expectancy_r * 100).toFixed(0)}%</b> of what each risked; the bar is a gain of ${(req.expectancy_r * 100).toFixed(0)}%.</div>` : ""}</div>
     <div class="card"><div class="card-head"><h3>Forward record</h3></div>
       ${base ? `<div class="big num ${cls(base.x40)}">${pct(base.x40)}</div><div class="muted" style="font-size:12.5px">How much alerts with a live base beat the market over 40 sessions; ${num(base.b40)}% of them did. Uptrend-only alerts: ${pct(noBase && noBase.x40)}. <a href="#/performance/evidence">The details</a></div>` : `<div class="muted">Not measured on this build.</div>`}</div>
     <div class="card"><div class="card-head"><h3>Paper books</h3><span class="right"><a href="#/performance/books">open</a></span></div>

@@ -1048,3 +1048,13 @@ details.fold > .fold-b > .card.flush { margin: -12px -14px -14px; }
   .topbar { gap: 5px; }
   .topbar .pill { padding-inline: 7px; }
 }
+
+/* v10.7: the numbers audit. The multibagger sum line, a three-tile row when
+   the multibagger tile has nothing to say, a price that has not traded */
+.mb-sum { font-size: 12.5px; color: var(--text-2); margin: -2px 0 12px; line-height: 1.5; }
+.stiles.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.shead-px .stale-px { font: 500 11.5px var(--font); }
+@media (max-width: 640px) {
+  .stiles.n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stiles.n3 .stile:last-child { grid-column: 1 / -1; }
+}

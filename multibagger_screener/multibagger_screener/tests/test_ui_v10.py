@@ -374,6 +374,79 @@ console.log(JSON.stringify({ a: memWords("2 positive developments over 19d (2x M
     assert "the stocks above" not in _fn_source(src, "pageHome"), "the heads-up hint names stocks that are not above it"
 
 
+# ------------------------------------------------------ numbers audit, 10-14
+def test_the_multibagger_score_shows_its_sum():
+    """User, 2026-10-14: "HFCL has 9/100, I don't know if it's right". It was
+    right (one ingredient, 8.9 points); the page never said how it was made."""
+    src = _js()
+    js = ("const isNum = v => typeof v === 'number' && isFinite(v);\n"
+          "const nf0 = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 });\n"
+          "function num(v) { return isNum(v) ? nf0.format(v) : '—'; }\n"
+          "function fShort(n) { return n.split(' ')[0]; }\n"
+          "const MBCFG = { 'P promoter': { weight: 0.8416 }, 'A3 turnaround': { weight: 0.5596 }, 'F momentum': { weight: 0.3853 } };\n"
+          "const MBS = { HFCL: { score: 21.57, factors: ['F momentum'] }, TOP: { score: 78.43, factors: ['P promoter', 'A3 turnaround'] },"
+          " MID: { score: 31.32, factors: ['A3 turnaround'] } };\n"
+          + _fn_source(src, "mbStats") + _fn_source(src, "mbPoints") + _fn_source(src, "mbRank") + _fn_source(src, "mbExplain") + """
+console.log(JSON.stringify({ hf: mbExplain("HFCL"), rank: mbRank("HFCL"), pts: mbPoints("F momentum"), none: mbExplain(null) }));
+""")
+    o = _node(js)
+    assert abs(o["pts"] - 21.57) < 0.01, "points are the weight's share of all weights"
+    assert o["rank"] == 3
+    assert "F 21.6 = 22" in o["hf"] and "rank 3 of 3" in o["hf"], o["hf"]
+    assert "not a verdict on the company" in o["hf"]
+    assert "highest today is 78" in o["none"]
+    tiles = _fn_source(src, "scoreTiles")
+    assert "m.score >= mbStats().top25" in tiles, "a 9/100 multibagger tile is back on every scan stock's Overview"
+
+
+def test_a_veto_says_what_it_capped_and_why_in_words():
+    src = _js()
+    js = ("const isNum = v => typeof v === 'number' && isFinite(v);\n" + _fn_source(src, "sentenceCase")
+          + _const_source(src, "VETO_WORDS") + _fn_source(src, "vetoWords") + _fn_source(src, "rawConviction") + """
+console.log(JSON.stringify({ a: vetoWords("promoter_pledge: 87.0% of promoter holding pledged"),
+  b: vetoWords("leverage_plus_froth: D/E 2.64 with P/E 224.0"), c: vetoWords("some_new_rule"),
+  raw: rawConviction({ dims: [{ w: 25, s: 0.4, live: true }, { w: 15, s: 0.8, live: true }, { w: 10, s: 1, live: false }] }) }));
+""")
+    o = _node(js)
+    assert o["a"] == "Promoters have pledged their shares: 87.0% of their holding", o["a"]
+    assert o["b"] == "Heavy debt with a very high P/E: debt is 2.64 times equity, P/E 224.0", o["b"]
+    assert "_" not in o["c"], "an unknown veto code reached the screen with its underscores"
+    assert abs(o["raw"] - 55) < 0.01, "the answers before the cap: (25*.4 + 15*.8) / 40"
+    assert "caps the score at 25" in _fn_source(src, "scoreCard")
+
+
+def test_score_evidence_has_no_shouting_or_dev_notes():
+    src = _js()
+    js = _const_source(src, "PLAIN_DIM") + _fn_source(src, "plainDim") + _fn_source(src, "noHeat") + """
+console.log(JSON.stringify({
+  a: plainDim("RS percentile 100; TT 8/8, stage 2, VCP live"),
+  b: plainDim("Loss to profit swing CONFIRMED by margin expansion (OPM 3.3 to 22.0%); accelerating (TTM 115% > 3y 4%)"),
+  c: plainDim("FII 7.48->15.74% (+8.26pp); foreign accumulation into domestic distribution (legs disagree — domestic weighted higher); delivery 40% of volume; bulk/block deals no"),
+  d: plainDim("lead: expansion (Rs820 Cr); promoter stake 60 to 55% (check WHY: lockup expiry)"),
+  e: noHeat("Shipbuilding & marine (heat 79.0) looks like the clearest case"),
+}));
+"""
+    o = _node(js)
+    assert "100%" not in o["a"] and "very strongest" in o["a"] and "a base is forming" in o["a"], o["a"]
+    for shout in ("CONFIRMED", "OPM", "WHY", " > ", "legs disagree", "bulk/block", "Rs820"):
+        assert shout not in o["a"] + o["b"] + o["c"] + o["d"], f"{shout!r} still on screen: {o}"
+    assert "foreign investors buying while domestic funds sell" in o["c"]
+    assert "₹820 Cr" in o["d"]
+    assert o["e"] == "Shipbuilding & marine looks like the clearest case", o["e"]
+    themes = _fn_source(src, "researchThemes")
+    assert "t.thin ?" in themes and "too few" in themes, "a two-stock theme reads 'Heat 0' again"
+
+
+def test_dated_reads_say_their_date_and_old_stops_stay_off_the_chart():
+    src = _js()
+    assert "convMoved(sym)" in _fn_source(src, "scoreCard"), "the read can contradict tonight's stage chip silently again"
+    assert "!convMoved(sym)" in _fn_source(src, "chartWords")
+    assert 'read of " + esc(String(' not in _fn_source(src, "scoreCard"), "the read date is an ISO string again"
+    dst = _fn_source(src, "drawStockTab")
+    assert "live && plan && !plan.skip ? plan.stop" in dst and "const live = buySignals().some(a => a.sym === sym)" in dst,         "a months-old alert's stop is drawn again"
+    assert "last traded" in _fn_source(src, "stockHead")
+
+
 if __name__ == "__main__":
     failures = 0
     for name, fn in sorted(globals().items()):

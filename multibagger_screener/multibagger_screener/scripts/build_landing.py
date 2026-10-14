@@ -76,6 +76,29 @@ def _day(s) -> str:
         return ""
 
 
+def _vetoed() -> set:
+    """The names the app shows as vetoed: the merged conviction details decide
+    (weekly shortlist, tonight's alerts winning), the ranked list otherwise,
+    as in build_dashboard._score_cov."""
+    details = {}
+    for parts in (("shortlist_details.json",), ("state", "alert_details.json")):
+        d = _json(*parts)
+        if isinstance(d, dict):
+            details.update({s: v for s, v in d.items() if isinstance(v, dict)})
+    out = {s for s, v in details.items() if v.get("veto_reasons")}
+    rp = os.path.join(ROOT, "shortlist_ranked.csv")
+    if os.path.exists(rp):
+        import csv as _csv
+        try:
+            for r in _csv.DictReader(open(rp, encoding="utf-8")):
+                s = r.get("symbol")
+                if s and s not in details and str(r.get("vetoed", "")).strip().lower() in ("true", "1"):
+                    out.add(s)
+        except OSError:
+            pass
+    return out
+
+
 def facts() -> dict:
     gate = _json("state", "gate.json")
     tags = (_json("state", "tags_state.json") or {}).get("tags", {})
@@ -88,8 +111,10 @@ def facts() -> dict:
     tag_counts: dict = {}
     for t in tags.values():
         tag_counts[t] = tag_counts.get(t, 0) + 1
+    vetoed = _vetoed()
+    # the app's "Base ready" leaves vetoed names out, so the count here does too
     ready = sum(1 for s, v in triggers.items()
-                if v.get("status") == "AWAITING TRIGGER" and tags.get(s) == "CONFIRMED")
+                if v.get("status") == "AWAITING TRIGGER" and tags.get(s) == "CONFIRMED" and s not in vetoed)
 
     stocks = ((radar.get("mb") or {}).get("stocks") or {})
     top = max(stocks.items(), key=lambda kv: kv[1].get("score") or 0) if stocks else None
@@ -124,7 +149,9 @@ def facts() -> dict:
         "picks_day": _day(picks.get("generated", "")),
         "dives": len(research),
         "dives_day": _day(dive_dates[-1]) if dive_dates else "",
-        "penny": penny.get("universe", 0) or len(_json("state", "penny_details.json") or {}),
+        # "passed the safety screens": the screen's own vetoes did not pass
+        "penny": sum(1 for v in (_json("state", "penny_details.json") or {}).values()
+                     if isinstance(v, dict) and not v.get("vetoed")),
         "signals": _rows(os.path.join("journal", "signals_journal.csv")),
         "gate": gate,
         "need": (gate.get("required") or {}).get("min_signals", GATE.min_signals),

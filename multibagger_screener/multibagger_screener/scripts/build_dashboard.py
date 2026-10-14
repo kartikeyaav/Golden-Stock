@@ -48,6 +48,32 @@ def _market_cap(sym: str):
     except (TypeError, ValueError):
         return None
 
+
+def _cache_read(sym: str):
+    """(price screener.in showed, the day it was read) for the cache file the
+    market cap above came from."""
+    raw = load_company(sym) or {}
+    try:
+        px = float((raw.get("top_ratios") or {}).get("Current Price"))
+    except (TypeError, ValueError):
+        px = None
+    return px, str(raw.get("fetched_at") or "")[:10] or None
+
+
+def _reprice(value, price_then, price_now):
+    """A figure that moves with the price between results (market cap, P/E),
+    carried from the day screener.in showed it to tonight's close. Shares and
+    earnings only change at results; the cache is up to ~3 months old (884 of
+    ~950 files were read in July 2026), so STLTECH's cap read Rs 29,000 Cr
+    after the price had risen 70%. Anything missing leaves the value as read."""
+    try:
+        v, a, b = float(value), float(price_then), float(price_now)
+    except (TypeError, ValueError):
+        return value
+    if not (a > 0 and b > 0) or v != v:
+        return value
+    return v * b / a
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "dashboard.html")
 OUT_CLASSIC = os.path.join(ROOT, "dashboard_classic.html")
@@ -1158,10 +1184,14 @@ def build_payload() -> dict:
     TIER = {"microcap250": "Micro", "smallcap250": "Small", "midcap150": "Mid"}
 
     def cap_tier(mcap, idx_src):
-        # actual market cap wins; index membership is the fallback label
+        # actual market cap wins; index membership is the fallback label.
+        # AMFI-style cut-offs (large about Rs 1 lakh Cr, mid about Rs 33,000 Cr):
+        # the old Rs 50,000 / 12,000 Cr lines called 85 sub-lakh-crore names
+        # "Large" and 231 small caps "Mid" (audit 2026-10-14). Micro is this
+        # app's own band, the multibagger study's "small" line.
         if mcap is not None and pd.notna(mcap):
             m = float(mcap)
-            return "Micro" if m < 2000 else "Small" if m < 12000 else "Mid" if m < 50000 else "Large"
+            return "Micro" if m < 2000 else "Small" if m < 33000 else "Mid" if m < 100000 else "Large"
         return TIER.get(str(idx_src), "")
 
     def _arch(raw) -> str:
@@ -1206,8 +1236,9 @@ def build_payload() -> dict:
         # market cap from the full-universe screener cache (consistent), with
         # the shortlist flat file as a secondary source
         mcap = _market_cap(sym)
+        mpx, masof = _cache_read(sym)
         if mcap is None:
-            mcap = f.get("market_cap_cr")
+            mcap, mpx, masof = f.get("market_cap_cr"), f.get("current_price"), str(f.get("fetched_at") or "")[:10] or None
         closes[sym] = _closes(sym)
         # price from tonight's cache — the focus snapshot's last_close is a
         # WEEKLY artifact and goes stale within a day (user-caught 2026-07-09)
@@ -1218,8 +1249,9 @@ def build_payload() -> dict:
             "ind": (ind_by_sym.get(sym) or as_text(r.get("industry")))[:30],
             # tonight's state wins over the weekly focus snapshot (freshness)
             "tag": tags.get(sym, r.get("tag", "")),
-            "tier": cap_tier(mcap, r.get("index_source", "")),
-            "mcap": round(float(mcap), 0) if mcap is not None and pd.notna(mcap) else None,
+            "_idx": r.get("index_source", ""), "_mpx": mpx, "_epx": f.get("current_price"),
+            "fasof": str(f.get("fetched_at") or "")[:10] or masof,
+            "mcap": mcap,
             "rs": (round(float(rs_live[sym]), 1) if sym in rs_live
                    else round(float(r["rs_pctile"]), 1) if pd.notna(r.get("rs_pctile")) else None),
             "close": live_close,
@@ -1244,15 +1276,17 @@ def build_payload() -> dict:
         closes[sym] = _closes(sym)
         live_close = closes[sym][-1] if closes[sym] else None
         mcap = _market_cap(sym)
+        mpx, masof = _cache_read(sym)
         if mcap is None:
-            mcap = f.get("market_cap_cr")
+            mcap, mpx, masof = f.get("market_cap_cr"), f.get("current_price"), str(f.get("fetched_at") or "")[:10] or None
         arch = str(arch_by_sym.get(sym, ""))
         screener_rows.append({
             "sym": sym, "company": str(company_by_sym.get(sym, "")),  # full name: the UI ellipsises (a 40-char cut read "Holdings Limite")
             "ind": str(ind_by_sym.get(sym, ""))[:30],
             "tag": tg,
-            "tier": cap_tier(mcap, ""),
-            "mcap": round(float(mcap), 0) if mcap is not None and pd.notna(mcap) else None,
+            "_idx": "", "_mpx": mpx, "_epx": f.get("current_price"),
+            "fasof": str(f.get("fetched_at") or "")[:10] or masof,
+            "mcap": mcap,
             "rs": round(float(rs_live[sym]), 1) if sym in rs_live else None,
             "close": live_close,
             "turn": _turnover_cr(sym),
@@ -1269,6 +1303,15 @@ def build_payload() -> dict:
     # field drifting apart, so there is exactly one place that sets it.
     for r in screener_rows:
         r["trig"] = trig_by_sym.get(r["sym"])
+    # Market cap and P/E at tonight's price, then the tier from that cap: one
+    # pass, for the same reason as the trigger above.
+    for r in screener_rows:
+        mpx, epx, idx = r.pop("_mpx", None), r.pop("_epx", None), r.pop("_idx", "")
+        m = _reprice(r.get("mcap"), mpx, r.get("close"))
+        r["mcap"] = round(float(m), 0) if m is not None and pd.notna(m) else None
+        r["tier"] = cap_tier(r["mcap"], idx)
+        pe = _reprice(r.get("pe"), epx, r.get("close"))
+        r["pe"] = round(float(pe), 1) if pe is not None and pd.notna(pe) else None
 
     # detail data: OHLC + fundamentals for shortlist + positions + paper book
     # + every recently-alerted name (details now includes alert_details.json)
@@ -2704,7 +2747,7 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
     </div>
     <div class="tblx"><div class="tbly">
     <table id="tbl"><thead><tr>
-      <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹12,000 Cr) · Mid (&lt;₹50,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. UPTREND = healthy confirmed uptrend (act only on a fresh trigger). BASING = base forming, watch only. EXTENDED = ran too far, don't chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></th>
+      <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹33,000 Cr) · Mid (&lt;₹1,00,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. UPTREND = healthy confirmed uptrend (act only on a fresh trigger). BASING = base forming, watch only. EXTENDED = ran too far, don't chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></th>
       <th data-k="trig">Trigger<span class="info" data-tip="Whether the entry this system's +1.61R was measured on has actually fired. BUY TRIGGER FIRED = VCP pivot cleared on volume, the backtested entry. BASE READY = a valid base is live, pivot not yet cleared. NO BASE = trend-following read only, the weakest live cohort (-0.225R). This is the PRIMARY sort whatever column you click — conviction ranks companies within a trigger class, never across one, because fundamental-ranked entry selection measured +0.38R against +1.27R ungated.">?</span></th>
       <th data-k="rs">RS%<span class="info" data-tip="Relative Strength percentile (0-100): how this stock's 6-and-12-month return ranks vs the whole universe. 90 = stronger than 90% of stocks. High + rising is what breakouts need.">?</span></th><th data-k="score">Conviction<span class="info" data-tip="0-100 score from the 8 weighted questions (momentum, earnings, theme, smart money, financial strength, catalyst, governance, valuation), scored at the WEEKLY refresh. ° = technical-only read (fundamentals were unavailable, coverage below 60%). A stock's drawer shows its freshest, most-informed read, which can differ from this weekly number.">?</span></th><th data-k="arch">Archetype<span class="info" data-tip="The kind of multibagger story: Turnaround (loss→profit), Quality (steady compounder), Hyper-growth (fast revenue), Super-cycle (sector tailwind). A tag for context, not a gate.">?</span></th>
       <th data-k="roce">ROCE<span class="info" data-tip="Return on Capital Employed (%): profit the business earns per rupee of capital. Higher = more efficient. Above ~15% is generally healthy.">?</span></th><th data-k="pe">P/E<span class="info" data-tip="Price-to-Earnings: how many years of current profit you pay for the stock. High P/E = pricey OR fast-growing; on a fresh turnaround it can be meaningless (tiny recovering profit).">?</span></th><th data-k="pgttm">PAT TTM%<span class="info" data-tip="Profit-After-Tax growth over the trailing twelve months vs the prior year. The company's bottom-line momentum.">?</span></th>
