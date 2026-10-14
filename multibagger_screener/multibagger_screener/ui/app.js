@@ -1307,7 +1307,9 @@ function bannerTiles() {
       go: "research", sub: ai.picks ? "picks" : "checks" },
     { label: "Health", icon: I.pulse, s: dh.state === "fail" ? "risk" : dh.state === "warn" || rg.defensive ? "warn" : "ok",
       val: dh.state !== "ok" ? "Data " + dh.word : rg.defensive ? "Market weak" : "Healthy", word: true,
-      note: `${dh.state !== "ok" ? (dh.bad.concat(dh.warn).map(x => x.label).join(", ") + ". ") : ""}Market ${rg.defensive ? "weak" : "healthy"}: ${isNum(rg.breadth) ? rg.breadth.toFixed(0) + "% above the 200-day, " : ""}${rg.defensive ? "half" : "full"}-size positions.`,
+      note: dh.state !== "ok"
+        ? `${dh.bad.concat(dh.warn).map(x => x.label).join(", ")}. Market ${rg.defensive ? "weak" : "healthy"}, ${rg.defensive ? "half" : "full"}-size positions.`
+        : `${isNum(rg.breadth) ? rg.breadth.toFixed(0) + "% of stocks above their 200-day average. " : ""}${rg.defensive ? "Half" : "Full"}-size positions. Data fresh.`,
       go: "performance", sub: "system" },
   ];
 }
