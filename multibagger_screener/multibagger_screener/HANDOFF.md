@@ -1,6 +1,6 @@
 # HANDOFF — Golden-Stock Screener (read this first to continue)
 
-**Last updated: 2026-10-09** (UI audit and a public STORIES tab of AI research notes on the multibagger candidates; see §3AE.) **Previous header, 2026-09-30:** (MULTIBAGGERS BY FUNDAMENTALS, INSTITUTIONS, PROMOTERS AND VOLUME. A pre-registered factor study on 10 years of shareholding and NSE's filed quarterly results. Eight factors survived both halves: turnaround, value, small, undiscovered, promoter raising stake, volume expansion, momentum and quarterly surge. Growth, ROCE, institutions arriving and the full stack did not. The conviction score was rebuilt from the survivors: nightly on every liquid stock, 27% a year as a portfolio over 2016-2026 against 17% for momentum alone. A weekly AI analyst reads the top names' concalls and reports. See §3AD.) **Previous header, 2026-09-28:** (a third pre-registered paper sleeve: PROMOTER BUYING + MOMENTUM, 32% a year over 2016-2026 in the backtest, forward from 29 Sep; see the end of §3AC.) **Header before that, 2026-09-27:** (MULTIBAGGER RESEARCH ON SURVIVORSHIP-FREE DATA. Every NSE stock since 2005 from the exchange's own files; 20 pre-registered hypotheses; the live system re-measured without survivorship bias (11-13% a year over 2006-2026); a whole-market multibagger radar, a pre-registered multibagger sleeve, the 3:10 PM breakout check, and a repair for phantom crashes in Yahoo's own series. Read `MULTIBAGGER_RESEARCH_2026-09-26.md`, then §3AC.)
+**Last updated: 2026-10-14** (v10 INTERFACE: phone first, one story across the five hero features, and DESIGN.md as the rulebook for every UI change. Read §3AF and DESIGN.md first.)
 
 **Superseded header, kept for the trail: 2026-09-25** (FULL REVIEW + v7 INTERFACE. The strategy was re-measured honestly — the live config is 45% a year with ideal fills and 30% with realistic execution over 2020→2026, not 54.5% — the gate's ruler and benchmark were corrected, the conviction weights moved to v2, and the dashboard was rebuilt. Read `REVIEW_2026-09-25.md`, then §3AB.)
 
@@ -2764,6 +2764,80 @@ How it works:
 **Test isolation fixed:** `test_scan_freshness_guards.py` drove the
 committee wrapper against the real `logs/local_git.lock`. It failed whenever
 a laptop job was running.
+
+---
+
+## 3AF. v10: phone first, one story, and DESIGN.md (2026-10-14)
+
+The user's main device is the phone. They asked for: Home without the
+"Market healthy · Full-size positions" ring, a clickable banner (alerts,
+health, multibaggers, breaking news) instead; a plain brief of what each
+company does at the top of the stock view, with far less scrolling; every
+value visible on a phone (Explore hid the conviction score); Research and
+Stories merged; and one story across the five hero features (stock buying, AI
+research, the screener with conviction scores, penny stocks, multibaggers).
+
+**Audit first, at 390 × 844 in the Browser pane** (headless Chrome renders at a
+~500px minimum width, so its phone captures are wrong). Explore hid 8 of 13
+columns, Conviction among them, and the 5 it kept were 573px wide; the stock
+view was 26 sections, about 7,300px; Research › Company deep-dives and Stories
+listed the same 8 companies from one file; "conviction" meant four things and
+the 0–100 score was labelled "Health"; the "1 stale" pill on every page was the
+capital gate going 15 days without a signal; hover tooltips were unreachable on
+touch. Full table: DESIGN.md §11.
+
+**DESIGN.md is now the rulebook** (package root): Find → Understand → Act →
+Track, five tabs, one name per score, the stock card, the frozen-column table,
+the sheet's tabs, writing rules, and a definition of done for any UI change.
+Mockups were shown first (private artifact) and the user picked option A
+twice: the status-board banner and the frozen-column screener.
+
+**What shipped** (`ui/app.js`, `ui/app.css`, `ui/app.html`):
+- Five places: Home, Screener, Watchlist, Research, Performance. Explore became
+  Screener (All stocks · Multibaggers · Penny · Themes & market); multibagger
+  candidates moved there from Watchlist; Stories became Research › Deep-dives;
+  News holds filings, deals and policy; System moved under Performance. Every
+  old route still resolves (`canonRoute`, tested in Node).
+- Home: a six-tile status board (Buy now, Near breakout, Multibaggers, Breaking
+  news, AI research, Health), each a button to its page, then the to-do list
+  capped at three rows a section. About 2.4 phone screens, from 3.2.
+- One stock card everywhere (`stockCard`): price and move, sparkline,
+  company · sector · size, the list's own line, and Conviction always in the
+  right column with its band (Strong / Passes / Weak / Avoid).
+- Screener tables freeze the stock and its score (`freeze2`) and swipe the
+  rest; `hide-sm` is gone, so no field is hidden on a phone. Filters live in a
+  panel behind one button, with removable chips.
+- The stock sheet opens on Overview (brief, what to do, four score tiles,
+  6-month chart, heads-up) with tabs Chart, Scores, Business, News & AI. Each
+  tab measured 0.9–2.5 phone screens.
+- Vocabulary: Conviction (0–100), AI rating (1–5, weekly deep-dive), AI check
+  (Buy/Wait/Skip, nightly), Weekly pick, Penny score. Stage words in sentence
+  case in the UI only (the Telegram vocabulary is unchanged).
+- Tooltips open on tap for any element that has no other action.
+- Look: the existing tokens, plus Sora for display type and a gold brand used
+  only in chrome (logo, current tab), never on data.
+
+**Two behaviour fixes found while testing.** (1) A signal whose latest close is
+under its own stop is no longer a buy (`underStop`). PANAMAPET broke out on
+7 Oct and sat at ₹473 under its ₹488.71 stop while still listed as "Buy now",
+because the journal-replay check reads daily lows that were stale in that
+build. (2) "Breaking news" counts filings since the last scan; exchange
+surveillance lasts weeks and stays a heads-up.
+
+**Company briefs** (`data/screener_fetch._parse_about`, `company_brief`,
+`_parse_name`; `scripts/backfill_briefs.py` -> committed
+`company_briefs.csv`; the builder ships them as the `d-brief` island via
+`_company_briefs`). screener.in returned HTTP 429 after ~25 requests, so the
+backfill paces 7 s a request, backs off 90 s doubling, stops after six refusals
+and resumes on rerun; about 4.5 hours for ~1,370 companies. The weekly
+fundamentals fetch now records the paragraph too, so new names fill in on their
+own. A company with no description gets "No company description yet", never
+an invented line. The same 429 explains the cloud's fundamentals failures on
+2026-10-11: rate limiting, not an IP block.
+
+Tests: `tests/test_ui_v10.py` (routes, nothing hidden, vocabulary, bands,
+the stop rule, the brief parser and cutter, the brief island); four guards
+canaried red.
 
 ---
 

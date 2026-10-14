@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import BUY_ALERT_KINDS, EVIDENCE, GATE, PENNY, RISK
 from data.cache import load_ohlcv
-from data.screener_fetch import load_company
+from data.screener_fetch import company_brief, load_company
 from paper_trader import summarize as paper_summary
 from reports import vocab
 from scoring.phase_b import NO_ARCHETYPE
@@ -78,6 +78,39 @@ def _turnover_cr(sym: str) -> float | None:
     t = df.tail(20)
     v = float((t["close"] * t["volume"]).mean() / 1e7)
     return round(v, 1) if v == v else None
+
+
+def _company_briefs(symbols) -> dict:
+    """What each company does, in one or two sentences, for the top of the
+    stock view (DESIGN.md §6.6; user-requested 2026-10-14).
+
+    Two sources, newest knowledge first: the About paragraph the weekly
+    fundamentals fetch now caches with every page it reads, then the committed
+    company_briefs.csv (scripts/backfill_briefs.py), which covers everything
+    the app lists. A company with neither gets no entry, and the page says so
+    rather than inventing a line. Each entry is [brief, company name]: the name
+    is what lets a multibagger candidate outside the nightly scan show more
+    than its ticker."""
+    out: dict = {}
+    path = os.path.join(ROOT, "company_briefs.csv")
+    if os.path.exists(path):
+        try:
+            b = pd.read_csv(path, dtype=str, keep_default_na=False)
+            names = b["company"] if "company" in b.columns else [""] * len(b)
+            out = {sym: [brief.strip(), str(name).strip()]
+                   for sym, brief, name in zip(b["symbol"], b["brief"], names)
+                   if brief.strip() or str(name).strip()}
+        except (OSError, ValueError, KeyError):
+            out = {}
+    for sym in symbols:
+        try:
+            raw = load_company(sym)
+        except Exception:  # noqa: BLE001 - a brief must never break the build
+            raw = None
+        about = (raw or {}).get("about")
+        if about:
+            out[sym] = [company_brief(about), (out.get(sym) or ["", ""])[1]]
+    return out
 
 
 def _archive_news(symbols: list, company_by_sym: dict, days: int = 30,
@@ -1586,6 +1619,7 @@ def build_payload() -> dict:
             [r["sym"] for r in screener_rows
              if not (details.get(r["sym"]) or {}).get("news")],
             company_by_sym),
+        "briefs": _company_briefs([r["sym"] for r in screener_rows]),
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,
         "forensics": _build_forensics(outcomes),
@@ -1670,7 +1704,7 @@ def build() -> None:
           f"{core_len / 1e6:.1f} MB)")
 
 
-HEAVY_BLOCKS = ("ohlc", "details", "fund", "archive_news", "penny")
+HEAVY_BLOCKS = ("ohlc", "details", "fund", "archive_news", "penny", "briefs")
 
 
 def _island(obj) -> str:
@@ -1697,7 +1731,8 @@ def render_v7(data: dict, extras: dict, ui_dir: str | None = None) -> tuple[str,
     fills = {"CSS": css_src, "JS": js_src.replace("</script", "<\\/script"),
              "CORE": _island(core), "OHLC": _island(data.get("ohlc") or {}),
              "DETAILS": _island(data.get("details") or {}), "FUND": _island(data.get("fund") or {}),
-             "NEWS": _island(data.get("archive_news") or {}), "PENNY": _island(data.get("penny"))}
+             "NEWS": _island(data.get("archive_news") or {}), "PENNY": _island(data.get("penny")),
+             "BRIEF": _island(data.get("briefs") or {})}
     # one pass over the SHELL only: inserted content is never re-scanned, so a
     # headline that happens to contain "%%JS%%" cannot pull code into data
     html = re.sub(r"%%([A-Z]+)%%", lambda m: fills.get(m.group(1), m.group(0)), shell)

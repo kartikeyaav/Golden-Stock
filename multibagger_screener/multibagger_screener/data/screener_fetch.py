@@ -158,8 +158,56 @@ def nse_industry_label(raw: str | None, known: set | None = None) -> str | None:
     return clean or None
 
 
+def _parse_about(html: str) -> str | None:
+    """The company's own description: screener.in's "About" paragraph, with
+    tags and source footnotes ("[1]") removed.
+
+    WHY (2026-10-14, user-requested): the stock view had no line on what a
+    company actually does. This paragraph exists on most pages; a brand-new
+    listing can lack one, which returns None rather than an invented line."""
+    import html as _html
+    m = re.search(r'<div class="[^"]*about[^"]*"[^>]*>(.*?)</div>', html, re.S)
+    if not m:
+        return None
+    text = _html.unescape(re.sub(r"<[^>]+>", " ", m.group(1)))
+    text = re.sub(r"\s*\[\d+\]", "", text)
+    text = " ".join(text.split())
+    return text or None
+
+
+def _parse_name(html: str) -> str | None:
+    """The company's name as the page titles it (the h1)."""
+    import html as _html
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", html, re.S)
+    if not m:
+        return None
+    name = " ".join(_html.unescape(re.sub(r"<[^>]+>", " ", m.group(1))).split())
+    return name or None
+
+
+def company_brief(about: str | None, limit: int = 320) -> str:
+    """One or two sentences for the top of the stock view: whole sentences up
+    to `limit` characters, else cut at a word with an ellipsis. Never mid-word
+    (DESIGN.md §8)."""
+    text = " ".join(str(about or "").split())
+    if len(text) <= limit:
+        return text
+    sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z(])", text)
+    out = ""
+    for s in sentences:
+        if len(out) + len(s) + (1 if out else 0) > limit:
+            break
+        out = f"{out} {s}" if out else s
+    if out:
+        return out
+    cut = text[:limit]
+    sp = cut.rfind(" ")
+    return (cut[:sp] if sp > limit * 0.6 else cut).rstrip(" ,;:(-") + "…"
+
+
 def parse_company_page(html: str) -> dict:
     return {
+        "about": _parse_about(html),
         "sector": _parse_sector(html),
         "top_ratios": _parse_top_ratios(html),
         "growth": _parse_ranges_tables(html),
