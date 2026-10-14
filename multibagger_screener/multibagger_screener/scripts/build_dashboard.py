@@ -1185,13 +1185,13 @@ def build_payload() -> dict:
 
     def cap_tier(mcap, idx_src):
         # actual market cap wins; index membership is the fallback label.
-        # AMFI-style cut-offs (large about Rs 1 lakh Cr, mid about Rs 33,000 Cr):
-        # the old Rs 50,000 / 12,000 Cr lines called 85 sub-lakh-crore names
-        # "Large" and 231 small caps "Mid" (audit 2026-10-14). Micro is this
-        # app's own band, the multibagger study's "small" line.
+        # The app's own bands, kept by the user's choice (2026-10-14) over the
+        # AMFI-style Rs 1 lakh / 33,000 Cr lines: this universe is small and mid
+        # caps, and the finer cut separates them. The cap they read is tonight's
+        # (re-priced below), not screener.in's on the day it was read.
         if mcap is not None and pd.notna(mcap):
             m = float(mcap)
-            return "Micro" if m < 2000 else "Small" if m < 33000 else "Mid" if m < 100000 else "Large"
+            return "Micro" if m < 2000 else "Small" if m < 12000 else "Mid" if m < 50000 else "Large"
         return TIER.get(str(idx_src), "")
 
     def _arch(raw) -> str:
@@ -2747,7 +2747,7 @@ nav h1{font:800 14px var(--mono);letter-spacing:.06em}
     </div>
     <div class="tblx"><div class="tbly">
     <table id="tbl"><thead><tr>
-      <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹33,000 Cr) · Mid (&lt;₹1,00,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. UPTREND = healthy confirmed uptrend (act only on a fresh trigger). BASING = base forming, watch only. EXTENDED = ran too far, don't chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></th>
+      <th data-k="sym">Symbol</th><th data-k="tier">Cap<span class="info" data-tip="Market-cap tier: Micro (&lt;₹2,000 Cr) · Small (&lt;₹12,000 Cr) · Mid (&lt;₹50,000 Cr) · Large. Smaller caps have more multibagger runway and more risk.">?</span></th><th data-k="ind">Industry</th><th data-k="tag">Stage<span class="info" data-tip="Tonight's chart stage. UPTREND = healthy confirmed uptrend (act only on a fresh trigger). BASING = base forming, watch only. EXTENDED = ran too far, don't chase. NEUTRAL = no clear trend. DOWNTREND = declining, avoid.">?</span></th>
       <th data-k="trig">Trigger<span class="info" data-tip="Whether the entry this system's +1.61R was measured on has actually fired. BUY TRIGGER FIRED = VCP pivot cleared on volume, the backtested entry. BASE READY = a valid base is live, pivot not yet cleared. NO BASE = trend-following read only, the weakest live cohort (-0.225R). This is the PRIMARY sort whatever column you click — conviction ranks companies within a trigger class, never across one, because fundamental-ranked entry selection measured +0.38R against +1.27R ungated.">?</span></th>
       <th data-k="rs">RS%<span class="info" data-tip="Relative Strength percentile (0-100): how this stock's 6-and-12-month return ranks vs the whole universe. 90 = stronger than 90% of stocks. High + rising is what breakouts need.">?</span></th><th data-k="score">Conviction<span class="info" data-tip="0-100 score from the 8 weighted questions (momentum, earnings, theme, smart money, financial strength, catalyst, governance, valuation), scored at the WEEKLY refresh. ° = technical-only read (fundamentals were unavailable, coverage below 60%). A stock's drawer shows its freshest, most-informed read, which can differ from this weekly number.">?</span></th><th data-k="arch">Archetype<span class="info" data-tip="The kind of multibagger story: Turnaround (loss→profit), Quality (steady compounder), Hyper-growth (fast revenue), Super-cycle (sector tailwind). A tag for context, not a gate.">?</span></th>
       <th data-k="roce">ROCE<span class="info" data-tip="Return on Capital Employed (%): profit the business earns per rupee of capital. Higher = more efficient. Above ~15% is generally healthy.">?</span></th><th data-k="pe">P/E<span class="info" data-tip="Price-to-Earnings: how many years of current profit you pay for the stock. High P/E = pricey OR fast-growing; on a fresh turnaround it can be meaningless (tiny recovering profit).">?</span></th><th data-k="pgttm">PAT TTM%<span class="info" data-tip="Profit-After-Tax growth over the trailing twelve months vs the prior year. The company's bottom-line momentum.">?</span></th>

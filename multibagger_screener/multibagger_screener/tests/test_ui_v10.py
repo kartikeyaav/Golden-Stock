@@ -375,7 +375,7 @@ console.log(JSON.stringify({ a: memWords("2 positive developments over 19d (2x M
 
 
 # ------------------------------------------------------ numbers audit, 10-14
-def test_the_multibagger_score_shows_its_sum():
+def test_the_multibagger_score_shows_its_sum_and_stays_off_scan_stocks():
     """User, 2026-10-14: "HFCL has 9/100, I don't know if it's right". It was
     right (one ingredient, 8.9 points); the page never said how it was made."""
     src = _js()
@@ -395,8 +395,10 @@ console.log(JSON.stringify({ hf: mbExplain("HFCL"), rank: mbRank("HFCL"), pts: m
     assert "F 21.6 = 22" in o["hf"] and "rank 3 of 3" in o["hf"], o["hf"]
     assert "not a verdict on the company" in o["hf"]
     assert "highest today is 78" in o["none"]
-    tiles = _fn_source(src, "scoreTiles")
-    assert "m.score >= mbStats().top25" in tiles, "a 9/100 multibagger tile is back on every scan stock's Overview"
+    # one stock, one score (user, 2026-10-14): a scan stock shows Conviction only
+    assert "Multibagger" not in _fn_source(src, "scoreTiles"), "the multibagger tile is back on scan stocks"
+    assert 'rowBy[sym] ? "" : mbCard(sym)' in _fn_source(src, "tabScores"), "the multibagger card is back on scan stocks"
+    assert "if (rr0 && !r.sym)" in _fn_source(src, "todoBox"), "a scan stock's to-do box says 'possible multibagger' again"
 
 
 def test_a_veto_says_what_it_capped_and_why_in_words():

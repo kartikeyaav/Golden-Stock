@@ -92,8 +92,10 @@ buying with momentum 19.5, turnaround 13, … volume surge 7). Most scan stocks
 score low by design (median 13, and 381 of 963 have none), so a low score is
 not a verdict. Wherever the number shows, its sum, rank and the market's scale
 are one tap away ("1 of 9 ingredients · 9 of 100 points · rank 597 of 868;
-the top 10% start at 33"). It is a headline tile on a stock's Overview only
-when the stock is in the top 25% of the ranking; otherwise it lives on Scores.
+the top 10% start at 33"). **One stock, one score** (user, 2026-10-14): a
+stock in the nightly scan is judged by Conviction, and its page carries no
+multibagger score, tile or "possible multibagger" box. The multibagger score
+belongs to the Multibaggers list and to stocks outside the scan.
 
 **Conviction bands.** 70 and above: **Strong** (green). 50–69: **Moderate**
 (neutral). Below 50: **Weak** (amber). Vetoed: **Avoid** (red). The band is
@@ -125,8 +127,9 @@ leaves "Buy now" and reads "under its stop" wherever it is listed.
   read ("read 11 Oct"), results ("results as read on 8 Oct"). When the stage
   has turned since the read, the Scores tab says it in a line.
 - Market cap and P/E are re-priced to tonight's close (shares and earnings
-  change only at results). Size bands: Large over ₹1 lakh Cr, Mid over
-  ₹33,000 Cr, Small over ₹2,000 Cr, Micro below.
+  change only at results). Size bands are the app's own, kept by the user's
+  choice over AMFI-style lines: Large over ₹50,000 Cr, Mid over ₹12,000 Cr,
+  Small over ₹2,000 Cr, Micro below.
 - A veto shows what it capped: "caps the score at 25 whatever the eight
   answers add up to (here 44)", with the reason in words.
 - A paper book's return is measured from the money that went in, and its
@@ -553,9 +556,9 @@ sums, trend checks, breadth, themes, market pulse, paper books, the gate.
 
 | Where | Finding | Fix |
 |---|---|---|
-| Multibagger score | Correct (HFCL: one ingredient, 8.9 points), but nothing said how 9/100 is made, and a 9 sat beside Conviction 69 on every scan stock | Sum, rank and scale in the card and its "?"; Overview tile only for the top 25% |
+| Multibagger score | Correct (HFCL: one ingredient, 8.9 points), but nothing said how 9/100 is made, and a 9 sat beside Conviction 69 on every scan stock | Sum, rank and scale in the card and its "?"; then dropped from scan stocks' pages altogether (user) |
 | Market cap, P/E | screener.in's figures on the day read; 884 of ~950 cache files from July (STLTECH's cap read ₹29,000 Cr after a 70% rise) | Re-priced to tonight's close; "results as read on" date |
-| Size bands | ₹50,000 / ₹12,000 Cr lines: 85 sub-lakh-crore names "Large", 231 small caps "Mid" | AMFI-style ₹1 lakh / ₹33,000 Cr |
+| Size bands | ₹50,000 / ₹12,000 Cr lines differ from AMFI's (85 sub-lakh-crore names "Large") | Kept by the user's choice; the cap they band is tonight's |
 | Conviction | Vetoed 25 beside bars adding to 44–58; "promoter_pledge: …" | The cap and the reason in words |
 | Conviction | Read of 11 Oct beside 13 Oct's stage (ASHIANA "8 of 8 trend checks" and "Neutral") | Date on the score; a line when the trend has turned; chart words use tonight's stage |
 | Momentum book | "+1.5%" beside "NAV ₹10.10 L on ₹10L": measured from the first close, after the first day's buying | From ₹10 L, benchmarks from the close before (cloud script) |

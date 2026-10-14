@@ -2874,7 +2874,9 @@ momentum book measured from its first close instead of its ₹10 L
 (`momentum_core.snapshot`, live after the next nightly); the conviction read
 (weekly, 11 Oct) beside tonight's stage; landing counts that included vetoed
 names; "Heat 0" on thin themes. The multibagger score was right; the page now
-shows its sum and rank and keeps it off the Overview unless top 25%. Tests:
+shows its sum and rank; the user then dropped it from scan stocks' pages
+entirely ("one stock, one score") and kept the app's own size bands over the
+AMFI-style lines. Tests:
 `tests/test_numbers_audit.py` (4) and four more in `test_ui_v10.py`, each
 canaried red.
 

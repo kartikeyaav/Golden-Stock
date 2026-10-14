@@ -31,10 +31,10 @@ def test_market_cap_and_pe_move_with_the_price():
         assert bd._reprice(v, a, b) == v, "missing data must leave the figure as read, never invent one"
 
 
-def test_cap_tiers_use_the_lines_indian_investors_know():
+def test_cap_tiers_come_from_tonights_cap():
     src = open(os.path.join(ROOT, "scripts", "build_dashboard.py"), encoding="utf-8").read()
-    assert '"Micro" if m < 2000 else "Small" if m < 33000 else "Mid" if m < 100000 else "Large"' in src, \
-        "85 sub-lakh-crore names read 'Large' under the old Rs 50,000 Cr line"
+    # the app's own bands, kept by the user's choice over AMFI-style lines (2026-10-14)
+    assert '"Micro" if m < 2000 else "Small" if m < 12000 else "Mid" if m < 50000 else "Large"' in src
     # tier is set once, AFTER the cap is re-priced (a tier from a stale cap is the bug)
     loop = src[src.index("# Market cap and P/E at tonight's price"):]
     assert 'r["tier"] = cap_tier(r["mcap"], idx)' in loop[:900]

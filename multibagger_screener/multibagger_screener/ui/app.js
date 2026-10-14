@@ -635,7 +635,7 @@ function screenStocks() {
     <div class="card flush"><div class="table-wrap max"><table class="t freeze2" id="stbl">
     <thead><tr>${th("sym", "Stock", "c1")}${th("score", "Conviction", "c2", "Conviction (0–100): the eight-question check. Under 50 and vetoed names have lagged the market; above 50 it does not rank.")}${th("close", "Price", "r")}${th("rs", "RS", "r", "Relative strength: 6- and 12-month return ranked against the whole universe (100 = strongest).")}
       ${th("tag", "Stage")}${th("setup", "Setup", "", "Fired breakout, then live base, then none. The base is where the forward record shows the edge.")}${th("dist", "To alert", "r", "How far below its alert price a base-ready stock sits.")}<th>120 days</th>
-      ${th("tier", "Size", "", "Market cap at tonight's price: Large over ₹1 lakh Cr, Mid over ₹33,000 Cr, Small over ₹2,000 Cr, Micro below.")}${th("ind", "Industry")}${th("roce", "ROCE", "r")}${th("pe", "P/E", "r", "Price over the last 12 months' earnings, at tonight's price.")}${th("pgttm", "Profit growth", "r", "Profit over the last 12 months against the 12 before.")}</tr></thead>
+      ${th("tier", "Size", "", "Market cap at tonight's price: Large over ₹50,000 Cr, Mid over ₹12,000 Cr, Small over ₹2,000 Cr, Micro below.")}${th("ind", "Industry")}${th("roce", "ROCE", "r")}${th("pe", "P/E", "r", "Price over the last 12 months' earnings, at tonight's price.")}${th("pgttm", "Profit growth", "r", "Profit over the last 12 months against the 12 before.")}</tr></thead>
     <tbody>${shown.map(r => { const s = setupBy[r.sym], q = quoteOf(r.sym); return `<tr data-sym="${esc(r.sym)}" data-ctx="screener" class="${r.veto ? "dim" : ""}">
       <td class="c1"><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc(coName(r.sym) || nameOf(r.sym) || r.ind || "")}</span></div></td>
       <td class="c2">${convCell(r.score, r.veto)}</td>
@@ -1719,7 +1719,7 @@ function todoBox(sym) {
     ${cells([["Entry ≈", px(plan.entry)], ["Stop", px(plan.stop), "neg", isNum(plan.stop_pct) ? pct(-plan.stop_pct) : ""], ["Quantity", num(plan.shares)], ["Risk", inr(plan.risk), "", isNum(riskShare(plan)) ? riskShare(plan).toFixed(2) + "% of " + capWord() : ""]])}</div>`;
   if (st && st.status === "AWAITING TRIGGER") return `<div class="todo watch"><div class="todo-head"><span class="todo-tag">Set an alert</span><span class="todo-text">${isNum(st.dist) && st.dist < 0 ? `It closed above its alert price of <b>${px(st.pivot)}</b>, but on ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "less than"} normal volume, so it is not a buy yet. A close above it with at least <b>${volFmt(st.vneed)}</b> shares traded makes it one.` : `Buy only on a close above <b>${px(st.pivot)}</b> with at least <b>${volFmt(st.vneed)}</b> shares traded (today: ${isNum(st.vr) ? st.vr.toFixed(1) + "×" : "—"} normal volume).`}</span>${sp ? `<button class="btn sm" data-copy-one="${esc(sym)}" style="margin-left:auto">${I.copy}Copy alert</button>` : ""}</div>
     ${sp ? cells([["Alert price", px(st.pivot), "", "buy zone to " + px(st.zone_top)], ["Stop", px(sp.stop), "neg", Math.abs(sp.stop_pct).toFixed(1) + "% below the alert"], ["Quantity", num(sp.shares), "", inrShort(sp.value) + " position"], ["Risk", inr(sp.risk), "", (sp.risk / myCapital() * 100).toFixed(2) + "% of " + capWord()]]) + tail(sp) : `<div class="muted" style="font-size:12.5px">${esc(plainAI(st.plan && st.plan.why || "No sized plan: the stop would be wider than the 12% cap."))}</div>`}</div>`;
-  if (rr0) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">Flagged as a possible multibagger (${Object.keys(rr0.signals || {}).map(k => esc(RADAR_WORD[k] || k)).join(", ")}). ${MRS[sym] ? `An AI deep-dive read its filings: <b>AI rating ${esc(MRS[sym].conviction)} of 5</b> (${esc(MRS[sym].horizon || "")}), below.` : "Not a buy signal: read the business and the news below first."}</span></div></div>`;
+  if (rr0 && !r.sym) return `<div class="todo ai"><div class="todo-head"><span class="todo-tag">Research it</span><span class="todo-text">Flagged as a possible multibagger (${Object.keys(rr0.signals || {}).map(k => esc(RADAR_WORD[k] || k)).join(", ")}). ${MRS[sym] ? `An AI deep-dive read its filings: <b>AI rating ${esc(MRS[sym].conviction)} of 5</b> (${esc(MRS[sym].horizon || "")}), below.` : "Not a buy signal: read the business and the news below first."}</span></div></div>`;
   if (st && st.status) return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">Watch</span><span class="todo-text">${esc(SETUP_WORD[st.status] || st.status)}. Nothing to do until a fresh base forms.</span></div></div>`;
   return `<div class="todo ghost"><div class="todo-head"><span class="todo-tag">No setup</span><span class="todo-text">${esc(stageWord(r.tag))}. Nothing to do until a base forms; it will appear in the watchlist when one does.</span></div></div>`;
 }
@@ -1754,11 +1754,11 @@ function scoreTiles(sym) {
   const aiVal = mr && isNum(+mr.conviction) ? `<span class="v ai">${esc(mr.conviction)}/5</span><span class="w ai">AI rating</span>`
     : v ? `<span class="v ${v.verdict === "BUY" ? "buy" : v.verdict === "SKIP" ? "risk" : "watch"}">${esc(VERDICT_WORD[v.verdict] || v.verdict)}</span><span class="w muted">AI check</span>`
     : pk ? `<span class="v ai">Pick</span>` : `<span class="v faint">—</span>`;
-  const mbShow = m && m.score >= mbStats().top25, mbTopPct = m ? Math.max(1, Math.ceil(mbRank(sym) / mbStats().all.length * 100)) : null;
-  return `<div class="stiles ${mbShow ? "" : "n3"}">
+  // one stock, one score (user, 2026-10-14): a scan stock is judged by
+  // Conviction; the multibagger score belongs to the multibagger list
+  return `<div class="stiles n3">
     <button class="stile" data-stab="scores"><span class="k">Conviction</span><span class="row"><span class="v ${b.cls}">${isNum(r.score) ? Math.round(r.score) : "—"}</span><span class="w ${b.cls}">${b.word}</span></span>${isNum(r.score) ? meter(r.score / 100, kindOf(b.cls)) : ""}<span class="s">${(detailOf(sym) || {}).dims_as_of || (detailOf(sym) || {}).scored_at ? "read " + esc(dateLabel((detailOf(sym) || {}).dims_as_of || (detailOf(sym) || {}).scored_at)) + " · " : ""}tap for the reasons</span></button>
     <div class="stile" data-tip="Relative strength: the 6- and 12-month return ranked against the whole universe. 98 means stronger than 98% of stocks."><span class="k">RS</span><span class="row"><span class="v">${isNum(r.rs) ? Math.round(r.rs) : "—"}</span><span class="w muted">of 100</span></span>${isNum(r.rs) ? meter(r.rs / 100, "info") : ""}<span class="s">${isNum(r.rs) ? (r.rs >= 99.5 ? "Among the very strongest stocks" : "Stronger than " + Math.round(r.rs) + "% of stocks") : "Not ranked"}</span></div>
-    ${mbShow ? `<button class="stile" data-stab="scores"><span class="k">Multibagger</span><span class="row"><span class="v">${Math.round(m.score)}</span><span class="w" style="color:var(--teal)">top ${mbTopPct}%</span></span>${meter(m.score / mbStats().max, "teal")}<span class="s">${m.factors.length} of ${nIng} ingredients · tap for how</span></button>` : ""}
     <button class="stile" data-stab="news"><span class="k">AI</span><span class="row">${aiVal}</span>${pk ? `<span class="chips"><span class="chip sm ai">Weekly pick · ${esc(dateLabel((D.ai_picks || {}).generated))}</span></span>` : ""}<span class="s">${mr ? "Rated " + esc(dateLabel(mr.date)) + (v ? " · AI check: " + esc(VERDICT_WORD[v.verdict] || v.verdict) : "") : !v && !pk ? "No AI research yet" : "Tap for the notes"}</span></button>
   </div>`;
 }
@@ -1808,7 +1808,7 @@ function tabChart(sym, p) {
     ${sp ? fold("Exit plan", "how the position is sold", `<div class="memo">${exitWords(sp)}</div>`) : ""}`;
 }
 function tabScores(sym) {
-  return `${scoreCard(sym)}${mbCard(sym) || ""}`;
+  return `${scoreCard(sym)}${rowBy[sym] ? "" : mbCard(sym) || ""}`;
 }
 function tabBusiness(sym, p) {
   return `${briefBlock(sym, true)}${keyNumbers(sym)}${bizCharts(p)}
