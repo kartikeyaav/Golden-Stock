@@ -2839,6 +2839,35 @@ Tests: `tests/test_ui_v10.py` (routes, nothing hidden, vocabulary, bands,
 the stop rule, the brief parser and cutter, the brief island); four guards
 canaried red.
 
+
+**Second pass, same day (user review: "chart twice", "no news", "make it
+collapsible", "'Passes' is confusing", "check every text").** Every screen,
+sub-tab and five stock pages were read at 390px, folds opened, and scanned for
+machine words. Fixed:
+- News: `_archive_news` skipped every stock with a scored news read, so the
+  472 alerted and focus names, the most important ones, had no headlines.
+  Built for every stock now (938 of 963 have some). Filing subjects are cleaned
+  (`cleanHeadline`) and routine paperwork is marked and kept off Overview.
+- Stock page: no chart on Overview (a price row instead); Overview carries
+  "What the AI says" and the latest three headlines; News & AI is all folds.
+- Conviction bands: Strong / Moderate / Weak / Avoid, banded on the number
+  shown. "Base ready" for any live base; "Near breakout" is a Home count of
+  bases within 5% of the alert (HFCL, 27% away, had been "Near breakout").
+- Words: `plainDim` (scoring evidence), `plainAI` (system terms inside AI
+  text: VCP, pivot, AWAITING TRIGGER, pp), `survText` (surveillance codes),
+  status words ("opened too high", "faded", "under its stop"), deals deduped,
+  full company names, watchlists show 30 at a time.
+- Landing page rebuilt (`scripts/build_landing.py`, DESIGN.md §7.6): five
+  phone screens instead of twelve, live tiles into the app, the evidence in
+  rupees with the honest comparisons folded, no ticker, no R.
+- The laptop job-runner probe (`/api/status`) runs only on localhost; on the
+  public site it was a console 404 on every System visit.
+
+**Audit the published page, not a local build.** A local build reads the local
+`state/` as of the last pull; it showed Momentum core with no value series
+("starts 1 October" beside 20 holdings), while the published page, built from
+the latest cloud commit, had it (+1.5% since 1 Oct). Pull first, or check live.
+
 ---
 
 ## 4. Live production state (as of 2026-07-19)

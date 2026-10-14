@@ -229,7 +229,7 @@ const PLAIN_DIM = [
 const PLAIN_AI = [
   [/\bStage 2\s*\/\s*VCP base\b/g, "rising-stage base"], [/\bVCP base\b/g, "base"], [/\bVCP\b/g, "base"],
   [/\bAWAITING TRIGGER\b/g, "waiting for a breakout"], [/\bpivot\b/g, "alert price"], [/\bthe card's own read\b/g, "the system's own read"],
-  [/\bthe card\b/g, "the alert"], [/\bATR stop\b/g, "The stop"], [/\bEP\b/g, "gap-up"],
+  [/\bthe card\b/g, "the alert"], [/\bATR stop\b/g, "The stop"], [/\bEP\b/g, "gap-up"], [/(\d)pp\b/g, "$1 points"],
 ];
 function plainAI(t) { let s = String(t || ""); PLAIN_AI.forEach(([re, w]) => { s = s.replace(re, w); }); return s; }
 function plainDim(t) { let s = String(t || ""); PLAIN_DIM.forEach(([re, w]) => { s = s.replace(re, w); }); return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -826,12 +826,12 @@ function researchNews() {
     <div class="grid grid-2">
       <div class="card accent-risk"><div class="card-head"><h3>Negative filings on stocks you follow</h3></div>
         ${risk.length ? risk.slice(0, 20).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(x.m.summary || "")}</div></div><span class="chip sm risk">${x.m.n_neg} negative</span></div>`).join("") : `<div class="muted">No negative filings on stocks you follow.</div>`}</div>
-      <div class="card"><div class="card-head"><h3>Good news building, chart not ready yet</h3></div>
-        ${building.length ? building.slice(0, 15).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(x.m.summary || "")}</div></div><span class="muted num" style="font-size:12px">${(x.m.p || 0).toFixed(2)}</span></div>`).join("") : `<div class="muted">Nothing building.</div>`}</div>
+      <div>${fold("Good news building, chart not ready yet", building.length ? building.length + " stocks" : "none", `<div>
+        ${building.length ? building.slice(0, 15).map(x => `<div class="lrow" data-sym="${esc(x.sym)}"><div><span class="sym">${esc(x.sym)}</span> ${stageChip(x.tag)}<div class="meta">${esc(x.m.summary || "")}</div></div><span class="muted num" style="font-size:12px" data-tip="News pressure: how strongly recent filings lean positive, 0 to 1.">${(x.m.p || 0).toFixed(2)}</span></div>`).join("") : `<div class="muted">Nothing building.</div>`}</div>`)}</div>
     </div>
     <div class="card flush" style="margin-top:16px"><div class="card-head"><h3>Filings since the last scan</h3><span class="hint">${hits.length} classified</span></div><div class="table-wrap"><table class="t"><thead><tr><th></th><th>Stock</th><th>Chart</th><th class="r">RS</th><th>Event</th><th class="">Filing</th></tr></thead>
       <tbody>${hits.map(h => `<tr data-sym="${esc(h.sym)}"><td>${h.cls === "neg" ? '<span class="neg">▼</span>' : h.cls === "pos" ? '<span class="pos">▲</span>' : "·"}</td><td class="sym">${esc(h.sym)}</td><td>${stageChip(h.tag)}</td><td class="r num">${isNum(h.rs) ? h.rs.toFixed(0) : "—"}</td>
-        <td>${esc(h.event || "")}${h.confluence ? ' <span class="chip sm buy" data-tip="Positive filing on a stock already in an uptrend.">confluence</span>' : ""}</td><td class=" muted" style="max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(h.subject || "")}</td></tr>`).join("")}</tbody></table></div></div>`;
+        <td>${esc(h.event || "")}${h.confluence ? ' <span class="chip sm buy" data-tip="Positive filing on a stock already in an uptrend.">confluence</span>' : ""}</td><td class=" muted" style="max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(cleanHeadline(h.subject || ""))}</td></tr>`).join("")}</tbody></table></div></div>`;
 }
 function dedupeDeals(list) {
   const by = new Map();
@@ -970,7 +970,9 @@ function pageSystem() {
 }
 let _runPoll = null;
 async function probeRunPanel() {
-  if (!/^https?:/.test(location.protocol)) return;
+  // the run panel exists only on the laptop's own server (dashboard_server.py);
+  // on the public site the probe was a 404 in the console on every visit
+  if (!/^https?:/.test(location.protocol) || !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
   try {
     const r = await fetch("/api/status", { cache: "no-store" });
     if (!r.ok) return;
