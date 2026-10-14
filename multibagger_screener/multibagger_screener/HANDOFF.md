@@ -2880,6 +2880,19 @@ AMFI-style lines. Tests:
 `tests/test_numbers_audit.py` (4) and four more in `test_ui_v10.py`, each
 canaried red.
 
+**Penny and multibagger in harmony, same day (user: "two scores, it's
+confusing").** The Penny tab is now a list ranked by the multibagger score,
+with the penny screen's checks as a Safety column; the penny score is journaled
+but not shown. Found on the way: 56 of 154 "passed" penny names had never been
+checked (no readable fundamentals) and held the top of the v10 Penny tab,
+because v10 re-sorted by score and dropped the backend's three tiers (the
+classic page had kept them). Cause upstream: `scripts/penny_fundamentals.py`
+fetched at 1.8 s with no back-off, and screener.in answers 429 after ~25
+requests; it now paces at 7 s, waits out 429s (90 s doubling) and stops after
+five refusals in a row. The penny fundamentals refill over the next penny runs
+(every 3 days, 150 fetches each). The landing's penny count is now checked
+and clean only.
+
 **Audit the published page, not a local build.** A local build reads the local
 `state/` as of the last pull; it showed Momentum core with no value series
 ("starts 1 October" beside 20 holdings), while the published page, built from

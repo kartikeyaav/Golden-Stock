@@ -99,6 +99,20 @@ def _vetoed() -> set:
     return out
 
 
+def _penny_passed() -> int:
+    rp = os.path.join(ROOT, "penny_ranked.csv")
+    if not os.path.exists(rp):
+        return 0
+    try:
+        r = pd.read_csv(rp)
+    except (OSError, ValueError):
+        return 0
+    yes = lambda s: s.astype(str).str.strip().str.lower().isin(("true", "1"))  # noqa: E731
+    veto = yes(r["vetoed"]) if "vetoed" in r else False
+    checked = yes(r["assessed"]) if "assessed" in r else True
+    return int((~veto & checked).sum())
+
+
 def facts() -> dict:
     gate = _json("state", "gate.json")
     tags = (_json("state", "tags_state.json") or {}).get("tags", {})
@@ -149,9 +163,10 @@ def facts() -> dict:
         "picks_day": _day(picks.get("generated", "")),
         "dives": len(research),
         "dives_day": _day(dive_dates[-1]) if dive_dates else "",
-        # "passed the safety screens": the screen's own vetoes did not pass
-        "penny": sum(1 for v in (_json("state", "penny_details.json") or {}).values()
-                     if isinstance(v, dict) and not v.get("vetoed")),
+        # "passed the safety screens": checked AND clean. The screen's vetoes did
+        # not pass, and a name whose fundamentals could not be read was never
+        # checked at all (56 of them on 2026-10-14)
+        "penny": _penny_passed(),
         "signals": _rows(os.path.join("journal", "signals_journal.csv")),
         "gate": gate,
         "need": (gate.get("required") or {}).get("min_signals", GATE.min_signals),

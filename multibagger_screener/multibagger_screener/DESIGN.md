@@ -84,7 +84,6 @@ two. From v10, each idea has exactly one name.
 | **AI rating** | 1–5 | The weekly AI deep-dive's long-term view of the business | "AI 2/5" |
 | **AI check** | Buy / Wait / Skip | The nightly AI analyst's read of one buy alert | "AI BUY · MEDIUM" |
 | **Weekly pick** | yes / no | Chosen by the weekly AI committee | "Committee pick", HIGH/MEDIUM |
-| **Penny score** | 0–100 | The penny screen's own formula (momentum, growth, tradability). Not the conviction check | "Score" |
 
 **Multibagger score, read correctly.** It is the points of the ingredients a
 stock has, out of 100 for all nine (each worth its measured edge: promoter
@@ -96,6 +95,18 @@ the top 10% start at 33"). **One stock, one score** (user, 2026-10-14): a
 stock in the nightly scan is judged by Conviction, and its page carries no
 multibagger score, tile or "possible multibagger" box. The multibagger score
 belongs to the Multibaggers list and to stocks outside the scan.
+
+**One long-term score; Penny is a list** (user, 2026-10-14: "multibagger and
+penny scores, it's confusing, we need a harmony"). The app has two scores, one
+per job: **Conviction** (should I buy this breakout?) and **Multibagger** (could
+this multiply over years?). The Penny tab is a list of very small companies
+that passed the penny screen's safety checks (can be sold, no exchange
+surveillance, no heavy pledging or dilution), ranked by the multibagger score.
+The penny screen's own score is still journaled for its forward test (never
+backtested; rank correlation 0.19 with the multibagger score) but is never
+shown. Penny safety has three tiers that never mix: passed, **not checked**
+(fundamentals unreadable, so no veto could run), failed. An unchecked name never
+sits above a checked one.
 
 **Conviction bands.** 70 and above: **Strong** (green). 50–69: **Moderate**
 (neutral). Below 50: **Weak** (amber). Vetoed: **Avoid** (red). The band is
@@ -399,7 +410,8 @@ the rows shown and says where to paste them (the broker's price alerts).
 ### 7.2 Screener
 Sub-tabs, search, Filter, sort, then the table (§6.3). **Multibaggers** ranks
 the whole market by the Multibagger score and shows the ingredients present.
-**Penny** keeps its research-only note behind a "?". **Themes & market**
+**Penny** is ranked by the multibagger score, with a Safety column
+(passed / not checked / failed) and the screen's warnings. **Themes & market**
 holds the market pulse, theme heat and the universe map.
 
 ### 7.3 Watchlist

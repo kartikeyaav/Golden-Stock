@@ -668,28 +668,43 @@ function screenMultibaggers() {
       <td class="r">${isNum(r.score) ? convCell(r.score, r.veto) : `<span class="faint" style="font-size:12px" data-tip="Outside the nightly scan, so it has no conviction check yet.">not scanned</span>`}</td>
       <td class="r num">${isNum(q2.price) ? px(q2.price) : "—"}${isNum(q2.chg) ? `<div class="chg ${cls(q2.chg)}">${movePct(q2.chg)}</div>` : ""}</td>
       <td class="r num">${mr && isNum(+mr.conviction) ? `<span style="color:${convCol(+mr.conviction)}">${esc(mr.conviction)}/5</span>` : `<span class="faint">—</span>`}</td>
-      <td class="ingr-cell">${(m.factors || []).map(n => `<span class="chip sm ghost" data-tip="${esc((m.evidence || {})[n] || "")}">${esc(fShort(n))}</span>`).join(" ")}</td></tr>`; }).join("")}</tbody></table></div>
+      <td class="ingr-cell">${pennyRow(m.sym) && !pennyRow(m.sym).veto ? `<span class="chip sm ghost" data-tip="${pennyRow(m.sym).asd === false ? "Also on the Penny list, not checked yet." : "Also on the Penny list: a very small company that passed the safety checks."}">penny</span> ` : ""}${(m.factors || []).map(n => `<span class="chip sm ghost" data-tip="${esc((m.evidence || {})[n] || "")}">${esc(fShort(n))}</span>`).join(" ")}</td></tr>`; }).join("")}</tbody></table></div>
     ${rows.length > shown.length ? `<div style="padding:12px 16px"><button class="btn" id="mbmore">Show ${Math.min(200, rows.length - shown.length)} more of ${rows.length - shown.length}</button></div>` : ""}</div>`;
+}
+/* The Penny tab is a LIST, not a score (user, 2026-10-14: "multibagger and
+   penny scores, it's confusing"). The penny screen decides who is safe enough
+   to trade; the multibagger score, the app's one long-term score, ranks them.
+   Three tiers, never mixed: checked and passed, not checked (fundamentals
+   unreadable, so no veto could run: these had floated to the top), failed. */
+const PENNY_TIER = r => r.veto ? 2 : r.asd === false ? 1 : 0;
+function pennyFlag(x) { const s = typeof x === "string" ? x : (x.code || ""); return s.split(" — ")[0].replace(/\bRs ?(\d)/g, "₹$1").replace(/\bpts\b/g, "points"); }
+function pennySafety(r) {
+  if (r.veto) return `<span class="chip sm risk" data-tip="${esc(String(r.vetowhy || "").replace(/\bRs ?(\d)/g, "₹$1"))}">failed</span>`;
+  if (r.asd === false) return `<span class="chip sm watch" data-tip="screener.in had no readable company data for it, so the pledge, dilution and shell checks could not run. It is listed below every checked name.">not checked</span>`;
+  return `<span class="chip sm buy">passed</span>${(r.flags || []).slice(0, 2).map(x => ` <span class="chip sm ghost" data-tip="${esc(pennyFlag(x))}">${esc(clip(pennyFlag(x), 30))}</span>`).join("")}`;
 }
 function explorePenny() {
   const P = lazy("penny") || D.penny;
   if (!P) return `<div class="empty">The penny screen has not run.</div>`;
   const f = S.penny, q = f.q.trim().toLowerCase();
-  let rows = (P.rows || []).filter(r => (!q || r.sym.toLowerCase().includes(q) || (r.company || "").toLowerCase().includes(q)) && (f.showVeto || !r.veto) && (!f.arm || (r.arm || "").includes(f.arm)));
-  rows.sort((a, b) => f.dir * (((a[f.sort] ?? -1e9) > (b[f.sort] ?? -1e9)) ? 1 : -1));
+  const mbOf = r => MBS[r.sym] ? MBS[r.sym].score : -1;
+  const all = P.rows || [];
+  let rows = all.filter(r => (!q || r.sym.toLowerCase().includes(q) || (r.company || "").toLowerCase().includes(q)) && (f.showVeto || !r.veto) && (!f.arm || (r.arm || "").includes(f.arm)));
+  rows.sort((a, b) => PENNY_TIER(a) - PENNY_TIER(b) || mbOf(b) - mbOf(a) || (b.turn || 0) - (a.turn || 0));
   S.ctx = rows.map(r => r.sym);
-  return `<div class="page-intro">A separate research screen for very small companies, never backtested. The danger here is not being able to sell, so it first removes stocks that are hard to exit, then scores the rest. Keep penny stocks to 5% of your portfolio and 1% in any one name. ${info("The penny score is the penny screen's own formula, not the conviction check: it weighs momentum, growth and tradability for stocks under ₹100 or ₹1,000 Cr.")}</div>
+  const nPass = all.filter(r => PENNY_TIER(r) === 0).length, nUnchecked = all.filter(r => PENNY_TIER(r) === 1).length;
+  return `<div class="page-intro">Very small companies, under ₹100 a share or under ₹1,000 Cr, that are safe enough to trade: you can sell them, they are not under exchange surveillance, and their shares are not heavily pledged or diluted. They are ranked by the same multibagger score as the Multibaggers list. Keep penny stocks to 5% of your portfolio and 1% in any one name. ${info("The penny screen decides who is safe; it removes stocks you could not sell and checks pledges, dilution and shells. The ranking is the multibagger score, the app's one long-term score. The penny screen's own score is still recorded every run for a forward test, but it has no track record yet, so it is not shown.")}</div>
     <div class="sc-tools"><div class="searchbox">${I.search}<input class="field" id="pq" placeholder="Symbol or company" value="${esc(f.q)}" autocomplete="off" spellcheck="false" aria-label="Search penny stocks"></div></div>
     <div class="toolbar"><div class="seg">${[["", "Both"], ["price", "Under ₹100"], ["mcap", "Under ₹1,000 Cr"]].map(([k, l]) => `<button data-parm="${k}" class="${f.arm === k ? "on" : ""}">${l}</button>`).join("")}</div>
-      <label class="muted" style="font-size:12.5px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="pveto" ${f.showVeto ? "checked" : ""}>Show vetoed</label></div>
-    <div class="meta-line"><span><b>${rows.length}</b> names · as of ${esc(dateLabel(P.as_of))}</span><span class="swipe-hint">Swipe for more →</span></div>
-    <div class="card flush"><div class="table-wrap max"><table class="t freeze2"><thead><tr><th class="c1">Stock</th><th class="c2" data-tip="The penny screen's own score out of 100, not the conviction check.">Penny score</th><th class="r">Price</th><th>Stage</th><th class="r">RS</th><th>Flags</th><th class="r" data-tip="Median daily traded value: whether an exit exists at all.">Turnover</th><th class="r" data-tip="10% of median daily value: roughly what you could sell in one session without moving the price.">Max position</th><th class="r">3 months</th><th class="r">Market cap</th></tr></thead>
+      <label class="muted" style="font-size:12.5px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="pveto" ${f.showVeto ? "checked" : ""}>Show the ones that failed</label></div>
+    <div class="meta-line"><span><b>${num(nPass)}</b> passed the safety checks${nUnchecked ? ` · ${num(nUnchecked)} not checked yet` : ""} · as of ${esc(dateLabel(P.as_of))}</span><span class="swipe-hint">Swipe for more →</span></div>
+    <div class="card flush"><div class="table-wrap max"><table class="t freeze2"><thead><tr><th class="c1">Stock</th><th class="c2" data-tip="The multibagger score: points for the proven ingredients present; all nine make 100.">Multibagger</th><th>Safety</th><th class="r">Price</th><th class="r" data-tip="Median daily traded value.">Traded a day</th><th class="r" data-tip="10% of the median daily value: roughly what you could sell in one session without moving the price.">Most you could sell a day</th><th class="r">3 months</th><th class="r">Market cap</th><th>Stage</th><th class="r">RS</th></tr></thead>
       <tbody>${rows.map(r => `<tr class="${r.veto ? "dim" : ""}" data-sym="${esc(r.sym)}" data-ctx="penny"><td class="c1"><div class="cell-sym"><span class="sym">${esc(r.sym)}</span><span class="co">${esc(shortCo(r.company))}</span></div></td>
-        <td class="c2">${isNum(r.score) ? cbar(r.score, scoreCol(r.score)) : "—"}</td><td class="r num">${px(r.close)}</td><td>${stageChip(r.tag)}</td><td class="r num">${isNum(r.rs) ? r.rs.toFixed(0) : "—"}</td>
-        <td>${r.veto ? `<span class="chip sm risk" data-tip="${esc(r.vetowhy)}">vetoed</span> ` : ""}${(r.flags || []).slice(0, 3).map(x => `<span class="chip sm watch" data-tip="${esc(survText([typeof x === "string" ? { code: x, detail: "" } : x]))}">${esc(typeof x === "string" ? x : x.code || "")}</span>`).join(" ") || (r.veto ? "" : '<span class="faint">none</span>')}</td>
+        <td class="c2">${MBS[r.sym] ? cbar(MBS[r.sym].score, "var(--teal)") : `<span class="faint" style="font-size:12px" data-tip="Too new or too thinly traded for the multibagger score.">not scored</span>`}</td>
+        <td>${pennySafety(r)}</td><td class="r num">${px(r.close)}</td>
         <td class="r num">${isNum(r.turn) ? "₹" + r.turn.toFixed(2) + " Cr" : "—"}</td><td class="r num">${isNum(r.turn) ? inrShort(r.turn * 1e7 * 0.1) : "—"}</td><td class="r num ${cls(r.run3m)}">${pct(r.run3m, 0)}</td>
-        <td class="r num">${isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : "—"}</td></tr>`).join("")}</tbody></table></div></div>
-    ${(P.funnel || []).length ? `<details class="more" style="margin-top:14px"><summary>What the gates excluded</summary><div class="card">${P.funnel.map(x => `<div class="lrow" style="cursor:default"><span>${esc(x.why)}</span><span class="num">${num(x.n)}</span></div>`).join("")}</div></details>` : ""}`;
+        <td class="r num">${isNum(r.mcap) ? "₹" + nf0.format(r.mcap) + " Cr" : "—"}</td><td>${stageChip(r.tag)}</td><td class="r num">${isNum(r.rs) ? r.rs.toFixed(0) : "—"}</td></tr>`).join("")}</tbody></table></div></div>
+    ${(P.funnel || []).length ? `<details class="more" style="margin-top:14px"><summary>Why the rest of the market is not here</summary><div class="card">${P.funnel.map(x => `<div class="lrow" style="cursor:default"><span>${esc(x.why)}</span><span class="num">${num(x.n)}</span></div>`).join("")}</div></details>` : ""}`;
 }
 function momentumSection() {
   const pv = MC.preview || {}, nav = MC.nav || [], cmp = MC.compare || {}, book = MC.book || {};
@@ -1359,7 +1374,6 @@ function glossary() {
       ["Conviction", "0 to 100. An eight-question check of a stock: trend, earnings, money flow, balance sheet, news, governance, valuation and theme. 70 and above is Strong, 50 to 69 Moderate, under 50 Weak. Avoid means a red flag vetoed it. It separates weak stocks from the rest; it does not rank good ones against each other."],
       ["RS", "Relative strength, 0 to 100: how the stock's 6- and 12-month return ranks against the others. 98 means stronger than 98% of them."],
       ["Multibagger score", "0 to 100: how many of the nine ingredients that came before past Indian multibaggers are present at once, such as a turnaround, a low valuation, few institutions, promoters buying, a volume surge or price leadership. A research idea, not a buy signal: even the best signal is followed by a triple about 1 time in 10."],
-      ["Penny score", "0 to 100, the penny screen's own formula for very small companies: momentum, growth and whether you could sell. It is not the conviction check."],
     ]],
     ["The AI", [
       ["AI rating", "1 to 5. Each week an AI reads the filings, results calls and reports of the top multibagger names and writes a deep-dive. 5 is its strongest long-term view."],
@@ -1382,6 +1396,7 @@ function glossary() {
       ["Triggered", "Signals from the last 7 days. Opened too high: it gapped past the buy zone, so the plan skipped it. Faded: it fell back under the alert price. Hit its stop: the setup failed."],
       ["Forming", "A base in a stock whose uptrend isn't confirmed yet. Watch only."],
       ["Gap-up", "A stock that jumped on big news with heavy volume. A separate kind of signal, with its own stop."],
+      ["Penny stocks", "Very small companies, under ₹100 a share or under ₹1,000 Cr, that passed safety checks: easy enough to sell, not under exchange surveillance, shares not heavily pledged or diluted. They are ranked by the multibagger score; there is no separate penny score."],
       ["Vetoed", "A governance, debt or exchange-surveillance red flag. The system will not buy it, whatever the chart says."],
     ]],
     ["The plan", [
@@ -1885,12 +1900,16 @@ function drawFundInto(sym, p) {
 function pennyRow(sym) { const P = lazy("penny") || D.penny; return P ? (P.rows || []).find(r => r.sym === sym) || null : null; }
 function pennyCard(sym) {
   const r = pennyRow(sym); if (!r) return "";
-  const flags = (r.flags || []).map(x => typeof x === "string" ? { code: x, detail: "" } : x);
-  return `<div class="todo ${r.veto ? "risk" : "watch"}"><div class="todo-head"><span class="todo-tag">Penny stock</span><span class="todo-text">${r.veto ? "Vetoed by the penny screen: " + esc(r.vetowhy || "a red flag") + "." : `Penny score <b>${Math.round(r.score)}</b> of 100. A research idea from the penny screen, never backtested: keep it to 1% of your portfolio.`}</span></div>
+  const m = MBS[sym], tier = PENNY_TIER(r), warn = (r.flags || []).map(pennyFlag);
+  const head = tier === 2 ? `Failed the penny safety checks: ${esc(pennyFlag(String(r.vetowhy || "a red flag").split("; ")[0]))}.`
+    : tier === 1 ? "On the penny list but not checked yet: screener.in had no readable company data for it, so the pledge, dilution and shell checks could not run. Treat it as unchecked."
+    : "A penny stock that passed the safety checks: it trades enough to sell, is not under exchange surveillance, and its shares are not heavily pledged or diluted.";
+  const mb = tier === 2 ? "" : m ? ` Multibagger score <b>${Math.round(m.score)}</b>, rank ${num(mbRank(sym))} of ${num(mbStats().all.length)}.` : " Too new or too thinly traded for the multibagger score.";
+  return `<div class="todo ${tier === 2 ? "risk" : tier === 1 ? "watch" : "ghost"}"><div class="todo-head"><span class="todo-tag">Penny stock</span><span class="todo-text">${head}${mb} Keep it to 1% of your portfolio.</span></div>
     <div class="plan-grid"><div class="plan-cell"><div class="k">Traded a day</div><div class="v">${isNum(r.turn) ? "₹" + r.turn.toFixed(2) + " Cr" : "—"}</div></div>
       <div class="plan-cell"><div class="k">Most you could sell in a day</div><div class="v">${isNum(r.turn) ? inrShort(r.turn * 1e7 * 0.1) : "—"}</div></div>
       <div class="plan-cell"><div class="k">3 months</div><div class="v ${cls(r.run3m)}">${pct(r.run3m, 0)}</div></div>
-      <div class="plan-cell"><div class="k">Exchange flags</div><div class="v" style="font-size:13px">${flags.length ? esc(survText(flags)) : "none"}</div></div></div></div>`;
+      <div class="plan-cell"><div class="k">Warnings</div><div class="v" style="font-size:13px">${warn.length ? esc(warn.join("; ")) : "none"}</div></div></div></div>`;
 }
 function outsideDetail(sym) {
   const pc = pennyCard(sym), body = outsideDetail0(sym);

@@ -315,7 +315,7 @@ def test_a_newcomer_can_find_out_what_every_word_means():
     assert 'h[0] === "guide"' in _fn_source(src, "onRoute"), "the Guide route no longer resolves"
     assert 'data-go="guide"' in _fn_source(src, "renderShell"), "no way into the Guide from the top bar"
     gl = _fn_source(src, "glossary")
-    for word in ("Conviction", "RS", "Multibagger score", "Penny score", "AI rating", "AI check", "Weekly pick",
+    for word in ("Conviction", "RS", "Multibagger score", "Penny stocks", "AI rating", "AI check", "Weekly pick",
                  "Uptrend", "Extended", "Basing", "Neutral", "Downtrend", "Base ready", "Near breakout",
                  "Buy now", "Triggered", "Forming", "Stop", "Paper books", "Capital gate", "Tracked stocks"):
         assert f'["{word}", ' in gl, f"the Guide no longer explains {word!r}"
@@ -447,6 +447,29 @@ def test_dated_reads_say_their_date_and_old_stops_stay_off_the_chart():
     dst = _fn_source(src, "drawStockTab")
     assert "live && plan && !plan.skip ? plan.stop" in dst and "const live = buySignals().some(a => a.sym === sym)" in dst,         "a months-old alert's stop is drawn again"
     assert "last traded" in _fn_source(src, "stockHead")
+
+
+
+def test_one_long_term_score_and_penny_is_a_checked_list():
+    """User, 2026-10-14: "multibagger and penny scores, it's confusing, we need
+    a harmony". The Penny tab is ranked by the multibagger score, and a name
+    the penny screen could not check never sits above one it did (56 unchecked
+    names had held ZIMLAB 92, GLOBAL 87, UNITEDPOLY 83 at the top)."""
+    src = _js()
+    js = ("const MBS = { A: { score: 30 }, B: { score: 60 }, C: { score: 90 }, D: { score: 10 } };\n"
+          + _const_source(src, "PENNY_TIER") + """
+const rows = [{ sym: "C", asd: false, veto: false, turn: 9 }, { sym: "A", asd: true, veto: false, turn: 1 },
+  { sym: "B", asd: true, veto: true, turn: 5 }, { sym: "D", asd: true, veto: false, turn: 2 }, { sym: "E", asd: true, veto: false, turn: 7 }];
+const mbOf = r => MBS[r.sym] ? MBS[r.sym].score : -1;
+rows.sort((a, b) => PENNY_TIER(a) - PENNY_TIER(b) || mbOf(b) - mbOf(a) || (b.turn || 0) - (a.turn || 0));
+console.log(JSON.stringify(rows.map(r => r.sym)));
+""")
+    assert _node(js) == ["A", "D", "E", "C", "B"], "checked by multibagger score, unscored next, then unchecked, then failed"
+    pen = _fn_source(src, "explorePenny")
+    assert "PENNY_TIER(a) - PENNY_TIER(b) || mbOf(b) - mbOf(a)" in pen, "the Penny tab sorts by something else again"
+    assert "Penny score" not in pen and "r.score" not in pen, "the penny screen's own score is on screen again"
+    card = _fn_source(src, "pennyCard")
+    assert "r.score" not in card and "not checked yet" in card
 
 
 if __name__ == "__main__":

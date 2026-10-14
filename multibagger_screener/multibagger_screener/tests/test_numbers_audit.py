@@ -71,7 +71,53 @@ def test_landing_counts_leave_out_what_the_app_leaves_out(tmp_path, monkeypatch)
     assert bl._vetoed() == {"AAA", "CCC", "DDD"}, "details decide; the ranked list only for names without details"
     src = open(os.path.join(ROOT, "scripts", "build_landing.py"), encoding="utf-8").read()
     assert "and s not in vetoed" in src, "the landing's 'base ready' counts vetoed names again"
-    assert 'not v.get("vetoed")' in src, "'passed the safety screens' counts the penny screen's vetoes again"
+    assert '"penny": _penny_passed(),' in src, "'passed the safety screens' counts failed or unchecked names again"
+
+
+
+# ------------------------------------------------ penny: checked means checked
+def test_the_penny_job_waits_out_screener_in_refusals(monkeypatch):
+    """At a 1.8 s pause with no back-off, screener.in refused (HTTP 429) after
+    about 25 names and every later one failed: 56 of 154 penny names had no
+    readable fundamentals, so no survival veto could run on them."""
+    import penny_fundamentals as pf
+    calls, waits = [], []
+    script = {"AAA": ["429", "429", "ok"], "BBB": ["ok"]}
+
+    def fetch(sym):
+        calls.append(sym)
+        step = script[sym].pop(0)
+        if step == "429":
+            raise RuntimeError(sym + ": no financials parsed (HTTP Error 429: Too Many Requests)")
+        return {"symbol": sym}
+
+    monkeypatch.setattr(pf, "load_company", lambda s: None)
+    monkeypatch.setattr(pf, "fetch_company", fetch)
+    monkeypatch.setattr(pf, "save_company", lambda s, d: None)
+    monkeypatch.setattr(pf, "has_real_data", lambda d: True)
+    monkeypatch.setattr(pf, "flatten", lambda s, d: {"symbol": s})
+    monkeypatch.setattr(pf, "penny_extras", lambda d: {})
+    monkeypatch.setattr(pf, "OUT", os.devnull)
+    df = pf.run(["AAA", "BBB"], max_age_days=30, limit=None, sleep=waits.append)
+    assert list(df["symbol"]) == ["AAA", "BBB"], "a refused name must be retried, not dropped"
+    assert calls == ["AAA", "AAA", "AAA", "BBB"]
+    assert waits[:2] == [90, 180] and pf.PAUSE_SECONDS >= 5
+
+    # five refusals in a row: stop fetching, keep going through the cache
+    calls.clear(); waits.clear()
+    script.update({"CCC": ["429"] * 5, "DDD": ["ok"]})
+    monkeypatch.setattr(pf, "load_company", lambda s: {"symbol": s} if s == "EEE" else None)
+    monkeypatch.setattr(pf, "_age_days", lambda d: 0)
+    df = pf.run(["CCC", "DDD", "EEE"], max_age_days=30, limit=None, sleep=waits.append)
+    assert calls == ["CCC"] * 5, "after five refusals the run stops asking"
+    assert list(df["symbol"]) == ["EEE"], "cached names still come through after the stop"
+
+
+def test_landing_counts_only_checked_penny_names(tmp_path, monkeypatch):
+    import build_landing as bl
+    (tmp_path / "penny_ranked.csv").write_text("symbol,vetoed,assessed\nA,False,True\nB,False,False\nC,True,True\nD,False,True\n")
+    monkeypatch.setattr(bl, "ROOT", str(tmp_path))
+    assert bl._penny_passed() == 2, "an unchecked name is not one that 'passed the safety screens'"
 
 
 if __name__ == "__main__":

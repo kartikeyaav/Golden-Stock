@@ -13,8 +13,13 @@ Two jobs:
   2. pull the survival/quality series the penny score needs: pledge, promoter
      trend, dilution, sales/profit, debt, OPM
 
-Politeness: the project's standing 1.8s pause, cache-aware (skips anything
-fetched within --max-age-days), and a bounded --limit so a run can be capped.
+Politeness: a 7 s pause, cache-aware (skips anything fetched within
+--max-age-days), and a bounded --limit so a run can be capped. screener.in
+answers HTTP 429 after about 25 quick requests; at the old 1.8 s pause every
+later name failed, and 56 of 154 penny names had no readable fundamentals,
+so none of the survival vetoes could run on them (2026-10-14). On a 429 the
+run waits (90 s, doubling) and retries the same name, and stops fetching
+after five refusals in a row: the rest is picked up by the next run.
 
     python scripts/penny_fundamentals.py                 # universe, then pending
     python scripts/penny_fundamentals.py --limit 200
@@ -41,7 +46,8 @@ UNIVERSE = os.path.join(ROOT, "penny_universe.csv")
 EXCLUDED = os.path.join(ROOT, "penny_excluded.csv")
 OUT = os.path.join(ROOT, "penny_fundamentals.csv")
 
-PAUSE_SECONDS = 1.8
+PAUSE_SECONDS = 7.0
+MAX_REFUSALS = 5
 
 
 def _series(data: dict, section: str, *labels: str) -> list:
@@ -97,9 +103,16 @@ def target_symbols(pending_only: bool = False) -> list[str]:
     return list(dict.fromkeys(syms))
 
 
-def run(symbols: list[str], max_age_days: float, limit: int | None) -> pd.DataFrame:
+def _refused(e: Exception) -> bool:
+    """screener.in's rate limit, however fetch_company wrapped it."""
+    return getattr(e, "code", None) == 429 or "429" in str(e)
+
+
+def run(symbols: list[str], max_age_days: float, limit: int | None,
+        sleep=time.sleep) -> pd.DataFrame:
     rows, failures, fetched = [], [], 0
     skipped_for_cap = 0
+    refusals, wait, stopped = 0, 90, False
     t0 = time.time()
     for i, sym in enumerate(symbols, 1):
         data = load_company(sym)
@@ -107,7 +120,11 @@ def run(symbols: list[str], max_age_days: float, limit: int | None) -> pd.DataFr
         # an empty parse cached by the pre-2026-07-25 consolidated-fallback bug
         # is not a cache hit — it is a blind spot that never heals on its own
         poisoned = data is not None and not has_real_data(data)
-        if data is None or stale or poisoned:
+        if (data is None or stale or poisoned) and stopped:
+            skipped_for_cap += 1
+            if data is None or poisoned:
+                continue
+        elif data is None or stale or poisoned:
             if limit is not None and fetched >= limit:
                 # SKIP, don't stop: names further down the list may already be
                 # cached and cost nothing. The cap exists to bound NETWORK
@@ -118,16 +135,34 @@ def run(symbols: list[str], max_age_days: float, limit: int | None) -> pd.DataFr
                           flush=True)
                 skipped_for_cap += 1
                 continue
-            try:
-                data = fetch_company(sym)
+            fresh = None
+            while fresh is None:
+                try:
+                    fresh = fetch_company(sym)
+                except Exception as e:  # noqa: BLE001 — one dead page != dead run
+                    if _refused(e) and refusals + 1 < MAX_REFUSALS:
+                        refusals += 1
+                        print(f"  [{i}/{len(symbols)}] 429 on {sym}; waiting {wait}s", flush=True)
+                        sleep(wait)
+                        wait = min(wait * 2, 900)
+                        continue
+                    if _refused(e):
+                        stopped = True
+                        print(f"  stopping live fetches: {MAX_REFUSALS} refusals in a row (HTTP 429); "
+                              f"the next run picks up the rest", flush=True)
+                    failures.append(sym)
+                    if len(failures) <= 12:
+                        print(f"  [{i}/{len(symbols)}] FAIL {sym}: {str(e)[:70]}", flush=True)
+                    break
+            if fresh is None:
+                if data is None or poisoned:
+                    continue
+            else:
+                data = fresh
                 save_company(sym, data)
                 fetched += 1
-                time.sleep(PAUSE_SECONDS)
-            except Exception as e:  # noqa: BLE001 — one dead page != dead run
-                failures.append(sym)
-                if len(failures) <= 12:
-                    print(f"  [{i}/{len(symbols)}] FAIL {sym}: {str(e)[:70]}", flush=True)
-                continue
+                refusals, wait = 0, 90
+                sleep(PAUSE_SECONDS)
         try:
             rows.append({**flatten(sym, data), **penny_extras(data)})
         except Exception as e:  # noqa: BLE001 — parser drift on one page
