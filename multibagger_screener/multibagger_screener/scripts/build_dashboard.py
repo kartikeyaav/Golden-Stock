@@ -115,7 +115,7 @@ def _company_briefs(symbols) -> dict:
 
 def _archive_news(symbols: list, company_by_sym: dict, days: int = 30,
                   per_name: int = 5) -> dict:
-    """Recent filings and headlines for names that have NO scored news read.
+    """Recent filings and headlines for every stock the screener lists.
 
     WHY (2026-09-15, user-reported: "the news is not showing up"). The drawer
     showed news only for names a nightly or weekly job had enriched — 464 of
@@ -1214,7 +1214,7 @@ def build_payload() -> dict:
         live_close = closes[sym][-1] if closes[sym] else (
             round(float(r["last_close"]), 2) if pd.notna(r.get("last_close")) else None)
         screener_rows.append({
-            "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
+            "sym": sym, "company": str(company_by_sym.get(sym, "")),  # full name: the UI ellipsises (a 40-char cut read "Holdings Limite")
             "ind": (ind_by_sym.get(sym) or as_text(r.get("industry")))[:30],
             # tonight's state wins over the weekly focus snapshot (freshness)
             "tag": tags.get(sym, r.get("tag", "")),
@@ -1248,7 +1248,7 @@ def build_payload() -> dict:
             mcap = f.get("market_cap_cr")
         arch = str(arch_by_sym.get(sym, ""))
         screener_rows.append({
-            "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
+            "sym": sym, "company": str(company_by_sym.get(sym, "")),  # full name: the UI ellipsises (a 40-char cut read "Holdings Limite")
             "ind": str(ind_by_sym.get(sym, ""))[:30],
             "tag": tg,
             "tier": cap_tier(mcap, ""),
@@ -1513,7 +1513,7 @@ def build_payload() -> dict:
         if sym not in watch:
             sc, cov, _ = _score_cov(sym)
             watch[sym] = {
-                "sym": sym, "company": str(company_by_sym.get(sym, ""))[:40],
+                "sym": sym, "company": str(company_by_sym.get(sym, "")),  # full name: the UI ellipsises (a 40-char cut read "Holdings Limite")
                 "stage": tags.get(sym, ""), "rs": rs_by_sym.get(sym),
                 "score": sc, "cov": cov, "price": _watch_price(sym),
                 "signal": "", "flags": []}
@@ -1615,10 +1615,12 @@ def build_payload() -> dict:
         "reviewed": list(ranked.head(20)["symbol"]) if not ranked.empty else [],
         "rows": screener_rows, "watch": watch_rows,
         "closes": closes, "ohlc": ohlc, "details": details,
-        "archive_news": _archive_news(
-            [r["sym"] for r in screener_rows
-             if not (details.get(r["sym"]) or {}).get("news")],
-            company_by_sym),
+        # EVERY stock gets its headlines (2026-10-14, user-reported: "I'm not
+        # seeing news for the stock"). This used to skip names that had a
+        # scored news read, on the assumption that the read listed them; it
+        # holds only a summary and one top story, so the 472 alerted and focus
+        # names, the ones that matter most, showed "no filings" in the app.
+        "archive_news": _archive_news([r["sym"] for r in screener_rows], company_by_sym, per_name=8),
         "briefs": _company_briefs([r["sym"] for r in screener_rows]),
         "fund": fund_series, "positions": pos_rows, "journal": j_rows,
         "journal_total": journal_total, "scorecard": score_rows,

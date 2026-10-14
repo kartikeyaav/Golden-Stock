@@ -86,16 +86,21 @@ two. From v10, each idea has exactly one name.
 | **Weekly pick** | yes / no | Chosen by the weekly AI committee | "Committee pick", HIGH/MEDIUM |
 | **Penny score** | 0–100 | The penny screen's own formula (momentum, growth, tradability). Not the conviction check | "Score" |
 
-**Conviction bands.** 70 and above: **Strong** (green). 50–69: **Passes**
-(neutral). Below 50: **Weak** (amber). Vetoed: **Avoid** (red). The number is
-shown as a whole number beside its band. Measured on 2026-09-25: the score
+**Conviction bands.** 70 and above: **Strong** (green). 50–69: **Moderate**
+(neutral). Below 50: **Weak** (amber). Vetoed: **Avoid** (red). The band is
+taken from the whole number shown, so "70" never reads "Moderate". ("Passes"
+was used for one day and read as a pass/fail test: user, 2026-10-14.) Measured on 2026-09-25: the score
 separates the weak from the rest but does not rank stocks above 50. That is why
 it shows bands, not decimals.
 
-### Price stages
+### Price stages and setups
 
-Uptrend · Near breakout · Breakout · Extended · Basing · Neutral · Downtrend.
-One stage per stock, shown as one chip.
+Stage (one chip): Uptrend · Extended · Basing · Neutral · Downtrend.
+Setup (at most one more chip): **Base ready** (a live base, at any distance
+from its alert price) · **Breakout** · **Gap-up**.
+**Near breakout** means within 5% of the alert price, or above it waiting for
+volume. It is a count on Home, never a label on a stock: on 2026-10-14 every
+live base was called "Near breakout", including HFCL 27% below its alert.
 
 ### Actions
 
@@ -161,7 +166,7 @@ not used.
 |---|---|---|
 | **Home** | — | Act |
 | **Screener** | All stocks · Multibaggers · Penny · Themes & market | Find |
-| **Watchlist** | Buy now · Near breakout · Triggered · Forming | Act |
+| **Watchlist** | Buy now · Base ready · Triggered · Forming | Act |
 | **Research** | Deep-dives · Buy checks · Weekly picks · News | Understand |
 | **Performance** | Overview · Paper books · Capital gate · Evidence · Log · System | Track |
 
@@ -205,7 +210,7 @@ app. Every tile is a button that goes to the place that answers it.
 | Tile | Shows | Tap goes to | State colour |
 |---|---|---|---|
 | **Buy now** | Count of valid buy signals; when zero, "None today · 5 triggered this week" | Watchlist › Buy now (or Triggered when zero) | green when above zero |
-| **Near breakout** | Count, and the closest one: "LAURUSLABS 0.2% away" | Watchlist › Near breakout | neutral |
+| **Near breakout** | Count within 5% of their alert price, and the closest one | Watchlist › Base ready | neutral |
 | **Multibaggers** | The top name and its score; new entries this week | Screener › Multibaggers | neutral |
 | **Breaking news** | Risk filings and exchange-surveillance changes in the last 48 hours on stocks you are following | Research › News, filtered to those stocks | red or amber when above zero |
 | **AI research** | Newest AI output and its date: "5 weekly picks · 12 Oct" | Research (newest sub-tab) | violet |
@@ -289,11 +294,11 @@ and size on the second. Back, previous, next.
 
 | Tab | Contents |
 |---|---|
-| **Overview** | Brief: what the company does, in one or two sentences. What to do box (§6.7). Four score tiles: Conviction, RS, Multibagger, AI. A 6-month chart with the alert and stop lines. Heads-up if any risk news exists. |
+| **Overview** | Brief: what the company does. What to do box (§6.7). Four score tiles: Conviction, RS, Multibagger, AI. A price row (1 month, 6 months, 1 year, below its 1-year high). What the AI says, one line each. The latest three headlines, routine paperwork left out. Heads-up if any risk exists. **No chart here**: the chart has its own tab, and showing it twice was user-reported. |
 | **Chart** | Full chart (3M / 6M / 1Y), RS line, trend checks, exit plan |
 | **Scores** | The eight Conviction questions as bars with their evidence; multibagger ingredients; any veto |
 | **Business** | Key numbers, profit and margin charts, debt, who owns it, what analysts say |
-| **News & AI** | News memory and filings, the AI check, the weekly pick note, the deep-dive, alert history |
+| **News & AI** | Folds, each with its answer in the header: Latest news (open), AI check, Weekly pick, Company deep-dive, Story memory, Bulk and block deals, Alert history |
 
 ### 6.7 What to do box
 
@@ -308,13 +313,22 @@ button ("Copy alert" or "Copy order"). Nothing else goes in it.
 - Today only the "?" icons respond to touch; every other `data-tip` is
   unreachable on a phone.
 
-### 6.9 Empty states
+### 6.9 Folding
+
+Anything longer than about five lines folds, with its one-line answer in the
+header ("AI check · Wait · 9 Oct", "Story memory · 2 positive · 0 negative").
+The section people come for opens by default. Research cards show a two-line
+summary and fold the full reasoning. Long tails of a page (universe map,
+industries, backtests) fold. User rule, 2026-10-14: "if something can be
+collapsible, implement it".
+
+### 6.10 Empty states
 
 Say what normal looks like and where to look instead. Example (kept from v9):
 "Nothing to buy today. That's normal: the system averages 2–3 entries a
 month." plus a link to the nearest useful list.
 
-### 6.10 Buttons
+### 6.11 Buttons
 
 - **Primary** (filled): one per view, at most.
 - **Secondary** (outline): any number.
@@ -348,7 +362,16 @@ block deals · policy) follow, each newest first with its date.
 ### 7.5 Stock sheet
 §6.6.
 
-### 7.6 Performance
+### 7.6 Landing page (the public index)
+
+Generated by `scripts/build_landing.py` from the same state as the app.
+Phone first, in this order: what it does and one button into the app; today's
+six live tiles, each opening its tab; how it works (Find, Understand, Act,
+Track); the evidence in rupees with the honest comparisons folded under "How to
+read these numbers"; the public test; the rejected ideas, folded. No ticker, no
+market-breadth header, no R multiples.
+
+### 7.7 Performance
 Overview first (is it making money, in rupees), then the books, the gate, the
 evidence, the log, and System (data freshness for every part).
 
@@ -364,6 +387,12 @@ evidence, the log, and System (data freshness for every part).
 - Recommendation language never appears in AI notes or Stories (the protocol
   rule, kept). Buy signals use the action verbs in §3 only.
 - Cut text at a word with "…", never mid-word.
+- No machine shorthand outside Performance: not "TT 8/8", "VCP", "PAT YoY",
+  "pp", "2.5 × ATR" or "R". The app translates the scoring engine's evidence
+  lines (`plainDim`), exchange filing subjects (`cleanHeadline`) and
+  surveillance codes (`survText`) into words. Performance may use R, with a
+  tooltip that says what it is.
+- Status words say what happened: "opened too high", "faded", "under its stop".
 
 ---
 
@@ -373,6 +402,7 @@ evidence, the log, and System (data freshness for every part).
 |---|---|---|
 | **Company brief** (what it does) | screener.in "About" paragraph, first one or two sentences, cut at a word around 180 characters, source footnotes removed | New. Needs a parser and a one-time backfill of about 1,200 names. screener.in returned HTTP 429 after about 16 requests in 10 minutes on 2026-10-14, so the backfill runs from the laptop at 6 seconds or more per request, then tops up new names weekly. Fallback text: "No description published yet." |
 | Banner counts | buy signals, ready setups, triggers, multibagger table, AI files, health rows | Exists |
+| Headlines for every stock | the 30-day filings and headlines archive, matched by the scan's own matchers | Fixed 2026-10-14: it skipped the 472 stocks with a scored news read, the ones that matter most |
 | Breaking news | risk filings in news memory plus surveillance changes, last 48 hours, on stocks in Watchlist, Home or Multibaggers | Exists; needs a 48-hour filter |
 | Data health without the gate | health rows, with the capital gate's "no signal for N days" moved to Performance | Small change |
 
@@ -411,3 +441,20 @@ Measured on the live site in a 390 × 844 viewport.
 | Names | "Conviction" means four things (0–100 score, the deep-dive's 1–5, the committee's HIGH/MEDIUM, the analyst's MEDIUM). The 0–100 score is labelled "Health". |
 | Tooltips | Open on hover. On touch only the "?" icons respond. |
 | Performance › Paper books | 5.5 screens; tables 561–660px wide. |
+
+### Second pass, same day (after the v10 build)
+
+| Where | Finding | Fix |
+|---|---|---|
+| Stock view | The chart showed on Overview and on Chart | Overview has a price row instead |
+| Stock view | No headlines for the 472 most important stocks | Archive built for every stock |
+| News & AI, Research | Long blocks, nothing folded | Folds with one-line answers (§6.9) |
+| Conviction | "Passes" read as pass/fail; "70" banded Moderate | Strong / Moderate / Weak; band from the shown number |
+| Setups | Every live base called "Near breakout" | "Base ready"; near = within 5% |
+| Forming tab | "buy on a close" above "watch only" | The line says the uptrend isn't confirmed |
+| Triggered | "ran away" when the price was 6% below | "opened too high", "faded", "under its stop" |
+| Headlines | "X LIMITED has informed the Exchange about … SUBJECT: …-XBRL" | Cleaned; paperwork marked and kept off Overview |
+| Scores | "TT 8/8, VCP live, PAT YoY, pp" | Plain words |
+| Deals | Every bulk deal listed twice (bulk and block) | One row a trade |
+| Company names | Cut at 40 characters ("Holdings Limite") | Full names |
+| Landing page | Twelve screens, R multiples, a breadth ticker | Rebuilt (§7.6) |

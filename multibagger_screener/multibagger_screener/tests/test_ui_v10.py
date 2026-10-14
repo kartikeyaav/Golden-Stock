@@ -135,16 +135,20 @@ def test_conviction_bands_and_moves():
     src = _js()
     harness = "const isNum = v => typeof v === 'number' && isFinite(v);\n" + _fn_source(src, "convBand") + _fn_source(src, "movePct") + """
 console.log(JSON.stringify({
-  strong: convBand(77).word, passes: convBand(55).word, weak: convBand(42).word,
+  strong: convBand(77).word, moderate: convBand(55).word, weak: convBand(42).word,
   avoid: convBand(90, true).word, none: convBand(null).word, edge70: convBand(70).word, edge50: convBand(50).word,
-  up: movePct(1.234), down: movePct(-12.6), flat: movePct(0), nan: movePct(NaN),
+  shown70: convBand(69.6).word, shown49: convBand(49.4).word,
+  up: movePct(1.234), down: movePct(-12.6), flat: movePct(0), tiny: movePct(-0.01), nan: movePct(NaN),
 }));
 """
     o = _node(harness)
-    assert (o["strong"], o["passes"], o["weak"], o["avoid"], o["none"]) == ("Strong", "Passes", "Weak", "Avoid", "—")
-    assert o["edge70"] == "Strong" and o["edge50"] == "Passes"
+    assert (o["strong"], o["moderate"], o["weak"], o["avoid"], o["none"]) == ("Strong", "Moderate", "Weak", "Avoid", "—"), \
+        "'Passes' read as a pass/fail test (user, 2026-10-14)"
+    assert o["edge70"] == "Strong" and o["edge50"] == "Moderate"
+    assert o["shown70"] == "Strong", "PARAS showed '70 · Moderate': the band must follow the number shown"
+    assert o["shown49"] == "Weak"
     assert o["up"] == "▲1.2%" and o["down"] == "▼13%", "one decimal under 10%, none above (DESIGN.md §8)"
-    assert o["flat"] == "0.0%" and o["nan"] == ""
+    assert o["flat"] == "0.0%" and o["tiny"] == "0.0%" and o["nan"] == "", "a flat day must not read ▼0.0%"
 
 
 # --------------------------------------------------------- a buy is a buy
@@ -224,6 +228,82 @@ def test_the_brief_file_is_tracked_so_the_cloud_build_has_it():
     r = subprocess.run(["git", "ls-files", "--error-unmatch", "company_briefs.csv"],
                        capture_output=True, text=True, cwd=ROOT)
     assert r.returncode == 0, "company_briefs.csv is not tracked: the published page would have no briefs"
+
+
+# ------------------------------------------------------ second pass, 10-14
+def _const_source(src: str, name: str) -> str:
+    m = re.search(r"^const " + re.escape(name) + r"\b", src, re.M)
+    assert m, f"const {name} is missing"
+    nxt = re.compile(r"^(?:function |const |let |/\*)", re.M).search(src, m.end())
+    return src[m.start(): nxt.start() if nxt else len(src)]
+
+
+def test_machine_shorthand_becomes_words():
+    """The scoring engine, NSE filings and the surveillance feed speak in
+    codes. Read at 390px on 2026-10-14: "TT 8/8, stage 2, VCP live",
+    "has informed the Exchange about ... |SUBJECT: ...-XBRL", "ASM (LT Stage I)"."""
+    src = _js()
+    js = "\n".join([_const_source(src, "PLAIN_DIM"), _fn_source(src, "plainDim"), _const_source(src, "ROUTINE"),
+                    _fn_source(src, "cleanHeadline"), _fn_source(src, "survWords"), _fn_source(src, "survText")]) + """
+console.log(JSON.stringify({
+  dim: plainDim("RS percentile 97; TT 8/8, stage 2, VCP live"),
+  dim2: plainDim("qtr PAT YoY +123%; TTM 115% > 3y 4%; FII 26.17->28.0% (+1.83pp) (news-based v0)"),
+  h: cleanHeadline("LAURUS LABS LIMITED has informed the Exchange about Board Meeting on 29-Oct |SUBJECT: Outcome-XBRL"),
+  routine: ROUTINE.test("informed the Exchange regarding the Trading Window closure"),
+  real: ROUTINE.test("Update on Acquisition"),
+  surv: survText([{ code: "ASM", detail: "LT Stage I" }, { code: "BAND 10%", detail: "" }]),
+}));
+"""
+    o = _node(js)
+    for code in ("TT ", "VCP", "PAT", "TTM", "pp", "->", "news-based"):
+        assert code not in o["dim"] + o["dim2"], f"machine shorthand left on screen: {code!r} in {o}"
+    assert o["h"] == "Board Meeting on 29-Oct", o["h"]
+    assert o["routine"] is True and o["real"] is False
+    assert "extra-surveillance" in o["surv"] and "10% a day" in o["surv"], o["surv"]
+
+
+def test_every_stock_gets_its_headlines():
+    """The archive was built only for stocks WITHOUT a scored news read, so
+    the 472 alerted and focus names showed "no filings" (user-reported:
+    "I'm not seeing news for the stock")."""
+    src = open(os.path.join(ROOT, "scripts", "build_dashboard.py"), encoding="utf-8").read()
+    assert '"archive_news": _archive_news([r["sym"] for r in screener_rows], company_by_sym' in src
+    assert 'if not (details.get(r["sym"]) or {}).get("news")]' not in src, "the scored-news exclusion is back"
+
+
+def test_the_overview_has_no_second_chart_and_news_folds():
+    src = _js()
+    ov = _fn_source(src, "tabOverview")
+    assert "chart-box" not in ov and "-mini" not in ov, "the chart is on Overview and Chart again (user-reported)"
+    assert 'S.sheetTab === "overview"' not in _fn_source(src, "drawStockTab"), "Overview draws a chart again"
+    assert "newsPeek(sym)" in ov and "aiSays(sym)" in ov, "Overview lost its news or AI summary"
+    news = _fn_source(src, "tabNews")
+    for title in ("Latest news", "AI check", "Weekly pick", "Company deep-dive", "Alert history"):
+        assert f'fold("{title}"' in news, f"{title} is no longer a fold"
+
+
+def test_near_breakout_means_near():
+    """HFCL, 27% under its alert, was labelled "Near breakout"."""
+    src = _js()
+    assert '"AWAITING TRIGGER": "Base ready"' in src
+    assert "s.dist <= 5" in _fn_source(src, "bannerTiles"), "the Near breakout tile counts every base again"
+
+
+def test_landing_page_tells_the_story_in_plain_words():
+    import build_landing as bl
+    f = {"cells": [["CONFIRMED", 90.0], ["WATCH", None]], "watched": 963, "uptrend": 164, "ready": 41,
+         "mb_n": 868, "mb_top": "BHAGERIA", "mb_score": 68, "picks": 5, "picks_day": "12 Oct", "dives": 8,
+         "dives_day": "9 Oct", "penny": 197, "signals": 1374, "gate": {"deadline": "2026-12-31"},
+         "need": 40, "have": 13, "generated": "14 Oct 2026"}
+    page = bl.render(f).replace("%%CELLS%%", "[]")
+    assert "%%" not in page, "a template token was left unfilled"
+    for route in ("#/watchlist/ready", "#/screener/multibaggers", "#/research/picks", "#/research/deepdives",
+                  "#/screener/stocks", "#/screener/penny", "#/performance/gate"):
+        assert f'href="dashboard.html{route}"' in page, f"no link into the app at {route}"
+    low = page.lower()
+    for jargon in ("ticker", "normal size", "full size", "200-dma", "expectancy", "vcp", "atr stop"):
+        assert jargon not in low, f"landing page jargon is back: {jargon!r}"
+    assert "How to read these numbers" in page, "the honest comparisons must stay on the page"
 
 
 if __name__ == "__main__":

@@ -1,35 +1,37 @@
 """
-scripts/build_landing.py — generates landing.html (published as the Pages
-index; the dashboard sits at /dashboard.html).
+scripts/build_landing.py - generates landing.html (published as the Pages
+index; the app sits at /dashboard.html).
 
-WHY THIS IS GENERATED. The old landing page was hand-written and its numbers
-were frozen at the moment someone typed them: it advertised +1.67R and a
-32.5% CAGR after two adoptions had superseded both, and its live-terminal
-mock still said "regime: checking NIFTY vs 150-DMA" months after the sizing
-rule became universe breadth. A marketing page that drifts from the system it
-describes is worse than no page. Every number here is read from the same
-state the dashboard reads, so the two cannot disagree.
+WHY THIS IS GENERATED. The first landing page was hand-written and its numbers
+froze the moment someone typed them. Every number here is read from the same
+state the app reads, so the two cannot disagree.
 
-WHAT IT CLAIMS, AND HOW. This is the sales page, so it leads with what was
-actually built and what the rules did on history — stated confidently, with
-every number sourced from config.EVIDENCE rather than typed by hand. What it
-does NOT do is import the project's internal engineering record: audit
-findings, cache bugs, cohort corrections and layer-reliability postmortems are
-real and stay in HANDOFF.md, VALIDATION_REPORT.md and the dashboard, which is
-where a person evaluating the system will look for them. A marketing page
-narrating its own bug history reads as doubt, not candour.
+v10 (2026-10-14, user-requested: "clean up the landing page too"). The page
+was twelve phone screens of internal vocabulary (R multiples, VCP, ATR, a
+"gate", ASM/GSM) under a header line about market breadth and "normal size",
+with a scrolling ticker of the same codes. It now tells the app's one story
+in plain words, phone first (DESIGN.md):
 
-PRESENTING EXPECTANCY. "+1.34R per trade" is the honest engineering unit and a
-terrible headline: it looks like 1.34 of something small. R is a MULTIPLE of
-what a trade risks, so the same fact reads as "every rupee at risk returns
-2.34" and compounds to the CAGR line. The evidence section converts it once,
-explicitly, instead of asking a visitor to do it.
+  * what Golden Stock does, in one sentence, and one button into the app;
+  * today, live: six tiles that open the matching tab in the app;
+  * how it works: Find, Understand, Act, Track, the five hero features;
+  * the evidence in rupees, with the honest comparisons one tap down;
+  * the public test that decides real money;
+  * what was tested and thrown out, folded.
+
+WHAT IT CLAIMS. This is the sales page, so it leads with what was built and
+what the rules did on history, every number from config.EVIDENCE. The
+engineering record (audit findings, fixed bugs) stays in HANDOFF.md and the
+app. The comparisons that keep the claim honest (ideal fills vs realistic,
+survivorship, owning the universe) stay on the page, folded under "How to read
+these numbers", not cut.
 
     python scripts/build_landing.py
 """
 
 from __future__ import annotations
 
+import html
 import json
 import os
 import sys
@@ -43,6 +45,7 @@ from config import EVIDENCE, GATE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "landing.html")
+APP = "dashboard.html"
 
 
 def _json(*parts, default=None):
@@ -65,23 +68,31 @@ def _rows(name: str) -> int:
         return 0
 
 
+def _day(s) -> str:
+    try:
+        return datetime.fromisoformat(str(s)[:10]).strftime("%-d %b") if os.name != "nt" \
+            else datetime.fromisoformat(str(s)[:10]).strftime("%#d %b")
+    except ValueError:
+        return ""
+
+
 def facts() -> dict:
     gate = _json("state", "gate.json")
-    regime = _json("state", "regime.json")
     tags = (_json("state", "tags_state.json") or {}).get("tags", {})
-    surv = _json("state", "surveillance.json")
+    triggers = (_json("state", "trigger_state.json") or {}).get("triggers", {})
     penny = _json("state", "penny_meta.json")
     picks = _json("ai_picks.json")
-    radar = _json("state", "news_radar.json")
-
-    cohort = gate.get("cohort", {})
-    run = gate.get("cohort_running", {})
-    leg = gate.get("legacy", {})
-    bm = gate.get("benchmark_context", {}).get("12m", {})
+    radar = _json("state", "multibagger_radar.json")
+    research = (_json("state", "multibagger_research.json") or {}).get("items", {}) or {}
 
     tag_counts: dict = {}
     for t in tags.values():
         tag_counts[t] = tag_counts.get(t, 0) + 1
+    ready = sum(1 for s, v in triggers.items()
+                if v.get("status") == "AWAITING TRIGGER" and tags.get(s) == "CONFIRMED")
+
+    stocks = ((radar.get("mb") or {}).get("stocks") or {})
+    top = max(stocks.items(), key=lambda kv: kv[1].get("score") or 0) if stocks else None
 
     # one cell per watched stock for the hero map, strongest first
     import csv as _csv
@@ -98,655 +109,331 @@ def facts() -> dict:
             pass
     cells = sorted(((rs_by.get(sym, -1.0), sym, tag) for sym, tag in tags.items()),
                    key=lambda x: -x[0])
+    cohort = gate.get("cohort", {})
+    dive_dates = sorted(str(v.get("date") or "") for v in research.values())
 
     return {
         "cells": [[t, round(r, 1) if r >= 0 else None] for r, _s, t in cells],
-        "universe": _rows("universe.csv"),
         "watched": len(tags),
-        "actionable": tag_counts.get("CONFIRMED", 0) + tag_counts.get("ANTICIPATION", 0),
-        "confirmed": tag_counts.get("CONFIRMED", 0),
-        "signals": _rows(os.path.join("journal", "signals_journal.csv")),
-        "penny": penny.get("universe", 0) or len(_json("state", "penny_details.json") or {}),
-        "penny_excluded": penny.get("excluded", 0),
-        "surv_flagged": surv.get("n_flagged", 0),
-        "surv_checked": surv.get("n_checked", 0),
-        "radar_hits": len(radar.get("hits") or []),
+        "uptrend": tag_counts.get("CONFIRMED", 0),
+        "ready": ready,
+        "mb_n": len(stocks),
+        "mb_top": top[0] if top else "",
+        "mb_score": round(top[1].get("score") or 0) if top else 0,
         "picks": len(picks.get("picks") or []),
-        "breadth": regime.get("breadth_pct_above_200dma"),
-        "defensive": bool(regime.get("breadth_pct_above_200dma") is not None
-                          and regime["breadth_pct_above_200dma"] < 50),
-        "gate": gate, "cohort": cohort, "running": run, "legacy": leg,
+        "picks_day": _day(picks.get("generated", "")),
+        "dives": len(research),
+        "dives_day": _day(dive_dates[-1]) if dive_dates else "",
+        "penny": penny.get("universe", 0) or len(_json("state", "penny_details.json") or {}),
+        "signals": _rows(os.path.join("journal", "signals_journal.csv")),
+        "gate": gate,
         "need": (gate.get("required") or {}).get("min_signals", GATE.min_signals),
         "have": cohort.get("n_qualifying", 0),
-        "bench12": (bm.get("bench") or {}).get("ret_pct"),
-        "bench12_2": (bm.get("bench2") or {}).get("ret_pct"),
         "generated": datetime.now().strftime("%d %b %Y"),
     }
+
+
+def _esc(v) -> str:
+    return html.escape(str(v), quote=True)
 
 
 def render(f: dict) -> str:
     g = f["gate"]
     have, need = f["have"], f["need"]
-    pct = min(100.0, have / max(need, 1) * 100)
-    RAD, = (62,)
-    CIRC = 2 * 3.14159265 * RAD
-    off = CIRC * (1 - pct / 100)
-    verdict = g.get("verdict", "ACCRUING")
-    vcol = {"PASSED": "var(--grn)", "FAILED": "var(--red)"}.get(verdict, "var(--cyn)")
-    breadth = f["breadth"]
-    regime_line = (f"breadth {breadth}% above 200-DMA · "
-                   f"{'DEFENSIVE — half size' if f['defensive'] else 'normal size'}"
-                   if breadth is not None else "regime snapshot pending")
-    run_r = f["running"].get("expectancy_r")
-    days = g.get("days_to_deadline")
+    pct = max(3.0, min(100.0, have / max(need, 1) * 100))
+    deadline = str(g.get("deadline") or "2026-12-31")
+    try:
+        deadline_words = datetime.fromisoformat(deadline).strftime("%d %B %Y").lstrip("0")
+    except ValueError:
+        deadline_words = deadline
 
-    # R -> money, computed once here rather than left for the reader. Expectancy
-    # is a multiple of the amount a trade RISKS, so +1.34R means the average
-    # trade hands back the rupee it risked plus 1.34 more.
-    back_per_rupee = 1 + EVIDENCE.expectancy_r
-    x3 = (1 + EVIDENCE.cagr_pct / 100) ** 3           # three years at the measured rate
-    x3s = (1 + EVIDENCE.stress_cagr_pct / 100) ** 3   # same, stressed fills
+    # history in rupees: a rupee at risk, and ten lakh compounded three years
+    back_per_rupee = 1 + EVIDENCE.stress_expectancy_r
+    x3s = (1 + EVIDENCE.stress_cagr_pct / 100) ** 3
+    x3 = (1 + EVIDENCE.cagr_pct / 100) ** 3
+    # the honest comparison, read from the same evidence note, never retyped
+    import re as _re
+    m = _re.search(r"equal-weight made ([\d.]+)%", EVIDENCE.combined_note)
+    eqw = f"{float(m.group(1)):.0f}" if m else ""
 
-    return f"""<!doctype html>
+    tiles = [
+        ("Base ready", f"{f['ready']}", "stocks in an uptrend with a base ready to break out", "#/watchlist/ready", "info"),
+        ("Multibaggers", f["mb_top"] or "—", f"tops {f['mb_n']:,} ranked, score {f['mb_score']}" if f["mb_top"] else "the ranking is rebuilt nightly", "#/screener/multibaggers", "teal"),
+        ("AI picks", f"{f['picks']}", f"chosen by the AI committee{', ' + f['picks_day'] if f['picks_day'] else ''}", "#/research/picks", "ai"),
+        ("AI deep-dives", f"{f['dives']}", f"companies read in depth{', latest ' + f['dives_day'] if f['dives_day'] else ''}", "#/research/deepdives", "ai"),
+        ("Scored tonight", f"{f['watched']:,}", "small and mid caps with a conviction score", "#/screener/stocks", "buy"),
+        ("Penny stocks", f"{f['penny']}", "that passed the safety screens", "#/screener/penny", "warn"),
+    ]
+    tiles_html = "".join(
+        f'<a class="tile t-{c}" href="{APP}{h}"><span class="tl">{_esc(l)}<span class="go">›</span></span>'
+        f'<span class="tv{" word" if not v.replace(",", "").isdigit() else ""}">{_esc(v)}</span><span class="tn">{_esc(n)}</span></a>'
+        for l, v, n, h, c in tiles)
+
+    steps = [
+        ("1", "Find", "#/screener",
+         "The screener scores about a thousand small and mid caps every night. Conviction, out of 100, checks the trend, "
+         "earnings, balance sheet, big investors and more. Separate lists hunt for possible multibaggers and screen penny stocks for safety."),
+        ("2", "Understand", "#/research",
+         "AI reads each candidate's concalls, filings and news, writes a plain research note, and double-checks every "
+         "buy signal before you act. Every stock opens with a short brief of what the company does."),
+        ("3", "Act", "#/watchlist",
+         "When a stock breaks out of its base on strong volume, you get the buy price, the stop and the number of shares, "
+         "sized so that a loss costs about 1% of your capital."),
+        ("4", "Track", "#/performance",
+         "Every signal is recorded the night it fires and scored in the open. Paper portfolios show whether it is making money."),
+    ]
+    steps_html = "".join(
+        f'<a class="step" href="{APP}{h}"><span class="sn">{n}</span><span class="sb"><span class="st">{t}</span>'
+        f'<span class="sd">{_esc(d)}</span><span class="sl">{_esc(lk)} ›</span></span></a>'
+        for (n, t, h, d), lk in zip(steps, ("Open the screener", "Open research", "Open the watchlist", "Open performance")))
+
+    rejected = [
+        ("Buying only on good fundamentals", "In this market price leads the reported numbers. Every fundamental filter on entries made results worse, so fundamentals rank and veto, they never trigger a buy."),
+        ("Buying only in hot sectors", "Restricting buys to the hottest sectors cut the average result per trade by more than 80%. Sector heat stays as context."),
+        ("Holding more positions at once", "Going from 12 to 20 positions lowered the result per trade by about a third: the extra slots only buy weaker breakouts."),
+        ("Risking more after a winning streak", "Scaling risk with the portfolio's own recent results cost 4 to 6 points a year. The market-breadth rule already does that job."),
+        ("Buying on good news", "Stocks with positive filings went on to break out less often than average (7% against 17%). News stays a risk check, never a buy signal."),
+        ("Trading bigger", "Raising the risk per trade from 1.25% to 1.75% or 2.5% broke the drawdown limit twice. Size stayed where the evidence put it."),
+    ]
+    rejected_html = "".join(f'<div class="rj"><b>{_esc(t)}</b><span>{_esc(d)}</span></div>' for t, d in rejected)
+
+    page = TEMPLATE
+    for k, v in {
+        "APP": APP, "TILES": tiles_html, "STEPS": steps_html, "REJECTED": rejected_html,
+        "WATCHED": f"{f['watched']:,}", "GENERATED": _esc(f["generated"]),
+        "STRESS_CAGR": f"{EVIDENCE.stress_cagr_pct:.0f}", "STRESS_DD": f"{abs(EVIDENCE.stress_max_dd_pct):.0f}",
+        "IDEAL_CAGR": f"{EVIDENCE.cagr_pct:.0f}", "IDEAL_DD": f"{abs(EVIDENCE.max_dd_pct):.0f}",
+        "X3S": f"{x3s * 10:.1f}", "X3": f"{x3 * 10:.1f}", "BACK": f"{back_per_rupee:.2f}",
+        "WIN": f"{EVIDENCE.win_rate_pct:.0f}", "POSITIONS": str(EVIDENCE.positions),
+        "HAVE": str(have), "NEED": str(need), "PCT": f"{pct:.1f}", "DEADLINE": _esc(deadline_words),
+        "SIGNALS": f"{f['signals']:,}",
+        "EQW": (f"Simply owning all of those same stocks returned {eqw}% a year over the same period. " if eqw else ""),
+    }.items():
+        page = page.replace("%%" + k + "%%", v)
+    return page
+
+
+TEMPLATE = """<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Golden Stock — an autonomous quant desk for Indian small-caps</title>
-<meta name="description" content="Every weeknight, Golden Stock re-reads the Indian small, mid and microcap market, finds the setups that produced a 9.6:1 payoff in testing, and hands you the entry, stop and position size with a research memo attached. Every signal published the night it fires.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e13">
+<title>Golden Stock</title>
+<meta name="description" content="Golden Stock scores about a thousand Indian small and mid caps every night, researches the best of them with AI, and gives you the buy price, stop and position size when a stock is ready.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{{
-  --bg:#04060a; --bg2:#06090f; --panel:rgba(10,15,23,.62); --line:rgba(148,163,184,.12);
-  --txt:#e9f0f7; --dim:#8c9bb0; --mut:#5d6d83;
-  --gold:#00ff9d; --gold2:#00c47a; --grn:#00ff9d; --cyn:#22d3ee; --red:#ff4d5e; --vio:#b18cff;
-  --mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
-}}
-*{{margin:0;padding:0;box-sizing:border-box}}
-html{{scroll-behavior:smooth}}
-body{{background:var(--bg);color:var(--txt);font:15px/1.6 -apple-system,'Segoe UI',Roboto,Inter,sans-serif;overflow-x:hidden}}
-::selection{{background:rgba(245,200,76,.25)}}
-a{{color:inherit;text-decoration:none}}
-@media(prefers-reduced-motion:reduce){{*{{animation:none!important;transition:none!important}}
- .rv{{opacity:1!important;transform:none!important}}}}
+/* One look with the app (DESIGN.md): dark ink, Sora for display, Inter for
+   reading, mono for numbers, gold only on the brand and the main button.
+   Phone first; wider screens get columns. */
+:root {
+  --bg: #0a0e13; --bg2: #0d1218; --surface: #121821; --surface2: #171f2a; --line: #212c38; --line2: #2d3a4a;
+  --text: #e8eef5; --text2: #b6c2d0; --muted: #8392a5; --faint: #5d6b7d;
+  --buy: #25c994; --watch: #f2b441; --risk: #f1616f; --info: #5b9dff; --ai: #a88dff; --teal: #2dd4bf;
+  --gold: #ecbd52; --gold2: #d9962f;
+  --display: "Sora", "Inter", system-ui, sans-serif; --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font: 400 16px/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  background-image: radial-gradient(900px 480px at 50% -160px, rgba(236, 189, 82, .10), transparent 70%); background-repeat: no-repeat; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; }
 
-/* ---------- animated backdrop ---------- */
-.bgwrap{{position:fixed;inset:0;z-index:-2;background:
-  radial-gradient(60vw 60vh at 85% -10%,rgba(34,211,238,.07),transparent 60%),
-  radial-gradient(50vw 50vh at -10% 30%,rgba(245,200,76,.06),transparent 60%),
-  radial-gradient(70vw 70vh at 50% 110%,rgba(52,211,153,.05),transparent 60%),var(--bg)}}
-.grid{{position:fixed;inset:0;z-index:-1;opacity:.5;background-image:
-  linear-gradient(rgba(148,163,184,.045) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(148,163,184,.045) 1px,transparent 1px);
-  background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 75%);
-  mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 75%)}}
-.orb{{position:fixed;border-radius:50%;filter:blur(90px);opacity:.16;z-index:-1;animation:drift 26s ease-in-out infinite alternate}}
-.orb.g{{width:44vw;height:44vw;background:var(--gold);top:-18vw;right:-12vw}}
-.orb.c{{width:36vw;height:36vw;background:var(--cyn);bottom:-14vw;left:-10vw;animation-delay:-9s}}
-@keyframes drift{{from{{transform:translate(0,0) scale(1)}}to{{transform:translate(-5vw,4vh) scale(1.12)}}}}
+/* top bar */
+.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+.mark { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: linear-gradient(135deg, #f7c948, #e0922f); color: #1b1203; font: 800 15px var(--font); box-shadow: 0 6px 18px rgba(224, 146, 47, .3); }
+.name { font: 650 16px var(--display); letter-spacing: -.01em; }
+.top .sp { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 11px; font: 650 15px var(--font); cursor: pointer; white-space: nowrap; }
+.btn.gold { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1204; box-shadow: 0 8px 26px rgba(236, 189, 82, .22); }
+.btn.gold:hover { filter: brightness(1.06); }
+.btn.line { border: 1px solid var(--line2); color: var(--text); background: var(--surface); }
+.btn.line:hover { border-color: var(--muted); }
+.top .btn { height: 38px; padding: 0 14px; font-size: 14px; }
 
-/* ---------- nav ---------- */
-nav{{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
-  padding:14px 5vw;background:rgba(4,6,11,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}}
-.brand{{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.14em;font-size:14px}}
-.brand .dot{{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold);animation:pulse 2.4s ease-in-out infinite}}
-@keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.35}}}}
-.brand b{{background:linear-gradient(90deg,var(--gold),#fde68a 55%,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}}
-.navlinks{{display:flex;gap:26px;font-size:13px;color:var(--dim)}}
-.navlinks a:hover{{color:var(--txt)}}
-.cta{{padding:9px 20px;border-radius:9px;font-size:13px;font-weight:700;color:#0a0e16;
-  background:linear-gradient(90deg,var(--gold),#e8b93e);box-shadow:0 4px 22px rgba(245,200,76,.28);transition:.25s}}
-.cta:hover{{transform:translateY(-1px);box-shadow:0 8px 30px rgba(245,200,76,.42)}}
+/* hero */
+.hero { padding-block: 44px 28px; display: grid; gap: 30px; }
+.eyebrow { font: 600 12.5px var(--font); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); }
+h1 { font: 700 clamp(32px, 8.4vw, 56px)/1.08 var(--display); letter-spacing: -.03em; text-wrap: balance; margin-top: 12px; }
+h1 em { font-style: normal; background: linear-gradient(90deg, var(--gold), #fde68a 60%, var(--gold2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { color: var(--text2); font-size: 17px; margin-top: 16px; max-width: 58ch; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.mapcard { border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg, var(--surface2), var(--surface)); padding: 14px; }
+.maphead { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.maphead b { color: var(--text2); font-weight: 600; }
+#map { display: grid; grid-template-columns: repeat(auto-fill, minmax(9px, 1fr)); gap: 2px; }
+#map i { aspect-ratio: 1; border-radius: 2px; display: block; opacity: var(--o, .6); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
 
-/* ---------- hero ---------- */
-.hero{{min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:5vw;
-  align-items:center;padding:120px 5vw 60px;max-width:1440px;margin:0 auto}}
-.kicker{{display:inline-flex;align-items:center;gap:8px;font:600 11px var(--mono);letter-spacing:.16em;color:var(--grn);
-  border:1px solid rgba(52,211,153,.3);background:rgba(52,211,153,.07);padding:6px 12px;border-radius:99px;margin-bottom:22px}}
-.kicker .live{{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 1.6s infinite}}
-h1{{font-size:clamp(36px,4.4vw,60px);line-height:1.06;font-weight:800;letter-spacing:-.02em;text-wrap:balance}}
-h1 .au{{background:linear-gradient(92deg,var(--gold) 10%,#fff0c4 45%,var(--gold2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}}
-.sub{{margin:22px 0 30px;font-size:16.5px;color:var(--dim);max-width:58ch}}
-.sub b{{color:var(--txt);font-weight:600}}
-.heroctas{{display:flex;gap:14px;flex-wrap:wrap;align-items:center}}
-.cta.big{{padding:14px 30px;font-size:15px;border-radius:11px}}
-.ghost{{padding:13px 24px;border-radius:11px;font-size:14px;font-weight:600;color:var(--txt);
-  border:1px solid var(--line);background:rgba(148,163,184,.05);transition:.25s}}
-.ghost:hover{{border-color:rgba(245,200,76,.4);background:rgba(245,200,76,.06)}}
-.chips{{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}}
-.chip{{font:600 11.5px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:rgba(15,22,38,.4)}}
-.chip b{{color:var(--gold)}}
+/* sections */
+section { padding-block: 34px; border-top: 1px solid var(--line); }
+.sh { display: grid; gap: 8px; margin-bottom: 18px; max-width: 64ch; }
+.sh .k { font: 600 12px var(--font); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+h2 { font: 650 clamp(24px, 5.6vw, 34px)/1.15 var(--display); letter-spacing: -.02em; text-wrap: balance; }
+.sh p { color: var(--text2); }
 
-/* ---------- the gate card (hero right) ---------- */
-.gatecard{{border:1px solid rgba(34,211,238,.22);border-radius:18px;padding:28px;
-  background:linear-gradient(180deg,rgba(15,22,38,.92),rgba(8,12,22,.94));
-  box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);position:relative;overflow:hidden}}
-.gatecard::after{{content:"";position:absolute;top:0;left:-40%;width:40%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(34,211,238,.7),transparent);animation:sheen 7s linear infinite}}
-@keyframes sheen{{to{{left:120%}}}}
-.gtop{{display:flex;align-items:center;gap:20px}}
-.ring{{position:relative;width:150px;height:150px;flex:0 0 auto}}
-.ring svg{{transform:rotate(-90deg)}}
-.ringtxt{{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}}
-.ringtxt b{{font:800 30px/1 var(--mono);letter-spacing:-1px}}
-.ringtxt small{{font:600 9.5px var(--mono);letter-spacing:.14em;color:var(--mut);margin-top:6px;text-transform:uppercase}}
-.gstat{{font:700 10.5px var(--mono);letter-spacing:.16em;padding:5px 12px;border-radius:99px;border:1px solid;display:inline-block}}
-.gtitle{{font-size:17px;font-weight:700;margin:12px 0 6px;letter-spacing:-.01em}}
-.gtext{{font-size:13px;color:var(--dim);line-height:1.62}}
-.gmeta{{margin-top:16px;padding-top:15px;border-top:1px solid var(--line);display:grid;gap:9px}}
-.gmrow{{display:flex;justify-content:space-between;gap:12px;font-size:12.4px}}
-.gmrow span{{color:var(--mut)}}
-.gmrow b{{font-family:var(--mono);font-weight:700}}
+/* today: tiles into the app */
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.tile { display: flex; flex-direction: column; gap: 4px; min-height: 124px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: linear-gradient(180deg, var(--surface2), var(--surface)); transition: border-color .15s, transform .15s; }
+.tile:hover { border-color: var(--line2); transform: translateY(-2px); }
+.tl { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.tl .go { color: var(--faint); font-size: 18px; line-height: 1; }
+.tv { font: 700 27px/1.15 var(--mono); margin-top: 6px; }
+.tv.word { font: 650 19px/1.25 var(--display); overflow-wrap: anywhere; }
+.tn { font-size: 13px; line-height: 1.4; color: var(--text2); }
+.t-buy .tv { color: var(--buy); } .t-info .tv { color: var(--info); } .t-teal .tv { color: var(--teal); } .t-ai .tv { color: var(--ai); } .t-warn .tv { color: var(--watch); }
+.asof { font-size: 12.5px; color: var(--faint); margin-top: 12px; }
 
-/* ---------- universe map (hero) ---------- */
-.mapcard{{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;
-  background:linear-gradient(180deg,rgba(10,15,23,.95),rgba(6,9,15,.95));
-  box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}}
-.maphead{{display:flex;justify-content:space-between;gap:10px;font:700 9px var(--mono);
-  letter-spacing:.16em;color:var(--mut);margin-bottom:9px}}
-.maphead span:first-child{{color:var(--grn)}}
-.map{{display:grid;grid-template-columns:repeat(auto-fill,minmax(8px,1fr));gap:1.5px}}
-.map i{{aspect-ratio:1;border-radius:1.5px;opacity:0;animation:cellin .45s ease forwards}}
-@keyframes cellin{{to{{opacity:var(--o,1)}}}}
-.maplegend{{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font:600 9px var(--mono);
-  letter-spacing:.11em;color:var(--mut);text-transform:uppercase}}
-.maplegend i{{width:7px;height:7px;border-radius:2px;display:inline-block;margin-right:4px}}
-
-/* ---------- ticker ---------- */
-.ticker{{border-block:1px solid var(--line);background:rgba(6,9,17,.7);overflow:hidden;white-space:nowrap;padding:11px 0;position:relative}}
-.tickin{{display:inline-block;animation:mq 46s linear infinite}}
-.ticker:hover .tickin{{animation-play-state:paused}}
-@keyframes mq{{from{{transform:translateX(0)}}to{{transform:translateX(-50%)}}}}
-.tk{{font:600 12px var(--mono);margin:0 26px;color:var(--dim)}}
-.tk b{{color:var(--txt);margin-right:8px}}.up{{color:var(--grn)}}.dn{{color:var(--red)}}
-
-/* ---------- sections ---------- */
-section{{padding:92px 5vw;max-width:1280px;margin:0 auto}}
-.shead{{text-align:center;margin-bottom:52px}}
-.stag{{font:700 11px var(--mono);letter-spacing:.22em;color:var(--gold)}}
-.shead h2{{font-size:clamp(24px,3vw,36px);font-weight:800;letter-spacing:-.01em;margin-top:10px;text-wrap:balance}}
-.shead p{{color:var(--dim);max-width:64ch;margin:12px auto 0}}
-.rv{{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}}
-.rv.on{{opacity:1;transform:none}}
-
-/* pipeline */
-.pipe{{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:step}}
-.pstep{{position:relative;border:1px solid var(--line);border-radius:14px;padding:26px 20px;background:var(--panel);backdrop-filter:blur(8px);transition:.3s}}
-.pstep:hover{{border-color:rgba(245,200,76,.35);transform:translateY(-4px)}}
-.pstep::before{{counter-increment:step;content:"0" counter(step);font:800 11px var(--mono);letter-spacing:.18em;color:var(--gold)}}
-.pstep h3{{font-size:16px;margin:10px 0 8px}}
-.pstep p{{font-size:13px;color:var(--dim)}}
-.pstep .arrow{{position:absolute;right:-13px;top:50%;transform:translateY(-50%);z-index:2;color:var(--gold);opacity:.7;font-size:15px}}
-.pstep:last-child .arrow{{display:none}}
-
-/* bento */
-.bento{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}}
-.bcard{{border:1px solid var(--line);border-radius:16px;padding:26px;background:var(--panel);backdrop-filter:blur(8px);
-  position:relative;overflow:hidden;transition:.3s}}
-.bcard::after{{content:"";position:absolute;inset:0;background:radial-gradient(240px 140px at var(--mx,50%) var(--my,0%),rgba(245,200,76,.09),transparent 70%);opacity:0;transition:.3s;pointer-events:none}}
-.bcard:hover{{transform:translateY(-4px);border-color:rgba(245,200,76,.3)}}
-.bcard:hover::after{{opacity:1}}
-.bic{{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;margin-bottom:16px;
-  background:linear-gradient(135deg,rgba(245,200,76,.14),rgba(34,211,238,.1));border:1px solid rgba(245,200,76,.22)}}
-.bic svg{{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}}
-.bcard h3{{font-size:15.5px;margin-bottom:8px}}
-.bcard p{{font-size:13px;color:var(--dim)}}
-.bcard .tagline{{margin-top:12px;font:600 10.5px var(--mono);letter-spacing:.1em;color:var(--grn)}}
+/* how it works */
+.steps { display: grid; gap: 10px; }
+.step { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); transition: border-color .15s; }
+.step:hover { border-color: var(--line2); }
+.sn { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font: 700 15px var(--mono); color: var(--gold); border: 1px solid rgba(236, 189, 82, .35); background: rgba(236, 189, 82, .08); }
+.sb { display: grid; gap: 5px; }
+.st { font: 650 19px var(--display); }
+.sd { color: var(--text2); font-size: 15px; }
+.sl { color: var(--gold); font-size: 14px; font-weight: 600; }
 
 /* evidence */
-.ev{{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(15,22,38,.7),rgba(8,12,22,.8));padding:44px 40px}}
-.evgrid{{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;text-align:center}}
-.ev .n{{font:800 clamp(24px,2.5vw,38px)/1.1 var(--mono);background:linear-gradient(180deg,#fff,#cbd5e1);-webkit-background-clip:text;background-clip:text;color:transparent}}
-.ev .n .u{{font-size:.55em;color:var(--gold);-webkit-text-fill-color:var(--gold)}}
-.ev .l{{font-size:11.5px;color:var(--dim);margin-top:8px;letter-spacing:.04em}}
-.honest{{margin-top:28px;padding-top:20px;border-top:1px dashed var(--line);text-align:center;font-size:12.5px;color:var(--mut);line-height:1.7}}
-.honest b{{color:var(--dim)}}
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stat { padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 4px; align-content: start; }
+.stat .v { font: 700 clamp(22px, 6vw, 32px)/1.1 var(--mono); }
+.stat .l { font-size: 13px; color: var(--text2); line-height: 1.4; }
+.stat.hi .v { color: var(--buy); }
+.note { margin-top: 14px; color: var(--text2); font-size: 15px; max-width: 64ch; }
+details { margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+summary { cursor: pointer; list-style: none; padding: 15px 16px; font-weight: 600; display: flex; justify-content: space-between; gap: 10px; min-height: 50px; align-items: center; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--muted); font: 500 20px var(--font); }
+details[open] summary::after { content: "−"; }
+.dbody { padding: 0 16px 16px; color: var(--text2); font-size: 15px; display: grid; gap: 10px; }
+.dbody b { color: var(--text); }
+.rj { display: grid; gap: 3px; padding-top: 10px; border-top: 1px solid var(--line); }
+.rj:first-child { border-top: 0; padding-top: 0; }
+.rj span { font-size: 14px; }
 
-/* R converted to money — the headline unit a visitor can actually price */
-.rconv{{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);
-  border-radius:20px;overflow:hidden;background:linear-gradient(180deg,rgba(15,22,38,.7),rgba(8,12,22,.82))}}
-.rc{{padding:30px 28px;position:relative}}
-.rc+.rc{{border-left:1px solid var(--line)}}
-.rc.hi{{background:radial-gradient(120% 150% at 50% 0%,rgba(52,211,153,.09),transparent 72%)}}
-.rc.hi::before{{content:"";position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--grn),transparent)}}
-.rc .k{{font:700 10px var(--mono);letter-spacing:.17em;color:var(--mut);text-transform:uppercase}}
-.rc .v{{font:800 clamp(30px,3.4vw,44px)/1 var(--mono);letter-spacing:-.03em;margin:14px 0 10px}}
-.rc .d{{font-size:12.8px;color:var(--dim);line-height:1.65}}
-.rc .d b{{color:var(--txt)}}
-.compound{{margin-top:26px;padding-top:20px;border-top:1px dashed var(--line);
-  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:baseline;
-  font-size:13px;color:var(--dim);text-align:center}}
-.compound .sep{{color:var(--mut)}}
+/* the public test */
+.gate { padding: 18px; border-radius: 16px; border: 1px solid var(--line); background: linear-gradient(180deg, var(--surface2), var(--surface)); display: grid; gap: 12px; }
+.gnum { font: 700 40px/1 var(--mono); }
+.gnum small { font-size: 20px; color: var(--muted); }
+.bar { height: 10px; border-radius: 999px; background: var(--bg2); overflow: hidden; border: 1px solid var(--line); }
+.bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--info), var(--ai)); }
+.gate p { color: var(--text2); font-size: 15px; }
 
-/* refusals — the credibility section */
-.ref{{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}}
-.rcard{{border:1px solid var(--line);border-left:2px solid var(--red);border-radius:12px;padding:18px 20px;background:rgba(248,113,113,.035)}}
-.rcard h4{{font-size:13.5px;margin-bottom:5px}}
-.rcard p{{font-size:12.6px;color:var(--dim)}}
-.rcard .verdict{{font:700 10px var(--mono);letter-spacing:.14em;color:var(--red);margin-bottom:8px}}
+/* close */
+.final { text-align: left; display: grid; gap: 14px; }
+footer { padding-block: 26px 40px; border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; display: grid; gap: 6px; }
 
-/* limits */
-.limits{{border:1px solid rgba(245,200,76,.25);border-radius:16px;padding:30px 34px;background:rgba(245,200,76,.035)}}
-.limits ul{{list-style:none;display:grid;gap:13px;margin-top:16px}}
-.limits li{{font-size:13.4px;color:var(--dim);padding-left:24px;position:relative;line-height:1.6}}
-.limits li::before{{content:"—";position:absolute;left:0;color:var(--gold)}}
-.limits li b{{color:var(--txt)}}
-
-/* final cta + footer */
-.final{{text-align:center}}
-.final h2{{font-size:clamp(26px,3.2vw,42px);font-weight:800;letter-spacing:-.015em}}
-.final p{{color:var(--dim);margin:16px auto 32px;max-width:56ch}}
-footer{{border-top:1px solid var(--line);padding:30px 5vw;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
-  font-size:12px;color:var(--mut);background:rgba(4,6,11,.6)}}
-footer a{{color:var(--dim)}} footer a:hover{{color:var(--txt)}}
-
-@media(max-width:980px){{
-  .hero{{grid-template-columns:1fr;padding-top:100px;gap:40px}}
-  .pipe,.bento,.ref,.rconv{{grid-template-columns:1fr}}
-  .rc+.rc{{border-left:0;border-top:1px solid var(--line)}}
-  .rc{{padding:22px 20px}}
-  .pstep .arrow{{display:none}}
-  .evgrid{{grid-template-columns:repeat(2,1fr);gap:22px}}
-  .navlinks{{display:none}}
-  section{{padding:64px 5vw}}
-  .ev{{padding:30px 22px}}
-}}
-@media(max-width:560px){{
-  .gtop{{flex-direction:column;align-items:flex-start;gap:14px}}
-  .evgrid{{grid-template-columns:1fr 1fr;gap:18px}}
-  .limits{{padding:22px 18px}}
-}}
+@media (min-width: 760px) {
+  .hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center; padding-block: 72px 44px; }
+  .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 380px) { .stats { grid-template-columns: 1fr; } .top .btn { padding: 0 11px; } }
 </style>
 </head>
 <body>
-<div class="bgwrap"></div><div class="grid"></div>
-<div class="orb g"></div><div class="orb c"></div>
 
-<nav>
-  <div class="brand"><span class="dot"></span>GOLDEN<b>STOCK</b></div>
-  <div class="navlinks">
-    <a href="#how">How it works</a><a href="#evidence">The edge</a>
-    <a href="#gate">The public test</a><a href="#refused">What it refuses</a>
-  </div>
-  <a class="cta" href="dashboard.html">Open the terminal</a>
-</nav>
+<header class="top"><div class="wrap">
+  <div class="mark">G</div><span class="name">Golden Stock</span><span class="sp"></span>
+  <a class="btn gold" href="%%APP%%">Open the app</a>
+</div></header>
 
-<!-- ============ HERO ============ -->
-<div class="hero">
+<main>
+<div class="wrap hero">
   <div>
-    <div class="kicker"><span class="live"></span>LIVE · {regime_line.upper()}</div>
-    <h1>A quant desk for Indian small-caps<br>that <span class="au">runs itself every night.</span></h1>
-    <p class="sub">At 6:35 every weeknight, Golden Stock re-reads <b>{f['watched']} small, mid and
-      microcaps</b> — chart structure, earnings inflection, ownership, exchange filings, exit risk —
-      and finds the few setting up the way India's biggest winners did before they ran.
-      Each one comes with <b>the entry, the stop and the position size already calculated</b>,
-      and a research memo written overnight. You wake up to a decision, not a watchlist.</p>
-    <div class="heroctas">
-      <a class="cta big" href="dashboard.html">Open the live terminal →</a>
-      <a class="ghost" href="#evidence">See what the rules did</a>
-    </div>
-    <div class="chips">
-      <span class="chip"><b>{f['universe']}</b>-stock universe, re-ranked nightly</span>
-      <span class="chip"><b>{EVIDENCE.payoff_ratio}</b> winner-to-loser payoff</span>
-      <span class="chip"><b>{f['signals']}</b> signals on the public record</span>
-      <span class="chip"><b>13+</b> shortcuts tested &amp; thrown out</span>
-    </div>
+    <div class="eyebrow">NSE small and mid caps · updated every weeknight</div>
+    <h1>Find India's next <em>multibaggers</em>, and know exactly when to buy.</h1>
+    <p class="lede">Golden Stock scores about a thousand small and mid-sized companies every night, researches the best of them with AI, and gives you the buy price, the stop and the number of shares when a stock is ready.</p>
+    <div class="cta"><a class="btn gold" href="%%APP%%">Open the app</a><a class="btn line" href="#today">See today's ideas</a></div>
   </div>
-
-  <div>
-  <div class="mapcard">
-    <div class="maphead"><span>UNIVERSE MAP</span><span>{f['watched']} WATCHED · RANKED BY STRENGTH</span></div>
-    <div class="map" id="map"></div>
-    <div class="maplegend">
-      <span><i style="background:#00ff9d"></i>uptrend</span>
-      <span><i style="background:#4d9fff"></i>basing</span>
-      <span><i style="background:#ffb020"></i>extended</span>
-      <span><i style="background:#64748b"></i>neutral</span>
-      <span><i style="background:#ff4d5e"></i>downtrend</span>
-    </div>
-  </div>
-  <div class="gatecard">
-    <div class="gtop">
-      <div class="ring">
-        <svg width="150" height="150" viewBox="0 0 150 150">
-          <circle cx="75" cy="75" r="{RAD}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"/>
-          <circle id="gring" cx="75" cy="75" r="{RAD}" fill="none" stroke="{vcol}" stroke-width="10"
-            stroke-linecap="round" stroke-dasharray="{CIRC:.1f}" stroke-dashoffset="{CIRC:.1f}"
-            style="transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1) .3s"/>
-        </svg>
-        <div class="ringtxt"><b style="color:{vcol}">{have}<span style="color:var(--mut);font-size:17px">/{need}</span></b>
-          <small>signals banked</small></div>
-      </div>
-      <div>
-        <span class="gstat" style="color:{vcol};border-color:{vcol}55;background:{vcol}12">
-          {'LIVE TEST RUNNING' if verdict == 'ACCRUING' else 'GATE ' + verdict}</span>
-        <div class="gtitle">Proving it in public</div>
-        <div class="gtext">Anyone can publish a backtest. This one has to clear a bar that was
-          written down <b style="color:var(--txt)">{g.get('registered', '')}</b> — before a single
-          qualifying signal existed — on <b style="color:var(--txt)">{need} live signals</b>, in the
-          open, with a deadline. Every one of them is timestamped the night it fires.</div>
-      </div>
-    </div>
-    <div class="gmeta">
-      <div class="gmrow"><span>Pass mark, fixed in advance</span>
-        <b style="color:var(--txt)">{GATE.min_expectancy_fraction:.0%} of the backtest&#39;s own
-        read &amp; beats the ETF</b></div>
-      <div class="gmrow"><span>Live read so far</span>
-        <b style="color:{'var(--grn)' if (run_r or 0) > 0 else 'var(--dim)'}">{(f'{run_r:+.2f}R' if run_r is not None else 'first signals pending')}</b></div>
-      <div class="gmrow"><span>Momentum ETF it must beat · 12m</span>
-        <b style="color:{'var(--grn)' if (f['bench12'] or 0) > 0 else 'var(--red)'}">{(f"{f['bench12']:+.1f}%" if f['bench12'] is not None else '—')}</b></div>
-      <div class="gmrow"><span>Verdict due</span>
-        <b>{g.get('deadline', '')}{f' · {days}d' if days is not None else ''}</b></div>
-    </div>
-  </div>
+  <div class="mapcard" aria-label="Every stock watched tonight, strongest first">
+    <div class="maphead"><span><b>%%WATCHED%% stocks</b> watched tonight</span><span>strongest first</span></div>
+    <div id="map"></div>
+    <div class="legend"><span><i style="background:#25c994"></i>Uptrend</span><span><i style="background:#5b9dff"></i>Basing</span><span><i style="background:#f2b441"></i>Extended</span><span><i style="background:#3a4759"></i>Neutral</span><span><i style="background:#f1616f"></i>Downtrend</span></div>
   </div>
 </div>
 
-<!-- ============ TICKER ============ -->
-<div class="ticker"><div class="tickin" id="tick"></div></div>
+<section id="today"><div class="wrap">
+  <div class="sh"><span class="k">Today, live</span><h2>What the system found tonight</h2><p>Every tile opens the matching page in the app.</p></div>
+  <div class="tiles">%%TILES%%</div>
+  <div class="asof">Read from tonight's run, %%GENERATED%%.</div>
+</div></section>
 
-<!-- ============ GATE ============ -->
-<section id="gate">
-  <div class="shead rv">
-    <div class="stag">THE ONLY NUMBER THAT MATTERS</div>
-    <h2>A threshold written down before the data arrived</h2>
-    <p>"Wait and see how it does" is not a test — at +0.30R you can read it as
-      <em>nearly there</em> or <em>it failed</em>, and both readings stay available forever.
-      So the bar was fixed in advance, in public, with the anti-gaming clauses attached.</p>
-  </div>
-  <div class="ref rv">
-    <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
-      <div class="verdict" style="color:var(--cyn)">CONDITION 1 — EXPECTANCY</div>
-      <h4>Half the backtest&#39;s own read, minimum</h4>
-      <p>Measured like for like: a live signal 60 days old is held against what the
-        backtest returned 60 days in, not against the full-hold number it only reaches
-        a year later. A system delivering under half that is not the system that was
-        validated.</p>
-    </div>
-    <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
-      <div class="verdict" style="color:var(--cyn)">CONDITION 2 — THE DUMB ALTERNATIVE</div>
-      <h4>It must beat a momentum ETF</h4>
-      <p>Mid/small-cap, momentum-ranked, quality-screened — the same factor exposure, one click,
-        ~0.5% a year. If the ETF wins, the rational allocation is the ETF.</p>
-    </div>
-    <div class="rcard" style="border-left-color:var(--cyn);background:rgba(34,211,238,.035)">
-      <div class="verdict" style="color:var(--cyn)">CONDITION 3 &amp; 4 — DISCIPLINE</div>
-      <h4>Not a lottery ticket, not a bleed</h4>
-      <p>No more than {GATE.max_share_from_best_trade_pct:.0f}% of the gains from one trade, and no more
-        than {GATE.max_hit_stop_pct:.0f}% of signals stopping out. A mean built from one runner is not an edge.</p>
-    </div>
-    <div class="rcard" style="border-left-color:var(--gold);background:rgba(245,200,76,.035)">
-      <div class="verdict" style="color:var(--gold)">WHAT A PASS BUYS</div>
-      <h4>{GATE.pass_capital_pct:.0f}% of intended capital — not the account</h4>
-      <p>Clearing a pre-set bar on {need} signals is meaningful and still small enough to be luck.
-        The next tranche needs its own review, 90 days later, against the same document.</p>
-    </div>
-  </div>
-</section>
+<section><div class="wrap">
+  <div class="sh"><span class="k">How it works</span><h2>From a thousand stocks to one decision</h2></div>
+  <div class="steps">%%STEPS%%</div>
+</div></section>
 
-<!-- ============ HOW ============ -->
-<section id="how">
-  <div class="shead rv">
-    <div class="stag">THE PIPELINE</div>
-    <h2>Price decides. Everything else explains.</h2>
-    <p>Entries are 100% technical and evidence-locked. Fundamentals, news and AI research
-      can veto, shrink or annotate a trade — none of them can create one.</p>
+<section><div class="wrap">
+  <div class="sh"><span class="k">The evidence, in rupees</span><h2>What the rules did on 2020 to 2026 history</h2>
+    <p>The exact buying and selling rules the app uses, run over nearly seven years of real prices, after costs, with realistic fills.</p></div>
+  <div class="stats">
+    <div class="stat hi"><span class="v">%%STRESS_CAGR%%%</span><span class="l">a year, with next-day fills and full costs</span></div>
+    <div class="stat"><span class="v">%%STRESS_DD%%%</span><span class="l">the worst fall along the way</span></div>
+    <div class="stat"><span class="v">₹%%X3S%% L</span><span class="l">what ₹10 lakh became in three years at that rate</span></div>
   </div>
-  <div class="pipe rv">
-    <div class="pstep"><span class="arrow">▸</span><h3>Scan the universe</h3>
-      <p>{f['watched']} small, mid &amp; microcaps re-tagged nightly by chart stage — basing, uptrend,
-        extended or broken. Tonight: <b style="color:var(--grn)">{f['confirmed']}</b> in a confirmed uptrend.</p></div>
-    <div class="pstep"><span class="arrow">▸</span><h3>Wait for the trigger</h3>
-      <p>Two validated entries and no others: a volume breakout over a VCP pivot, or an episodic
-        pivot — a gap of 8%+ on 3× volume. An uptrend on its own is not a buy.</p></div>
-    <div class="pstep"><span class="arrow">▸</span><h3>Size it mechanically</h3>
-      <p>ATR stop, fixed-fractional risk, two-lot exit, half size when market breadth is weak.
-        The plan is written before the trade, never adjusted after.</p></div>
-    <div class="pstep"><h3>Journal it forever</h3>
-      <p>Every signal is recorded before the outcome exists, then scored through the same backtest
-        engine it is compared against. Nothing is ever quietly deleted.</p></div>
-  </div>
-</section>
+  <p class="note">Most trades are small losses, cut early. The few winners run. Across %%POSITIONS%% positions, %%WIN%% in 100 won, and each ₹1 risked came back as ₹%%BACK%% on average.</p>
+  <details><summary>How to read these numbers</summary><div class="dbody">
+    <p>With perfect fills at the breakout price, the same rules made <b>%%IDEAL_CAGR%%% a year</b> (worst fall %%IDEAL_DD%%%, ₹10 lakh to ₹%%X3%% lakh in three years). Plan against the realistic figure above.</p>
+    <p>The test uses today's index members, so companies that later collapsed or delisted are missing, which flatters every number. %%EQW%%The edge to judge is when to buy and how much to risk, and the live test below decides whether it holds.</p>
+    <p>Past results do not promise future returns.</p>
+  </div></details>
+</div></section>
 
-<!-- ============ CAPABILITIES ============ -->
-<section>
-  <div class="shead rv">
-    <div class="stag">WHAT RUNS EVERY NIGHT</div>
-    <h2>Six layers, one combined output</h2>
-    <p>They cross-feed rather than compete — divergence between layers is shown, never averaged away.</p>
+<section><div class="wrap">
+  <div class="sh"><span class="k">Proving it in public</span><h2>Real money waits for a test written in advance</h2></div>
+  <div class="gate">
+    <div class="gnum">%%HAVE%%<small> of %%NEED%% live signals</small></div>
+    <div class="bar"><i style="width:%%PCT%%%"></i></div>
+    <p>Every buy signal is published the night it fires: %%SIGNALS%% so far. Real money goes in only if, by %%DEADLINE%%, the %%NEED%% qualifying signals earn at least half of what the backtest earned at the same age, beat a momentum ETF, and do not depend on one lucky trade. The bar was set before the first signal existed.</p>
+    <a class="btn line" href="%%APP%%#/performance/gate">See the live record</a>
   </div>
-  <div class="bento rv">
-    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7h-5v5"/></svg></div>
-      <h3>Mechanical core</h3><p>Stage tagging, trend template, VCP detection, relative strength and a
-      breadth-based regime switch that halves risk when the market weakens.</p>
-      <div class="tagline">BACKTESTED · EVIDENCE-LOCKED</div></div>
-    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-      <h3>Nightly AI analyst</h3><p>Web-researches every buy alert overnight and answers one question
-      each — take it, halve it, or skip it — with the memo attached. It can only ever say no.</p>
-      <div class="tagline">RESEARCH ON DEMAND · NEVER CREATES A TRADE</div></div>
-    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg></div>
-      <h3>Weekly committee</h3><p>Reads the whole scored shortlist, picks {f['picks'] or '3–5'} researched names
-      and writes the investment case — including why it passed on the analyst's calls.</p>
-      <div class="tagline">CURATION · JOURNALED</div></div>
-    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/></svg></div>
-      <h3>News radar &amp; 90-day memory</h3><p>NSE filings classified into real events, with repeat filings of
-      one story collapsed so paperwork volume can't masquerade as news flow.</p>
-      <div class="tagline">MOVES ATTENTION · NEVER ENTRIES</div></div>
-    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><path d="M12 3l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/></svg></div>
-      <h3>Exit-risk surveillance</h3><p>ASM, GSM, circuit bands and settlement series on every watched name —
-      <b style="color:var(--gold)">{f['surv_flagged']} of {f['surv_checked']}</b> currently carry a flag. A stop you can't fill isn't a stop.</p>
-      <div class="tagline">RISK DISPLAY · NEVER A FILTER</div></div>
-    <div class="bcard"><div class="bic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10h4a1.8 1.8 0 010 3.6h-4"/></svg></div>
-      <h3>Penny screen</h3><p>A separate nano-cap universe where the edge is the exclusions: surveillance,
-      circuit bands, dilution and shells are filtered before anything is scored.</p>
-      <div class="tagline">RESEARCH ONLY · ZERO CAPITAL</div></div>
-  </div>
-</section>
+  <details><summary>Ideas that were tested and thrown out</summary><div class="dbody">%%REJECTED%%</div></details>
+</div></section>
 
-<!-- ============ EVIDENCE ============ -->
-<section id="evidence">
-  <div class="shead rv">
-    <div class="stag">THE EDGE, IN PLAIN MONEY</div>
-    <h2>Wrong two times out of three.<br>And that is the point.</h2>
-    <p>Traders quote edge in <em>R</em> — multiples of what a trade puts at risk. It is the right
-      unit and a useless headline, so here it is converted once, in rupees.</p>
-  </div>
+<section><div class="wrap final">
+  <h2>See tonight's ideas</h2>
+  <p class="lede" style="margin-top:0">The screener, the AI research, the buy signals with their plans, the multibagger and penny lists: all in one app, updated every weeknight.</p>
+  <div class="cta" style="margin-top:4px"><a class="btn gold" href="%%APP%%">Open the app</a></div>
+</div></section>
+</main>
 
-  <div class="rconv rv">
-    <div class="rc">
-      <div class="k">What one trade risks</div>
-      <div class="v" style="color:var(--dim)">₹1</div>
-      <div class="d">Every position is sized backwards from its stop, so a loser costs the same
-        fixed slice of the book whatever the share price is. That slice is one <b>R</b>.</div>
-    </div>
-    <div class="rc hi">
-      <div class="k">What the average trade returned</div>
-      <div class="v" style="color:var(--grn)">₹{back_per_rupee:.2f}</div>
-      <div class="d">Back for every ₹1 put at risk, after costs, across {EVIDENCE.positions}
-        positions — a <b>+{EVIDENCE.expectancy_r:.2f}R</b> expectancy. Losers are cut at ₹1.</div>
-    </div>
-    <div class="rc">
-      <div class="k">How, on a {EVIDENCE.win_rate_pct:.0f}% win rate</div>
-      <div class="v" style="color:var(--gold)">{EVIDENCE.payoff_ratio}</div>
-      <div class="d">The average winner is 9.6× the average loser. The system is designed to be
-        wrong often and cheaply, and right rarely and enormously.</div>
-    </div>
-  </div>
-
-  <div class="ev rv" style="margin-top:14px">
-    <div class="evgrid">
-      <div><div class="n" data-count="{EVIDENCE.cagr_pct}" data-dec="1">0<span class="u">%</span></div><div class="l">a year over the tested window</div></div>
-      <div><div class="n" data-count="{abs(EVIDENCE.max_dd_pct)}" data-dec="1">0<span class="u">%</span></div><div class="l">worst drawdown along the way</div></div>
-      <div><div class="n" data-count="{EVIDENCE.mar}" data-dec="2">0</div><div class="l">MAR — return per unit of pain</div></div>
-      <div><div class="n" data-count="{EVIDENCE.positions}" data-dec="0">0</div><div class="l">positions behind these numbers</div></div>
-      <div><div class="n" data-count="13">0<span class="u">+</span></div><div class="l">configurations tested and rejected</div></div>
-    </div>
-    <div class="compound">
-      <span>Compounded for three years at that rate, <b style="color:var(--gold)">₹10 lakh → ₹{x3 * 10:.1f} lakh</b></span>
-      <span class="sep">·</span>
-      <span>on the <b>stressed</b> read — next-open fills, gap-aware stops, full costs —
-        <b style="color:var(--txt)">₹{x3s * 10:.1f} lakh</b> ({EVIDENCE.stress_cagr_pct}% a year)</span>
-    </div>
-    <div class="honest">
-      <b>How to read this.</b> These are the exact live rules run over nearly seven years of history —
-      the 2020 crash, the 2021 run, the 2022 chop, the 2025 drawdown — net of costs. That universe
-      excludes companies that later delisted, so treat the numbers as evidence of an edge,
-      not a forecast of your account. Plan against the stressed column. The live record that will
-      confirm or kill them is being written now, in public, one timestamped signal at a time.
-    </div>
-  </div>
-</section>
-
-<!-- ============ REFUSALS ============ -->
-<section id="refused">
-  <div class="shead rv">
-    <div class="stag">THE PART NOBODY ADVERTISES</div>
-    <h2>Every idea that was tested and thrown away</h2>
-    <p>Each of these was a plausible improvement, pre-registered, measured, and killed by its own
-      number. They are kept on the record because a system that only publishes its wins
-      has told you nothing.</p>
-  </div>
-  <div class="ref rv">
-    <div class="rcard"><div class="verdict">REJECTED</div><h4>Gating entries on fundamentals</h4>
-      <p>Price leads reported fundamentals in this universe. Every fundamental filter on entries
-        made the expectancy worse, not better.</p></div>
-    <div class="rcard"><div class="verdict">REJECTED</div><h4>Buying only in hot sectors</h4>
-      <p>+0.22R gated at 40% sector heat, +0.11R at 60%, against +1.27R ungated — monotonically
-        the wrong way. Sector heat is now a reading tab, not a filter.</p></div>
-    <div class="rcard"><div class="verdict">REJECTED</div><h4>Holding more positions</h4>
-      <p>Expectancy fell from 1.29R to 0.89R as slots went 12 → 20. The queue already takes the
-        best breakouts; extra slots only buy the weaker ones.</p></div>
-    <div class="rcard"><div class="verdict">REJECTED</div><h4>Progressive exposure</h4>
-      <p>Scaling risk off the portfolio's own recent results cost 3.7–5.7 percentage points of CAGR.
-        The market-regime rule already did that job.</p></div>
-    <div class="rcard"><div class="verdict">REJECTED</div><h4>News as a leading indicator</h4>
-      <p>Names with positive filings went on to trigger 7.3% of the time against a 16.6% base rate.
-        News stayed as context and risk, never as a signal.</p></div>
-    <div class="rcard"><div class="verdict">REJECTED</div><h4>Trading bigger</h4>
-      <p>Raising risk per trade from 1.25% to 1.75% and 2.5% was measured twice. Both breached the
-        drawdown limit and went negative in choppy conditions. Size stayed where the evidence put it.</p></div>
-  </div>
-</section>
-
-<!-- ============ LIMITS ============ -->
-<section id="limits">
-  <div class="shead rv">
-    <div class="stag">STRAIGHT ANSWERS</div>
-    <h2>Four things worth knowing</h2>
-  </div>
-  <div class="limits rv">
-    <ul>
-      <li><b>It is decision support, not advice.</b> It hands you a researched, pre-sized plan.
-        You place the order, you carry the risk, and nothing here is a recommendation to buy
-        anything.</li>
-      <li><b>Plan against the stressed column.</b> The historical universe excludes companies that
-        later delisted, which flatters every backtest in this asset class — including this one.
-        The stressed read exists so you never have to guess by how much.</li>
-      <li><b>Small-caps can trap you on the way out.</b> Circuit bands and exchange surveillance can
-        make an exit impossible at any price you planned. That is why exit risk is checked on every
-        watched name, every night, and shown before you size anything.</li>
-      <li><b>Price decides; nothing else is allowed to.</b> Fundamentals, news and the AI layers can
-        veto a trade, shrink it or explain it. None of them has ever been permitted to create one —
-        because when that was tested, it made the results worse.</li>
-    </ul>
-  </div>
-</section>
-
-<!-- ============ FINAL ============ -->
-<section class="final rv">
-  <h2>See what it found tonight.</h2>
-  <p>The terminal is live and public: the whole universe as one map, tonight's triggers with their
-    sized plans, every research memo, and the full record behind them.</p>
-  <a class="cta big" href="dashboard.html">Open the terminal →</a>
-</section>
-
-<footer>
-  <div>© Golden Stock · decision support, not investment advice · data as of {f['generated']}</div>
-  <div><a href="dashboard.html">Terminal</a> &nbsp;·&nbsp; <a href="#gate">The gate</a>
-    &nbsp;·&nbsp; <a href="#limits">Limitations</a></div>
-</footer>
+<footer><div class="wrap">
+  <div>Research and decision support, not investment advice. You place every order yourself.</div>
+  <div>Prices: Yahoo and NSE · Fundamentals: screener.in · Filings: NSE</div>
+</div></footer>
 
 <script>
-/* the ring: set after paint so the transition runs; setTimeout rather than
-   rAF because a background tab never fires rAF and the ring would then sit
-   at zero while claiming a real number */
-setTimeout(function(){{var r=document.getElementById('gring');
- if(r)r.setAttribute('stroke-dashoffset','{off:.1f}');}},80);
-
-/* reveal on scroll */
-var io=new IntersectionObserver(function(es){{es.forEach(function(e){{
- if(e.isIntersecting){{e.target.classList.add('on');io.unobserve(e.target);}}}});}},{{threshold:.12}});
-document.querySelectorAll('.rv').forEach(function(el){{io.observe(el);}});
-
-/* count-up on the evidence strip */
-var nio=new IntersectionObserver(function(es){{es.forEach(function(e){{
- if(!e.isIntersecting)return; nio.unobserve(e.target);
- var el=e.target,to=parseFloat(el.dataset.count),dec=parseInt(el.dataset.dec||'0',10),
-     unit=el.querySelector('.u'),u=unit?unit.outerHTML:'',t0=performance.now();
- (function step(t){{var k=Math.min(1,(t-t0)/1100),v=to*(1-Math.pow(1-k,3));
-   el.innerHTML=v.toFixed(dec)+u; if(k<1)requestAnimationFrame(step);
-   else el.innerHTML=to.toFixed(dec)+u;}})(t0);
-}});}},{{threshold:.5}});
-document.querySelectorAll('.n[data-count]').forEach(function(el){{nio.observe(el);}});
-
-/* bento hover spotlight */
-document.querySelectorAll('.bcard').forEach(function(c){{
- c.addEventListener('mousemove',function(e){{var b=c.getBoundingClientRect();
-  c.style.setProperty('--mx',(e.clientX-b.left)+'px');
-  c.style.setProperty('--my',(e.clientY-b.top)+'px');}});}});
-
-/* universe map: real stages, ranked by relative strength. Cells fade in
-   across ~700ms so the market assembles rather than appears. */
-var CELLS={{cells_json}};
-var CMAP={{CONFIRMED:'#00ff9d',ANTICIPATION:'#4d9fff',EXTENDED:'#ffb020',
- BROKEN:'#ff4d5e',WATCH:'#64748b'}};
-document.getElementById('map').innerHTML=CELLS.map(function(c,i){{
- var col=CMAP[c[0]]||'#3a4759', rs=c[1];
- var o=(rs==null?0.3:0.34+0.66*(rs/100)).toFixed(2);
- return '<i style="background:'+col+';--o:'+o+';animation-delay:'+Math.round(i/CELLS.length*700)+'ms"></i>';
-}}).join('');
-
-/* ticker — real reads from tonight's state, duplicated for a seamless loop */
-var TK={{ticker_json}};
-document.getElementById('tick').innerHTML=TK.concat(TK).map(function(t){{
- return '<span class="tk"><b>'+t[0]+'</b><span class="'+t[2]+'">'+t[1]+'</span></span>';}}).join('');
+var CELLS = %%CELLS%%;
+var CMAP = { CONFIRMED: "#25c994", ANTICIPATION: "#5b9dff", EXTENDED: "#f2b441", BROKEN: "#f1616f", WATCH: "#3a4759" };
+document.getElementById("map").innerHTML = CELLS.map(function (c) {
+  var rs = c[1], o = (rs == null ? 0.45 : 0.45 + 0.55 * (rs / 100)).toFixed(2);
+  return '<i style="background:' + (CMAP[c[0]] || "#3a4759") + ';--o:' + o + '"></i>';
+}).join("");
 </script>
 </body>
 </html>
 """
 
 
-def ticker(f: dict) -> list:
-    """Real reads from tonight's state — the old page's ticker was invented
-    copy, including a regime line describing a rule that was replaced in
-    July."""
-    g = f["gate"]
-    t = [
-        ["UNIVERSE", f"{f['watched']} watched nightly", "up"],
-        ["CONFIRMED UPTREND", f"{f['confirmed']} names", "up"],
-        ["GATE", f"{f['have']}/{f['need']} signals banked", "dn" if f["have"] < f["need"] else "up"],
-        ["REGIME", (f"breadth {f['breadth']}% — {'half size' if f['defensive'] else 'full size'}"
-                    if f["breadth"] is not None else "snapshot pending"),
-         "dn" if f["defensive"] else "up"],
-        ["EXIT RISK", f"{f['surv_flagged']} names flagged ASM/GSM/band", "dn"],
-        ["JOURNAL", f"{f['signals']} signals, append-only", "up"],
-        ["NEWS RADAR", f"{f['radar_hits']} material filings in window", "up"],
-        ["PENNY SCREEN", f"{f['penny']} survivors of the gates", "up"],
-        ["PAYOFF", f"{EVIDENCE.payoff_ratio} winner-to-loser, backtested", "up"],
-        ["VERDICT DUE", str(g.get("deadline", "")), "up"],
-    ]
-    return t
-
-
 def build() -> None:
     f = facts()
-    html = (render(f)
-            .replace("{ticker_json}", json.dumps(ticker(f)))
-            .replace("{cells_json}", json.dumps(f["cells"], separators=(",", ":"))))
+    page = render(f).replace("%%CELLS%%", json.dumps(f["cells"], separators=(",", ":")))
     with open(OUT, "w", encoding="utf-8") as fh:
-        fh.write(html)
+        fh.write(page)
     print(f"landing -> {OUT}  ({os.path.getsize(OUT) / 1024:.0f} KB)  "
-          f"gate {f['have']}/{f['need']}, {f['watched']} watched")
+          f"{f['watched']} watched, {f['ready']} base ready, gate {f['have']}/{f['need']}")
 
 
 if __name__ == "__main__":
