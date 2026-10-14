@@ -113,6 +113,22 @@ def test_the_penny_job_waits_out_screener_in_refusals(monkeypatch):
     assert list(df["symbol"]) == ["EEE"], "cached names still come through after the stop"
 
 
+
+def test_the_penny_job_reads_unchecked_names_before_refreshing_old_ones(monkeypatch):
+    import penny_fundamentals as pf
+    calls = []
+    cache = {"OLD": {"age": 40}, "FRESH": {"age": 1}}
+    monkeypatch.setattr(pf, "load_company", lambda s: cache.get(s))
+    monkeypatch.setattr(pf, "_age_days", lambda d: d["age"])
+    monkeypatch.setattr(pf, "has_real_data", lambda d: True)
+    monkeypatch.setattr(pf, "fetch_company", lambda s: calls.append(s) or {"age": 0})
+    monkeypatch.setattr(pf, "save_company", lambda s, d: None)
+    monkeypatch.setattr(pf, "flatten", lambda s, d: {"symbol": s})
+    monkeypatch.setattr(pf, "penny_extras", lambda d: {})
+    monkeypatch.setattr(pf, "OUT", os.devnull)
+    pf.run(["OLD", "FRESH", "NEW1", "NEW2"], max_age_days=14, limit=2, sleep=lambda s: None)
+    assert calls == ["NEW1", "NEW2"], "the fetch cap went to refreshing a known name before an unchecked one"
+
 def test_landing_counts_only_checked_penny_names(tmp_path, monkeypatch):
     import build_landing as bl
     (tmp_path / "penny_ranked.csv").write_text("symbol,vetoed,assessed\nA,False,True\nB,False,False\nC,True,True\nD,False,True\n")

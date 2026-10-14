@@ -114,6 +114,16 @@ def run(symbols: list[str], max_age_days: float, limit: int | None,
     skipped_for_cap = 0
     refusals, wait, stopped = 0, 90, False
     t0 = time.time()
+
+    # Never-read names first, then stale refreshes, then cache hits: the fetch
+    # cap and screener.in's patience are spent on companies nobody has checked
+    # (56 of them on 2026-10-14) before re-reading ones that are merely old.
+    def need(sym: str) -> int:
+        d = load_company(sym)
+        if d is None or not has_real_data(d):
+            return 0
+        return 1 if _age_days(d) > max_age_days else 2
+    symbols = sorted(symbols, key=need)
     for i, sym in enumerate(symbols, 1):
         data = load_company(sym)
         stale = data is not None and _age_days(data) > max_age_days
