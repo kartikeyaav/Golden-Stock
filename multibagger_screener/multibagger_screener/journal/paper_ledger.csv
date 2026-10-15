@@ -126,3 +126,9 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-12,RADICO,SKIP,entry,0,,,[RADICO@2026-10-12 21:32] already open in paper book
 2026-10-13,KINGFA,SKIP,entry,0,,,[KINGFA@2026-10-12 21:34] slot limit 12 reached (29 open) — the backtested edge was measured with this cap in force
 2026-10-13,GOKULAGRO,SELL,all,292,204.04,-6237.12,stop hit
+2026-10-15,AEGISLOG,SKIP,entry,0,,,[AEGISLOG@2026-10-14 21:31] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
+2026-10-15,STOVEKRAFT,SKIP,entry,0,,,[STOVEKRAFT@2026-10-14 21:33] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
+2026-10-15,SEAMECLTD,SKIP,entry,0,,,[SEAMECLTD@2026-10-14 21:34] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
+2026-10-15,SHILPAMED,SELL,trading,17,922.1,5492.7,trading-lot trail: close < 50-DMA
+2026-10-15,ACMESOLAR,SELL,trading,27,407.6,1015.2,trading-lot trail: close < 50-DMA
+2026-10-15,ELGIEQUIP,SELL,all,256,567.01,-4707.84,stop hit
