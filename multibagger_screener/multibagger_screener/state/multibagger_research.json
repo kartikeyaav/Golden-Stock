@@ -772,7 +772,313 @@
    "mb_score": 49.3,
    "company": "Nitco Ltd",
    "sector": "Consumer Durables"
+  },
+  "DBOL": {
+   "symbol": "DBOL",
+   "headline": "A sugar-to-ethanol maker sold a factory to pay off debt, bets on new foods",
+   "story": "Dhampur Bio Organics makes sugar, power, ethanol and country liquor from sugarcane grown mostly in western and central Uttar Pradesh. It was carved out of the older Dhampur Sugar Mills in a 2022 demerger, taking three factories — Asmoli, Mansurpur and Meerganj.\n\nWhat changed this year is that the company sold one of those three factories. In June 2026 it handed over the Meerganj unit, which made ₹423 crore of revenue in FY25, to Forever Global Enterprises for ₹305 crore in cash. Most of that money went straight to the bank: long-term loans fell from ₹757 crore in March 2026 to ₹124 crore by the date of the July 2026 investor presentation, and the long-term debt-to-equity ratio dropped to 0.18 times. At the same time, the company announced a joint venture with a firm called Orgonew to make \"functional foods\" — a newer, higher-margin category — a small bet on moving beyond commodity sugar.\n\nThe core business, though, has had a rough two years. Operating margin has nearly halved, from 12% in FY22 to 6-8% now, and return on capital employed has fallen to just 4-5%, down from 11% in FY22. Management has repeatedly blamed a pest-and-fungus problem called red rot, which has cut sugarcane yields and recovery rates in its main growing areas; the credit rater CARE downgraded the company's debt rating in January 2026 for exactly this reason, citing lower recovery (down to 9.80% from 10.32%) and a shorter crushing season. On an August 2025 earnings call, one analyst called the results \"pretty disappointing,\" and management conceded the numbers were below its own expectations — a pattern that has repeated across several quarters, including a net loss as recently as the September 2025 quarter.\n\nSet against that, ethanol and country liquor are growing quickly: ethanol sales rose 89% year-on-year in the June 2025 quarter and country liquor case sales were up 45% in the same period, and the government's own roadmap points toward raising ethanol blending in petrol from today's roughly 20% past 27%, a long runway for a company that converts molasses and grain into ethanol. Promoter-linked entities have also been steady buyers of stock through 2026, and the company itself trades around 11 times trailing earnings with almost no institutional ownership (FIIs and DIIs combined under 1.5%) — numbers that look statistically cheap.\n\nThe open questions are whether the cane-disease problem is a one-off or recurring, whether the Meerganj cash gets redeployed well, and whether the functional-foods venture amounts to anything. For now the core sugar business remains a low-return, weather- and pest-exposed commodity operation, even as the balance sheet gets noticeably safer.",
+   "founder": "Dhampur Bio Organics is controlled by the Goel family, promoters of the Dhampur Group founded by Lala Ram Narain in 1933. Gautam Goel is Managing Director & CEO (re-designated Chairman and CEO at the July 2026 AGM) and leads the earnings calls personally. Promoter/promoter-group holding has stayed steady near 50.6-50.8% through FY23-FY26, and in April 2026 promoters formally declared no shares pledged during FY26. Through 2026, promoter-group entities (Shudh Edible Products, Sonitron Limited) and a company director made multiple on-market purchases totalling roughly ₹2.7 crore disclosed between March and September 2026 — buying, not selling. No SEBI order, auditor resignation or related-party controversy was found in public searches. Management's forecasting record is mixed: it has flagged cane-disease problems in advance but results have still undershot its own stated expectations for several consecutive quarters.",
+   "conviction": 2,
+   "horizon": "long term",
+   "thesis": "Dhampur Bio Organics used a ₹305 crore sale of its Meerganj sugar unit to slash debt and is testing a diversification into higher-margin functional foods and faster-growing ethanol/country-liquor lines, which could lift returns if execution holds. For multiplication to happen, operating margins need to recover from today's 6-8% toward the 12% seen in FY22, the red rot disease problem needs to stay contained, and the new Orgonew joint venture needs to generate real revenue rather than remain a side bet. Promoter buying through 2026 and a now debt-light balance sheet are supportive, but four loss-making quarters in the last two years and a January 2026 credit downgrade show the core business is still fragile.",
+   "triggers": [
+    {
+     "what": "74:26 joint venture with Orgonew Private Limited to make functional foods",
+     "when": "FY27",
+     "source": "news/filing"
+    },
+    {
+     "what": "Meerganj unit sale (₹305 Cr) completed; proceeds cut long-term debt from ₹757 Cr to ₹124 Cr",
+     "when": "Jun 2026 / Q1 FY27",
+     "source": "investor presentation + filing"
+    },
+    {
+     "what": "Dual-feed (molasses+grain) distillery conversion completed at Asmoli",
+     "when": "Jun 2025",
+     "source": "transcript"
+    },
+    {
+     "what": "Government ethanol blending roadmap extending from E20 toward E22/E25/E27/E30 (BIS standards agreed)",
+     "when": "ongoing, FY26-FY30",
+     "source": "transcript"
+    },
+    {
+     "what": "Country liquor case sales growth (44.12 lakh cases in FY26 vs 37.64 lakh in FY25)",
+     "when": "FY26",
+     "source": "investor presentation"
+    }
+   ],
+   "guidance": "On the July 29, 2025 (Q1 FY26) call, management guided to 'better performance especially in Q3-Q4 [FY26]' as cane-development and dual-feed initiatives came on stream, and said FY26 capex would be 'considerably lower than net depreciation' with no major capex planned.",
+   "delivered_vs_guidance": "Partial delivery. Q2 FY26 (Sep-2025) stayed weak (operating loss ₹8 Cr, net loss ₹16 Cr), but Q3 FY26 (Dec-2025: operating profit ₹43 Cr, net profit ₹17 Cr) and Q4 FY26 (Mar-2026: operating profit ₹80 Cr, net profit ₹46 Cr) did improve as guided. Q1 FY27 (Jun-2026) operating profit fell back to ₹9 Cr, though net profit of ₹37 Cr was aided by the Meerganj sale.",
+   "scores": {
+    "size_runway": {
+     "score": 3,
+     "why": "₹957 Cr market cap is a sliver of India's ethanol program (OMCs tender ~930 crore litres/year) and FY26 sugar output of about 3.5 lakh tonnes is under 1% of national production, but the core sugar market itself is low-growth."
+    },
+    "business_quality": {
+     "score": 2,
+     "why": "OPM has nearly halved to 6-8% and ROCE is just 4-5% in FY26, typical of a commodity sugar business with no pricing power and recurring disruption (recovery cut from 10.32% to 9.80%, per CARE, Jan-2026)."
+    },
+    "management": {
+     "score": 3,
+     "why": "Promoter stake steady at ~50.6-50.8% with no pledge (filed Apr-2026) and promoter-group entities bought roughly ₹2.7 Cr of stock through 2026, but guidance has repeatedly missed — management called Q1FY26 'not as per expectation' and an analyst called it 'pretty disappointing' on the Jul-2025 call."
+    },
+    "growth_visibility": {
+     "score": 3,
+     "why": "The new Orgonew functional-foods JV and the completed dual-feed distillery are concrete triggers, but Q1 FY27 sugar production collapsed to 9,097 tonnes from 22,117 tonnes a year earlier, clouding near-term visibility."
+    },
+    "longevity": {
+     "score": 3,
+     "why": "Government roadmap targets raising ethanol blending past 20% toward E27/E30, a multi-year tailwind, but cane-growing and disease risk recurs every season."
+    },
+    "valuation": {
+     "score": 3,
+     "why": "TTM P/E of about 11x (₹144 price / ₹12.7 TTM EPS) and book/market near 1.07x look statistically cheap, but ROCE of 4-5% means earnings quality doesn't obviously support a re-rating."
+    },
+    "red_flags": {
+     "score": 2,
+     "why": "CARE downgraded the long-term rating from A- to BBB+ in Jan-2026 citing red rot and a shortened crushing season, operating or net profit was negative in four of the last eight quarters (Sep-24, Dec-24, Jun-25, Sep-25), and FY24 operating cash flow was negative ₹101 Cr; no SEBI action or auditor issue was found."
+    }
+   },
+   "analyst_views": [],
+   "industry": "ICRA's September 2025 note on integrated sugar mills expected FY26 revenue growth of 5-8% on higher distillery sales volumes and firm domestic sugar prices. Nationally, ethanol blending in petrol reached about 19-20% in ESY2025 against OMC tenders of roughly 930 crore litres a year, with government and industry signalling a move toward E22-E30 over coming years (BIS standards, per DBOL management, Jul-2025 call). DBOL's own FY26 net sugar production of about 3.5 lakh tonnes is a small fraction of India's roughly 30-35 million-tonne annual crop.",
+   "risks": [
+    "Red rot and pest infestation in UP cane can recur and compress recovery/margins without warning.",
+    "CARE's January 2026 downgrade (A- to BBB+) signals weaker credit quality even after the debt paydown.",
+    "Operating or net profit was negative in four of the last eight quarters; earnings are volatile and seasonal.",
+    "No independent broker coverage was found, so there is no external check on management's growth narrative.",
+    "The new functional-foods joint venture with Orgonew is unproven and could fail to scale."
+   ],
+   "change_my_mind": "Another season of red rot-driven recovery declines, a further credit downgrade, or the functional-foods JV failing to generate real revenue within a year or two would undercut the turnaround case.",
+   "sources": [
+    "https://www.careratings.com/upload/CompanyFiles/PR/202601140134_Dhampur_Bio_Organics_Limited.pdf",
+    "https://scanx.trade/stock-market-news/companies/dhampur-bio-organics-promoters-declare-no-share-encumbrance-in-fy26/43096392",
+    "https://scanx.trade/stock-market-news/companies/dhampur-bio-organics-completes-sale-of-meerganj-unit-to-forever-global-enterprises-for-305-crores/43323374",
+    "https://www.whalesbook.com/corporate-news/English/chemicals/Dhampur-Bio-Organics-Sells-indian-rupee305-Cr-Unit-Launches-Functional-Foods-JV/69e633afbca97ee10694b62a",
+    "https://www.icra.in/Rating/DownloadResearchSummaryReport?id=6513",
+    "https://www.dhampur.com/about-us/leadership-team",
+    "https://www.screener.in/company/DBOL/consolidated/"
+   ],
+   "date": "2026-10-16",
+   "model": "claude-sonnet-5",
+   "concall": "Aug 2025",
+   "ppt": "Jul 2026",
+   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=cbbe8234-383e-4a2b-8df9-0c0b2d883162.pdf",
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=54ede069-66c8-4ae6-abaa-f84b32ac1c5a.pdf",
+   "company": "Dhampur Bio Organics Ltd",
+   "sector": "Fast Moving Consumer Goods",
+   "price": 144.04,
+   "mb_score": 68.6,
+   "mb_factors": [
+    "B2 value: FCF yield and book/market top 30%",
+    "B3 small: market cap under Rs 2,000 Cr",
+    "C2 undiscovered: FII+DII under 5%",
+    "E3 volume expansion: traded value 2x",
+    "F momentum alone (RS leader or trend template)",
+    "P promoter buying + momentum"
+   ]
+  },
+  "GANDHAR": {
+   "symbol": "GANDHAR",
+   "headline": "A white-oil maker's record quarter is an admitted one-off, not yet a new plan",
+   "story": "Gandhar Oil Refinery makes specialty petroleum products: white oils used in medicines, cosmetics and food-grade lubricants (it calls this category PHPO), transformer and insulating oils used by power utilities (PIO), and automotive lubricants. It buys base oil, refines and blends it, and sells to pharma, personal-care and power customers. It also runs Texol, a trading and blending unit in Sharjah, UAE, and exports to global customers.\n\nWhat changed: the June 2026 quarter (Q1 FY27) was the best in the company's history. Revenue rose 92% year-on-year to ₹1,732 crore, and net profit jumped 689% to ₹206 crore — more than the company earned in all of FY26. Management credits this to a favourable moment: tension around the Strait of Hormuz disrupted base-oil supply chains and pushed up prices, and Gandhar's early, disciplined buying of raw material let it sell at unusually wide margins. Gross margin per kilolitre jumped to ₹28,145, over three times the year-ago level.\n\nManagement itself calls this exceptional. Pressed repeatedly on the July 23, 2026 earnings call about whether these margins can last, the CFO said only that he is \"hopeful\" they continue for \"most of this year,\" and the Joint Managing Director declined to forecast margins beyond the next one or two quarters. Before this quarter, operating margin had wandered between 4.5% and 8% over the last five years, and return on capital employed had fallen from 39% in FY22 to 11-13% in the last two years — numbers more typical of a business processing a bought-in commodity than one with durable pricing power.\n\nWhy it might matter: India's white-oil segment is genuinely growing — a CRISIL study, commissioned by the company itself, put India's white-oil demand growth at roughly 9.5% a year to 2027, helped by pharma and personal-care demand and multinationals shifting sourcing to India. Shell's 2025 purchase of peer Raj Petro suggests global interest in the space. But Gandhar's three plants already run at about 97% utilisation on two shifts, and management has not announced a capacity expansion or capex number — plans are being drawn up and will be shared \"shortly.\" A planned entry into South Africa is also still being worked out, with no committed timeline.\n\nOn the numbers: operating cash flow fell well short of profit in FY24 (-₹69 crore versus ₹165 crore profit) and FY25 (₹15 crore versus ₹84 crore profit), before recovering closer to profit in FY26 (₹128 crore versus ₹137 crore). Promoters have been buying shares steadily — their stake rose from 64.6% in March 2024 to 66.6% by June 2026, including purchases as recent as September 2026. The stock has already risen about 111% in six months and sits near its 52-week high, so much of this quarter's news looks already reflected in the price.",
+   "founder": "Gandhar Oil Refinery is controlled by the Parekh family. Ramesh Babulal Parekh, the founder, Chairman and Managing Director, has run the business since its 1992 incorporation and has over 30 years in the petroleum and specialty-oils trade; he is a commerce graduate from Mumbai University. His sons, Samir Parekh (Vice Chairman and Joint MD) and Aslesh Parekh (Joint MD), each have about 19 years in the business and run day-to-day operations alongside him. Promoter holding has risen steadily, from 64.6% in March 2024 to 66.6% in June 2026, with purchases both by Ramesh Parekh personally (including ₹82 lakh and ₹50.8 lakh on September 9, 2026) and by the promoter-group entity Gandhar Coals & Mines, which bought shares between December 2025 and March 2026. No share pledge was found in the disclosures reviewed. No SEBI order, auditor resignation or related-party dispute was found; the statutory auditor is listed as K J K & Associates. Governance history before the 2023 IPO: not found.",
+   "conviction": 2,
+   "horizon": "short term",
+   "thesis": "Gandhar's June 2026 quarter was a genuine record, but management attributes it to an exceptional, geopolitically driven margin spread that it explicitly does not promise will last beyond one or two more quarters. For a multibagger case to build, the company needs to convert this windfall into announced capacity expansion and new export markets, neither of which has a firm timeline yet. With plants already near full utilisation, the stock up over 100% in six months, and historical margins and ROCE both structurally lower than pre-2024 levels, the risk is that the current price is extrapolating a one-off quarter rather than pricing a repeatable one.",
+   "triggers": [
+    {
+     "what": "Margin sustainability through FY27 (management 'hopeful' current spread holds)",
+     "when": "Next 1-2 quarters (through Q3 FY27)",
+     "source": "transcript, Q1 FY27 call, 2026-07-23"
+    },
+    {
+     "what": "Capex/capacity expansion plan to be formally announced",
+     "when": "'Shortly' / next quarter per management, not yet committed",
+     "source": "transcript, Q1 FY27 call"
+    },
+    {
+     "what": "South Africa market entry strategy",
+     "when": "Clarity expected in 1-2 quarters, no committed launch date",
+     "source": "transcript, Q1 FY27 call"
+    },
+    {
+     "what": "New customer qualifications (4-5 year approval cycle) converting to revenue",
+     "when": "Not specified; existing pipeline undisclosed",
+     "source": "transcript, Q1 FY27 call"
+    }
+   ],
+   "guidance": "On the Q1 FY27 call (2026-07-23), management guided volume growth of 8-10% (historically 8-10-11%) for FY27, and said it is 'hopeful' EBITDA margins stay near the current elevated level 'for most of this year,' while declining to give any sustainable margin guidance for FY28/FY29 when an analyst asked directly.",
+   "delivered_vs_guidance": "Volume grew about 8% year-on-year in Q1 FY27, in line with the long-stated 8-10% volume guidance. But margins have been far more volatile than any guidance implied: operating margin fell from 8% in FY23 to 4.5% in FY25 without being flagged in advance, then jumped to a 16.2% quarterly margin in Q1 FY27 that management says came from an unplanned, external raw-material/geopolitical event rather than a strategic shift. Margin outcomes, in other words, have repeatedly surprised both ways and have not tracked any stated plan.",
+   "scores": {
+    "size_runway": {
+     "score": 3,
+     "why": "Already calls itself India's largest white-oil maker (~₹5,052 cr TTM sales) inside a relatively small India white-oil segment (CRISIL estimate: ~$0.69bn by 2027); runway exists mainly via exports and new geographies, not domestic market size alone."
+    },
+    "business_quality": {
+     "score": 3,
+     "why": "Operating margin ranged 4.5-8% over FY22-26 before this quarter's spike; ROCE fell from 39% (FY22) to 11-13% (FY25-26), consistent with a margin-on-throughput business rather than one with strong pricing power."
+    },
+    "management": {
+     "score": 4,
+     "why": "Promoters have raised their stake from 64.6% to 66.6% (Mar 2024-Jun 2026) via repeated market purchases, including as recently as 2026-09-09; no governance red flags found, but forward guidance on capex and new markets stays vague ('to be announced shortly')."
+    },
+    "growth_visibility": {
+     "score": 2,
+     "why": "No announced capacity expansion despite ~97% utilisation on two shifts; South Africa entry and new export markets are still 'being worked out' with no committed timeline per the 2026-07-23 call."
+    },
+    "longevity": {
+     "score": 3,
+     "why": "Sector tailwinds (CRISIL-estimated ~9.5% India white-oil CAGR to 2027, China+1 sourcing, Shell's 2025 acquisition of Raj Petro) are real, but multi-year compounding needs capacity that is not yet committed."
+    },
+    "valuation": {
+     "score": 2,
+     "why": "Stock up ~111% in 6 months and near its 52-week high; trailing P/E (~9.7x on TTM EPS of ₹30.8) looks cheap only because TTM earnings include one quarter management calls exceptional; last available analyst-consensus target (~₹159, pre-results) sits far below the current price of ₹299."
+    },
+    "red_flags": {
+     "score": 3,
+     "why": "Operating cash flow trailed net profit in FY24 (-₹69 cr vs ₹165 cr) and FY25 (₹15 cr vs ₹84 cr), improving only in FY26 (₹128 cr vs ₹137 cr); trade payables and receivables both grew sharply in Q1 FY27, though management says ageing remains normal. No SEBI order, pledge, or auditor issue found."
+    }
+   },
+   "analyst_views": [
+    {
+     "broker": "TipRanks (aggregated consensus, not a single named broker)",
+     "date": "2026-10",
+     "view": "Hold/Neutral (score 66)",
+     "target": "₹159",
+     "url": "https://www.tipranks.com/stocks/in:gandhar/stock-analysis"
+    }
+   ],
+   "industry": "CRISIL research commissioned by Gandhar itself (dated 2022-12-16, hosted on the company's own site) estimated India's white-oil market growing from $0.43bn (2022) to $0.69bn by 2027, a ~9.8% value CAGR and ~9.5% volume CAGR. The company's own Q1 FY27 presentation cites a global white-oil market of $2.19bn (2025) growing to $2.77bn by 2030 (~4.8% CAGR, sourced to Mordor Intelligence) and notes Shell's 2025 acquisition of peer Raj Petro as a sign of global interest. Third-party market-size estimates for India vary widely across research vendors (from roughly $145m to over $1bn for 2025), so the exact size of the addressable market is not well pinned down, and the most detailed sector study available was paid for by the company being researched.",
+   "risks": [
+    "The record Q1 FY27 margin is explicitly described by management as driven by an exceptional, temporary geopolitical disruption (Strait of Hormuz tension), not a structural change — it may revert.",
+    "Plants are near full utilisation (~97%) with no announced capacity expansion or capex figure yet, limiting near-term volume growth beyond the guided 8-10%.",
+    "Operating cash flow has lagged reported profit in two of the last three fiscal years (FY24, FY25), a sign that part of past profit has not yet turned into cash.",
+    "Historical margins (4.5-8% OPM) and declining ROCE (39% to 11-13%) suggest limited pricing power outside the current unusual market conditions.",
+    "No fresh, named broker report with a target price post the Q1 FY27 results was found; the stock has already risen sharply ahead of any updated analyst view."
+   ],
+   "change_my_mind": "A firm, funded capacity-expansion announcement with a stated timeline, combined with evidence that the elevated margin spread holds for two to three quarters beyond management's own 'hopeful' window (rather than reverting toward the historical 4.5-8% band), would meaningfully strengthen this case.",
+   "sources": [
+    "https://www.business-standard.com/markets/capital-market-news/gandhar-oil-refinery-hits-the-roof-after-q1-pat-zooms-689-yoy-126072300269_1.html",
+    "https://www.indianchemicalnews.com/general/gandhar-oil-refinery-posts-record-q1-fy27-as-pat-surges-689-31215",
+    "https://www.marketsmojo.com/news/result-analysis/gandhar-oil-refinery-q1-fy27-stellar-633-profit-surge-powers-micro-cap-to-52-week-high-4117920",
+    "https://gandharoil.com/wp-content/uploads/2023/02/CRISIL-Research_Gandhar-Oil_Assessment-of-Specialty-Oil-Industry_16-December-2022_Final-Report.pdf",
+    "https://www.mordorintelligence.com/industry-reports/india-white-oil-market",
+    "https://www.tipranks.com/stocks/in:gandhar/stock-analysis",
+    "https://www.nuvama.com/wp-content/uploads/2023/11/Gandhar-Oil-Prospectus-November-25-2023.pdf",
+    "https://www.screener.in/company/GANDHAR/consolidated/"
+   ],
+   "date": "2026-10-16",
+   "model": "claude-sonnet-5",
+   "concall": "Jul 2026",
+   "ppt": "Jul 2026",
+   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=fdd49a7a-3729-4dee-8469-adc094c219c6.pdf",
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=68a28b26-abbb-466b-9299-20caa6879ab5.pdf",
+   "company": "Gandhar Oil Refinery (India) Ltd",
+   "sector": "Oil, Gas & Consumable Fuels",
+   "price": 299.1,
+   "mb_score": 67.8,
+   "mb_factors": [
+    "B2 value: FCF yield and book/market top 30%",
+    "C2 undiscovered: FII+DII under 5%",
+    "D1 promoter raising stake: +1 pt",
+    "F momentum alone (RS leader or trend template)",
+    "Q1 quarterly: profit +25%, sales +20% on the same quarter last year",
+    "P promoter buying + momentum"
+   ]
+  },
+  "UTTAMSUGAR": {
+   "symbol": "UTTAMSUGAR",
+   "headline": "A small sugar miller pivoting to ethanol, cheap on cash flow, thin on growth clarity",
+   "story": "Uttam Sugar Mills runs four sugar mills in Uttarakhand and Uttar Pradesh with combined cane-crushing capacity of 27,000 tonnes a day, along with distilleries (350 KLPD ethanol capacity) and 122 MW of captive power cogeneration. It also makes pharma-grade and \"branded/specialty\" sugar - icing sugar, bura, brown sugar - sold through Blinkit, Zepto and Amazon, alongside bulk commodity sugar.\n\nRevenue bounced around over the last three years: ₹2,047 Cr (FY24), ₹1,846 Cr (FY25), ₹2,202 Cr (FY26, consolidated). But operating margin slid from 13% to a trailing 9% as sugar output fell - 30.87 lakh quintals in FY26 versus 34.69 lakh in FY25 - after poor cane yields from unfavourable weather, per the company's own presentation. Ethanol partly filled the gap: distillery production rose 32% to 877 lakh bulk litres. Cash generation improved sharply even as profit wobbled - operating cash flow rose from ₹33 Cr (FY24) to ₹270 Cr (FY26) - and the company used it to cut borrowings from ₹833 Cr to ₹722 Cr.\n\nWhy this might matter now: the stock trades around 16.5x trailing EPS and roughly 1.6x book, with a screen-flagged free-cash-flow yield above 13%, and almost no institutional ownership (FII+DII combined just 0.3%) despite a stable ~75% promoter stake. India's ethanol-blending push is a multi-year government program - the industry body ISMA wants the sugar sector's share of ethanol supply raised from today's roughly 27.5% toward a 55% target - which would favour distilleries like Uttam's if it happens. ISMA has also sought a 2-million-tonne sugar export quota for the current season, which could support realisations if granted.\n\nThe doubts are real. The business is highly seasonal and policy-dependent: quarterly profit swung from a loss of ₹14 Cr (quarter to Sep 2024) to a profit of ₹64 Cr (quarter to Mar 2025) to near break-even at ₹1.3 Cr (quarter to Jun 2026). No recent concall transcript was available to check management's own targets against what it actually delivered. The higher-margin branded/specialty sugar line is still a small slice of total volume. And no named broker report or rating change from the last year turned up in this research - only generic algorithmic price-target aggregator sites with inconsistent numbers, which are not a substitute for real analyst coverage. This looks more like a statistically cheap, under-followed cyclical than a company with a clear, visible growth trigger.",
+   "founder": "Uttam Sugar Mills is controlled by the Adlakha family, promoters since the company's founding, who together with promoter-group entities hold about 74.7% of equity - a level that has been stable to slightly rising since March 2022 (74.4%). Named promoter shareholders include Raj Kumar Adlakha, Ranjan Adlakha and Shomna Adlakha. None of the promoter holding is reported as pledged. In March 2026, promoter-group member Rajni Babbar acquired roughly ₹2.47 Cr of shares, recorded as inherited rather than bought in the open market, so it is not a strong signal of fresh conviction buying. One governance note from the historical record: in 2001, SEBI's adjudicating officer fined promoter Ranjan Adlakha and two promoter-group members a combined ₹33,500 under takeover-disclosure (SAST) regulations - a minor, more than two-decade-old matter. The FY26 secretarial audit (N.K. Rastogi & Associates) reported no deviations or regulatory actions; statutory auditor B K Kapur & Company has not changed recently and no resignation was found.",
+   "conviction": 2,
+   "horizon": "long term",
+   "thesis": "Uttam Sugar is a decades-old, family-run sugar-ethanol-power combine trading cheap on cash flow (FCF yield 13.3%, price/book ~1.6x) with almost no institutional ownership. The thesis is that rising ethanol allocation under India's blending mandate, plus a small but fast-growing branded/specialty sugar business, could lift margins and earn a re-rating from today's commodity-sugar multiple. For that to play out, government ethanol-allocation and export-quota policy needs to turn favourable, and the company needs to show it can hold margins through a cane cycle rather than being whipsawed by weather and price controls, as happened in FY26 when operating margin fell to a trailing 9%.",
+   "triggers": [
+    {
+     "what": "Government push to raise the sugar sector's share of ethanol supply from ~27.5% toward a 55% target under the EBP roadmap",
+     "when": "ongoing policy decision, no confirmed date",
+     "source": "industry (ISMA)"
+    },
+    {
+     "what": "Branded/specialty sugar volume scale-up - average monthly sales grew from 18,437 to 59,698 quintals between FY19 and FY26",
+     "when": "multi-year, already in progress",
+     "source": "investor presentation, May 2026"
+    },
+    {
+     "what": "ISMA-sought 2 million tonne sugar export quota for the current season, which could lift realisations if granted",
+     "when": "SS2025-26 (current season)",
+     "source": "news report, 2025-07-31"
+    }
+   ],
+   "guidance": "not found - no concall transcript was filed or available, and the May 2026 results presentation contains no forward revenue, margin or capex targets from management.",
+   "delivered_vs_guidance": "not found - without an accessible transcript from a year ago, there is no specific prior management guidance to check against FY26 delivery.",
+   "scores": {
+    "size_runway": {
+     "score": 3,
+     "why": "Market cap ₹1,436 Cr is small against a national ethanol-blending push, but core sugar remains a mature, government-regulated commodity with capped volume growth."
+    },
+    "business_quality": {
+     "score": 2,
+     "why": "OPM fell from 13% (FY24) to 9% TTM and ROCE is just 11%; FRP-linked cane costs and price controls leave limited pricing power outside the small branded/pharma-sugar niche."
+    },
+    "management": {
+     "score": 3,
+     "why": "Adlakha family promoters have run the company for three decades, growing crushing capacity from 2,500 to 27,000 TCD and adding ethanol/potash lines, but no transcript was available to check recent guidance against delivery."
+    },
+    "growth_visibility": {
+     "score": 3,
+     "why": "Distillery output grew 32% YoY in FY26 (666 to 877 lakh bulk litres) and a national ethanol roadmap favours sugar-sector distillers, but Q1 FY27 net profit fell to just ₹1.3 Cr on weather/cane-driven margin pressure."
+    },
+    "longevity": {
+     "score": 2,
+     "why": "Ethanol policy support is multi-year, but sugar pricing faces recurring government intervention (export bans/quotas, FRP hikes) that has already pulled OPM down for three straight years."
+    },
+    "valuation": {
+     "score": 4,
+     "why": "Trailing P/E near 16.5x, price/book about 1.6x and a screen-flagged free-cash-flow yield of 13.3%, with FII+DII holding just 0.3% - cheap and largely undiscovered."
+    },
+    "red_flags": {
+     "score": 4,
+     "why": "Operating cash flow rose to ₹270 Cr in FY26, well above the ₹101 Cr net profit, and borrowings fell from ₹833 Cr to ₹722 Cr; no pledge found; the only blemish is a ₹33,500 SEBI penalty on a promoter from 2001."
+    }
+   },
+   "analyst_views": [],
+   "industry": "India's net sugar output for the 2025-26 season is pegged near 309-310 lakh tonnes after diverting about 34 lakh tonnes to ethanol, against domestic consumption of about 285 lakh tonnes, leaving a closing stock of roughly 74.5 lakh tonnes that ISMA says can support exports (it has sought a 2 million tonne export quota) - source: ISMA data reported by Business Standard, 2025-07-31. Uttam's ₹2,200 Cr revenue base is a small single-digit-percentage share of this national sugar/ethanol market.",
+   "risks": [
+    "Sugar/cane economics are set by government-fixed cane prices (FRP) and periodic export, import and ethanol-diversion policy changes that can swing margins quickly - OPM is already down to a trailing 9% from 13% two years ago.",
+    "Weather-driven cane yield swings hit volumes directly, as in SS2025-26 when crushing fell and quarterly net profit dropped to near break-even (₹1.3 Cr in the quarter to Jun 2026).",
+    "No recent concall transcript was available, limiting the ability to verify management's own targets or near-term plans.",
+    "Virtually no institutional (FII+DII 0.3%) or verifiable broker coverage means limited external scrutiny and limited price discovery."
+   ],
+   "change_my_mind": "A run of two to three quarters where distillery/ethanol realisations and allocation visibly offset sugar-cycle swings, margin stabilises back above the FY24 13% OPM level, and a named brokerage initiates coverage with a reasoned thesis would raise conviction. A further fall in cane crushing or another policy-driven margin hit would instead confirm this is a cyclical commodity stock rather than a re-rating story.",
+   "sources": [
+    "https://www.screener.in/company/UTTAMSUGAR/consolidated/",
+    "https://www.business-standard.com/economy/news/india-sugar-output-to-rise-18-in-2025-26-isma-eyes-exports-ethanol-push-125073101814_1.html",
+    "https://www.valueresearchonline.com/stocks/45025/uttam-sugar-mills-ltd/shareholding/",
+    "https://www.corporateprofessionals.com/docs/Rightsissue/Uttam/Uttam_Draft_Letter_of_Offer.pdf",
+    "https://scanx.trade/stock-market-news/companies/uttam-sugar-mills-confirms-full-compliance-with-sebi-regulations-for-fy26/41512120",
+    "https://www.marketsmojo.com/news/result-analysis/uttam-sugar-mills-q4-fy26-strong-quarter-masks-underlying-margin-pressures-3994711"
+   ],
+   "date": "2026-10-16",
+   "model": "claude-sonnet-5",
+   "concall": null,
+   "ppt": "May 2026",
+   "transcript_url": null,
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=aedb8555-2e6f-4772-a7f2-416547a45dd6.pdf",
+   "company": "Uttam Sugar Mills Ltd",
+   "sector": "Fast Moving Consumer Goods",
+   "price": 376.65,
+   "mb_score": 49.0,
+   "mb_factors": [
+    "B2 value: FCF yield and book/market top 30%",
+    "B3 small: market cap under Rs 2,000 Cr",
+    "C2 undiscovered: FII+DII under 5%",
+    "E3 volume expansion: traded value 2x",
+    "F momentum alone (RS leader or trend template)"
+   ]
   }
  },
- "generated": "2026-10-09 14:36"
+ "generated": "2026-10-16 09:25"
 }
