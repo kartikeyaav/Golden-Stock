@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-15 15:17",
+ "generated": "2026-10-16 15:08",
  "n_checked": 1004,
- "n_flagged": 76,
- "asm_total": 210,
+ "n_flagged": 77,
+ "asm_total": 218,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -852,6 +852,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "WSTCSTPAPR": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "SANATHAN": {
    "flags": [
     {
@@ -949,11 +961,6 @@
   "HLEGLAS": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -961,7 +968,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 5%"
   },
   "SHANTIGOLD": {
    "flags": [
@@ -999,7 +1006,7 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "KOPRAN": {
+  "UTTAMSUGAR": {
    "flags": [
     {
      "code": "ASM",

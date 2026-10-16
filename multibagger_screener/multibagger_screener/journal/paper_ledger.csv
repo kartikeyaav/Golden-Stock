@@ -132,3 +132,6 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-15,SHILPAMED,SELL,trading,17,922.1,5492.7,trading-lot trail: close < 50-DMA
 2026-10-15,ACMESOLAR,SELL,trading,27,407.6,1015.2,trading-lot trail: close < 50-DMA
 2026-10-15,ELGIEQUIP,SELL,all,256,567.01,-4707.84,stop hit
+2026-10-16,IPCALAB,SKIP,entry,0,,,[IPCALAB@2026-10-16 01:05] already open in paper book
+2026-10-16,ENGINERSIN,SELL,trading,146,273.45,4844.28,trading-lot trail: close < 50-DMA
+2026-10-16,RRKABEL,SELL,all,18,2438.91,-6229.62,stop hit
