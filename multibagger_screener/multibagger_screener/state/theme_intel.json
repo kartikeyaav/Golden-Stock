@@ -1,152 +1,248 @@
 {
- "generated": "2026-10-09 14:11",
+ "generated": "2026-10-16 09:11",
  "model": "claude-sonnet-5",
- "week_of": "2026-10-09",
- "summary": "RBI's first hawkish rate hike in four years landed alongside a sharp Hormuz/Houthi-driven oil shock and a US Labor Department crackdown on IT-services green-card filings, while hard capex approvals (Green Energy Corridor-III, Integrated Transport & Logistics Authority), a 40-ship Cochin Shipyard export breakthrough, a ₹50,000cr Shyam Metalics steel MoU and a cancer-drug margin cap gave five sectors concrete, dated catalysts. Nuclear, CDMO, defence electronics, textiles, semis and gems & jewellery carried no fresh decided driver this week and should be read as fading on silence rather than reversed.",
+ "week_of": "2026-10-16",
+ "summary": "The week's standout is a single decided mega-event — Cabinet's ₹52,878cr IDBI-Fairfax approval, India's largest financial-sector FDI — alongside a draft National Steel Policy and confirmed 8% 2027 steel demand growth that convert last week's framework into dated policy plus live pricing power. Data-centre capex keeps compounding (Hillhouse, Lightstorm) just as MeitY moves to regulate its power draw, copper producers' duty push creates a clean tailwind/headwind split against solar-module and cable makers, and Brent above $106 with Houthi escalation sharpens the refiner-margin-vs-protected-city-gas divide.",
  "themes": [
   {
-   "key": "shipbuilding",
-   "status": "existing",
-   "name": "Shipbuilding & marine",
+   "key": "idbi_privatisation",
+   "status": "new",
+   "name": "IDBI Bank strategic sale to Fairfax",
    "direction": "tailwind",
    "strength": 4,
-   "horizon": "medium",
-   "continuity": "strengthening",
-   "thesis": "Confirmed Western export orders and naval capacity milestones move the theme from port-capex sentiment to actual shipbuilding order flow.",
+   "horizon": "near",
+   "continuity": "new",
+   "thesis": "Cabinet-approved sale of a 60.72% stake (govt 30.48% + LIC 30.24%) to Fairfax at ₹81/share, above the ₹75.99 fair-value benchmark, recapitalises and re-rates IDBI while LIC books a one-off divestment gain.",
    "drivers": [
     {
-     "what": "Cochin Shipyard confirmed orders to build 40+ ships for buyers in the US, Germany, Norway and other nations",
+     "what": "Cabinet approves Fairfax's ₹52,878 crore bid for 60.72% stake in IDBI Bank, India's largest financial-sector FDI",
      "where": "India",
-     "date": "2026-10-08",
-     "source": "https://www.dailyexcelsior.com/cochin-shipyard-gets-order-to-build-40-ships-from-us-germany-norway-other-nations-sonowal/"
-    },
-    {
-     "what": "Cochin Shipyard cuts steel for 70T Bollard Pull tugs for Svitzer A/S, Denmark",
-     "where": "India",
-     "date": "2026-10-08",
-     "source": "headline: Cochin Shipyard cuts steel for 70 T Bollard Pull tugs for Svitzer A/S, Denmark"
-    },
-    {
-     "what": "Defence Minister launches Fleet Support Ship-1 at Hindustan Shipyard Ltd, Vizag",
-     "where": "India",
-     "date": "2026-10-06",
-     "source": "policy event: Defence Minister launches Fleet Support Ship-1 at HSL in Vizag"
+     "date": "2026-10-14",
+     "source": "https://www.businesstoday.in/latest/corporate/story/centre-approves-fairfax-financials-rs52878-crore-bid-for-60-72-stake-in-idbi-bank-561590-2026-10-14"
     }
    ],
    "beneficiaries": [
     {
-     "symbol": "COCHINSHIP",
+     "symbol": "IDBI",
      "order": 1,
      "effect": "benefit",
      "confidence": "high",
-     "mechanism": "Direct recipient of the 40-ship export order book and the Svitzer tug contract",
-     "evidence": "https://www.dailyexcelsior.com/cochin-shipyard-gets-order-to-build-40-ships-from-us-germany-norway-other-nations-sonowal/"
+     "mechanism": "Direct recipient of a priced, decided ownership change at a premium to independent fair value; strategic owner replaces government overhang.",
+     "evidence": "https://www.businesstoday.in/latest/corporate/story/centre-approves-fairfax-financials-rs52878-crore-bid-for-60-72-stake-in-idbi-bank-561590-2026-10-14"
     },
     {
-     "symbol": "GRSE",
+     "symbol": "LICI",
      "order": 1,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Sentiment and order-pipeline tailwind as India's state shipbuilding capacity (alongside HSL) draws fresh foreign and naval orders",
-     "evidence": "policy event: Defence Minister launches Fleet Support Ship-1 at HSL in Vizag"
+     "mechanism": "Monetises its 30.24% stake at a premium to carrying value, a one-off capital realisation.",
+     "evidence": "https://www.businesstoday.in/latest/corporate/story/centre-approves-fairfax-financials-rs52878-crore-bid-for-60-72-stake-in-idbi-bank-561590-2026-10-14"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "steel",
+   "status": "new",
+   "name": "Steel capacity & import protection",
+   "direction": "tailwind",
+   "strength": 4,
+   "horizon": "medium",
+   "continuity": "strengthening",
+   "thesis": "A draft National Steel Policy Vision 2047 (604 MT capacity target, AI-based substandard-import monitoring) lands alongside confirmed 8% 2027 demand growth and a third month of price hikes, converting last week's framework into a dated policy plus live pricing power for domestic mills.",
+   "drivers": [
+    {
+     "what": "Draft National Steel Policy proposes AI-supported monitoring to curb substandard steel imports, targets 604 MT capacity by 2047",
+     "where": "India",
+     "date": "2026-10-11",
+     "source": "https://www.deccanherald.com/india/proposed-steel-policy-seeks-ai-supported-framework-for-early-detection-of-sub-standard-steel-imports-4180651"
     },
     {
-     "symbol": "KMEW",
+     "what": "India's steel demand to grow 8% in 2027, fastest among major markets; steel prices rise for third consecutive month",
+     "where": "India",
+     "date": "2026-10-13",
+     "source": "BusinessLine headline, 2026-10-13"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "SAIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Demand growth and anti-dumping/AI-monitoring protection support domestic realisations.",
+     "evidence": "BusinessLine, 2026-10-13"
+    },
+    {
+     "symbol": "NSLNISP",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Same demand and import-protection tailwind; stock already moved 6% on the news.",
+     "evidence": "Livemint, 2026-10-15"
+    },
+    {
+     "symbol": "JSL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Stainless segment benefits from the same import-screening push against substandard imports.",
+     "evidence": "https://www.deccanherald.com/india/proposed-steel-policy-seeks-ai-supported-framework-for-early-detection-of-sub-standard-steel-imports-4180651"
+    },
+    {
+     "symbol": "SHYAMMETL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Domestic alloy/steel maker benefits from pricing power and demand growth.",
+     "evidence": "BusinessLine, 2026-10-13"
+    },
+    {
+     "symbol": "GPIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Integrated steel producer benefits from the same demand/price cycle.",
+     "evidence": "BusinessLine, 2026-10-13"
+    },
+    {
+     "symbol": "KSL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Alloy steel maker rides the broader pricing recovery.",
+     "evidence": "BusinessLine, 2026-10-13"
+    },
+    {
+     "symbol": "GALLANTT",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Secondary steelmaker benefits from price hikes and demand growth.",
+     "evidence": "BusinessLine, 2026-10-13"
+    },
+    {
+     "symbol": "JAIBALAJI",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Integrated steel producer benefits from the same cycle.",
+     "evidence": "BusinessLine, 2026-10-13"
+    },
+    {
+     "symbol": "SANDUMA",
      "order": 2,
      "effect": "benefit",
      "confidence": "low",
-     "mechanism": "Marine engineering/dredging services demand scales with shipyard throughput and port-adjacent activity",
-     "evidence": "https://www.dailyexcelsior.com/cochin-shipyard-gets-order-to-build-40-ships-from-us-germany-norway-other-nations-sonowal/"
+     "mechanism": "Manganese/iron ore feeds expanding steel capacity.",
+     "evidence": "https://www.deccanherald.com/india/proposed-steel-policy-seeks-ai-supported-framework-for-early-detection-of-sub-standard-steel-imports-4180651"
+    },
+    {
+     "symbol": "GRAPHITE",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Graphite electrode consumable demand scales with EAF/steel capacity expansion under the 604MT 2047 roadmap.",
+     "evidence": "https://www.deccanherald.com/india/proposed-steel-policy-seeks-ai-supported-framework-for-early-detection-of-sub-standard-steel-imports-4180651"
+    },
+    {
+     "symbol": "VESUVIUS",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Refractories demand scales with steel capacity additions.",
+     "evidence": "https://www.deccanherald.com/india/proposed-steel-policy-seeks-ai-supported-framework-for-early-detection-of-sub-standard-steel-imports-4180651"
     }
    ],
    "map_additions": []
   },
   {
-   "key": "grid",
-   "status": "existing",
-   "name": "Power transmission & grid capex",
-   "direction": "tailwind",
-   "strength": 4,
-   "horizon": "medium",
-   "continuity": "strengthening",
-   "thesis": "A fully costed, Cabinet-approved transmission-plus-storage scheme converts the renewables evacuation bottleneck into orders for cable, tower, transformer and conductor makers.",
+   "key": "copper",
+   "status": "new",
+   "name": "Copper price rally & import-duty push",
+   "direction": "mixed",
+   "strength": 3,
+   "horizon": "near",
+   "continuity": "new",
+   "thesis": "Record-high global copper prices plus a producer lobby push to double the duty on solar PV copper ribbons/busbars (5%→10%) is a clean tailwind for the domestic copper miner and a cost headwind for every copper-intensive downstream maker (solar modules, wires/cables).",
    "drivers": [
     {
-     "what": "Cabinet approved Green Energy Corridor-III: Rs 1,86,405cr outlay (Rs 1,36,378cr intra-state transmission + Rs 50,000cr for 50GWh battery storage) to evacuate 135GW renewable power by FY32-33",
+     "what": "Primary copper producers' body urges government to retain/raise duty on copper used in solar modules, citing underutilised 30,000-tonne domestic capacity vs cheap imports",
      "where": "India",
-     "date": "2026-09-30",
-     "source": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
+     "date": "2026-10-13",
+     "source": "https://a2ztaxcorp.net/industry-body-seeks-higher-duty-on-copper-used-in-solar-module/"
+    },
+    {
+     "what": "Copper's bullish momentum likely to continue for a few more months",
+     "where": "Global",
+     "date": "2026-10-14",
+     "source": "BusinessLine headline, 2026-10-14"
     }
    ],
    "beneficiaries": [
+    {
+     "symbol": "HINDCOPPER",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Direct domestic copper producer benefits from both the price rally and a protective import duty on copper-intensive components.",
+     "evidence": "https://a2ztaxcorp.net/industry-body-seeks-higher-duty-on-copper-used-in-solar-module/"
+    },
+    {
+     "symbol": "WAAREEENER",
+     "order": 2,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Solar module maker's copper-ribbon/busbar input costs rise whether sourced domestically (producers want higher prices) or via a higher import duty.",
+     "evidence": "https://a2ztaxcorp.net/industry-body-seeks-higher-duty-on-copper-used-in-solar-module/"
+    },
+    {
+     "symbol": "PREMIERENE",
+     "order": 2,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Same copper-ribbon input-cost exposure as other solar module makers.",
+     "evidence": "https://a2ztaxcorp.net/industry-body-seeks-higher-duty-on-copper-used-in-solar-module/"
+    },
+    {
+     "symbol": "VIKRAMSOLR",
+     "order": 2,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Same copper-ribbon input-cost exposure as other solar module makers.",
+     "evidence": "https://a2ztaxcorp.net/industry-body-seeks-higher-duty-on-copper-used-in-solar-module/"
+    },
+    {
+     "symbol": "WEBELSOLAR",
+     "order": 2,
+     "effect": "hurt",
+     "confidence": "low",
+     "mechanism": "Smaller-scale module maker faces the same input-cost pressure.",
+     "evidence": "https://a2ztaxcorp.net/industry-body-seeks-higher-duty-on-copper-used-in-solar-module/"
+    },
+    {
+     "symbol": "FINCABLES",
+     "order": 2,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Copper is the dominant input cost for wire/cable makers; a sustained rally compresses margins unless fully passed through.",
+     "evidence": "BusinessLine headline, 2026-10-14"
+    },
+    {
+     "symbol": "RRKABEL",
+     "order": 2,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Same copper-cost pass-through risk as other cable makers.",
+     "evidence": "BusinessLine headline, 2026-10-14"
+    },
     {
      "symbol": "KEI",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "high",
-     "mechanism": "Direct cable/conductor demand from the intra-state transmission buildout",
-     "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-    },
-    {
-     "symbol": "SKIPPER",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "high",
-     "mechanism": "Transmission tower fabrication order book expands with new InSTS lines",
-     "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-    },
-    {
-     "symbol": "TARIL",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "Power transformer demand scales with new substation capacity under GEC-III",
-     "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-    },
-    {
-     "symbol": "APARINDS",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "Conductor supply tied to new intra-state transmission corridors",
-     "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-    }
-   ],
-   "map_additions": []
-  },
-  {
-   "key": "renewables",
-   "status": "existing",
-   "name": "Renewables, solar & storage",
-   "direction": "tailwind",
-   "strength": 3,
-   "horizon": "medium",
-   "continuity": "steady",
-   "thesis": "A government push to repower ~25GW of ageing wind capacity is a replacement-demand driver for turbine OEMs, distinct from and additive to new-capacity additions.",
-   "drivers": [
-    {
-     "what": "Renewable Energy Minister Pralhad Joshi said government is working on strategies to repower ~25GW of old wind projects, seeking industry input at Windergy India 2026",
-     "where": "India",
-     "date": "2026-10-08",
-     "source": "https://www.deccanchronicle.com/nation/govt-working-to-re-power-around-25-gw-of-old-wind-projects-joshi-1994094"
-    }
-   ],
-   "beneficiaries": [
-    {
-     "symbol": "SUZLON",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "Leading wind OEM positioned to supply repowering turbines replacing decades-old installed base",
-     "evidence": "https://www.deccanchronicle.com/nation/govt-working-to-re-power-around-25-gw-of-old-wind-projects-joshi-1994094"
-    },
-    {
-     "symbol": "INOXWIND",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "Wind turbine manufacturer with direct exposure to replacement-cycle demand",
-     "evidence": "https://www.deccanchronicle.com/nation/govt-working-to-re-power-around-25-gw-of-old-wind-projects-joshi-1994094"
+     "order": 2,
+     "effect": "hurt",
+     "confidence": "low",
+     "mechanism": "Copper-intensive cable manufacturer faces margin risk from sustained price strength.",
+     "evidence": "BusinessLine headline, 2026-10-14"
     }
    ],
    "map_additions": []
@@ -156,179 +252,164 @@
    "status": "existing",
    "name": "Data centres & digital infrastructure",
    "direction": "tailwind",
-   "strength": 4,
+   "strength": 5,
    "horizon": "medium",
    "continuity": "strengthening",
-   "thesis": "A quantified CBRE report confirms the capex cycle is real and compounding, with hyperscale/AI-linked demand now the majority of committed investment.",
+   "thesis": "Fresh hyperscale and fibre capital commitments (Hillhouse, Lightstorm) land the same week MeitY confirms it is drafting a national data-centre policy to manage grid impact — the capex cycle keeps outrunning the governance response, which itself signals the scale is now too large to ignore.",
    "drivers": [
     {
-     "what": "CBRE: India data centre sector attracted $173bn in investment commitments since 2021; capacity on track to reach 2GW by end-2026 (130MW added H1, 200MW+ expected H2); hyperscale/colo ~62% of commitments, 15%+ AI-linked",
+     "what": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
      "where": "India",
-     "date": "2026-10-06",
-     "source": "https://www.deccanherald.com/amp/story/india/data-centre-sector-draws-173-billion-in-investment-commitments-since-2021-cbre-says-4172448"
+     "date": "2026-10-15",
+     "source": "Livemint headline, 2026-10-15"
+    },
+    {
+     "what": "Lightstorm bets $500 mn on fibre networks to tap India's AI data centre boom",
+     "where": "India",
+     "date": "2026-10-14",
+     "source": "Livemint headline, 2026-10-14"
+    },
+    {
+     "what": "Government drafting national data-centre policy after installed capacity projected to reach ~8GW by 2030, 17GW by 2031-32",
+     "where": "India",
+     "date": "2026-10-14",
+     "source": "https://www.whalesbook.com/news/English/technology/India-Drafts-National-Data-Center-Policy-to-Manage-Power-Demand/6acf3e7179a16deaeaf0f89c"
     }
    ],
    "beneficiaries": [
+    {
+     "symbol": "ANANTRAJ",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Listed data-centre developer directly captures incremental hyperscale demand and capital inflow into the sector.",
+     "evidence": "Livemint headline, 2026-10-15"
+    },
     {
      "symbol": "NETWEB",
      "order": 1,
      "effect": "benefit",
      "confidence": "high",
-     "mechanism": "Server/AI-infrastructure maker scales directly with hyperscale and AI-linked data centre buildout",
-     "evidence": "https://www.deccanherald.com/amp/story/india/data-centre-sector-draws-173-billion-in-investment-commitments-since-2021-cbre-says-4172448"
+     "mechanism": "Server/HPC maker supplies compute hardware for new DC capacity build-out.",
+     "evidence": "Livemint headline, 2026-10-15"
+    },
+    {
+     "symbol": "STLTECH",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Optical fibre cable maker supplies the backbone connectivity new DC campuses need.",
+     "evidence": "https://www.whalesbook.com/news/English/technology/India-Drafts-National-Data-Center-Policy-to-Manage-Power-Demand/6acf3e7179a16deaeaf0f89c"
+    },
+    {
+     "symbol": "HFCL",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Fibre and optical networking gear maker benefits from Lightstorm-type fibre expansion.",
+     "evidence": "Livemint headline, 2026-10-14"
+    },
+    {
+     "symbol": "TATACOMM",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Enterprise network/data-centre connectivity provider rides the same hyperscale demand.",
+     "evidence": "Livemint headline, 2026-10-14"
     },
     {
      "symbol": "BLUESTARCO",
-     "order": 2,
+     "order": 3,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Precision cooling demand scales with new data centre capacity additions",
-     "evidence": "https://www.deccanherald.com/amp/story/india/data-centre-sector-draws-173-billion-in-investment-commitments-since-2021-cbre-says-4172448"
+     "mechanism": "DC cooling/HVAC equipment demand scales directly with new campus construction.",
+     "evidence": "https://www.whalesbook.com/news/English/technology/India-Drafts-National-Data-Center-Policy-to-Manage-Power-Demand/6acf3e7179a16deaeaf0f89c"
     },
     {
-     "symbol": "WAAREERTL",
-     "order": 2,
+     "symbol": "TECHNOE",
+     "order": 3,
      "effect": "benefit",
-     "confidence": "low",
-     "mechanism": "Renewable EPC/power-supply partner to data centre campuses seeking captive clean power",
-     "evidence": "policy event: Waaree Renewable's data centre push raises the stakes"
+     "confidence": "medium",
+     "mechanism": "Power/EPC solutions provider for DC campus electrical infrastructure.",
+     "evidence": "https://www.whalesbook.com/news/English/technology/India-Drafts-National-Data-Center-Policy-to-Manage-Power-Demand/6acf3e7179a16deaeaf0f89c"
     }
    ],
    "map_additions": [
-    "WAAREERTL"
+    "KEI",
+    "SCHNEIDER"
    ]
   },
   {
-   "key": "finfra",
+   "key": "grid",
    "status": "existing",
-   "name": "Financial market infrastructure",
+   "name": "Power transmission & grid capex",
+   "direction": "tailwind",
+   "strength": 4,
+   "horizon": "medium",
+   "continuity": "steady",
+   "thesis": "NTPC's ₹17 lakh crore 10-year investment plan and a Cabinet move to extend the power transmission fund by 5 years keep the evacuation/transmission capex cycle flowing, following on from the Green Energy Corridor-III approval.",
+   "drivers": [
+    {
+     "what": "NTPC plans ₹17 lakh crore investment over 10 years to meet rising power demand",
+     "where": "India",
+     "date": "2026-10-13",
+     "source": "BusinessLine headline, 2026-10-13"
+    },
+    {
+     "what": "Cabinet nod sought to extend power fund for 5 years",
+     "where": "India",
+     "date": "2026-10-13",
+     "source": "The Economic Times headline, 2026-10-13"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "KEI",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Transmission/power cabling demand scales with the extended capex pipeline.",
+     "evidence": "BusinessLine headline, 2026-10-13"
+    },
+    {
+     "symbol": "SKIPPER",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Transmission tower maker benefits from sustained grid capex.",
+     "evidence": "BusinessLine headline, 2026-10-13"
+    }
+   ],
+   "map_additions": [
+    "GVT&D",
+    "TRANSRAILL"
+   ]
+  },
+  {
+   "key": "renewables",
+   "status": "existing",
+   "name": "Renewables, solar & storage",
    "direction": "tailwind",
    "strength": 3,
-   "horizon": "near",
+   "horizon": "medium",
    "continuity": "steady",
-   "thesis": "RBI/SEBI opened new data-sharing and issuance plumbing this week, and speculation on F&O settlement-rule changes directly repriced trading-linked fintech and capital-market stocks.",
+   "thesis": "NTPC is actively seeking overseas buyers for green ammonia and low-carbon fuels (talks with Japan, Korea, Germany), extending India's renewables story from domestic capacity addition into an export business line.",
    "drivers": [
     {
-     "what": "RBI allows Account Aggregator interoperability, expanding customer financial-data sharing",
-     "where": "India",
-     "date": "2026-10-07",
-     "source": "headline: RBI allows Account Aggregator interoperability, expanding customer choice"
-    },
-    {
-     "what": "SEBI relaxes private placement norms, allowing up to 17 ISINs to mature in a year",
-     "where": "India",
-     "date": "2026-10-07",
-     "source": "headline: SEBI relaxes private placement norms, allows up to 17 ISINs to mature in a year"
-    },
-    {
-     "what": "Pine Labs, CAMS and other fintech stocks rally up to 11% after RBI MPC move; capital-market stocks jump up to 4% on buzz around SEBI tweaking F&O settlement rules",
-     "where": "India",
-     "date": "2026-10-07",
-     "source": "headline: Pine Labs, CAMS, Moneyview, other fintech stocks rally up to 11% after RBI MPC move"
+     "what": "NTPC seeks overseas buyers for green ammonia, low-carbon fuels; in talks with Japan, South Korea, Germany for green fuel exports",
+     "where": "India/Global",
+     "date": "2026-10-13",
+     "source": "BusinessLine/The Economic Times headlines, 2026-10-13"
     }
    ],
    "beneficiaries": [
     {
-     "symbol": "PINELABS",
+     "symbol": "NTPCGREEN",
      "order": 1,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Payments/fintech infrastructure named directly in the post-MPC rally on easier liquidity and data-sharing rules",
-     "evidence": "headline: Pine Labs, CAMS, Moneyview, other fintech stocks rally up to 11% after RBI MPC move"
-    },
-    {
-     "symbol": "CAMS",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "RTA/data-infrastructure beneficiary of expanded Account Aggregator interoperability",
-     "evidence": "headline: RBI allows Account Aggregator interoperability, expanding customer choice"
-    },
-    {
-     "symbol": "GROWW",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "low",
-     "mechanism": "Discount broker named in the capital-market rally tied to speculated F&O settlement rule changes",
-     "evidence": "headline: CAS U-turn ahead? BSE, Groww, NSE, other capital market stocks jump up to 4% amid buzz around Sebi tweaking F&O settlement rules"
-    }
-   ],
-   "map_additions": [
-    "GROWW",
-    "PINELABS"
-   ]
-  },
-  {
-   "key": "itvisa",
-   "status": "new",
-   "name": "US immigration crackdown on IT services",
-   "direction": "headwind",
-   "strength": 4,
-   "horizon": "near",
-   "continuity": "new",
-   "thesis": "The US Labor Department's suspension of PERM green-card filings for major Indian IT firms, layered on the pending $100k H-1B fee, raises the structural cost of the onsite-delivery model that mid-cap IT services peers also run, even though the named firms sit outside this universe.",
-   "drivers": [
-    {
-     "what": "US Labor Secretary Sonderling suspends PERM green-card processing for Cognizant, Infosys, TCS, Wipro, HCL and Capgemini, citing displacement of American workers",
-     "where": "US",
-     "date": "2026-10-08",
-     "source": "https://www.theweek.in/news/biz-tech/2026/10/08/us-labour-department-halts-green-cards-for-tcs-infosys.html"
-    },
-    {
-     "what": "Trump's proposed $100,000 H-1B fee hits a legal hurdle but remains a live cost overhang",
-     "where": "US",
-     "date": "2026-10-06",
-     "source": "headline: Trump's $100,000 H-1B fee hits legal hurdle"
-    }
-   ],
-   "beneficiaries": [
-    {
-     "symbol": "COFORGE",
-     "order": 2,
-     "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Meaningful US onsite/H-1B-dependent delivery model shares the same immigration cost and scrutiny exposure as the suspended large caps",
-     "evidence": "https://www.theweek.in/news/biz-tech/2026/10/08/us-labour-department-halts-green-cards-for-tcs-infosys.html"
-    },
-    {
-     "symbol": "PERSISTENT",
-     "order": 2,
-     "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "US-heavy revenue mix with onsite staffing exposed to the same visa-cost pressure",
-     "evidence": "https://www.theweek.in/news/biz-tech/2026/10/08/us-labour-department-halts-green-cards-for-tcs-infosys.html"
-    },
-    {
-     "symbol": "MPHASIS",
-     "order": 2,
-     "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "BFSI-heavy US delivery model carries comparable H-1B/onsite cost exposure",
-     "evidence": "https://www.theweek.in/news/biz-tech/2026/10/08/us-labour-department-halts-green-cards-for-tcs-infosys.html"
-    },
-    {
-     "symbol": "HEXT",
-     "order": 2,
-     "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Named alongside TCS in the same day's 'stocks to watch' coverage of the visa action, reflecting shared sector exposure",
-     "evidence": "https://hdfcsky.com/news/stocks-to-watch-today-friday-october-9-2026-tcs-kec-international-hexaware-technologies-itc-cochin-shipyard"
-    },
-    {
-     "symbol": "LTTS",
-     "order": 2,
-     "effect": "hurt",
-     "confidence": "low",
-     "mechanism": "Engineering-services onsite delivery carries secondary exposure to tightening US work-visa policy",
-     "evidence": "https://www.theweek.in/news/biz-tech/2026/10/08/us-labour-department-halts-green-cards-for-tcs-infosys.html"
-    },
-    {
-     "symbol": "CYIENT",
-     "order": 2,
-     "effect": "hurt",
-     "confidence": "low",
-     "mechanism": "Onsite engineering-services delivery model carries secondary visa-policy exposure",
-     "evidence": "https://www.theweek.in/news/biz-tech/2026/10/08/us-labour-department-halts-green-cards-for-tcs-infosys.html"
+     "mechanism": "Direct beneficiary of NTPC's green ammonia/low-carbon export push, opening a new revenue line beyond domestic power.",
+     "evidence": "The Economic Times headline, 2026-10-13"
     }
    ],
    "map_additions": []
@@ -336,24 +417,24 @@
   {
    "key": "energysecurity",
    "status": "new",
-   "name": "Crude oil supply shock & energy security",
+   "name": "Crude/LNG security vs. refining margins",
    "direction": "mixed",
    "strength": 4,
    "horizon": "near",
    "continuity": "strengthening",
-   "thesis": "Hormuz tanker attacks hit a new weekly record and Houthi missiles struck Saudi airports this week, pushing Brent above $104 — escalating last week's energysecurity read and widening the gap between upstream realizations and downstream marketing-margin pressure.",
+   "thesis": "Brent above $106 as Houthi attacks on Saudi targets intensify squeezes refiner/marketer margins even as the government explicitly shields city-gas users from the Hormuz-driven LNG shock — widening last week's gap between upstream realisations and downstream margin pressure.",
    "drivers": [
     {
-     "what": "Record 10 tanker attacks in the Strait of Hormuz in the week to Oct 4 (prior high was 6); a crude tanker was struck again on Oct 6; Brent rose 4% to $104.28 on Oct 8 after Houthi missile strikes on Riyadh and Abha airports",
-     "where": "Middle East / Gulf",
-     "date": "2026-10-08",
-     "source": "https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html"
+     "what": "Brent crude rises above $106 as Houthis intensify attacks on Saudi targets",
+     "where": "Middle East",
+     "date": "2026-10-14",
+     "source": "BusinessLine headline, 2026-10-14"
     },
     {
-     "what": "India cuts back on costly Russian crude as West Asia flows recover; RBI intervenes to defend the rupee amid oil-driven outflows",
+     "what": "India shields city gas users as Hormuz crisis threatens South Asia's LNG demand",
      "where": "India",
-     "date": "2026-10-08",
-     "source": "headline: India cuts back on costly Russian crude as West Asia flows recover"
+     "date": "2026-10-12",
+     "source": "The Economic Times headline, 2026-10-12"
     }
    ],
    "beneficiaries": [
@@ -361,323 +442,525 @@
      "symbol": "OIL",
      "order": 1,
      "effect": "benefit",
-     "confidence": "high",
-     "mechanism": "Upstream E&P realizations rise directly with Brent",
-     "evidence": "https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html"
+     "confidence": "medium",
+     "mechanism": "Upstream producer captures higher crude realisations as Brent rallies past $106.",
+     "evidence": "BusinessLine headline, 2026-10-14"
     },
     {
-     "symbol": "HINDOILEXP",
+     "symbol": "IGL",
      "order": 1,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Domestic upstream producer benefits from higher crude realizations",
-     "evidence": "https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html"
+     "mechanism": "City-gas distributor explicitly shielded from the Hormuz-driven LNG cost/supply shock.",
+     "evidence": "The Economic Times headline, 2026-10-12"
     },
     {
-     "symbol": "JINDRILL",
-     "order": 2,
+     "symbol": "MGL",
+     "order": 1,
      "effect": "benefit",
-     "confidence": "low",
-     "mechanism": "Higher crude prices support E&P capex and drilling-rig dayrate demand",
-     "evidence": "https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html"
+     "confidence": "medium",
+     "mechanism": "Same government protection of city-gas allocation during the Hormuz crisis.",
+     "evidence": "The Economic Times headline, 2026-10-12"
+    },
+    {
+     "symbol": "ATGL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Same government protection of city-gas allocation during the Hormuz crisis.",
+     "evidence": "The Economic Times headline, 2026-10-12"
     },
     {
      "symbol": "HINDPETRO",
      "order": 1,
      "effect": "hurt",
-     "confidence": "high",
-     "mechanism": "Refining/marketing margins compress when crude input costs spike faster than regulated retail pump prices",
-     "evidence": "https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html"
+     "confidence": "medium",
+     "mechanism": "Refiner/marketer faces margin compression as crude cost rises faster than regulated retail pricing.",
+     "evidence": "Livemint headline, 2026-10-14"
     },
     {
      "symbol": "MRPL",
      "order": 1,
      "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Refiner margin squeeze from crude cost spike",
-     "evidence": "https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html"
+     "confidence": "low",
+     "mechanism": "Refiner margin squeeze from elevated crude feedstock cost.",
+     "evidence": "Livemint headline, 2026-10-14"
     },
     {
      "symbol": "CHENNPETRO",
      "order": 1,
      "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Refiner margin squeeze from crude cost spike",
-     "evidence": "https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html"
+     "confidence": "low",
+     "mechanism": "Refiner margin squeeze from elevated crude feedstock cost.",
+     "evidence": "Livemint headline, 2026-10-14"
     }
    ],
    "map_additions": []
   },
   {
-   "key": "logistics",
-   "status": "new",
-   "name": "Multimodal transport & logistics planning",
+   "key": "finfra",
+   "status": "existing",
+   "name": "Financial market infrastructure",
    "direction": "tailwind",
    "strength": 3,
-   "horizon": "long",
-   "continuity": "new",
-   "thesis": "A new apex transport-planning authority tasked with a 10-year National Transport Master Plan and project appraisal above Rs 500cr should improve multimodal pipeline visibility and reduce logistics costs over time, a coordination tailwind rather than immediate capex.",
+   "horizon": "medium",
+   "continuity": "steady",
+   "thesis": "A dense run of SEBI circulars this week — notified common ad code, notified PMS/PRIM rules, SME IPO reform, extended IPO-size relaxation to March 2027 — deepens primary-market activity that RTAs, depositories and brokers all monetise through volume.",
    "drivers": [
     {
-     "what": "Cabinet approved the Integrated Transport & Logistics Authority (ITLA), an SPV to prepare a 10-year National Transport Master Plan across roads, rail, ports, aviation, inland waterways and urban mobility, and to appraise projects of Rs 500c",
+     "what": "SEBI notifies common ad code for market intermediaries, allows celebrity endorsements",
      "where": "India",
-     "date": "2026-10-06",
-     "source": "https://www.pmindia.gov.in/en/news_updates/cabinet-approves-setting-up-of-integrated-transport-logistics-authority/"
+     "date": "2026-10-12",
+     "source": "BusinessLine headline, 2026-10-12"
+    },
+    {
+     "what": "SEBI notifies PMS rules, introduces PRIM route, broadens portfolio-manager investment avenues",
+     "where": "India",
+     "date": "2026-10-13",
+     "source": "The Economic Times headline, 2026-10-13"
+    },
+    {
+     "what": "SEBI plans sweeping SME IPO rule changes, raises profit threshold to ₹3 crore; extends IPO issue-size relaxation to March 2027",
+     "where": "India",
+     "date": "2026-10-13",
+     "source": "BusinessLine headlines, 2026-10-13/14"
     }
    ],
    "beneficiaries": [
     {
-     "symbol": "CONCOR",
+     "symbol": "CDSL",
      "order": 1,
      "effect": "benefit",
-     "confidence": "low",
-     "mechanism": "Rail-linked container logistics gains from improved multimodal planning and reduced logistics-cost friction",
-     "evidence": "https://www.pmindia.gov.in/en/news_updates/cabinet-approves-setting-up-of-integrated-transport-logistics-authority/"
+     "confidence": "medium",
+     "mechanism": "Depository revenue scales with IPO count and demat-account growth from a sustained primary-market boom.",
+     "evidence": "BusinessLine headline, 2026-10-13"
     },
     {
-     "symbol": "TCI",
+     "symbol": "CAMS",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "RTA volumes benefit from expanded PMS/AIF activity and SME IPO flow.",
+     "evidence": "The Economic Times headline, 2026-10-13"
+    },
+    {
+     "symbol": "KFINTECH",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "RTA volumes benefit from expanded PMS/AIF activity and SME IPO flow.",
+     "evidence": "The Economic Times headline, 2026-10-13"
+    },
+    {
+     "symbol": "MOTILALOFS",
      "order": 2,
      "effect": "benefit",
      "confidence": "low",
-     "mechanism": "Multimodal surface-logistics operator benefits from streamlined national transport planning",
-     "evidence": "https://www.pmindia.gov.in/en/news_updates/cabinet-approves-setting-up-of-integrated-transport-logistics-authority/"
+     "mechanism": "Broker/wealth manager benefits from broader capital-market activity and new PRIM route for portfolio managers.",
+     "evidence": "The Economic Times headline, 2026-10-13"
     },
     {
-     "symbol": "JSWINFRA",
-     "order": 3,
+     "symbol": "ANGELONE",
+     "order": 2,
      "effect": "benefit",
      "confidence": "low",
-     "mechanism": "Port infrastructure operator benefits from coordinated long-horizon national logistics planning",
-     "evidence": "https://www.pmindia.gov.in/en/news_updates/cabinet-approves-setting-up-of-integrated-transport-logistics-authority/"
+     "mechanism": "Retail broking volumes benefit from a soaring primary market.",
+     "evidence": "BusinessLine headline, 2026-10-13"
     }
    ],
    "map_additions": []
   },
   {
-   "key": "steel",
-   "status": "new",
-   "name": "Steel capacity & demand cycle",
+   "key": "textiles",
+   "status": "existing",
+   "name": "Textiles & apparel PLI",
+   "direction": "tailwind",
+   "strength": 3,
+   "horizon": "medium",
+   "continuity": "steady",
+   "thesis": "India says the first phase of the US trade deal is finalised, with legal drafting ongoing — a tariff-relief tailwind for US-facing apparel exporters, though Goyal's own phrasing keeps the operational benefit conditional for now.",
+   "drivers": [
+    {
+     "what": "India says first phase of US trade deal finalised",
+     "where": "India/US",
+     "date": "2026-10-15",
+     "source": "BusinessLine headline, 2026-10-15"
+    },
+    {
+     "what": "Legal drafting on in US trade pact; to be operationalised once we get competitive advantage: Goyal",
+     "where": "India/US",
+     "date": "2026-10-15",
+     "source": "BusinessLine headline, 2026-10-15"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "KPRMILL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "US-facing apparel/yarn exporter gains from tariff relief once the deal is operationalised.",
+     "evidence": "BusinessLine headline, 2026-10-15"
+    },
+    {
+     "symbol": "GOKEX",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Garment exporter with US exposure benefits from reduced tariff friction.",
+     "evidence": "BusinessLine headline, 2026-10-15"
+    },
+    {
+     "symbol": "TRIDENT",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Home-textile exporter with significant US revenue exposure.",
+     "evidence": "BusinessLine headline, 2026-10-15"
+    },
+    {
+     "symbol": "WELSPUNLIV",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Home-textile exporter with significant US revenue exposure.",
+     "evidence": "BusinessLine headline, 2026-10-15"
+    },
+    {
+     "symbol": "ICIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Cotton yarn/home-textile exporter benefits from US tariff relief.",
+     "evidence": "BusinessLine headline, 2026-10-15"
+    },
+    {
+     "symbol": "PGIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Apparel exporter with US/European customer base benefits from trade-pact tariff relief.",
+     "evidence": "BusinessLine headline, 2026-10-15"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "defence",
+   "status": "existing",
+   "name": "Defence & aerospace",
    "direction": "tailwind",
    "strength": 4,
    "horizon": "medium",
    "continuity": "strengthening",
-   "thesis": "A large, dated greenfield capex commitment plus confirmed output/demand growth data extend last week's National Steel Policy thesis from a draft framework into company-level capital allocation.",
+   "thesis": "Four separate decisions in one week — ₹2,400cr MSME/startup procurement, a MoD commitment to a 15-year drone/counter-drone roadmap, GE Aerospace doubling India supply-chain spend to $400mn by 2030, and the Fleet Support Ship-1 delivery — move this from sentiment to multi-channel order flow.",
    "drivers": [
     {
-     "what": "Shyam Metalics signs Rs 50,000cr MoU with Maharashtra government for a 9 MTPA integrated steel complex at Chandrapur, in two phases (3.75MTPA + 5.25MTPA)",
+     "what": "Defence Ministry approves over ₹2,400 crore procurement from startups and MSMEs",
      "where": "India",
-     "date": "2026-10-05",
-     "source": "https://www.business-standard.com/companies/news/shyam-metalics-rs-50000-crore-integrated-steel-complex-chandrapur-maharashtra-126100500246_1.html"
+     "date": "2026-10-15",
+     "source": "https://www.newsbytesapp.com/news/business/india-approves-rs2400cr-defense-procurement-from-startups-and-msmes/tldr"
     },
     {
-     "what": "SAIL H1 hot metal output rose 2% YoY to 10.2 MT",
+     "what": "MoD to give defence industry 15-year outlook on drones, counter-drone systems",
      "where": "India",
-     "date": "2026-10-05",
-     "source": "headline: SAIL H1 hot metal output 10.2 MT, up 2% on year"
+     "date": "2026-10-13",
+     "source": "https://ipanewspack.com/mod-to-give-defence-industry-15-year-outlook-on-drones-counter-drone-systems/"
     },
     {
-     "what": "Tata Steel CEO flags domestic steel demand growth of 8-10% in H2 and NINL capacity expansion to 5 MTPA",
+     "what": "GE Aerospace to boost India supply chain spending to $400 million by 2030, eyes more component sourcing",
+     "where": "India/US",
+     "date": "2026-10-12",
+     "source": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
+    },
+    {
+     "what": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
      "where": "India",
      "date": "2026-10-06",
-     "source": "headline: Steel demand to grow 8-10% in H2: T V Narendran"
+     "source": "Policy radar, 2026-10-06"
     }
    ],
    "beneficiaries": [
     {
-     "symbol": "SHYAMMETL",
+     "symbol": "BDL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Missile systems maker benefits from the broader procurement push and long-term capability roadmap.",
+     "evidence": "https://ipanewspack.com/mod-to-give-defence-industry-15-year-outlook-on-drones-counter-drone-systems/"
+    },
+    {
+     "symbol": "PARAS",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Defence electronics/counter-drone systems maker directly positioned for the 15-year drone/counter-drone roadmap.",
+     "evidence": "https://ipanewspack.com/mod-to-give-defence-industry-15-year-outlook-on-drones-counter-drone-systems/"
+    },
+    {
+     "symbol": "ZENTEC",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Counter-drone/defence electronics maker benefits from the roadmap and MSME procurement budget.",
+     "evidence": "https://ipanewspack.com/mod-to-give-defence-industry-15-year-outlook-on-drones-counter-drone-systems/"
+    },
+    {
+     "symbol": "DATAPATTNS",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Defence electronics maker benefits from sustained procurement flow to the private sector.",
+     "evidence": "https://www.newsbytesapp.com/news/business/india-approves-rs2400cr-defense-procurement-from-startups-and-msmes/tldr"
+    },
+    {
+     "symbol": "UNIMECH",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Precision aerospace/defence component maker benefits from GE Aerospace's expanding India sourcing.",
+     "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
+    },
+    {
+     "symbol": "MIDHANI",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Special metals/alloys supplier to both aerospace and defence OEMs benefits from expanding component sourcing.",
+     "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
+    },
+    {
+     "symbol": "PTCIL",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Titanium alloy/aerospace casting maker benefits from GE Aerospace's expanding India supply chain.",
+     "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
+    },
+    {
+     "symbol": "AZAD",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Forged components supplier to aerospace/defence benefits from the same sourcing expansion.",
+     "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
+    },
+    {
+     "symbol": "GRSE",
      "order": 1,
      "effect": "benefit",
      "confidence": "high",
-     "mechanism": "Direct party to the Rs 50,000cr Maharashtra capacity-expansion MoU",
-     "evidence": "https://www.business-standard.com/companies/news/shyam-metalics-rs-50000-crore-integrated-steel-complex-chandrapur-maharashtra-126100500246_1.html"
+     "mechanism": "Naval shipbuilder delivers the Fleet Support Ship-1, confirming execution capacity for further naval orders.",
+     "evidence": "Policy radar, 2026-10-06"
     },
     {
-     "symbol": "SAIL",
+     "symbol": "COCHINSHIP",
      "order": 1,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Rising hot metal output and sector-wide H2 demand growth support realizations and volumes",
-     "evidence": "headline: SAIL H1 hot metal output 10.2 MT, up 2% on year"
+     "mechanism": "Naval shipbuilder benefits from the same fleet-expansion order pipeline.",
+     "evidence": "Policy radar, 2026-10-06"
     },
     {
-     "symbol": "JSL",
-     "order": 1,
+     "symbol": "ROSSTECH",
+     "order": 2,
      "effect": "benefit",
-     "confidence": "low",
-     "mechanism": "General beneficiary of the 8-10% H2 domestic steel demand growth guidance",
-     "evidence": "headline: Steel demand to grow 8-10% in H2: T V Narendran"
-    }
-   ],
-   "map_additions": []
-  },
-  {
-   "key": "oncopricing",
-   "status": "new",
-   "name": "Anti-cancer drug margin cap",
-   "direction": "headwind",
-   "strength": 3,
-   "horizon": "near",
-   "continuity": "new",
-   "thesis": "A decided government price intervention caps trade margins on all non-scheduled anti-cancer drugs, directly compressing realized pricing for domestic oncology-focused formulators even as it does not touch manufacturing cost structure.",
-   "drivers": [
-    {
-     "what": "Government caps trade margins at 30% of MRP for all non-scheduled anti-cancer drugs (110 drugs, including 35 patented), expected to cut MRPs by up to 70% and save patients Rs 2,500cr annually",
-     "where": "India",
-     "date": "2026-10-08",
-     "source": "https://www.businesstoday.in/industry/pharma/story/cancer-drugs-may-get-cheaper-as-govt-set-to-cap-trade-margins-at-30-560489-2026-10-08"
-    }
-   ],
-   "beneficiaries": [
-    {
-     "symbol": "NATCOPHARM",
-     "order": 1,
-     "effect": "hurt",
      "confidence": "medium",
-     "mechanism": "Major oncology-generics revenue base sees realized pricing compressed by the new MRP-linked trade margin cap",
-     "evidence": "https://www.businesstoday.in/industry/pharma/story/cancer-drugs-may-get-cheaper-as-govt-set-to-cap-trade-margins-at-30-560489-2026-10-08"
+     "mechanism": "Aerospace/defence engineering services provider positioned to capture GE Aerospace's expanding India sourcing.",
+     "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
     },
     {
-     "symbol": "BIOCON",
-     "order": 1,
-     "effect": "hurt",
-     "confidence": "low",
-     "mechanism": "Oncology biosimilar portfolio carries partial exposure to the new trade-margin ceiling",
-     "evidence": "https://www.businesstoday.in/industry/pharma/story/cancer-drugs-may-get-cheaper-as-govt-set-to-cap-trade-margins-at-30-560489-2026-10-08"
+     "symbol": "AEQUS",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Precision aerospace component manufacturer in the global OEM supply chain benefits from the same sourcing expansion.",
+     "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
     }
    ],
-   "map_additions": []
+   "map_additions": [
+    "ROSSTECH",
+    "AEQUS"
+   ]
   }
  ],
  "outside_universe": [
   {
-   "company": "TCS",
+   "company": "Nexon Geochem",
+   "theme": "critical_minerals",
+   "why": "₹1,250cr NdFeB rare-earth permanent magnet plant MoU signed in Kakinada (AP) on 2026-10-14 — the system has no listed rare-earth magnet maker to map this to."
+  },
+  {
+   "company": "Tata Power",
+   "theme": "renewablesdatacentre",
+   "why": "Approaching West Bengal govt for land for a ~₹2,500cr solar investment and building out a data-centre energy pipeline this week — the universe's Power sector list has no Tata Power listing."
+  },
+  {
+   "company": "Shriram Finance",
+   "theme": "finfra",
+   "why": "Japan's MUFG weighing a $10bn+ investment for majority control — the largest NBFC M&A story this week, but Shriram Finance is not in the universe."
+  },
+  {
+   "company": "Wipro / HCLTech",
    "theme": "itvisa",
-   "why": "Directly named in the PERM green-card suspension; large US onsite workforce, not in this universe"
-  },
-  {
-   "company": "Infosys",
-   "theme": "itvisa",
-   "why": "Directly named in the PERM green-card suspension; not in this universe"
-  },
-  {
-   "company": "Wipro",
-   "theme": "itvisa",
-   "why": "Directly named in the PERM green-card suspension; not in this universe"
-  },
-  {
-   "company": "HCLTech",
-   "theme": "itvisa",
-   "why": "Directly named in the PERM green-card suspension; not in this universe"
-  },
-  {
-   "company": "Hindustan Shipyard Limited",
-   "theme": "shipbuilding",
-   "why": "State shipyard that launched Fleet Support Ship-1; not listed/not in this universe"
-  },
-  {
-   "company": "Tata Steel",
-   "theme": "steel",
-   "why": "Source of H2 demand guidance and NINL capacity expansion; large-cap not in this universe"
-  },
-  {
-   "company": "ONGC",
-   "theme": "energysecurity",
-   "why": "Largest domestic upstream beneficiary of the crude price spike and new MRPL/OPaL petrochemicals JV; not in this universe"
+   "why": "Both explicitly said the US PERM suspension has no material business impact this week, fading last week's IT-visa headwind thesis — but neither sits in this mid/small-cap universe."
   }
  ],
  "overlay": {
-  "shipbuilding": [
-   {
-    "symbol": "COCHINSHIP",
-    "via": "order1_benefit",
-    "mechanism": "Direct recipient of the 40-ship export order book and the Svitzer tug contract",
-    "evidence": "https://www.dailyexcelsior.com/cochin-shipyard-gets-order-to-build-40-ships-from-us-germany-norway-other-nations-sonowal/"
-   },
-   {
-    "symbol": "GRSE",
-    "via": "order1_benefit",
-    "mechanism": "Sentiment and order-pipeline tailwind as India's state shipbuilding capacity (alongside HSL) draws fresh foreign and naval orders",
-    "evidence": "policy event: Defence Minister launches Fleet Support Ship-1 at HSL in Vizag"
-   }
-  ],
-  "grid": [
-   {
-    "symbol": "KEI",
-    "via": "order1_benefit",
-    "mechanism": "Direct cable/conductor demand from the intra-state transmission buildout",
-    "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-   },
-   {
-    "symbol": "SKIPPER",
-    "via": "order1_benefit",
-    "mechanism": "Transmission tower fabrication order book expands with new InSTS lines",
-    "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-   },
-   {
-    "symbol": "TARIL",
-    "via": "order1_benefit",
-    "mechanism": "Power transformer demand scales with new substation capacity under GEC-III",
-    "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-   },
-   {
-    "symbol": "APARINDS",
-    "via": "order1_benefit",
-    "mechanism": "Conductor supply tied to new intra-state transmission corridors",
-    "evidence": "https://www.tribuneindia.com/news/india/cabinet-approves-rs-1-86-lakh-crore-green-energy-corridor-to-evacuate-135gw-renewable-energy/"
-   }
-  ],
-  "renewables": [
-   {
-    "symbol": "SUZLON",
-    "via": "order1_benefit",
-    "mechanism": "Leading wind OEM positioned to supply repowering turbines replacing decades-old installed base",
-    "evidence": "https://www.deccanchronicle.com/nation/govt-working-to-re-power-around-25-gw-of-old-wind-projects-joshi-1994094"
-   },
-   {
-    "symbol": "INOXWIND",
-    "via": "order1_benefit",
-    "mechanism": "Wind turbine manufacturer with direct exposure to replacement-cycle demand",
-    "evidence": "https://www.deccanchronicle.com/nation/govt-working-to-re-power-around-25-gw-of-old-wind-projects-joshi-1994094"
-   }
-  ],
   "datacentre": [
    {
-    "symbol": "WAAREERTL",
+    "symbol": "KEI",
     "via": "map_addition",
-    "mechanism": "Renewable EPC/power-supply partner to data centre campuses seeking captive clean power",
-    "evidence": "policy event: Waaree Renewable's data centre push raises the stakes"
+    "mechanism": "",
+    "evidence": "Livemint headline, 2026-10-15"
+   },
+   {
+    "symbol": "SCHNEIDER",
+    "via": "map_addition",
+    "mechanism": "",
+    "evidence": "Livemint headline, 2026-10-15"
+   },
+   {
+    "symbol": "ANANTRAJ",
+    "via": "order1_benefit",
+    "mechanism": "Listed data-centre developer directly captures incremental hyperscale demand and capital inflow into the sector.",
+    "evidence": "Livemint headline, 2026-10-15"
    },
    {
     "symbol": "NETWEB",
     "via": "order1_benefit",
-    "mechanism": "Server/AI-infrastructure maker scales directly with hyperscale and AI-linked data centre buildout",
-    "evidence": "https://www.deccanherald.com/amp/story/india/data-centre-sector-draws-173-billion-in-investment-commitments-since-2021-cbre-says-4172448"
+    "mechanism": "Server/HPC maker supplies compute hardware for new DC capacity build-out.",
+    "evidence": "Livemint headline, 2026-10-15"
+   }
+  ],
+  "grid": [
+   {
+    "symbol": "GVT&D",
+    "via": "map_addition",
+    "mechanism": "",
+    "evidence": "BusinessLine headline, 2026-10-13"
+   },
+   {
+    "symbol": "TRANSRAILL",
+    "via": "map_addition",
+    "mechanism": "",
+    "evidence": "BusinessLine headline, 2026-10-13"
+   }
+  ],
+  "renewables": [
+   {
+    "symbol": "NTPCGREEN",
+    "via": "order1_benefit",
+    "mechanism": "Direct beneficiary of NTPC's green ammonia/low-carbon export push, opening a new revenue line beyond domestic power.",
+    "evidence": "The Economic Times headline, 2026-10-13"
    }
   ],
   "finfra": [
    {
-    "symbol": "GROWW",
-    "via": "map_addition",
-    "mechanism": "Discount broker named in the capital-market rally tied to speculated F&O settlement rule changes",
-    "evidence": "headline: CAS U-turn ahead? BSE, Groww, NSE, other capital market stocks jump up to 4% amid buzz around Sebi tweaking F&O settlement rules"
-   },
-   {
-    "symbol": "PINELABS",
-    "via": "map_addition",
-    "mechanism": "Payments/fintech infrastructure named directly in the post-MPC rally on easier liquidity and data-sharing rules",
-    "evidence": "headline: Pine Labs, CAMS, Moneyview, other fintech stocks rally up to 11% after RBI MPC move"
+    "symbol": "CDSL",
+    "via": "order1_benefit",
+    "mechanism": "Depository revenue scales with IPO count and demat-account growth from a sustained primary-market boom.",
+    "evidence": "BusinessLine headline, 2026-10-13"
    },
    {
     "symbol": "CAMS",
     "via": "order1_benefit",
-    "mechanism": "RTA/data-infrastructure beneficiary of expanded Account Aggregator interoperability",
-    "evidence": "headline: RBI allows Account Aggregator interoperability, expanding customer choice"
+    "mechanism": "RTA volumes benefit from expanded PMS/AIF activity and SME IPO flow.",
+    "evidence": "The Economic Times headline, 2026-10-13"
+   },
+   {
+    "symbol": "KFINTECH",
+    "via": "order1_benefit",
+    "mechanism": "RTA volumes benefit from expanded PMS/AIF activity and SME IPO flow.",
+    "evidence": "The Economic Times headline, 2026-10-13"
+   }
+  ],
+  "textiles": [
+   {
+    "symbol": "KPRMILL",
+    "via": "order1_benefit",
+    "mechanism": "US-facing apparel/yarn exporter gains from tariff relief once the deal is operationalised.",
+    "evidence": "BusinessLine headline, 2026-10-15"
+   },
+   {
+    "symbol": "GOKEX",
+    "via": "order1_benefit",
+    "mechanism": "Garment exporter with US exposure benefits from reduced tariff friction.",
+    "evidence": "BusinessLine headline, 2026-10-15"
+   },
+   {
+    "symbol": "TRIDENT",
+    "via": "order1_benefit",
+    "mechanism": "Home-textile exporter with significant US revenue exposure.",
+    "evidence": "BusinessLine headline, 2026-10-15"
+   },
+   {
+    "symbol": "WELSPUNLIV",
+    "via": "order1_benefit",
+    "mechanism": "Home-textile exporter with significant US revenue exposure.",
+    "evidence": "BusinessLine headline, 2026-10-15"
+   },
+   {
+    "symbol": "ICIL",
+    "via": "order1_benefit",
+    "mechanism": "Cotton yarn/home-textile exporter benefits from US tariff relief.",
+    "evidence": "BusinessLine headline, 2026-10-15"
+   }
+  ],
+  "defence": [
+   {
+    "symbol": "ROSSTECH",
+    "via": "map_addition",
+    "mechanism": "Aerospace/defence engineering services provider positioned to capture GE Aerospace's expanding India sourcing.",
+    "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
+   },
+   {
+    "symbol": "AEQUS",
+    "via": "map_addition",
+    "mechanism": "Precision aerospace component manufacturer in the global OEM supply chain benefits from the same sourcing expansion.",
+    "evidence": "https://avi-go.com/news/articles/a40f02acb562aebbaf38010cb99246fb"
+   },
+   {
+    "symbol": "BDL",
+    "via": "order1_benefit",
+    "mechanism": "Missile systems maker benefits from the broader procurement push and long-term capability roadmap.",
+    "evidence": "https://ipanewspack.com/mod-to-give-defence-industry-15-year-outlook-on-drones-counter-drone-systems/"
+   },
+   {
+    "symbol": "PARAS",
+    "via": "order1_benefit",
+    "mechanism": "Defence electronics/counter-drone systems maker directly positioned for the 15-year drone/counter-drone roadmap.",
+    "evidence": "https://ipanewspack.com/mod-to-give-defence-industry-15-year-outlook-on-drones-counter-drone-systems/"
+   },
+   {
+    "symbol": "ZENTEC",
+    "via": "order1_benefit",
+    "mechanism": "Counter-drone/defence electronics maker benefits from the roadmap and MSME procurement budget.",
+    "evidence": "https://ipanewspack.com/mod-to-give-defence-industry-15-year-outlook-on-drones-counter-drone-systems/"
+   },
+   {
+    "symbol": "DATAPATTNS",
+    "via": "order1_benefit",
+    "mechanism": "Defence electronics maker benefits from sustained procurement flow to the private sector.",
+    "evidence": "https://www.newsbytesapp.com/news/business/india-approves-rs2400cr-defense-procurement-from-startups-and-msmes/tldr"
+   },
+   {
+    "symbol": "GRSE",
+    "via": "order1_benefit",
+    "mechanism": "Naval shipbuilder delivers the Fleet Support Ship-1, confirming execution capacity for further naval orders.",
+    "evidence": "Policy radar, 2026-10-06"
+   },
+   {
+    "symbol": "COCHINSHIP",
+    "via": "order1_benefit",
+    "mechanism": "Naval shipbuilder benefits from the same fleet-expansion order pipeline.",
+    "evidence": "Policy radar, 2026-10-06"
    }
   ]
  },
  "validation": {
-  "proposed": 35,
-  "accepted": 35,
+  "proposed": 61,
+  "accepted": 61,
   "rejected": [],
   "themes_dropped": [],
   "hallucinated": 0,
