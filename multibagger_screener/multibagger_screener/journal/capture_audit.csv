@@ -363,3 +363,31 @@ audit_date,window,rank,symbol,window_return_pct,turnover_cr,classification,ident
 2026-10-09,6m,5,RAYMOND,207.2,145.92,CAUGHT,True,CONFIRMED (watch pivot),2026-08-14,635.45,110.7,246.6,0.45,,,flagged mid-move
 2026-10-09,6m,6,E2E,187.6,63.0,CAUGHT,True,CONFIRMED (watch pivot),2026-07-17,404.95,86.0,207.5,0.41,,,flagged mid-move
 2026-10-09,6m,7,DIACABS,177.9,105.2,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-06-11,193.73,108.5,194.7,0.56,,,flagged with most of the move still ahead
+2026-10-16,1w,1,UTTAMSUGAR,23.9,86.57,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-10-09,298.05,34.5,34.5,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,1w,2,TATAELXSI,23.0,595.77,NO STRUCTURE,False,,,,,23.2,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-10-16,1w,3,ORIENTELEC,21.9,207.2,NO STRUCTURE,False,,,,,30.5,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-10-16,1w,4,GALLANTT,21.0,734.55,NO STRUCTURE,False,,,,,28.6,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-10-16,1w,5,63MOONS,20.0,111.37,CAUGHT,True,CONFIRMED (watch pivot),2026-10-13,904.4,5.0,24.0,0.21,,,flagged mid-move
+2026-10-16,1w,6,GOODLUCK,18.6,237.06,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-10-09,500.25,22.9,22.9,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,1w,7,TIPSMUSIC,17.4,131.51,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-10-12,682.25,11.1,19.1,0.58,,,flagged with most of the move still ahead
+2026-10-16,1m,1,SHANTIGOLD,73.5,180.29,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-16,243.95,74.2,74.2,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,1m,2,UTTAMSUGAR,47.2,28.16,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-25,293.15,36.8,60.0,0.61,,,flagged with most of the move still ahead
+2026-10-16,1m,3,SUNTV,38.0,197.26,ANTICIPATION ONLY,False,,,,,45.7,,,,reached the Stage-1 watchlist tier (zero-capital by design) but never CONFIRMED
+2026-10-16,1m,4,SAMBHV,34.3,114.5,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-16,128.4,36.7,36.7,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,1m,5,SKYGOLD,33.8,131.73,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-16,792.6,35.6,35.6,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,1m,6,NELCAST,30.8,8.25,EXTENDED / NO ENTRY,False,,,,,45.2,,,,in a straight-up run (EXTENDED) — deliberately not chased; the intended entry is an EXTENDED->pullback re-entry that never set up
+2026-10-16,1m,7,PROTEAN,30.1,116.35,NO STRUCTURE,False,,,,,48.1,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-10-16,3m,1,SHANTIGOLD,99.1,93.57,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-18,253.85,67.4,99.9,0.67,,,flagged with most of the move still ahead
+2026-10-16,3m,2,RAYMOND,87.5,245.83,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-14,635.45,110.7,121.4,0.91,,,flagged with most of the move still ahead
+2026-10-16,3m,3,TFCILTD,83.1,182.8,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-17,85.03,90.5,90.5,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,3m,4,LOTUSDEV,76.0,51.17,CAUGHT,True,CONFIRMED (watch pivot),2026-09-24,219.05,13.4,77.5,0.17,,,flagged mid-move
+2026-10-16,3m,5,SIGMAADV,71.7,24.67,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-17,557.8,108.9,108.9,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,3m,6,E2E,71.6,70.74,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-17,404.95,88.9,88.9,1.0,,,flagged with most of the move still ahead
+2026-10-16,3m,7,SKYGOLD,70.7,101.65,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-17,621.3,73.0,73.0,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,6m,1,SIGMAADV,388.3,22.22,CAUGHT,True,CONFIRMED (watch pivot),2026-07-08,531.5,119.2,494.1,0.24,,,flagged mid-move
+2026-10-16,6m,2,CUPID,242.9,576.85,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-05-18,120.84,205.3,257.6,0.8,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-16,6m,3,STLTECH,229.1,154.56,CAUGHT,True,VALIDATED VCP ENTRY,2026-07-01,590.75,77.9,299.5,0.26,2026-08-04,,flagged mid-move
+2026-10-16,6m,4,RAYMOND,168.4,146.97,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-14,635.45,110.7,217.0,0.51,,,flagged with most of the move still ahead
+2026-10-16,6m,5,HFCL,168.1,561.55,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,163.68,68.6,188.9,0.36,,,flagged mid-move
+2026-10-16,6m,6,SKYGOLD,150.5,87.74,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-04-17,423.35,153.9,153.9,1.0,,,flagged with most of the move still ahead
+2026-10-16,6m,7,E2E,147.6,65.4,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-17,404.95,88.9,172.6,0.52,,,flagged with most of the move still ahead
