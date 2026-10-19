@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-18 09:35",
+ "generated": "2026-10-19 17:15",
  "n_checked": 1004,
- "n_flagged": 77,
- "asm_total": 218,
+ "n_flagged": 73,
+ "asm_total": 205,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -126,22 +126,17 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "LT Stage IV",
+     "detail": "LT Stage III",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     },
     {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "BE",
+   "series": "EQ",
    "worst": "ASM"
   },
   "RUBICON": {
@@ -358,18 +353,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "CENTUM": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "DIACABS": {
    "flags": [
     {
@@ -439,18 +422,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "INDIAGLYCO": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "JAIBALAJI": {
    "flags": [
@@ -971,30 +942,6 @@
    "worst": "BAND 5%"
   },
   "SHANTIGOLD": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "MOBIKWIK": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "ASTEC": {
    "flags": [
     {
      "code": "ASM",

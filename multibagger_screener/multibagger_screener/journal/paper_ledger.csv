@@ -135,3 +135,9 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-16,IPCALAB,SKIP,entry,0,,,[IPCALAB@2026-10-16 01:05] already open in paper book
 2026-10-16,ENGINERSIN,SELL,trading,146,273.45,4844.28,trading-lot trail: close < 50-DMA
 2026-10-16,RRKABEL,SELL,all,18,2438.91,-6229.62,stop hit
+2026-10-19,AARTIIND,BUY,entry,87,495.0,,[AARTIIND@2026-10-16 01:03] analyst BUY/MEDIUM/HALF PLAN
+2026-10-19,FEDFINA,BUY,entry,444,163.0,,[FEDFINA@2026-10-16 01:05] analyst BUY/MEDIUM/FULL PLAN
+2026-10-19,AARTIIND,SKIP,entry,0,,,[AARTIIND@2026-10-16 21:31] already open in the book (no pyramiding)
+2026-10-19,SAREGAMA,SKIP,entry,0,,,[SAREGAMA@2026-10-17 21:32] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
+2026-10-19,VOLTAMP,SKIP,entry,0,,,[VOLTAMP@2026-10-17 21:34] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
+2026-10-19,APARINDS,SELL,all,3,15885.71,-5136.87,stop hit
