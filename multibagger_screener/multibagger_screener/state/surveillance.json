@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-19 17:15",
+ "generated": "2026-10-21 15:29",
  "n_checked": 1004,
- "n_flagged": 73,
- "asm_total": 205,
+ "n_flagged": 71,
+ "asm_total": 203,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -438,14 +438,14 @@
   "KRN": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "THELEELA": {
    "flags": [
@@ -482,18 +482,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "PCJEWELLER": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "PAISALO": {
    "flags": [
@@ -692,18 +680,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "V2RETAIL": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "DBREALTY": {
    "flags": [
@@ -945,7 +921,7 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "ST Stage I",
+     "detail": "LT Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],

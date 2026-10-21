@@ -141,3 +141,8 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-19,SAREGAMA,SKIP,entry,0,,,[SAREGAMA@2026-10-17 21:32] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
 2026-10-19,VOLTAMP,SKIP,entry,0,,,[VOLTAMP@2026-10-17 21:34] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
 2026-10-19,APARINDS,SELL,all,3,15885.71,-5136.87,stop hit
+2026-10-21,INDNIPPON,BUY,entry,45,1212.7,,[INDNIPPON@2026-10-20 10:48] analyst BUY/MEDIUM/FULL PLAN
+2026-10-21,GRAPHITE,SKIP,entry,0,,,[GRAPHITE@2026-10-20 10:51] slot limit 12 reached (28 open) — the backtested edge was measured with this cap in force
+2026-10-21,ASTRAMICRO,SELL,all,35,1534.42,-6145.3,stop hit
+2026-10-21,MAHLOG,SELL,all,205,389.71,-6219.7,stop hit
+2026-10-21,GLAND,SELL,all,32,2869.33,-6072.64,stop hit
