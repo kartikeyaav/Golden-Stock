@@ -146,3 +146,9 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-21,ASTRAMICRO,SELL,all,35,1534.42,-6145.3,stop hit
 2026-10-21,MAHLOG,SELL,all,205,389.71,-6219.7,stop hit
 2026-10-21,GLAND,SELL,all,32,2869.33,-6072.64,stop hit
+2026-10-22,SHYAMMETL,BUY,entry,36,1179.4,,[SHYAMMETL@2026-10-21 23:33] analyst BUY/MEDIUM/HALF PLAN
+2026-10-22,FEDERALBNK,BUY,entry,334,343.0,,[FEDERALBNK@2026-10-21 23:34] analyst BUY/MEDIUM/FULL PLAN
+2026-10-22,CUPID,SKIP,entry,0,,,[CUPID@2026-10-21 23:36] slot limit 12 reached (27 open) — the backtested edge was measured with this cap in force
+2026-10-22,WELCORP,SELL,trading,27,2444.2,20849.4,trading-lot trail: close < 50-DMA
+2026-10-22,MCX,SELL,all,46,3058.63,-8711.02,stop hit
+2026-10-22,AARTIIND,SELL,all,87,459.28,-3107.64,stop hit
