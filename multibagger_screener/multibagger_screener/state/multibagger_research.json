@@ -1078,7 +1078,212 @@
     "E3 volume expansion: traded value 2x",
     "F momentum alone (RS leader or trend template)"
    ]
+  },
+  "BODALCHEM": {
+   "symbol": "BODALCHEM",
+   "headline": "A dyestuff and chemicals maker getting a lift from an anti-dumping duty",
+   "story": "Bodal Chemicals is a Gujarat-based maker of dyestuff and dye intermediates — the chemicals used mainly to colour textiles. It calls itself India's largest integrated player in this niche, and has branched into basic chemicals (like sulphuric acid), caustic soda via a chlor-alkali plant, and, most recently, benzene-derivative chemicals used in pharma and agrochemical intermediates, made at a new unit in Saykha, Gujarat.\n\nWhat changed: in March 2025, the government imposed a five-year anti-dumping duty on an imported chemical called Trichloro Isocyanuric Acid (TCCA), a water-disinfectant that Bodal is India's sole domestic producer of. Management had talked about this adding ₹50-60 crore of annual revenue. But as of the August 2025 earnings call, TCCA had contributed only ₹3.2 crore of revenue for the quarter — leftover stock that importers had piled up before the duty kicked in was still working through the system. Management pointed to a bigger contribution from the third quarter of FY26 onward.\n\nThe newer benzene-derivatives unit has also ramped more slowly than planned: utilisation was around 20-30% in mid-2025 against a target of 70-80% by the fourth quarter, and management cut its full-year revenue target for this unit from an original ₹150 crore down to roughly ₹100 crore.\n\nDespite those delays, recent numbers have turned up. Revenue for the quarter ended June 2026 was ₹709 crore, up 56% from a year earlier, and net profit was ₹30 crore versus almost nil a year before — a jump the machine screen flagged as +200%. For the full year to March 2026, sales of roughly ₹2,012-2,054 crore were broadly in line with management's own guidance of ₹2,000-2,100 crore. But net profit of about ₹48 crore fell well short of the ₹70-80 crore management had guided to in August 2025 — a reminder that hitting a revenue target doesn't guarantee hitting a profit one.\n\nThe balance sheet carries real debt: about ₹813 crore of borrowings against roughly ₹1,157 crore of equity. The company has been paying this down (a planned ₹150-175 crore cut in FY26) and is selling about 8 acres of surplus land near its Rajpura chlor-alkali plant to a neighbouring chemicals company, partly to improve chlorine disposal logistics and partly to raise cash. One reassuring sign: operating cash flow has exceeded reported net profit every year since FY23, suggesting the accounting profit is backed by real cash.\n\nThe open question is returns: return on capital employed was just 3-6% between FY23 and FY25. Whether better utilisation of the TCCA and benzene plants, plus debt reduction, can lift that meaningfully — or whether cyclical chemical pricing keeps margins capped around the 10-11% management now expects, well below the 18-20% the company saw a decade ago — is the crux of this story.",
+   "founder": "Suresh J. Patel founded the business in 1989 as J K Pharma, a small dye-intermediate plant in Vatva, Ahmedabad; it was renamed Bodal Chemicals in 1994 and listed in 2006 via a reverse merger with Dintex Dyechem. He remains Chairman and Managing Director, with over three decades in the chemicals trade. His sons, Bhavin Patel and Ankit Patel, are both Executive Directors running day-to-day operations — Ankit, who returned from the US in 2007, has pushed the diversification into pharma, agrochemical and specialty-chemical intermediates. Promoter and promoter-group holding has stayed steady at around 57% for years, with no decline. In October 2026, two promoter-group members, Ankit Patel and Ramesh D. Patel, recorded an inter-se transfer of shares worth roughly ₹3.4 crore each — a transfer within the promoter group, not an open-market trade, so it does not by itself signal buying or selling conviction. The company has declared no pledged or encumbered promoter shares for FY26. No SEBI order, auditor resignation, or other governance lapse was found in public records.",
+   "conviction": 3,
+   "horizon": "short term",
+   "thesis": "Bodal sits in a protected niche — sole domestic TCCA producer behind a five-year anti-dumping duty — and has under-utilised benzene-derivative and chlor-alkali capacity that could lift margins as it ramps and as debt comes down. For this to multiply, the TCCA and benzene ramps need to actually hit the utilisation levels management keeps pushing out, and return on capital needs to move durably above the single digits it has shown for most of the last five years. The latest quarter's profit jump is an encouraging early sign, but management's own guidance has been missed on profit (if not revenue) as recently as FY26.",
+   "triggers": [
+    {
+     "what": "TCCA volumes ramp up as pre-duty import inventory clears",
+     "when": "Q3-Q4 FY26 (per management, Aug 2025)",
+     "source": "transcript"
+    },
+    {
+     "what": "Benzene-derivatives (Saykha, MCB/PNCB/ONCB) utilisation lift from ~20-30% to 70-80%",
+     "when": "Q3-Q4 FY26 (per management, Aug 2025)",
+     "source": "transcript"
+    },
+    {
+     "what": "Chlor-alkali capacity utilisation push to 90-95%",
+     "when": "\"coming couple of quarters\" from Aug 2025",
+     "source": "transcript"
+    },
+    {
+     "what": "Debt reduction of ₹150-175 crore in FY26, similar planned for FY27",
+     "when": "FY26-FY27",
+     "source": "transcript"
+    },
+    {
+     "what": "Land deal near Rajpura unit secures a captive chlorine buyer (Shivtek) and ~₹5 crore cash",
+     "when": "announced 2025, in process",
+     "source": "web search news"
+    }
+   ],
+   "guidance": "Q1FY26 call (Aug 2025): FY26 revenue of about ₹1,900-1,950 crore (plus ~₹35 crore other income), blended EBITDA margin trending toward 13-15% over time, net profit of ₹70-80 crore for FY26, debt reduction of ₹150-175 crore in FY26, and a medium-term debt/EBITDA target near 2.5x.",
+   "delivered_vs_guidance": "FY26 (year to March 2026) revenue came in at about ₹2,012-2,054 crore, slightly ahead of the ₹1,950 crore guided. But FY26 EBITDA margin was about 8%, well short of the 13-15% management had been targeting, and FY26 net profit of roughly ₹48 crore fell well short of the ₹70-80 crore guided in August 2025. TCCA and benzene-derivative ramps were also both running behind original timelines as of the most recent transcript available.",
+   "scores": {
+    "size_runway": {
+     "score": 4,
+     "why": "₹1,968 crore market cap against an Indian dye market estimated near $7 billion (growing ~9-10% a year per market research estimates), with FII+DII holding near 0% historically — largely undiscovered."
+    },
+    "business_quality": {
+     "score": 3,
+     "why": "Integrated model (about 40% of dye-intermediate output captively consumed) gives a cost edge, but OPM has run just 8-11% and ROCE only 3-6% in FY23-FY25, below the ~8.5-9% cost of debt."
+    },
+    "management": {
+     "score": 3,
+     "why": "Hit the FY26 revenue guide (~₹2,000-2,100 crore guided vs ~₹2,012-2,054 crore delivered) but missed the FY26 profit guide (₹70-80 crore vs ~₹48 crore) and cut the benzene-unit revenue target from ₹150 crore to ₹100 crore mid-year."
+    },
+    "growth_visibility": {
+     "score": 4,
+     "why": "Multiple concrete near-term triggers (TCCA ramp, benzene utilisation lift, chlor-alkali push, debt paydown) are already showing up: Q1FY27 revenue +56% YoY and net profit +200% YoY."
+    },
+    "longevity": {
+     "score": 3,
+     "why": "The anti-dumping protection runs five years from March 2025 and China+1 sourcing is a real tailwind, but the business has a decade-long history of cyclical swings — OPM ranged from about 8% now to 18-20% a decade ago."
+    },
+    "valuation": {
+     "score": 3,
+     "why": "TTM P/E of about 28x (EPS ₹5.5, price ₹156.25) looks full for a historically sub-10% ROCE cyclical business, though a 9.4% FCF yield and the latest quarter's profit jump leave room for re-rating if it holds."
+    },
+    "red_flags": {
+     "score": 4,
+     "why": "No pledge, no SEBI order or auditor issue found, and operating cash flow has exceeded net profit every year since FY23; but borrowings (~₹813 crore, net debt/equity ~0.67) stay meaningful and a Turkey subsidiary hyperinflation charge adds minor noise."
+    }
+   },
+   "analyst_views": [
+    {
+     "broker": "JM Financial",
+     "date": "2026",
+     "view": "Neutral",
+     "target": "₹81",
+     "url": "https://trendlyne.com/equity/consensus-estimates/211/BODALCHEM/bodal-chemicals-ltd/"
+    },
+    {
+     "broker": "Kotak Securities",
+     "date": "2026",
+     "view": "Neutral",
+     "target": "₹74",
+     "url": "https://trendlyne.com/equity/consensus-estimates/211/BODALCHEM/bodal-chemicals-ltd/"
+    }
+   ],
+   "industry": "The Indian dye and dyestuff market is estimated at roughly $7 billion as of 2024, growing at a 9-10% CAGR per market-research estimates (not a CRISIL/ICRA sector note); India's dye-intermediates market was put at about $808 million in 2025, growing near 7.5% CAGR. Bodal's own August 2026 investor presentation claims a ~13% domestic and ~3% global share in dyestuff, and ~20% domestic and ~6% global share in dye intermediates (company/management estimates, not independently verified).",
+   "risks": [
+    "Thin, cyclical margins exposed to crude-linked and sulfur-based raw material swings",
+    "TCCA and benzene-derivative capacity ramps have already run behind original management guidance more than once",
+    "Return on capital employed has stayed in single digits for most of the last five years",
+    "Leverage remains meaningful (~₹813 crore borrowings, net debt/equity ~0.67) even after planned paydown",
+    "Very low institutional coverage (FII+DII near 0% for years) means less independent scrutiny of the numbers",
+    "Turkey subsidiary (Sener Boya) is under hyperinflation accounting, adding noise to consolidated results",
+    "Global trade policy (tariffs, anti-dumping actions elsewhere) could shift again and affect export economics"
+   ],
+   "change_my_mind": "If TCCA and benzene-derivative utilisation stay stuck near 20-30% well into FY27, if net profit keeps missing management's own guidance the way it did in FY26, or if return on capital employed fails to move durably above high single digits even after the debt paydown, the case for a re-rating weakens considerably.",
+   "sources": [
+    "https://www.screener.in/company/BODALCHEM/consolidated/",
+    "https://trendlyne.com/equity/consensus-estimates/211/BODALCHEM/bodal-chemicals-ltd/",
+    "https://www.tradingview.com/news/moneycontrol:fd3f8afb1094b:0-bodal-chemicals-shares-surge-18-as-govt-imposes-anti-dumping-duty-on-tcca-imports-from-china-and-japan/",
+    "https://www.indianchemicalnews.com/regulatory/india-imposes-anti-dumping-duty-on-trichloro-isocyanuric-acid-imported-from-china-and-japan-25415",
+    "https://digitalmag.theceomagazine.com/ankit-patel/?r=global",
+    "https://www.drvijaymalik.com/bodal-chemicals-research-report-fundamental-analysis/",
+    "https://scanx.trade/stock-market-news/companies/bodal-chemicals-promoters-declare-no-encumbrance-for-fy26/43101667",
+    "https://www.manufacturingtodayindia.com/shivtek-to-invest-rs-50-cr",
+    "https://www.researchandmarkets.com/reports/5912802/india-dyes-pigments-market-size-share-outlook"
+   ],
+   "date": "2026-10-22",
+   "model": "claude-sonnet-5",
+   "concall": "Aug 2025",
+   "ppt": "Aug 2026",
+   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=6355906a-26be-4413-b341-aa8e74233520.pdf",
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=e386e341-2f18-471a-a62b-dc366ce88644.pdf",
+   "company": "Bodal Chemicals Ltd",
+   "sector": "Chemicals",
+   "price": 156.25,
+   "mb_score": 49.2,
+   "mb_factors": [
+    "B2 value: FCF yield and book/market top 30%",
+    "B3 small: market cap under Rs 2,000 Cr",
+    "C2 undiscovered: FII+DII under 5%",
+    "F momentum alone (RS leader or trend template)",
+    "Q1 quarterly: profit +25%, sales +20% on the same quarter last year"
+   ]
+  },
+  "MAWANASUG": {
+   "symbol": "MAWANASUG",
+   "headline": "A century-old sugar mill with no visible growth plan and a governance flag",
+   "story": "Mawana Sugars runs two sugar and ethanol-distillery units in Uttar Pradesh — Mawana and Nanglamal — along with attached power cogeneration. It is part of the Siddharth Shriram Group, a family offshoot of the original DCM Shriram business. The company has been listed for decades and is tiny by market standards: about ₹671 Crore in market value.\n\nThe screen flagged this stock mainly on price action and statistical cheapness, not on business momentum. It is a 'relative strength leader' trading just 5% below its 52-week high, up 97% over a year, with trading volumes running two and a half times normal. It also screens cheap on free-cash-flow yield (6.3%) and trades below book value (price/book 0.78). Separately, almost no institutional money owns it — FIIs and DIIs together hold under 1% — so it is 'undiscovered' in the sense that few professional investors have looked at it.\n\nThe underlying numbers do not support a growth story. Sales have been flat for four years: ₹1,478 Crore in FY22 to ₹1,586 Crore trailing twelve months, essentially no volume growth. Operating margin bounces between 5% and 8%, typical of a commodity sugar business with no pricing power — cane cost and sugar prices are both government-influenced. Net profit swung from ₹109 Crore in FY25 (EPS ₹28) back down to ₹37 Crore in FY26, and the trailing twelve months show just ₹28 Crore. Three of the last five quarters posted outright losses, including a ₹23 Crore loss in the June 2026 quarter. Return on capital has never exceeded 10% in the last six years. FY24 also saw operating cash flow turn negative (-₹164 Crore) even though the company reported a profit that year, a mismatch worth watching.\n\nThere is no concall transcript or investor presentation on file, so there is no management commentary on capacity additions, new products, or an order book to evaluate — the growth triggers this process normally looks for simply are not available. On the industry side, the government has just cut sugar diversion for ethanol to zero for the 2026-27 supply year, a policy reversal that works against distillery-based diversification for sugar millers like Mawana.\n\nA governance item also needs disclosing: in February 2025, SEBI ordered Krishna Shriram — the company's current non-executive chairman, who inherited the promoter shares from his late father Siddharth Shriram — to disgorge about ₹6.17 Crore plus interest, tied to a 2017 insider-trading finding against his father ahead of a quarterly loss announcement. Promoter holding itself has stayed flat at 63.5% for years, with no visible open-market buying.\n\nTaken together, this looks like a momentum and statistical-value flag on a mature, policy-exposed commodity business rather than a company showing fresh capacity, products, or markets.",
+   "founder": "Mawana Sugars is controlled by the Shriram family (Siddharth Shriram Group), descended from the original DCM Shriram promoter family. The late Siddharth Shriram ran the company as promoter and special advisor until his death in May 2021; his son, Krishna Shriram, has been non-executive chairman since 2021 and holds the family's 63.5% promoter stake, unchanged for at least five years with no reported open-market buying or selling in the last 12 months. In February 2025, SEBI ordered Krishna Shriram, as legal heir, to disgorge about ₹6.17 Crore plus 12% annual interest dating to November 2017, over a finding that Siddharth Shriram sold 2.5 million MSL shares in 2017 while in possession of unpublished price-sensitive information, ahead of a disclosed quarterly loss. No information was found on other businesses run by the family, on any auditor changes, or on share pledges; these should be treated as 'not found' rather than confirmed clean.",
+   "conviction": 2,
+   "horizon": "short term",
+   "thesis": "The stock was flagged almost entirely on price momentum (a relative-strength leader near its 52-week high on heavy volume) and statistical value (a high free-cash-flow yield and a sub-1x price/book), not on any visible business improvement. Revenue has been flat for four years, margins and profits are volatile and commodity-driven, and no transcript or presentation exists to show capacity, product, or market triggers. For this to work as a multi-year compounder, the company would need to show sustained margin improvement, a real ethanol/distillery growth plan despite an adverse 2026-27 policy shift, and clean up the governance overhang from the chairman's inherited SEBI order — none of which is currently evidenced.",
+   "triggers": [],
+   "guidance": "Not found — no concall transcript or investor presentation is on file for Mawana Sugars, and no recent management guidance on revenue, margins, or capacity could be located.",
+   "delivered_vs_guidance": "No prior public guidance was found to check against. What is verifiable from the numbers: net profit spiked to ₹109 Crore (EPS ₹28) in FY25 and fell back to ₹37 Crore (EPS ₹9.5) in FY26, with the trailing twelve months at just ₹28 Crore. Three of the last five quarters (Jun 2025, Sep 2025, Jun 2026) posted net losses, a swing pattern the company has not explained in any available disclosure.",
+   "scores": {
+    "size_runway": {
+     "score": 3,
+     "why": "Market cap of ₹671 Cr is small against the broader Indian sugar/ethanol market, but sales have been flat near ₹1,400-1,600 Cr for four straight years with no disclosed capacity expansion."
+    },
+    "business_quality": {
+     "score": 2,
+     "why": "Commodity sugar business with government-influenced cane and sugar pricing; OPM has ranged only 5-8% and ROCE has not exceeded 10% in six years."
+    },
+    "management": {
+     "score": 2,
+     "why": "Current chairman Krishna Shriram was ordered by SEBI in Feb 2025 to disgorge ~₹6.17 Cr tied to a 2017 insider-trading finding against his late father; no concall or presentation is filed, suggesting thin investor engagement."
+    },
+    "growth_visibility": {
+     "score": 2,
+     "why": "No transcript, presentation, or exchange filing describes any new capacity, product, or market; trailing profit has fallen sharply from FY25's ₹109 Cr to ₹28 Cr TTM."
+    },
+    "longevity": {
+     "score": 2,
+     "why": "Growth is tied to monsoon-dependent cane supply and shifting government policy; ESY2026-27 ethanol diversion has just been cut to zero, working against the distillery diversification route."
+    },
+    "valuation": {
+     "score": 3,
+     "why": "FCF yield of 6.3% and price/book of 0.78 look statistically cheap, but trailing EPS of ₹7 against a ₹171.5 price reflects earnings that have proven highly volatile and hard to trust."
+    },
+    "red_flags": {
+     "score": 2,
+     "why": "SEBI insider-trading disgorgement order against the chairman (Feb 2025); FY24 operating cash flow was negative (-₹164 Cr) despite a reported profit; three loss-making quarters in the last five; rising borrowings (₹420 Cr)."
+    }
+   },
+   "analyst_views": [],
+   "industry": "India's sugar sector is in the middle of a policy shift: the government has directed that sugar diversion toward ethanol be cut to zero for the 2026-27 ethanol supply year, even as ISMA has pushed for blending targets to rise toward 22-27% over time and warned that preferential treatment of dedicated ethanol plants with long-term offtake agreements could hurt conventional sugar-mill distilleries like Mawana's (sources: USDA FAS Sugar Annual 2026; Business Standard, July 2026; ISMA coverage via ChiniMandi/BusinessToday, Oct 2026). No source was found giving Mawana's specific share of national sugar or ethanol capacity.",
+   "risks": [
+    "No capacity, product, or market expansion could be verified from any filed transcript, presentation, or exchange disclosure.",
+    "Earnings are highly volatile quarter to quarter, with three net losses in the last five quarters including a ₹23 Cr loss in June 2026.",
+    "Chairman Krishna Shriram carries a SEBI-ordered disgorgement liability (~₹6.17 Cr plus 12% interest since Nov 2017) tied to an insider-trading finding against his late father.",
+    "Government has cut ethanol diversion for sugar companies to zero for ESY2026-27, removing a potential revenue diversification lever.",
+    "FY24 operating cash flow was negative (-₹164 Cr) despite a reported net profit that year, a profit/cash mismatch worth monitoring.",
+    "Borrowings have risen to ₹420 Cr with ROCE under 10%, limiting financial flexibility.",
+    "Near-zero institutional (FII+DII) ownership means little independent scrutiny of the business from professional investors."
+   ],
+   "change_my_mind": "A filed concall or investor presentation showing a concrete, funded capacity or product expansion with a clear timeline; two to three consecutive quarters of stable, improving operating margins and net profit; and resolution or clarity on the chairman's SEBI disgorgement matter would all meaningfully change this picture.",
+   "sources": [
+    "https://www.screener.in/company/MAWANASUG/consolidated/",
+    "https://www.business-standard.com/markets/news/sebi-orders-rs-6-2-crore-disgorgement-from-mawana-sugars-chairman-125021801031_1.html",
+    "https://www.moneylife.in/article/mawana-sugars-insider-trading-promoter-siddharth-shrirams-heir-asked-to-disgorge-rs617-crore-in-insider-trading-case/76424.html",
+    "https://www.mawanasugars.com/downloads/order-passed-on-18022025-by-sebi-19022025.pdf",
+    "https://www.fas.usda.gov/data/gain-report/2026/04/Sugar%20Annual_New%20Delhi_India_IN2026-0024.pdf",
+    "https://www.business-standard.com/economy/news/india-sugar-output-to-rise-18-in-2025-26-isma-eyes-exports-ethanol-push-125073101814_1.html",
+    "https://www.businesstoday.in/industry/story/could-seriously-hurt-sugar-industry-isma-warns-against-continued-preference-for-dedicated-ethanol-plants-562504-2026-10-19",
+    "https://www.marketsmojo.com/news/stocks-in-action/mawana-sugars-ltd-surges-1641-downgrade-and-bullish-momentum-shape-week-4206634",
+    "https://trendlyne.com/fundamentals/financials/844/MAWANASUG/mawana-sugars-ltd/"
+   ],
+   "date": "2026-10-22",
+   "model": "claude-sonnet-5",
+   "concall": null,
+   "ppt": null,
+   "transcript_url": null,
+   "ppt_url": null,
+   "company": "Mawana Sugars Ltd",
+   "sector": "Fast Moving Consumer Goods",
+   "price": 171.54,
+   "mb_score": 49.0,
+   "mb_factors": [
+    "B2 value: FCF yield and book/market top 30%",
+    "B3 small: market cap under Rs 2,000 Cr",
+    "C2 undiscovered: FII+DII under 5%",
+    "E3 volume expansion: traded value 2x",
+    "F momentum alone (RS leader or trend template)"
+   ]
   }
  },
- "generated": "2026-10-16 09:25"
+ "generated": "2026-10-22 18:36"
 }
