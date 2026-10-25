@@ -391,3 +391,31 @@ audit_date,window,rank,symbol,window_return_pct,turnover_cr,classification,ident
 2026-10-16,6m,5,HFCL,168.1,561.55,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,163.68,68.6,188.9,0.36,,,flagged mid-move
 2026-10-16,6m,6,SKYGOLD,150.5,87.74,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-04-17,423.35,153.9,153.9,1.0,,,flagged with most of the move still ahead
 2026-10-16,6m,7,E2E,147.6,65.4,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-17,404.95,88.9,172.6,0.52,,,flagged with most of the move still ahead
+2026-10-23,1w,1,IGIL,16.7,275.71,ANTICIPATION ONLY,False,,,,,18.9,,,,reached the Stage-1 watchlist tier (zero-capital by design) but never CONFIRMED
+2026-10-23,1w,2,ANTELOPUS,13.3,104.41,CAUGHT EARLY,True,VALIDATED VCP ENTRY,2026-10-16,1003.1,15.6,15.6,1.0,2026-10-23,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,1w,3,KROSS,12.7,261.18,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-10-16,272.0,20.0,20.0,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,1w,4,TTML,12.3,357.38,NO STRUCTURE,False,,,,,22.2,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-10-23,1w,5,SSWL,12.1,260.19,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-10-16,418.1,12.1,12.1,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,1w,6,PCJEWELLER,10.8,935.91,ALREADY FLAGGED,True,,,,,23.5,,,,"CONFIRMED before the window opened — on the radar the whole time, no fresh transition alert"
+2026-10-23,1w,7,PLATIND,10.0,74.5,NO STRUCTURE,False,,,,,20.6,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-10-23,1m,1,UTTAMSUGAR,32.3,34.29,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-25,293.15,36.8,50.6,0.73,,,flagged with most of the move still ahead
+2026-10-23,1m,2,SKYGOLD,31.8,158.41,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-23,794.1,36.5,36.5,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,1m,3,SHANTIGOLD,27.9,186.12,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-23,288.07,51.9,51.9,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,1m,4,SSWL,26.0,91.03,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-09-23,371.95,26.0,26.0,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,1m,5,PCJEWELLER,24.7,654.39,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-10-13,14.1,42.6,38.9,1.0,,,flagged with most of the move still ahead
+2026-10-23,1m,6,LTTS,21.0,216.72,ANTICIPATION ONLY,False,,,,,28.2,,,,reached the Stage-1 watchlist tier (zero-capital by design) but never CONFIRMED
+2026-10-23,1m,7,HEXT,18.2,105.99,NO STRUCTURE,False,,,,,22.0,,,,never passed the Stage-2 8-point trend template — did not meet the mechanical uptrend gate
+2026-10-23,3m,1,PCJEWELLER,94.4,437.85,CAUGHT,True,CONFIRMED (watch pivot),2026-10-13,14.1,42.6,116.6,0.36,,,flagged mid-move
+2026-10-23,3m,2,RAYMOND,80.7,253.5,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-14,635.45,110.7,127.6,0.87,,,flagged with most of the move still ahead
+2026-10-23,3m,3,SHANTIGOLD,74.4,100.74,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-18,253.85,72.4,107.1,0.68,,,flagged with most of the move still ahead
+2026-10-23,3m,4,TFCILTD,69.1,189.86,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-24,87.27,85.6,85.6,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,3m,5,SSWL,62.6,67.36,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-20,304.8,53.8,62.6,0.86,,,flagged with most of the move still ahead
+2026-10-23,3m,6,SKYGOLD,60.1,107.7,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-07-24,653.7,65.8,65.8,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,3m,7,UTTAMSUGAR,54.3,18.71,CAUGHT,True,CONFIRMED (watch pivot),2026-09-02,292.55,37.1,75.5,0.49,,,flagged mid-move
+2026-10-23,6m,1,SIGMAADV,230.1,22.42,CAUGHT,True,CONFIRMED (watch pivot),2026-07-08,531.5,119.2,392.3,0.3,,,flagged mid-move
+2026-10-23,6m,2,STLTECH,210.2,157.3,CAUGHT,True,VALIDATED VCP ENTRY,2026-07-01,590.75,77.9,294.5,0.26,2026-08-04,,flagged mid-move
+2026-10-23,6m,3,CUPID,171.0,591.61,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-05-18,120.84,205.3,226.2,0.91,,,flagged with most of the move still ahead
+2026-10-23,6m,4,SKYGOLD,153.8,92.98,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-04-24,412.55,162.7,162.7,1.0,,,already CONFIRMED entering the window; flagged with most of the move still ahead
+2026-10-23,6m,5,RAYMOND,144.9,149.84,CAUGHT EARLY,True,CONFIRMED (watch pivot),2026-08-14,635.45,110.7,208.4,0.53,,,flagged with most of the move still ahead
+2026-10-23,6m,6,HFCL,139.5,561.77,CAUGHT,True,CONFIRMED (watch pivot),2026-06-11,163.68,72.4,181.6,0.4,,,flagged mid-move
+2026-10-23,6m,7,SSWL,125.5,46.12,CAUGHT,True,CONFIRMED (watch pivot),2026-08-20,304.8,53.8,125.5,0.43,,,flagged mid-move
