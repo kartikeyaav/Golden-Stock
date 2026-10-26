@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-25 09:54",
+ "generated": "2026-10-26 17:01",
  "n_checked": 1004,
  "n_flagged": 72,
- "asm_total": 194,
+ "asm_total": 188,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -568,14 +568,14 @@
   "SMLMAH": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "LOTUSDEV": {
    "flags": [
@@ -655,19 +655,14 @@
   "TRIVENIPT": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
      "code": "BE",
      "detail": "BE settlement series",
      "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 5.0,
+   "band": 20.0,
    "series": "BE",
-   "worst": "BAND 5%"
+   "worst": "BE"
   },
   "UNIMECH": {
    "flags": [
@@ -785,6 +780,11 @@
   "EMUDHRA": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -792,7 +792,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "ASM"
   },
   "RAYMOND": {
    "flags": [

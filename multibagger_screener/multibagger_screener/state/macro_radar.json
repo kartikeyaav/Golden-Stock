@@ -1,17 +1,77 @@
 {
  "ok": true,
- "generated": "2026-10-23T15:12:48",
+ "generated": "2026-10-26T16:55:41",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9830,
- "policy_hits": 19,
- "stories": 15,
+ "headlines_read": 9831,
+ "policy_hits": 22,
+ "stories": 18,
  "themes": {
-  "renewables": {
-   "pressure": 0.259,
-   "pos_flow": 0.222,
+  "railways": {
+   "pressure": 0.439,
+   "pos_flow": 0.4286,
    "neg_flow": 0.0,
-   "n_scored": 2,
+   "n_scored": 4,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
+     "date": "2026-10-26T21:37:44",
+     "source": "The Economic Times",
+     "link": "https://economictimes.indiatimes.com/industry/transportation/railways/railway-board-flags-safety-concerns-grants-conditional-approval-to-rcf-made-vande-bharat-chair-car/articleshow/135215338.cms",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.15
+    },
+    {
+     "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
+     "date": "2026-10-14T20:10:30",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/cabinet-approves-2010-cr-bonus-for-over-11-lakh-railway-employees/article71583806.ece",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 2010.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 2,
+     "retellings": 3,
+     "weight": 0.1248
+    },
+    {
+     "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
+     "date": "2026-10-26T18:38:52",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/logistics/indian-railways-extends-optional-travel-insurance-to-counter-ticket-buyers-mandates-digital-payment/article71626740.ece",
+     "themes": [
+      "railways"
+     ],
+     "polarity": "pos",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.108
+    }
+   ]
+  },
+  "renewables": {
+   "pressure": 0.144,
+   "pos_flow": 0.2011,
+   "neg_flow": 0.1045,
+   "n_scored": 3,
    "n_attn": 1,
    "top": [
     {
@@ -29,7 +89,24 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.1209
+     "weight": 0.1095
+    },
+    {
+     "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
+     "date": "2026-10-25T13:56:36",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/govt-needs-to-incentivise-domestic-solar-production-as-china-eyes-curbs-on-tech-exports-solex-chairman/article71622836.ece",
+     "themes": [
+      "renewables"
+     ],
+     "polarity": "neg",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1045
     },
     {
      "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -46,13 +123,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1011
+     "weight": 0.0916
     }
    ]
   },
   "defence": {
-   "pressure": 0.266,
-   "pos_flow": 0.2294,
+   "pressure": 0.245,
+   "pos_flow": 0.2077,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -72,7 +149,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1449
+     "weight": 0.1312
     },
     {
      "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -89,7 +166,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0616
+     "weight": 0.0558
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -107,7 +184,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0229
+     "weight": 0.0207
     }
    ]
   },
@@ -119,52 +196,9 @@
    "n_attn": 2,
    "top": []
   },
-  "railways": {
-   "pressure": 0.224,
-   "pos_flow": 0.1883,
-   "neg_flow": 0.0,
-   "n_scored": 2,
-   "n_attn": 1,
-   "top": [
-    {
-     "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
-     "date": "2026-10-14T20:10:30",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/economy/cabinet-approves-2010-cr-bonus-for-over-11-lakh-railway-employees/article71583806.ece",
-     "themes": [
-      "railways"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": 2010.0,
-     "tier": 1,
-     "hedged": false,
-     "sources": 2,
-     "retellings": 3,
-     "weight": 0.1378
-    },
-    {
-     "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
-     "date": "2026-09-20T09:39:35",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/economy/logistics/indian-railways-approves-multiple-infrastructure-safety-projects-to-enhance-operational-efficiency/article71486995.ece",
-     "themes": [
-      "railways"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0505
-    }
-   ]
-  },
   "capex": {
-   "pressure": 0.22,
-   "pos_flow": 0.1843,
+   "pressure": 0.196,
+   "pos_flow": 0.1615,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -185,13 +219,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1843
+     "weight": 0.1615
     }
    ]
   },
   "ev": {
-   "pressure": 0.298,
-   "pos_flow": 0.2619,
+   "pressure": 0.269,
+   "pos_flow": 0.2318,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 1,
@@ -212,7 +246,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1843
+     "weight": 0.1615
     },
     {
      "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -229,13 +263,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0776
+     "weight": 0.0703
     }
    ]
   },
   "textiles": {
-   "pressure": 0.134,
-   "pos_flow": 0.1069,
+   "pressure": 0.123,
+   "pos_flow": 0.0968,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -255,13 +289,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1069
+     "weight": 0.0968
     }
    ]
   },
   "defelec": {
-   "pressure": 0.03,
-   "pos_flow": 0.0229,
+   "pressure": 0.028,
+   "pos_flow": 0.0207,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -282,7 +316,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0229
+     "weight": 0.0207
     }
    ]
   }
@@ -304,7 +338,24 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1843
+   "weight": 0.1615
+  },
+  {
+   "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
+   "date": "2026-10-26T21:37:44",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/railway-board-flags-safety-concerns-grants-conditional-approval-to-rcf-made-vande-bharat-chair-car/articleshow/135215338.cms",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.15
   },
   {
    "title": "Defence Ministry approves over ₹2,400 crore procurement from startups and MSMEs",
@@ -321,7 +372,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1449
+   "weight": 0.1312
   },
   {
    "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -338,7 +389,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 3,
-   "weight": 0.1378
+   "weight": 0.1248
   },
   {
    "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
@@ -355,7 +406,41 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.1209
+   "weight": 0.1095
+  },
+  {
+   "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
+   "date": "2026-10-26T18:38:52",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/logistics/indian-railways-extends-optional-travel-insurance-to-counter-ticket-buyers-mandates-digital-payment/article71626740.ece",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "pos",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.108
+  },
+  {
+   "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
+   "date": "2026-10-25T13:56:36",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/economy/govt-needs-to-incentivise-domestic-solar-production-as-china-eyes-curbs-on-tech-exports-solex-chairman/article71622836.ece",
+   "themes": [
+    "renewables"
+   ],
+   "polarity": "neg",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1045
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -372,7 +457,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1069
+   "weight": 0.0968
   },
   {
    "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -389,7 +474,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1011
+   "weight": 0.0916
   },
   {
    "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
@@ -406,7 +491,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0892
+   "weight": 0.0808
   },
   {
    "title": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
@@ -423,7 +508,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0829
+   "weight": 0.0751
   },
   {
    "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -440,7 +525,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0776
+   "weight": 0.0703
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -457,7 +542,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.075
+   "weight": 0.0657
   },
   {
    "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -474,7 +559,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0616
+   "weight": 0.0558
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -491,7 +576,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0505
+   "weight": 0.0457
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -508,7 +593,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.034
+   "weight": 0.0308
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -526,7 +611,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0308
+   "weight": 0.0279
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -544,7 +629,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0229
+   "weight": 0.0207
   }
  ]
 }
