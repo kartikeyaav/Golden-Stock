@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-10-26T16:55:41",
+ "generated": "2026-10-27T16:00:46",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9831,
+ "headlines_read": 9953,
  "policy_hits": 22,
  "stories": 18,
  "themes": {
   "railways": {
-   "pressure": 0.439,
-   "pos_flow": 0.4286,
+   "pressure": 0.435,
+   "pos_flow": 0.423,
    "neg_flow": 0.0,
    "n_scored": 4,
    "n_attn": 1,
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 3,
-     "weight": 0.1248
+     "weight": 0.1208
     },
     {
      "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -68,9 +68,9 @@
    ]
   },
   "renewables": {
-   "pressure": 0.144,
-   "pos_flow": 0.2011,
-   "neg_flow": 0.1045,
+   "pressure": 0.14,
+   "pos_flow": 0.1946,
+   "neg_flow": 0.1011,
    "n_scored": 3,
    "n_attn": 1,
    "top": [
@@ -89,7 +89,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.1095
+     "weight": 0.106
     },
     {
      "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -106,7 +106,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1045
+     "weight": 0.1011
     },
     {
      "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -123,13 +123,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0916
+     "weight": 0.0886
     }
    ]
   },
   "defence": {
-   "pressure": 0.245,
-   "pos_flow": 0.2077,
+   "pressure": 0.238,
+   "pos_flow": 0.201,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -149,7 +149,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1312
+     "weight": 0.1269
     },
     {
      "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -166,7 +166,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0558
+     "weight": 0.054
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -184,7 +184,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0207
+     "weight": 0.0201
     }
    ]
   },
@@ -197,8 +197,8 @@
    "top": []
   },
   "capex": {
-   "pressure": 0.196,
-   "pos_flow": 0.1615,
+   "pressure": 0.19,
+   "pos_flow": 0.1563,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -219,13 +219,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1615
+     "weight": 0.1563
     }
    ]
   },
   "ev": {
-   "pressure": 0.269,
-   "pos_flow": 0.2318,
+   "pressure": 0.261,
+   "pos_flow": 0.2243,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 1,
@@ -246,7 +246,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1615
+     "weight": 0.1563
     },
     {
      "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -263,13 +263,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0703
+     "weight": 0.068
     }
    ]
   },
   "textiles": {
-   "pressure": 0.123,
-   "pos_flow": 0.0968,
+   "pressure": 0.119,
+   "pos_flow": 0.0937,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -289,13 +289,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0968
+     "weight": 0.0937
     }
    ]
   },
   "defelec": {
-   "pressure": 0.028,
-   "pos_flow": 0.0207,
+   "pressure": 0.027,
+   "pos_flow": 0.0201,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -316,7 +316,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0207
+     "weight": 0.0201
     }
    ]
   }
@@ -338,7 +338,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1615
+   "weight": 0.1563
   },
   {
    "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
@@ -372,7 +372,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1312
+   "weight": 0.1269
   },
   {
    "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -389,24 +389,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 3,
-   "weight": 0.1248
-  },
-  {
-   "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
-   "date": "2026-09-30T20:01:24",
-   "source": "BusinessLine",
-   "link": "https://www.thehindubusinessline.com/news/cabinet-approves-green-energy-corridor-phase-iii-scheme/article71527880.ece",
-   "themes": [
-    "renewables"
-   ],
-   "polarity": "pos",
-   "event": "approval",
-   "amount_cr": 186000.0,
-   "tier": 1,
-   "hedged": false,
-   "sources": 2,
-   "retellings": 2,
-   "weight": 0.1095
+   "weight": 0.1208
   },
   {
    "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -426,6 +409,23 @@
    "weight": 0.108
   },
   {
+   "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
+   "date": "2026-09-30T20:01:24",
+   "source": "BusinessLine",
+   "link": "https://www.thehindubusinessline.com/news/cabinet-approves-green-energy-corridor-phase-iii-scheme/article71527880.ece",
+   "themes": [
+    "renewables"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": 186000.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 2,
+   "retellings": 2,
+   "weight": 0.106
+  },
+  {
    "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
    "date": "2026-10-25T13:56:36",
    "source": "BusinessLine",
@@ -440,7 +440,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1045
+   "weight": 0.1011
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -457,7 +457,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0968
+   "weight": 0.0937
   },
   {
    "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -474,7 +474,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0916
+   "weight": 0.0886
   },
   {
    "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
@@ -491,7 +491,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0808
+   "weight": 0.0781
   },
   {
    "title": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
@@ -508,7 +508,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0751
+   "weight": 0.0727
   },
   {
    "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -525,7 +525,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0703
+   "weight": 0.068
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -542,7 +542,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0657
+   "weight": 0.0636
   },
   {
    "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -559,7 +559,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0558
+   "weight": 0.054
   },
   {
    "title": "Indian Railways approves multiple infrastructure, safety projects to enhance operational efficiency",
@@ -576,7 +576,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0457
+   "weight": 0.0442
   },
   {
    "title": "LHB coach bogies are 'corroding': Railway Board raises safety concerns as toilet leaks, salty air &amp; even cleaning practices emerge as problems",
@@ -593,7 +593,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0308
+   "weight": 0.0298
   },
   {
    "title": "Waaree Renewable?s data centre push raises the stakes",
@@ -611,7 +611,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0279
+   "weight": 0.027
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -629,7 +629,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0207
+   "weight": 0.0201
   }
  ]
 }
