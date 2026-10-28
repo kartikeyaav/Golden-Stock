@@ -1,7 +1,7 @@
 {
- "generated": "2026-10-27 16:09",
+ "generated": "2026-10-28 17:02",
  "n_checked": 1004,
- "n_flagged": 72,
+ "n_flagged": 71,
  "asm_total": 188,
  "syms": {
   "CPPLUS": {
@@ -652,18 +652,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "TRIVENIPT": {
-   "flags": [
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 20.0,
-   "series": "BE",
-   "worst": "BE"
-  },
   "UNIMECH": {
    "flags": [
     {
@@ -753,6 +741,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "SSWL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "JUNIPER": {
    "flags": [
     {
@@ -808,18 +808,6 @@
     }
    ],
    "band": 10.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "WSTCSTPAPR": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },
