@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-28 17:02",
+ "generated": "2026-10-29 17:11",
  "n_checked": 1004,
- "n_flagged": 71,
- "asm_total": 188,
+ "n_flagged": 73,
+ "asm_total": 190,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -183,6 +183,18 @@
    ],
    "band": 5.0,
    "series": "BE",
+   "worst": "ASM"
+  },
+  "TTML": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
    "worst": "ASM"
   },
   "THANGAMAYL": {
@@ -851,6 +863,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "ASM"
+  },
+  "NSIL": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
   },
   "ANTELOPUS": {
    "flags": [
