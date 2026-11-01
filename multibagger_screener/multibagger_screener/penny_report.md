@@ -1,4 +1,4 @@
-# Penny / nano-cap screen — 2026-10-31 11:17
+# Penny / nano-cap screen — 2026-11-01 12:32
 
 **Research surface. Zero capital. Not backtested.** The main system's
 evidence (+1.67R, walk-forward, 13 rejected overlays) says nothing about
@@ -6,7 +6,7 @@ this screen. Every name below is journaled to `journal/penny_journal.csv`
 so the question 'does this add anything?' gets an out-of-sample answer
 instead of an argument.
 
-Universe: 216 names that survived the hard tradability gates
+Universe: 217 names that survived the hard tradability gates
 (EQ series only · no GSM/ASM · band >= 10% · liquidity + circuit floors ·
 listed >= 1 year). Rejects and their reasons: `penny_excluded.csv`.
 
@@ -42,7 +42,7 @@ the one that means genuinely small. Read the MCAP rows first.
 | 19 | **KAMDHENU** | PRICE+MCAP | 66 | 100% | WATCH | 95 | Rs3.01 Cr | Rs998 Cr | Hyper-growth | — |
 | 20 | **GLOBAL** | MCAP | 66 | 100% | CONFIRMED | 100 | Rs1.34 Cr | Rs732 Cr | Hyper-growth + Momentum | — |
 
-## Vetoed (60) — capped at 25, momentum cannot outvote these
+## Vetoed (61) — capped at 25, momentum cannot outvote these
 
 | Symbol | Reason |
 |--------|--------|
