@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30 16:56",
+ "generated": "2026-11-01 12:05",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
  "progress_pct": 40.0,
@@ -13,7 +13,7 @@
   "degraded_scans": 1,
   "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"
  },
- "days_to_deadline": 61,
+ "days_to_deadline": 59,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
@@ -171,41 +171,41 @@
   "3m": {
    "bench": {
     "sym": "MIDSMALL",
-    "ret_pct": -4.4,
-    "first": 51.17,
+    "ret_pct": -4.86,
+    "first": 51.42,
     "last": 48.92,
-    "from": "2026-07-31",
+    "from": "2026-08-03",
     "to": "2026-10-30",
-    "sessions": 65
+    "sessions": 64
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -5.46,
-    "first": 24383.6,
+    "ret_pct": -6.95,
+    "first": 24774.3,
     "last": 23053.1,
-    "from": "2026-07-31",
+    "from": "2026-08-03",
     "to": "2026-10-30",
-    "sessions": 63
+    "sessions": 62
    }
   },
   "12m": {
    "bench": {
     "sym": "MIDSMALL",
-    "ret_pct": -0.39,
-    "first": 49.11,
+    "ret_pct": -0.69,
+    "first": 49.26,
     "last": 48.92,
-    "from": "2025-10-30",
+    "from": "2025-11-03",
     "to": "2026-10-30",
-    "sessions": 251
+    "sessions": 249
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -10.92,
-    "first": 25877.85,
+    "ret_pct": -10.52,
+    "first": 25763.35,
     "last": 23053.1,
-    "from": "2025-10-30",
+    "from": "2025-11-03",
     "to": "2026-10-30",
-    "sessions": 247
+    "sessions": 245
    }
   }
  },

@@ -1,7 +1,7 @@
 {
- "generated": "2026-10-30 16:56",
- "n_checked": 1004,
- "n_flagged": 73,
+ "generated": "2026-11-01 12:05",
+ "n_checked": 1003,
+ "n_flagged": 72,
  "asm_total": 190,
  "syms": {
   "CPPLUS": {
@@ -268,18 +268,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "POLICYBZR": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": null,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "AXISCADES": {
    "flags": [
@@ -870,10 +858,15 @@
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
    "band": 5.0,
-   "series": "EQ",
+   "series": "BE",
    "worst": "BAND 5%"
   },
   "ANTELOPUS": {

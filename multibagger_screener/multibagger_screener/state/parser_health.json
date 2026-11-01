@@ -1,7 +1,7 @@
 {
- "checked_at": "2026-10-25T09:38:25",
- "fetched": 85,
+ "checked_at": "2026-11-01T11:45:25",
+ "fetched": 75,
  "empty_quarters": 0,
- "fetch_failures": 176,
+ "fetch_failures": 149,
  "ok": false
 }
