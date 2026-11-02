@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-01 12:05",
+ "generated": "2026-11-02 20:39",
  "n_checked": 1003,
- "n_flagged": 72,
- "asm_total": 190,
+ "n_flagged": 73,
+ "asm_total": 178,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -126,7 +126,7 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "LT Stage III",
+     "detail": "LT Stage II",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     },
     {
@@ -458,6 +458,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "OMNI": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 5.0,
+   "series": "EQ",
+   "worst": "BAND 5%"
   },
   "OSWALPUMPS": {
    "flags": [
