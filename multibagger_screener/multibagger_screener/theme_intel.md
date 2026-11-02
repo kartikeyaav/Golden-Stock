@@ -1,194 +1,187 @@
-# Thematic intelligence — week of 2026-10-22
-_generated 2026-10-22 18:26 · claude-sonnet-5 · 52 calls accepted, 0 rejected, hallucination rate 0%_
+# Thematic intelligence — week of 2026-11-02
+_generated 2026-11-02 23:46 · claude-sonnet-5 · 38 calls accepted, 0 rejected, hallucination rate 0%_
 
-Brent above $111 on escalating Houthi strikes on Saudi oil infrastructure is this week's dominant cross-cutting driver, mixed for India's energy complex; a cluster of trade-policy relief (US tariff locked at 18%, NZ FTA live, gems tariff threat waived) removes downside for exporters, while a confirmed Rs1.64 lakh cr semiconductor-mission tally, a dated National Steel Policy draft, and a zero-ethanol-diversion mandate that crashed sugar stocks round out a week with as many real policy decisions as macro shocks.
+Brent nearing $120 on repeated Houthi strikes on Saudi oil infrastructure is no longer just an energy story — it's now visibly hitting Indian trade flows (Morbi ceramic exports down 40%, ABDL margins squeezed), while two confirmed Cabinet/regulator decisions (the ₹10,000cr Container Manufacturing Promotion Scheme and IRDAI's draft insurance-distribution caps) and a hardening EMS memory-cost shock (Lava's Nov-15 price hike) give the system new, dated, quantified beneficiary and headwind calls.
 
-## Data centres & digital infrastructure (datacentre) — tailwind, strength 5/5, medium horizon, strengthening
-_existing theme_
+## West Asia war – crude cost shock & trade disruption (energysecurity) — mixed, strength 5/5, near horizon, steady
+_NEW THEME — promote to scoring/themes.py to score it_
 
-Institutional capital keeps broadening beyond hyperscalers into private equity (Hillhouse's $12-15bn TeraNova DC) while a regulator puts a hard number on the eventual grid footprint (24-26 GW) and a brokerage initiates a high-conviction buy on a universe name explicitly citing AI/data-centre exposure.
+Repeated Houthi strikes on Saudi refineries keep crude near $120 and India's import basket above it, lifting upstream realisations while the same war is now directly cutting Gulf-bound export volumes and raising input/freight costs for companies far outside the energy sector.
 
 **Drivers**
-- 2026-10-15 India: Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032 — headline: Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032
-- 2026-10-15 India: CEA Chairman says India's data-centre capacity may surge to 24-26 GW — headline: India's data-centre capacity may surge to 24-26 GW, impact on overall power demand to remain limited: CEA Chairman
-- 2026-10-16 India: Nuvama initiates Buy on HFCL, Rs 380 target (56% upside), citing AI/data-centre capex exposure and record order book — https://www.inkl.com/news/hfcls-ai-data-centre-exposure-drives-nuvamas-buy-call-target-implies-56-upside
+- 2026-10-27 India: India's crude basket price tops $120/bbl amid West Asia war — https://www.cnbc.com/2026/10/30/oil-rises-on-supply-concerns-as-houthis-attack-saudi-arabia.html
+- 2026-10-28 Saudi Arabia: Houthi drone/missile strikes hit Ras Tanura, Rabigh refineries and Abqaiq facility; Saudi Aramco evacuates Dhahran HQ — https://www.cnbc.com/2026/10/30/oil-rises-on-supply-concerns-as-houthis-attack-saudi-arabia.html
+- 2026-10-27 India: ICRA Chief Economist: West Asia crisis may cost govt ₹1.35 lakh crore — BusinessLine headline: 'West Asia crisis so far may cost govt ₹1.35 lakh crore, spending cuts unlikely: ICRA Chief Economist'
+- 2026-10-30 India: Reliance diversifies crude sourcing to Latin America, North America and the Mediterranean as Middle East supply is disrupted — ET headline: 'Reliance looks to Latin America, North America and the Mediterranean as Middle East oil disruptions put supply chains under pressure'
+- 2026-10-29 India (Gujarat): Morbi ceramic exports confirmed to shrink ~40% in FY27 (Saudi shipments -92.6%, UAE -86.5%) on freight/Hormuz disruption — https://theprint.in/economy/a-war-in-the-gulf-a-crisis-in-gujarats-morbi-indias-ceramics-capital-counts-the-cost/2877673/
+- 2026-10-28 India: Allied Blenders and Distillers (ABD) margins narrow in Q2 on supply-chain hit despite crossing 10 million case mark — BusinessLine headline: 'ABD crosses 10 million case mark in Q2 as margins narrow on supply chain hit'
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| HFCL | 1 | benefit | high | Pivoted to telecom/networking products (83% of Q1FY27 revenue vs 27% in FY21), riding global DC buildouts and exports |
-| ANANTRAJ | 1 | benefit | medium | DC land/capacity developer, direct beneficiary of hyperscale and PE capital inflow into India DC capacity |
-| STLTECH | 2 | benefit | medium | Optical fibre/cable supplier into DC and telecom backhaul buildout |
-| TATACOMM | 2 | benefit | medium | Enterprise/cloud connectivity revenue scales with DC traffic growth |
-| BLUESTARCO | 2 | benefit | medium | DC cooling/HVAC equipment demand rises with capacity build-out |
-| RAILTEL | 3 | benefit | low | Fibre network leasing to DC and enterprise customers |
+| OIL | 1 | benefit | high | Upstream E&P revenue is price × volume; a sustained $110-120 Brent directly lifts realisations |
+| GESHIP | 2 | benefit | medium | Longer-haul crude sourcing from the Americas/Mediterranean (replacing short Gulf routes) raises tanker ton-mile demand and freight rates |
+| SCI | 2 | benefit | medium | Same rerouting mechanism as GESHIP — longer voyages lift tanker utilisation and rates |
+| AEGISLOG | 2 | benefit | medium | Volatile crude/LNG flows and rerouted import mix increase demand for terminal storage and handling capacity |
+| CASTROLIND | 1 | hurt | medium | Lubricant base oils are crude derivatives; a rapid crude spike compresses margins before pricing catches up |
+| ABDL | 1 | hurt | medium | Company explicitly flagged margin narrowing this quarter from the West Asia-driven supply-chain/freight cost hit |
+| KAJARIACER | 1 | hurt | medium | Gulf is ~25% of Morbi ceramic export volume; Hormuz/Houthi disruption has cut Saudi/UAE shipments 85-93%, hitting export revenue |
+| SOMANYCERA | 1 | hurt | medium | Same Morbi-cluster Gulf export collapse as KAJARIACER |
 
-**Map corrections applied:** E2E
-
-## Semiconductors & OSAT (semis) — mixed, strength 4/5, medium horizon, strengthening
+## Electronics manufacturing (EMS) (ems) — headwind, strength 4/5, near horizon, strengthening
 _existing theme_
 
-India's chip mission crossed from announcement to confirmed capex (12 projects, Rs 1.64 lakh crore, 6 states) the same week global memory/logic chip sentiment wobbled on oversupply fears — the domestic buildout is now a decided, multi-year fact insulated from one bad quarter in US chip stocks.
+Last week's DRAM/NAND cost shock (90-120% since late 2025) has deepened further (40-160% in recent months, 600% over 18 months per reports) and is now converting into actual retail price hikes, directly squeezing the budget-device volumes EMS assemblers depend on.
 
 **Drivers**
-- 2026-10-19 India: Amitabh Kant confirms 12 approved semiconductor projects across 6 states, Rs 1.64 lakh crore investment (Tata-PSMC Dholera fab, Tata OSAT Assam, SiCSem & 3D Glass Odisha, ASIP Andhra Pradesh, CDIL Punjab) — https://english.punjabkesari.com/business/indias-semiconductor-future-taking-shape-with-12-approved-projects-rs-164-lakh-crore-investment-amitabh-kant
-- 2026-10-15 US: US chip stocks (SanDisk, Intel, Micron, AMD) fall over 7% on investor oversupply concerns — headline: Chip Stocks Fall Over 7%, With SanDisk, Intel, Micron And AMD Trading Lower Amid Investors' Oversupply Concerns
+- 2026-11-15 India: Lava raises smartphone prices by up to ₹3,000 across its India portfolio, effective November 15, citing global memory shortages — https://gadgetbridge.com/lava-international-announces-smartphone-price-hike-of-up-to-%E2%82%B93000-amid-global-memory-shortages/
+- 2026-10-30 Global: DRAM/NAND prices up a further 40-160% in recent months on AI data-centre demand, on top of 600% over 18 months — https://www.deccanherald.com/technology/phone-prices-spike-as-chip-crunch-bites-4053720
+- 2026-10-30 Global: Nasdaq sinks 2.2% and Japan's Nikkei falls 3% as AI-spending/chip-oversupply fears hit global chip stocks — ET headline: 'US stocks today: Nasdaq sinks 2.2% as Amazon, Intel fuel fresh fears over AI spending'
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| KAYNES | 1 | benefit | high | OSAT/packaging capacity stays qualified for mission capital subsidy regardless of global memory cycle |
-| MOSCHIP | 1 | benefit | medium | Fabless/design-services exposure to the expanding domestic ecosystem |
-| TATAELXSI | 2 | benefit | low | Design/engineering services tied to semiconductor and embedded-systems programs |
-
-## Electronics manufacturing (EMS) (ems) — headwind, strength 3/5, near horizon, new
-_existing theme_
-
-A global, AI-data-centre-driven DRAM/NAND shortage has pushed memory component costs up 90-120% since late 2025, gutting India's sub-$100 smartphone segment (IDC: shipments down 74.3% YoY) — the budget-device volumes that domestic EMS assemblers depend on for scale.
-
-**Drivers**
-- 2026-10-16 India: Homegrown firms enter budget smartphone market as memory chip prices rise — headline: Homegrown firms enter budget smartphone market as memory chip prices rise
-- 2026-10 India: IDC: India sub-$100 smartphone shipments fall 74.3% YoY as memory costs surge; average smartphone prices up 16% in H1 2026 per Counterpoint — https://www.indoneo.com/capital/india-smartphone-market-budget-phones-memory-costs/
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| DIXON | 1 | hurt | medium | Largest India smartphone EMS assembler, directly exposed to budget-segment volume collapse |
-| AMBER | 1 | hurt | low | Diversified EMS with smaller but real smartphone-linked exposure to rising BOM costs |
-| PGEL | 1 | hurt | low | EMS assembler with consumer-electronics/smartphone exposure to memory cost inflation |
-
-**Map corrections applied:** IKIO
+| DIXON | 1 | hurt | high | Largest India ODM for budget smartphones/appliances; memory-cost pass-through compresses volumes in the sub-$150 segment it depends on for scale |
+| AMBER | 1 | hurt | medium | Consumer-durable EMS volumes exposed to the same memory-driven retail price inflation |
+| SYRMA | 1 | hurt | medium | Consumer-electronics EMS mix exposed to component cost inflation squeezing OEM order volumes |
+| PGEL | 1 | hurt | medium | PCBA/appliance assembly for budget devices directly exposed to memory-cost pass-through |
 
 ## Textiles & apparel PLI (textiles) — tailwind, strength 4/5, medium horizon, strengthening
 _existing theme_
 
-Two trade risks that hung over exporters all year resolved favourably within ten days: the India-US tariff is locked at 18% (not the feared 25%, Russian-oil penalty waived) and the India-New Zealand FTA went live with duty-free access — converting last week's conditional outlook into confirmed market access.
+Two decided government actions land in the same week: the PLI portal reopens for a more inclusive Round 4 (turnover bar cut from ₹200cr to ₹100cr, tenure extended to FY33-34), and the RELIEF export-risk cover — which insures exporters against West Asia-driven freight/insurance cost spikes — is extended to March 2027.
 
 **Drivers**
-- 2026-10-15 India/US: India-US trade deal: reciprocal tariff cut from 25% to 18%, Russian-oil penalty executive order removed — https://www.india-briefing.com/news/us-india-interim-trade-agreement-18-percent-tariff-42514.html/
-- 2026-10-20 India/New Zealand: India-New Zealand FTA takes effect Oct 20: duty-free access for Indian textile, pharma, leather exports — headline: India-New Zealand FTA: No tariff on Indian exports from Oct 20; Textile, pharma, leather exports to gain market access
-- 2026-10-19 India: Government plans Rs 25,000-crore skilling push to sharpen textile export edge — headline: Govt plans ₹25,000-crore skilling push to sharpen textile export edge
+- 2026-11-01 India: Ministry of Textiles reopens PLI Round 4 portal Nov 1, cuts minimum turnover from ₹200cr to ₹100cr, extends tenure to FY33-34 — https://www.zeebiz.com/india/news-textile-pli-scheme-round-4-opens-on-november-1-government-lowers-turnover-requirement-404734
+- 2026-10-26 India: Department of Commerce extends RELIEF scheme (95% export risk cover) for exporters to March 31, 2027 amid West Asia disruption — https://www.businessworld.in/article/government-extends-relief-scheme-for-exporters-until-march-2027-630533
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| KPRMILL | 1 | benefit | high | Large US/EU-facing apparel and yarn exporter, direct tariff-rate beneficiary |
-| GOKEX | 1 | benefit | high | Garment exporter with a significant US order book |
-| TRIDENT | 1 | benefit | medium | Home textiles exporter to the US, direct beneficiary of the lower locked-in tariff |
-| WELSPUNLIV | 1 | benefit | medium | US-facing home textiles exporter |
-| ARVIND | 2 | benefit | medium | Fabric/denim supplier into the export garment chain |
+| KPRMILL | 1 | benefit | medium | Large MMF/garment exporter gains both PLI incentive visibility and RELIEF cover against freight/insurance cost spikes on its export book |
+| GOKEX | 1 | benefit | medium | Garment exporter directly covered by the extended RELIEF export-risk scheme |
+| TRIDENT | 1 | benefit | medium | Home textiles exporter benefits from both PLI Round 4 reopening and RELIEF cover |
+| WELSPUNLIV | 1 | benefit | medium | Large home-textile exporter covered by RELIEF's export-risk protection |
+| ICIL | 1 | benefit | medium | Bed-linen exporter directly covered by RELIEF's risk protection on export consignments |
+| SANGAMIND | 1 | benefit | low | Lower ₹100cr PLI turnover threshold newly brings mid-sized MMF spinners into the incentive's reach |
+| NITINSPIN | 1 | benefit | low | Same MSME-inclusion mechanism as SANGAMIND under the lowered PLI threshold |
 
-## Energy security & crude price shock (energysecurity) — mixed, strength 5/5, near horizon, strengthening
+## Shipping container manufacturing (containers) — tailwind, strength 4/5, long horizon, new
 _NEW THEME — promote to scoring/themes.py to score it_
 
-Brent crossing $111 on repeated Houthi strikes on Saudi oil infrastructure, five months into the Iran war, lifts realisations for India's one upstream producer while squeezing refiners on crude cost — even as those same refiners keep harvesting strong export cracks on discounted Russian barrels shipped to the West.
+The Cabinet approved a 13-year, ₹10,000 crore Container Manufacturing Promotion Scheme (FY28-FY40) with per-box cash incentives of ₹49,500 (20ft) and ₹86,625 (40ft), targeting a near-10x rise in domestic container capacity — a direct, decided revenue subsidy for the one universe name that already makes containers.
 
 **Drivers**
-- 2026-10-21 Saudi Arabia/Global: Brent crude tops $111/bbl after a Houthi drone strike near Saudi Aramco's Shaybah field and a strike on Dammam airport — https://www.thenationalnews.com/business/energy/2026/10/22/oil-tops-110-as-houthi-drone-strike-near-saudi-shaybah-field-rattles-markets/
-- 2026-10-21 India: Indian Oil to trim West Asia/Middle East oil imports under annual term deals amid Iran war — headline: Indian Oil to trim West Asia oil imports under annual deals amid Iran war
-- 2026-10-18 India: Indian refiners' fuel exports to the West jump 43% as they keep processing discounted Russian crude — headline: Indian refiners' fuel exports to the West jump 43% as they keep processing Russian crude
+- 2026-10-28 India: Union Cabinet approves ₹10,000 crore Container Manufacturing Promotion Scheme, targeting capacity rising from ~70,000 to 750,000 TEUs by FY40 — https://www.business-standard.com/economy/news/india-container-manufacturing-scheme-maritime-trade-shipping-imports-126103000871_1.html
+- 2026-10-28 India: Scheme offers ₹49,500 per 20ft container and ₹86,625 per 40ft container produced and sold, plus interest subvention on capex loans — https://www.marineinsight.com/india-approves-rs-10000-crore-scheme-to-boost-domestic-shipping-container-manufacturing/
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| OIL | 1 | benefit | high | Upstream E&P revenue scales directly with Brent realisation |
-| MRPL | 1 | benefit | medium | Refiner processing discounted Russian crude while exporting fuel into strong Western cracks |
-| CHENNPETRO | 1 | benefit | medium | Same mechanism as MRPL: cheap Russian feedstock plus strong export cracks to the West |
-| CASTROLIND | 2 | hurt | low | Lubricant maker faces crude-linked base-oil feedstock cost headwind |
-| IGL | 1 | hurt | low | City-gas distributor faces higher global crude/LNG-linked gas costs pressuring margin despite volume growth |
+| JWL | 1 | benefit | high | Already operates a container manufacturing facility in Indore and directly qualifies for the per-box production subsidy |
+| SAIL | 2 | benefit | medium | Container shells require corten-grade steel; SAIL's indigenous 'SAILCOR' grade from Bokaro positions it as the domestic plate supplier to new container capacity |
 
-## Steel capacity & trade protection (steel) — tailwind, strength 4/5, long horizon, steady
+## Renewables, solar & storage (renewables) — mixed, strength 4/5, medium horizon, new
+_existing theme_
+
+The US Section 232 minimum-import-price action has gone from a flagged risk to a realised P&L hit — Waaree's US export order share fell from ~24% to under 8% of its book in one quarter — even as domestic commissioning and NTPC-linked contracting keep the India-facing capex story intact.
+
+**Drivers**
+- 2026-10-28 India/US: Waaree Energies removes ~3GW of US export orders from its book; export share of order book falls from ~24% to under 8% in a quarter on Section 232 minimum-import-price uncertainty — https://www.tradingview.com/news/moodys:a297614b1ce1f:0-waaree-energies-flags-us-linked-export-order-cancellations/
+- 2026-10-29 India: ACME Solar Q2 profit jumps over 100%; signs 400MW agreement with NTPC — ET headline: 'ACME Solar shares rally 5% after Q2 profit jumps over 100%, signs 400MV agreement with NTPC'
+- 2026-10-30 India: NTPC Green Energy begins commercial operation of 95.6 MW Kalasar solar project in Rajasthan — BusinessLine headline: 'NTPC Green Energy begins commercial operation of 95.6 MW of Kalasar solar project in Rajasthan'
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| WAAREEENER | 1 | hurt | high | Section 232 MIP/duties directly cut US-bound export order volume this quarter |
+| PREMIERENE | 1 | hurt | medium | Same Section 232 US tariff exposure applies industry-wide to Indian solar cell/module exporters |
+| ACMESOLAR | 1 | benefit | high | Domestic IPP with a new, decided 400MW NTPC agreement and profit more than doubling |
+| NTPCGREEN | 1 | benefit | medium | Newly commissioned capacity converts pipeline into revenue-generating assets |
+
+**Map corrections applied:** UTLSOLAR
+
+## Railways & metro (railways) — tailwind, strength 3/5, medium horizon, steady
+_existing theme_
+
+Railway Board capex keeps flowing to listed suppliers in concrete, dated orders — this week a direct ₹1,140 crore wagon order — confirming the sector's order-book momentum continues uninterrupted.
+
+**Drivers**
+- 2026-10-29 India: Jupiter Wagons secures ₹1,140 crore order from the Railway Board/Ministry — BusinessLine headline: 'Jupiter Wagons secures ₹1,140-crore order from Ministry'
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| JWL | 1 | benefit | high | Direct, dated ₹1,140 crore order booked from the Railway Board this week |
+
+**Map corrections applied:** GPTINFRA
+
+## Insurance distribution economics squeeze (insurdistribution) — headwind, strength 3/5, medium horizon, new
 _NEW THEME — promote to scoring/themes.py to score it_
 
-The draft National Steel Policy Vision 2047 (604 MT capacity, AI-based import surveillance, continued safeguard/anti-dumping recourse) is now reinforced by live data — September infra output already running hot on steel and coal, and JSW Steel winning a mining-dispute reprieve that protects ore-linked cost structures.
+IRDAI's consultation on 'Recalibrating Economics of Insurance Distribution' (comments closed Oct 25) proposes tight product- and channel-specific commission caps and a multi-year glide-path cut to expense-of-management limits — a direct threat to distribution-commission-heavy business models, as the affected companies themselves are now publicly flagging.
 
 **Drivers**
-- 2026-10-11 India: Government releases draft National Steel Policy Vision 2047: targets 604 MT capacity, 505 MT demand, 45 MT exports by 2047, with AI-based import monitoring — https://www.business-standard.com/industry/news/govt-releases-draft-national-steel-policy-2047-targets-604-mt-capacity-126101100130_1.html
-- 2026-10-21 India: India's infrastructure output grows 7.9% YoY in September on strong coal, steel output — headline: India's infrastructure output grows 7.9% year-on-year in September on strong coal, steel output
-- 2026-10-18 India: JSW Steel gets relief from Orissa HC in Rs 2,169 crore mining dispute — headline: JSW Steel gets relief in ₹2,169 crore mining dispute: What was the case and what Orissa HC ruled
+- 2026-10-30 India: PolicyBazaar CEO Yashish Dahiya: the agent business may need to change under IRDAI's draft distribution rules — Livemint headline: 'Policybazaar’s agent business may need to change under Irdai’s draft rules, says CEO Yashish Dahiya'
+- 2026-10-28 India: Star Health lobbies IRDAI to keep mandated products outside the proposed expense cap — Livemint headline: 'Star Health wants mandated products kept out of Irdai’s expense cap'
+- 2026-10-28 India: Bandhan Bank flags a ₹200 crore hit to third-party (bancassurance) income from IRDAI's proposed distribution overhaul — Livemint headline: 'Bandhan Bank sees ₹200 crore hit to third-party income from Irdai’s proposed distribution overhaul'
+- 2026-09-23 India: IRDAI consultation paper proposes commission caps (e.g. 2% on single-premium credit-life, nil on third-party motor for distribution entities) and a 5-year EoM glide-path to 20% GDPI (general) / 12.5% (life) — https://beinsure.com/news/irdai-proposes-insurance-distribution/
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| SAIL | 1 | benefit | high | Largest listed integrated steelmaker in the universe, direct capacity-expansion and pricing-power beneficiary |
-| JSL | 1 | benefit | medium | Stainless capacity expansion aligned with the policy's value-addition push |
-| NSLNISP | 1 | benefit | medium | NMDC's steel arm ramping capacity into a supportive demand and trade-protection backdrop |
-| SHYAMMETL | 1 | benefit | medium | Secondary steel producer benefiting from safeguard/anti-dumping continuity |
-| GALLANTT | 1 | benefit | low | Long-products steelmaker riding domestic capacity growth |
-| JAIBALAJI | 1 | benefit | low | Sponge iron/steel producer benefiting from firm pricing and output growth |
-| KSL | 1 | benefit | low | Alloy/special steel maker aligned with policy's value-addition focus |
-| NMDC | 2 | benefit | medium | Iron-ore supplier, direct volume beneficiary of the 604 MT capacity build-out target |
-| MOIL | 2 | benefit | low | Manganese ore supplier into the ferro-alloy/steel chain |
-| GRAPHITE | 2 | benefit | low | Graphite electrode maker for EAF-based steel capacity additions |
+| POLICYBZR | 1 | hurt | high | Insurance-broking/agent revenue model directly targeted by proposed commission caps; CEO publicly confirms a business-model change is likely |
+| STARHEALTH | 1 | hurt | medium | Standalone health insurer exposed to the proposed EoM/commission caps unless mandated products are carved out |
+| BANDHANBNK | 2 | hurt | medium | Bank's third-party (bancassurance) distribution fee income directly quantified as a ₹200cr hit under the draft rules |
 
-## Copper price & trade protection (copper) — mixed, strength 3/5, medium horizon, steady
+## Pharma CDMO & API (cdmo) — mixed, strength 3/5, medium horizon, steady
+_existing theme_
+
+Piramal Pharma's explicit move to cut China exposure for supply-chain resilience, alongside pharma exports growing 4.9% (Europe +10%), confirms the China+1 CDMO tailwind is still live — while the government's 30% trade-margin cap on 543 drug brands is a dated, quantified cost headwind for domestic oncology-brand makers.
+
+**Drivers**
+- 2026-10-28 India: Piramal Pharma is cutting China exposure to manage supply-chain resilience, says Nandini Piramal — ET headline: 'Piramal Pharma cutting China exposure to manage supply-chain resilience, says Nandini Piramal'
+- 2026-10-29 India: India's pharma exports rise 4.9% to USD 16.14 bn in H1; shipments to Europe up nearly 10%: Pharmexcil — ET headline: 'India's pharma exports rise 4.9% to USD 16.14 bn in H1...: Pharmexcil'
+- 2026-10-28 India: Government caps trade margins at 30% and revises prices on 543 cancer drug brands — NDTV Profit headline: 'Cancer Drug Price Cut: Govt Caps Trade Margins At 30%, Revises Prices Of 543 Drug Brands'
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| PPLPHARMA | 1 | benefit | high | Company directly stated it is shifting supply chain away from China, favouring its own India/other-geography CDMO capacity |
+| COHANCE | 1 | benefit | medium | China+1 CDMO client reallocation and rising pharma exports broadly support contract manufacturing order books |
+| SYNGENE | 1 | benefit | medium | Same China+1/export-growth tailwind applies to India's largest listed pure-play CDMO |
+| BIOCON | 1 | hurt | low | Oncology biosimilar portfolio falls within the newly capped 543-brand list, pressuring trade margins |
+| NATCOPHARM | 1 | hurt | low | Oncology-generics-focused portfolio exposed to the same 30% trade-margin cap |
+
+**Map corrections applied:** PPLPHARMA, ONESOURCE, SAILIFE, DCAL
+
+## Financial market infrastructure (finfra) — mixed, strength 3/5, near horizon, steady
+_existing theme_
+
+SEBI cut two frictions for foreign capital (FPI onboarding to 5 business days, KYC review extended to 8 years) which favours depositories/custodians, even as its decision to make direct mutual-fund plans the default works against commission-dependent distribution platforms.
+
+**Drivers**
+- 2026-10-28 India: SEBI aims to cut foreign investor onboarding to as little as five business days — NDTV Profit headline: 'SEBI Aims To Cut Foreign Investor Onboarding To As Little As Five Business Days'
+- 2026-10-30 India: SEBI eases KYC norms for foreign investors, extends review period to eight years — NDTV Profit headline: 'SEBI Eases KYC Norms For Foreign Investors, Extends Review Period To Eight Years'
+- 2026-10-29 India: SEBI makes direct mutual fund plans the default, pushing transparency on costs and commissions — BusinessLine headline: 'SEBI makes direct mutual fund plans default, pushes transparency on costs and commissions'
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| CDSL | 1 | benefit | medium | Faster FPI onboarding and longer KYC review cycles increase demat-account volume and reduce compliance friction for custodial flows |
+| ANGELONE | 1 | hurt | medium | Direct plans becoming the default reduces the trail-commission pool available to distribution platforms over time |
+
+**Map corrections applied:** ABSLAMC, 5PAISA
+
+## Ethanol blending ceiling (ethanol) — headwind, strength 2/5, near horizon, fading
 _NEW THEME — promote to scoring/themes.py to score it_
 
-The copper lobby is pushing government to both protect the one listed primary producer from a 77%-in-five-years import surge and double the duty on solar PV ribbons/busbars to 10% — a clean tailwind for the miner and a dated, quantifiable cost headwind for cable-makers and solar-module producers.
+Last week's grain-diversion tailwind assumed blending would keep climbing; this week the oil minister explicitly ruled out going beyond 20%, and the Supreme Court is now questioning the 100%-ethanol vehicle push on fuel-supply grounds — capping the demand growth story rather than reversing existing E20 volumes.
 
 **Drivers**
-- 2026-10-13 India: Indian Primary Copper Producers Association asks govt to retain 5% BCD on refined copper and raise duty on solar PV ribbons/busbars from 5% to 10%, citing a 77% surge in refined copper imports since 2020 — https://now.solar/2026/10/13/cos-body-for-higher-duty-on-copper-used-in-solar-module-the-economic-times/
-- 2026-10-20 Global: Copper rises as US inventories draw down; Goldman Sachs flags new mine supply taking over 16 years to develop — headline: Copper supply crunch deepens as new mines take over 16 years to develop: Goldman Sachs
+- 2026-10-27 India: Union minister Hardeep Puri: no intention to increase ethanol blending in fuel beyond 20% — ET headline: 'No intention to increase ethanol blending in fuel beyond 20%: Union minister Hardeep Puri'
+- 2026-10-29 India: India's 100%-ethanol-run vehicle push faces Supreme Court question to government over fuel supply — ET headline: 'India's 100% ethanol-run vehicle push faces Supreme Court question to govt over fuel supply'
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| HINDCOPPER | 1 | benefit | high | Sole listed primary copper producer in universe, direct beneficiary of high prices and the proposed protective duty |
-| RRKABEL | 2 | hurt | medium | Copper is the primary input cost for wire/cable manufacturing |
-| FINCABLES | 2 | hurt | medium | Same copper cost-pass-through exposure as other cable makers |
-| KEI | 2 | hurt | low | Scale partly hedges copper cost, but pass-through lag remains a margin risk |
-| WAAREEENER | 2 | hurt | low | Solar module maker faces higher BOM cost if PV ribbon/busbar duty doubles to 10% |
-| PREMIERENE | 2 | hurt | low | Solar cell/module maker with the same ribbon/busbar duty exposure |
-
-## Sugar-ethanol diversion halt (ethanol) — mixed, strength 4/5, near horizon, new
-_NEW THEME — promote to scoring/themes.py to score it_
-
-The government set sugarcane-to-ethanol diversion at zero for 2026-27 to defend record-high retail sugar prices after weak Maharashtra/Karnataka cane yields — a direct, dated hit to cane-based mills' ethanol revenue, while the 11-billion-litre OMC tender it opened instead to corn and broken rice redirects that demand toward grain-based processors.
-
-**Drivers**
-- 2026-10-16 India: Centre sets sugar diversion for ethanol at zero for 2026-27 supply year; OMCs invite bids for 11 billion litres of ethanol from corn/broken rice instead of sugarcane — https://www.business-standard.com/industry/news/centre-sets-sugar-diversion-for-ethanol-at-zero-in-2026-27-tender-126101601377_1.html
-- 2026-10-19 India: Sugar stocks Balrampur Chini, Bajaj Sugar, others crash up to 7% as centre stops diversion to ethanol — headline: Sugar stocks Balrampur Chini, Bajaj Sugar, others crash up to 7% as centre stops diversion to ethanol
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| BALRAMCHIN | 1 | hurt | high | Loses cane-to-ethanol diversion allowance for the full 2026-27 season |
-| BAJAJHIND | 1 | hurt | high | Named directly in the sell-off; cane-based ethanol revenue line removed for the season |
-| UTTAMSUGAR | 1 | hurt | medium | Cane-based sugar/ethanol producer loses the same diversion allowance |
-| RENUKA | 1 | hurt | medium | Cane-based sugar/ethanol producer loses the same diversion allowance |
-| EIDPARRY | 1 | hurt | low | Diversified sugar producer with an ethanol segment affected by the zero-diversion mandate |
-| GAEL | 2 | benefit | low | Maize-based processor positioned to supply grain-ethanol into the OMC tender redirected away from cane sugar |
-| SANSTAR | 2 | benefit | low | Maize/starch processor with ethanol capacity benefiting from the same redirected demand |
-
-## US tariff relief for gems & generics (gemstariff) — tailwind, strength 3/5, near horizon, new
-_NEW THEME — promote to scoring/themes.py to score it_
-
-Washington removed a second overhang this week: the threatened 100% punitive tariff on Indian goods tied to Russian-oil purchases — which gem and jewellery exporters feared most ahead of the US holiday season — was waived, while generics, gems and diamonds retain confirmed zero-tariff status under the trade deal's first phase.
-
-**Drivers**
-- 2026-10-20 India/US: US waives proposed 100% punitive tariff threat on Indian gems/jewellery tied to Russia-sanctions law; generics, gems, diamonds remain zero-tariff under trade deal phase 1 — https://rapaport.com/news/us-to-nix-tariff-on-indian-gems-and-natural-diamonds/
-- 2026-10-20 India: Gem, jewellery exporters heave a sigh of relief as the US puts off punitive tax — headline: Gem, jewellery exporters heave a sigh of relief as the US puts off punitive tax
-- 2026-10-19 US: NATCO Pharma subsidiary launches generic Carboplatin in US market to address shortages — headline: NATCO Pharma subsidiary launches Carboplatin in US market to address shortages
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| GOLDIAM | 1 | benefit | high | US-facing diamond/jewellery exporter, direct beneficiary of the tariff-threat removal |
-| RGL | 1 | benefit | medium | US-focused jewellery exporter with major US retail customers |
-| IGIL | 2 | benefit | low | Gemological certification volumes tied to global gem-trade flow, which the tariff removal unblocks |
-| NATCOPHARM | 1 | benefit | medium | Generics exporter actively launching new products into the confirmed zero-tariff US market |
-| AUROPHARMA | 1 | benefit | low | Large generics exporter to the US, zero-tariff status reaffirmed under trade deal phase 1 |
-| GRANULES | 1 | benefit | low | API/generics exporter with US exposure benefiting from confirmed zero-tariff treatment |
-
-## IDBI Bank privatisation (idbi) — tailwind, strength 3/5, near horizon, steady
-_NEW THEME — promote to scoring/themes.py to score it_
-
-Last week's Cabinet-approved Fairfax sale keeps moving through the pipeline — DIPAM confirms RBI's banking-licence nod is now the final gating item — while this week's 7% pullback reads as profit-booking on priced-in news, not a reversal of the re-rating catalyst.
-
-**Drivers**
-- 2026-10-16 India: IDBI Bank sale to Fairfax enters final lap, RBI nod now key: DIPAM — headline: IDBI Bank sale to Fairfax enters final lap, RBI nod now key: DIPAM
-- 2026-10-15 India: IDBI Bank shares fall 7% as investors book profit after Fairfax deal gets cabinet nod — headline: IDBI Bank shares fall 7% as investors book profit after Fairfax deal gets cabinet nod
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| IDBI | 1 | benefit | high | Direct subject of the privatisation re-rating catalyst, now in the final regulatory (RBI) stage |
+| BALRAMCHIN | 1 | hurt | low | Growth narrative built on blending rising past E20 loses its confirmed policy ceiling, capping incremental ethanol-segment upside |
+| GODAVARIB | 1 | hurt | low | Same E20-ceiling mechanism caps further grain/sugarcane-to-ethanol volume growth |
 
 ## Beneficiaries the universe does not hold
 
-- Tata Electronics / PSMC (Dholera fab) and Tata Semiconductor Assembly & Test (As (semis): The two largest confirmed India chip-mission projects (Rs 91,526cr and Rs 27,120cr) are not separately listed/in this universe
-- SiCSem and 3D Glass Solutions (Odisha) (semis): Two of the 12 approved semiconductor-mission projects; unlisted project sponsors
-- CDIL (Continental Device India) (semis): Punjab power-semiconductor mission project sponsor, not listed in universe
-- Vedanta, Hindalco, Kutch Copper (Adani) (copper): India's largest copper producers and IPCPA members are not in this universe; HINDCOPPER is the only listed proxy
-- JSW Steel, Tata Steel, Jindal Steel & Power (steel): The largest Indian steelmakers driving the National Steel Policy narrative sit outside this small/mid-cap screener universe
-- Tonbo Imaging (defelec): Defence-electronics maker got SEBI nod for its IPO this week but is not yet listed
+- Jindal Steel & Power (containers): Already planned entry into container manufacturing; a direct beneficiary of the new scheme not in the universe
+- JSW Steel (containers): Considering container manufacturing under its maritime vision; large steel supplier to the new scheme, not in the universe
+- Kalyani Cast-Tech (containers): Existing ISO shipping-container and steel-casting maker directly named as a scheme beneficiary; not listed/not in the universe
+- InterGlobe Aviation (IndiGo) (energysecurity): Iran war and rupee fall flagged to push India airline sector losses to Rs 38,000 crore this year; airlines are not in the universe
+- Coal India (energysecurity): H1 capex up 27% and dispatches outpacing production as crude disruption raises reliance on domestic coal; not in the universe
