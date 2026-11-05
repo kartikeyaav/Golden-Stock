@@ -1,7 +1,7 @@
 {
- "generated": "2026-11-04 18:16",
+ "generated": "2026-11-05 18:29",
  "n_checked": 1003,
- "n_flagged": 80,
+ "n_flagged": 81,
  "asm_total": 190,
  "syms": {
   "ACUTAAS": {
@@ -1028,6 +1028,18 @@
    "worst": "ASM"
   },
   "UTTAMSUGAR": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
+  "NELCAST": {
    "flags": [
     {
      "code": "ASM",

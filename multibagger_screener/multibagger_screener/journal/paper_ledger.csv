@@ -168,3 +168,6 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-10-30,SPORTKING,SELL,all,538,190.4,-12492.36,stop hit
 2026-11-02,SAREGAMA,BUY,entry,40,550.2,,[SAREGAMA@2026-10-30 22:44] analyst BUY/MEDIUM/HALF PLAN
 2026-11-02,WELCORP,SKIP,entry,0,,,[WELCORP@2026-10-30 22:45] already open in paper book
+2026-11-05,DIACABS,BUY,entry,90,393.0,,[DIACABS@2026-11-04 21:31] analyst BUY/MEDIUM/FULL PLAN
+2026-11-05,TASTYBITE,SKIP,entry,0,,,[TASTYBITE@2026-11-04 21:32] stop too wide to size (<2 shares at risk budget)
+2026-11-05,ACMESOLAR,BUY,entry,56,426.0,,[ACMESOLAR@2026-11-04 21:34] analyst BUY/MEDIUM/HALF PLAN
