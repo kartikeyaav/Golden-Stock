@@ -171,3 +171,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-11-05,DIACABS,BUY,entry,90,393.0,,[DIACABS@2026-11-04 21:31] analyst BUY/MEDIUM/FULL PLAN
 2026-11-05,TASTYBITE,SKIP,entry,0,,,[TASTYBITE@2026-11-04 21:32] stop too wide to size (<2 shares at risk budget)
 2026-11-05,ACMESOLAR,BUY,entry,56,426.0,,[ACMESOLAR@2026-11-04 21:34] analyst BUY/MEDIUM/HALF PLAN
+2026-11-06,ORIENTHOT,SELL,partial,51,176.95,1272.45,partial at 2.5R

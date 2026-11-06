@@ -9,3 +9,8 @@ date,symbol,action,shares,price,value,reason
 2026-10-01,BHAGERIA,SELL,523,415.8,217463.39,regime exit or stop / 3xATR trail; x1.09 since 2026-09-30
 2026-10-01,CONFIPET,SELL,2295,87.9,201730.5,regime exit or stop / 3xATR trail; x1.01 since 2026-09-30
 2026-10-01,PAISALO,SELL,2550,77.0,196350.0,regime exit or stop / 3xATR trail; x0.99 since 2026-09-30
+2026-11-06,BHAGERIA,BUY,541,372.0,201252.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-06,GANDHAR,BUY,788,255.4,201255.2,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-06,PAISALO,BUY,2613,76.6,200155.8,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-06,PREMIERPOL,BUY,2142,94.0,201348.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-06,SOTL,BUY,300,669.25,200775.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template

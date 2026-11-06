@@ -9,3 +9,8 @@ date,symbol,action,shares,price,value,reason
 2026-10-01,STLTECH,SELL,248,955.35,236926.79,regime exit or stop / 30-week trail; x1.19 since 2026-09-29
 2026-10-01,KABRAEXTRU,SELL,240,810.0,194400.0,regime exit or stop / 30-week trail; x0.97 since 2026-09-29
 2026-10-01,BODALCHEM,SELL,988,197.0,194636.0,regime exit or stop / 30-week trail; x0.98 since 2026-09-29
+2026-11-06,BHAGYANGR,BUY,1241,73.14,90766.74,RS leader: 6m and 12m return in the top 10%
+2026-11-06,KABRAEXTRU,BUY,299,711.5,212738.5,RS leader: 6m and 12m return in the top 10%
+2026-11-06,SIGMAADV,BUY,236,900.05,212411.8,RS leader: 6m and 12m return in the top 10%
+2026-11-06,SPECTRUM,BUY,49,4346.0,212954.0,RS leader: 6m and 12m return in the top 10%
+2026-11-06,TBZ,BUY,350,609.0,213150.0,RS leader: 6m and 12m return in the top 10%

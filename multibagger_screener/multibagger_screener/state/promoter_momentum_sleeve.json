@@ -105,30 +105,78 @@
   [
    "2026-11-05",
    1007307.51
+  ],
+  [
+   "2026-11-06",
+   989542.8
   ]
  ],
- "last_session": "2026-11-05",
+ "last_session": "2026-11-06",
  "book": {
-  "cash": 1007307.5056945231,
-  "pos": {},
-  "pending_buys": [
+  "cash": 9.549513206729898,
+  "pos": {
+   "BHAGERIA": {
+    "j": 511,
+    "entry_t": 542,
+    "px": 372.0,
+    "sh": 541,
+    "peak": 372.0,
+    "entry_date": "2026-11-06"
+   },
+   "PREMIERPOL": {
+    "j": 759,
+    "entry_t": 542,
+    "px": 94.0,
+    "sh": 2142,
+    "peak": 94.0,
+    "entry_date": "2026-11-06"
+   },
+   "GANDHAR": {
+    "j": 1693,
+    "entry_t": 542,
+    "px": 255.39999389648438,
+    "sh": 788,
+    "peak": 255.39999389648438,
+    "entry_date": "2026-11-06"
+   },
+   "SOTL": {
+    "j": 1064,
+    "entry_t": 542,
+    "px": 669.25,
+    "sh": 300,
+    "peak": 669.25,
+    "entry_date": "2026-11-06"
+   },
+   "PAISALO": {
+    "j": 979,
+    "entry_t": 542,
+    "px": 76.5999984741211,
+    "sh": 2613,
+    "peak": 76.5999984741211,
+    "entry_date": "2026-11-06"
+   }
+  },
+  "pending_buys": [],
+  "pending_sells": [
    "BHAGERIA",
    "PREMIERPOL",
    "GANDHAR",
    "SOTL",
    "PAISALO"
   ],
-  "pending_sells": [],
   "last_px": {
    "STLTECH": 909.9000244140625,
    "INDORAMA": 100.36000061035156,
-   "BHAGERIA": 406.45001220703125,
+   "BHAGERIA": 360.95001220703125,
    "CONFIPET": 88.12999725341797,
-   "PAISALO": 76.41000366210938
+   "PAISALO": 75.4800033569336,
+   "PREMIERPOL": 91.4000015258789,
+   "GANDHAR": 251.47999572753906,
+   "SOTL": 676.9500122070312
   }
  },
- "insider_asof": "2026-11-05 19:40",
- "risk_on": true,
- "asof": "2026-11-05",
- "generated": "2026-11-05 18:29"
+ "insider_asof": "2026-11-06 21:02",
+ "risk_on": false,
+ "asof": "2026-11-06",
+ "generated": "2026-11-06 17:55"
 }
