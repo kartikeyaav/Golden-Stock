@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-06 17:55",
- "n_checked": 1003,
- "n_flagged": 81,
- "asm_total": 190,
+ "generated": "2026-11-08 12:03",
+ "n_checked": 1005,
+ "n_flagged": 83,
+ "asm_total": 177,
  "syms": {
   "ACUTAAS": {
    "flags": [
@@ -209,18 +209,6 @@
    "series": "BE",
    "worst": "ASM"
   },
-  "TTML": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "THANGAMAYL": {
    "flags": [
     {
@@ -244,6 +232,18 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
+  },
+  "VEDPOWER": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "WELCORP": {
    "flags": [
@@ -413,6 +413,23 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "ENNATURE": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
+  },
   "UTLSOLAR": {
    "flags": [
     {
@@ -425,6 +442,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "EBGNG": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "HAPPYFORGE": {
    "flags": [
     {
@@ -436,6 +465,23 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "IGLSPIRITS": {
+   "flags": [
+    {
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    },
+    {
+     "code": "BE",
+     "detail": "BE settlement series",
+     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
+    }
+   ],
+   "band": 5.0,
+   "series": "BE",
+   "worst": "BAND 5%"
   },
   "JAIBALAJI": {
    "flags": [
@@ -1016,18 +1062,6 @@
    "worst": "ASM"
   },
   "SHREEPUSHK": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "UTTAMSUGAR": {
    "flags": [
     {
      "code": "ASM",
