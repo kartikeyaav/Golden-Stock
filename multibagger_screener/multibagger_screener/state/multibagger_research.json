@@ -1405,7 +1405,199 @@
     "F momentum alone (RS leader or trend template)",
     "Q1 quarterly: profit +25%, sales +20% on the same quarter last year"
    ]
+  },
+  "TEXINFRA": {
+   "symbol": "TEXINFRA",
+   "headline": "Dormant Delhi land, held a century, is finally becoming a luxury tower project",
+   "story": "Texmaco Infrastructure & Holdings (TEXINFRA) is the holding and real-estate arm of the Kolkata-based Adventz Group, controlled by the Poddar family. Its day-to-day business — leasing, a small 3 MW hydro plant on the Neora river in Darjeeling, and trading/job-work — is tiny and has lost money at the operating level every year for at least five years; standalone return on capital is near zero (ROCE about 1.4% in FY26). What the market is really pricing is two other things it owns: a 14.5% stake in listed Texmaco Rail & Engineering, and roughly 10 acres of prime land in Kamla Nagar, North Delhi — the site of the century-old Birla Cotton Mills, held by the group for more than a hundred years.\n\nThat land sat undeveloped for years while the Delhi Development Authority's conversion of its land use from industrial to residential was pending. That conversion has now been notified, and in 2026 TEXINFRA brought in global developer Hines (its first residential project in Delhi), listed developer Conscient, and HDFC Capital to build 'Elevate Kamla Nagar' — a roughly 30-lakh-sq-ft, seven-tower, around 650-unit luxury residential and retail project reported to be pricing near ₹28,000 per sq ft at launch, with the formal launch reported around September 2026. The trigger has, in other words, just landed. How much of that project's value — land sale proceeds, a revenue share, or a JV equity stake — actually flows to TEXINFRA was not disclosed in anything we could find, and that detail matters a great deal.\n\nThe accounts hint at how the company currently makes money: operating profit has been negative every year since at least FY22, yet net profit swung from a ₹7 Cr loss in FY25 to an ₹11 Cr profit in FY26, and net worth jumped by roughly ₹460 Cr between March and September 2026 even though operating cash flow was a modest ₹16 Cr. That looks like gains tied to the Texmaco Rail holding and land revaluation, not the underlying business. Texmaco Rail itself carries a market cap near ₹4,200 Cr, so TEXINFRA's stake is worth close to ₹600 Cr — more than a third of TEXINFRA's own ₹1,604 Cr market value — before the Delhi land is counted at all.\n\nPromoters have been buying steadily: the Adventz Group's investment arm made four open-market purchases in March 2026 alone, lifting promoter holding from 65% in FY22 to 66.5% now. Institutional ownership is still under 4% combined. No concall transcript or investor presentation has been filed to corroborate management's own view of the project, and no major brokerage report was found.",
+   "founder": "TEXINFRA sits within the Adventz Group, led by patriarch Saroj Kumar Poddar, who also chairs related group companies such as Zuari Industries. Within TEXINFRA, Akshay Poddar is Chairman and Jyotsna Poddar is a non-executive director. The promoter group — mainly Adventz Finance Pvt Ltd, Adventz Securities Enterprises Ltd, and Saroj and Jyoti Poddar family holdings — raised its combined stake from about 65% in March 2022 to 66.5% by September 2026, including four open-market purchases by Adventz Securities in March 2026. No pledge on promoter shares was found; group entity New Eros Tradecom has formally declared no encumbrances. Statutory auditor L.B. Jha & Co. LLP issued an unmodified opinion on the latest results. No SEBI order, auditor resignation, or other governance lapse specific to TEXINFRA was found. Related-party transactions are disclosed as arm's-length and in the ordinary course of business.",
+   "conviction": 3,
+   "horizon": "long term",
+   "thesis": "TEXINFRA's own real-estate, hydro and trading operations lose money every year, so the case here rests almost entirely on two assets: a roughly ₹600 Cr stake in listed Texmaco Rail & Engineering, and a ten-acre Delhi land parcel now being developed into a luxury project with Hines, Conscient and HDFC Capital. That project, pricing near ₹28,000 per sq ft, is only now moving from land-use approval to actual launch after close to a decade of delay, so execution speed and revenue-sharing terms are the real swing factors, not operating leverage or new capacity. For this to re-rate meaningfully, the Delhi project has to convert into cash or equity value the market is not yet pricing into a ₹1,604 Cr market cap, and the Texmaco Rail stake's value has to hold. What has to go right: clear, favourable revenue-share terms for TEXINFRA, on-time delivery by the JV partners, and no reversal in Texmaco Rail's share price, since a large part of recent net-worth gains looks mark-to-market rather than operating profit.",
+   "triggers": [
+    {
+     "what": "Elevate Kamla Nagar launch: ~30 lakh sq ft, 7-tower, ~650-unit luxury project on the 10-acre former Birla Cotton Mills site, with Hines, Conscient and HDFC Capital, priced near ₹28,000/sq ft",
+     "when": "reported launch around September 2026",
+     "source": "web/trade press"
+    },
+    {
+     "what": "14.5% stake in Texmaco Rail & Engineering (~5.9 crore shares), worth close to ₹600 Cr at TEXRAIL's ~₹4,200 Cr market cap",
+     "when": "current",
+     "source": "shareholding data / market data"
+    },
+    {
+     "what": "3 MW mini-hydro plant on the Neora river, Darjeeling, plus a 41% stake in Texmaco Defence Systems Pvt Ltd",
+     "when": "ongoing",
+     "source": "annual report"
+    }
+   ],
+   "guidance": "Not found. No concall transcript or investor presentation has been filed by the company. The only forward-looking detail available is trade-press reporting that the Elevate Kamla Nagar project's formal launch was expected around September 2026 at a price near ₹28,000 per sq ft.",
+   "delivered_vs_guidance": "No formal management guidance could be checked. Informally, the Kamla Nagar redevelopment was already being flagged in company reports by FY2017-18 (land-use conversion 'awaited'), and the DDA notification and tie-up with Hines, Conscient and HDFC Capital only materialized around 2025-2026 — roughly eight years between the first public mention of the project and its actual launch.",
+   "scores": {
+    "size_runway": {
+     "score": 4,
+     "why": "₹1,604 Cr market cap against a 14.5% Texmaco Rail stake worth ~₹600 Cr plus a 10-acre Delhi land parcel now entering monetization via a luxury project priced near ₹28,000/sq ft."
+    },
+    "business_quality": {
+     "score": 2,
+     "why": "Standalone operating margin has been negative every year since at least FY22 and ROCE is about 1.4% in FY26; the core business has no demonstrated moat or pricing power."
+    },
+    "management": {
+     "score": 3,
+     "why": "Promoter stake rose from 65% (FY22) to 66.5% (Sep 2026) with repeated open-market buys in March 2026, but the Delhi land sat undeveloped for roughly eight years before the current JV was signed."
+    },
+    "growth_visibility": {
+     "score": 4,
+     "why": "A concrete, named trigger exists: the Elevate Kamla Nagar launch with Hines/Conscient/HDFC Capital, reported for around September 2026."
+    },
+    "longevity": {
+     "score": 3,
+     "why": "A ~30 lakh sq ft project typically takes several years to fully sell and execute, but there is no other disclosed pipeline beyond this project and the small hydro asset."
+    },
+    "valuation": {
+     "score": 2,
+     "why": "Standalone earnings power is negligible, so the ₹1,604 Cr market cap is effectively a bet on undisclosed JV economics for the Delhi project, not on current fundamentals."
+    },
+    "red_flags": {
+     "score": 4,
+     "why": "No pledge, no SEBI action, and an unmodified FY26 audit opinion from L.B. Jha & Co. LLP were found, but profit is driven by non-operating/revaluation items rather than operations."
+    }
+   },
+   "analyst_views": [],
+   "industry": "No dedicated sector report (e.g. CRISIL, ICRA, Anarock) specific to TEXINFRA's businesses was found. Trade press describes North Delhi as an underserved luxury-housing micro-market, with one property-industry article calling the Kamla Nagar area one that has 'been waiting 30 years' for a project of this scale — but this is real-estate trade press, not an independent industry-research market-size estimate. TEXINFRA's listed associate, Texmaco Rail & Engineering, trades around a ₹4,200 Cr market cap and a trailing P/E near 20 in the railway wagons/capital-goods space tied to Indian Railways capex — that is TEXRAIL's industry exposure, not TEXINFRA's own operating business.",
+   "risks": [
+    "Standalone operating business (real estate ops, hydro, trading/job-work) has posted negative operating margin every year since at least FY22 and ROCE near 1%; profit depends on non-operating income and investment revaluation.",
+    "No disclosed detail on what share of the Kamla Nagar project's revenue or equity value accrues to TEXINFRA versus Hines, Conscient and HDFC Capital — the real economic stake could be much smaller than the project's headline scale suggests.",
+    "A large part of recent net-worth growth (~₹460 Cr between March and September 2026) appears tied to the market value of the Texmaco Rail stake and/or land revaluation; a fall in Texmaco Rail's share price would reverse this.",
+    "No concall transcript, investor presentation, or brokerage research report was found, so management's own account of the project's economics and timeline could not be independently checked.",
+    "Public shareholder count fell from about 42,000 in FY24 to about 32,800 by September 2026, alongside a declining public float (34.6% to 29.5%)."
+   ],
+   "change_my_mind": "A disclosed revenue-share or JV-equity agreement showing TEXINFRA retains only a small fraction of the Kamla Nagar project's value; a stalling or renegotiation of the project after RERA approval; a sustained drop in Texmaco Rail's share price revealing how much of TEXINFRA's recent book-value gain was just mark-to-market; or any related-party or governance issue surfacing between Adventz group entities.",
+   "sources": [
+    "https://www.screener.in/company/TEXINFRA/consolidated/",
+    "https://www.valueresearchonline.com/stocks/44852/texmaco-infrastructure-holdings-ltd/shareholding/",
+    "https://trendlyne.com/equity/share-holding/1378/TEXINFRA/latest/texmaco-infrastructure-holdings-ltd/",
+    "https://www.texinfra.in/group-profile.html",
+    "https://www.whalesbook.com/corporate-news/English/industrial-goodsservices/Adventz-Securities-Boosts-Texmaco-Infrastructure-Stake-to-375percent/69ccce6d3f30946a723e1e8b",
+    "https://en.wikipedia.org/wiki/Texmaco_Rail_%26_Engineering",
+    "https://www.screener.in/company/TEXRAIL/consolidated/",
+    "https://elevatekamlanagar.com/blogs/hines-elevate",
+    "https://www.opulnzabode.com/conscient-hines-elevate-kamla-nagar-delhi-luxury-high-rise-2026/",
+    "https://www.squareyards.com/blog/texmaco-plans-foray-delhi-real-estate-market",
+    "https://texinfra.in/PDF/AR21-22.pdf"
+   ],
+   "date": "2026-11-09",
+   "model": "claude-sonnet-5",
+   "concall": null,
+   "ppt": null,
+   "transcript_url": null,
+   "ppt_url": null,
+   "company": "Texmaco Infrastructure &amp; Holdings Ltd",
+   "sector": "Services",
+   "price": 125.9,
+   "mb_score": 53.9,
+   "mb_factors": [
+    "A3 turnaround: profit after a loss year, sales up",
+    "B3 small: market cap under Rs 2,000 Cr",
+    "C2 undiscovered: FII+DII under 5%",
+    "E3 volume expansion: traded value 2x",
+    "F momentum alone (RS leader or trend template)"
+   ]
+  },
+  "PREMIERPOL": {
+   "symbol": "PREMIERPOL",
+   "headline": "A PVC flooring maker riding a profit surge, with owners buying more stock",
+   "story": "Premier Polyfilm Limited, based in Ghaziabad, Uttar Pradesh, makes PVC-based vinyl flooring, sheeting and artificial leather cloth, along with newer lines such as self-adhesive films for car wrapping and decorative wallpaper. It was founded in 1992 by Amar Nath Goenka and A K Surekha, and sells into commercial flooring for offices, hospitals and transport (buses, trains), plus decorative and automotive film markets.\n\nThe business has accelerated sharply. Revenue grew 12% in FY25 to ₹341 crore, but momentum picked up through FY26 into FY27: Q1 FY27 revenue rose 35% year-on-year to ₹87 crore with profit up 51% to ₹9.1 crore, and Q2 FY27 revenue rose 38% to ₹115 crore with profit up 22% to ₹9.8 crore. Over the half-year, revenue crossed ₹217 crore, up 36%, and profit rose 35% to ₹18.9 crore. Five-year sales have compounded at roughly 14% a year, but underlying operating profit (EBIT) has compounded faster, near 27%, meaning margins have been expanding, not just volumes.\n\nThat improving profitability sits on a conservative balance sheet. Debt-to-equity is just 0.11 and the ability to service debt (DSCR) is a comfortable 17 times. ICRA upgraded its long-term rating in June 2026 to A-(Stable) from BBB+, citing the company's 'debt-free status' and strong cash generation; CRISIL separately reaffirmed BBB+/A2 ratings on ₹54 crore of facilities in August 2026.\n\nWhat could matter most for future growth is capacity. Press reports describe plans to add roughly 10,000 tonnes a year of BOPP (biaxially oriented polypropylene) film capacity, plus a new PVC products line planned at Chennai, both said to be debt-funded. Neither the capex amount nor a firm start date has turned up in a transcript or investor presentation — the company does not appear to hold the kind of concall larger firms do, so outsiders are relying on secondary press reports rather than management's own words for these plans.\n\nOwnership is a notable signal. Promoter holding has climbed steadily, from 67.4% in March 2022 to 70.8% by September 2026, and managing director Amitaabh Goenka has personally bought shares on the open market repeatedly through 2026, as recently as 28 October. Institutional ownership is almost nonexistent — FIIs and DIIs together hold just 1.1% — which cuts both ways: the stock may simply be undiscovered, or it may be too small and thinly traded for institutions to bother with.\n\nThe doubts: this is a commodity-adjacent plastics business without an obvious pricing moat, the BOPP expansion would put it up against larger, established film makers, and a modest ₹98.58 lakh GST dispute remains outstanding per the FY25 annual report. There is no broker research coverage available to check the story against, so all of this is read from filings and news reports alone.",
+   "founder": "Premier Polyfilm was founded in 1992 by Amar Nath Goenka and A K Surekha. It is now run by Amitaabh Goenka, Managing Director & CEO, alongside Mayank Goenka (whole-time executive director) and Ram Babu Verma (executive director); other promoter-family names in filings include Arvind Goenka, Indira Goenka, Manvi Goenka, Bhupinder Kaur Marwah and S K Dabriwala, plus promoter-group entities D L Millar & Co Ltd and Premier Polyplast And Processors Limited. Combined promoter holding rose from 67.4% (March 2022) to 70.8% (September 2026). Amitaabh Goenka bought shares on the open market several times in 2026, including ₹58.1 lakh and ₹103.8 lakh in May, and ₹33.4 lakh plus ₹10.2 lakh in October. Family-side selling was limited to a ₹201.2 lakh market sale by Manvi Goenka in September 2025 and a nil-value off-market gift of shares from Arvind Goenka to nephew Mayank Goenka in May 2026. No pledge, SEBI order, or auditor dispute was found in public filings or news searched.",
+   "conviction": 3,
+   "horizon": "long term",
+   "thesis": "Premier Polyfilm is a small, debt-free PVC flooring and film maker whose revenue growth accelerated to 35-38% year-on-year through H1 FY27 while promoters kept adding to an already-high stake. If the reported BOPP and Chennai capacity additions land and sustain this growth with expanding margins, the business could re-rate from today's roughly 31x trailing earnings. What has to go right: the undisclosed capex gets funded and commissioned without cost overruns or delay, the new BOPP film line avoids getting commoditised against larger incumbents, and the growth seen in FY27's first two quarters proves durable rather than a low-base effect.",
+   "triggers": [
+    {
+     "what": "~10,000 MTPA BOPP film capacity addition",
+     "when": "not disclosed",
+     "source": "news report, not a company filing or transcript"
+    },
+    {
+     "what": "New PVC products capacity planned at Chennai, said to be debt-funded",
+     "when": "not disclosed",
+     "source": "news report, not a company filing or transcript"
+    }
+   ],
+   "guidance": "Not found. The dossier contains no concall transcript or investor presentation, and no news report found quotes management's own forward revenue or margin guidance tied to a specific quarter.",
+   "delivered_vs_guidance": "No prior formal guidance could be located to check delivery against. What is verifiable from results releases is that growth itself has accelerated — from 12% FY25 revenue growth to 35-38% YoY revenue growth in Q1 and Q2 FY27 — but this acceleration has not been tied by management to any specific public plan or target.",
+   "scores": {
+    "size_runway": {
+     "score": 4,
+     "why": "Market cap ~₹1,004 crore (Sep 2026, Yahoo Finance) against a vinyl/PVC flooring market estimated at $12.9bn in 2025 growing toward ~$22bn by 2034 (IMARC Group, Expert Market Research); FY25 revenue of ₹341 crore is a small sliver of that."
+    },
+    "business_quality": {
+     "score": 3,
+     "why": "PAT margin ~10.4% and OPM ~15.5% in Q1 FY27, with 5-year EBIT CAGR near 27% vs sales CAGR near 14% (margin expansion); but it is a commodity-adjacent PVC/film business without an obvious brand or pricing moat, and the planned BOPP line adds exposure to a more crowded film segment."
+    },
+    "management": {
+     "score": 4,
+     "why": "Promoter holding rose from 67.4% (Mar 2022) to 70.8% (Sep 2026); MD Amitaabh Goenka bought shares on market repeatedly through 2026 including as recently as 28 Oct 2026 (₹33.4L + ₹10.2L); no formal guidance exists to test execution against, and the company does not appear to hold investor concalls."
+    },
+    "growth_visibility": {
+     "score": 3,
+     "why": "Press reports describe a ~10,000 MTPA BOPP film line and a new Chennai PVC facility, both reportedly debt-funded, but neither the capex amount nor a commissioning date has been disclosed in any company transcript or presentation."
+    },
+    "longevity": {
+     "score": 3,
+     "why": "Revenue growth held at 35-38% YoY through Q1-Q2 FY27 off a ₹341 crore FY25 base, but the underlying end-markets (PVC flooring, films) grow at a mid-single-digit industry rate per market-research estimates, so sustained outperformance depends on continued capacity and share gains rather than a structural tailwind."
+    },
+    "valuation": {
+     "score": 3,
+     "why": "At close ₹91.4 and market cap ~₹1,004 crore against FY25 PAT of ₹31.88 crore, trailing P/E is near 31x (Yahoo Finance); not cheap for a plastics processor, though H1 FY27 profit growth of ~35% YoY narrows the multiple on a trailing-twelve-month basis."
+    },
+    "red_flags": {
+     "score": 4,
+     "why": "No pledge, SEBI order, or auditor issue found; debt/equity of 0.11 and DSCR of 17x argue against cash-flow stress, and ICRA/CRISIL ratings are investment grade. A ₹98.58 lakh GST dispute is outstanding per the FY25 annual report, and FII+DII ownership is only 1.1%, leaving the stock thinly tracked by outside capital."
+    }
+   },
+   "analyst_views": [],
+   "industry": "The India/global vinyl-PVC flooring market was valued at roughly $12.9 billion in 2025 and is projected to reach ~$22 billion by 2034, a CAGR near 6-7% (IMARC Group, Expert Market Research) — these are industry-research estimates, not a CRISIL/ICRA sector note. Premier Polyfilm's FY25 revenue of ₹341 crore (~$41 million) is a small fraction of this, and its planned move into BOPP packaging film adds exposure to a more crowded segment with larger incumbents such as Uflex and Cosmo Films.",
+   "risks": [
+    "No management guidance or concall transcript exists to verify the scale or timeline of the BOPP/Chennai expansion",
+    "BOPP film is a more commoditised, competitive segment than the company's core PVC flooring franchise",
+    "Institutional ownership is just 1.1% (FII+DII combined), implying thin liquidity and little independent outside scrutiny",
+    "A ₹98.58 lakh GST dispute remains unresolved per the FY25 annual report",
+    "Trailing P/E near 31x already prices in some of the recent growth acceleration",
+    "No broker or analyst research coverage was found to cross-check the growth and capex story"
+   ],
+   "change_my_mind": "If revenue growth decelerates back toward the historical ~14% sales CAGR over the next two to three quarters, or if the reported BOPP/Chennai capex is delayed, scaled back, or ends up raising leverage without a matching rise in profit, the capacity-led growth thesis would not hold.",
+   "sources": [
+    "https://www.screener.in/company/PREMIERPOL/consolidated/",
+    "https://finance.yahoo.com/quote/PREMIERPOL.NS/profile/",
+    "https://www.whalesbook.com/corporate-news/English/industrial-goodsservices/Premier-Polyfilm-Promoter-Amitaabh-Goenka-Buys-More-Shares/6a0b0a54cfe07c0307e5fb7c",
+    "https://www.whalesbook.com/corporate-news/English/chemicals/Premier-Polyfilm-Promoter-Gifts-005percent-Shares-to-Nephew/6a080914e125a601ebe2ef94",
+    "https://www.whalesbook.com/corporate-news/English/industrial-goodsservices/Premier-Polyfilm-Q2-Revenue-Jumps-38percent-to-Rs-11506-Crore/6aca04bfb2eb76fd08c0deac",
+    "https://www.equitybulls.com/news/376754/premier-polyfilm-reports-22-47-yoy-net-profit-growth-in-q2-fy27-as-half-year-rev",
+    "https://www.marketsmojo.com/news/result-analysis/premier-polyfilm-q1-fy27-stellar-growth-momentum-drives-51-profit-surge-4107755",
+    "https://www.whalesbook.com/corporate-news/English/industrial-goodsservices/Premier-Polyfilm-Reports-indian-rupee3188-Cr-FY25-Profit-as-Q4-Revenue-Grows-1168percent/69ff173c0737e18b2733bad6",
+    "https://www.whalesbook.com/corporate-news/English/industrial-goodsservices/Premier-Polyfilm-Upgraded-by-ICRA-Removed-from-Not-Cooperating-List/6a325c06b6609c8f9dd13208",
+    "https://www.steelcitynettrade.com/News/NewsDetails/5006367/Premier_Polyfilm's_debt_instruments_received_reaffirmations_from_CRISIL,_including_ratings_for_Rs__54_crore_facilities",
+    "https://www.imarcgroup.com/india-vinyl-flooring-market",
+    "https://www.expertmarketresearch.com/reports/india-vinyl-flooring-market"
+   ],
+   "date": "2026-11-09",
+   "model": "claude-sonnet-5",
+   "concall": null,
+   "ppt": null,
+   "transcript_url": null,
+   "ppt_url": null,
+   "company": "Premier Polyfilm Ltd",
+   "sector": "Capital Goods",
+   "price": 91.4,
+   "mb_score": 52.5,
+   "mb_factors": [
+    "C2 undiscovered: FII+DII under 5%",
+    "D1 promoter raising stake: +1 pt",
+    "F momentum alone (RS leader or trend template)",
+    "P promoter buying + momentum"
+   ]
   }
  },
- "generated": "2026-11-03 00:08"
+ "generated": "2026-11-09 11:22"
 }
