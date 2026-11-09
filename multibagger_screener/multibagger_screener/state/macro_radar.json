@@ -1,26 +1,18 @@
 {
  "ok": true,
- "generated": "2026-11-06T17:38:09",
+ "generated": "2026-11-09T20:51:38",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 10372,
+ "headlines_read": 9673,
  "policy_hits": 20,
  "stories": 16,
  "themes": {
-  "cdmo": {
-   "pressure": 0.0,
-   "pos_flow": 0.0,
-   "neg_flow": 0.0,
-   "n_scored": 0,
-   "n_attn": 1,
-   "top": []
-  },
   "railways": {
-   "pressure": 0.308,
-   "pos_flow": 0.2723,
+   "pressure": 0.279,
+   "pos_flow": 0.2418,
    "neg_flow": 0.0,
    "n_scored": 3,
-   "n_attn": 0,
+   "n_attn": 1,
    "top": [
     {
      "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
@@ -37,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1078
+     "weight": 0.0977
     },
     {
      "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -54,7 +46,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 3,
-     "weight": 0.0868
+     "weight": 0.0761
     },
     {
      "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -71,14 +63,22 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0776
+     "weight": 0.068
     }
    ]
   },
+  "cdmo": {
+   "pressure": 0.0,
+   "pos_flow": 0.0,
+   "neg_flow": 0.0,
+   "n_scored": 0,
+   "n_attn": 1,
+   "top": []
+  },
   "renewables": {
-   "pressure": 0.107,
-   "pos_flow": 0.1399,
-   "neg_flow": 0.0727,
+   "pressure": 0.093,
+   "pos_flow": 0.1226,
+   "neg_flow": 0.0658,
    "n_scored": 3,
    "n_attn": 0,
    "top": [
@@ -97,7 +97,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 2,
-     "weight": 0.0762
+     "weight": 0.0668
     },
     {
      "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -114,7 +114,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0727
+     "weight": 0.0658
     },
     {
      "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -131,13 +131,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0637
+     "weight": 0.0558
     }
    ]
   },
   "defence": {
-   "pressure": 0.177,
-   "pos_flow": 0.1445,
+   "pressure": 0.159,
+   "pos_flow": 0.1282,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 0,
@@ -157,7 +157,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0912
+     "weight": 0.08
     },
     {
      "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -174,7 +174,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0388
+     "weight": 0.0352
     },
     {
      "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -192,7 +192,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0144
+     "weight": 0.0131
     }
    ]
   },
@@ -205,11 +205,11 @@
    "top": []
   },
   "capex": {
-   "pressure": 0.141,
-   "pos_flow": 0.1123,
+   "pressure": 0.128,
+   "pos_flow": 0.1017,
    "neg_flow": 0.0,
    "n_scored": 1,
-   "n_attn": 1,
+   "n_attn": 0,
    "top": [
     {
      "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -227,13 +227,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1123
+     "weight": 0.1017
     }
    ]
   },
   "ev": {
-   "pressure": 0.196,
-   "pos_flow": 0.1612,
+   "pressure": 0.179,
+   "pos_flow": 0.146,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 1,
@@ -254,7 +254,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1123
+     "weight": 0.1017
     },
     {
      "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -271,13 +271,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0489
+     "weight": 0.0443
     }
    ]
   },
   "textiles": {
-   "pressure": 0.087,
-   "pos_flow": 0.0674,
+   "pressure": 0.077,
+   "pos_flow": 0.059,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -297,13 +297,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0674
+     "weight": 0.059
     }
    ]
   },
   "defelec": {
-   "pressure": 0.019,
-   "pos_flow": 0.0144,
+   "pressure": 0.017,
+   "pos_flow": 0.0131,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -324,7 +324,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0144
+     "weight": 0.0131
     }
    ]
   }
@@ -346,7 +346,24 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1123
+   "weight": 0.1017
+  },
+  {
+   "title": "1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai to ease waiting lists, Railway ministry plans four parallel tracks on 7 major corridors",
+   "date": "2026-11-07T17:32:05",
+   "source": "The Economic Times",
+   "link": "https://economictimes.indiatimes.com/industry/transportation/railways/1000-extra-trains-between-delhi-mumbai-kolkata-and-chennai-to-ease-waiting-lists-railway-ministry-plans-four-parallel-tracks-on-7-major-corridors/articleshow/135635762.cms",
+   "themes": [
+    "railways"
+   ],
+   "polarity": "attn",
+   "event": "",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": true,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1011
   },
   {
    "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
@@ -363,7 +380,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1078
+   "weight": 0.0977
   },
   {
    "title": "Defence Ministry approves over ₹2,400 crore procurement from startups and MSMEs",
@@ -380,7 +397,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0912
+   "weight": 0.08
   },
   {
    "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -397,7 +414,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 3,
-   "weight": 0.0868
+   "weight": 0.0761
   },
   {
    "title": "Cancer Drug Price Cut: Govt Caps Trade Margins At 30%, Revises Prices Of 543 Drug Brands",
@@ -414,7 +431,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0829
+   "weight": 0.0727
   },
   {
    "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -431,7 +448,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0776
+   "weight": 0.068
   },
   {
    "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
@@ -448,7 +465,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0762
+   "weight": 0.0668
   },
   {
    "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -465,7 +482,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0727
+   "weight": 0.0658
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -482,7 +499,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0674
+   "weight": 0.059
   },
   {
    "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -499,24 +516,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0637
-  },
-  {
-   "title": "Govt set to consider auto PLI applications with Chinese investment after FDI nod",
-   "date": "2026-09-23T05:30:00",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/auto/auto-news/govt-set-to-consider-auto-pli-applications-with-chinese-investment-after-fdi-nod/articleshow/134419730.cms",
-   "themes": [
-    "capex"
-   ],
-   "polarity": "attn",
-   "event": "scheme/mission",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": true,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0562
+   "weight": 0.0558
   },
   {
    "title": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
@@ -533,7 +533,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0473
   },
   {
    "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -550,7 +550,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0489
+   "weight": 0.0443
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -567,7 +567,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0457
+   "weight": 0.0414
   },
   {
    "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -584,7 +584,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0388
+   "weight": 0.0352
   },
   {
    "title": "Tonbo Imaging India gets SEBI nod for IPO; defence electronics maker offers over 1.8 crore shares",
@@ -602,7 +602,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0144
+   "weight": 0.0131
   }
  ]
 }

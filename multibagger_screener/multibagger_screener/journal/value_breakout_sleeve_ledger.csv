@@ -29,3 +29,23 @@ date,symbol,action,shares,price,value,reason
 2026-11-06,PNB,BUY,782,126.0,98532.0,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-11-06,RAMCOIND,BUY,312,315.15,98326.8,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-11-06,UDS,BUY,487,202.65,98690.55,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-08,UDS,SELL,487,203.98,99338.26,regime exit or stop / 30-week trail; x1.01 since 2026-11-06
+2026-11-08,KAMATHOTEL,SELL,440,222.4,97856.0,regime exit or stop / 30-week trail; x0.99 since 2026-11-06
+2026-11-08,DCMSRIND,SELL,1572,61.4,96520.8,regime exit or stop / 30-week trail; x0.98 since 2026-11-06
+2026-11-08,HARIOMPIPE,SELL,264,367.0,96888.0,regime exit or stop / 30-week trail; x0.98 since 2026-11-06
+2026-11-08,KIRIINDUS,SELL,199,504.8,100455.2,regime exit or stop / 30-week trail; x1.02 since 2026-11-06
+2026-11-08,PNB,SELL,782,127.5,99705.0,regime exit or stop / 30-week trail; x1.01 since 2026-11-06
+2026-11-08,COFFEEDAY,SELL,3285,31.86,104660.1,regime exit or stop / 30-week trail; x1.06 since 2026-11-06
+2026-11-08,PETRONET,SELL,317,316.5,100330.5,regime exit or stop / 30-week trail; x1.02 since 2026-11-06
+2026-11-08,RAMCOIND,SELL,312,316.8,98841.6,regime exit or stop / 30-week trail; x1.01 since 2026-11-06
+2026-11-08,KRBL,SELL,241,408.1,98352.1,regime exit or stop / 30-week trail; x1.01 since 2026-11-06
+2026-11-09,COFFEEDAY,BUY,3134,31.59,99003.06,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,DCMSRIND,BUY,1651,60.0,99060.0,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,HARIOMPIPE,BUY,268,368.2,98677.6,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,KAMATHOTEL,BUY,443,223.25,98899.75,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,KIRIINDUS,BUY,196,505.0,98980.0,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,PETRONET,BUY,315,314.0,98910.0,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,PNB,BUY,785,125.99,98902.15,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,RAMCOIND,BUY,315,313.5,98752.5,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,SAMHI,BUY,584,169.1,98754.4,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-09,THOMASCOOK,BUY,964,102.03,98356.92,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
