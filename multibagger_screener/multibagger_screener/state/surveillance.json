@@ -1,21 +1,9 @@
 {
- "generated": "2026-11-09 20:59",
+ "generated": "2026-11-11 18:15",
  "n_checked": 1005,
  "n_flagged": 83,
- "asm_total": 177,
+ "asm_total": 171,
  "syms": {
-  "ACUTAAS": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "CPPLUS": {
    "flags": [
     {
@@ -56,7 +44,7 @@
    "flags": [
     {
      "code": "ASM",
-     "detail": "ST Stage I",
+     "detail": "LT Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],
@@ -429,6 +417,18 @@
    "band": 5.0,
    "series": "BE",
    "worst": "BAND 5%"
+  },
+  "ENTERO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "UTLSOLAR": {
    "flags": [
@@ -943,6 +943,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "MMFL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "BOROLTD": {
    "flags": [
     {
@@ -996,7 +1008,7 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "HUBTOWN": {
+  "RAMKY": {
    "flags": [
     {
      "code": "ASM",
@@ -1054,18 +1066,6 @@
     {
      "code": "ASM",
      "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "SHREEPUSHK": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],

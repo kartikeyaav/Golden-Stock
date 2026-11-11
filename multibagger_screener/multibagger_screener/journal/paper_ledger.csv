@@ -174,3 +174,9 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-11-06,ORIENTHOT,SELL,partial,51,176.95,1272.45,partial at 2.5R
 2026-11-08,HESTERBIO,BUY,entry,12,2372.8,,[HESTERBIO@2026-11-06 21:31] analyst BUY/MEDIUM/HALF PLAN
 2026-11-09,FLUOROCHEM,SKIP,entry,0,,,[FLUOROCHEM@2026-11-06 21:32] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-11,IGPL,SKIP,entry,0,,,[IGPL@2026-11-09 10:56] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-11,ASHIANA,SKIP,entry,0,,,[ASHIANA@2026-11-09 10:57] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-11,ANTHEM,SKIP,entry,0,,,[ANTHEM@2026-11-09 10:59] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-11,EMCURE,SKIP,entry,0,,,[EMCURE@2026-11-10 15:25] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-11,QUESS,SKIP,entry,0,,,[QUESS@2026-11-10 21:31] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-11,BHARATSE,SKIP,entry,0,,,[BHARATSE@2026-11-10 21:32] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force

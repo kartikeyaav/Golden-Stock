@@ -1,26 +1,107 @@
 {
- "generated": "2026-11-09T20:59:54",
+ "generated": "2026-11-11T18:15:45",
  "themes": [
   {
-   "key": "hospital",
-   "name": "Hospitals & diagnostics",
-   "blurb": "Bed additions and the shift of diagnostics into organised chains.",
-   "n": 14,
-   "breadth": 42.9,
-   "rs_med": 66.2,
-   "ret3m": -4.8,
-   "news": 3.58,
-   "news_per_name": 0.256,
+   "key": "chemicals",
+   "name": "Specialty chemicals & China+1",
+   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
+   "n": 16,
+   "breadth": 50.0,
+   "rs_med": 35.2,
+   "ret3m": -5.0,
+   "news": 2.38,
+   "news_per_name": 0.149,
    "thin": false,
    "confirmed": [
-    "VIJAYA",
-    "YATHARTH",
-    "LALPATHLAB",
-    "SURAKSHA",
-    "MEDANTA",
-    "METROPOLIS"
+    "NAVINFLUOR",
+    "FLUOROCHEM",
+    "FINEORG",
+    "SUDARSCHEM",
+    "EPL",
+    "SRF",
+    "DEEPAKNTR",
+    "JUBLINGREA"
    ],
-   "heat": 81.2
+   "heat": 76.6
+  },
+  {
+   "key": "finfra",
+   "name": "Financial market infrastructure",
+   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
+   "n": 15,
+   "breadth": 26.7,
+   "rs_med": 63.5,
+   "ret3m": 0.6,
+   "news": 1.26,
+   "news_per_name": 0.084,
+   "thin": false,
+   "confirmed": [
+    "MCX",
+    "MOTILALOFS",
+    "NUVAMA",
+    "CAMS"
+   ],
+   "heat": 71.2
+  },
+  {
+   "key": "textiles",
+   "name": "Textiles & apparel PLI",
+   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
+   "n": 33,
+   "breadth": 36.4,
+   "rs_med": 64.3,
+   "ret3m": -3.0,
+   "news": 1.11,
+   "news_per_name": 0.034,
+   "thin": false,
+   "confirmed": [
+    "RAYMOND",
+    "WELSPUNLIV",
+    "PGIL",
+    "ICIL",
+    "NITINSPIN",
+    "SPORTKING",
+    "GHCLTEXTIL",
+    "PDSL",
+    "SANGAMIND",
+    "SANATHAN",
+    "KPRMILL",
+    "VTL"
+   ],
+   "heat": 71.2
+  },
+  {
+   "key": "shipbuilding",
+   "name": "Shipbuilding & marine",
+   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
+   "n": 9,
+   "breadth": 11.1,
+   "rs_med": 63.2,
+   "ret3m": 1.9,
+   "news": 3.35,
+   "news_per_name": 0.373,
+   "thin": false,
+   "confirmed": [
+    "GPPL"
+   ],
+   "heat": 70.3
+  },
+  {
+   "key": "defelec",
+   "name": "Defence electronics & space",
+   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
+   "n": 8,
+   "breadth": 25.0,
+   "rs_med": 92.2,
+   "ret3m": -1.2,
+   "news": 0.77,
+   "news_per_name": 0.096,
+   "thin": false,
+   "confirmed": [
+    "ASTRAMICRO",
+    "APOLLO"
+   ],
+   "heat": 61.9
   },
   {
    "key": "defence",
@@ -28,10 +109,10 @@
    "blurb": "Indigenisation of platforms, electronics and munitions \u2014 a multi-year order-book cycle rather than a quarter's demand.",
    "n": 15,
    "breadth": 33.3,
-   "rs_med": 81.0,
-   "ret3m": -3.1,
-   "news": 4.25,
-   "news_per_name": 0.284,
+   "rs_med": 82.1,
+   "ret3m": -7.2,
+   "news": 4.97,
+   "news_per_name": 0.331,
    "thin": false,
    "confirmed": [
     "UNIMECH",
@@ -40,123 +121,23 @@
     "APOLLO",
     "DYNAMATECH"
    ],
-   "heat": 80.9
-  },
-  {
-   "key": "finfra",
-   "name": "Financial market infrastructure",
-   "blurb": "Exchanges, depositories, registrars and brokers \u2014 the toll booths on rising retail participation.",
-   "n": 15,
-   "breadth": 26.7,
-   "rs_med": 59.9,
-   "ret3m": -0.8,
-   "news": 1.34,
-   "news_per_name": 0.089,
-   "thin": false,
-   "confirmed": [
-    "MCX",
-    "MOTILALOFS",
-    "NUVAMA",
-    "CAMS"
-   ],
-   "heat": 74.1
-  },
-  {
-   "key": "shipbuilding",
-   "name": "Shipbuilding & marine",
-   "blurb": "Yard capacity, ship repair and the maritime-cluster policy push.",
-   "n": 9,
-   "breadth": 22.2,
-   "rs_med": 63.0,
-   "ret3m": -1.3,
-   "news": 2.51,
-   "news_per_name": 0.279,
-   "thin": false,
-   "confirmed": [
-    "GESHIP",
-    "GPPL"
-   ],
-   "heat": 67.8
+   "heat": 61.6
   },
   {
    "key": "cdmo",
    "name": "Pharma CDMO & API",
    "blurb": "Contract development and manufacturing plus API backward integration \u2014 the supply-chain-relocation trade in pharma.",
    "n": 10,
-   "breadth": 20.0,
-   "rs_med": 69.9,
-   "ret3m": 3.2,
-   "news": 1.46,
-   "news_per_name": 0.146,
+   "breadth": 10.0,
+   "rs_med": 66.1,
+   "ret3m": 7.4,
+   "news": 1.39,
+   "news_per_name": 0.139,
    "thin": false,
    "confirmed": [
-    "EMCURE",
-    "BLUEJET"
+    "EMCURE"
    ],
-   "heat": 67.2
-  },
-  {
-   "key": "defelec",
-   "name": "Defence electronics & space",
-   "blurb": "Radars, avionics, sensors, satellites and drones \u2014 the highest-margin slice of the defence build.",
-   "n": 8,
-   "breadth": 25.0,
-   "rs_med": 89.8,
-   "ret3m": -1.1,
-   "news": 0.82,
-   "news_per_name": 0.103,
-   "thin": false,
-   "confirmed": [
-    "ASTRAMICRO",
-    "APOLLO"
-   ],
-   "heat": 64.7
-  },
-  {
-   "key": "textiles",
-   "name": "Textiles & apparel PLI",
-   "blurb": "Technical textiles, garmenting and the incentive-led export push.",
-   "n": 33,
-   "breadth": 30.3,
-   "rs_med": 64.3,
-   "ret3m": -5.1,
-   "news": 1.17,
-   "news_per_name": 0.036,
-   "thin": false,
-   "confirmed": [
-    "RAYMOND",
-    "WELSPUNLIV",
-    "PGIL",
-    "ICIL",
-    "NITINSPIN",
-    "GHCLTEXTIL",
-    "SANGAMIND",
-    "SANATHAN",
-    "KPRMILL",
-    "CANTABIL"
-   ],
-   "heat": 60.6
-  },
-  {
-   "key": "chemicals",
-   "name": "Specialty chemicals & China+1",
-   "blurb": "Fluorochemicals, agrochem intermediates and fine chemicals moving supply out of China.",
-   "n": 16,
-   "breadth": 37.5,
-   "rs_med": 34.7,
-   "ret3m": -9.0,
-   "news": 2.5,
-   "news_per_name": 0.157,
-   "thin": false,
-   "confirmed": [
-    "NAVINFLUOR",
-    "FLUOROCHEM",
-    "FINEORG",
-    "EPL",
-    "SRF",
-    "DEEPAKNTR"
-   ],
-   "heat": 54.4
+   "heat": 59.7
   },
   {
    "key": "water",
@@ -164,36 +145,75 @@
    "blurb": "Water treatment, pipes and municipal environmental infrastructure.",
    "n": 12,
    "breadth": 25.0,
-   "rs_med": 62.4,
-   "ret3m": -7.5,
-   "news": 3.02,
-   "news_per_name": 0.252,
+   "rs_med": 63.0,
+   "ret3m": -6.3,
+   "news": 2.86,
+   "news_per_name": 0.238,
    "thin": false,
    "confirmed": [
     "WABAG",
     "JASH",
     "PRINCEPIPE"
    ],
-   "heat": 51.6
+   "heat": 57.2
+  },
+  {
+   "key": "hospital",
+   "name": "Hospitals & diagnostics",
+   "blurb": "Bed additions and the shift of diagnostics into organised chains.",
+   "n": 14,
+   "breadth": 35.7,
+   "rs_med": 58.5,
+   "ret3m": -7.5,
+   "news": 3.42,
+   "news_per_name": 0.244,
+   "thin": false,
+   "confirmed": [
+    "YATHARTH",
+    "LALPATHLAB",
+    "SURAKSHA",
+    "MEDANTA",
+    "METROPOLIS"
+   ],
+   "heat": 56.6
   },
   {
    "key": "capex",
    "name": "Industrial capex & machinery",
    "blurb": "Process plant, heavy engineering, automation and the order books that turn a capex cycle into revenue.",
    "n": 27,
-   "breadth": 14.8,
-   "rs_med": 48.9,
-   "ret3m": -6.1,
-   "news": 3.7,
-   "news_per_name": 0.137,
+   "breadth": 22.2,
+   "rs_med": 48.7,
+   "ret3m": -5.1,
+   "news": 3.49,
+   "news_per_name": 0.129,
    "thin": false,
    "confirmed": [
     "GALAPREC",
     "JYOTICNC",
     "JASH",
-    "ACE"
+    "ACE",
+    "PITTIENG",
+    "THEJO"
    ],
-   "heat": 44.1
+   "heat": 51.9
+  },
+  {
+   "key": "renewables",
+   "name": "Renewables, solar & storage",
+   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
+   "n": 14,
+   "breadth": 14.3,
+   "rs_med": 10.2,
+   "ret3m": -12.9,
+   "news": 11.3,
+   "news_per_name": 0.807,
+   "thin": false,
+   "confirmed": [
+    "ACMESOLAR",
+    "IREDA"
+   ],
+   "heat": 35.3
   },
   {
    "key": "datacentre",
@@ -201,29 +221,13 @@
    "blurb": "Land, power, cooling and fibre for compute \u2014 the physical layer under the AI build-out.",
    "n": 9,
    "breadth": 0.0,
-   "rs_med": 45.0,
-   "ret3m": -6.8,
-   "news": 3.06,
-   "news_per_name": 0.34,
+   "rs_med": 54.1,
+   "ret3m": -6.6,
+   "news": 2.83,
+   "news_per_name": 0.315,
    "thin": false,
    "confirmed": [],
-   "heat": 35.6
-  },
-  {
-   "key": "renewables",
-   "name": "Renewables, solar & storage",
-   "blurb": "Solar and wind manufacturing, EPC, IPPs and the battery-storage layer attached to them.",
-   "n": 14,
-   "breadth": 7.1,
-   "rs_med": 9.5,
-   "ret3m": -11.5,
-   "news": 11.96,
-   "news_per_name": 0.854,
-   "thin": false,
-   "confirmed": [
-    "IREDA"
-   ],
-   "heat": 33.1
+   "heat": 33.8
   },
   {
    "key": "ev",
@@ -231,10 +235,10 @@
    "blurb": "Powertrain change, batteries and the component makers whose content per vehicle rises with it.",
    "n": 12,
    "breadth": 25.0,
-   "rs_med": 61.4,
-   "ret3m": -16.8,
-   "news": 2.01,
-   "news_per_name": 0.168,
+   "rs_med": 66.5,
+   "ret3m": -16.1,
+   "news": 1.89,
+   "news_per_name": 0.158,
    "thin": false,
    "confirmed": [
     "SONACOMS",
@@ -249,13 +253,45 @@
    "blurb": "Transformers, conductors, cables, switchgear and EPC feeding the transmission build-out and rising grid density.",
    "n": 13,
    "breadth": 0.0,
-   "rs_med": 65.7,
-   "ret3m": -8.2,
-   "news": 2.44,
-   "news_per_name": 0.188,
+   "rs_med": 70.0,
+   "ret3m": -7.0,
+   "news": 2.3,
+   "news_per_name": 0.177,
    "thin": false,
    "confirmed": [],
-   "heat": 21.6
+   "heat": 27.2
+  },
+  {
+   "key": "railways",
+   "name": "Railways & metro",
+   "blurb": "Rolling stock, wagons, signalling and station/metro civil work.",
+   "n": 11,
+   "breadth": 9.1,
+   "rs_med": 18.5,
+   "ret3m": -9.4,
+   "news": 7.01,
+   "news_per_name": 0.637,
+   "thin": false,
+   "confirmed": [
+    "BEML"
+   ],
+   "heat": 27.2
+  },
+  {
+   "key": "ems",
+   "name": "Electronics manufacturing (EMS)",
+   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
+   "n": 10,
+   "breadth": 10.0,
+   "rs_med": 47.8,
+   "ret3m": -9.1,
+   "news": 1.9,
+   "news_per_name": 0.19,
+   "thin": false,
+   "confirmed": [
+    "DIXON"
+   ],
+   "heat": 26.9
   },
   {
    "key": "semis",
@@ -263,41 +299,13 @@
    "blurb": "Fabs, assembly-test-packaging, design services and the materials around them \u2014 the newest and least proven of the capex themes.",
    "n": 4,
    "breadth": 0.0,
-   "rs_med": 19.5,
-   "ret3m": -7.8,
-   "news": 0.25,
-   "news_per_name": 0.062,
+   "rs_med": 20.9,
+   "ret3m": -7.5,
+   "news": 0.23,
+   "news_per_name": 0.059,
    "thin": false,
    "confirmed": [],
-   "heat": 17.8
-  },
-  {
-   "key": "ems",
-   "name": "Electronics manufacturing (EMS)",
-   "blurb": "Contract manufacturing of electronics \u2014 the assembly layer of the PLI and China+1 shift.",
-   "n": 10,
-   "breadth": 0.0,
-   "rs_med": 43.3,
-   "ret3m": -10.3,
-   "news": 2.04,
-   "news_per_name": 0.204,
-   "thin": false,
-   "confirmed": [],
-   "heat": 16.9
-  },
-  {
-   "key": "railways",
-   "name": "Railways & metro",
-   "blurb": "Rolling stock, wagons, signalling and station/metro civil work.",
-   "n": 11,
-   "breadth": 0.0,
-   "rs_med": 23.3,
-   "ret3m": -12.3,
-   "news": 7.53,
-   "news_per_name": 0.684,
-   "thin": false,
-   "confirmed": [],
-   "heat": 16.9
+   "heat": 12.2
   },
   {
    "key": "nuclear",
@@ -305,10 +313,10 @@
    "blurb": "Small modular reactors, nuclear-grade fabrication and the hydrogen chain \u2014 earliest-stage and most speculative of the energy themes.",
    "n": 2,
    "breadth": 50.0,
-   "rs_med": 91.8,
-   "ret3m": 4.2,
-   "news": 0.51,
-   "news_per_name": 0.254,
+   "rs_med": 90.0,
+   "ret3m": 3.7,
+   "news": 0.48,
+   "news_per_name": 0.238,
    "thin": true,
    "confirmed": [
     "PTCIL"
