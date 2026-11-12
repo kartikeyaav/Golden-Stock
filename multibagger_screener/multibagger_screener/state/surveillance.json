@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-11 18:15",
+ "generated": "2026-11-12 18:34",
  "n_checked": 1005,
- "n_flagged": 83,
- "asm_total": 171,
+ "n_flagged": 81,
+ "asm_total": 169,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -902,18 +902,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "AGIIL": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "GOPAL": {
    "flags": [
     {
@@ -944,18 +932,6 @@
    "worst": "ASM"
   },
   "MMFL": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "BOROLTD": {
    "flags": [
     {
      "code": "ASM",

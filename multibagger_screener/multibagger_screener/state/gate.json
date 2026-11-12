@@ -1,26 +1,26 @@
 {
- "generated": "2026-11-11 18:15",
+ "generated": "2026-11-12 18:34",
  "registered": "2026-07-26",
  "verdict": "ACCRUING",
- "progress_pct": 40.0,
+ "progress_pct": 42.5,
  "deadline": "2026-12-31",
  "observation": {
   "window_start": "2026-07-25",
-  "eligible_weekdays": 78,
-  "sessions_scanned": 72,
+  "eligible_weekdays": 79,
+  "sessions_scanned": 73,
   "sessions_missed": 6,
-  "observed_pct": 92.3,
+  "observed_pct": 92.4,
   "degraded_scans": 1,
   "note": "eligible_weekdays is an upper bound; NSE holidays are not modelled"
  },
- "days_to_deadline": 49,
+ "days_to_deadline": 48,
  "ruler": "plan_followed_R",
  "required": {
   "min_signals": 40,
   "min_age_days": 30,
   "min_expectancy_fraction": 0.5,
-  "expectancy_r": 0.3345,
-  "age_matched_reference_r": 0.669,
+  "expectancy_r": 0.3315,
+  "age_matched_reference_r": 0.663,
   "superseded_flat_min_expectancy_r": 0.5,
   "expectancy_curve": [
    [
@@ -50,69 +50,69 @@
  },
  "cohort": {
   "n": 32,
-  "n_qualifying": 16,
+  "n_qualifying": 17,
   "n_unsized": 2,
-  "expectancy_r": -0.429,
+  "expectancy_r": -0.336,
   "median_age_days": 82,
-  "age_matched_reference_r": 0.669,
-  "required_expectancy_r": 0.3345,
+  "age_matched_reference_r": 0.663,
+  "required_expectancy_r": 0.3315,
   "median_r": -1.027,
-  "sum_r": -6.87,
-  "win_rate_pct": 37.5,
-  "hit_stop_pct": 73.7,
-  "best_trade_share_pct": 24.8,
-  "best_r": 0.84,
+  "sum_r": -5.71,
+  "win_rate_pct": 41.2,
+  "hit_stop_pct": 75.0,
+  "best_trade_share_pct": 40.7,
+  "best_r": 1.85,
   "worst_r": -1.06,
-  "signal_basis_return_pct": -8.58,
+  "signal_basis_return_pct": -7.13,
   "first": "2026-07-29",
   "last": "2026-10-16"
  },
  "cohort_running": {
   "n": 32,
-  "n_qualifying": 25,
-  "n_unsized": 2,
-  "expectancy_r": -0.03,
-  "median_age_days": 34,
-  "age_matched_reference_r": 0.62,
-  "required_expectancy_r": 0.31,
-  "median_r": 0.122,
-  "sum_r": -0.76,
-  "win_rate_pct": 56.0,
-  "hit_stop_pct": 46.7,
-  "best_trade_share_pct": 21.5,
-  "best_r": 2.09,
+  "n_qualifying": 26,
+  "n_unsized": 3,
+  "expectancy_r": 0.016,
+  "median_age_days": 32,
+  "age_matched_reference_r": 0.618,
+  "required_expectancy_r": 0.309,
+  "median_r": 0.157,
+  "sum_r": 0.43,
+  "win_rate_pct": 53.8,
+  "hit_stop_pct": 51.7,
+  "best_trade_share_pct": 21.2,
+  "best_r": 2.29,
   "worst_r": -1.06,
-  "signal_basis_return_pct": -0.95,
+  "signal_basis_return_pct": 0.53,
   "first": "2026-07-29",
   "last": "2026-11-11"
  },
  "legacy": {
-  "n": 1059,
-  "n_qualifying": 841,
-  "n_unsized": 164,
-  "expectancy_r": -0.195,
-  "median_age_days": 61,
-  "age_matched_reference_r": 0.659,
-  "required_expectancy_r": 0.3295,
+  "n": 1069,
+  "n_qualifying": 852,
+  "n_unsized": 169,
+  "expectancy_r": -0.156,
+  "median_age_days": 60,
+  "age_matched_reference_r": 0.66,
+  "required_expectancy_r": 0.33,
   "median_r": -1.027,
-  "sum_r": -163.69,
-  "win_rate_pct": 27.3,
-  "hit_stop_pct": 62.8,
-  "best_trade_share_pct": 2.1,
-  "best_r": 7.96,
+  "sum_r": -132.64,
+  "win_rate_pct": 28.9,
+  "hit_stop_pct": 62.4,
+  "best_trade_share_pct": 1.9,
+  "best_r": 7.72,
   "worst_r": -6.34,
-  "signal_basis_return_pct": -204.62,
+  "signal_basis_return_pct": -165.8,
   "first": "2026-07-07",
-  "last": "2026-11-11"
+  "last": "2026-11-12"
  },
  "extended": {
   "n": 2,
   "n_qualifying": 2,
   "n_unsized": 0,
   "expectancy_r": -1.04,
-  "median_age_days": 56,
-  "age_matched_reference_r": 0.629,
-  "required_expectancy_r": 0.3145,
+  "median_age_days": 57,
+  "age_matched_reference_r": 0.632,
+  "required_expectancy_r": 0.316,
   "median_r": -1.04,
   "sum_r": -2.08,
   "win_rate_pct": 0.0,
@@ -127,84 +127,84 @@
  "conditions": {
   "sample": {
    "ok": false,
-   "detail": "16 of 40 qualifying signals (closed, or aged 30d+)"
+   "detail": "17 of 40 qualifying signals (closed, or aged 30d+)"
   },
   "expectancy": {
    "ok": false,
-   "detail": "-0.43R vs +0.33R required \u2014 50% of the +0.67R the backtest reads at the same ages (median 82d)"
+   "detail": "-0.34R vs +0.33R required \u2014 50% of the +0.66R the backtest reads at the same ages (median 82d)"
   },
   "beats_benchmark": {
    "ok": false,
-   "detail": "system -8.6% vs Momentum-quality ETF (MidSmall 400) +1.6% over the same window"
+   "detail": "system -7.1% vs Momentum-quality ETF (MidSmall 400) +2.2% over the same window"
   },
   "hit_stop": {
    "ok": false,
-   "detail": "73.7% stopped vs 55.0% ceiling"
+   "detail": "75.0% stopped vs 55.0% ceiling"
   },
   "concentration": {
    "ok": true,
-   "detail": "best trade is 24.8% of positive R vs 60.0% ceiling"
+   "detail": "best trade is 40.7% of positive R vs 60.0% ceiling"
   }
  },
  "benchmark": {
   "sym": "MIDSMALL",
-  "ret_pct": 1.63,
+  "ret_pct": 2.21,
   "first": 51.07,
-  "last": 51.9,
+  "last": 52.2,
   "from": "2026-07-29",
-  "to": "2026-11-11",
-  "sessions": 75,
+  "to": "2026-11-12",
+  "sessions": 76,
   "label": "Momentum-quality ETF (MidSmall 400)",
   "note": "Mirae Nifty MidSmallcap400 Momentum Quality 100 ETF (NSE: MIDSMALL) \u2014 the investable alternative to running this system."
  },
  "benchmark2": {
   "sym": "NIFTY50",
-  "ret_pct": 4.14,
+  "ret_pct": 4.33,
   "first": 24250.2,
-  "last": 25255.05,
+  "last": 25299.35,
   "from": "2026-07-29",
-  "to": "2026-11-11",
-  "sessions": 73,
+  "to": "2026-11-12",
+  "sessions": 74,
   "label": "NIFTY 50"
  },
  "benchmark_context": {
   "3m": {
    "bench": {
     "sym": "MIDSMALL",
-    "ret_pct": -1.12,
-    "first": 52.49,
-    "last": 51.9,
-    "from": "2026-08-12",
-    "to": "2026-11-11",
+    "ret_pct": -0.51,
+    "first": 52.47,
+    "last": 52.2,
+    "from": "2026-08-13",
+    "to": "2026-11-12",
     "sessions": 65
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": 3.35,
-    "first": 24435.95,
-    "last": 25255.05,
-    "from": "2026-08-12",
-    "to": "2026-11-11",
+    "ret_pct": 3.7,
+    "first": 24395.85,
+    "last": 25299.35,
+    "from": "2026-08-13",
+    "to": "2026-11-12",
     "sessions": 63
    }
   },
   "12m": {
    "bench": {
     "sym": "MIDSMALL",
-    "ret_pct": 5.83,
-    "first": 49.04,
-    "last": 51.9,
-    "from": "2025-11-11",
-    "to": "2026-11-11",
+    "ret_pct": 5.22,
+    "first": 49.61,
+    "last": 52.2,
+    "from": "2025-11-12",
+    "to": "2026-11-12",
     "sessions": 252
    },
    "bench2": {
     "sym": "NIFTY50",
-    "ret_pct": -1.71,
-    "first": 25694.95,
-    "last": 25255.05,
-    "from": "2025-11-11",
-    "to": "2026-11-11",
+    "ret_pct": -2.23,
+    "first": 25875.8,
+    "last": 25299.35,
+    "from": "2025-11-12",
+    "to": "2026-11-12",
     "sessions": 248
    }
   }
