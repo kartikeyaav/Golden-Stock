@@ -180,3 +180,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-11-11,EMCURE,SKIP,entry,0,,,[EMCURE@2026-11-10 15:25] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
 2026-11-11,QUESS,SKIP,entry,0,,,[QUESS@2026-11-10 21:31] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
 2026-11-11,BHARATSE,SKIP,entry,0,,,[BHARATSE@2026-11-10 21:32] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-13,EIMCOELECO,SELL,partial,4,2733.45,1965.0,partial at 2.5R

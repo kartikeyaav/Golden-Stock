@@ -1,16 +1,76 @@
 {
  "ok": true,
- "generated": "2026-11-12T18:27:43",
+ "generated": "2026-11-13T17:52:37",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 10006,
- "policy_hits": 21,
- "stories": 17,
+ "headlines_read": 9946,
+ "policy_hits": 22,
+ "stories": 18,
  "themes": {
+  "renewables": {
+   "pressure": 0.283,
+   "pos_flow": 0.3018,
+   "neg_flow": 0.0577,
+   "n_scored": 4,
+   "n_attn": 0,
+   "top": [
+    {
+     "title": "Sembcorp Green Infra IPO: Temasek-backed renewable energy company gets SEBI nod for  ₹3,750 crore public issue",
+     "date": "2026-11-13T18:34:59",
+     "source": "Livemint",
+     "link": "https://www.livemint.com/companies/sembcorp-green-infra-ipo-temasek-backed-renewable-energy-company-gets-sebi-nod-for-3-750-crore-public-issue-11794574597354.html",
+     "themes": [
+      "renewables"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 3750.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.1908
+    },
+    {
+     "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
+     "date": "2026-09-30T20:01:24",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/news/cabinet-approves-green-energy-corridor-phase-iii-scheme/article71527880.ece",
+     "themes": [
+      "renewables"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": 186000.0,
+     "tier": 1,
+     "hedged": false,
+     "sources": 2,
+     "retellings": 2,
+     "weight": 0.0605
+    },
+    {
+     "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
+     "date": "2026-10-25T13:56:36",
+     "source": "BusinessLine",
+     "link": "https://www.thehindubusinessline.com/economy/govt-needs-to-incentivise-domestic-solar-production-as-china-eyes-curbs-on-tech-exports-solex-chairman/article71622836.ece",
+     "themes": [
+      "renewables"
+     ],
+     "polarity": "neg",
+     "event": "",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.0577
+    }
+   ]
+  },
   "ev": {
-   "pressure": 0.066,
-   "pos_flow": 0.1323,
-   "neg_flow": 0.108,
+   "pressure": 0.065,
+   "pos_flow": 0.128,
+   "neg_flow": 0.1045,
    "n_scored": 3,
    "n_attn": 1,
    "top": [
@@ -29,7 +89,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.108
+     "weight": 0.1045
     },
     {
      "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -47,7 +107,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0922
+     "weight": 0.0892
     },
     {
      "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -64,13 +124,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0401
+     "weight": 0.0388
     }
    ]
   },
   "defence": {
-   "pressure": 0.134,
-   "pos_flow": 0.1067,
+   "pressure": 0.13,
+   "pos_flow": 0.1032,
    "neg_flow": 0.0,
    "n_scored": 2,
    "n_attn": 1,
@@ -90,7 +150,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0749
+     "weight": 0.0724
     },
     {
      "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -107,13 +167,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0318
+     "weight": 0.0308
     }
    ]
   },
   "railways": {
-   "pressure": 0.26,
-   "pos_flow": 0.2234,
+   "pressure": 0.253,
+   "pos_flow": 0.2161,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 1,
@@ -133,7 +193,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0885
+     "weight": 0.0856
     },
     {
      "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -150,7 +210,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 3,
-     "weight": 0.0712
+     "weight": 0.0689
     },
     {
      "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -167,7 +227,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0637
+     "weight": 0.0616
     }
    ]
   },
@@ -179,66 +239,6 @@
    "n_attn": 1,
    "top": []
   },
-  "renewables": {
-   "pressure": 0.09,
-   "pos_flow": 0.1147,
-   "neg_flow": 0.0596,
-   "n_scored": 3,
-   "n_attn": 0,
-   "top": [
-    {
-     "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
-     "date": "2026-09-30T20:01:24",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/news/cabinet-approves-green-energy-corridor-phase-iii-scheme/article71527880.ece",
-     "themes": [
-      "renewables"
-     ],
-     "polarity": "pos",
-     "event": "approval",
-     "amount_cr": 186000.0,
-     "tier": 1,
-     "hedged": false,
-     "sources": 2,
-     "retellings": 2,
-     "weight": 0.0625
-    },
-    {
-     "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
-     "date": "2026-10-25T13:56:36",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/economy/govt-needs-to-incentivise-domestic-solar-production-as-china-eyes-curbs-on-tech-exports-solex-chairman/article71622836.ece",
-     "themes": [
-      "renewables"
-     ],
-     "polarity": "neg",
-     "event": "",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0596
-    },
-    {
-     "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
-     "date": "2026-10-20T19:58:37",
-     "source": "BusinessLine",
-     "link": "https://www.thehindubusinessline.com/companies/evolve-energy-launches-solar-xperience-centre-in-chennai/article71604913.ece",
-     "themes": [
-      "renewables"
-     ],
-     "polarity": "pos",
-     "event": "",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0522
-    }
-   ]
-  },
   "datacentre": {
    "pressure": 0.0,
    "pos_flow": 0.0,
@@ -248,8 +248,8 @@
    "top": []
   },
   "capex": {
-   "pressure": 0.117,
-   "pos_flow": 0.0922,
+   "pressure": 0.113,
+   "pos_flow": 0.0892,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -270,7 +270,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0922
+     "weight": 0.0892
     }
    ]
   },
@@ -303,6 +303,23 @@
  },
  "events": [
   {
+   "title": "Sembcorp Green Infra IPO: Temasek-backed renewable energy company gets SEBI nod for  ₹3,750 crore public issue",
+   "date": "2026-11-13T18:34:59",
+   "source": "Livemint",
+   "link": "https://www.livemint.com/companies/sembcorp-green-infra-ipo-temasek-backed-renewable-energy-company-gets-sebi-nod-for-3-750-crore-public-issue-11794574597354.html",
+   "themes": [
+    "renewables"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": 3750.0,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.1908
+  },
+  {
    "title": "Mangaluru’s Zupple Labs get DRDO mandate to develop blockchain evaluation standards",
    "date": "2026-11-10T21:58:38",
    "source": "BusinessLine",
@@ -317,7 +334,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1451
+   "weight": 0.1404
   },
   {
    "title": "Centre bans export of unsorted waste, scrap of lithium-ion batteries",
@@ -334,7 +351,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.108
+   "weight": 0.1045
   },
   {
    "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -352,7 +369,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0922
+   "weight": 0.0892
   },
   {
    "title": "1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai to ease waiting lists, Railway ministry plans four parallel tracks on 7 major corridors",
@@ -369,7 +386,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0916
+   "weight": 0.0886
   },
   {
    "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
@@ -386,7 +403,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0885
+   "weight": 0.0856
   },
   {
    "title": "Defence Ministry approves over ₹2,400 crore procurement from startups and MSMEs",
@@ -403,7 +420,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0749
+   "weight": 0.0724
   },
   {
    "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -420,7 +437,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 3,
-   "weight": 0.0712
+   "weight": 0.0689
   },
   {
    "title": "Cancer Drug Price Cut: Govt Caps Trade Margins At 30%, Revises Prices Of 543 Drug Brands",
@@ -437,7 +454,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.068
+   "weight": 0.0658
   },
   {
    "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -454,7 +471,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0637
+   "weight": 0.0616
   },
   {
    "title": "Cabinet clears ₹1.86 lakh crore Green Energy Corridor-III to evacuate 135 GW renewable power",
@@ -471,7 +488,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0625
+   "weight": 0.0605
   },
   {
    "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -488,7 +505,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0596
+   "weight": 0.0577
   },
   {
    "title": "Karnataka approves Rs 4,000 crore textile policy to attract Rs 20,000 crore investment",
@@ -522,7 +539,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0506
   },
   {
    "title": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
@@ -539,7 +556,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0429
+   "weight": 0.0415
   },
   {
    "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -556,7 +573,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0388
   },
   {
    "title": "Jammu and Kashmir government notifies Electric Vehicle Policy 2026",
@@ -573,7 +590,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 2,
-   "weight": 0.0375
+   "weight": 0.0363
   },
   {
    "title": "Defence Minister launches Fleet Support Ship-1 at HSL in Vizag",
@@ -590,7 +607,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0318
+   "weight": 0.0308
   }
  ]
 }
