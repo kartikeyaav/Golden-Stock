@@ -1,133 +1,172 @@
-# Thematic intelligence — week of 2026-11-09
-_generated 2026-11-09 11:06 · claude-sonnet-5 · 26 calls accepted, 0 rejected, hallucination rate 0%_
+# Thematic intelligence — week of 2026-11-15
+_generated 2026-11-15 13:09 · claude-sonnet-5 · 40 calls accepted, 0 rejected, hallucination rate 0%_
 
-US-midterm shockwaves dominated the week: an AI-stock rout deepened the DRAM/NAND cost squeeze on Indian EMS assemblers while Iran de-escalation hopes knocked Brent down ~18% before a partial rebound, fading the energy-security tailwind. Domestically, four decided Cabinet/DGTR/order-book actions this week — grid-storage VGF, critical-mineral processing capex support, a ₹28,000cr BHEL thermal order, and a soda-ash safeguard — open four new, narrowly-scoped tailwinds, while a Paras–BroadPak OSAT tie-up adds a fresh name to the semis theme.
+Three decided government actions this week have clean revenue mechanisms into the universe: a dated DGFT export ban on lithium-ion battery black mass (10 Nov) that locks feedstock for domestic recyclers, a 64%-larger Rs 62,370 crore Cabinet fertiliser subsidy for the Rabi season (11 Nov), and a confirmed $659mn Paras-BroadPak OSAT packaging facility that the semis map is missing. Meanwhile Hormuz tanker/LNG disruption has flipped the energy-security trade from upstream-tailwind to refiner/shipper-tailwind-plus-upstream-headwind, and the Jensen Huang/Nvidia-driven chip-stock rout keeps the EMS memory-cost headwind alive rather than resolved.
 
-## Grid-scale energy storage (VGF scheme) (storage) — tailwind, strength 4/5, medium horizon, new
+## Critical minerals & battery recycling (criticalminerals) — tailwind, strength 4/5, medium horizon, strengthening
 _NEW THEME — promote to scoring/themes.py to score it_
 
-A dated, costed Rs 14,500 crore viability-gap-funding scheme de-risks 92 GWh of new pumped-hydro and battery storage capacity (Rs 97,600 crore total investment, FY27-31), directly subsidising the capex of storage-cell makers and project developers who bid into it.
+A dated export prohibition on lithium-ion battery black mass forces domestic scrap generators to sell feedstock to Indian recyclers instead of exporting it, lowering their input costs and securing capacity utilisation; a parallel NMDC-Rosatom lithium exploration talk adds a longer-dated supply-side option.
 
 **Drivers**
-- 2026-11-04 India: Cabinet approved Rs 14,500 crore VGF scheme for 92 GWh grid-scale storage (60 GWh pumped hydro, 30 GWh BESS, 2 GWh other) targeting 411 GWh cumulative by FY32 — https://www.etvbharat.com/en/business/cabinet-clears-rs-14500-crore-energy-storage-scheme-how-it-will-ensure-round-the-clock-power-supply-enn26110405355
+- 2026-11-10 India: DGFT Notification 49/2026-27 prohibits export of lithium-ion battery black mass (HS 85491400), effective immediately — https://www.pib.gov.in/PressReleasePage.aspx?PRID=2335019&lang=1&reg=3
+- 2026-11-10 India/Russia: NMDC in talks with Russia's Rosatom to explore lithium mining and processing opportunities — BusinessLine: NMDC in talks with Russia's Rosatom to explore lithium mining and processing opportunities
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| EXIDEIND | 1 | benefit | high | Exide Energy Solutions' 12 GWh lithium-cell gigafactory (Bengaluru) is a direct domestic BESS-cell supplier positioned to fill VGF-backed storage tenders |
-| ARE&M | 1 | benefit | high | Amara Raja's Rs 9,500 crore, 16 GWh Telangana Giga Corridor targets grid/BESS demand the VGF scheme is designed to catalyse |
-| NHPC | 1 | benefit | medium | 60 of the 92 GWh is pumped-hydro storage (PSP) capacity; NHPC is a PSU pumped-hydro developer with an existing project pipeline that can draw VGF support directly |
-| JSWENERGY | 1 | benefit | medium | JSW Energy's storage and pumped-hydro project pipeline qualifies for the new VGF capital support, lowering its project IRR hurdle |
-| IREDA | 2 | benefit | medium | As the dedicated RE/storage lender, IREDA's loan book grows as developers draw financing to build out VGF-subsidised storage capacity |
-| ACMESOLAR | 2 | benefit | medium | Hybrid renewable-plus-storage developer whose storage-linked PPAs become more bankable once VGF narrows the viability gap |
+| GRAVITA | 1 | benefit | high | Lead-acid/lithium battery recycler whose core feedstock is black mass; export ban guarantees domestic supply and improves margin via lower input cost. |
+| JAINREC | 1 | benefit | high | Metal and battery-material recycler; same feedstock-lock mechanism as Gravita. |
+| NMDC | 2 | benefit | low | Exploring a lithium mining/processing tie-up with Rosatom, diversifying revenue beyond iron ore — intent stage, not yet decided. |
 
-## Critical mineral processing & recycling (criticalminerals) — tailwind, strength 4/5, medium horizon, new
+## Fertiliser subsidy support (fertilizersubsidy) — tailwind, strength 4/5, near horizon, new
 _NEW THEME — promote to scoring/themes.py to score it_
 
-A dated Cabinet capex-support scheme directly subsidises domestic lithium/nickel processing plants (up to Rs 500-900 crore per plant), and a fresh critical-mineral block auction widens the ore-supply pipeline — together de-risking the capex of India's handful of secondary/critical-metal processors.
+The Cabinet-approved jump in P&K (phosphatic/potassic) nutrient-based subsidy directly underwrites affordability and payment certainty for DAP/NPK producers through the Rabi season, reducing receivables risk and supporting volumes.
 
 **Drivers**
-- 2026-11-04 India: Cabinet approved Rs 2,814 crore Capex Support Scheme to Promote Critical Mineral Processing (lithium/nickel), targeting 60kt lithium + 100kt nickel processing capacity and Rs 10,000 crore of investment, FY27-31 — https://www.pmindia.gov.in/en/news_updates/cabinet-approves-capex-support-scheme-to-promote-critical-mineral-processing-with-an-outlay-of-rs-2814-crore-for-lithium-and-nickel-processing/
-- 2026-11-06 India: Government offered 20 critical mineral blocks across 8 states in the ninth auction tranche — BusinessLine headline from briefing: "India offers 20 critical mineral blocks across 8 states in ninth auction tranche"
+- 2026-11-11 India: Cabinet approves Rs 62,370.02 crore NBS subsidy for P&K fertilisers for Rabi 2026-27 (Oct 2026-Mar 2027), up 64.3% YoY — https://www.business-standard.com/amp/economy/news/cabinet-approves-62-370-crore-fertiliser-subsidy-for-rabi-2026-27-season-126111100867_1.html
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| GRAVITA | 1 | benefit | high | Already running a 6,000 MTPA lithium-ion battery recycling plant at Mundra with a Rs 1,700 crore roadmap to 800,000 MTPA secondary-processing capacity by FY29 — exactly the domestic processing capacity the new capex-support scheme is designed to catalyse |
-| JAINREC | 2 | benefit | medium | Non-ferrous metal (copper/lead/aluminium) recycler adjacent to the government's secondary-processing push for strategic metals, though its current capacity isn't lithium/nickel-specific |
-| HINDCOPPER | 1 | benefit | low | Copper is on India's critical-minerals list; HINDCOPPER is a plausible bidder in the new mineral-block auction tranche, though no specific award is yet confirmed |
+| COROMANDEL | 1 | benefit | high | Major DAP/NPK producer; higher subsidy allocation improves affordability for farmers and payment certainty for the company. |
+| CHAMBLFERT | 1 | benefit | high | DAP/NPK producer directly covered by the P&K subsidy pool. |
+| PARADEEP | 1 | benefit | high | DAP-focused producer; subsidy increase directly supports volume and realisation. |
+| GSFC | 1 | benefit | medium | P&K fertiliser manufacturer benefiting from the subsidy pool alongside its chemicals business. |
+| DEEPAKFERT | 1 | benefit | medium | NPK/specialty fertiliser maker within the subsidised P&K basket. |
 
-## Thermal & nuclear power equipment order cycle (thermalcapex) — tailwind, strength 4/5, medium horizon, new
+## Steel capacity expansion (steelcapacity) — tailwind, strength 3/5, long horizon, new
 _NEW THEME — promote to scoring/themes.py to score it_
 
-A dated, Rs 28,000 crore BTG (boiler-turbine-generator) order from Adani Power to BHEL, alongside NTPC's decided plan to add 58 GW of capacity (including a stepped-up ~30 GW nuclear ambition) by 2032-37, confirms a multi-year thermal-plus-nuclear EPC order cycle feeding listed power-equipment makers.
+A ministerial capacity target (300 MT by 2030, 500 MT by 2047) paired with an active push to raise domestic iron-ore output signals the government's intent to support steelmaker capex and ore-linked producers, though nothing is yet a binding allocation.
 
 **Drivers**
-- 2026-11-04 India: BHEL won orders worth up to Rs 28,000 crore from Adani Power for four 2x800MW (6,400MW total) thermal projects, covering boilers, turbines, generators and auxiliary equipment — https://www.kotakneo.com/news/stocks/bhel-secures-adani-power-orders-worth-up-to-28000-crore/
-- 2026-11-03 India: NTPC targets 149 GW installed capacity by 2032 (+58 GW), with chairman outlining ~30 GW nuclear ambition by 2037 and feasibility studies completed in MP, Bihar and Odisha — https://aninews.in/news/business/ntpc-plans-to-expand-installed-capacity-to-149-gw-by-2032-add-58-gw20261104110614/
+- 2026-11-06 India: Union Minister G Kishan Reddy states India targets 300 million tonnes of steel production by 2030 and 500 million tonnes by 2047, alongside a push for higher iron ore output — https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| BHEL | 1 | benefit | high | Direct, named EPC/BTG contractor on the Rs 28,000 crore Adani Power order, its single largest disclosed order win this year |
-| THERMAX | 2 | benefit | medium | Supplies boilers and auxiliary equipment into the same thermal-capacity build-out cycle that BHEL's order confirms is accelerating |
-| TDPOWERSYS | 2 | benefit | medium | Turbine-generator component supplier benefiting from the broader thermal/industrial power order momentum |
-| MIDHANI | 3 | benefit | low | Special alloys/forgings supplier positioned to benefit as NTPC's nuclear-grade component sourcing ramps toward its 2037 nuclear ambition |
-| PTCIL | 3 | benefit | low | Precision investment castings for nuclear/aerospace-grade components, an adjacent beneficiary of NTPC's nuclear capacity push |
+| SAIL | 1 | benefit | medium | State steelmaker positioned as a primary vehicle for capacity expansion toward the national target. |
+| JSL | 1 | benefit | medium | Stainless producer benefiting from a broader national push on steel capacity and ore access. |
+| SHYAMMETL | 1 | benefit | medium | Mid-cap integrated steelmaker with active capacity expansion, aligned to the capacity-growth push. |
+| GPIL | 1 | benefit | medium | Integrated ore-to-steel producer benefiting from both capacity-growth policy and the ore-production push. |
+| NMDC | 2 | benefit | high | Largest listed iron-ore merchant miner; explicit government push to raise ore output to feed the 300 MT steel target lifts its volume outlook. |
+| KSL | 2 | benefit | low | Ore-linked specialty steelmaker that benefits indirectly from higher domestic ore availability. |
 
-## Soda ash import safeguard (sodaash) — tailwind, strength 3/5, near horizon, new
-_NEW THEME — promote to scoring/themes.py to score it_
-
-DGTR found soda ash imports up 89% in 2023-24 causing serious injury and recommended a two-year quantitative-restriction safeguard; this directly protects the pricing power of the domestic soda-ash producers who filed the case, pending final Department of Revenue notification.
-
-**Drivers**
-- 2026-11-06 India: DGTR recommended a two-year safeguard (quantitative restriction) on soda ash imports — quota of 754,992 MT in year 1, 792,740 MT in year 2 — after a petition by the Alkali Manufacturers Association on behalf of DCW, GHCL, Nirma, RSPL and Ta — https://www.gktoday.in/dgtr-recommends-two-year-soda-ash-import-curbs/
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| TATACHEM | 1 | benefit | high | Named petitioner and India's largest listed soda-ash producer; the import quota directly shields its domestic soda-ash pricing and volumes from a documented 89% import surge |
-
-## Semiconductors & OSAT (semis) — tailwind, strength 3/5, medium horizon, strengthening
+## Railways & metro (railways) — tailwind, strength 4/5, medium horizon, strengthening
 _existing theme_
 
-A new, decided private-sector tie-up adds an advanced-packaging/OSAT capability inside the universe, broadening the theme beyond its existing EMS-adjacent members even as the global AI-chip rout (see EMS) creates short-term noise around semis sentiment generally.
+A ministry plan to quadruple key corridors and add 1,000 trains, combined with BEML's move to build tunnel-boring machines domestically, extends the railway capex cycle into both rolling stock and tunnelling equipment import-substitution.
 
 **Drivers**
-- 2026-11-06 India: Paras Semiconductors (subsidiary of Paras Defence) partnered with US-based BroadPak Corp to build an advanced heterogeneous-integration/3D-packaging OSAT facility in India (2.5D/3D packaging, chiplet integration, hybrid bonding, co-packaged — https://cxotoday.com/media-coverage/paras-semiconductors-partners-with-us-based-broadpak-corporation-to-build-advanced-semiconductor-packaging-capabilities-in-india/
+- 2026-11-07 India: Railway ministry plans four parallel tracks on 7 major corridors, 1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai — BusinessLine: 'Indian Railways to quadruple 7 major corridors, add over 1,000 trains'
+- 2026-11-12 India: BEML to build tunnel-boring machines domestically to cut reliance on China — Livemint: 'How BEML plans to gain an edge over China in building India's tunnel-boring machines'
+- 2026-11-13 India: PM Modi inaugurates Bengaluru Metro Pink Line stretch; network crosses 100 km — BusinessLine: 'PM Modi inaugurates Bengaluru Metro Pink Line stretch, network crosses 100 km'
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| PARAS | 1 | benefit | high | Direct new OSAT/advanced-packaging business line via the BroadPak technology partnership, a new revenue vertical outside its core defence-optics business |
+| RVNL | 1 | benefit | high | Primary EPC contractor for rail electrification and new-corridor construction tied to the quadrupling plan. |
+| IRCON | 1 | benefit | high | Rail infrastructure EPC player positioned for new-corridor and track-doubling contracts. |
+| TITAGARH | 1 | benefit | high | Rolling stock maker benefiting directly from the 1,000-extra-trains plan. |
+| JWL | 1 | benefit | high | Wagon and rolling-stock maker benefiting from expanded train fleet demand. |
+| BEML | 1 | benefit | high | Direct beneficiary of the decided move to build tunnel-boring machines domestically for metro/tunnel projects, plus existing rolling-stock exposure. |
+| RAILTEL | 2 | benefit | medium | Signalling/telecom backbone provider for the expanding rail and metro network. |
+
+## Data centres & digital infrastructure (datacentre) — tailwind, strength 4/5, medium horizon, strengthening
+_existing theme_
+
+A decided export-order win tied explicitly to AI data-centre demand confirms networking-gear makers are already converting the broader data-centre capex wave (Hillhouse's $12-15bn TeraNova DC plan from last week) into booked revenue.
+
+**Drivers**
+- 2026-11-12 India/export: HFCL secures Rs 834 crore export orders, eyes AI data centre demand — The Economic Times: 'HFCL secures Rs 834 crore export orders, eyes AI data centre demand'
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| HFCL | 1 | benefit | high | Booked Rs 834 crore of export orders explicitly tied to AI data-centre networking demand. |
+| STLTECH | 2 | benefit | low | Optical-fibre backbone supplier positioned to benefit from the same data-centre connectivity build-out. |
+
+## Energy security & Hormuz shipping stress (energysecurity) — mixed, strength 3/5, near horizon, reversed
+_NEW THEME — promote to scoring/themes.py to score it_
+
+Last week's upstream-crude-tailwind thesis has flipped: Brent fell toward $75 before a partial Hormuz-driven rebound, so refiners/OMCs now gain from cheaper feedstock while upstream producers lose on realisations, and Hormuz tanker/LNG disruption is separately lifting shipping and terminal-throughput demand.
+
+**Drivers**
+- 2026-11-10 Strait of Hormuz/India: Hormuz LNG tanker traffic hits highest level since the Iran war began — The Economic Times: 'Hormuz LNG traffic hits highest in October since Iran war began'
+- 2026-11-07 Global/India: IEA warns global gas supplies to tighten this winter due to Strait of Hormuz LNG shock — BusinessLine: 'Global gas supplies to tighten this winter due to Strait of Hormuz LNG shock, warns IEA'
+- 2026-11-08 India: IOC to buy extra crude and LPG carriers as Hormuz disruptions drive up freight costs — Livemint: 'Iran war: IOC to buy crude, LPG carriers as Strait of Hormuz disruptions drive freight costs'
+- 2026-11-11 Global: Crude oil prices seen falling toward $75 by December as West Asia tensions ease, before partially rebounding on renewed tanker attacks — BusinessLine: 'Crude oil prices may fall to $75 by December as West Asia tensions ease'
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| HINDPETRO | 1 | benefit | medium | OMC/refiner whose marketing and refining margins improve as crude feedstock costs ease. |
+| MRPL | 1 | benefit | medium | Refiner benefiting from the same lower-feedstock-cost dynamic. |
+| GESHIP | 2 | benefit | medium | Crude/product tanker owner; Hormuz rerouting and extra chartering demand lift freight rates. |
+| SCI | 2 | benefit | medium | State shipping line with tanker exposure benefiting from the same chartering-demand surge. |
+| PETRONET | 1 | benefit | low | LNG import terminal operator sees higher throughput as winter gas supply tightens and buyers route more cargo through Indian terminals. |
+| OIL | 1 | hurt | medium | Upstream crude producer whose realisations fall as Brent eases toward $75. |
+
+## Textiles & apparel PLI (textiles) — mixed, strength 2/5, near horizon, steady
+_existing theme_
+
+A USDA-flagged decline in global cotton output raises raw-material costs for domestic spinners even as garment exporters diversify client relationships toward the US on tariff uncertainty.
+
+**Drivers**
+- 2026-11-11 Global/India: Global cotton output to decline as US, India crops shrink, says USDA — BusinessLine: 'Global cotton output to decline as US, India crops shrink, says USDA'
+- 2026-11-10 US: Arvind plans third design studio in the US after London, Amsterdam — BusinessLine: 'Arvind plans third design studio in the US after London, Amsterdam'
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| KPRMILL | 1 | hurt | medium | Cotton-spinning/apparel integrated player facing higher raw cotton costs as global output shrinks. |
+| VTL | 1 | hurt | medium | Large cotton-yarn and textile producer exposed to rising raw cotton input costs. |
+| TRIDENT | 1 | hurt | medium | Cotton-based home textile exporter exposed to the same input-cost pressure. |
+| NITINSPIN | 1 | hurt | low | Cotton spinner facing margin pressure from tighter raw cotton supply. |
+| ARVIND | 1 | benefit | low | Expanding US design-studio footprint signals deepening US client relationships ahead of any tariff resolution. |
+
+## Semiconductors & OSAT (semis) — tailwind, strength 3/5, long horizon, steady
+_existing theme_
+
+Paras Semiconductors' confirmed advanced-packaging tie-up with US-based BroadPak adds a ~$659mn OSAT facility (2.5D/3D packaging, chiplet integration) to the Indian semiconductor supply chain, a capability the existing semis member list doesn't yet reflect.
+
+**Drivers**
+- 2026-11-06 India/US: Paras Semiconductors (Paras Defence subsidiary) partners with US-based BroadPak to build an advanced packaging facility (~$658.77mn) in Madhya Pradesh — https://www.digitimes.com/news/a20261109VL209/packaging-plant-subsidiary-technology-incentives.html
+
+| symbol | order | effect | conf | mechanism |
+|---|---|---|---|---|
+| PARAS | 1 | benefit | high | Parent company of Paras Semiconductors, the entity building the OSAT packaging facility with BroadPak's technology transfer. |
 
 **Map corrections applied:** PARAS
 
-## Electronics manufacturing (EMS) (ems) — headwind, strength 4/5, near horizon, strengthening
+## Electronics manufacturing (EMS) (ems) — headwind, strength 3/5, near horizon, steady
 _existing theme_
 
-The global memory (DRAM/NAND) cost shock flagged last week has now converted into realised, brokerage-quantified margin and volume cuts at the most exposed assembler, and was compounded this week by an AI-driven Nasdaq chip rout that hit the same global supply chain, even after a partial rebound.
+The Jensen Huang/Nvidia China-spy controversy and ensuing AI-chip stock rout (partially rebounded) keeps global memory (DRAM/NAND) costs elevated and AI-capex sentiment uncertain, sustaining margin and component-availability pressure on Indian assemblers rather than resolving it.
 
 **Drivers**
-- 2026-11 India: CLSA flags Dixon as most exposed in EMS to the memory price surge; Jefferies forecasts a 31% drop in Dixon's CY26 global smartphone shipments; Dixon's own Q4 showed revenue +2.1% but profit -36% on cost pressure — https://www.business-standard.com/markets/news/ems-sector-at-risk-amid-memory-price-surge-clsa-cuts-dixon-technologies-to-hold-126022000400_1.html
-- 2026-11-05 Global: Worst US stock rout since 2020: Nasdaq plunged 6.4%, Micron -17%, AMD/Qualcomm/SanDisk down up to 17%, $2.5 trillion wiped off US equities, before a partial Nasdaq +2% rebound after midterm results — BusinessLine headline from briefing: "Worst US stock rout since 2020 leaves virtually nowhere to hide as Nasdaq plunges 6.4%, Dow sheds 1,833 points"
+- 2026-11-09 Global: Nvidia shares drop sharply on CEO Jensen Huang China-spy probe before partially recovering; Baird downgrades Nvidia on China curbs and AI demand worries — Livemint: 'Nvidia shares drop nearly 6% in pre-market as alleged China spy links put Jensen Huang under board scrutiny'; The Economic Times: 'Baird downgrades Nvidia on China curbs, AI demand worries'
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| DIXON | 1 | hurt | high | Smartphone-heavy EMS mix is most exposed to memory cost pass-through; brokerages have already cut shipment and earnings estimates on this specific driver |
-| AMBER | 1 | hurt | medium | White-goods-weighted EMS mix is less memory-intensive than smartphones, so the cost hit is milder but still present across the sector |
-| SYRMA | 1 | hurt | medium | Consumer-electronics EMS assembler exposed to the same component cost inflation sweeping the sector |
-| PGEL | 1 | hurt | medium | Consumer-electronics EMS assembler exposed to the same component cost inflation sweeping the sector |
+| DIXON | 1 | hurt | medium | Large electronics assembler exposed to elevated global memory-chip costs and AI-capex demand uncertainty. |
+| AMBER | 1 | hurt | low | EMS player with component-cost exposure to the same global memory-chip volatility. |
+| SYRMA | 1 | hurt | low | Contract electronics manufacturer with similar memory-cost and component-supply exposure. |
+| KAYNES | 1 | hurt | low | EMS/OSAT player with partial exposure to the same global chip-market volatility. |
 
-## Financial market infrastructure (finfra) — tailwind, strength 3/5, near horizon, strengthening
-_existing theme_
-
-A cluster of decided SEBI actions this week continues to strip friction from foreign and domestic capital flows — digital KYC for NRIs/FPIs without an India visit, net settlement for MF cash trades, and higher currency-derivative limits — each pushing incremental volume toward listed depositories, RTAs and exchanges.
-
-**Drivers**
-- 2026-11-05 India: SEBI eased KYC norms for NRIs, OCIs and foreign nationals, allowing fully digital onboarding without an India visit — BusinessLine headline from briefing: "SEBI eases KYC rules for overseas investors, allows digital onboarding without India visit"
-- 2026-11-05 India: SEBI approved net settlement of cash-market fund trades for mutual funds, effective April — The Economic Times headline from briefing: "Sebi approves net settlement of cash market trades for mutual funds"
-- 2026-11-05 India: SEBI revised currency derivative norms, raising the domestic investor/FPI position limit to $5 million — NDTV Profit headline from briefing: "SEBI Eases Currency Derivatives Rules, Sets $5 Million Limit"
-
-| symbol | order | effect | conf | mechanism |
-|---|---|---|---|---|
-| CDSL | 1 | benefit | medium | Depository account-opening and transaction volumes rise as FPI/NRI onboarding friction falls |
-| CAMS | 2 | benefit | medium | RTA transaction volumes benefit from smoother, net-settled mutual-fund cash-market processing |
-| KFINTECH | 2 | benefit | medium | RTA transaction volumes benefit from smoother, net-settled mutual-fund cash-market processing |
-| MCX | 1 | benefit | medium | Higher currency-derivative position limits support exchange turnover and open interest |
-
-## West Asia energy security / crude price (energysecurity) — mixed, strength 3/5, near horizon, fading
+## US tariff-advantage exporters (ustariffedge) — tailwind, strength 3/5, near horizon, new
 _NEW THEME — promote to scoring/themes.py to score it_
 
-Last week's strength-5 thesis (sustained high crude lifting upstream realisations while raising freight/input costs elsewhere) is fading: Brent fell roughly 18% from its 30 October high to its 5 November low on US-midterm-driven Iran de-escalation hopes, though it partially rebounded ~6% as Hormuz tanker attacks persisted — leaving the direction genuinely mixed rather than a clean tailwind or headwind.
+Even with the India-US tariff framework still unresolved, individual exporters are already booking decided revenue gains from relatively favourable US tariff treatment versus competing supply chains.
 
 **Drivers**
-- 2026-11-05 Global/India: Brent crude fell ~18% from the 30 October high to the 5 November low on hopes of US-brokered Iran de-escalation following the Democratic midterm sweep, before rebounding ~6% as Hormuz tanker attacks continued — https://www.vantagemarkets.com/market-analysis/why-brent-crude-oil-price-fell-midterms-iran-peace-bets-ukousd-usousd-november-6-2026/
+- 2026-11-13 India/US: India's exports to US rise 11%; Brazil and Mexico shipments also register strong growth — BusinessLine: 'India's exports to US rise 11%; Brazil and Mexico shipments register strong growth'
+- 2026-11-12 India/US/China: Suprajit's global business gains traction on US contract wins and China EV demand — BusinessLine: 'Suprajit's global business gains traction on US contract wins and China EV demand'
+- 2026-11-12 India/US: Cosmo First eyes all-time high US exports from film business this fiscal on lower tariffs — Livemint: 'Cosmo First eyes all-time high US exports from film business this fiscal on lower tariffs'
 
 | symbol | order | effect | conf | mechanism |
 |---|---|---|---|---|
-| OIL | 1 | hurt | medium | Upstream realisation tailwind fades as Brent retreats from the $109-120 highs cited last week toward the $93-100 range |
-| MRPL | 1 | hurt | medium | Forced shift to delivered-basis crude purchases to manage Hormuz-linked shipping risk is a persistent cost/margin headwind independent of the spot price move |
+| SUPRAJIT | 1 | benefit | medium | Auto cable/components exporter booking new US contract wins, decided revenue growth this quarter. |
+| COSMOFIRST | 1 | benefit | medium | Specialty film exporter guiding to all-time-high US exports this fiscal, explicitly tied to a lower relative tariff position. |
 
 ## Beneficiaries the universe does not hold
 
-- GHCL Limited (soda ash division) (sodaash): Named petitioner alongside Tata Chemicals in the DGTR soda-ash safeguard case and a direct beneficiary, but the GHCL entity in the universe (GHCLTEXTIL) is only the demerged textile arm.
-- Tonbo Imaging India (defelec): SEBI-cleared IPO for a defence-electronics/thermal-imaging maker riding the same procurement tailwind as listed defelec names, but not yet listed.
-- Hindustan Shipyard (HSL) (shipbuilding): Launched the Navy's Fleet Support Ship-1 this week, a direct naval-shipbuilding beneficiary, but it is a government shipyard not listed on the exchange.
-- Gentari Renewables India (Petronas/KKR) (renewables): CCI cleared a KKR-led investment into this Petronas-backed renewables platform, a large new capital pool entering India's RE build-out, but the entity is unlisted.
-- Hillhouse's TeraNova DC (datacentre): Plans to deploy $12-15bn into Indian data-centre capacity by 2032, a major demand signal for the theme, but the platform itself is not a listed universe name.
+- Adani Kutch Copper (criticalminerals): Signed an MoU with Chile's Codelco to secure copper ore supply for its Mundra smelter (2026-11-12) — direct copper supply-chain exposure, but neither it nor parent Adani Enterprises sits in the tracke
+- Indian Oil Corporation (IOC) (energysecurity): Chartering extra crude/LPG carriers as Hormuz disruption drives freight costs (2026-11-08) — India's largest OMC and most direct beneficiary of this dynamic, but not in the tracked universe.
+- Aluminium Extrusion Manufacturers Association of India (ALEMAI) members (steelcapacity): DGTR opened a suo motu anti-dumping probe into aluminium extrusion imports from China, Malaysia, Vietnam and Thailand (2026-11-09) on ALEMAI's complaint — no listed pure-play aluminium extruder exists
+- Domestic rubber glove manufacturers (other): DGTR recommended anti-dumping duty on rubber glove imports from Thailand and Malaysia (2026-11-09) — no listed Indian glove maker exists in the universe.

@@ -1,99 +1,30 @@
 {
- "generated": "2026-11-09 11:06",
+ "generated": "2026-11-15 13:09",
  "model": "claude-sonnet-5",
- "week_of": "2026-11-09",
- "summary": "US-midterm shockwaves dominated the week: an AI-stock rout deepened the DRAM/NAND cost squeeze on Indian EMS assemblers while Iran de-escalation hopes knocked Brent down ~18% before a partial rebound, fading the energy-security tailwind. Domestically, four decided Cabinet/DGTR/order-book actions this week — grid-storage VGF, critical-mineral processing capex support, a ₹28,000cr BHEL thermal order, and a soda-ash safeguard — open four new, narrowly-scoped tailwinds, while a Paras–BroadPak OSAT tie-up adds a fresh name to the semis theme.",
+ "week_of": "2026-11-15",
+ "summary": "Three decided government actions this week have clean revenue mechanisms into the universe: a dated DGFT export ban on lithium-ion battery black mass (10 Nov) that locks feedstock for domestic recyclers, a 64%-larger Rs 62,370 crore Cabinet fertiliser subsidy for the Rabi season (11 Nov), and a confirmed $659mn Paras-BroadPak OSAT packaging facility that the semis map is missing. Meanwhile Hormuz tanker/LNG disruption has flipped the energy-security trade from upstream-tailwind to refiner/shipper-tailwind-plus-upstream-headwind, and the Jensen Huang/Nvidia-driven chip-stock rout keeps the EMS memory-cost headwind alive rather than resolved.",
  "themes": [
-  {
-   "key": "storage",
-   "status": "new",
-   "name": "Grid-scale energy storage (VGF scheme)",
-   "direction": "tailwind",
-   "strength": 4,
-   "horizon": "medium",
-   "continuity": "new",
-   "thesis": "A dated, costed Rs 14,500 crore viability-gap-funding scheme de-risks 92 GWh of new pumped-hydro and battery storage capacity (Rs 97,600 crore total investment, FY27-31), directly subsidising the capex of storage-cell makers and project developers who bid into it.",
-   "drivers": [
-    {
-     "what": "Cabinet approved Rs 14,500 crore VGF scheme for 92 GWh grid-scale storage (60 GWh pumped hydro, 30 GWh BESS, 2 GWh other) targeting 411 GWh cumulative by FY32",
-     "where": "India",
-     "date": "2026-11-04",
-     "source": "https://www.etvbharat.com/en/business/cabinet-clears-rs-14500-crore-energy-storage-scheme-how-it-will-ensure-round-the-clock-power-supply-enn26110405355"
-    }
-   ],
-   "beneficiaries": [
-    {
-     "symbol": "EXIDEIND",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "high",
-     "mechanism": "Exide Energy Solutions' 12 GWh lithium-cell gigafactory (Bengaluru) is a direct domestic BESS-cell supplier positioned to fill VGF-backed storage tenders",
-     "evidence": "https://www.mvapulse.com/amara-raja-invests-%E2%82%B95-5-billion-in-battery-gigafactory/"
-    },
-    {
-     "symbol": "ARE&M",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "high",
-     "mechanism": "Amara Raja's Rs 9,500 crore, 16 GWh Telangana Giga Corridor targets grid/BESS demand the VGF scheme is designed to catalyse",
-     "evidence": "https://www.multibagg.ai/market-pulse/articles/amara-raja-bess-gigafactory-outlook-cms7fyw7c086h0zo20i0t2gcg"
-    },
-    {
-     "symbol": "NHPC",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "60 of the 92 GWh is pumped-hydro storage (PSP) capacity; NHPC is a PSU pumped-hydro developer with an existing project pipeline that can draw VGF support directly",
-     "evidence": "https://www.etvbharat.com/en/business/cabinet-clears-rs-14500-crore-energy-storage-scheme-how-it-will-ensure-round-the-clock-power-supply-enn26110405355"
-    },
-    {
-     "symbol": "JSWENERGY",
-     "order": 1,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "JSW Energy's storage and pumped-hydro project pipeline qualifies for the new VGF capital support, lowering its project IRR hurdle",
-     "evidence": "https://rupeezy.in/blog/top-bess-stocks-in-india"
-    },
-    {
-     "symbol": "IREDA",
-     "order": 2,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "As the dedicated RE/storage lender, IREDA's loan book grows as developers draw financing to build out VGF-subsidised storage capacity",
-     "evidence": "https://www.etvbharat.com/en/business/cabinet-clears-rs-14500-crore-energy-storage-scheme-how-it-will-ensure-round-the-clock-power-supply-enn26110405355"
-    },
-    {
-     "symbol": "ACMESOLAR",
-     "order": 2,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "Hybrid renewable-plus-storage developer whose storage-linked PPAs become more bankable once VGF narrows the viability gap",
-     "evidence": "https://www.etvbharat.com/en/business/cabinet-clears-rs-14500-crore-energy-storage-scheme-how-it-will-ensure-round-the-clock-power-supply-enn26110405355"
-    }
-   ],
-   "map_additions": []
-  },
   {
    "key": "criticalminerals",
    "status": "new",
-   "name": "Critical mineral processing & recycling",
+   "name": "Critical minerals & battery recycling",
    "direction": "tailwind",
    "strength": 4,
    "horizon": "medium",
-   "continuity": "new",
-   "thesis": "A dated Cabinet capex-support scheme directly subsidises domestic lithium/nickel processing plants (up to Rs 500-900 crore per plant), and a fresh critical-mineral block auction widens the ore-supply pipeline — together de-risking the capex of India's handful of secondary/critical-metal processors.",
+   "continuity": "strengthening",
+   "thesis": "A dated export prohibition on lithium-ion battery black mass forces domestic scrap generators to sell feedstock to Indian recyclers instead of exporting it, lowering their input costs and securing capacity utilisation; a parallel NMDC-Rosatom lithium exploration talk adds a longer-dated supply-side option.",
    "drivers": [
     {
-     "what": "Cabinet approved Rs 2,814 crore Capex Support Scheme to Promote Critical Mineral Processing (lithium/nickel), targeting 60kt lithium + 100kt nickel processing capacity and Rs 10,000 crore of investment, FY27-31",
+     "what": "DGFT Notification 49/2026-27 prohibits export of lithium-ion battery black mass (HS 85491400), effective immediately",
      "where": "India",
-     "date": "2026-11-04",
-     "source": "https://www.pmindia.gov.in/en/news_updates/cabinet-approves-capex-support-scheme-to-promote-critical-mineral-processing-with-an-outlay-of-rs-2814-crore-for-lithium-and-nickel-processing/"
+     "date": "2026-11-10",
+     "source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2335019&lang=1&reg=3"
     },
     {
-     "what": "Government offered 20 critical mineral blocks across 8 states in the ninth auction tranche",
-     "where": "India",
-     "date": "2026-11-06",
-     "source": "BusinessLine headline from briefing: \"India offers 20 critical mineral blocks across 8 states in ninth auction tranche\""
+     "what": "NMDC in talks with Russia's Rosatom to explore lithium mining and processing opportunities",
+     "where": "India/Russia",
+     "date": "2026-11-10",
+     "source": "BusinessLine: NMDC in talks with Russia's Rosatom to explore lithium mining and processing opportunities"
     }
    ],
    "beneficiaries": [
@@ -102,120 +33,426 @@
      "order": 1,
      "effect": "benefit",
      "confidence": "high",
-     "mechanism": "Already running a 6,000 MTPA lithium-ion battery recycling plant at Mundra with a Rs 1,700 crore roadmap to 800,000 MTPA secondary-processing capacity by FY29 — exactly the domestic processing capacity the new capex-support scheme is designed to catalyse",
-     "evidence": "https://www.sahi.com/news/gravita-india-starts-6-000-mtpa-mundra-lithium-ion-recycling-plant-eyeing-800-000-mtpa-capacity-3865-PE1_COR"
+     "mechanism": "Lead-acid/lithium battery recycler whose core feedstock is black mass; export ban guarantees domestic supply and improves margin via lower input cost.",
+     "evidence": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2335019&lang=1&reg=3"
     },
     {
      "symbol": "JAINREC",
-     "order": 2,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "Non-ferrous metal (copper/lead/aluminium) recycler adjacent to the government's secondary-processing push for strategic metals, though its current capacity isn't lithium/nickel-specific",
-     "evidence": "Cabinet scheme rationale per https://www.pmindia.gov.in/en/news_updates/cabinet-approves-capex-support-scheme-to-promote-critical-mineral-processing-with-an-outlay-of-rs-2814-crore-for-lithium-and-nickel-processing/"
-    },
-    {
-     "symbol": "HINDCOPPER",
      "order": 1,
      "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Metal and battery-material recycler; same feedstock-lock mechanism as Gravita.",
+     "evidence": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2335019&lang=1&reg=3"
+    },
+    {
+     "symbol": "NMDC",
+     "order": 2,
+     "effect": "benefit",
      "confidence": "low",
-     "mechanism": "Copper is on India's critical-minerals list; HINDCOPPER is a plausible bidder in the new mineral-block auction tranche, though no specific award is yet confirmed",
-     "evidence": "BusinessLine headline from briefing: \"India offers 20 critical mineral blocks across 8 states in ninth auction tranche\""
+     "mechanism": "Exploring a lithium mining/processing tie-up with Rosatom, diversifying revenue beyond iron ore — intent stage, not yet decided.",
+     "evidence": "BusinessLine, 2026-11-10: 'NMDC in talks with Russia's Rosatom to explore lithium mining and processing opportunities'"
     }
    ],
    "map_additions": []
   },
   {
-   "key": "thermalcapex",
+   "key": "fertilizersubsidy",
    "status": "new",
-   "name": "Thermal & nuclear power equipment order cycle",
+   "name": "Fertiliser subsidy support",
+   "direction": "tailwind",
+   "strength": 4,
+   "horizon": "near",
+   "continuity": "new",
+   "thesis": "The Cabinet-approved jump in P&K (phosphatic/potassic) nutrient-based subsidy directly underwrites affordability and payment certainty for DAP/NPK producers through the Rabi season, reducing receivables risk and supporting volumes.",
+   "drivers": [
+    {
+     "what": "Cabinet approves Rs 62,370.02 crore NBS subsidy for P&K fertilisers for Rabi 2026-27 (Oct 2026-Mar 2027), up 64.3% YoY",
+     "where": "India",
+     "date": "2026-11-11",
+     "source": "https://www.business-standard.com/amp/economy/news/cabinet-approves-62-370-crore-fertiliser-subsidy-for-rabi-2026-27-season-126111100867_1.html"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "COROMANDEL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Major DAP/NPK producer; higher subsidy allocation improves affordability for farmers and payment certainty for the company.",
+     "evidence": "https://www.business-standard.com/amp/economy/news/cabinet-approves-62-370-crore-fertiliser-subsidy-for-rabi-2026-27-season-126111100867_1.html"
+    },
+    {
+     "symbol": "CHAMBLFERT",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "DAP/NPK producer directly covered by the P&K subsidy pool.",
+     "evidence": "https://www.business-standard.com/amp/economy/news/cabinet-approves-62-370-crore-fertiliser-subsidy-for-rabi-2026-27-season-126111100867_1.html"
+    },
+    {
+     "symbol": "PARADEEP",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "DAP-focused producer; subsidy increase directly supports volume and realisation.",
+     "evidence": "https://www.business-standard.com/amp/economy/news/cabinet-approves-62-370-crore-fertiliser-subsidy-for-rabi-2026-27-season-126111100867_1.html"
+    },
+    {
+     "symbol": "GSFC",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "P&K fertiliser manufacturer benefiting from the subsidy pool alongside its chemicals business.",
+     "evidence": "https://www.business-standard.com/amp/economy/news/cabinet-approves-62-370-crore-fertiliser-subsidy-for-rabi-2026-27-season-126111100867_1.html"
+    },
+    {
+     "symbol": "DEEPAKFERT",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "NPK/specialty fertiliser maker within the subsidised P&K basket.",
+     "evidence": "https://www.business-standard.com/amp/economy/news/cabinet-approves-62-370-crore-fertiliser-subsidy-for-rabi-2026-27-season-126111100867_1.html"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "steelcapacity",
+   "status": "new",
+   "name": "Steel capacity expansion",
+   "direction": "tailwind",
+   "strength": 3,
+   "horizon": "long",
+   "continuity": "new",
+   "thesis": "A ministerial capacity target (300 MT by 2030, 500 MT by 2047) paired with an active push to raise domestic iron-ore output signals the government's intent to support steelmaker capex and ore-linked producers, though nothing is yet a binding allocation.",
+   "drivers": [
+    {
+     "what": "Union Minister G Kishan Reddy states India targets 300 million tonnes of steel production by 2030 and 500 million tonnes by 2047, alongside a push for higher iron ore output",
+     "where": "India",
+     "date": "2026-11-06",
+     "source": "https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "SAIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "State steelmaker positioned as a primary vehicle for capacity expansion toward the national target.",
+     "evidence": "https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245"
+    },
+    {
+     "symbol": "JSL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Stainless producer benefiting from a broader national push on steel capacity and ore access.",
+     "evidence": "https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245"
+    },
+    {
+     "symbol": "SHYAMMETL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Mid-cap integrated steelmaker with active capacity expansion, aligned to the capacity-growth push.",
+     "evidence": "https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245"
+    },
+    {
+     "symbol": "GPIL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Integrated ore-to-steel producer benefiting from both capacity-growth policy and the ore-production push.",
+     "evidence": "https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245"
+    },
+    {
+     "symbol": "NMDC",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Largest listed iron-ore merchant miner; explicit government push to raise ore output to feed the 300 MT steel target lifts its volume outlook.",
+     "evidence": "https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245"
+    },
+    {
+     "symbol": "KSL",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Ore-linked specialty steelmaker that benefits indirectly from higher domestic ore availability.",
+     "evidence": "https://www.zeebiz.com/india/news-india-pushes-higher-iron-ore-production-to-meet-300-million-tonne-steel-target-405245"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "railways",
+   "status": "existing",
+   "name": "Railways & metro",
    "direction": "tailwind",
    "strength": 4,
    "horizon": "medium",
-   "continuity": "new",
-   "thesis": "A dated, Rs 28,000 crore BTG (boiler-turbine-generator) order from Adani Power to BHEL, alongside NTPC's decided plan to add 58 GW of capacity (including a stepped-up ~30 GW nuclear ambition) by 2032-37, confirms a multi-year thermal-plus-nuclear EPC order cycle feeding listed power-equipment makers.",
+   "continuity": "strengthening",
+   "thesis": "A ministry plan to quadruple key corridors and add 1,000 trains, combined with BEML's move to build tunnel-boring machines domestically, extends the railway capex cycle into both rolling stock and tunnelling equipment import-substitution.",
    "drivers": [
     {
-     "what": "BHEL won orders worth up to Rs 28,000 crore from Adani Power for four 2x800MW (6,400MW total) thermal projects, covering boilers, turbines, generators and auxiliary equipment",
+     "what": "Railway ministry plans four parallel tracks on 7 major corridors, 1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai",
      "where": "India",
-     "date": "2026-11-04",
-     "source": "https://www.kotakneo.com/news/stocks/bhel-secures-adani-power-orders-worth-up-to-28000-crore/"
+     "date": "2026-11-07",
+     "source": "BusinessLine: 'Indian Railways to quadruple 7 major corridors, add over 1,000 trains'"
     },
     {
-     "what": "NTPC targets 149 GW installed capacity by 2032 (+58 GW), with chairman outlining ~30 GW nuclear ambition by 2037 and feasibility studies completed in MP, Bihar and Odisha",
+     "what": "BEML to build tunnel-boring machines domestically to cut reliance on China",
      "where": "India",
-     "date": "2026-11-03",
-     "source": "https://aninews.in/news/business/ntpc-plans-to-expand-installed-capacity-to-149-gw-by-2032-add-58-gw20261104110614/"
+     "date": "2026-11-12",
+     "source": "Livemint: 'How BEML plans to gain an edge over China in building India's tunnel-boring machines'"
+    },
+    {
+     "what": "PM Modi inaugurates Bengaluru Metro Pink Line stretch; network crosses 100 km",
+     "where": "India",
+     "date": "2026-11-13",
+     "source": "BusinessLine: 'PM Modi inaugurates Bengaluru Metro Pink Line stretch, network crosses 100 km'"
     }
    ],
    "beneficiaries": [
     {
-     "symbol": "BHEL",
+     "symbol": "RVNL",
      "order": 1,
      "effect": "benefit",
      "confidence": "high",
-     "mechanism": "Direct, named EPC/BTG contractor on the Rs 28,000 crore Adani Power order, its single largest disclosed order win this year",
-     "evidence": "https://www.kotakneo.com/news/stocks/bhel-secures-adani-power-orders-worth-up-to-28000-crore/"
+     "mechanism": "Primary EPC contractor for rail electrification and new-corridor construction tied to the quadrupling plan.",
+     "evidence": "BusinessLine: 'Indian Railways to quadruple 7 major corridors, add over 1,000 trains'"
     },
     {
-     "symbol": "THERMAX",
+     "symbol": "IRCON",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Rail infrastructure EPC player positioned for new-corridor and track-doubling contracts.",
+     "evidence": "BusinessLine: 'Indian Railways to quadruple 7 major corridors, add over 1,000 trains'"
+    },
+    {
+     "symbol": "TITAGARH",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Rolling stock maker benefiting directly from the 1,000-extra-trains plan.",
+     "evidence": "The Economic Times: '1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai'"
+    },
+    {
+     "symbol": "JWL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Wagon and rolling-stock maker benefiting from expanded train fleet demand.",
+     "evidence": "The Economic Times: '1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai'"
+    },
+    {
+     "symbol": "BEML",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "high",
+     "mechanism": "Direct beneficiary of the decided move to build tunnel-boring machines domestically for metro/tunnel projects, plus existing rolling-stock exposure.",
+     "evidence": "Livemint: 'How BEML plans to gain an edge over China in building India's tunnel-boring machines'"
+    },
+    {
+     "symbol": "RAILTEL",
      "order": 2,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Supplies boilers and auxiliary equipment into the same thermal-capacity build-out cycle that BHEL's order confirms is accelerating",
-     "evidence": "https://www.kotakneo.com/news/stocks/bhel-secures-adani-power-orders-worth-up-to-28000-crore/"
-    },
-    {
-     "symbol": "TDPOWERSYS",
-     "order": 2,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "Turbine-generator component supplier benefiting from the broader thermal/industrial power order momentum",
-     "evidence": "https://www.kotakneo.com/news/stocks/bhel-secures-adani-power-orders-worth-up-to-28000-crore/"
-    },
-    {
-     "symbol": "MIDHANI",
-     "order": 3,
-     "effect": "benefit",
-     "confidence": "low",
-     "mechanism": "Special alloys/forgings supplier positioned to benefit as NTPC's nuclear-grade component sourcing ramps toward its 2037 nuclear ambition",
-     "evidence": "https://www.whalesbook.com/news/English/energy/NTPC-Targets-149-GW-Capacity-by-2032-With-Nuclear-Push/6ae9d1174fc30694db5a0737"
-    },
-    {
-     "symbol": "PTCIL",
-     "order": 3,
-     "effect": "benefit",
-     "confidence": "low",
-     "mechanism": "Precision investment castings for nuclear/aerospace-grade components, an adjacent beneficiary of NTPC's nuclear capacity push",
-     "evidence": "https://www.whalesbook.com/news/English/energy/NTPC-Targets-149-GW-Capacity-by-2032-With-Nuclear-Push/6ae9d1174fc30694db5a0737"
+     "mechanism": "Signalling/telecom backbone provider for the expanding rail and metro network.",
+     "evidence": "BusinessLine: 'PM Modi inaugurates Bengaluru Metro Pink Line stretch, network crosses 100 km'"
     }
    ],
    "map_additions": []
   },
   {
-   "key": "sodaash",
-   "status": "new",
-   "name": "Soda ash import safeguard",
+   "key": "datacentre",
+   "status": "existing",
+   "name": "Data centres & digital infrastructure",
    "direction": "tailwind",
-   "strength": 3,
-   "horizon": "near",
-   "continuity": "new",
-   "thesis": "DGTR found soda ash imports up 89% in 2023-24 causing serious injury and recommended a two-year quantitative-restriction safeguard; this directly protects the pricing power of the domestic soda-ash producers who filed the case, pending final Department of Revenue notification.",
+   "strength": 4,
+   "horizon": "medium",
+   "continuity": "strengthening",
+   "thesis": "A decided export-order win tied explicitly to AI data-centre demand confirms networking-gear makers are already converting the broader data-centre capex wave (Hillhouse's $12-15bn TeraNova DC plan from last week) into booked revenue.",
    "drivers": [
     {
-     "what": "DGTR recommended a two-year safeguard (quantitative restriction) on soda ash imports — quota of 754,992 MT in year 1, 792,740 MT in year 2 — after a petition by the Alkali Manufacturers Association on behalf of DCW, GHCL, Nirma, RSPL and Ta",
-     "where": "India",
-     "date": "2026-11-06",
-     "source": "https://www.gktoday.in/dgtr-recommends-two-year-soda-ash-import-curbs/"
+     "what": "HFCL secures Rs 834 crore export orders, eyes AI data centre demand",
+     "where": "India/export",
+     "date": "2026-11-12",
+     "source": "The Economic Times: 'HFCL secures Rs 834 crore export orders, eyes AI data centre demand'"
     }
    ],
    "beneficiaries": [
     {
-     "symbol": "TATACHEM",
+     "symbol": "HFCL",
      "order": 1,
      "effect": "benefit",
      "confidence": "high",
-     "mechanism": "Named petitioner and India's largest listed soda-ash producer; the import quota directly shields its domestic soda-ash pricing and volumes from a documented 89% import surge",
-     "evidence": "https://www.sahi.com/news/ghcl-impacted-as-dgtr-recommends-2-year-quantitative-restrictions-on-soda-ash-imports"
+     "mechanism": "Booked Rs 834 crore of export orders explicitly tied to AI data-centre networking demand.",
+     "evidence": "The Economic Times: 'HFCL secures Rs 834 crore export orders, eyes AI data centre demand'"
+    },
+    {
+     "symbol": "STLTECH",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Optical-fibre backbone supplier positioned to benefit from the same data-centre connectivity build-out.",
+     "evidence": "The Economic Times: 'HFCL secures Rs 834 crore export orders, eyes AI data centre demand'"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "energysecurity",
+   "status": "new",
+   "name": "Energy security & Hormuz shipping stress",
+   "direction": "mixed",
+   "strength": 3,
+   "horizon": "near",
+   "continuity": "reversed",
+   "thesis": "Last week's upstream-crude-tailwind thesis has flipped: Brent fell toward $75 before a partial Hormuz-driven rebound, so refiners/OMCs now gain from cheaper feedstock while upstream producers lose on realisations, and Hormuz tanker/LNG disruption is separately lifting shipping and terminal-throughput demand.",
+   "drivers": [
+    {
+     "what": "Hormuz LNG tanker traffic hits highest level since the Iran war began",
+     "where": "Strait of Hormuz/India",
+     "date": "2026-11-10",
+     "source": "The Economic Times: 'Hormuz LNG traffic hits highest in October since Iran war began'"
+    },
+    {
+     "what": "IEA warns global gas supplies to tighten this winter due to Strait of Hormuz LNG shock",
+     "where": "Global/India",
+     "date": "2026-11-07",
+     "source": "BusinessLine: 'Global gas supplies to tighten this winter due to Strait of Hormuz LNG shock, warns IEA'"
+    },
+    {
+     "what": "IOC to buy extra crude and LPG carriers as Hormuz disruptions drive up freight costs",
+     "where": "India",
+     "date": "2026-11-08",
+     "source": "Livemint: 'Iran war: IOC to buy crude, LPG carriers as Strait of Hormuz disruptions drive freight costs'"
+    },
+    {
+     "what": "Crude oil prices seen falling toward $75 by December as West Asia tensions ease, before partially rebounding on renewed tanker attacks",
+     "where": "Global",
+     "date": "2026-11-11",
+     "source": "BusinessLine: 'Crude oil prices may fall to $75 by December as West Asia tensions ease'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "HINDPETRO",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "OMC/refiner whose marketing and refining margins improve as crude feedstock costs ease.",
+     "evidence": "BusinessLine: 'Crude oil prices may fall to $75 by December as West Asia tensions ease'"
+    },
+    {
+     "symbol": "MRPL",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Refiner benefiting from the same lower-feedstock-cost dynamic.",
+     "evidence": "BusinessLine: 'Crude oil prices may fall to $75 by December as West Asia tensions ease'"
+    },
+    {
+     "symbol": "GESHIP",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "Crude/product tanker owner; Hormuz rerouting and extra chartering demand lift freight rates.",
+     "evidence": "Livemint: 'Iran war: IOC to buy crude, LPG carriers as Strait of Hormuz disruptions drive freight costs'"
+    },
+    {
+     "symbol": "SCI",
+     "order": 2,
+     "effect": "benefit",
+     "confidence": "medium",
+     "mechanism": "State shipping line with tanker exposure benefiting from the same chartering-demand surge.",
+     "evidence": "Livemint: 'Iran war: IOC to buy crude, LPG carriers as Strait of Hormuz disruptions drive freight costs'"
+    },
+    {
+     "symbol": "PETRONET",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "LNG import terminal operator sees higher throughput as winter gas supply tightens and buyers route more cargo through Indian terminals.",
+     "evidence": "BusinessLine: 'Global gas supplies to tighten this winter due to Strait of Hormuz LNG shock, warns IEA'"
+    },
+    {
+     "symbol": "OIL",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Upstream crude producer whose realisations fall as Brent eases toward $75.",
+     "evidence": "BusinessLine: 'Crude oil prices may fall to $75 by December as West Asia tensions ease'"
+    }
+   ],
+   "map_additions": []
+  },
+  {
+   "key": "textiles",
+   "status": "existing",
+   "name": "Textiles & apparel PLI",
+   "direction": "mixed",
+   "strength": 2,
+   "horizon": "near",
+   "continuity": "steady",
+   "thesis": "A USDA-flagged decline in global cotton output raises raw-material costs for domestic spinners even as garment exporters diversify client relationships toward the US on tariff uncertainty.",
+   "drivers": [
+    {
+     "what": "Global cotton output to decline as US, India crops shrink, says USDA",
+     "where": "Global/India",
+     "date": "2026-11-11",
+     "source": "BusinessLine: 'Global cotton output to decline as US, India crops shrink, says USDA'"
+    },
+    {
+     "what": "Arvind plans third design studio in the US after London, Amsterdam",
+     "where": "US",
+     "date": "2026-11-10",
+     "source": "BusinessLine: 'Arvind plans third design studio in the US after London, Amsterdam'"
+    }
+   ],
+   "beneficiaries": [
+    {
+     "symbol": "KPRMILL",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Cotton-spinning/apparel integrated player facing higher raw cotton costs as global output shrinks.",
+     "evidence": "BusinessLine: 'Global cotton output to decline as US, India crops shrink, says USDA'"
+    },
+    {
+     "symbol": "VTL",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Large cotton-yarn and textile producer exposed to rising raw cotton input costs.",
+     "evidence": "BusinessLine: 'Global cotton output to decline as US, India crops shrink, says USDA'"
+    },
+    {
+     "symbol": "TRIDENT",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "medium",
+     "mechanism": "Cotton-based home textile exporter exposed to the same input-cost pressure.",
+     "evidence": "BusinessLine: 'Global cotton output to decline as US, India crops shrink, says USDA'"
+    },
+    {
+     "symbol": "NITINSPIN",
+     "order": 1,
+     "effect": "hurt",
+     "confidence": "low",
+     "mechanism": "Cotton spinner facing margin pressure from tighter raw cotton supply.",
+     "evidence": "BusinessLine: 'Global cotton output to decline as US, India crops shrink, says USDA'"
+    },
+    {
+     "symbol": "ARVIND",
+     "order": 1,
+     "effect": "benefit",
+     "confidence": "low",
+     "mechanism": "Expanding US design-studio footprint signals deepening US client relationships ahead of any tariff resolution.",
+     "evidence": "BusinessLine: 'Arvind plans third design studio in the US after London, Amsterdam'"
     }
    ],
    "map_additions": []
@@ -226,15 +463,15 @@
    "name": "Semiconductors & OSAT",
    "direction": "tailwind",
    "strength": 3,
-   "horizon": "medium",
-   "continuity": "strengthening",
-   "thesis": "A new, decided private-sector tie-up adds an advanced-packaging/OSAT capability inside the universe, broadening the theme beyond its existing EMS-adjacent members even as the global AI-chip rout (see EMS) creates short-term noise around semis sentiment generally.",
+   "horizon": "long",
+   "continuity": "steady",
+   "thesis": "Paras Semiconductors' confirmed advanced-packaging tie-up with US-based BroadPak adds a ~$659mn OSAT facility (2.5D/3D packaging, chiplet integration) to the Indian semiconductor supply chain, a capability the existing semis member list doesn't yet reflect.",
    "drivers": [
     {
-     "what": "Paras Semiconductors (subsidiary of Paras Defence) partnered with US-based BroadPak Corp to build an advanced heterogeneous-integration/3D-packaging OSAT facility in India (2.5D/3D packaging, chiplet integration, hybrid bonding, co-packaged",
-     "where": "India",
+     "what": "Paras Semiconductors (Paras Defence subsidiary) partners with US-based BroadPak to build an advanced packaging facility (~$658.77mn) in Madhya Pradesh",
+     "where": "India/US",
      "date": "2026-11-06",
-     "source": "https://cxotoday.com/media-coverage/paras-semiconductors-partners-with-us-based-broadpak-corporation-to-build-advanced-semiconductor-packaging-capabilities-in-india/"
+     "source": "https://www.digitimes.com/news/a20261109VL209/packaging-plant-subsidiary-technology-incentives.html"
     }
    ],
    "beneficiaries": [
@@ -243,8 +480,8 @@
      "order": 1,
      "effect": "benefit",
      "confidence": "high",
-     "mechanism": "Direct new OSAT/advanced-packaging business line via the BroadPak technology partnership, a new revenue vertical outside its core defence-optics business",
-     "evidence": "https://cxotoday.com/media-coverage/paras-semiconductors-partners-with-us-based-broadpak-corporation-to-build-advanced-semiconductor-packaging-capabilities-in-india/"
+     "mechanism": "Parent company of Paras Semiconductors, the entity building the OSAT packaging facility with BroadPak's technology transfer.",
+     "evidence": "https://www.digitimes.com/news/a20261109VL209/packaging-plant-subsidiary-technology-incentives.html"
     }
    ],
    "map_additions": [
@@ -256,22 +493,16 @@
    "status": "existing",
    "name": "Electronics manufacturing (EMS)",
    "direction": "headwind",
-   "strength": 4,
+   "strength": 3,
    "horizon": "near",
-   "continuity": "strengthening",
-   "thesis": "The global memory (DRAM/NAND) cost shock flagged last week has now converted into realised, brokerage-quantified margin and volume cuts at the most exposed assembler, and was compounded this week by an AI-driven Nasdaq chip rout that hit the same global supply chain, even after a partial rebound.",
+   "continuity": "steady",
+   "thesis": "The Jensen Huang/Nvidia China-spy controversy and ensuing AI-chip stock rout (partially rebounded) keeps global memory (DRAM/NAND) costs elevated and AI-capex sentiment uncertain, sustaining margin and component-availability pressure on Indian assemblers rather than resolving it.",
    "drivers": [
     {
-     "what": "CLSA flags Dixon as most exposed in EMS to the memory price surge; Jefferies forecasts a 31% drop in Dixon's CY26 global smartphone shipments; Dixon's own Q4 showed revenue +2.1% but profit -36% on cost pressure",
-     "where": "India",
-     "date": "2026-11",
-     "source": "https://www.business-standard.com/markets/news/ems-sector-at-risk-amid-memory-price-surge-clsa-cuts-dixon-technologies-to-hold-126022000400_1.html"
-    },
-    {
-     "what": "Worst US stock rout since 2020: Nasdaq plunged 6.4%, Micron -17%, AMD/Qualcomm/SanDisk down up to 17%, $2.5 trillion wiped off US equities, before a partial Nasdaq +2% rebound after midterm results",
+     "what": "Nvidia shares drop sharply on CEO Jensen Huang China-spy probe before partially recovering; Baird downgrades Nvidia on China curbs and AI demand worries",
      "where": "Global",
-     "date": "2026-11-05",
-     "source": "BusinessLine headline from briefing: \"Worst US stock rout since 2020 leaves virtually nowhere to hide as Nasdaq plunges 6.4%, Dow sheds 1,833 points\""
+     "date": "2026-11-09",
+     "source": "Livemint: 'Nvidia shares drop nearly 6% in pre-market as alleged China spy links put Jensen Huang under board scrutiny'; The Economic Times: 'Baird downgrades Nvidia on China curbs, AI demand worries'"
     }
    ],
    "beneficiaries": [
@@ -279,135 +510,82 @@
      "symbol": "DIXON",
      "order": 1,
      "effect": "hurt",
-     "confidence": "high",
-     "mechanism": "Smartphone-heavy EMS mix is most exposed to memory cost pass-through; brokerages have already cut shipment and earnings estimates on this specific driver",
-     "evidence": "https://www.whalesbook.com/news/English/industrial-goodsservices/Dixon-Technologies-Warns-of-Shipment-Miss-as-RAM-Prices-Surge/69b39832f962c451ea5f59ca"
+     "confidence": "medium",
+     "mechanism": "Large electronics assembler exposed to elevated global memory-chip costs and AI-capex demand uncertainty.",
+     "evidence": "The Economic Times: 'Baird downgrades Nvidia on China curbs, AI demand worries'"
     },
     {
      "symbol": "AMBER",
      "order": 1,
      "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "White-goods-weighted EMS mix is less memory-intensive than smartphones, so the cost hit is milder but still present across the sector",
-     "evidence": "https://www.business-standard.com/markets/news/ems-sector-at-risk-amid-memory-price-surge-clsa-cuts-dixon-technologies-to-hold-126022000400_1.html"
+     "confidence": "low",
+     "mechanism": "EMS player with component-cost exposure to the same global memory-chip volatility.",
+     "evidence": "The Economic Times: 'US stocks: S&P 500, Nasdaq fall as Nvidia turmoil hits tech sector'"
     },
     {
      "symbol": "SYRMA",
      "order": 1,
      "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Consumer-electronics EMS assembler exposed to the same component cost inflation sweeping the sector",
-     "evidence": "https://www.business-standard.com/markets/news/ems-sector-at-risk-amid-memory-price-surge-clsa-cuts-dixon-technologies-to-hold-126022000400_1.html"
+     "confidence": "low",
+     "mechanism": "Contract electronics manufacturer with similar memory-cost and component-supply exposure.",
+     "evidence": "The Economic Times: 'US stocks: S&P 500, Nasdaq fall as Nvidia turmoil hits tech sector'"
     },
     {
-     "symbol": "PGEL",
+     "symbol": "KAYNES",
      "order": 1,
      "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Consumer-electronics EMS assembler exposed to the same component cost inflation sweeping the sector",
-     "evidence": "https://www.business-standard.com/markets/news/ems-sector-at-risk-amid-memory-price-surge-clsa-cuts-dixon-technologies-to-hold-126022000400_1.html"
+     "confidence": "low",
+     "mechanism": "EMS/OSAT player with partial exposure to the same global chip-market volatility.",
+     "evidence": "The Economic Times: 'US stocks: S&P 500, Nasdaq fall as Nvidia turmoil hits tech sector'"
     }
    ],
    "map_additions": []
   },
   {
-   "key": "finfra",
-   "status": "existing",
-   "name": "Financial market infrastructure",
+   "key": "ustariffedge",
+   "status": "new",
+   "name": "US tariff-advantage exporters",
    "direction": "tailwind",
    "strength": 3,
    "horizon": "near",
-   "continuity": "strengthening",
-   "thesis": "A cluster of decided SEBI actions this week continues to strip friction from foreign and domestic capital flows — digital KYC for NRIs/FPIs without an India visit, net settlement for MF cash trades, and higher currency-derivative limits — each pushing incremental volume toward listed depositories, RTAs and exchanges.",
+   "continuity": "new",
+   "thesis": "Even with the India-US tariff framework still unresolved, individual exporters are already booking decided revenue gains from relatively favourable US tariff treatment versus competing supply chains.",
    "drivers": [
     {
-     "what": "SEBI eased KYC norms for NRIs, OCIs and foreign nationals, allowing fully digital onboarding without an India visit",
-     "where": "India",
-     "date": "2026-11-05",
-     "source": "BusinessLine headline from briefing: \"SEBI eases KYC rules for overseas investors, allows digital onboarding without India visit\""
+     "what": "India's exports to US rise 11%; Brazil and Mexico shipments also register strong growth",
+     "where": "India/US",
+     "date": "2026-11-13",
+     "source": "BusinessLine: 'India's exports to US rise 11%; Brazil and Mexico shipments register strong growth'"
     },
     {
-     "what": "SEBI approved net settlement of cash-market fund trades for mutual funds, effective April",
-     "where": "India",
-     "date": "2026-11-05",
-     "source": "The Economic Times headline from briefing: \"Sebi approves net settlement of cash market trades for mutual funds\""
+     "what": "Suprajit's global business gains traction on US contract wins and China EV demand",
+     "where": "India/US/China",
+     "date": "2026-11-12",
+     "source": "BusinessLine: 'Suprajit's global business gains traction on US contract wins and China EV demand'"
     },
     {
-     "what": "SEBI revised currency derivative norms, raising the domestic investor/FPI position limit to $5 million",
-     "where": "India",
-     "date": "2026-11-05",
-     "source": "NDTV Profit headline from briefing: \"SEBI Eases Currency Derivatives Rules, Sets $5 Million Limit\""
+     "what": "Cosmo First eyes all-time high US exports from film business this fiscal on lower tariffs",
+     "where": "India/US",
+     "date": "2026-11-12",
+     "source": "Livemint: 'Cosmo First eyes all-time high US exports from film business this fiscal on lower tariffs'"
     }
    ],
    "beneficiaries": [
     {
-     "symbol": "CDSL",
+     "symbol": "SUPRAJIT",
      "order": 1,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Depository account-opening and transaction volumes rise as FPI/NRI onboarding friction falls",
-     "evidence": "BusinessLine headline from briefing: \"SEBI eases KYC rules for overseas investors, allows digital onboarding without India visit\""
+     "mechanism": "Auto cable/components exporter booking new US contract wins, decided revenue growth this quarter.",
+     "evidence": "BusinessLine: 'Suprajit's global business gains traction on US contract wins and China EV demand'"
     },
     {
-     "symbol": "CAMS",
-     "order": 2,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "RTA transaction volumes benefit from smoother, net-settled mutual-fund cash-market processing",
-     "evidence": "The Economic Times headline from briefing: \"Sebi approves net settlement of cash market trades for mutual funds\""
-    },
-    {
-     "symbol": "KFINTECH",
-     "order": 2,
-     "effect": "benefit",
-     "confidence": "medium",
-     "mechanism": "RTA transaction volumes benefit from smoother, net-settled mutual-fund cash-market processing",
-     "evidence": "The Economic Times headline from briefing: \"Sebi approves net settlement of cash market trades for mutual funds\""
-    },
-    {
-     "symbol": "MCX",
+     "symbol": "COSMOFIRST",
      "order": 1,
      "effect": "benefit",
      "confidence": "medium",
-     "mechanism": "Higher currency-derivative position limits support exchange turnover and open interest",
-     "evidence": "NDTV Profit headline from briefing: \"SEBI Eases Currency Derivatives Rules, Sets $5 Million Limit\""
-    }
-   ],
-   "map_additions": []
-  },
-  {
-   "key": "energysecurity",
-   "status": "new",
-   "name": "West Asia energy security / crude price",
-   "direction": "mixed",
-   "strength": 3,
-   "horizon": "near",
-   "continuity": "fading",
-   "thesis": "Last week's strength-5 thesis (sustained high crude lifting upstream realisations while raising freight/input costs elsewhere) is fading: Brent fell roughly 18% from its 30 October high to its 5 November low on US-midterm-driven Iran de-escalation hopes, though it partially rebounded ~6% as Hormuz tanker attacks persisted — leaving the direction genuinely mixed rather than a clean tailwind or headwind.",
-   "drivers": [
-    {
-     "what": "Brent crude fell ~18% from the 30 October high to the 5 November low on hopes of US-brokered Iran de-escalation following the Democratic midterm sweep, before rebounding ~6% as Hormuz tanker attacks continued",
-     "where": "Global/India",
-     "date": "2026-11-05",
-     "source": "https://www.vantagemarkets.com/market-analysis/why-brent-crude-oil-price-fell-midterms-iran-peace-bets-ukousd-usousd-november-6-2026/"
-    }
-   ],
-   "beneficiaries": [
-    {
-     "symbol": "OIL",
-     "order": 1,
-     "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Upstream realisation tailwind fades as Brent retreats from the $109-120 highs cited last week toward the $93-100 range",
-     "evidence": "https://www.vantagemarkets.com/market-analysis/why-brent-crude-oil-price-fell-midterms-iran-peace-bets-ukousd-usousd-november-6-2026/"
-    },
-    {
-     "symbol": "MRPL",
-     "order": 1,
-     "effect": "hurt",
-     "confidence": "medium",
-     "mechanism": "Forced shift to delivered-basis crude purchases to manage Hormuz-linked shipping risk is a persistent cost/margin headwind independent of the spot price move",
-     "evidence": "The Economic Times headline from briefing: \"MRPL boosts delivered oil buying as Iran war raises shipping risks\""
+     "mechanism": "Specialty film exporter guiding to all-time-high US exports this fiscal, explicitly tied to a lower relative tariff position.",
+     "evidence": "Livemint: 'Cosmo First eyes all-time high US exports from film business this fiscal on lower tariffs'"
     }
    ],
    "map_additions": []
@@ -415,58 +593,79 @@
  ],
  "outside_universe": [
   {
-   "company": "GHCL Limited (soda ash division)",
-   "theme": "sodaash",
-   "why": "Named petitioner alongside Tata Chemicals in the DGTR soda-ash safeguard case and a direct beneficiary, but the GHCL entity in the universe (GHCLTEXTIL) is only the demerged textile arm."
+   "company": "Adani Kutch Copper",
+   "theme": "criticalminerals",
+   "why": "Signed an MoU with Chile's Codelco to secure copper ore supply for its Mundra smelter (2026-11-12) — direct copper supply-chain exposure, but neither it nor parent Adani Enterprises sits in the tracke"
   },
   {
-   "company": "Tonbo Imaging India",
-   "theme": "defelec",
-   "why": "SEBI-cleared IPO for a defence-electronics/thermal-imaging maker riding the same procurement tailwind as listed defelec names, but not yet listed."
+   "company": "Indian Oil Corporation (IOC)",
+   "theme": "energysecurity",
+   "why": "Chartering extra crude/LPG carriers as Hormuz disruption drives freight costs (2026-11-08) — India's largest OMC and most direct beneficiary of this dynamic, but not in the tracked universe."
   },
   {
-   "company": "Hindustan Shipyard (HSL)",
-   "theme": "shipbuilding",
-   "why": "Launched the Navy's Fleet Support Ship-1 this week, a direct naval-shipbuilding beneficiary, but it is a government shipyard not listed on the exchange."
+   "company": "Aluminium Extrusion Manufacturers Association of India (ALEMAI) members",
+   "theme": "steelcapacity",
+   "why": "DGTR opened a suo motu anti-dumping probe into aluminium extrusion imports from China, Malaysia, Vietnam and Thailand (2026-11-09) on ALEMAI's complaint — no listed pure-play aluminium extruder exists"
   },
   {
-   "company": "Gentari Renewables India (Petronas/KKR)",
-   "theme": "renewables",
-   "why": "CCI cleared a KKR-led investment into this Petronas-backed renewables platform, a large new capital pool entering India's RE build-out, but the entity is unlisted."
-  },
-  {
-   "company": "Hillhouse's TeraNova DC",
-   "theme": "datacentre",
-   "why": "Plans to deploy $12-15bn into Indian data-centre capacity by 2032, a major demand signal for the theme, but the platform itself is not a listed universe name."
+   "company": "Domestic rubber glove manufacturers",
+   "theme": "other",
+   "why": "DGTR recommended anti-dumping duty on rubber glove imports from Thailand and Malaysia (2026-11-09) — no listed Indian glove maker exists in the universe."
   }
  ],
  "overlay": {
+  "railways": [
+   {
+    "symbol": "RVNL",
+    "via": "order1_benefit",
+    "mechanism": "Primary EPC contractor for rail electrification and new-corridor construction tied to the quadrupling plan.",
+    "evidence": "BusinessLine: 'Indian Railways to quadruple 7 major corridors, add over 1,000 trains'"
+   },
+   {
+    "symbol": "IRCON",
+    "via": "order1_benefit",
+    "mechanism": "Rail infrastructure EPC player positioned for new-corridor and track-doubling contracts.",
+    "evidence": "BusinessLine: 'Indian Railways to quadruple 7 major corridors, add over 1,000 trains'"
+   },
+   {
+    "symbol": "TITAGARH",
+    "via": "order1_benefit",
+    "mechanism": "Rolling stock maker benefiting directly from the 1,000-extra-trains plan.",
+    "evidence": "The Economic Times: '1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai'"
+   },
+   {
+    "symbol": "JWL",
+    "via": "order1_benefit",
+    "mechanism": "Wagon and rolling-stock maker benefiting from expanded train fleet demand.",
+    "evidence": "The Economic Times: '1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai'"
+   },
+   {
+    "symbol": "BEML",
+    "via": "order1_benefit",
+    "mechanism": "Direct beneficiary of the decided move to build tunnel-boring machines domestically for metro/tunnel projects, plus existing rolling-stock exposure.",
+    "evidence": "Livemint: 'How BEML plans to gain an edge over China in building India's tunnel-boring machines'"
+   }
+  ],
+  "datacentre": [
+   {
+    "symbol": "HFCL",
+    "via": "order1_benefit",
+    "mechanism": "Booked Rs 834 crore of export orders explicitly tied to AI data-centre networking demand.",
+    "evidence": "The Economic Times: 'HFCL secures Rs 834 crore export orders, eyes AI data centre demand'"
+   }
+  ],
   "semis": [
    {
     "symbol": "PARAS",
     "via": "map_addition",
-    "mechanism": "Direct new OSAT/advanced-packaging business line via the BroadPak technology partnership, a new revenue vertical outside its core defence-optics business",
-    "evidence": "https://cxotoday.com/media-coverage/paras-semiconductors-partners-with-us-based-broadpak-corporation-to-build-advanced-semiconductor-packaging-capabilities-in-india/"
-   }
-  ],
-  "finfra": [
-   {
-    "symbol": "CDSL",
-    "via": "order1_benefit",
-    "mechanism": "Depository account-opening and transaction volumes rise as FPI/NRI onboarding friction falls",
-    "evidence": "BusinessLine headline from briefing: \"SEBI eases KYC rules for overseas investors, allows digital onboarding without India visit\""
-   },
-   {
-    "symbol": "MCX",
-    "via": "order1_benefit",
-    "mechanism": "Higher currency-derivative position limits support exchange turnover and open interest",
-    "evidence": "NDTV Profit headline from briefing: \"SEBI Eases Currency Derivatives Rules, Sets $5 Million Limit\""
+    "mechanism": "Parent company of Paras Semiconductors, the entity building the OSAT packaging facility with BroadPak's technology transfer.",
+    "evidence": "https://www.digitimes.com/news/a20261109VL209/packaging-plant-subsidiary-technology-incentives.html"
    }
   ]
  },
  "validation": {
-  "proposed": 26,
-  "accepted": 26,
+  "proposed": 40,
+  "accepted": 40,
   "rejected": [],
   "themes_dropped": [],
   "hallucinated": 0,
