@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-13 18:09",
- "n_checked": 1005,
- "n_flagged": 81,
- "asm_total": 169,
+ "generated": "2026-11-15 13:31",
+ "n_checked": 1004,
+ "n_flagged": 80,
+ "asm_total": 171,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -140,14 +140,9 @@
      "code": "ASM",
      "detail": "LT Stage II",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 5.0,
+   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },
@@ -466,23 +461,6 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
-  "IGLSPIRITS": {
-   "flags": [
-    {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 5.0,
-   "series": "BE",
-   "worst": "BAND 5%"
-  },
   "JAIBALAJI": {
    "flags": [
     {
@@ -718,6 +696,18 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
+  },
+  "SUPRIYA": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "UNIMECH": {
    "flags": [
@@ -1042,18 +1032,6 @@
     {
      "code": "ASM",
      "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "NELCAST": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
      "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
     }
    ],
