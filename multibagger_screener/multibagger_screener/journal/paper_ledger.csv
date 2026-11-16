@@ -181,3 +181,7 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-11-11,QUESS,SKIP,entry,0,,,[QUESS@2026-11-10 21:31] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
 2026-11-11,BHARATSE,SKIP,entry,0,,,[BHARATSE@2026-11-10 21:32] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
 2026-11-13,EIMCOELECO,SELL,partial,4,2733.45,1965.0,partial at 2.5R
+2026-11-16,TMB,SKIP,entry,0,,,[TMB@2026-11-15 12:59] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-16,DIFFNKG,SKIP,entry,0,,,[DIFFNKG@2026-11-15 13:00] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-16,NILKAMAL,SKIP,entry,0,,,[NILKAMAL@2026-11-15 13:02] alert had no mechanical stop (risk engine skipped the plan)
+2026-11-16,SUDARSCHEM,SKIP,entry,0,,,[SUDARSCHEM@2026-11-15 13:03] alert had no mechanical stop (risk engine skipped the plan)
