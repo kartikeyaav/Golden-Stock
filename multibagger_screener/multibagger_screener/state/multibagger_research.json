@@ -238,93 +238,115 @@
   },
   "VISAKAIND": {
    "symbol": "VISAKAIND",
-   "conviction": 3,
+   "headline": "A cheap roofing-and-board maker recovering from a fibre-cost shock, flagged for its promoter",
+   "story": "Visaka Industries has made cement roofing sheets for over 40 years and is now India's largest maker of fibre cement boards, sold under the Vnext brand as a fire- and termite-resistant substitute for plywood and gypsum board. It also runs a synthetic-yarn mill and a newer solar-roofing line (ATUM). Roofing sheets still use imported chrysotile asbestos fibre, which is about a third of raw-material cost.\n\nThe story of the last three years is a cost shock. The Russia-Ukraine war pushed fibre costs up roughly 25% while selling prices could only be raised about 2%, and operating margin fell from 14% (FY22) to 6% (FY24). FY25 ended in a small loss (-₹3 Cr). FY26 looks like a recovery: sales rose to ₹1,678 Cr, operating profit to ₹139 Cr (8.3% margin), and profit to ₹85 Cr. The improvement has continued: in the September 2026 quarter, revenue was up 22.8% year-on-year to ₹399 Cr, gross margin expanded to 52.6%, and the company swung from a ₹8.7 Cr loss a year earlier to a ₹71 Cr profit. Return on capital employed, which was 21% in FY21-22, has only recovered to 7% in FY26.\n\nThe stock is statistically cheap: at a ₹743 Cr market cap and a share price of ₹86, trailing EPS of about ₹19 puts the P/E near 4.5x, and the company's own reserves (₹914 Cr) exceed its market value. Institutions barely own it — FIIs and DIIs together hold under 1%. The screen's numbers also flagged the promoter raising his stake from 48.4% to 53.2-53.5% over FY26.\n\nThat last point needs a caveat. The entity doing most of the buying, Vigilance Security Services Private Limited, is part of the promoter group — and in November 2023 the Enforcement Directorate searched Visaka's offices and the promoter's residences under FEMA, saying Vigilance Security Services was found non-existent at its declared address and had moved over ₹100 Cr with the promoter, Dr. G. Vivek Venkatswamy, and his wife with no clear business rationale, ahead of the 2023 Telangana state election. Media reports from 2026 say the same entity was still buying Visaka shares on the open market as recently as September-October 2026. A promoter adding to his stake is normally read as a vote of confidence; here it is harder to read cleanly.\n\nThe business case — a leading position in a growing fibre-cement-board market, margins recovering from an external cost shock, and a deep value rating — is genuine but sits next to an unresolved governance question about how that very stake increase was financed and through whom.",
+   "founder": "Dr. G. Vivek Venkatswamy (also recorded as Gaddam Vivekanand / Vivek Venkataswamy), an MBBS graduate of Osmania University, founded Visaka Industries in 1981 and remains its Chairman. He is also a sitting Telangana cabinet minister (Labour, Employment, Factories, Mines) and Congress MLA for Chennur, and a former Lok Sabha MP; he also owns the Telugu channel V6. Promoter holding rose from 48.4% (through FY25) to 53.2% by March 2026 and 53.5% by September 2026, via open-market purchases. Pledge, which stood at 15.68% in June 2023, was reduced to zero by an FY26 regulatory declaration. However, the buying vehicle, Vigilance Security Services Private Limited, was named by the Enforcement Directorate in November 2023 as a non-existent/fictitious company at its declared address, used to circuitously move over ₹100 Cr involving the promoter and his wife around the 2023 state election, under a FEMA probe. That same entity reportedly continued buying Visaka shares through 2026. Managing Director Smt. G. Saroja Vivekanand and Joint MD Shri G. Vamsi Krishna, both promoter family, run day-to-day operations.",
+   "conviction": 2,
    "horizon": "long term",
-   "thesis": "Visaka is a small-cap (₹696 Cr market cap) building-materials company just emerging from a three-year chrysotile-fiber cost shock that pushed it to a loss in FY24/FY25; FY26 saw sales +9% to ₹1,678 Cr and net profit recover to ₹85 Cr, with Q1 FY27 EBITDA up 79% YoY and operating cash flow (₹183 Cr) now comfortably covering profit. The thesis is a cyclical margin recovery in the legacy roofing business compounding with continued 20%+ growth in the higher-margin Vnext fiber-cement-board unit (new ₹175 Cr, 72,000 MT Tonk, Rajasthan plant due Dec 2027) and the nascent ATUM solar-roofing business, re-rating a stock trading near book value (book/market 1.19) and at a high free-cash-flow yield (31.3%). For this to multiply, roofing margins must hold, Vnext must keep taking share from plywood/gypsum, and management must finally deliver on growth targets it has repeatedly pushed out. Promoters raising their stake from 48.4% to 53.2% in FY26 is a supportive signal, but near-zero institutional ownership (FII+DII 0.1%) means there is no external validation yet.",
+   "thesis": "Visaka is India's largest fibre-cement-board maker and a top-two cement roofing player, trading at roughly 4.5x trailing earnings with book value exceeding its market cap, after a multi-year margin collapse caused by an import fibre-cost shock that is now reversing. For this to multiply, the non-asbestos board and solar businesses need to keep growing faster than the commodity roofing business, margins need to hold as fibre costs normalise, and — critically — the unresolved ED/FEMA scrutiny of the promoter-linked entity now used to build his stake needs to be satisfactorily resolved rather than escalate.",
    "triggers": [
     {
-     "what": "New 72,000 MTPA fibre cement/calcium silicate board plant at Tonk, Rajasthan, ₹175 Cr capex",
-     "when": "commissioning by Dec 2027",
-     "source": "web search (ScanX/multibagg.ai coverage of Aug 6, 2026 board meeting)"
+     "what": "Vnext fibre-cement board capacity at 3.56 lakh TPA, India's largest",
+     "when": "as of Q1 FY27",
+     "source": "web/multibagg.ai Q1 FY27 presentation summary"
     },
     {
-     "what": "Vnext business targeted to reach ₹1,000 Cr revenue (from ~₹450 Cr run-rate in FY24) at ~25% YoY growth",
-     "when": "by FY2030, guidance given Q1 FY24 (Aug 2023) call",
+     "what": "Non-asbestos products reaching 47% of revenue mix",
+     "when": "Q1 FY27",
+     "source": "web/multibagg.ai"
+    },
+    {
+     "what": "Management guidance: Vnext turnover target ₹1,000 Cr by FY2030 on ~₹500 Cr cumulative capex",
+     "when": "given Aug 2023 (Q1 FY24 concall)",
      "source": "transcript"
     },
     {
-     "what": "ATUM integrated solar roof received ALMM certification, stock spiked 19% on the news",
-     "when": "Jan 2025",
-     "source": "web search (Business Standard)"
-    },
-    {
-     "what": "Q1 FY27: revenue ₹590 Cr (+16.7% YoY), EBITDA +79% YoY, interim dividend ₹1 declared",
-     "when": "quarter ended Jun 2026, reported Aug 6 2026",
-     "source": "web search (sahi.com / ScanX)"
+     "what": "Q2 FY27 revenue +22.8% YoY, PAT ₹71.3 Cr vs loss ₹8.7 Cr a year earlier, gross margin +344bps to 52.6%",
+     "when": "quarter ended Sep 2026, reported Nov 12 2026",
+     "source": "web/univest.in, marketsmojo.com"
     }
    ],
-   "guidance": "Q1 FY24 (Aug 16, 2023) call: management guided Vnext to grow 20–25% YoY and reach ~₹450 Cr revenue by end of FY24, with a longer-term target of ₹1,000 Cr by FY2030 (implying management's own, more conservative, ~13% CAGR when pressed by analysts). No specific margin or revenue guidance was found in any post-FY24 concall in the dossier or web search — the company does not appear to have held a public concall since then that surfaced in search results.",
-   "delivered_vs_guidance": "Management promised Vnext would hit ~₹450 Cr in FY24 and grow 20–25%/year; standalone company-wide sales instead fell from ₹1,653 Cr (FY23) to ₹1,527 Cr (FY24) and profit collapsed to near breakeven (₹1 Cr) as chrysotile fiber costs stayed elevated far longer than management's Aug 2023 expectation that prices would 'normalize' as the Russia-Ukraine war situation settled. FY25 was a net loss (-₹3 Cr). Only in FY26 did profit recover to ₹85 Cr and OCF to ₹183 Cr — roughly two to three years later than the 'coming quarters' recovery management had signaled in 2023. This is a clear miss on timing, though the underlying capacity expansions (Midnapore, now Tonk) have been executed as announced.",
+   "guidance": "In the Q1 FY24 concall (16 Aug 2023), management guided Vnext revenue to reach about ₹450 Cr by end of FY24 and targeted ₹1,000 Cr by FY2030 with roughly ₹500 Cr of cumulative capex, expecting 20-25% annual growth in that segment; it also guided the overall building-materials industry to grow 8-12% annually for 4-5 years. No more recent segment-level guidance was found in the dossier.",
+   "delivered_vs_guidance": "Segment-level Vnext revenue is not broken out in the data available, so the FY24 ₹450 Cr / FY2030 ₹1,000 Cr targets cannot be directly checked. What is checkable: overall building-materials revenue (84-86% of sales) was roughly flat from FY22 (₹1,416 Cr total) to FY26 (₹1,678 Cr total) despite the stated 20-25% Vnext growth rate, implying the legacy roofing business was a drag — consistent with management's own account of the fibre-cost shock. The 2023 call also flagged margins 'under pressure' with no quick fix, which matches the FY24-FY25 margin trough (5.8%-6.4% EBITDA margin) before the FY26 recovery to 8.3%.",
    "scores": {
     "size_runway": {
      "score": 4,
-     "why": "Market cap ₹696 Cr against a India fiber-cement/building-products market pegged at multi-billion-dollar scale growing ~6-8% CAGR (IMARC/MarketResearchFuture estimates), with Vnext alone targeted at ₹1,000 Cr vs current total company sales of ₹1,678 Cr."
+     "why": "₹743 Cr market cap against an India fibre-cement-board market estimated at $150.2M in 2026 growing toward $410.7M by 2030, where Visaka is already the largest player (3.56 lakh TPA capacity)."
     },
     "business_quality": {
      "score": 2,
-     "why": "Core roofing business is commodity, import-dependent on chrysotile fiber, and OPM has fallen from 14% (FY22) to 6-10% range since; ROCE has collapsed from 21% (FY21-22) to just 3-7% (FY24-26), showing weak, volatile returns on capital despite 40+ years in the category."
+     "why": "ROCE fell from 21% (FY21-22) to 3-4% (FY24-25) and only recovered to 7% in FY26; roofing margins are hostage to imported chrysotile fibre prices, a commodity input outside the company's control."
     },
     "management": {
-     "score": 3,
-     "why": "No governance red flags found (clean PwC audit opinion, no pledges, no SEBI action found), and promoters raised stake from 48.4% to 53.2% in FY26, but FY24/FY25 margin-recovery guidance from the Aug 2023 call missed by roughly 2-3 years, and Vnext revenue/growth targets were repeatedly described only in ranges, not firm numbers."
+     "score": 2,
+     "why": "Operationally steered the company back to profit after the fibre shock, but the promoter's own stake increase (48.4%→53.5%) was executed through Vigilance Security Services Pvt Ltd, an entity the Enforcement Directorate called non-existent/fictitious in a Nov 2023 FEMA probe tied to the promoter and his wife."
     },
     "growth_visibility": {
      "score": 4,
-     "why": "Concrete, funded trigger in hand: ₹175 Cr, 72,000 MT Tonk plant due Dec 2027, plus Q1 FY27 sales +16.7% YoY and EBITDA +79% YoY showing the recovery is already underway, not just promised."
+     "why": "Q2 FY27 revenue up 22.8% YoY with gross margin up 344bps to 52.6% and a swing to ₹71 Cr profit from a ₹8.7 Cr loss; non-asbestos mix now 47% of revenue and rising."
     },
     "longevity": {
      "score": 3,
-     "why": "Building-materials demand (housing, urbanization) is structurally durable per industry estimates (6-8% market CAGR), but the roofing segment's reliance on imported chrysotile asbestos fiber carries longer-term regulatory/ESG tail risk (banned in EU and several countries) that could cap how long that leg of growth persists."
+     "why": "Structural housing and urbanisation demand supports board and roofing demand for years, but the roofing half of the business stays exposed to chrysotile asbestos, a material with long-run global regulatory overhang even though no India import ban exists today."
     },
     "valuation": {
      "score": 4,
-     "why": "TTM P/E of roughly 8x (₹696 Cr market cap / ₹86 Cr TTM profit), FCF yield 31.3% and book/market of 1.19 per the machine screen — statistically cheap for a company whose earnings just troughed and are recovering."
+     "why": "Trailing P/E near 4.5x (₹86 price / ₹19.2 TTM EPS), FCF yield 29.3%, and book value (₹914 Cr reserves + ₹17 Cr equity) exceeding the ₹743 Cr market cap."
     },
     "red_flags": {
-     "score": 4,
-     "why": "Operating cash flow (₹183 Cr FY26) now exceeds net profit (₹85 Cr), a healthy sign, debt fell from ₹479 Cr to ₹303 Cr, and no pledges or auditor issues were found; the only flag is the large, unexplained one-quarter jump in promoter holding (48.4%→53.2% in FY26) whose mechanism (open market vs preferential allotment) was not identified in the dossier or search."
+     "score": 1,
+     "why": "Vigilance Security Services Pvt Ltd — named by the ED in Nov 2023 as a bogus entity used to move over ₹100 Cr involving the promoter and his wife — is the same vehicle reported buying Visaka shares on the open market as late as Sep-Oct 2026 to raise the promoter stake."
     }
    },
-   "analyst_views": [],
-   "industry": "India's fiber cement board/sheet market is estimated at roughly USD 141.7-150 million (2025-26) growing to USD 243.9 million by 2034 at a ~6% CAGR per IMARC, while other estimates (MarketResearchFuture, TechSci) put the broader fiber cement boards and sheets category at USD 2.8-4.8 billion with CAGR estimates ranging 6.4%-8.2% through 2030-2035 — the wide dispersion across sources suggests the category definitions vary; no CRISIL/ICRA-specific note on fiber cement boards was found. Visaka has described itself (management commentary, Aug 2023 call) as holding roughly 32% share of the Vnext-type fiber cement board segment, well ahead of the next competitor, though this claim is unverified by a third party.",
-   "risks": [
-    "Chrysotile fiber cost volatility (the raw material that caused the FY24/FY25 loss) is tied to global supply and geopolitical events outside the company's control.",
-    "Asbestos-based roofing faces long-term regulatory and ESG/health-reputation risk as other markets phase out chrysotile products.",
-    "Near-zero institutional ownership (FII+DII 0.1%) means no external analyst scrutiny or validation of management's targets.",
-    "No public concall transcript was found for any period after Aug 2023 in the dossier or search, reducing visibility into recent management commentary and updated guidance.",
-    "Unexplained large one-quarter jump in promoter shareholding (June 2025/FY26) that was not clarified in available sources."
+   "analyst_views": [
+    {
+     "broker": "MarketsMOJO",
+     "date": "2026-08",
+     "view": "Hold",
+     "target": "not found",
+     "url": "https://www.marketsmojo.com/news/stock-recommendation/visaka-industries-ltd-is-rated-hold-by-marketsmojo-4238704"
+    }
    ],
-   "change_my_mind": "If the Tonk plant capex overruns or is delayed past Dec 2027, if roofing OPM fails to hold above FY26's ~8-10% level as fiber costs normalize, or if a future concall shows Vnext growth decelerating well below the 20-25% range management cited in 2023, the recovery thesis weakens materially.",
+   "industry": "The India fibre cement boards and sheets market is estimated at about $150.2 million in 2026, with third-party industry forecasts (Grand View Research) projecting growth toward roughly $410.7 million by 2030; Visaka describes itself as India's largest fibre-cement-board manufacturer (installed capacity 3.56 lakh TPA as of Q1 FY27) and a top-two player in cement roofing sheets, per its own investor presentation.",
+   "risks": [
+    "Unresolved Enforcement Directorate/FEMA scrutiny (since Nov 2023) of Vigilance Security Services Pvt Ltd, a promoter-linked entity flagged as non-existent at its declared address, which is also the vehicle raising the promoter's stake in 2026",
+    "Roofing margins depend on imported chrysotile asbestos fibre prices, which caused a multi-year margin collapse (14% to 6% operating margin, FY22-FY24) when they spiked after the Russia-Ukraine war",
+    "Long-run global regulatory risk around asbestos-based products, even though no current India ban exists",
+    "Thin institutional ownership (FII+DII under 1%) means little independent scrutiny or research coverage",
+    "ROCE still well below its FY21-22 level (7% in FY26 vs 21% then), so the margin recovery is not yet fully proven"
+   ],
+   "change_my_mind": "Clear resolution (or escalation) of the ED/FEMA matter around Vigilance Security Services, confirmation that promoter purchases going forward come through unambiguous, verifiable vehicles, sustained ROCE recovery toward double digits over 2-3 more quarters, and segment-level disclosure showing Vnext/non-asbestos growth is actually tracking the FY2030 target would meaningfully change this view in either direction.",
    "sources": [
     "https://www.screener.in/company/VISAKAIND/consolidated/",
-    "https://www.plyreporter.com/article/51101/visaka-to-increase-the-capacity-of-fibre-cement-board-set-up-a-new-line-in-tamil-nadu",
-    "https://www.sahi.com/news/visaka-industries-approves-175-crore-tonk-plant-posts-52-68-crore-q1-net-profit-474-PE1_CORP",
-    "https://scanx.trade/stock-market-news/companies/visaka-industries-q1-results-net-profit-rises-16-yoy-to-500-crore/47567134",
+    "https://www.multibagg.ai/market-pulse/articles/visaka-non-asbestos-revenue-share-ppt-cmwddcvyy002g2hs18ajgtct7",
+    "https://www.multibagg.ai/market-pulse/articles/visaka-q1-revenue-ebitda-growth-cmwdcbdbz001a2hs1hoeqt3j9",
+    "https://univest.in/blogs/visaka-industries-q2-results-fy27-pat-71-crore",
+    "https://www.marketsmojo.com/news/result-analysis/visaka-industries-q2-fy27-profit-surge-masks-margin-volatility-concerns-4259754",
+    "https://www.marketsmojo.com/news/stock-recommendation/visaka-industries-ltd-is-rated-hold-by-marketsmojo-4238704",
+    "https://www.grandviewresearch.com/horizon/outlook/fiber-cement-board-market/india",
     "https://scanx.trade/stock-market-news/companies/visaka-industries-files-declaration-confirming-no-share-encumbrance-by-promoters-for-fy26/39054780",
-    "https://www.business-standard.com/markets/capital-market-news/visaka-industries-spurts-after-co-s-solar-roofing-product-receives-almm-certification-125010800526_1.html",
-    "https://www.imarcgroup.com/india-fibre-cement-boards-sheets-market",
-    "https://www.visaka.co/assets/website/files/investors/concall_files/Earning-Call-Transcription-16-08-2023-for-Q1FY-2023-24.pdf"
+    "https://thesouthfirst.com/telangana/ed-establishes-connection-between-g-vivekanand-and-vigilance-services-in-%E2%82%B98-crore-transaction/",
+    "https://www.taxscan.in/ed-raids-in-telangana-uncover-massive-financial-irregularities-involving-dr-gaddam-vivekanand-and-associated-companies/345774/",
+    "https://www.deccanchronicle.com/nation/politics/211123/i-t-raids-on-ex-mp-viveks-residences-offices.html",
+    "https://www.siasat.com/i-t-searches-at-premises-of-telangana-congress-leader-vivek-2915860/"
    ],
-   "date": "2026-10-09",
+   "date": "2026-11-15",
    "model": "claude-sonnet-5",
    "concall": "Aug 2023",
-   "ppt": "Aug 2023",
+   "ppt": "Nov 2026",
    "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=ad25e68f-df7c-41a3-b3de-1cd68697791e.pdf",
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=07689066-a02d-48c2-8f21-943927099ff7.pdf",
-   "price": 80.55,
-   "mb_score": 57.5,
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=a0e84ef9-5c71-416d-85fa-167602acea2a.pdf",
    "company": "Visaka Industries Ltd",
-   "sector": "Construction Materials"
+   "sector": "Construction Materials",
+   "price": 86.02,
+   "mb_score": 57.5,
+   "mb_factors": [
+    "A3 turnaround: profit after a loss year, sales up",
+    "B2 value: FCF yield and book/market top 30%",
+    "B3 small: market cap under Rs 2,000 Cr",
+    "C2 undiscovered: FII+DII under 5%",
+    "D1 promoter raising stake: +1 pt"
+   ]
   },
   "VALIANTORG": {
    "symbol": "VALIANTORG",
@@ -604,96 +626,107 @@
   },
   "YUKEN": {
    "symbol": "YUKEN",
-   "conviction": 2,
+   "headline": "A Japan-backed hydraulics maker localising pumps to chase India's mobile-machinery market",
+   "story": "Yuken India makes hydraulic pumps, valves, cylinders and power packs — the components that let a steel mill's rolling line, a machine tool, or an excavator turn fluid pressure into controlled movement. The Bengaluru company has operated since 1976 in technical and financial partnership with Yuken Kogyo of Japan, which remains its single largest shareholder.\n\nWhat has changed is the scale of that partnership. Over the last two years Yuken Kogyo has put roughly ₹120 crore of fresh equity into the Indian unit — part of a plan, management told shareholders at the September 2025 annual meeting, to make India a manufacturing hub for products the group used to make only in Japan. The company has started making piston pumps in India for the first time, and is localising next-generation solenoid valves and components for proportional valves. Some of this output is already being re-exported to Yuken's own subsidiaries abroad.\n\nWhy this might matter: Yuken dominates hydraulics for machine tools, where management puts its share above 90%, and holds roughly half the broader industrial-hydraulics market. But \"mobile hydraulics\" — pumps and valves for construction equipment, tractors and material handling — is 65-70% of the total Indian hydraulics market, and Yuken's own management admits its share there is \"very, very weak.\" The new piston pumps and an expanding gear-pump line target exactly that gap.\n\nThe numbers so far are uneven, not a clean growth line. Profit for the year to March 2026 actually fell about 41% to roughly ₹14 crore, and the December 2025 quarter posted a loss, as rising depreciation and interest costs from the capex bit into margins. The following quarters snapped back hard: profit and sales both grew in double digits, accelerating to around 30-40% year-on-year growth by September 2026.\n\nManagement's own target, given at that AGM, is to roughly double consolidated sales to about ₹1,000 crore and lift EBITDA margin from the low teens to 18-20% by 2030, with exports rising from under 5% of sales today to about 20%. Return on capital employed has actually slipped, from 11% to 7% over the last year, as the investment phase plays out — a reminder the payoff is not guaranteed and still some years off.\n\nAt roughly 87 times trailing earnings, with almost no institutional ownership (FIIs and DIIs together hold about 1%) and no broker research found to check the story against, the market already appears to be pricing in a good part of this multi-year plan working out.",
+   "founder": "Yuken India is run by Managing Director C.P. Rangachar, with Tadanori Okada — a director of Yuken Kogyo Company Limited, Japan — as non-executive Chairman. The promoter group combines Yuken Kogyo (the original 1976 technical and financial collaborator) with a small set of Indian individuals, including R. Srinivasan and members of the Rangachar family. Promoter holding has risen from 52.5% in March 2022 to 58.0% now, but this rise has come mainly through preferential equity allotments to Yuken Kogyo (about ₹120 crore across two tranches) rather than open-market purchases by individual promoters — a sign of the Japanese parent's commitment, but also a source of dilution for other shareholders. No promoter pledge, SEBI order, or auditor resignation was found; statutory auditor Walker Chandiok & Co LLP gave an unqualified FY25 opinion. No individual promoter or director market trades were found in the last 12 months.",
+   "conviction": 3,
    "horizon": "long term",
-   "thesis": "Yuken India is a small (₹1,542 Cr market cap), promoter-backed (Japanese JV partner Yuken Kogyo) hydraulics component maker broadening from stationary industrial hydraulics into mobile hydraulics (via Kolben Hydraulics), precision components (Coretec), and renewable power for its own foundry (AEPL windmill) — a genuine 'size vs addressable market' setup against a multi-billion-dollar Indian hydraulics market. The Q1 FY27 bounce (sales +28%, profit +29% YoY) is encouraging, but it follows a weak FY26 in which full-year net profit fell roughly 40-44% and ROCE nearly halved (11%→7%), with an actual net loss in Q3 FY26. For this to compound 3-10x, the company needs margins and ROCE to recover durably and the mobile-hydraulics/Coretec bets to scale — not just one strong quarter. At a TTM P/E near 95-100x on a cyclical, thin-margin (10-12% OPM) component business, the price already assumes a lot of that recovery before it's proven in the numbers.",
+   "thesis": "Yuken's Japanese parent is funding a multi-year localisation and capacity drive aimed at a part of the hydraulics market (mobile machinery) where Yuken barely competes today despite dominating machine-tool hydraulics. If the new piston-pump and gear-pump capacity wins real mobile-sector customers and margins climb toward management's 18-20% EBITDA target by 2030, the earnings base could expand meaningfully from a small, under-owned stock. What has to go right: the capex (mostly complete by FY27) must translate into utilisation and operating leverage rather than just higher depreciation, and the company must prove it can win mobile-hydraulics customers it admits it has barely served before. At roughly 87x trailing earnings, the market is already paying up for a good part of that outcome.",
    "triggers": [
     {
-     "what": "Expansion into mobile hydraulics (construction/off-highway equipment) via Kolben Hydraulics JV, the 'mobile face' of the Yuken group",
-     "when": "ongoing, no firm date disclosed",
-     "source": "web (company group-companies page, Kolben Hydraulics site)"
+     "what": "Made-in-India piston pump production ramp-up, with re-exports to Yuken's own global subsidiaries",
+     "when": "ongoing through FY27",
+     "source": "AGM transcript, 10 Sep 2025"
     },
     {
-     "what": "Further equity infusion of ₹3 Cr into wholly-owned subsidiary Coretec Engineering (solenoids, precision ground spools, hydraulic accessories)",
-     "when": "FY26 filing, exact quarter not found",
-     "source": "web (BSE corporate filing summary)"
+     "what": "Localisation of next-generation solenoid valves and proportional-valve components (import substitution from Japan)",
+     "when": "FY26-FY27",
+     "source": "AGM transcript, 10 Sep 2025"
     },
     {
-     "what": "Investment in AEPL Grotek Renewable Energy (51% stake, windmill project) to cut foundry power costs",
-     "when": "not dated in available sources",
-     "source": "web (annual report excerpt)"
+     "what": "Expansion of gear-pump division and piston pumps to enter mobile hydraulics (construction machinery)",
+     "when": "multi-year, through FY30",
+     "source": "AGM transcript, 10 Sep 2025"
     },
     {
-     "what": "Promoter/JV partner Yuken Kogyo raised stake from 52.5% (Mar 2023) to 58% (by Mar 2025) via capital infusion, reported elsewhere as a ~₹62.9 Cr infusion for a 4.62-point stake increase",
-     "when": "FY24",
-     "source": "shareholding table + web (AGM commentary)"
+     "what": "~₹120 crore parent (Yuken Kogyo) equity infusion largely funding floor space, machines and balancing equipment",
+     "when": "substantially complete by FY27",
+     "source": "AGM transcript, 10 Sep 2025"
+    },
+    {
+     "what": "Export share target rising from under 5% of sales to about 20%",
+     "when": "by FY30",
+     "source": "AGM transcript, 10 Sep 2025"
     }
    ],
-   "guidance": "No current concall transcript or investor presentation was available in the dossier, and two BSE transcript PDFs found via search (filed Jun 2026 and Aug 2026) returned HTTP 403 and could not be read. The only guidance found is from the FY24 annual report, where management said the Indian hydraulics market opportunity should support 'a steady 12-15% growth in revenues.'",
-   "delivered_vs_guidance": "Against that 12-15%/year revenue guidance: FY23→FY24 sales grew 13.7% (in range), but FY24→FY25 grew only 8.0% and FY25→FY26 grew just 1.1% — a clear miss for two straight years. Net profit over the same period went from ₹19 Cr (FY24) to ₹25 Cr (FY25) to ₹14 Cr (FY26), a ~44% drop in the most recent full year, with ROCE falling from 11% to 7% and an outright net loss (-₹0.6 Cr) in the Dec 2025 quarter. Q1 FY27 (Jun 2026) then rebounded sharply (+28% sales, +29% profit YoY), but that is one quarter against two years of guidance underperformance.",
+   "guidance": "At the FY2024-25 AGM (10 September 2025), MD C.P. Rangachar guided to consolidated sales of about ₹1,000 crore by FY30 (versus ~₹500 crore now) on 10-15% annual growth, EBITDA margin rising from 11-13% to 18-20% by 2030, capacity utilisation currently 60-70%, and exports rising from under 5% of sales to about 20% of sales over the next five years.",
+   "delivered_vs_guidance": "This AGM transcript is the earliest public growth guidance found in the dossier, so a prior-year promise-versus-delivery check isn't possible from company sources. Against this guidance itself: full-year FY26 net profit fell about 41% to roughly ₹14 crore (per post-results coverage), with a net loss in the December 2025 quarter, before profit and sales growth accelerated to roughly 29-42% year-on-year by the June and September 2026 quarters — so the growth guidance has recently been exceeded, but the margin story has been bumpy: Q2 FY26 (Sep 2025) net margin contracted 151 bps year-on-year on higher interest and depreciation, consistent with management's own caution that EBITDA gains would come \"steadily,\" not immediately.",
    "scores": {
     "size_runway": {
      "score": 4,
-     "why": "₹1,542 Cr market cap / ~₹492 Cr TTM sales against an Indian hydraulic equipment market estimated at roughly $1.5-2.9 billion (Fortune Business Insights, IMARC) — Yuken's revenue is a small fraction of the addressable market."
+     "why": "₹1,524 crore market cap against an India hydraulic pump market estimated at roughly $340-860 million (IMARC, Grand View Research); Yuken's own management puts its overall share near 10%, with mobile hydraulics (65-70% of the total market) largely unaddressed."
     },
     "business_quality": {
-     "score": 2,
-     "why": "Thin, volatile margins (OPM 9-12% over 5 years), ROCE roughly halved from 11% (FY25) to 7% (FY26), and an actual net loss in Q3 FY26 — not evidence of durable pricing power or a moat, despite the Japanese-JV technology tie-up."
+     "score": 3,
+     "why": "Over 90% share in machine-tool hydraulics and roughly half of industrial hydraulics, but EBITDA margin has run only 8-13% and ROCE 7-11% for years; management itself attributes the industry's thin margins to intense price competition, i.e. limited pricing power."
     },
     "management": {
      "score": 3,
-     "why": "Promoter/JV partner Yuken Kogyo has raised its stake from 52.5% to 58% via capital infusion (skin in the game increasing), but disclosure is thin — no concall transcript or presentation was obtainable, and an auditor resigned at subsidiary Coretec in 2026 citing bandwidth, not fraud."
+     "why": "Long-tenured MD, unqualified audit opinion, candid AGM answers to pointed shareholder questions; but a shareholder on record flagged weak ongoing disclosure (no quarterly updates, no analyst calls), and promoter stake growth has come from dilutive preferential allotments to the parent rather than open-market buying."
     },
     "growth_visibility": {
-     "score": 3,
-     "why": "Concrete diversification moves exist (Kolben mobile hydraulics, Coretec precision components, AEPL windmill for cost savings) but none come with disclosed capacity figures, order books, or timelines in available sources."
+     "score": 4,
+     "why": "Concrete, named triggers for the next 2-3 years: Made-in-India piston pumps already shipping, next-gen solenoid and proportional valve localisation underway, and a specific push into the underpenetrated mobile-hydraulics segment, backed by committed parent capital."
     },
     "longevity": {
      "score": 3,
-     "why": "Hydraulics demand is tied to capex, construction equipment and auto cycles — a long runway exists if India's capex cycle holds, but the business is inherently cyclical, as FY26's slowdown shows."
+     "why": "Guidance runs to FY30 and is backed by continued Japanese-parent investment, but depends on an as-yet-unproven entry into mobile hydraulics where management admits current share is 'very, very weak.'"
     },
     "valuation": {
      "score": 2,
-     "why": "At close ₹1,135.3 and TTM EPS ₹11.5, P/E is roughly 95-99x against a 7% ROCE and a FY26 profit decline — rich for the demonstrated quality, even allowing for the Q1 FY27 rebound."
+     "why": "Roughly 87x trailing EPS and about 2.8x TTM sales for a business guiding to 10-15% annual revenue growth and a margin target of only 18-20% EBITDA by 2030, with ROCE having fallen from 11% to 7% over the last year."
     },
     "red_flags": {
-     "score": 3,
-     "why": "No pledge, no SEBI action found, and the promoter explicitly confirmed zero encumbrance on FY26 shares; but FY26 saw a ~44% profit fall, a net-loss quarter, and ROCE nearly halved — real operational deterioration even if not 'serious' governance fraud."
+     "score": 4,
+     "why": "No auditor qualification, no SEBI order, no promoter pledge found, and operating cash flow (₹41-49 crore in recent years) has broadly tracked profit; the main caution is a falling ROCE and margin compression from rising depreciation/interest as capex is absorbed, plus a shareholder-flagged disclosure gap."
     }
    },
    "analyst_views": [],
-   "industry": "India hydraulic equipment market estimated at roughly $2.88 billion in 2026 (Fortune Business Insights) to $1.5 billion in 2025 growing to $2.0 billion by 2034 at ~3.5% CAGR (IMARC), with other estimates (OMR) citing ~6.2% CAGR; India is cited as the world's third-largest consumer and second-largest producer of hydraulic cylinders/systems (~7.7 million units consumption). No CRISIL/ICRA sector note specific to Yuken or hydraulics was found. Yuken's TTM revenue of ~₹492 Cr (~$59M) is a small sliver of this market.",
+   "industry": "Estimates of the India hydraulic pump/equipment market vary by scope: IMARC puts it at about $340 million in 2025, growing to about $491 million by 2034 (~4% CAGR); another estimate (Grand View Research/Markets&Data) puts total hydraulic pumps at $859 million in 2024 rising to about $1,194 million by 2030 (~5.8% CAGR). Yuken says it holds over 90% share in machine-tool hydraulics and roughly 50% of industrial hydraulics, but only about 10% of the total market once mobile hydraulics (65-70% of the market, per management) is included — no independent third-party (CRISIL/ICRA-type) sector report specific to Yuken's niche was found.",
    "risks": [
-    "Demand is tied to capex, construction-equipment and auto cycles — FY26's revenue stall (+1.1%) and profit drop (~-44%) show this cyclicality is real, not theoretical.",
-    "Valuation (TTM P/E ~95-99x) already prices in a recovery that has shown only one quarter (Q1 FY27) of confirmation.",
-    "No concall transcript or investor presentation could be sourced or read (403 errors on filed PDFs), so growth triggers rely on secondary web sources rather than direct management commentary.",
-    "Very low institutional ownership (FII+DII ~1.3%, per machine evidence) means no independent analyst validation and potential illiquidity.",
-    "Auditor resignation at subsidiary Coretec (effective June 2026), even if explained as bandwidth-related, is a governance item worth monitoring at the group's newer growth bets."
+    "Valuation (~87x trailing earnings) leaves little room for execution slips against a guidance timeline running to 2030",
+    "Heavy dependence on the Japanese parent for technology, capital and export routing, with limited independent customer relationships of its own outside India",
+    "Return on capital employed has fallen from 11% to 7% year-on-year, with rising depreciation and interest from capex compressing margins",
+    "Mobile hydraulics, the stated growth target, is a market where the company's own management describes its share as 'very, very weak' today",
+    "Thin public disclosure (no regular analyst calls, no broker coverage found) and a concentrated, 58% promoter-held, low-float register (FII+DII together ~0.7%)"
    ],
-   "change_my_mind": "If Q1 FY27's rebound proves a one-off and FY27 reverts to the low-single-digit growth and margin compression seen in FY25-FY26, or if ROCE doesn't recover from 7% toward its earlier 10-11% range, the thesis fails — the stock would then be a cyclical small-cap trading at a growth-stock multiple without growth. Conversely, sustained 15%+ revenue growth with margin recovery and disclosed order-book visibility for Kolben/Coretec over the next two to three quarters would meaningfully strengthen the case.",
+   "change_my_mind": "Evidence that ROCE and margins keep sliding even after the current capex program is reported complete (expected by FY27), or that the mobile-hydraulics push fails to convert into real orders after repeated promises of entry, would undercut this thesis.",
    "sources": [
     "https://www.screener.in/company/YUKEN/consolidated/",
-    "https://scanx.trade/stock-market-news/companies/yuken-india-q1-results-net-profit-rises-29-yoy-to-521-80-lakhs/47997160",
-    "https://scanx.trade/stock-market-news/companies/yuken-india-fy26-results-net-profit-falls-41-143-9-crore/48517353",
-    "https://scanx.trade/stock-market-news/companies/yuken-india-statutory-auditor-resigns-at-material-subsidiary-coretec/42004478",
-    "https://univest.in/blogs/yuken-india-analyst-review-2026",
-    "https://www.yukenindia.com/group-companies/",
-    "https://kolbenhydraulics.com/about.html",
-    "https://www.yukenindia.com/wp-content/uploads/2024/08/Yuken-annual-report_2024.pdf",
-    "https://www.imarcgroup.com/india-hydraulic-equipment-market",
-    "https://www.fortunebusinessinsights.com/hydraulic-equipment-market-111987",
-    "https://www.tradejini.com/blogs/yuken-india-ltd-is-driving-industrial-strength-with-sustainable-hydraulic-solutions"
+    "https://www.yukenindia.com/wp-content/uploads/2025/10/AGM_TRANSCRIPT.pdf",
+    "https://trendlyne.com/equity/2883/YUKEN/yuken-india-ltd/",
+    "https://www.imarcgroup.com/india-hydraulic-pump-market",
+    "https://www.grandviewresearch.com/horizon/outlook/hydraulic-pumps-market/india",
+    "https://www.marketsmojo.com/news/result-analysis/yuken-india-q2-fy26-profit-recovery-masks-underlying-margin-pressures-3713342",
+    "https://scanx.trade/stock-market-news/companies/yuken-india-fy26-results-net-profit-falls-41-143-9-crore/48517353"
    ],
-   "date": "2026-10-09",
+   "date": "2026-11-17",
    "model": "claude-sonnet-5",
    "concall": null,
    "ppt": null,
    "transcript_url": null,
    "ppt_url": null,
-   "price": 1135.3,
-   "mb_score": 50.4,
    "company": "Yuken India Ltd",
-   "sector": "Capital Goods"
+   "sector": "Capital Goods",
+   "price": 1121.9,
+   "mb_score": 52.4,
+   "mb_factors": [
+    "B3 small: market cap under Rs 2,000 Cr",
+    "C2 undiscovered: FII+DII under 5%",
+    "D1 promoter raising stake: +1 pt",
+    "F momentum alone (RS leader or trend template)",
+    "Q1 quarterly: profit +25%, sales +20% on the same quarter last year"
+   ]
   },
   "NITCO": {
    "symbol": "NITCO",
@@ -896,103 +929,98 @@
   },
   "GANDHAR": {
    "symbol": "GANDHAR",
-   "headline": "A white-oil maker's record quarter is an admitted one-off, not yet a new plan",
-   "story": "Gandhar Oil Refinery makes specialty petroleum products: white oils used in medicines, cosmetics and food-grade lubricants (it calls this category PHPO), transformer and insulating oils used by power utilities (PIO), and automotive lubricants. It buys base oil, refines and blends it, and sells to pharma, personal-care and power customers. It also runs Texol, a trading and blending unit in Sharjah, UAE, and exports to global customers.\n\nWhat changed: the June 2026 quarter (Q1 FY27) was the best in the company's history. Revenue rose 92% year-on-year to ₹1,732 crore, and net profit jumped 689% to ₹206 crore — more than the company earned in all of FY26. Management credits this to a favourable moment: tension around the Strait of Hormuz disrupted base-oil supply chains and pushed up prices, and Gandhar's early, disciplined buying of raw material let it sell at unusually wide margins. Gross margin per kilolitre jumped to ₹28,145, over three times the year-ago level.\n\nManagement itself calls this exceptional. Pressed repeatedly on the July 23, 2026 earnings call about whether these margins can last, the CFO said only that he is \"hopeful\" they continue for \"most of this year,\" and the Joint Managing Director declined to forecast margins beyond the next one or two quarters. Before this quarter, operating margin had wandered between 4.5% and 8% over the last five years, and return on capital employed had fallen from 39% in FY22 to 11-13% in the last two years — numbers more typical of a business processing a bought-in commodity than one with durable pricing power.\n\nWhy it might matter: India's white-oil segment is genuinely growing — a CRISIL study, commissioned by the company itself, put India's white-oil demand growth at roughly 9.5% a year to 2027, helped by pharma and personal-care demand and multinationals shifting sourcing to India. Shell's 2025 purchase of peer Raj Petro suggests global interest in the space. But Gandhar's three plants already run at about 97% utilisation on two shifts, and management has not announced a capacity expansion or capex number — plans are being drawn up and will be shared \"shortly.\" A planned entry into South Africa is also still being worked out, with no committed timeline.\n\nOn the numbers: operating cash flow fell well short of profit in FY24 (-₹69 crore versus ₹165 crore profit) and FY25 (₹15 crore versus ₹84 crore profit), before recovering closer to profit in FY26 (₹128 crore versus ₹137 crore). Promoters have been buying shares steadily — their stake rose from 64.6% in March 2024 to 66.6% by June 2026, including purchases as recent as September 2026. The stock has already risen about 111% in six months and sits near its 52-week high, so much of this quarter's news looks already reflected in the price.",
-   "founder": "Gandhar Oil Refinery is controlled by the Parekh family. Ramesh Babulal Parekh, the founder, Chairman and Managing Director, has run the business since its 1992 incorporation and has over 30 years in the petroleum and specialty-oils trade; he is a commerce graduate from Mumbai University. His sons, Samir Parekh (Vice Chairman and Joint MD) and Aslesh Parekh (Joint MD), each have about 19 years in the business and run day-to-day operations alongside him. Promoter holding has risen steadily, from 64.6% in March 2024 to 66.6% in June 2026, with purchases both by Ramesh Parekh personally (including ₹82 lakh and ₹50.8 lakh on September 9, 2026) and by the promoter-group entity Gandhar Coals & Mines, which bought shares between December 2025 and March 2026. No share pledge was found in the disclosures reviewed. No SEBI order, auditor resignation or related-party dispute was found; the statutory auditor is listed as K J K & Associates. Governance history before the 2023 IPO: not found.",
-   "conviction": 2,
+   "headline": "Gandhar Oil's profit tripled on a Gulf supply shock — can the margins last?",
+   "story": "Gandhar Oil Refinery makes specialty oils — white oils, transformer oils, lubricants and related products used in everything from baby oil and pharma packaging to power transformers and rubber manufacturing. It says it is India's largest white-oil maker, with roughly 26.5% of that market, and counts multinational personal-care and industrial firms among its customers. Nearly half its revenue is exported, largely through a UAE unit called Texol.\n\nWhat changed this year has little to do with anything Gandhar built. A war-related shipping and supply disruption around the Strait of Hormuz hit the availability of \"base oil,\" the crude derivative that is the main raw material for every specialty-oil maker. Scarce supply let Gandhar and its competitors charge far more for the same product. The \"gross margin spread\" it earns per kilolitre sold jumped from about ₹8,000-9,000 to roughly ₹29,000 in each of the last two quarters, more than a three-fold rise. Revenue for the September 2026 quarter hit a record ₹1,847 crore, up 73% year-on-year, and profit rose almost five-fold to ₹186 crore. First-half profit this year, ₹392 crore, is already near three times all of last year's full-year profit.\n\nUnderneath that windfall sit some genuine, slower-moving improvements. The company has expanded capacity, mostly by capitalising projects already under construction, from about 598,000 kilolitres to 838,000 kilolitres, and its Indian plants now run at about 82% utilisation with room to add a third shift. Its transformer-oil business grew volumes 23% in the first half, riding India's power and data-centre build-out, a trend management expects to continue. The balance sheet is solid: the standalone company carries no debt, and the group holds more cash than borrowings.\n\nBut there is real reason for caution. Management itself says it has no idea when the elevated spreads will normalise, only that they probably will, and only guesses they will settle somewhere between the old and new levels. Consolidated sales volume grew just about 1% in the first half versus a year ago, far short of the 8-11% management guided in July, because the Hormuz disruption hit the UAE unit hard; standalone Indian volumes, by contrast, grew a healthier 15-16%. Trade receivables have nearly doubled in six months, with debtor days rising from about 37 to 70-75, even as management downplays the shift. Operating cash flow of about ₹183 crore in the first half covered less than half of the ₹392 crore profit booked. Return on capital employed, above 30% a few years ago, had fallen to 11-13% even before adjusting for this year's one-off spike. None of this proves the story wrong — but it does mean today's profit run-rate may not be the one to extrapolate from.",
+   "founder": "Ramesh Babulal Parekh founded and chairs Gandhar Oil Refinery, running it with sons Samir Ramesh Parekh (vice chairman and joint MD) and Aslesh Ramesh Parekh (joint MD, who led the recent earnings call). The family holds the business through entities including Gandhar Coals & Mines Private Limited and family trusts. Promoter holding has risen steadily, from 64.6% in March 2024 to 66.7% in September 2026, with repeated open-market purchases through 2025-26, including roughly ₹5 crore of buying across early November 2026 alone. Promoters formally declared zero share pledges for FY26. No SEBI order, distressed auditor resignation, or other serious governance lapse was found; a cheque-dishonour case under the Negotiable Instruments Act, filed by a counterparty against the company and promoter group, ended in acquittal in September 2026. A company secretary and a senior manufacturing executive each resigned in the past year, described as routine or personal.",
+   "conviction": 3,
    "horizon": "short term",
-   "thesis": "Gandhar's June 2026 quarter was a genuine record, but management attributes it to an exceptional, geopolitically driven margin spread that it explicitly does not promise will last beyond one or two more quarters. For a multibagger case to build, the company needs to convert this windfall into announced capacity expansion and new export markets, neither of which has a firm timeline yet. With plants already near full utilisation, the stock up over 100% in six months, and historical margins and ROCE both structurally lower than pre-2024 levels, the risk is that the current price is extrapolating a one-off quarter rather than pricing a repeatable one.",
+   "thesis": "Gandhar is a genuine market leader in an approval-gated specialty-oil niche that is currently benefiting from a geopolitical supply shock which has roughly tripled its per-unit margins. If some of that elevated spread proves stickier than management expects, and transformer-oil growth and capacity utilisation keep climbing, earnings could compound well beyond what today's cheap-looking P/E implies. For that to happen, margins need to settle well above the pre-war ₹8,000-9,000/kl level even after Gulf shipping normalises, consolidated volume growth needs to broaden past its current ~1% pace, and the growing receivables and weak cash conversion need to reverse rather than widen.",
    "triggers": [
     {
-     "what": "Margin sustainability through FY27 (management 'hopeful' current spread holds)",
-     "when": "Next 1-2 quarters (through Q3 FY27)",
-     "source": "transcript, Q1 FY27 call, 2026-07-23"
+     "what": "Gross margin spread of ~₹29,000/kl expected to hold",
+     "when": "Q3-Q4 FY27",
+     "source": "concall, Oct 28 2026"
     },
     {
-     "what": "Capex/capacity expansion plan to be formally announced",
-     "when": "'Shortly' / next quarter per management, not yet committed",
-     "source": "transcript, Q1 FY27 call"
+     "what": "Consolidated installed capacity raised to 838,637 KL (from ~598,000 KL) via debottlenecking; standalone utilisation ~82%, room to add a third shift",
+     "when": "ongoing through FY27",
+     "source": "concall and presentation"
     },
     {
-     "what": "South Africa market entry strategy",
-     "when": "Clarity expected in 1-2 quarters, no committed launch date",
-     "source": "transcript, Q1 FY27 call"
+     "what": "PIO (transformer/insulating oil) segment volumes up 23% H1 YoY on power and data-centre demand",
+     "when": "H1 FY27, expected to continue",
+     "source": "presentation and concall"
     },
     {
-     "what": "New customer qualifications (4-5 year approval cycle) converting to revenue",
-     "when": "Not specified; existing pipeline undisclosed",
-     "source": "transcript, Q1 FY27 call"
+     "what": "New value-added products under R&D, details undisclosed",
+     "when": "not specified",
+     "source": "concall"
     }
    ],
-   "guidance": "On the Q1 FY27 call (2026-07-23), management guided volume growth of 8-10% (historically 8-10-11%) for FY27, and said it is 'hopeful' EBITDA margins stay near the current elevated level 'for most of this year,' while declining to give any sustainable margin guidance for FY28/FY29 when an analyst asked directly.",
-   "delivered_vs_guidance": "Volume grew about 8% year-on-year in Q1 FY27, in line with the long-stated 8-10% volume guidance. But margins have been far more volatile than any guidance implied: operating margin fell from 8% in FY23 to 4.5% in FY25 without being flagged in advance, then jumped to a 16.2% quarterly margin in Q1 FY27 that management says came from an unplanned, external raw-material/geopolitical event rather than a strategic shift. Margin outcomes, in other words, have repeatedly surprised both ways and have not tracked any stated plan.",
+   "guidance": "In July 2026 management guided 8-11% consolidated volume growth for FY27; on the Oct 28, 2026 Q2 call, management said it expects the elevated gross margin spread (~₹29,000/kl) to hold through Q3 and Q4 FY27, but could not say when or to what level spreads will normalise once Gulf shipping disruptions ease.",
+   "delivered_vs_guidance": "Volume guidance of 8-11% (July 2026) versus H1 FY27 actual consolidated volume growth of only ~1%, though standalone Indian volume grew ~15-16%; the shortfall is attributed to the Strait of Hormuz disruption hitting the UAE (Texol) unit, not domestic demand.",
    "scores": {
     "size_runway": {
      "score": 3,
-     "why": "Already calls itself India's largest white-oil maker (~₹5,052 cr TTM sales) inside a relatively small India white-oil segment (CRISIL estimate: ~$0.69bn by 2027); runway exists mainly via exports and new geographies, not domestic market size alone."
+     "why": "Already India's largest white-oil maker (~26.5% share) in a $7.33bn (2023) to $9.30bn (2028) domestic specialty-oil market growing ~5%/yr — not a small player in a huge ocean, though transformer-oil and export niches still offer runway."
     },
     "business_quality": {
      "score": 3,
-     "why": "Operating margin ranged 4.5-8% over FY22-26 before this quarter's spike; ROCE fell from 39% (FY22) to 11-13% (FY25-26), consistent with a margin-on-throughput business rather than one with strong pricing power."
+     "why": "Sticky, approval-gated relationships with large personal-care and industrial customers and an oligopolistic sourcing position, but margins are commodity- and shipping-dependent; ROCE fell from 39% (FY22) to 11% (FY25) before this year's spike."
     },
     "management": {
      "score": 4,
-     "why": "Promoters have raised their stake from 64.6% to 66.6% (Mar 2024-Jun 2026) via repeated market purchases, including as recently as 2026-09-09; no governance red flags found, but forward guidance on capex and new markets stays vague ('to be announced shortly')."
+     "why": "Standalone debt-free, CRISIL A+/Stable reaffirmed, promoter stake raised to 66.7% with continuous open-market buying and no pledges; management was candid that the margin windfall is war-driven, though FY27 consolidated volume guidance (8-11%) was missed."
     },
     "growth_visibility": {
-     "score": 2,
-     "why": "No announced capacity expansion despite ~97% utilisation on two shifts; South Africa entry and new export markets are still 'being worked out' with no committed timeline per the 2026-07-23 call."
+     "score": 3,
+     "why": "PIO volumes up 23% H1 YoY on power/data-centre demand and capacity debottlenecked to 838,637 KL, but most of FY27's profit growth is an unrepeatable margin spread rather than volume or mix."
     },
     "longevity": {
-     "score": 3,
-     "why": "Sector tailwinds (CRISIL-estimated ~9.5% India white-oil CAGR to 2027, China+1 sourcing, Shell's 2025 acquisition of Raj Petro) are real, but multi-year compounding needs capacity that is not yet committed."
+     "score": 2,
+     "why": "Management cannot say when the gross margin spread (₹29,000/kl now vs ₹8,000-9,000/kl historically) will normalise, and underlying consolidated volume grew only ~1% H1 YoY — growth beyond the current windfall is unproven at scale."
     },
     "valuation": {
-     "score": 2,
-     "why": "Stock up ~111% in 6 months and near its 52-week high; trailing P/E (~9.7x on TTM EPS of ₹30.8) looks cheap only because TTM earnings include one quarter management calls exceptional; last available analyst-consensus target (~₹159, pre-results) sits far below the current price of ₹299."
+     "score": 3,
+     "why": "TTM P/E near 6x (EPS ~45, price ₹264.55) looks cheap, but TTM earnings are inflated by a geopolitical margin spike management itself expects to fade; on normalised margins the multiple would look considerably higher."
     },
     "red_flags": {
-     "score": 3,
-     "why": "Operating cash flow trailed net profit in FY24 (-₹69 cr vs ₹165 cr) and FY25 (₹15 cr vs ₹84 cr), improving only in FY26 (₹128 cr vs ₹137 cr); trade payables and receivables both grew sharply in Q1 FY27, though management says ageing remains normal. No SEBI order, pledge, or auditor issue found."
+     "score": 4,
+     "why": "No pledges, no SEBI action found, standalone debt-free; but trade receivables nearly doubled in six months (debtor days ~37 to ~70-75) and H1 FY27 operating cash flow (₹183cr) covered under half of reported PAT (₹392cr)."
     }
    },
-   "analyst_views": [
-    {
-     "broker": "TipRanks (aggregated consensus, not a single named broker)",
-     "date": "2026-10",
-     "view": "Hold/Neutral (score 66)",
-     "target": "₹159",
-     "url": "https://www.tipranks.com/stocks/in:gandhar/stock-analysis"
-    }
-   ],
-   "industry": "CRISIL research commissioned by Gandhar itself (dated 2022-12-16, hosted on the company's own site) estimated India's white-oil market growing from $0.43bn (2022) to $0.69bn by 2027, a ~9.8% value CAGR and ~9.5% volume CAGR. The company's own Q1 FY27 presentation cites a global white-oil market of $2.19bn (2025) growing to $2.77bn by 2030 (~4.8% CAGR, sourced to Mordor Intelligence) and notes Shell's 2025 acquisition of peer Raj Petro as a sign of global interest. Third-party market-size estimates for India vary widely across research vendors (from roughly $145m to over $1bn for 2025), so the exact size of the addressable market is not well pinned down, and the most detailed sector study available was paid for by the company being researched.",
+   "analyst_views": [],
+   "industry": "India's specialty-oil market was valued at $7.33bn in 2023, projected to reach $9.30bn by 2028 (CAGR ~4.9%), per CRISIL Research commissioned for Gandhar (report dated 16 December 2022). Within it, white oil — Gandhar's largest category — was $0.43bn in 2022, projected to reach $0.69bn by 2027 (value CAGR 9.8%, volume CAGR 9.5%, from 718 KT to 1,128 KT). Gandhar's FY25 annual report cites an estimated 26.5% share of India's white-oil market and a top-5 global white-oil producer ranking.",
    "risks": [
-    "The record Q1 FY27 margin is explicitly described by management as driven by an exceptional, temporary geopolitical disruption (Strait of Hormuz tension), not a structural change — it may revert.",
-    "Plants are near full utilisation (~97%) with no announced capacity expansion or capex figure yet, limiting near-term volume growth beyond the guided 8-10%.",
-    "Operating cash flow has lagged reported profit in two of the last three fiscal years (FY24, FY25), a sign that part of past profit has not yet turned into cash.",
-    "Historical margins (4.5-8% OPM) and declining ROCE (39% to 11-13%) suggest limited pricing power outside the current unusual market conditions.",
-    "No fresh, named broker report with a target price post the Q1 FY27 results was found; the stock has already risen sharply ahead of any updated analyst view."
+    "Elevated gross margin spreads (~₹29,000/kl) are explicitly tied to a geopolitical shipping/supply disruption; management does not know when or to what level they will normalise",
+    "Texol (UAE) is directly exposed to Strait of Hormuz disruptions, which already cut consolidated volume growth to ~1% H1 FY27 versus an 8-11% guidance",
+    "Trade receivables nearly doubled in six months; debtor days rose from ~37 to ~70-75",
+    "Operating cash flow (₹183cr H1 FY27) covered less than half of reported PAT (₹392cr)",
+    "ROCE declined from 39% (FY22) to 11-13% (FY25-FY26) before this year's one-off spike",
+    "PHPO (personal care) volumes saw a slight decline from some key customers citing competition from smaller brands",
+    "One-time Silvassa plant flood (July 2026) caused a ₹21cr exceptional inventory/contamination loss, with insurance recovery still pending"
    ],
-   "change_my_mind": "A firm, funded capacity-expansion announcement with a stated timeline, combined with evidence that the elevated margin spread holds for two to three quarters beyond management's own 'hopeful' window (rather than reverting toward the historical 4.5-8% band), would meaningfully strengthen this case.",
+   "change_my_mind": "If gross margin spreads revert quickly toward the pre-war ₹8,000-9,000/kl level once Gulf shipping normalises, or if consolidated volume growth stays stuck near 1% rather than broadening, today's seemingly cheap P/E would look much more expensive and the growth thesis would largely collapse back to a slow, commodity-margin business.",
    "sources": [
-    "https://www.business-standard.com/markets/capital-market-news/gandhar-oil-refinery-hits-the-roof-after-q1-pat-zooms-689-yoy-126072300269_1.html",
-    "https://www.indianchemicalnews.com/general/gandhar-oil-refinery-posts-record-q1-fy27-as-pat-surges-689-31215",
-    "https://www.marketsmojo.com/news/result-analysis/gandhar-oil-refinery-q1-fy27-stellar-633-profit-surge-powers-micro-cap-to-52-week-high-4117920",
+    "https://www.screener.in/company/GANDHAR/consolidated/",
     "https://gandharoil.com/wp-content/uploads/2023/02/CRISIL-Research_Gandhar-Oil_Assessment-of-Specialty-Oil-Industry_16-December-2022_Final-Report.pdf",
-    "https://www.mordorintelligence.com/industry-reports/india-white-oil-market",
-    "https://www.tipranks.com/stocks/in:gandhar/stock-analysis",
-    "https://www.nuvama.com/wp-content/uploads/2023/11/Gandhar-Oil-Prospectus-November-25-2023.pdf",
-    "https://www.screener.in/company/GANDHAR/consolidated/"
+    "https://www.valueresearchonline.com/stories/53531/gandhar-oil-refinery-ipo/",
+    "https://scanx.trade/stock-market-news/companies/gandhar-oil-promoter-confirms-no-encumbrances-in-fy26/43111779",
+    "https://scanx.trade/stock-market-news/companies/gandhar-oil-refinery-india-ltd-senior-vice-president-manufacturing-resigns-effective-may-05-2026/40080450",
+    "https://www.sre.co.in/news-details/eod-4592375",
+    "https://www.gurufocus.com/news/9160220/gandhar-oil-refinery-india-ltd-nsegandhar-q2-2027-earnings-call-highlights-record-revenue-of-inr-1847-crores-and-pat-up-368-yoy",
+    "https://gandharoil.com/wp-content/uploads/2026/11/Transcript.pdf",
+    "https://gandharoil.com/investor-relations/presentations/"
    ],
-   "date": "2026-10-16",
+   "date": "2026-11-15",
    "model": "claude-sonnet-5",
-   "concall": "Jul 2026",
-   "ppt": "Jul 2026",
-   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=fdd49a7a-3729-4dee-8469-adc094c219c6.pdf",
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=68a28b26-abbb-466b-9299-20caa6879ab5.pdf",
+   "concall": "Nov 2026",
+   "ppt": "Nov 2026",
+   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=caf2a3c1-8999-4033-a2d0-eca39d772ea9.pdf",
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=c51eeb62-17b2-4269-ae22-af9ae01853db.pdf",
    "company": "Gandhar Oil Refinery (India) Ltd",
    "sector": "Oil, Gas & Consumable Fuels",
-   "price": 299.1,
+   "price": 264.55,
    "mb_score": 67.8,
    "mb_factors": [
     "B2 value: FCF yield and book/market top 30%",
@@ -1599,5 +1627,5 @@
    ]
   }
  },
- "generated": "2026-11-09 11:22"
+ "generated": "2026-11-17 14:27"
 }
