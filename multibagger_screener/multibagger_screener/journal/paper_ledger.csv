@@ -185,3 +185,4 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-11-16,DIFFNKG,SKIP,entry,0,,,[DIFFNKG@2026-11-15 13:00] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
 2026-11-16,NILKAMAL,SKIP,entry,0,,,[NILKAMAL@2026-11-15 13:02] alert had no mechanical stop (risk engine skipped the plan)
 2026-11-16,SUDARSCHEM,SKIP,entry,0,,,[SUDARSCHEM@2026-11-15 13:03] alert had no mechanical stop (risk engine skipped the plan)
+2026-11-17,LAURUSLABS,SKIP,entry,0,,,[LAURUSLABS@2026-11-17 19:59] already open in paper book
