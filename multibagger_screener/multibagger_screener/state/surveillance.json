@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-17 19:26",
+ "generated": "2026-11-18 19:07",
  "n_checked": 1004,
- "n_flagged": 79,
- "asm_total": 159,
+ "n_flagged": 82,
+ "asm_total": 178,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -216,18 +216,6 @@
    "series": "EQ",
    "worst": "BAND 5%"
   },
-  "VEDPOWER": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
   "WELCORP": {
    "flags": [
     {
@@ -363,6 +351,11 @@
   "E2E": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 5%",
      "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -370,7 +363,7 @@
    ],
    "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 5%"
+   "worst": "ASM"
   },
   "ELLEN": {
    "flags": [
@@ -387,19 +380,14 @@
   "ENNATURE": {
    "flags": [
     {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
      "code": "BE",
      "detail": "BE settlement series",
      "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
     }
    ],
-   "band": 5.0,
+   "band": 20.0,
    "series": "BE",
-   "worst": "BAND 5%"
+   "worst": "BE"
   },
   "ENTERO": {
    "flags": [
@@ -484,6 +472,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "MSTCLTD": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "OMNI": {
    "flags": [
@@ -573,6 +573,18 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
+  },
+  "SGMART": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "LT Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "SIGMAADV": {
    "flags": [
@@ -880,6 +892,18 @@
    "series": "EQ",
    "worst": "BAND 10%"
   },
+  "AGIIL": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": 20.0,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "GOPAL": {
    "flags": [
     {
@@ -921,23 +945,6 @@
    "series": "EQ",
    "worst": "ASM"
   },
-  "NSIL": {
-   "flags": [
-    {
-     "code": "BAND 5%",
-     "detail": "5% circuit band",
-     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
-    },
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 5.0,
-   "series": "BE",
-   "worst": "BAND 5%"
-  },
   "ANTELOPUS": {
    "flags": [
     {
@@ -949,6 +956,18 @@
    "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
+  },
+  "DCAL": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
   },
   "FLAIR": {
    "flags": [
@@ -1014,6 +1033,23 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
+  },
+  "HINDOILEXP": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "ASM"
   },
   "SHANTIGOLD": {
    "flags": [

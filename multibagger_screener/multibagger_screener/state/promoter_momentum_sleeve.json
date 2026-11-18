@@ -137,9 +137,13 @@
   [
    "2026-11-17",
    961485.86
+  ],
+  [
+   "2026-11-18",
+   938884.79
   ]
  ],
- "last_session": "2026-11-17",
+ "last_session": "2026-11-18",
  "book": {
   "cash": 74.32179309870116,
   "pos": {
@@ -185,20 +189,26 @@
    }
   },
   "pending_buys": [],
-  "pending_sells": [],
+  "pending_sells": [
+   "BHAGERIA",
+   "GANDHAR",
+   "PREMIERPOL",
+   "SOTL",
+   "PAISALO"
+  ],
   "last_px": {
    "STLTECH": 909.9000244140625,
    "INDORAMA": 100.36000061035156,
-   "BHAGERIA": 364.79998779296875,
+   "BHAGERIA": 350.8500061035156,
    "CONFIPET": 88.12999725341797,
-   "PAISALO": 75.12999725341797,
-   "PREMIERPOL": 86.04000091552734,
-   "GANDHAR": 264.9800109863281,
-   "SOTL": 650.5999755859375
+   "PAISALO": 75.55999755859375,
+   "PREMIERPOL": 83.12999725341797,
+   "GANDHAR": 260.9800109863281,
+   "SOTL": 626.5999755859375
   }
  },
- "insider_asof": "2026-11-17 20:18",
- "risk_on": true,
- "asof": "2026-11-17",
- "generated": "2026-11-17 19:26"
+ "insider_asof": "2026-11-18 21:37",
+ "risk_on": false,
+ "asof": "2026-11-18",
+ "generated": "2026-11-18 19:07"
 }
