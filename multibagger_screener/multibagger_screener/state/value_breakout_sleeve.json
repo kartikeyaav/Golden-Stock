@@ -145,106 +145,29 @@
   [
    "2026-11-18",
    989277.03
+  ],
+  [
+   "2026-11-19",
+   988636.57
   ]
  ],
- "last_session": "2026-11-18",
+ "last_session": "2026-11-19",
  "book": {
-  "cash": 72.86388328581234,
-  "pos": {
-   "DCMSRIND": {
-    "j": 713,
-    "entry_t": 538,
-    "px": 60.0,
-    "sh": 1651,
-    "peak": 61.15999984741211,
-    "entry_date": "2026-11-09"
-   },
-   "KAMATHOTEL": {
-    "j": 1624,
-    "entry_t": 538,
-    "px": 223.25,
-    "sh": 443,
-    "peak": 226.97999572753906,
-    "entry_date": "2026-11-09"
-   },
-   "KIRIINDUS": {
-    "j": 742,
-    "entry_t": 538,
-    "px": 505.0,
-    "sh": 196,
-    "peak": 513.0999755859375,
-    "entry_date": "2026-11-09"
-   },
-   "COFFEEDAY": {
-    "j": 1936,
-    "entry_t": 538,
-    "px": 31.59000015258789,
-    "sh": 3134,
-    "peak": 31.59000015258789,
-    "entry_date": "2026-11-09"
-   },
-   "PNB": {
-    "j": 1140,
-    "entry_t": 538,
-    "px": 125.98999786376953,
-    "sh": 785,
-    "peak": 150.0,
-    "entry_date": "2026-11-09"
-   },
-   "PETRONET": {
-    "j": 156,
-    "entry_t": 538,
-    "px": 314.0,
-    "sh": 315,
-    "peak": 335.0,
-    "entry_date": "2026-11-09"
-   },
-   "RAMCOIND": {
-    "j": 357,
-    "entry_t": 538,
-    "px": 313.5,
-    "sh": 315,
-    "peak": 318.95001220703125,
-    "entry_date": "2026-11-09"
-   },
-   "HARIOMPIPE": {
-    "j": 56,
-    "entry_t": 538,
-    "px": 368.20001220703125,
-    "sh": 268,
-    "peak": 370.20001220703125,
-    "entry_date": "2026-11-09"
-   },
-   "SAMHI": {
-    "j": 364,
-    "entry_t": 538,
-    "px": 169.10000610351562,
-    "sh": 584,
-    "peak": 169.10000610351562,
-    "entry_date": "2026-11-09"
-   },
-   "THOMASCOOK": {
-    "j": 1709,
-    "entry_t": 538,
-    "px": 102.02999877929688,
-    "sh": 964,
-    "peak": 115.02999877929688,
-    "entry_date": "2026-11-09"
-   }
-  },
-  "pending_buys": [],
-  "pending_sells": [
+  "cash": 988636.5674589828,
+  "pos": {},
+  "pending_buys": [
+   "PNB",
    "DCMSRIND",
    "KAMATHOTEL",
+   "ALEMBICLTD",
    "KIRIINDUS",
-   "COFFEEDAY",
-   "PNB",
-   "PETRONET",
-   "RAMCOIND",
-   "HARIOMPIPE",
-   "SAMHI",
-   "THOMASCOOK"
+   "SBIN",
+   "THOMASCOOK",
+   "BANKINDIA",
+   "PRINCEPIPE",
+   "IOC"
   ],
+  "pending_sells": [],
   "last_px": {
    "RANEHOLDIN": 1529.800048828125,
    "UDS": 204.1199951171875,
@@ -268,7 +191,7 @@
    "THOMASCOOK": 110.70999908447266
   }
  },
- "risk_on": false,
- "asof": "2026-11-18",
- "generated": "2026-11-18 19:07"
+ "risk_on": true,
+ "asof": "2026-11-19",
+ "generated": "2026-11-19 19:15"
 }

@@ -145,61 +145,24 @@
   [
    "2026-11-18",
    1082370.94
+  ],
+  [
+   "2026-11-19",
+   1081225.76
   ]
  ],
- "last_session": "2026-11-18",
+ "last_session": "2026-11-19",
  "book": {
-  "cash": 1895.7045364952937,
-  "pos": {
-   "TBZ": {
-    "j": 823,
-    "entry_t": 538,
-    "px": 606.5,
-    "sh": 360,
-    "peak": 650.6500244140625,
-    "entry_date": "2026-11-09"
-   },
-   "SPECTRUM": {
-    "j": 2398,
-    "entry_t": 538,
-    "px": 4606.0,
-    "sh": 47,
-    "peak": 4678.2001953125,
-    "entry_date": "2026-11-09"
-   },
-   "KABRAEXTRU": {
-    "j": 821,
-    "entry_t": 538,
-    "px": 740.9000244140625,
-    "sh": 294,
-    "peak": 749.6500244140625,
-    "entry_date": "2026-11-09"
-   },
-   "SIGMAADV": {
-    "j": 332,
-    "entry_t": 538,
-    "px": 930.0,
-    "sh": 234,
-    "peak": 937.9500122070312,
-    "entry_date": "2026-11-09"
-   },
-   "SSWL": {
-    "j": 342,
-    "entry_t": 538,
-    "px": 550.8499755859375,
-    "sh": 395,
-    "peak": 572.7999877929688,
-    "entry_date": "2026-11-09"
-   }
-  },
-  "pending_buys": [],
-  "pending_sells": [
+  "cash": 1081225.7595017054,
+  "pos": {},
+  "pending_buys": [
    "TBZ",
-   "SPECTRUM",
+   "NRL",
+   "BHAGYANGR",
    "KABRAEXTRU",
-   "SIGMAADV",
-   "SSWL"
+   "SPECTRUM"
   ],
+  "pending_sells": [],
   "last_px": {
    "SIGMAADV": 945.75,
    "TBZ": 593.2000122070312,
@@ -211,7 +174,7 @@
    "SSWL": 545.75
   }
  },
- "risk_on": false,
- "asof": "2026-11-18",
- "generated": "2026-11-18 19:07"
+ "risk_on": true,
+ "asof": "2026-11-19",
+ "generated": "2026-11-19 19:15"
 }

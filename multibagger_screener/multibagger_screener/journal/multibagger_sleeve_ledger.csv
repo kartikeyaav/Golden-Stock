@@ -24,3 +24,8 @@ date,symbol,action,shares,price,value,reason
 2026-11-09,SSWL,BUY,395,550.85,217585.74,RS leader: 6m and 12m return in the top 10%
 2026-11-09,TBZ,BUY,360,606.5,218340.0,RS leader: 6m and 12m return in the top 10%
 2026-11-09,BHAGYANGR,SELL,1241,68.01,84400.41,regime exit or stop / 30-week trail; x0.93 since 2026-11-06
+2026-11-19,TBZ,SELL,360,590.0,212400.0,regime exit or stop / 30-week trail; x0.97 since 2026-11-09
+2026-11-19,SPECTRUM,SELL,47,4650.0,218550.0,regime exit or stop / 30-week trail; x1.01 since 2026-11-09
+2026-11-19,KABRAEXTRU,SELL,294,728.6,214208.39,regime exit or stop / 30-week trail; x0.98 since 2026-11-09
+2026-11-19,SIGMAADV,SELL,234,945.75,221305.5,regime exit or stop / 30-week trail; x1.02 since 2026-11-09
+2026-11-19,SSWL,SELL,395,545.75,215571.25,regime exit or stop / 30-week trail; x0.99 since 2026-11-09

@@ -49,3 +49,13 @@ date,symbol,action,shares,price,value,reason
 2026-11-09,RAMCOIND,BUY,315,313.5,98752.5,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-11-09,SAMHI,BUY,584,169.1,98754.4,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-11-09,THOMASCOOK,BUY,964,102.03,98356.92,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-19,DCMSRIND,SELL,1651,57.25,94519.75,regime exit or stop / 30-week trail; x0.95 since 2026-11-09
+2026-11-19,KAMATHOTEL,SELL,443,222.87,98731.41,regime exit or stop / 30-week trail; x1.00 since 2026-11-09
+2026-11-19,KIRIINDUS,SELL,196,492.0,96432.0,regime exit or stop / 30-week trail; x0.97 since 2026-11-09
+2026-11-19,COFFEEDAY,SELL,3134,28.44,89130.96,regime exit or stop / 30-week trail; x0.90 since 2026-11-09
+2026-11-19,PNB,SELL,785,149.89,117663.65,regime exit or stop / 30-week trail; x1.19 since 2026-11-09
+2026-11-19,PETRONET,SELL,315,327.1,103036.5,regime exit or stop / 30-week trail; x1.04 since 2026-11-09
+2026-11-19,RAMCOIND,SELL,315,311.8,98217.0,regime exit or stop / 30-week trail; x0.99 since 2026-11-09
+2026-11-19,HARIOMPIPE,SELL,268,353.75,94805.0,regime exit or stop / 30-week trail; x0.96 since 2026-11-09
+2026-11-19,SAMHI,SELL,584,157.01,91693.84,regime exit or stop / 30-week trail; x0.93 since 2026-11-09
+2026-11-19,THOMASCOOK,SELL,964,110.8,106811.2,regime exit or stop / 30-week trail; x1.09 since 2026-11-09

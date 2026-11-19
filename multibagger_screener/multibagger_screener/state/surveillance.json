@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-18 19:07",
+ "generated": "2026-11-19 19:16",
  "n_checked": 1004,
- "n_flagged": 82,
- "asm_total": 178,
+ "n_flagged": 79,
+ "asm_total": 175,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -376,30 +376,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "ENNATURE": {
-   "flags": [
-    {
-     "code": "BE",
-     "detail": "BE settlement series",
-     "why": "trade-to-trade or SME settlement: compulsory delivery, no intraday exit."
-    }
-   ],
-   "band": 20.0,
-   "series": "BE",
-   "worst": "BE"
-  },
-  "ENTERO": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "UTLSOLAR": {
    "flags": [
@@ -930,18 +906,6 @@
     }
    ],
    "band": 10.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "MMFL": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
    "series": "EQ",
    "worst": "ASM"
   },
