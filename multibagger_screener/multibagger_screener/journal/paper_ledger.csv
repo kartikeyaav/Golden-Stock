@@ -190,3 +190,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-11-18,PIXTRANS,SKIP,entry,0,,,[PIXTRANS@2026-11-17 14:27] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
 2026-11-18,STYLAMIND,SKIP,entry,0,,,[STYLAMIND@2026-11-17 14:28] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
 2026-11-18,PAYTM,SKIP,entry,0,,,[PAYTM@2026-11-17 21:31] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-20,MOTILALOFS,SKIP,entry,0,,,[MOTILALOFS@2026-11-19 21:35] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-20,SKYGOLD,SELL,trading,37,874.9,8765.3,trading-lot trail: close < 50-DMA

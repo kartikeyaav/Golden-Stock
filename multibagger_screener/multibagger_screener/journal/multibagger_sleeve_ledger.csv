@@ -29,3 +29,8 @@ date,symbol,action,shares,price,value,reason
 2026-11-19,KABRAEXTRU,SELL,294,728.6,214208.39,regime exit or stop / 30-week trail; x0.98 since 2026-11-09
 2026-11-19,SIGMAADV,SELL,234,945.75,221305.5,regime exit or stop / 30-week trail; x1.02 since 2026-11-09
 2026-11-19,SSWL,SELL,395,545.75,215571.25,regime exit or stop / 30-week trail; x0.99 since 2026-11-09
+2026-11-20,BHAGYANGR,BUY,2549,84.74,216002.25,RS leader: 6m and 12m return in the top 10%
+2026-11-20,KABRAEXTRU,BUY,298,724.05,215766.9,RS leader: 6m and 12m return in the top 10%
+2026-11-20,NRL,BUY,1168,185.0,216080.0,RS leader: 6m and 12m return in the top 10%
+2026-11-20,SPECTRUM,BUY,46,4645.0,213670.0,RS leader: 6m and 12m return in the top 10%
+2026-11-20,TBZ,BUY,380,567.9,215802.01,RS leader: 6m and 12m return in the top 10%

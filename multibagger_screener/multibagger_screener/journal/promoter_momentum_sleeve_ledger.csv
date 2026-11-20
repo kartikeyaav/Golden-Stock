@@ -29,3 +29,8 @@ date,symbol,action,shares,price,value,reason
 2026-11-19,PREMIERPOL,SELL,2156,82.36,177568.16,regime exit or stop / 3xATR trail; x0.90 since 2026-11-09
 2026-11-19,SOTL,SELL,289,626.5,181058.5,regime exit or stop / 3xATR trail; x0.91 since 2026-11-09
 2026-11-19,PAISALO,SELL,2563,75.58,193711.54,regime exit or stop / 3xATR trail; x0.98 since 2026-11-09
+2026-11-20,BHAGERIA,BUY,530,352.0,186560.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-20,GANDHAR,BUY,732,255.0,186660.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-20,KROSS,BUY,656,282.5,185320.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-20,PAISALO,BUY,2499,74.63,186500.36,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-20,PREMIERPOL,BUY,2205,84.63,186609.14,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
