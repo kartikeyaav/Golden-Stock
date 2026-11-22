@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-20 18:51",
- "n_checked": 1004,
+ "generated": "2026-11-22 13:23",
+ "n_checked": 1003,
  "n_flagged": 79,
- "asm_total": 175,
+ "asm_total": 177,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -924,6 +924,11 @@
   "DCAL": {
    "flags": [
     {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    },
+    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -931,7 +936,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "ASM"
   },
   "FLAIR": {
    "flags": [
