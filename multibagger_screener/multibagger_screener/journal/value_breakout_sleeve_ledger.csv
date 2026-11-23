@@ -69,3 +69,13 @@ date,symbol,action,shares,price,value,reason
 2026-11-20,PRINCEPIPE,BUY,339,290.4,98445.6,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-11-20,SBIN,BUY,85,1150.0,97750.0,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
 2026-11-20,THOMASCOOK,BUY,879,112.27,98685.33,cheap (FCF yield and book-to-market top 30%) + a 2-year breakout or stage-2 start
+2026-11-23,PNB,SELL,641,155.93,99951.13,regime exit or stop / 30-week trail; x1.01 since 2026-11-20
+2026-11-23,DCMSRIND,SELL,1764,56.35,99401.4,regime exit or stop / 30-week trail; x1.01 since 2026-11-20
+2026-11-23,KAMATHOTEL,SELL,441,220.59,97280.19,regime exit or stop / 30-week trail; x0.99 since 2026-11-20
+2026-11-23,ALEMBICLTD,SELL,887,109.0,96683.0,regime exit or stop / 30-week trail; x0.98 since 2026-11-20
+2026-11-23,KIRIINDUS,SELL,203,487.9,99043.7,regime exit or stop / 30-week trail; x1.01 since 2026-11-20
+2026-11-23,SBIN,SELL,85,1178.55,100176.75,regime exit or stop / 30-week trail; x1.02 since 2026-11-20
+2026-11-23,THOMASCOOK,SELL,879,116.25,102183.75,regime exit or stop / 30-week trail; x1.04 since 2026-11-20
+2026-11-23,BANKINDIA,SELL,614,164.7,101125.8,regime exit or stop / 30-week trail; x1.03 since 2026-11-20
+2026-11-23,PRINCEPIPE,SELL,339,288.35,97750.65,regime exit or stop / 30-week trail; x0.99 since 2026-11-20
+2026-11-23,IOC,SELL,671,150.95,101287.45,regime exit or stop / 30-week trail; x1.03 since 2026-11-20

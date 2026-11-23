@@ -1,16 +1,16 @@
 {
  "ok": true,
- "generated": "2026-11-20T18:44:39",
+ "generated": "2026-11-23T22:12:09",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9975,
+ "headlines_read": 9377,
  "policy_hits": 16,
  "stories": 14,
  "themes": {
   "renewables": {
-   "pressure": 0.187,
-   "pos_flow": 0.1915,
-   "neg_flow": 0.0458,
+   "pressure": 0.17,
+   "pos_flow": 0.1723,
+   "neg_flow": 0.0415,
    "n_scored": 3,
    "n_attn": 0,
    "top": [
@@ -29,7 +29,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1514
+     "weight": 0.1371
     },
     {
      "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -46,7 +46,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0458
+     "weight": 0.0415
     },
     {
      "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -63,14 +63,14 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0401
+     "weight": 0.0352
     }
    ]
   },
   "ev": {
-   "pressure": 0.056,
-   "pos_flow": 0.1016,
-   "neg_flow": 0.0802,
+   "pressure": 0.051,
+   "pos_flow": 0.092,
+   "neg_flow": 0.0727,
    "n_scored": 3,
    "n_attn": 0,
    "top": [
@@ -89,7 +89,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0802
+     "weight": 0.0727
     },
     {
      "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -107,7 +107,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0708
+     "weight": 0.0641
     },
     {
      "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -124,13 +124,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0308
+     "weight": 0.0279
     }
    ]
   },
   "defence": {
-   "pressure": 0.075,
-   "pos_flow": 0.0575,
+   "pressure": 0.066,
+   "pos_flow": 0.0504,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -150,13 +150,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0575
+     "weight": 0.0504
     }
    ]
   },
   "railways": {
-   "pressure": 0.205,
-   "pos_flow": 0.17,
+   "pressure": 0.184,
+   "pos_flow": 0.1503,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 1,
@@ -176,7 +176,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0679
+     "weight": 0.0595
     },
     {
      "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -193,7 +193,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 3,
-     "weight": 0.0547
+     "weight": 0.0479
     },
     {
      "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -210,7 +210,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0473
+     "weight": 0.0429
     }
    ]
   },
@@ -231,8 +231,8 @@
    "top": []
   },
   "capex": {
-   "pressure": 0.091,
-   "pos_flow": 0.0708,
+   "pressure": 0.083,
+   "pos_flow": 0.0641,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -253,7 +253,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0708
+     "weight": 0.0641
     }
    ]
   }
@@ -274,7 +274,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1514
+   "weight": 0.1371
   },
   {
    "title": "Mangaluru’s Zupple Labs get DRDO mandate to develop blockchain evaluation standards",
@@ -291,7 +291,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1114
+   "weight": 0.0977
   },
   {
    "title": "Centre bans export of unsorted waste, scrap of lithium-ion batteries",
@@ -308,7 +308,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0802
+   "weight": 0.0727
   },
   {
    "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -326,7 +326,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0708
+   "weight": 0.0641
   },
   {
    "title": "1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai to ease waiting lists, Railway ministry plans four parallel tracks on 7 major corridors",
@@ -343,7 +343,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0703
+   "weight": 0.0637
   },
   {
    "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
@@ -360,7 +360,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0679
+   "weight": 0.0595
   },
   {
    "title": "Defence Ministry approves over ₹2,400 crore procurement from startups and MSMEs",
@@ -377,7 +377,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0575
+   "weight": 0.0504
   },
   {
    "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -394,7 +394,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 3,
-   "weight": 0.0547
+   "weight": 0.0479
   },
   {
    "title": "Cancer Drug Price Cut: Govt Caps Trade Margins At 30%, Revises Prices Of 543 Drug Brands",
@@ -411,7 +411,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0522
+   "weight": 0.0458
   },
   {
    "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -428,7 +428,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0473
+   "weight": 0.0429
   },
   {
    "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -445,7 +445,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0458
+   "weight": 0.0415
   },
   {
    "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -462,7 +462,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0401
+   "weight": 0.0352
   },
   {
    "title": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
@@ -479,7 +479,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0329
+   "weight": 0.0298
   },
   {
    "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -496,7 +496,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0308
+   "weight": 0.0279
   }
  ]
 }

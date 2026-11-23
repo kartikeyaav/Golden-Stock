@@ -34,3 +34,8 @@ date,symbol,action,shares,price,value,reason
 2026-11-20,KROSS,BUY,656,282.5,185320.0,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
 2026-11-20,PAISALO,BUY,2499,74.63,186500.36,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
 2026-11-20,PREMIERPOL,BUY,2205,84.63,186609.14,promoter market purchase disclosed in the last 60 sessions + RS leader or trend template
+2026-11-23,BHAGERIA,SELL,530,344.05,182346.49,regime exit or stop / 3xATR trail; x0.98 since 2026-11-20
+2026-11-23,GANDHAR,SELL,732,250.01,183007.32,regime exit or stop / 3xATR trail; x0.98 since 2026-11-20
+2026-11-23,PREMIERPOL,SELL,2205,82.78,182529.9,regime exit or stop / 3xATR trail; x0.98 since 2026-11-20
+2026-11-23,PAISALO,SELL,2499,73.0,182427.0,regime exit or stop / 3xATR trail; x0.98 since 2026-11-20
+2026-11-23,KROSS,SELL,656,276.95,181679.21,regime exit or stop / 3xATR trail; x0.98 since 2026-11-20

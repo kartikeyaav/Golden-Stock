@@ -153,106 +153,18 @@
   [
    "2026-11-20",
    990741.31
+  ],
+  [
+   "2026-11-23",
+   993128.58
   ]
  ],
- "last_session": "2026-11-20",
+ "last_session": "2026-11-23",
  "book": {
-  "cash": 731.978397341125,
-  "pos": {
-   "PNB": {
-    "j": 542,
-    "entry_t": 544,
-    "px": 154.0,
-    "sh": 641,
-    "peak": 154.0,
-    "entry_date": "2026-11-20"
-   },
-   "DCMSRIND": {
-    "j": 1441,
-    "entry_t": 544,
-    "px": 56.0,
-    "sh": 1764,
-    "peak": 56.0,
-    "entry_date": "2026-11-20"
-   },
-   "KAMATHOTEL": {
-    "j": 701,
-    "entry_t": 544,
-    "px": 223.91000366210938,
-    "sh": 441,
-    "peak": 223.91000366210938,
-    "entry_date": "2026-11-20"
-   },
-   "ALEMBICLTD": {
-    "j": 1459,
-    "entry_t": 544,
-    "px": 111.25,
-    "sh": 887,
-    "peak": 111.25,
-    "entry_date": "2026-11-20"
-   },
-   "KIRIINDUS": {
-    "j": 690,
-    "entry_t": 544,
-    "px": 485.0,
-    "sh": 203,
-    "peak": 485.0,
-    "entry_date": "2026-11-20"
-   },
-   "SBIN": {
-    "j": 708,
-    "entry_t": 544,
-    "px": 1150.0,
-    "sh": 85,
-    "peak": 1150.0,
-    "entry_date": "2026-11-20"
-   },
-   "THOMASCOOK": {
-    "j": 382,
-    "entry_t": 544,
-    "px": 112.2699966430664,
-    "sh": 879,
-    "peak": 112.2699966430664,
-    "entry_date": "2026-11-20"
-   },
-   "BANKINDIA": {
-    "j": 1739,
-    "entry_t": 544,
-    "px": 160.5,
-    "sh": 614,
-    "peak": 160.5,
-    "entry_date": "2026-11-20"
-   },
-   "PRINCEPIPE": {
-    "j": 1272,
-    "entry_t": 544,
-    "px": 290.3999938964844,
-    "sh": 339,
-    "peak": 290.3999938964844,
-    "entry_date": "2026-11-20"
-   },
-   "IOC": {
-    "j": 873,
-    "entry_t": 544,
-    "px": 147.0,
-    "sh": 671,
-    "peak": 147.0,
-    "entry_date": "2026-11-20"
-   }
-  },
+  "cash": 993128.5809246926,
+  "pos": {},
   "pending_buys": [],
-  "pending_sells": [
-   "PNB",
-   "DCMSRIND",
-   "KAMATHOTEL",
-   "ALEMBICLTD",
-   "KIRIINDUS",
-   "SBIN",
-   "THOMASCOOK",
-   "BANKINDIA",
-   "PRINCEPIPE",
-   "IOC"
-  ],
+  "pending_sells": [],
   "last_px": {
    "RANEHOLDIN": 1529.800048828125,
    "UDS": 204.1199951171875,
@@ -281,6 +193,6 @@
   }
  },
  "risk_on": false,
- "asof": "2026-11-20",
- "generated": "2026-11-20 18:51"
+ "asof": "2026-11-23",
+ "generated": "2026-11-23 22:19"
 }

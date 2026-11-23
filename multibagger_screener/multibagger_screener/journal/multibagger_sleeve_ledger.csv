@@ -34,3 +34,7 @@ date,symbol,action,shares,price,value,reason
 2026-11-20,NRL,BUY,1168,185.0,216080.0,RS leader: 6m and 12m return in the top 10%
 2026-11-20,SPECTRUM,BUY,46,4645.0,213670.0,RS leader: 6m and 12m return in the top 10%
 2026-11-20,TBZ,BUY,380,567.9,215802.01,RS leader: 6m and 12m return in the top 10%
+2026-11-23,TBZ,SELL,380,535.0,203300.0,regime exit or stop / 30-week trail; x0.94 since 2026-11-20
+2026-11-23,NRL,SELL,1168,186.8,218182.4,regime exit or stop / 30-week trail; x1.01 since 2026-11-20
+2026-11-23,KABRAEXTRU,SELL,298,711.1,211907.79,regime exit or stop / 30-week trail; x0.98 since 2026-11-20
+2026-11-23,SPECTRUM,SELL,46,4520.0,207920.0,regime exit or stop / 30-week trail; x0.97 since 2026-11-20

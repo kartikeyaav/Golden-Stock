@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-22 13:23",
+ "generated": "2026-11-23 22:19",
  "n_checked": 1003,
- "n_flagged": 79,
- "asm_total": 177,
+ "n_flagged": 77,
+ "asm_total": 167,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -147,18 +147,6 @@
    "worst": "ASM"
   },
   "RUBICON": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "LT Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
-  },
-  "SANSERA": {
    "flags": [
     {
      "code": "ASM",
@@ -672,18 +660,6 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
-  },
-  "SUPRIYA": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "UNIMECH": {
    "flags": [
