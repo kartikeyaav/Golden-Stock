@@ -1,16 +1,42 @@
 {
  "ok": true,
- "generated": "2026-11-23T22:12:09",
+ "generated": "2026-11-25T20:05:46",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9377,
- "policy_hits": 16,
- "stories": 14,
+ "headlines_read": 9681,
+ "policy_hits": 17,
+ "stories": 15,
  "themes": {
+  "datacentre": {
+   "pressure": 0.183,
+   "pos_flow": 0.15,
+   "neg_flow": 0.0,
+   "n_scored": 1,
+   "n_attn": 1,
+   "top": [
+    {
+     "title": "SpaceX Receives Government Approval to Launch Space Data Centers",
+     "date": "2026-11-26T00:13:57",
+     "source": "Livemint",
+     "link": "https://www.livemint.com/companies/spacex-receives-government-approval-to-launch-space-data-centers-11795632238029.html",
+     "themes": [
+      "datacentre"
+     ],
+     "polarity": "pos",
+     "event": "approval",
+     "amount_cr": null,
+     "tier": 1,
+     "hedged": false,
+     "sources": 1,
+     "retellings": 1,
+     "weight": 0.15
+    }
+   ]
+  },
   "renewables": {
-   "pressure": 0.17,
-   "pos_flow": 0.1723,
-   "neg_flow": 0.0415,
+   "pressure": 0.161,
+   "pos_flow": 0.1613,
+   "neg_flow": 0.0388,
    "n_scored": 3,
    "n_attn": 0,
    "top": [
@@ -29,7 +55,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1371
+     "weight": 0.1284
     },
     {
      "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -46,7 +72,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0415
+     "weight": 0.0388
     },
     {
      "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -63,14 +89,14 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0352
+     "weight": 0.0329
     }
    ]
   },
   "ev": {
-   "pressure": 0.051,
-   "pos_flow": 0.092,
-   "neg_flow": 0.0727,
+   "pressure": 0.049,
+   "pos_flow": 0.0861,
+   "neg_flow": 0.068,
    "n_scored": 3,
    "n_attn": 0,
    "top": [
@@ -89,7 +115,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0727
+     "weight": 0.068
     },
     {
      "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -107,7 +133,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0641
+     "weight": 0.06
     },
     {
      "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -124,13 +150,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0279
+     "weight": 0.0261
     }
    ]
   },
   "defence": {
-   "pressure": 0.066,
-   "pos_flow": 0.0504,
+   "pressure": 0.062,
+   "pos_flow": 0.0472,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -150,13 +176,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0504
+     "weight": 0.0472
     }
    ]
   },
   "railways": {
-   "pressure": 0.184,
-   "pos_flow": 0.1503,
+   "pressure": 0.177,
+   "pos_flow": 0.1441,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 1,
@@ -176,7 +202,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0595
+     "weight": 0.0576
     },
     {
      "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -193,7 +219,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 3,
-     "weight": 0.0479
+     "weight": 0.0464
     },
     {
      "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -210,7 +236,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0429
+     "weight": 0.0401
     }
    ]
   },
@@ -222,17 +248,9 @@
    "n_attn": 1,
    "top": []
   },
-  "datacentre": {
-   "pressure": 0.0,
-   "pos_flow": 0.0,
-   "neg_flow": 0.0,
-   "n_scored": 0,
-   "n_attn": 1,
-   "top": []
-  },
   "capex": {
-   "pressure": 0.083,
-   "pos_flow": 0.0641,
+   "pressure": 0.078,
+   "pos_flow": 0.06,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -253,12 +271,29 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0641
+     "weight": 0.06
     }
    ]
   }
  },
  "events": [
+  {
+   "title": "SpaceX Receives Government Approval to Launch Space Data Centers",
+   "date": "2026-11-26T00:13:57",
+   "source": "Livemint",
+   "link": "https://www.livemint.com/companies/spacex-receives-government-approval-to-launch-space-data-centers-11795632238029.html",
+   "themes": [
+    "datacentre"
+   ],
+   "polarity": "pos",
+   "event": "approval",
+   "amount_cr": null,
+   "tier": 1,
+   "hedged": false,
+   "sources": 1,
+   "retellings": 1,
+   "weight": 0.15
+  },
   {
    "title": "Sembcorp Green Infra IPO: Temasek-backed renewable energy company gets SEBI nod for  ₹3,750 crore public issue",
    "date": "2026-11-13T18:34:59",
@@ -274,7 +309,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1371
+   "weight": 0.1284
   },
   {
    "title": "Mangaluru’s Zupple Labs get DRDO mandate to develop blockchain evaluation standards",
@@ -291,7 +326,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0977
+   "weight": 0.0945
   },
   {
    "title": "Centre bans export of unsorted waste, scrap of lithium-ion batteries",
@@ -308,7 +343,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0727
+   "weight": 0.068
   },
   {
    "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -326,7 +361,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0641
+   "weight": 0.06
   },
   {
    "title": "1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai to ease waiting lists, Railway ministry plans four parallel tracks on 7 major corridors",
@@ -343,7 +378,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0637
+   "weight": 0.0596
   },
   {
    "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
@@ -360,7 +395,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0595
+   "weight": 0.0576
   },
   {
    "title": "Defence Ministry approves over ₹2,400 crore procurement from startups and MSMEs",
@@ -377,7 +412,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0504
+   "weight": 0.0472
   },
   {
    "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -394,7 +429,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 3,
-   "weight": 0.0479
+   "weight": 0.0464
   },
   {
    "title": "Cancer Drug Price Cut: Govt Caps Trade Margins At 30%, Revises Prices Of 543 Drug Brands",
@@ -411,7 +446,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0458
+   "weight": 0.0443
   },
   {
    "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -428,7 +463,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0429
+   "weight": 0.0401
   },
   {
    "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -445,7 +480,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0415
+   "weight": 0.0388
   },
   {
    "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -462,7 +497,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0352
+   "weight": 0.0329
   },
   {
    "title": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
@@ -479,7 +514,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0298
+   "weight": 0.0279
   },
   {
    "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
@@ -496,7 +531,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0279
+   "weight": 0.0261
   }
  ]
 }

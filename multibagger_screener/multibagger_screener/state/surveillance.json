@@ -1,7 +1,7 @@
 {
- "generated": "2026-11-23 22:19",
+ "generated": "2026-11-25 20:14",
  "n_checked": 1003,
- "n_flagged": 77,
+ "n_flagged": 78,
  "asm_total": 167,
  "syms": {
   "CPPLUS": {
@@ -660,6 +660,18 @@
    "band": 5.0,
    "series": "EQ",
    "worst": "BAND 5%"
+  },
+  "THOMASCOOK": {
+   "flags": [
+    {
+     "code": "BAND 10%",
+     "detail": "10% circuit band",
+     "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
+    }
+   ],
+   "band": 10.0,
+   "series": "EQ",
+   "worst": "BAND 10%"
   },
   "UNIMECH": {
    "flags": [
