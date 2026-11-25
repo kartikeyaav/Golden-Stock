@@ -1125,118 +1125,104 @@
   },
   "BODALCHEM": {
    "symbol": "BODALCHEM",
-   "headline": "A dyestuff and chemicals maker getting a lift from an anti-dumping duty",
-   "story": "Bodal Chemicals is a Gujarat-based maker of dyestuff and dye intermediates — the chemicals used mainly to colour textiles. It calls itself India's largest integrated player in this niche, and has branched into basic chemicals (like sulphuric acid), caustic soda via a chlor-alkali plant, and, most recently, benzene-derivative chemicals used in pharma and agrochemical intermediates, made at a new unit in Saykha, Gujarat.\n\nWhat changed: in March 2025, the government imposed a five-year anti-dumping duty on an imported chemical called Trichloro Isocyanuric Acid (TCCA), a water-disinfectant that Bodal is India's sole domestic producer of. Management had talked about this adding ₹50-60 crore of annual revenue. But as of the August 2025 earnings call, TCCA had contributed only ₹3.2 crore of revenue for the quarter — leftover stock that importers had piled up before the duty kicked in was still working through the system. Management pointed to a bigger contribution from the third quarter of FY26 onward.\n\nThe newer benzene-derivatives unit has also ramped more slowly than planned: utilisation was around 20-30% in mid-2025 against a target of 70-80% by the fourth quarter, and management cut its full-year revenue target for this unit from an original ₹150 crore down to roughly ₹100 crore.\n\nDespite those delays, recent numbers have turned up. Revenue for the quarter ended June 2026 was ₹709 crore, up 56% from a year earlier, and net profit was ₹30 crore versus almost nil a year before — a jump the machine screen flagged as +200%. For the full year to March 2026, sales of roughly ₹2,012-2,054 crore were broadly in line with management's own guidance of ₹2,000-2,100 crore. But net profit of about ₹48 crore fell well short of the ₹70-80 crore management had guided to in August 2025 — a reminder that hitting a revenue target doesn't guarantee hitting a profit one.\n\nThe balance sheet carries real debt: about ₹813 crore of borrowings against roughly ₹1,157 crore of equity. The company has been paying this down (a planned ₹150-175 crore cut in FY26) and is selling about 8 acres of surplus land near its Rajpura chlor-alkali plant to a neighbouring chemicals company, partly to improve chlorine disposal logistics and partly to raise cash. One reassuring sign: operating cash flow has exceeded reported net profit every year since FY23, suggesting the accounting profit is backed by real cash.\n\nThe open question is returns: return on capital employed was just 3-6% between FY23 and FY25. Whether better utilisation of the TCCA and benzene plants, plus debt reduction, can lift that meaningfully — or whether cyclical chemical pricing keeps margins capped around the 10-11% management now expects, well below the 18-20% the company saw a decade ago — is the crux of this story.",
-   "founder": "Suresh J. Patel founded the business in 1989 as J K Pharma, a small dye-intermediate plant in Vatva, Ahmedabad; it was renamed Bodal Chemicals in 1994 and listed in 2006 via a reverse merger with Dintex Dyechem. He remains Chairman and Managing Director, with over three decades in the chemicals trade. His sons, Bhavin Patel and Ankit Patel, are both Executive Directors running day-to-day operations — Ankit, who returned from the US in 2007, has pushed the diversification into pharma, agrochemical and specialty-chemical intermediates. Promoter and promoter-group holding has stayed steady at around 57% for years, with no decline. In October 2026, two promoter-group members, Ankit Patel and Ramesh D. Patel, recorded an inter-se transfer of shares worth roughly ₹3.4 crore each — a transfer within the promoter group, not an open-market trade, so it does not by itself signal buying or selling conviction. The company has declared no pledged or encumbered promoter shares for FY26. No SEBI order, auditor resignation, or other governance lapse was found in public records.",
-   "conviction": 3,
+   "headline": "A dye-chemical maker's profit jumped on a China supply shock, not a new plant",
+   "story": "Bodal Chemicals is a Gujarat-based integrated chemicals maker: it produces dye intermediates (the chemical building blocks of dyes), finished dyestuff, basic chemicals such as sulphuric acid, chlor-alkali (caustic soda), and TCCA (a chlorinating agent used in water treatment), from eight plants across Gujarat, Punjab and Uttar Pradesh plus four small foreign subsidiaries.\n\nIts numbers just moved sharply. In the September 2026 quarter, consolidated revenue rose 77% year-on-year to ₹884 crore and net profit jumped over twelve-fold to ₹81 crore, after a near-breakeven year-ago quarter. The company says this is being driven almost entirely by a price spike in H-acid and vinyl sulphone, two dye-intermediate chemicals where China, the dominant producer, has tightened environmental enforcement and cut compliant capacity. On the November 2026 earnings call, management said Chinese H-acid prices rose roughly from ¥40,000 to over ¥150,000 a tonne in 2026, and that its own H-acid realisation went from about ₹600/kg in the June quarter to ₹900/kg average in the September quarter, settling around ₹1,600-1,650/kg since.\n\nThat raises the obvious question: is this a one-off commodity spike or a lasting shift? Management itself is not sure. Asked directly why it isn't expanding H-acid and vinyl sulphone capacity despite record prices, the Executive Director said the company wants to \"see and verify how long-term this is going to sustain\" before committing, and will revisit the decision after the current (March 2027) quarter. Both products are already running at what the CFO called \"optimum\" utilisation, so near-term volume growth is capped by design.\n\nThe backdrop matters too. Between FY23 and FY26, Bodal's consolidated net profit collapsed from ₹99 crore to ₹6 crore and limped back to only ₹48 crore, as post-COVID demand faded, global freight and tariff disruptions hit exports, and a new benzene-downstream plant at Saykha took years longer than planned to stabilise — running an EBITDA loss of about ₹30 crore in each of FY25 and FY26 before turning a corner this year. Return on capital employed has been stuck in single digits (3-6%) for four straight years.\n\nOn valuation, the stock looks statistically cheap: a reported free-cash-flow yield of 10.5%, a price-to-book of roughly 1.5x, and a trailing P/E near 12x on the current earnings run-rate. But that run-rate is a few quarters old and leans on a raw-material price spike management can't promise will hold. Institutional ownership is almost nonexistent — FIIs and DIIs together own under 2% of the company — so there is little independent professional scrutiny validating the current numbers.",
+   "founder": "Bodal was founded by Suresh J. Patel in 1989 as JK Pharma, a small 200-tonne vinyl sulphone plant in Vatva, Ahmedabad; it was renamed Bodal Chemicals in 1994 and listed in 2006 via a reverse merger with Dintex Dyechem. The promoter group today is Suresh Patel and his sons Bhavin and Ankit Patel; Ankit Patel, Executive Director, is the company's usual voice on earnings calls. Promoter holding has been steady near 57% for several years, and the company declared no promoter pledge or encumbrance for FY26. In October 2026, an inter-se (family-to-family) transfer saw one promoter-group member, Ankit S. Patel, buy about ₹3.39 crore of shares while another, Ramesh D. Patel, sold an equal ₹3.37 crore stake — an internal rebalancing rather than open-market buying or selling, so it carries no clear signal either way. No SEBI order, auditor resignation, or related-party controversy was found in available records; the statutory auditor is BNPS & Associates LLP.",
+   "conviction": 2,
    "horizon": "short term",
-   "thesis": "Bodal sits in a protected niche — sole domestic TCCA producer behind a five-year anti-dumping duty — and has under-utilised benzene-derivative and chlor-alkali capacity that could lift margins as it ramps and as debt comes down. For this to multiply, the TCCA and benzene ramps need to actually hit the utilisation levels management keeps pushing out, and return on capital needs to move durably above the single digits it has shown for most of the last five years. The latest quarter's profit jump is an encouraging early sign, but management's own guidance has been missed on profit (if not revenue) as recently as FY26.",
+   "thesis": "Bodal's current earnings surge is a margin/price story, not a capacity or new-market story: a China-driven supply crunch in H-acid and vinyl sulphone has let an already-large Indian producer re-rate its realisations sharply. For this to compound into something larger, the China supply tightness needs to prove structural rather than cyclical, and the loss-making Saykha benzene-downstream unit and the sub-scale TCCA business need to sustain the profit contribution management says is now starting. Management's own refusal to commit capital to expand the two hottest product lines until at least Q4 FY27, plus a multi-year history (FY23-FY26) of profit collapsing on an identical commodity and execution-delay pattern, argue for caution despite the statistically cheap current valuation.",
    "triggers": [
     {
-     "what": "TCCA volumes ramp up as pre-duty import inventory clears",
-     "when": "Q3-Q4 FY26 (per management, Aug 2025)",
+     "what": "Saykha benzene-downstream plant turning EBITDA-positive after two years of ~₹30 crore annual losses",
+     "when": "Q3 FY27 (quarter in progress at the Nov 2026 call)",
      "source": "transcript"
     },
     {
-     "what": "Benzene-derivatives (Saykha, MCB/PNCB/ONCB) utilisation lift from ~20-30% to 70-80%",
-     "when": "Q3-Q4 FY26 (per management, Aug 2025)",
+     "what": "TCCA utilisation improvement via locally sourced equipment, after the originally planned Chinese equipment failed to arrive",
+     "when": "no committed date — described as ongoing",
      "source": "transcript"
     },
     {
-     "what": "Chlor-alkali capacity utilisation push to 90-95%",
-     "when": "\"coming couple of quarters\" from Aug 2025",
+     "what": "H-acid and vinyl sulphone export orders to China keeping realisations near ₹1,600-1,650/kg and ₹440-450/kg respectively",
+     "when": "visibility given only through January 2027",
      "source": "transcript"
     },
     {
-     "what": "Debt reduction of ₹150-175 crore in FY26, similar planned for FY27",
-     "when": "FY26-FY27",
+     "what": "Possible brownfield expansion of H-acid/vinyl sulphone capacity (executable in under 12 months) if the China shift is judged structural",
+     "when": "decision deferred to after Q4 FY27",
      "source": "transcript"
-    },
-    {
-     "what": "Land deal near Rajpura unit secures a captive chlorine buyer (Shivtek) and ~₹5 crore cash",
-     "when": "announced 2025, in process",
-     "source": "web search news"
     }
    ],
-   "guidance": "Q1FY26 call (Aug 2025): FY26 revenue of about ₹1,900-1,950 crore (plus ~₹35 crore other income), blended EBITDA margin trending toward 13-15% over time, net profit of ₹70-80 crore for FY26, debt reduction of ₹150-175 crore in FY26, and a medium-term debt/EBITDA target near 2.5x.",
-   "delivered_vs_guidance": "FY26 (year to March 2026) revenue came in at about ₹2,012-2,054 crore, slightly ahead of the ₹1,950 crore guided. But FY26 EBITDA margin was about 8%, well short of the 13-15% management had been targeting, and FY26 net profit of roughly ₹48 crore fell well short of the ₹70-80 crore guided in August 2025. TCCA and benzene-derivative ramps were also both running behind original timelines as of the most recent transcript available.",
+   "guidance": "Nov 2026 (Q2 FY27 call): management reiterated an earlier full-year FY27 turnover guidance of ₹2,500-2,800 crore, noted that H1 FY27's pace is running only about 15-20% above that guidance because of the price spike, and said that even if raw-material and product prices normalise (e.g. crude around $70-80/bbl) it still expects to deliver roughly ₹2,800 crore of revenue at a 14-15% EBITDA margin. It declined to give specific FY28 revenue guidance, citing uncertainty on crude-linked input costs, while expressing confidence in holding the EBITDA margin percentage.",
+   "delivered_vs_guidance": "H1 FY27 consolidated revenue of ₹1,599 crore (up 67% YoY) and EBITDA of ₹203 crore (up 114% YoY) are running well ahead of the ₹2,500-2,800 crore full-year guidance pace, but management attributes this entirely to the H-acid/vinyl sulphone price spike, not the volume or new-capacity growth it had earlier guided toward. Separately, the Saykha benzene-downstream plant — repeatedly guided toward breakeven — instead booked roughly ₹30 crore of EBITDA losses in each of FY25 and FY26 due to technology-integration issues and slow pharma-customer approvals, only turning the corner in H1 FY27. That track record of capex timelines slipping is a relevant data point when weighing today's guidance.",
    "scores": {
     "size_runway": {
-     "score": 4,
-     "why": "₹1,968 crore market cap against an Indian dye market estimated near $7 billion (growing ~9-10% a year per market research estimates), with FII+DII holding near 0% historically — largely undiscovered."
+     "score": 3,
+     "why": "Market cap ₹1,770 crore but FY27 revenue run-rate already near ₹3,000+ crore annualised; management puts its own share at ~13% of the domestic dyestuff market and ~20% of domestic dye-intermediates — a large incumbent in a mature (~9-10% CAGR estimated) market, not a small player in a vastly larger addressable market."
     },
     "business_quality": {
-     "score": 3,
-     "why": "Integrated model (about 40% of dye-intermediate output captively consumed) gives a cost edge, but OPM has run just 8-11% and ROCE only 3-6% in FY23-FY25, below the ~8.5-9% cost of debt."
+     "score": 2,
+     "why": "ROCE has been stuck at 3-6% for four of the last five years (FY23-FY26) and OPM is 8-11%; it is a commodity chemicals business whose current margin expansion is explicitly tied to an external supply shock rather than structural pricing power."
     },
     "management": {
      "score": 3,
-     "why": "Hit the FY26 revenue guide (~₹2,000-2,100 crore guided vs ~₹2,012-2,054 crore delivered) but missed the FY26 profit guide (₹70-80 crore vs ~₹48 crore) and cut the benzene-unit revenue target from ₹150 crore to ₹100 crore mid-year."
+     "why": "No promoter pledge declared for FY26 and promoter holding stable at ~57%, but the family has a multi-year record of capex execution slippage (Saykha plant, TCCA equipment delays) and was candid on the call that it does not yet trust the China shift enough to commit new capital."
     },
     "growth_visibility": {
-     "score": 4,
-     "why": "Multiple concrete near-term triggers (TCCA ramp, benzene utilisation lift, chlor-alkali push, debt paydown) are already showing up: Q1FY27 revenue +56% YoY and net profit +200% YoY."
+     "score": 3,
+     "why": "Concrete near-term triggers exist — Saykha turning profitable, committed China export orders through January 2027 — but management explicitly said it cannot comment on Q4 FY27 or FY28 topline, and both H-acid and vinyl sulphone are already at 'optimum' utilisation with no committed expansion timeline."
     },
     "longevity": {
-     "score": 3,
-     "why": "The anti-dumping protection runs five years from March 2025 and China+1 sourcing is a real tailwind, but the business has a decade-long history of cyclical swings — OPM ranged from about 8% now to 18-20% a decade ago."
+     "score": 2,
+     "why": "Management itself called the China supply shift potentially 'too soon' to call structural and said it needs another quarter or two to decide; the business has a documented history of multi-year boom-bust cycles in these exact products (FY23-FY26 profit collapse)."
     },
     "valuation": {
      "score": 3,
-     "why": "TTM P/E of about 28x (EPS ₹5.5, price ₹156.25) looks full for a historically sub-10% ROCE cyclical business, though a 9.4% FCF yield and the latest quarter's profit jump leave room for re-rating if it holds."
+     "why": "Trailing P/E near 12x, FCF yield 10.5%, price/book ~1.5x — cheap against the current earnings run-rate, but that run-rate depends on a raw-material price spike management won't promise will hold, so the multiple could look very different on normalised earnings."
     },
     "red_flags": {
      "score": 4,
-     "why": "No pledge, no SEBI order or auditor issue found, and operating cash flow has exceeded net profit every year since FY23; but borrowings (~₹813 crore, net debt/equity ~0.67) stay meaningful and a Turkey subsidiary hyperinflation charge adds minor noise."
+     "why": "No pledge, no auditor or SEBI issue found; operating cash flow (₹176 crore FY26) comfortably exceeds net profit. The one flagged item is rising receivables/inventory in H1 FY27, which management attributes to revenue growth and high raw-material (aniline, sulphur) costs rather than a collection problem, but this is self-reported and unverified independently."
     }
    },
    "analyst_views": [
     {
-     "broker": "JM Financial",
-     "date": "2026",
-     "view": "Neutral",
-     "target": "₹81",
-     "url": "https://trendlyne.com/equity/consensus-estimates/211/BODALCHEM/bodal-chemicals-ltd/"
-    },
-    {
-     "broker": "Kotak Securities",
-     "date": "2026",
-     "view": "Neutral",
-     "target": "₹74",
-     "url": "https://trendlyne.com/equity/consensus-estimates/211/BODALCHEM/bodal-chemicals-ltd/"
+     "broker": "MarketsMojo (automated rating service)",
+     "date": "2026-07",
+     "view": "Upgraded from Sell to Hold, citing improved technicals and quarterly performance; explicitly stopped short of a Buy",
+     "target": "not found",
+     "url": "https://www.marketsmojo.com/news/stock-recommendation/bodal-chemicals-ltd-upgraded-to-hold-by-marketsmojo-on-improved-technicals-and-financial-performance-4100014"
     }
    ],
-   "industry": "The Indian dye and dyestuff market is estimated at roughly $7 billion as of 2024, growing at a 9-10% CAGR per market-research estimates (not a CRISIL/ICRA sector note); India's dye-intermediates market was put at about $808 million in 2025, growing near 7.5% CAGR. Bodal's own August 2026 investor presentation claims a ~13% domestic and ~3% global share in dyestuff, and ~20% domestic and ~6% global share in dye intermediates (company/management estimates, not independently verified).",
+   "industry": "India's dye and dyestuff market is estimated at roughly $7 billion as of 2024, with industry commentary projecting 9-10% CAGR over five years; India is cited as one of the largest global producers/exporters of dyes and dye intermediates, accounting for an estimated 16-18% of global production, with dye and dye-intermediate exports of about $2.3 billion in April-February FY2025. Bodal itself estimates its domestic market share at ~13% in dyestuff and ~20% in dye intermediates, versus ~3% and ~6% globally respectively (management estimates, investor presentation). No independent CRISIL/ICRA sector note was found in available sources.",
    "risks": [
-    "Thin, cyclical margins exposed to crude-linked and sulfur-based raw material swings",
-    "TCCA and benzene-derivative capacity ramps have already run behind original management guidance more than once",
-    "Return on capital employed has stayed in single digits for most of the last five years",
-    "Leverage remains meaningful (~₹813 crore borrowings, net debt/equity ~0.67) even after planned paydown",
-    "Very low institutional coverage (FII+DII near 0% for years) means less independent scrutiny of the numbers",
-    "Turkey subsidiary (Sener Boya) is under hyperinflation accounting, adding noise to consolidated results",
-    "Global trade policy (tariffs, anti-dumping actions elsewhere) could shift again and affect export economics"
+    "The China H-acid/vinyl sulphone supply tightness could prove cyclical rather than structural, reverting prices and margins toward FY23-FY26 levels where net profit fell to as low as ₹6 crore.",
+    "Management has deliberately not expanded capacity in the two products driving the current upside, capping volume growth regardless of how long the price spike lasts.",
+    "Receivables and inventory have risen alongside revenue in H1 FY27; management says this is proportionate to growth, but it is self-reported and worth monitoring.",
+    "Near-zero institutional (FII+DII) ownership means little independent professional validation of the current numbers.",
+    "Demonstrated history of capex execution delays (Saykha benzene-downstream plant, TCCA equipment sourcing from China) raises doubt about the timeliness of future growth triggers.",
+    "The business remains exposed to crude-oil-linked raw material costs (aniline, sulphur), which management flagged could pressure topline by 20-30% if prices normalise."
    ],
-   "change_my_mind": "If TCCA and benzene-derivative utilisation stay stuck near 20-30% well into FY27, if net profit keeps missing management's own guidance the way it did in FY26, or if return on capital employed fails to move durably above high single digits even after the debt paydown, the case for a re-rating weakens considerably.",
+   "change_my_mind": "If Chinese H-acid and vinyl sulphone prices fall back sharply from current (~₹1,600-1,650/kg H-acid) levels toward pre-2026 norms within the next two to three quarters, or if the Saykha benzene-downstream plant fails to deliver the bottom-line contribution management now promises for the current quarter, the thesis that this is more than a temporary commodity price cycle would be wrong.",
    "sources": [
-    "https://www.screener.in/company/BODALCHEM/consolidated/",
-    "https://trendlyne.com/equity/consensus-estimates/211/BODALCHEM/bodal-chemicals-ltd/",
-    "https://www.tradingview.com/news/moneycontrol:fd3f8afb1094b:0-bodal-chemicals-shares-surge-18-as-govt-imposes-anti-dumping-duty-on-tcca-imports-from-china-and-japan/",
-    "https://www.indianchemicalnews.com/regulatory/india-imposes-anti-dumping-duty-on-trichloro-isocyanuric-acid-imported-from-china-and-japan-25415",
-    "https://digitalmag.theceomagazine.com/ankit-patel/?r=global",
-    "https://www.drvijaymalik.com/bodal-chemicals-research-report-fundamental-analysis/",
+    "https://www.bseindia.com/xml-data/corpfiling/AttachHis/3973709b-147e-4641-b20e-2ed9be61a486.pdf",
+    "https://www.multibagg.ai/market-pulse/articles/bodal-h-acid-pricing-capacity-concall-cmw4jmzse003c2pp10cyw6ot1",
+    "https://www.multibagg.ai/market-pulse/articles/bodal-saykha-plant-profit-contribution-concall-cmw4jmxg3003a2pp17mbyer38",
     "https://scanx.trade/stock-market-news/companies/bodal-chemicals-promoters-declare-no-encumbrance-for-fy26/43101667",
-    "https://www.manufacturingtodayindia.com/shivtek-to-invest-rs-50-cr",
-    "https://www.researchandmarkets.com/reports/5912802/india-dyes-pigments-market-size-share-outlook"
+    "https://www.fibre2fashion.com/interviews/printinterview.aspx?Id=359&sectionType=Face2Face",
+    "https://digitalmag.theceomagazine.com/ankit-patel/?r=global",
+    "https://www.marketsmojo.com/news/stock-recommendation/bodal-chemicals-ltd-upgraded-to-hold-by-marketsmojo-on-improved-technicals-and-financial-performance-4100014",
+    "https://www.indianchemicalnews.com/opinion/colors-of-opportunity-indias-expanding-dye-and-dyestuff-industry-27154"
    ],
-   "date": "2026-10-22",
+   "date": "2026-11-25",
    "model": "claude-sonnet-5",
-   "concall": "Aug 2025",
-   "ppt": "Aug 2026",
-   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=6355906a-26be-4413-b341-aa8e74233520.pdf",
-   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=e386e341-2f18-471a-a62b-dc366ce88644.pdf",
+   "concall": "Nov 2026",
+   "ppt": "Nov 2026",
+   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=3973709b-147e-4641-b20e-2ed9be61a486.pdf",
+   "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=9df25e87-5cda-46e4-9f2a-1d3e006a51ff.pdf",
    "company": "Bodal Chemicals Ltd",
-   "sector": "Chemicals",
-   "price": 156.25,
+   "sector": null,
+   "price": 140.59,
    "mb_score": 49.2,
    "mb_factors": [
     "B2 value: FCF yield and book/market top 30%",
@@ -1330,101 +1316,130 @@
   },
   "MENONBE": {
    "symbol": "MENONBE",
-   "headline": "A small Kolhapur bearings maker chasing brakes, exports and railway orders",
-   "story": "Menon Bearings makes small but critical metal parts — engine bearings, bushings and thrust washers made by bonding different metals together (the \"bi-metal\" in its main business), aluminium-alloy castings through its Alkop division, and brake linings through Menon Brakes. These parts go mainly into tractors, trucks and buses, sold to Indian and global equipment makers such as John Deere, Cummins and Allison, and reach companies like Tesla and Porsche as a smaller, tier-two supplier through bigger component makers.\n\nThe company has been compounding steadily: consolidated sales rose from ₹213 crore in FY24 to ₹299 crore in FY26, and trailing twelve-month sales now stand at ₹354 crore. Return on capital employed improved to 26% in FY26 from 20% a year earlier, and the company carries almost no net debt. The September 2026 quarter alone delivered ₹98 crore of sales and ₹15 crore of net profit, up sharply from a year earlier — the kind of acceleration that got this stock flagged by a screen.\n\nManagement points to several concrete growth levers. A new \"dynamometer\" testing machine for brakes — needed before Indian Railways will approve the product — was expected to be commissioned around September 2026; once certified, management expects ₹5-6 crore of railway brake-lining revenue in the first year, growing to ₹25-30 crore within two years. The aluminium-castings business (Alkop) is guided to more than double, to ₹95 crore in FY27 from ₹40 crore, on parts developed for a large customer. A domestic quotation pipeline worth ₹75 crore, with a historical 75-80% conversion rate, could add roughly ₹60 crore more. Exports, about a third of revenue, got a lift from recent customer visits in the US and Canada.\n\nThree years ago, management told investors to expect ₹270 crore of revenue; it delivered ₹299 crore — a target beaten, not missed. For the year to March 2027 it is guiding to ₹360 crore, again calling that number \"conservative,\" and the first half of the year already suggests it is tracking that pace.\n\nThe doubts are real too. Operating cash flow of ₹23 crore in FY26 lagged well behind the ₹38 crore of net profit, and trade receivables grew faster than sales — from ₹61 crore to nearly ₹100 crore within about a year — a working-capital strain worth watching. The company changed its managing director in March 2026, promoting its long-serving CFO after the 82-year-old former MD retired following 33 years in the job, so the new leadership is still unproven on its own. And in August 2026, members of the founder family sold about 1.77% of the company in the open market even as growth guidance stayed upbeat.",
-   "founder": "Menon Bearings is controlled by the Menon family, who founded the company (incorporated 1991, listed on BSE). Nitin Menon is Executive Chairman; his son Aditya Nitin Menon, part of the promoter group, described himself on the July 2026 earnings call as \"third generation\" running the business, and holds about 5.79% of shares directly. Arun Aradhye, previously whole-time director and CFO, was promoted to Managing Director effective 4 March 2026, after long-serving MD R.D. Dixit, aged 82, retired following 33 years in the role — an internal succession, not an outside hire. Promoter group holding has declined gradually, from 71.2% in March 2022 to 66.7% in September 2026, including an open-market sale of about ₹24 crore (1.77% of equity, at ₹229.68/share) by Aditya, Anshul and Sucheta Menon in August 2026. No pledge of promoter shares, SEBI order, or auditor dispute was found. Founders' other business interests: not found.",
+   "headline": "A small Kolhapur auto-parts maker posting record margins on exports",
+   "story": "Menon Bearings, listed since the early 1990s and run from Kolhapur, Maharashtra, makes engine bearings (bushings and bi-metal strips that let an engine's moving parts run smoothly), aluminium-alloy sintered and cold-clad components under the \"Alkop\" brand, and a newer line of brake linings. Customers include global names like John Deere, Cummins, Eaton and Honeywell, and the company says its parts reach Tesla and Porsche indirectly through larger tier-1 suppliers.\n\nWhat changed: in the July-September 2026 quarter, consolidated total income rose about 58.6% year-on-year, EBITDA rose 103.8%, and profit after tax rose about 117%, management said on the October 30, 2026 earnings call. For the first half of FY27, revenue was ₹194.9 crore, up 47% over the same period last year. Falling aluminium and tin prices through the quarter helped, management said, alongside productivity gains and lower overheads from an automation push — robotic machining cells and AI-based visual inspection to reduce dependence on manual labour.\n\nWhy it might matter now: management guided for growth above 30% in both FY27 and FY28, citing ₹30 crore of additional business already lined up for this year, a further ₹131 crore for FY28 and ₹157 crore for FY29 (excluding a potential ₹35 crore from new European orders). The Alkop division alone is targeted to roughly double capacity and nearly 2.5x revenue (from about ₹40 crore to ₹95 crore) by FY27. Segment margins, per management, run 30-35% in brakes, 23% in bearings and 18-19% in Alkop, with a company-wide EBITDA margin target of 23% next year, up from roughly 21-22% now.\n\nThe numbers that call for caution: trade receivables rose from ₹60.6 crore (March 2025) to ₹90.8 crore (March 2026) to ₹99.9 crore (September 2026) — faster than the rise in sales — which management attributed to building three months of inventory and credit at new US warehouses for new customer ramp-ups. Operating cash flow (₹23 crore in FY26) has run below net profit (₹38 crore) for three straight years, a gap worth watching even though debt is low (net debt/equity near nil). Three promoter-group family members — Anshul, Aditya and Sucheta Menon — sold shares worth about ₹24 crore combined in market sales on August 18, 2026, and promoter holding has drifted down from 71.2% in March 2022 to 66.7% by September 2026, though FIIs and DIIs between them still own barely 2.4% of the company, so it remains thinly covered by institutions.\n\nThe stock trades around 31 times trailing annual earnings (₹293.55 close against a TTM EPS of about ₹9.3), after a sharp run-up in trading volume, so a fair amount of this growth story already appears priced in.",
+   "founder": "Menon Bearings was promoted in 1991 by the Menon family of Kolhapur alongside Menon Pistons Ltd. Nitin Menon chairs the company; Arun Aradhye, a career finance-and-operations executive with over five decades of experience, was appointed Managing Director effective March 4, 2026, after years in senior roles at the company. Promoter and promoter-group holding has declined gradually, from 71.2% in March 2022 to 66.7% in September 2026, including a combined ₹24 crore market sale by three promoter-group family members (Anshul, Aditya and Sucheta Menon) on August 18, 2026. No SEBI order, auditor resignation, or share pledge against Menon Bearings or its promoters turned up in this research; a SEBI matter involving an unrelated person also named \"Arun Menon\" at Gensol Engineering is a different individual and company, not connected here. Promoter remuneration, related-party dealings and any further governance history beyond standard regulatory filings: not found.",
    "conviction": 3,
    "horizon": "long term",
-   "thesis": "Menon Bearings is a small, debt-light, high-ROCE auto-components supplier compounding sales and profit at 20-25%+ a year, with management naming specific near-term triggers — railway brake certification, an aluminium-castings ramp, export expansion — that could lift revenue from ₹354 crore (TTM) toward its own internally stated ₹500 crore aspiration over the next few years. For it to multiply, the brakes and railway ramp has to actually convert from quotations to billed revenue, margins have to hold near 20-22%, and the stock's re-rating has to survive its own illiquidity (FII+DII holding is near zero). What has to go right: cash conversion improves from its current weak state, the new MD delivers what the old one did, and growth doesn't stay confined to management's own call-transcript promises.",
+   "thesis": "Menon Bearings is a sub-₹2,000-crore auto-ancillary compounding profit faster than sales by squeezing costs and shifting mix toward higher-margin Alkop and brake products, with management pointing to a concrete, multi-year order ladder (₹30 crore FY27, ₹131 crore FY28, ₹157 crore FY29 of incremental business) built on export growth to the US and Europe and diversification away from tractor-cycle dependence. For this to compound several-fold, the company has to keep converting that order pipeline into cash profit rather than just paper growth — the recent gap between operating cash flow and net profit, and the fast rise in receivables, need to normalize as management claims they will. It also needs the 30%+ growth guidance, which is unusually bold and repeated every call, to hold up against a cyclical, commodity-price-exposed business, and the promoter family's recent large share sale and gradually declining holding bear watching rather than ignoring.",
    "triggers": [
     {
-     "what": "Brake dynamometer commissioning, enabling Indian Railways certification for brake linings",
-     "when": "around Sep 2026, ramping to ₹25-30 Cr within two years",
-     "source": "transcript"
-    },
-    {
-     "what": "Alkop (aluminium castings) revenue guided to ₹95 Cr in FY27 from ₹40 Cr now",
+     "what": "Alkop capacity roughly doubled, revenue to ~₹95 crore (from ~₹40 crore)",
      "when": "FY27",
-     "source": "presentation"
+     "source": "investor presentation, Oct 2026"
     },
     {
-     "what": "Domestic RFQ pipeline of ₹75 Cr at a historical 75-80% conversion rate (~₹60 Cr incremental)",
+     "what": "~₹35-40 crore of new European RFQs converting to sales",
+     "when": "FY28-FY29",
+     "source": "transcript, Oct 30 2026"
+    },
+    {
+     "what": "Incremental business of ₹30 crore / ₹131 crore / ₹157 crore layered into FY27 / FY28 / FY29",
+     "when": "FY27-FY29",
+     "source": "transcript, Oct 30 2026"
+    },
+    {
+     "what": "Brake volumes rising from 18 lakh to 24 lakh pieces",
      "when": "FY27",
-     "source": "transcript"
+     "source": "company filings (reported via secondary source, multibagg.ai)"
     },
     {
-     "what": "Modular bi-metal capacity addition, funded via internal accruals, targeted asset turn of ~2.5x",
-     "when": "next 2 years",
-     "source": "transcript"
-    },
-    {
-     "what": "Internal aspiration to reach ₹500 Cr revenue (vs ₹299 Cr FY26), originally targeted for 2030 but management says it is trying sooner",
-     "when": "FY29-30 (internal target)",
-     "source": "transcript"
+     "what": "EBITDA margin target of ~23%, up from ~21-22%",
+     "when": "FY28 (as stated in Oct 2026 call)",
+     "source": "transcript, Oct 30 2026"
     }
    ],
-   "guidance": "On the Q1 FY27 earnings call (17 July 2026), management guided to consolidated FY27 (year to March 2027) revenue of ₹360 crore, calling it a 'conservative' number, with EBITDA margins expected to sustain around 20-22%.",
-   "delivered_vs_guidance": "On the same call, management recalled that it had guided ₹270 crore of revenue about three years earlier and then exceeded it, delivering ₹299.46 crore of consolidated sales in FY26. For FY27, H1 sales already total roughly ₹190 crore (₹92 Cr in Q1 + ₹98 Cr in Q2), which is tracking at or ahead of the pace implied by the ₹360 crore full-year guidance — consistent with management's stated practice of guiding conservatively.",
+   "guidance": "On the October 30, 2026 (Q2/H1 FY27) call, management guided for revenue growth of 'more than 30%' in FY27 and again in FY28, split roughly 20 points from volume and the rest from pricing/mix, and targeted an EBITDA margin near 23% next year, management said.",
+   "delivered_vs_guidance": "Management itself claimed on the latest call that H1 FY27 results 'not only achieved, but exceeded' prior targets — H1 revenue grew 47% YoY and EBITDA 77% YoY against a stated growth ambition of 30%+. This dossier does not contain an independent transcript of the guidance management gave a year earlier (Q2 FY26), so the comparison above rests on management's own characterization rather than a verified independent record; treat it as self-reported.",
    "scores": {
     "size_runway": {
      "score": 4,
-     "why": "Market cap ₹1,547 Cr and TTM sales of ₹354 Cr against a company-cited domestic TAM of ~₹1,000 Cr (engine bearings) + ~₹2,000 Cr (brakes) + ~₹6,000 Cr (aluminium castings), plus exports that are ~34% of revenue and growing — the company is a small share of the markets it already serves."
+     "why": "Market cap ~₹1,645 crore against a domestic brakes market of ~₹2,000 crore, aluminium casting market of ~₹6,000 crore, and an Indian auto-component industry IBEF/McKinsey figures peg near $80bn (FY25) growing toward $200bn by 2030."
     },
     "business_quality": {
-     "score": 3,
-     "why": "ROCE rose to 26% in FY26 from 20% in FY25, EBITDA margins steady at 20-22%, near-zero net debt, and 20-30 year single-source relationships with OEMs like John Deere and Allison; offset by operating cash flow (₹23 Cr FY26) running well below net profit (₹38 Cr FY26) and receivables growing faster than sales."
+     "score": 4,
+     "why": "ROCE 26% (FY26, screener) and a 10-year average ROCE/ROE of ~22% and ~20-22% respectively (company presentation); niche, high-precision products with in-house tooling and multi-year customer approvals create switching costs."
     },
     "management": {
-     "score": 4,
-     "why": "Beat a ₹270 Cr revenue guidance given three years earlier with ₹299 Cr delivered in FY26, funds capex from internal accruals rather than fresh debt, and handled MD succession (Arun Aradhye, ex-CFO, replacing the 82-year-old retiring R.D. Dixit from March 2026) as an internal promotion rather than a scramble."
+     "score": 3,
+     "why": "Delivered sharp H1 FY27 growth and claims to have beaten its own prior targets, but guidance language is highly promotional and repeated every call without independent verification, and promoter-group family members sold ~₹24 crore of stock in August 2026 even as holding has drifted from 71.2% to 66.7% since March 2022."
     },
     "growth_visibility": {
      "score": 4,
-     "why": "Multiple named, dated triggers — brakes railway certification (~Sep 2026), Alkop revenue to ₹95 Cr in FY27, a ₹75 Cr domestic RFQ pipeline — though some, like railway and Africa revenue, are explicitly described by management as uncertain in size."
+     "why": "Concrete, numbered order pipeline given on the Oct 2026 call: ₹30cr (FY27), ₹131cr (FY28), ₹157cr (FY29) of additional business, plus Alkop capacity doubling and new European RFQs worth ₹35-40cr."
     },
     "longevity": {
      "score": 3,
-     "why": "Capacity and product launches span a 2-3 year runway and an internal ₹500 Cr revenue aspiration, but roughly half of revenue still depends on cyclical tractor/CV demand and the business lacks a single structural moat beyond long customer relationships."
+     "why": "Growth plan runs through FY29, but ~60-65% of revenue is auto-linked and historically tractor-cycle sensitive (tractor share of engine-bearing revenue fell from ~70-75% a decade ago to 34-58% now per management, still material)."
     },
     "valuation": {
-     "score": 3,
-     "why": "At ₹276.2, market cap of ₹1,547 Cr against TTM PAT of ₹52 Cr implies a P/E near 30x and P/S near 4.4x on TTM sales of ₹354 Cr — not cheap for an auto ancillary, and no verifiable independent broker target was found to benchmark against."
+     "score": 2,
+     "why": "TTM EPS of ~₹9.3 against a ₹293.55 close is roughly 31x trailing earnings, after a reported 3.3x surge in traded value versus the 6-month average — a lot of the growth story already looks priced in for a cyclical auto-ancillary."
     },
     "red_flags": {
-     "score": 4,
-     "why": "No auditor resignation, SEBI order, or promoter share pledge was found, and net debt/equity is near nil (0.15x); the flag is a cash-conversion gap — FY26 operating cash flow of ₹23 Cr versus ₹38 Cr net profit, and trade receivables roughly doubling in a year."
+     "score": 3,
+     "why": "No SEBI action, auditor resignation or share pledge found; but operating cash flow (₹23cr FY26) has trailed net profit (₹38cr FY26) for three straight years and trade receivables roughly doubled from ₹60.6cr (Mar 2025) to ₹99.9cr (Sep 2026), both flagged by an analyst on the Oct 2026 call and attributed by management to new-customer inventory build-up."
     }
    },
-   "analyst_views": [],
-   "industry": "Per Menon Bearings' own October 2026 investor presentation (citing IBEF/McKinsey), India's auto component industry reached ~$80.2 billion in FY25 (14% CAGR FY20-25) and is projected to reach ~$200 billion by 2030, with exports targeted to triple to ~$60 billion by 2030. The company states its own domestic addressable markets as ~₹1,000 Cr for engine bearings, ~₹2,000 Cr for brakes, and ~₹6,000 Cr for aluminium-casting products. No independent CRISIL, ICRA or similar third-party sector report specific to bi-metal bearings or brake linings was found.",
-   "risks": [
-    "Roughly half of revenue depends on cyclical tractor and commercial-vehicle demand, which management itself flagged as monsoon- and drought-sensitive.",
-    "Operating cash flow has trailed net profit and trade receivables have grown faster than sales, a working-capital trend that needs reversing.",
-    "Export orders were disrupted for three months by shipping/war-related issues (Strait of Hormuz, per the July 2026 call), showing exposure to geopolitical shocks.",
-    "FII+DII ownership is only about 0.2-2.4% combined, making the stock thin and more volatile on any shift in sentiment.",
-    "New MD Arun Aradhye (since March 2026) has yet to be tested over a full multi-year cycle in the top role.",
-    "Several growth numbers (railway, Africa, OEM wins) are management's own targets stated on calls, not yet booked or independently confirmed revenue.",
-    "No independent analyst or broker coverage was found to cross-check management's guidance."
+   "analyst_views": [
+    {
+     "broker": "MarketsMojo",
+     "date": "2026-11-23",
+     "view": "Downgraded to Hold",
+     "target": "not found",
+     "url": "https://www.marketsmojo.com/news/stock-recommendation/menon-bearings-ltd-downgraded-to-hold-amid-mixed-technical-and-valuation-signals-4272584"
+    },
+    {
+     "broker": "ICICI Direct",
+     "date": "2026 (exact date not independently verified)",
+     "view": "Buy, citing OEM volume growth and EV content gains",
+     "target": "not found",
+     "url": "https://univest.in/blogs/menon-bearings-share-price-target-2026"
+    },
+    {
+     "broker": "JM Financial",
+     "date": "2026 (exact date not independently verified)",
+     "view": "Buy, citing export recovery and EBITDA margin expansion",
+     "target": "not found",
+     "url": "https://univest.in/blogs/menon-bearings-share-price-target-2026"
+    },
+    {
+     "broker": "YES Securities",
+     "date": "2026 (exact date not independently verified)",
+     "view": "Neutral, citing growth fairly priced at current valuation",
+     "target": "not found",
+     "url": "https://univest.in/blogs/menon-bearings-share-price-target-2026"
+    }
    ],
-   "change_my_mind": "If operating cash flow keeps lagging profit and receivables keep growing faster than sales for another two quarters, or if the brakes/railway ramp and the ₹95 Cr Alkop FY27 target are pushed out or missed, or if promoter holding keeps declining further, the growth-and-discipline story weakens materially.",
+   "industry": "India's auto-component industry had FY2024-25 turnover of about ₹6.73 lakh crore (up 9.6% YoY) and is cited by IBEF/McKinsey as heading toward $200 billion by 2030 from roughly $80 billion now. The India automotive bearings market specifically was estimated at ~$3.07 billion in 2025, projected to reach ~$5.03 billion by 2030 (8.6% CAGR, MarkNtel Advisors). Menon's own presentation sizes its domestic addressable markets at ~₹1,000 crore (engine bearings), ~₹2,000 crore (brakes) and ~₹6,000 crore (aluminium casting products).",
+   "risks": [
+    "Guidance of 30%+ annual growth for multiple years running is unusually aggressive for a small auto-ancillary and has not yet been independently verified against a prior year's stated target.",
+    "Receivables have grown faster than sales and operating cash flow has lagged net profit for three straight years; a sustained gap would undercut the reported profit quality.",
+    "Revenue remains 60-65% auto-linked, including meaningful tractor-cycle exposure (management cites a Maharashtra drought affecting the tractor sector) and is exposed to copper, tin, aluminium and steel price swings.",
+    "Promoter-group family members sold ~₹24 crore of stock in August 2026 and promoter holding has been gradually declining since 2022.",
+    "Institutional ownership is still minimal (FII+DII ~2.4%), so liquidity and price discovery depend heavily on retail flows; the stock has already seen a reported 3.3x spike in traded value, suggesting some of the momentum may be short-term and sentiment-driven.",
+    "Valuation at ~31x trailing earnings leaves little room for error if growth or margin targets are missed."
+   ],
+   "change_my_mind": "If receivables keep outpacing sales and operating cash flow stays well below reported profit for another two to three quarters, or if the FY27/FY28 incremental-business numbers management cited on the October 2026 call fail to show up in actual revenue, or if promoter selling continues at scale, the thesis weakens materially.",
    "sources": [
     "https://www.screener.in/company/MENONBE/consolidated/",
-    "https://scanx.trade/stock-market-news/companies/menon-bearings-promoters-sell-1-77-stake-open-market/48575012",
-    "https://univest.in/blogs/menon-bearings-share-price-promoter-stake-august-2026",
-    "https://www.whalesbook.com/corporate-news/English/industrial-goodsservices/Menon-Bearings-Seeks-Shareholder-Vote-to-Appoint-Arun-Aradhye-as-New-MD/69d782b9e1f61dfbf5125803",
-    "https://scanx.trade/stock-market-news/stocks/menon-bearings-announces-leadership-transition-new-managing-director-and-cfo-appointed/34068417",
-    "https://menonbearings.in/wp-content/uploads/2026/10/Board-of-Directors-and-Key-Managerial-Personnel.pdf",
-    "https://www.bseindia.com/xml-data/corpfiling/AttachHis/82e5cec1-6446-4ab6-8de6-960711141812.pdf"
+    "https://www.gurufocus.com/news/9163784/q2-2027-menon-bearings-ltd-earnings-call-transcript",
+    "https://univest.in/blogs/menon-bearings-share-price-target-2026",
+    "https://www.marketsmojo.com/news/stock-recommendation/menon-bearings-ltd-downgraded-to-hold-amid-mixed-technical-and-valuation-signals-4272584",
+    "https://www.multibagg.ai/market-pulse/articles/menon-bearings-capex-export-roadmap-ppt-cmvuihfm600032hmwm8g7yzis",
+    "https://www.imarcgroup.com/india-bearings-market",
+    "https://www.marknteladvisors.com/research-library/india-automotive-bearing-market.html",
+    "https://menonbearings.in/wp-content/uploads/2026/10/Board-of-Directors-and-Key-Managerial-Personnel.pdf"
    ],
-   "date": "2026-11-03",
+   "date": "2026-11-25",
    "model": "claude-sonnet-5",
-   "concall": "Jul 2026",
-   "ppt": "Oct 2026",
-   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=9bbda2ff-57d7-415d-8ecb-d282f064ab21.pdf",
+   "concall": "Nov 2026",
+   "ppt": "Nov 2026",
+   "transcript_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=94248125-0875-4d70-98c7-9d80d586709a.pdf",
    "ppt_url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=189137b1-9b5a-4f26-84fd-e5dd09055da0.pdf",
    "company": "Menon Bearings Ltd",
-   "sector": "Automobile and Auto Components",
-   "price": 276.2,
+   "sector": null,
+   "price": 293.55,
    "mb_score": 48.0,
    "mb_factors": [
     "B3 small: market cap under Rs 2,000 Cr",
@@ -1625,7 +1640,102 @@
     "F momentum alone (RS leader or trend template)",
     "P promoter buying + momentum"
    ]
+  },
+  "ALEMBICLTD": {
+   "symbol": "ALEMBICLTD",
+   "headline": "A pharma family's holding company trading well below the value of what it owns",
+   "story": "Alembic Limited is not really a pharmaceutical company any more. In 2010 it demerged its drug-making business into Alembic Pharmaceuticals (APL), and what remained is a holding company that still owns 28.5% of APL, a smaller stake (about 19%) in the specialty chemicals maker Paushak, and a 102-acre land bank in Vadodara that it is slowly turning into real estate through its Alembic City project.\n\nThat structure explains the odd-looking numbers in the dossier. \"Sales\" of a few crore a year make no sense for a company earning ₹300+ crore of net profit — because most of that profit is dividends from APL and gains from the real estate business, not sales in the conventional sense. Quarterly profit is lumpy for the same reason: a spike to ₹128 crore in the September 2025 quarter and ₹163 crore in September 2026 lines up with when APL dividends typically land, not with any change in an underlying business.\n\nThe core argument for owning the stock is simple: Alembic's 28.5% APL stake alone was worth roughly ₹3,900–5,850 crore in late 2026 (estimates vary by source and date), against Alembic Limited's own market capitalisation of about ₹2,800–2,900 crore. In other words, the market was valuing the real estate business and the Paushak stake at zero or less. This kind of holding-company discount — often 50–65% by various estimates — is common in India and does not have to close on any schedule; it can persist for years without a trigger like a buyback or demerger.\n\nWhat has changed recently: APL itself raised its FY27 guidance mid-year to 20–25% consolidated revenue growth (from mid-teens), with US generics guided up to roughly 40% growth, after a Q2 FY27 quarter where revenue rose 36% and profit jumped 81% on US strength. If that growth holds, it strengthens the asset sitting inside Alembic's holding structure, even though Alembic itself gives no guidance of its own — there is no concall or investor presentation for Alembic Limited, only for APL.\n\nThe promoter entity, Nirayu Private Limited, bought shares in the open market almost every week from August through October 2026, lifting the promoter group's stake from 70.9% to 71.4%. Promoters have not pledged any shares for over a decade, by outside accounts.\n\nThe doubts: this is a \"wait for the discount to close\" story, not an operating growth story. Alembic Limited's own return on capital is low (6%) because a large chunk of its balance sheet is investments carried below their look-through value. The company's investor communication is thin, and FII+DII ownership is under 2%, meaning there is little institutional scrutiny pushing for value-unlocking action.",
+   "founder": "Alembic Limited is controlled by the Amin family through Nirayu Private Limited (holding roughly 63–64% directly, with the promoter group — including Chirayu Amin — at about 71.4% as of September 2026). Chirayu Amin chairs the company; the family has run the broader Alembic Group, founded in 1907, for multiple generations, including the listed Alembic Pharmaceuticals. Outside reporting describes zero promoter share pledging for over ten years, and Nirayu has been a steady open-market buyer of Alembic Limited shares through August–October 2026 (roughly ₹1.4 crore disclosed in the most recent tranche alone, part of a longer buying run). No auditor resignation, SEBI order, or pledge was found in the search done for this note. One flag: a shareholder forum post referenced sizeable institutional dissent on a 2025 postal ballot covering succession and promoter remuneration, but the company's FY26 AGM voting data shows near-unanimous approval, with only minor recorded dissent on a director's (Udit Amin's) commission — the two accounts don't fully agree, so treat the dissent claim with caution.",
+   "conviction": 3,
+   "horizon": "long term",
+   "thesis": "Alembic Limited's market price appears to capture little to none of the value of its 28.5% stake in Alembic Pharmaceuticals or its 102-acre Vadodara land bank, creating a classic holding-company-discount setup. For this to pay off, either the discount has to narrow (via a buyback, demerger, or re-rating) or the real estate business has to monetise land at a pace the market starts to price in — neither is guided or scheduled by management. The nearer-term lever is a pass-through one: APL's own raised FY27 growth guidance, if delivered, lifts the value of the asset Alembic Limited sits on, and steady promoter buying signals the family sees the current price as cheap.",
+   "triggers": [
+    {
+     "what": "APL raised FY27 consolidated revenue growth guidance to ~20-25%, US generics guided to ~40% growth",
+     "when": "given during Q2 FY27 (quarter ended Sep 2026)",
+     "source": "web - APL earnings call coverage"
+    },
+    {
+     "what": "Alembic City / Alembic Real Estate continuing to develop and monetise the ~102-acre Vadodara land bank",
+     "when": "ongoing, multi-year",
+     "source": "web - company real estate subsidiary filings"
+    },
+    {
+     "what": "Nirayu Private Limited open-market share purchases raising promoter stake from 70.9% to 71.4%",
+     "when": "Aug-Oct 2026, disclosed through 2026-10-01",
+     "source": "shareholding/promoter trade data"
+    }
+   ],
+   "guidance": "Alembic Limited itself issues no public guidance — it holds no concalls and files no investor presentation. The guidance that matters to its main asset comes from Alembic Pharmaceuticals (APL): consolidated FY27 revenue growth raised to ~20-25% and US generics growth guided to ~40% for FY27, given during the Q2 FY27 (quarter ended September 2026) earnings call.",
+   "delivered_vs_guidance": "Not found for Alembic Limited itself — no historical guidance from the company could be located. For APL, the asset underlying most of Alembic's value, the FY27 guide was raised mid-year (from mid-teens to 20-25% revenue growth) after Q2 FY27 revenue grew 36% YoY and profit grew 81% YoY, i.e. guidance has so far been exceeded within the same year, though this is one year of data, not a multi-year track record independently verified here.",
+   "scores": {
+    "size_runway": {
+     "score": 3,
+     "why": "Small market cap (~₹2,800-2,900 crore) sitting on investments/real estate estimated well above that, but Alembic Limited has no organic growth engine of its own — upside depends on discount-narrowing and land monetisation, both open-ended in timing."
+    },
+    "business_quality": {
+     "score": 3,
+     "why": "Debt-free (borrowings fell to ₹0 by Sep 2026) and backed by a quality pharma stake, but Alembic Limited itself is an investment holding + real estate vehicle with no moat of its own; reported ROCE of 6% reflects investments held below look-through value, not a clean quality signal."
+    },
+    "management": {
+     "score": 3,
+     "why": "Amin family has run the group for generations with no pledging found for 10+ years and steady promoter buying in 2026, but investor communication is minimal (no concalls/presentations) and a forum account flags a disputed 2025 dissent vote on succession/remuneration."
+    },
+    "growth_visibility": {
+     "score": 3,
+     "why": "Near-term value driver is pass-through from APL's raised FY27 guidance (20-25% revenue growth); the real estate monetisation driver is real but has no disclosed timeline from Alembic Limited itself."
+    },
+    "longevity": {
+     "score": 3,
+     "why": "Land bank monetisation (102 acres in Vadodara) and APL's multi-year US launch pipeline both point to a multi-year story, but pace is undisclosed and described externally as a 'long waiting game.'"
+    },
+    "valuation": {
+     "score": 4,
+     "why": "Alembic's 28.5% APL stake alone was estimated at ₹3,900-5,850 crore versus Alembic's own ~₹2,800-2,900 crore market cap; book/market of 0.91 and FCF yield of 2.5% per the machine screen support a cheap valuation."
+    },
+    "red_flags": {
+     "score": 4,
+     "why": "No pledges, auditor resignations, or SEBI actions found; operating cash flow (₹120 crore FY26) trailing PAT (₹317 crore FY26) is a modest flag but is explainable by dividend income/real estate gains routing through non-operating lines typical of holding companies."
+    }
+   },
+   "analyst_views": [],
+   "industry": "Two distinct exposures: (1) Indian/US generic pharmaceuticals via the APL stake — APL guided FY27 consolidated revenue growth to ~20-25% and US generics growth to ~40%, per its Q2 FY27 (Sep 2026 quarter) earnings call; (2) Vadodara real estate via a 102-acre land bank under Alembic City/Alembic Real Estate, with no independent third-party market-size estimate for this specific micro-market found in this search. No named brokerage was found publishing a target specifically for Alembic Limited (as distinct from APL).",
+   "risks": [
+    "Holding company discount may never close without a specific corporate action (buyback, demerger, restructuring) — none has been announced.",
+    "Value depends heavily on APL's continued execution; any slowdown in APL's US generics growth reduces the asset backing Alembic Limited.",
+    "Very low FII/DII ownership (1.3%) means little institutional pressure to unlock value.",
+    "Minimal investor communication from the company itself makes independent verification of the real estate monetisation pace difficult.",
+    "A forum-reported 2025 shareholder dissent on succession/remuneration, if accurate, would be a governance concern worth monitoring, though it conflicts with the company's own FY26 AGM voting results."
+   ],
+   "change_my_mind": "If APL's US generics growth decelerates sharply from its raised FY27 guidance, if the Vadodara land bank shows no monetisation progress over several years, or if promoter buying reverses into selling, the holding-company-discount thesis weakens considerably.",
+   "sources": [
+    "https://www.screener.in/company/ALEMBICLTD/consolidated/",
+    "https://forum.valuepickr.com/t/alembic-ltd-alembicltd-deep-holding-company-discount-real-estate-optionality/219418",
+    "https://www.multibagg.ai/market-pulse/articles/alembic-pharmaceuticals-lifts-fy27-outlook-concall-cmwal8iec000l2qo6srhict56",
+    "https://www.multibagg.ai/market-pulse/articles/alembic-us-growth-fy27-guidance-cmpb69v1o8d9fnv0js5ldji5a",
+    "https://in.investing.com/news/stock-market-news/alembic-pharma-q2-fy27-slides-profit-jumps-81-on-us-strength-93CH-5678642",
+    "https://en.wikipedia.org/wiki/Alembic_Pharmaceuticals",
+    "https://scanx.trade/stock-market-news/companies/alembic-limited-concludes-119th-agm-adopts-fy26-financials/48020394",
+    "https://www.alembicrealestate.com/about-us/"
+   ],
+   "date": "2026-11-25",
+   "model": "claude-sonnet-5",
+   "concall": null,
+   "ppt": null,
+   "transcript_url": null,
+   "ppt_url": null,
+   "company": "Alembic Ltd",
+   "sector": null,
+   "price": 104.73,
+   "mb_score": 56.3,
+   "mb_factors": [
+    "B2 value: FCF yield and book/market top 30%",
+    "C2 undiscovered: FII+DII under 5%",
+    "E3 volume expansion: traded value 2x",
+    "F momentum alone (RS leader or trend template)",
+    "P promoter buying + momentum"
+   ]
   }
  },
- "generated": "2026-11-17 14:27"
+ "generated": "2026-11-25 19:23"
 }
