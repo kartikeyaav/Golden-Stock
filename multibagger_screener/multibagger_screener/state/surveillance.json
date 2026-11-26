@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-25 20:14",
+ "generated": "2026-11-26 19:56",
  "n_checked": 1003,
  "n_flagged": 78,
- "asm_total": 167,
+ "asm_total": 161,
  "syms": {
   "CPPLUS": {
    "flags": [
@@ -216,6 +216,18 @@
    "series": "EQ",
    "worst": "ASM"
   },
+  "APLAPOLLO": {
+   "flags": [
+    {
+     "code": "ASM",
+     "detail": "ST Stage I",
+     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
+    }
+   ],
+   "band": null,
+   "series": "EQ",
+   "worst": "ASM"
+  },
   "BAJAJHFL": {
    "flags": [
     {
@@ -368,14 +380,14 @@
   "UTLSOLAR": {
    "flags": [
     {
-     "code": "BAND 10%",
-     "detail": "10% circuit band",
+     "code": "BAND 5%",
+     "detail": "5% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
     }
    ],
-   "band": 10.0,
+   "band": 5.0,
    "series": "EQ",
-   "worst": "BAND 10%"
+   "worst": "BAND 5%"
   },
   "EBGNG": {
    "flags": [
@@ -436,18 +448,6 @@
    "band": 10.0,
    "series": "EQ",
    "worst": "BAND 10%"
-  },
-  "MSTCLTD": {
-   "flags": [
-    {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    }
-   ],
-   "band": 20.0,
-   "series": "EQ",
-   "worst": "ASM"
   },
   "OMNI": {
    "flags": [
@@ -801,11 +801,6 @@
   "EMUDHRA": {
    "flags": [
     {
-     "code": "ASM",
-     "detail": "ST Stage I",
-     "why": "exchange flag for manipulation or abnormal volatility. 100% margin, no intraday leverage."
-    },
-    {
      "code": "BAND 10%",
      "detail": "10% circuit band",
      "why": "the day's range is narrower than a normal ATR stop, so a gap to the limit fills no stop at all."
@@ -813,7 +808,7 @@
    ],
    "band": 10.0,
    "series": "EQ",
-   "worst": "ASM"
+   "worst": "BAND 10%"
   },
   "RAYMOND": {
    "flags": [
