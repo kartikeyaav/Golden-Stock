@@ -1,15 +1,15 @@
 {
  "ok": true,
- "generated": "2026-11-26T19:46:07",
+ "generated": "2026-11-27T19:37:01",
  "window_days": 45,
  "half_life_days": 21.0,
- "headlines_read": 9711,
- "policy_hits": 17,
- "stories": 15,
+ "headlines_read": 9615,
+ "policy_hits": 16,
+ "stories": 14,
  "themes": {
   "datacentre": {
-   "pressure": 0.183,
-   "pos_flow": 0.15,
+   "pressure": 0.178,
+   "pos_flow": 0.1451,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -29,14 +29,14 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.15
+     "weight": 0.1451
     }
    ]
   },
   "renewables": {
-   "pressure": 0.157,
-   "pos_flow": 0.1571,
-   "neg_flow": 0.0376,
+   "pressure": 0.153,
+   "pos_flow": 0.152,
+   "neg_flow": 0.0363,
    "n_scored": 3,
    "n_attn": 0,
    "top": [
@@ -55,7 +55,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.1242
+     "weight": 0.1202
     },
     {
      "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -72,7 +72,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0376
+     "weight": 0.0363
     },
     {
      "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -89,15 +89,15 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0329
+     "weight": 0.0318
     }
    ]
   },
   "ev": {
-   "pressure": 0.047,
-   "pos_flow": 0.0833,
-   "neg_flow": 0.0658,
-   "n_scored": 3,
+   "pressure": 0.016,
+   "pos_flow": 0.0562,
+   "neg_flow": 0.0637,
+   "n_scored": 2,
    "n_attn": 0,
    "top": [
     {
@@ -115,7 +115,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0658
+     "weight": 0.0637
     },
     {
      "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -133,30 +133,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0581
-    },
-    {
-     "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
-     "date": "2026-10-13T14:26:14",
-     "source": "The Economic Times",
-     "link": "https://economictimes.indiatimes.com/industry/renewables/delhi-chief-minister-rekha-gupta-launches-150-electric-buses-ev-charging-stations/articleshow/134912913.cms",
-     "themes": [
-      "ev"
-     ],
-     "polarity": "pos",
-     "event": "",
-     "amount_cr": null,
-     "tier": 1,
-     "hedged": false,
-     "sources": 1,
-     "retellings": 1,
-     "weight": 0.0253
+     "weight": 0.0562
     }
    ]
   },
   "defence": {
-   "pressure": 0.06,
-   "pos_flow": 0.0456,
+   "pressure": 0.058,
+   "pos_flow": 0.0441,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 1,
@@ -176,13 +159,13 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0456
+     "weight": 0.0441
     }
    ]
   },
   "railways": {
-   "pressure": 0.172,
-   "pos_flow": 0.1394,
+   "pressure": 0.166,
+   "pos_flow": 0.1349,
    "neg_flow": 0.0,
    "n_scored": 3,
    "n_attn": 1,
@@ -202,7 +185,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0557
+     "weight": 0.0539
     },
     {
      "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -219,7 +202,7 @@
      "hedged": false,
      "sources": 2,
      "retellings": 3,
-     "weight": 0.0449
+     "weight": 0.0434
     },
     {
      "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -236,7 +219,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0388
+     "weight": 0.0376
     }
    ]
   },
@@ -249,8 +232,8 @@
    "top": []
   },
   "capex": {
-   "pressure": 0.075,
-   "pos_flow": 0.0581,
+   "pressure": 0.073,
+   "pos_flow": 0.0562,
    "neg_flow": 0.0,
    "n_scored": 1,
    "n_attn": 0,
@@ -271,7 +254,7 @@
      "hedged": false,
      "sources": 1,
      "retellings": 1,
-     "weight": 0.0581
+     "weight": 0.0562
     }
    ]
   }
@@ -292,7 +275,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.15
+   "weight": 0.1451
   },
   {
    "title": "Sembcorp Green Infra IPO: Temasek-backed renewable energy company gets SEBI nod for  ₹3,750 crore public issue",
@@ -309,7 +292,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.1242
+   "weight": 0.1202
   },
   {
    "title": "Mangaluru’s Zupple Labs get DRDO mandate to develop blockchain evaluation standards",
@@ -326,7 +309,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0914
+   "weight": 0.0885
   },
   {
    "title": "Centre bans export of unsorted waste, scrap of lithium-ion batteries",
@@ -343,7 +326,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0658
+   "weight": 0.0637
   },
   {
    "title": "Centre extends bid deadline for advanced chemistry cell battery PLI scheme to November 10",
@@ -361,7 +344,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0581
+   "weight": 0.0562
   },
   {
    "title": "1,000 extra trains between Delhi, Mumbai, Kolkata and Chennai to ease waiting lists, Railway ministry plans four parallel tracks on 7 major corridors",
@@ -378,7 +361,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0577
+   "weight": 0.0558
   },
   {
    "title": "Railway Board flags safety concerns, grants conditional approval to RCF-made Vande Bharat chair car",
@@ -395,7 +378,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0557
+   "weight": 0.0539
   },
   {
    "title": "Defence Ministry approves over ₹2,400 crore procurement from startups and MSMEs",
@@ -412,7 +395,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0456
+   "weight": 0.0441
   },
   {
    "title": "Cabinet approves ₹2,010 cr bonus for over 11 lakh railway employees",
@@ -429,7 +412,7 @@
    "hedged": false,
    "sources": 2,
    "retellings": 3,
-   "weight": 0.0449
+   "weight": 0.0434
   },
   {
    "title": "Cancer Drug Price Cut: Govt Caps Trade Margins At 30%, Revises Prices Of 543 Drug Brands",
@@ -446,7 +429,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0429
+   "weight": 0.0415
   },
   {
    "title": "Indian Railways extends optional travel insurance to counter-ticket buyers, mandates digital payment",
@@ -463,7 +446,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0388
+   "weight": 0.0376
   },
   {
    "title": "Govt needs to incentivise domestic solar production as China eyes curbs on tech exports: Solex Chairman",
@@ -480,7 +463,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0376
+   "weight": 0.0363
   },
   {
    "title": "Evolve Energy launches Solar Xperience Centre in Chennai",
@@ -497,7 +480,7 @@
    "hedged": false,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.0329
+   "weight": 0.0318
   },
   {
    "title": "Hillhouse launches data centre platform TeraNova DC, may deploy $12-15 bn in India by 2032",
@@ -514,24 +497,7 @@
    "hedged": true,
    "sources": 1,
    "retellings": 1,
-   "weight": 0.027
-  },
-  {
-   "title": "Delhi Chief Minister Rekha Gupta launches 150 electric buses, EV charging stations",
-   "date": "2026-10-13T14:26:14",
-   "source": "The Economic Times",
-   "link": "https://economictimes.indiatimes.com/industry/renewables/delhi-chief-minister-rekha-gupta-launches-150-electric-buses-ev-charging-stations/articleshow/134912913.cms",
-   "themes": [
-    "ev"
-   ],
-   "polarity": "pos",
-   "event": "",
-   "amount_cr": null,
-   "tier": 1,
-   "hedged": false,
-   "sources": 1,
-   "retellings": 1,
-   "weight": 0.0253
+   "weight": 0.0261
   }
  ]
 }

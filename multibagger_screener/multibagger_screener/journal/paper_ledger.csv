@@ -194,3 +194,5 @@ date,symbol,action,lot,shares,price,pnl,reason
 2026-11-20,SKYGOLD,SELL,trading,37,874.9,8765.3,trading-lot trail: close < 50-DMA
 2026-11-25,SSWL,SKIP,entry,0,,,[SSWL@2026-11-24 21:32] alert had no mechanical stop (risk engine skipped the plan)
 2026-11-25,JSWINFRA,SKIP,entry,0,,,[JSWINFRA@2026-11-24 21:34] slot limit 12 reached (20 open) — the backtested edge was measured with this cap in force
+2026-11-27,IPCALAB,SELL,all,45,1788.0,0.0,stop hit
+2026-11-27,MARKSANS,SELL,core,104,276.3,1310.4,core exit: weekly close < 30-week MA

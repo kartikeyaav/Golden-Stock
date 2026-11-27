@@ -1,5 +1,19 @@
 {
- "generated": "2026-11-26T19:48:06",
- "window_start": "2026-11-25T20:07:14",
- "hits": []
+ "generated": "2026-11-27T19:38:55",
+ "window_start": "2026-11-26T19:48:06",
+ "hits": [
+  {
+   "sym": "ACMESOLAR",
+   "cls": "pos",
+   "event": "expansion",
+   "subject": "ACME Solar Holdings Limited has informed the Exchange about commissioning of solar component of the Hybrid Power Project |SUBJECT: Commencement of commercial pr",
+   "date": "2026-11-27T00:05:35",
+   "n": 1,
+   "tag": "CONFIRMED",
+   "rs": 92.7,
+   "held": false,
+   "confluence": true,
+   "urgent": false
+  }
+ ]
 }
